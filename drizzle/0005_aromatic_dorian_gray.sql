@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `last_viewed_at` timestamp;

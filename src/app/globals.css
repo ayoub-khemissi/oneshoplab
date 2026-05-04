@@ -1,0 +1,390 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+/* =============================================================================
+   OneShopLab — design system
+   -----------------------------------------------------------------------------
+   Three layers of tokens:
+     1. Brand palette (--color-brand-*)         → identity, used selectively
+     2. Semantic tokens (HeroUI-compatible)     → consumed by all UI components
+     3. Tailwind @theme exposure                → makes tokens available as
+                                                  utility classes (text-brand-500
+                                                  bg-card, font-sans, etc.)
+
+   Rule of thumb: prefer semantic utilities (`text-foreground`, `bg-card`) over
+   raw brand colors. Use brand only for hero accents and illustrative bits.
+   ============================================================================= */
+
+@theme {
+  /* Brand palette — cobalt blue (option A: tech / SaaS modern) */
+  --color-brand-50:  oklch(0.970 0.020 250);
+  --color-brand-100: oklch(0.930 0.050 250);
+  --color-brand-200: oklch(0.860 0.100 250);
+  --color-brand-300: oklch(0.760 0.150 250);
+  --color-brand-400: oklch(0.660 0.190 250);
+  --color-brand-500: oklch(0.560 0.215 250);
+  --color-brand-600: oklch(0.475 0.220 250);
+  --color-brand-700: oklch(0.395 0.190 250);
+  --color-brand-800: oklch(0.310 0.150 250);
+  --color-brand-900: oklch(0.215 0.090 250);
+  --color-brand-950: oklch(0.135 0.055 250);
+
+  /* Warm gold accent — strong contrast against cobalt for highlights & scores */
+  --color-amber-400: oklch(0.830 0.140 75);
+  --color-amber-500: oklch(0.780 0.150 75);
+  --color-amber-600: oklch(0.690 0.160 70);
+
+  /* Fonts (Geist injected from next/font in layout) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "JetBrains Mono", monospace;
+
+  /* Radii */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.500rem;
+  --radius-lg: 0.750rem;
+  --radius-xl: 1.000rem;
+  --radius-2xl: 1.500rem;
+}
+
+@layer base {
+  /* -------------------------------------------------------------------------
+     Light mode — overrides HeroUI defaults with OneShopLab brand
+     ------------------------------------------------------------------------- */
+  :root,
+  [data-theme="light"] {
+    color-scheme: light;
+
+    --white: oklch(1 0 0);
+    --black: oklch(0 0 0);
+    --snow: oklch(0.990 0.002 250);
+    --eclipse: oklch(0.180 0.022 250);
+
+    --spacing: 0.25rem;
+    --border-width: 1px;
+    --field-border-width: 1px;
+    --disabled-opacity: 0.5;
+    --ring-offset-width: 2px;
+    --cursor-interactive: pointer;
+    --cursor-disabled: not-allowed;
+    --radius: 0.625rem;
+    --field-radius: 0.500rem;
+
+    --background: oklch(0.992 0.005 250);
+    --foreground: var(--eclipse);
+    --surface: var(--white);
+    --surface-foreground: var(--foreground);
+    --overlay: var(--white);
+    --overlay-foreground: var(--foreground);
+
+    --muted: oklch(0.555 0.018 250);
+    --default: oklch(0.960 0.005 250);
+    --default-foreground: var(--eclipse);
+    --scrollbar: oklch(0.870 0.005 250);
+
+    --accent: var(--color-brand-500);
+    --accent-foreground: var(--snow);
+
+    --field-background: var(--white);
+    --field-foreground: var(--foreground);
+    --field-placeholder: oklch(0.620 0.012 250);
+    --field-border: oklch(0.880 0.008 250);
+
+    --success: oklch(0.700 0.160 150);
+    --success-foreground: var(--snow);
+    --warning: oklch(0.780 0.160 70);
+    --warning-foreground: var(--eclipse);
+    --danger: oklch(0.620 0.220 25);
+    --danger-foreground: var(--snow);
+
+    --segment: var(--white);
+    --segment-foreground: var(--foreground);
+    --border: oklch(0.910 0.008 250);
+    --separator: oklch(0.930 0.005 250);
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    --surface-shadow:
+      0 1px 2px 0 oklch(0.20 0.025 250 / 0.04),
+      0 4px 12px -2px oklch(0.20 0.025 250 / 0.06);
+    --overlay-shadow:
+      0 8px 24px -4px oklch(0.20 0.025 250 / 0.10),
+      0 16px 40px -8px oklch(0.20 0.025 250 / 0.10);
+    --field-shadow: 0 1px 2px 0 oklch(0.20 0.025 250 / 0.04);
+  }
+
+  /* -------------------------------------------------------------------------
+     Dark mode
+     ------------------------------------------------------------------------- */
+  .dark,
+  [data-theme="dark"] {
+    color-scheme: dark;
+
+    --background: oklch(0.108 0.018 250);
+    --foreground: oklch(0.960 0.005 250);
+    --surface: oklch(0.140 0.018 250);
+    --surface-foreground: var(--foreground);
+    --overlay: oklch(0.170 0.018 250);
+    --overlay-foreground: var(--foreground);
+
+    --muted: oklch(0.660 0.018 250);
+    --default: oklch(0.210 0.018 250);
+    --default-foreground: var(--foreground);
+    --scrollbar: oklch(0.310 0.018 250);
+
+    --accent: var(--color-brand-400);
+    --accent-foreground: oklch(0.108 0.018 250);
+
+    --field-background: oklch(0.170 0.018 250);
+    --field-foreground: var(--foreground);
+    --field-placeholder: oklch(0.555 0.018 250);
+    --field-border: oklch(0.260 0.018 250);
+
+    --success: oklch(0.730 0.160 150);
+    --success-foreground: oklch(0.108 0.018 250);
+    --warning: oklch(0.810 0.160 70);
+    --warning-foreground: oklch(0.108 0.018 250);
+    --danger: oklch(0.660 0.220 25);
+    --danger-foreground: var(--foreground);
+
+    --segment: oklch(0.210 0.018 250);
+    --segment-foreground: var(--foreground);
+    --border: oklch(0.230 0.018 250);
+    --separator: oklch(0.210 0.018 250);
+    --focus: var(--accent);
+    --link: var(--accent);
+
+    --surface-shadow:
+      0 1px 2px 0 oklch(0 0 0 / 0.30),
+      0 4px 12px -2px oklch(0 0 0 / 0.40);
+    --overlay-shadow: 0 8px 24px -4px oklch(0 0 0 / 0.50);
+    --field-shadow: 0 0 0 0 transparent;
+  }
+
+  /* -------------------------------------------------------------------------
+     Base typography
+     ------------------------------------------------------------------------- */
+  body {
+    font-family: var(--font-sans);
+    background: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1 {
+    letter-spacing: -0.030em;
+  }
+  h2, h3 {
+    letter-spacing: -0.018em;
+  }
+
+  ::selection {
+    background: var(--color-brand-200);
+    color: var(--color-brand-900);
+  }
+}
+
+@layer components {
+  /* Brand accent text — used to highlight a key word in a headline.
+     Solid color is more elegant than a multi-hue gradient and lets the
+     typography breathe. Falls back to a very subtle vertical fade in dark
+     mode for a hint of depth. */
+  .text-gradient-brand {
+    color: var(--accent);
+  }
+  .dark .text-gradient-brand {
+    background: linear-gradient(180deg, var(--color-brand-300) 0%, var(--color-brand-500) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Ambient hero glow — refined: two soft pools in the same cool family,
+     low opacity, big blur. Aiming for a designer "presence" rather than
+     an obvious gradient bomb. */
+  .hero-glow {
+    position: absolute;
+    inset: -15%;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(55% 40% at 50% 0%, oklch(0.78 0.10 250 / 0.18) 0%, transparent 70%),
+      radial-gradient(45% 35% at 80% 100%, oklch(0.70 0.10 280 / 0.12) 0%, transparent 75%);
+    filter: blur(50px);
+  }
+  .dark .hero-glow {
+    background:
+      radial-gradient(55% 40% at 50% 0%, oklch(0.55 0.18 250 / 0.30) 0%, transparent 70%),
+      radial-gradient(45% 35% at 80% 100%, oklch(0.50 0.18 280 / 0.22) 0%, transparent 75%);
+  }
+
+  /* Subtle grid pattern overlay — adds texture without dominating. */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(to right, oklch(from var(--foreground) l c h / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(from var(--foreground) l c h / 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 0%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 0%, transparent 80%);
+  }
+
+  /* Cone of light from top — very subtle, drives the eye to the headline
+     without screaming. */
+  .hero-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      ellipse 50% 30% at 50% -5%,
+      oklch(1 0 0 / 0.6) 0%,
+      transparent 75%
+    );
+  }
+  .dark .hero-spotlight {
+    background: radial-gradient(
+      ellipse 50% 30% at 50% -5%,
+      oklch(0.35 0.04 250 / 0.5) 0%,
+      transparent 75%
+    );
+  }
+
+  /* Eyebrow / kicker label — small uppercase mono */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  /* Hide native scrollbar on horizontal carousels (WebKit + Firefox + IE). */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Score gauge ring — soft brand glow */
+  .score-ring {
+    box-shadow:
+      0 0 0 1px oklch(from var(--foreground) l c h / 0.06),
+      0 8px 32px -8px var(--accent);
+  }
+
+  /* AI-generated rich content — provides paragraph spacing, lists, emphasis
+     so the merchant sees a properly-formatted description (and can copy-paste
+     into Shopify / WooCommerce / Wix rich editors with formatting preserved).
+     We don't depend on @tailwindcss/typography; these rules are scoped to
+     .prose containers we explicitly add. */
+  .prose p {
+    line-height: 1.65;
+    margin-block: 0.85em;
+  }
+  .prose p:first-child {
+    margin-top: 0;
+  }
+  .prose p:last-child {
+    margin-bottom: 0;
+  }
+  .prose ul,
+  .prose ol {
+    margin-block: 0.85em;
+    padding-left: 1.4rem;
+  }
+  .prose ul {
+    list-style: disc outside;
+  }
+  .prose ol {
+    list-style: decimal outside;
+  }
+  .prose li {
+    margin-block: 0.35em;
+    line-height: 1.55;
+  }
+  .prose li > p {
+    margin-block: 0.25em;
+  }
+  .prose strong,
+  .prose b {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  .prose em,
+  .prose i {
+    font-style: italic;
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 1.4em;
+    margin-bottom: 0.55em;
+    color: var(--foreground);
+  }
+  .prose h1 {
+    font-size: 1.35em;
+  }
+  .prose h2 {
+    font-size: 1.2em;
+  }
+  .prose h3 {
+    font-size: 1.08em;
+  }
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    margin: 1em 0;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--default);
+    padding: 0.15em 0.3em;
+    border-radius: 0.25rem;
+  }
+  .prose hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1.5em 0;
+  }
+
+  /* Design system: HeroUI InputGroup ships with a vertical divider between
+     the prefix/suffix and the input field. We want the icon to feel "inside"
+     the same field, not visually fenced off — so flatten those borders. */
+  .input-group__prefix {
+    border-right: none;
+  }
+  .input-group__suffix {
+    border-left: none;
+  }
+}

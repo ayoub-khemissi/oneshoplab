@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1777778364469,
+      "tag": "0000_dazzling_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1777778571593,
+      "tag": "0001_useful_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1777780604153,
+      "tag": "0002_high_hellcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1777797742521,
+      "tag": "0003_overjoyed_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1777824416909,
+      "tag": "0004_melted_klaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1777832605834,
+      "tag": "0005_aromatic_dorian_gray",
+      "breakpoints": true
+    }
+  ]
+}

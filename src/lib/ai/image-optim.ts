@@ -1,0 +1,119 @@
+import { eq } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
+import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
+import { db } from '@/lib/db';
+import { jobs, users } from '@/lib/db/schema';
+import { getKieClient } from './kie';
+import { costForImage, getImageModel, type ImageQualityId } from './models';
+
+/** Legacy default — used when no quality is passed. Mirrors `costForImage('image-1k')`. */
+const IMAGE_COST_CREDITS = costForImage('image-1k');
+
+export interface StartImageOptimOptions {
+  userId: string;
+  projectId: string;
+  productSourceId: string;
+  sourceImageUrl: string;
+  userPrompt: string;
+  /** Public origin used to build the kie webhook callback URL. */
+  appUrl?: string;
+  /** Caller-selected image quality. Falls back to the user's preference / default. */
+  imageQualityId?: ImageQualityId;
+}
+
+export interface StartImageOptimResult {
+  jobId: string;
+  kieTaskId: string;
+  creditsHeld: number;
+}
+
+/**
+ * Kick off an image-to-image generation:
+ *   1. Hold credits (idempotent debit, refunded on synchronous failure).
+ *   2. Persist a `kie_image_edit` job before the kie call.
+ *   3. POST createTask to kie with our webhook URL.
+ *   4. Save the returned taskId on the job so the webhook can match it.
+ *
+ * The result image arrives later via /api/kie/callback (or the worker's
+ * kie-watchdog as a poll fallback).
+ */
+export async function startImageOptim(
+  opts: StartImageOptimOptions
+): Promise<StartImageOptimResult> {
+  const quality = getImageModel(opts.imageQualityId);
+  const cost = costForImage(quality.id);
+
+  const user = await db.query.users.findFirst({ where: eq(users.id, opts.userId) });
+  if (!user) throw new Error(`User ${opts.userId} not found`);
+  if (user.creditsBalance < cost) {
+    throw new InsufficientCreditsError(cost, user.creditsBalance);
+  }
+
+  const jobId = randomUUID();
+  const callBackUrl = opts.appUrl ? `${opts.appUrl.replace(/\/$/, '')}/api/kie/callback` : undefined;
+
+  await db.insert(jobs).values({
+    id: jobId,
+    projectId: opts.projectId,
+    kind: 'kie_image_edit',
+    status: 'pending',
+    inputPayload: {
+      productSourceId: opts.productSourceId,
+      field: 'images',
+      userPrompt: opts.userPrompt,
+      sourceImageUrl: opts.sourceImageUrl,
+      imageQualityId: quality.id
+    },
+    creditsCost: cost,
+    startedAt: new Date()
+  });
+
+  // Hold the credits up-front. Refunded if createTask fails synchronously.
+  await applyCreditTransaction({
+    userId: opts.userId,
+    delta: -cost,
+    reason: 'kie_image_edit',
+    jobId,
+    idempotencyKey: `job-${jobId}`
+  });
+
+  const kie = getKieClient();
+  try {
+    const { taskId } = await kie.createTask({
+      model: quality.kieModelId,
+      input: {
+        prompt: opts.userPrompt,
+        input_urls: [opts.sourceImageUrl],
+        aspect_ratio: 'auto',
+        resolution: quality.resolution
+      },
+      ...(callBackUrl ? { callBackUrl } : {})
+    });
+
+    await db
+      .update(jobs)
+      .set({ kieTaskId: taskId, status: 'running' })
+      .where(eq(jobs.id, jobId));
+
+    return { jobId, kieTaskId: taskId, creditsHeld: cost };
+  } catch (e) {
+    const message = (e as Error).message;
+    await db
+      .update(jobs)
+      .set({ status: 'failed', error: message, finishedAt: new Date() })
+      .where(eq(jobs.id, jobId));
+
+    // Refund credits (idempotency key avoids double-refund on retry).
+    await applyCreditTransaction({
+      userId: opts.userId,
+      delta: cost,
+      reason: 'kie_image_edit_refund',
+      jobId,
+      idempotencyKey: `job-${jobId}-refund`
+    });
+
+    throw e;
+  }
+}
+
+export { IMAGE_COST_CREDITS };

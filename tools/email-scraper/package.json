@@ -1,0 +1,16 @@
+{
+  "name": "email-scraper",
+  "version": "1.0.0",
+  "description": "Extract contact emails from WooCommerce, Shopify, and Wix stores",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "scrape": "node index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "csv-stringify": "^6.5.0",
+    "puppeteer": "^23.6.0"
+  }
+}

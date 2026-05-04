@@ -1,0 +1,72 @@
+# Sample nginx config for the OVH dedicated server.
+# Place this in /etc/nginx/sites-available/oneshoplab, then:
+#   ln -s /etc/nginx/sites-available/oneshoplab /etc/nginx/sites-enabled/
+#   nginx -t && systemctl reload nginx
+#
+# TLS via certbot:
+#   certbot --nginx -d oneshoplab.app -d www.oneshoplab.app
+
+upstream oneshoplab_app {
+    server 127.0.0.1:3000;
+    keepalive 16;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name oneshoplab.app www.oneshoplab.app;
+
+    # Let's Encrypt challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+    }
+
+    # Redirect everything else to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name oneshoplab.app www.oneshoplab.app;
+
+    # ssl_certificate     /etc/letsencrypt/live/oneshoplab.app/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/oneshoplab.app/privkey.pem;
+
+    # Reasonable defaults; tighten for production.
+    client_max_body_size 10m;
+    proxy_read_timeout 60s;
+    proxy_connect_timeout 10s;
+
+    # Static assets — Next.js serves these but we let nginx cache them.
+    location /_next/static/ {
+        proxy_pass http://oneshoplab_app;
+        proxy_cache_bypass $http_upgrade;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Webhook endpoints: keep no caching, no buffering
+    location /api/kie/callback {
+        proxy_pass http://oneshoplab_app;
+        proxy_buffering off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    # Everything else → Next.js
+    location / {
+        proxy_pass http://oneshoplab_app;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

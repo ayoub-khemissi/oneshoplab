@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm tsx *)",
+      "WebFetch(domain:heroui.com)",
+      "Bash(sed -i 's/__shopauraMysqlPool/__oneshoplabMysqlPool/g' src/lib/db/index.ts)",
+      "Bash(sed -i 's/shopaura-bot/oneshoplab-bot/g; s|https://shopaura.app|https://oneshoplab.app|g' src/lib/adapters/fetch-utils.ts)",
+      "Bash(sed -i 's/shopaura-audit/oneshoplab-audit/g' legacy/scripts/audit.ts)",
+      "Bash(sed -i 's/shopaura-web/oneshoplab-web/g; s/shopaura-worker/oneshoplab-worker/g' ecosystem.config.cjs)",
+      "Bash(sed -i 's/shopaura_dev/oneshoplab_dev/g; s/shopaura-assets/oneshoplab-assets/g' .env.example)"
+    ]
+  }
+}
