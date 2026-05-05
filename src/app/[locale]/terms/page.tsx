@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — OneShopLab',
-  description: 'The legal terms governing your use of OneShopLab.'
+  title: 'Terms of Service',
+  description: 'The legal terms governing your use of OneShopLab.',
+  // Indexable but low-priority — search engines occasionally surface these
+  // as part of the brand SERP, which is fine. Not a primary SEO target.
+  robots: { index: true, follow: true }
 };
 
 const LAST_UPDATED = 'May 5, 2026';

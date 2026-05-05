@@ -9,11 +9,17 @@ import {
   TextField
 } from '@heroui/react';
 import { eq } from 'drizzle-orm';
+import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { randomUUID } from 'node:crypto';
 import { Link } from '@/i18n/navigation';
+
+export const metadata: Metadata = {
+  title: 'Sign up',
+  robots: { index: false, follow: false }
+};
 import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
 import { claimAnonAudits, clearAnonToken, getAnonToken } from '@/lib/anon';
 import { hashPassword, signIn } from '@/lib/auth';

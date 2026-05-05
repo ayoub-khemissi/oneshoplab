@@ -18,7 +18,9 @@
     "step2Description": "AI suggests 5 distinct prompts per field — punchy, SEO, luxury, lifestyle outdoors, technical. Or write your own.",
     "step3Title": "Generate variants",
     "step3Description": "Claude rewrites titles, descriptions and tags. GPT-Image edits product photos into lifestyle scenes. Apply what you like.",
-    "compatibleWith": "Compatible with"
+    "compatibleWith": "Compatible with",
+    "seoTitle": "OneShopLab — AI product page optimization for Shopify, WooCommerce, Wix",
+    "seoDescription": "Audit your storefront in 30 seconds. Score every product on copy, visuals, catalog and tags. AI rewrites, regenerates and redesigns — with prompts you control."
   },
   "Nav": {
     "signIn": "Sign in",

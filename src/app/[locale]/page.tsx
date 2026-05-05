@@ -1,6 +1,7 @@
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -15,6 +16,37 @@ import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/lib/audit
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
+import { SUPPORTED_LOCALES } from '@/i18n/routing';
+
+const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Home' });
+  const languages: Record<string, string> = {};
+  for (const loc of SUPPORTED_LOCALES) {
+    languages[loc] = `${SITE_URL}/${loc}`;
+  }
+  languages['x-default'] = `${SITE_URL}/en`;
+  return {
+    title: t('seoTitle'),
+    description: t('seoDescription'),
+    alternates: {
+      canonical: `${SITE_URL}/${locale}`,
+      languages
+    },
+    openGraph: {
+      title: t('seoTitle'),
+      description: t('seoDescription'),
+      url: `${SITE_URL}/${locale}`,
+      type: 'website'
+    }
+  };
+}
 
 async function startAuditAction(formData: FormData) {
   'use server';

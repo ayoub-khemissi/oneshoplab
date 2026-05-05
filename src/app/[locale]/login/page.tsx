@@ -7,11 +7,17 @@ import {
   Label,
   TextField
 } from '@heroui/react';
+import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { signIn } from '@/lib/auth';
+
+export const metadata: Metadata = {
+  title: 'Sign in',
+  robots: { index: false, follow: false }
+};
 
 interface PageProps {
   searchParams: Promise<{ error?: string; audit?: string; next?: string }>;

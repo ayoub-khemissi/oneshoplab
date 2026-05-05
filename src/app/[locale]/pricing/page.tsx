@@ -1,11 +1,44 @@
 import { Card } from '@heroui/react';
 import { ChevronDown } from 'lucide-react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PricingCards } from '@/components/pricing-cards';
+import { CREDIT_PACKS, PLAN_TIERS, yearlyPriceEur } from '@/lib/ai/models';
 import { auth } from '@/lib/auth';
+import { SUPPORTED_LOCALES } from '@/i18n/routing';
 import { getStripePriceId } from '@/lib/stripe';
 
+const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
+
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Pricing' });
+  const languages: Record<string, string> = {};
+  for (const loc of SUPPORTED_LOCALES) {
+    languages[loc] = `${SITE_URL}/${loc}/pricing`;
+  }
+  languages['x-default'] = `${SITE_URL}/en/pricing`;
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/pricing`,
+      languages
+    },
+    openGraph: {
+      title: `${t('title')} · OneShopLab`,
+      description: t('subtitle'),
+      url: `${SITE_URL}/${locale}/pricing`,
+      type: 'website'
+    }
+  };
+}
 
 export default async function PricingPage() {
   const t = await getTranslations('Pricing');
@@ -23,8 +56,52 @@ export default async function PricingPage() {
     scale_yearly: Boolean(getStripePriceId('scale', 'yearly'))
   };
 
+  // JSON-LD: surfaces the plans (subscription) + credit packs (one-time)
+  // as schema.org Offers so search engines can render them as rich
+  // snippets in Google Shopping / "Sponsored" results / answer boxes.
+  const offerCatalog = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'OneShopLab',
+    description: t('subtitle'),
+    brand: { '@type': 'Brand', name: 'OneShopLab' },
+    offers: [
+      ...PLAN_TIERS.filter((p) => p.priceEur > 0).flatMap((p) => [
+        {
+          '@type': 'Offer',
+          name: `${p.name} · monthly`,
+          price: p.priceEur.toFixed(2),
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+          url: `${SITE_URL}/en/pricing`
+        },
+        {
+          '@type': 'Offer',
+          name: `${p.name} · yearly`,
+          price: yearlyPriceEur(p.priceEur).toFixed(2),
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+          url: `${SITE_URL}/en/pricing`
+        }
+      ]),
+      ...CREDIT_PACKS.map((pack) => ({
+        '@type': 'Offer',
+        name: `${pack.name} pack · ${pack.credits.toLocaleString()} credits`,
+        price: pack.priceEur.toFixed(2),
+        priceCurrency: 'EUR',
+        availability: 'https://schema.org/InStock',
+        url: `${SITE_URL}/en/account/credits`
+      }))
+    ]
+  };
+
   return (
     <main className="flex-1 p-6 md:p-12 max-w-6xl w-full mx-auto flex flex-col gap-12">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalog) }}
+      />
       <header className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">
         <span className="eyebrow">{t('eyebrow')}</span>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">{t('title')}</h1>

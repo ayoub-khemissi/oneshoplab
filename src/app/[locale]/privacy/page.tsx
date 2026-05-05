@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — OneShopLab',
-  description: 'How OneShopLab collects, uses, and protects your data.'
+  title: 'Privacy Policy',
+  description: 'How OneShopLab collects, uses, and protects your data.',
+  robots: { index: true, follow: true }
 };
 
 const LAST_UPDATED = 'May 5, 2026';
