@@ -22,6 +22,17 @@ server {
     access_log /var/log/nginx/oneshoplab_access.log;
     error_log  /var/log/nginx/oneshoplab_error.log warn;
 
+    # Security headers. If your nginx.conf already sets a global CSP, nginx
+    # drops every inherited add_header as soon as we declare any here, so we
+    # have to re-state HSTS / X-Frame-Options / etc. img-src is permissive on
+    # https because merchant CDNs (Shopify, Wix, WooCommerce, custom) vary.
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" always;
+
     # Next.js (running on 127.0.0.1:3030) builds absolute URLs in middleware
     # redirects from its own listening address, so Location: headers leak
     # ":3030". Rewrite them to the public origin before they reach the client.
