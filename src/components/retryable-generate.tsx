@@ -412,10 +412,10 @@ export function CustomInstructionsField() {
   const t = useTranslations('Product');
   const { customInstructions, setCustomInstructions } = useGenerateContext();
   return (
-    <div className="flex flex-col gap-2 p-5 rounded-md border border-[var(--border)] bg-[var(--card)]">
+    <div className="flex flex-col gap-2">
       <label
         htmlFor="custom-instructions"
-        className="text-xs uppercase tracking-wider text-[var(--muted)] font-mono"
+        className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]"
       >
         {t('customInstructionsLabel')}
       </label>

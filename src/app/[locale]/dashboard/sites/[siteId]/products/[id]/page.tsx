@@ -229,8 +229,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
         creditsBalance={balance}
       >
         <div className="flex flex-col gap-6">
-        <ModelChips />
-        <CustomInstructionsField />
+        <div className="flex flex-col gap-3">
+          <ModelChips />
+          <CustomInstructionsField />
+        </div>
 
         <Card variant="secondary" className="overflow-hidden">
           <div className="grid md:grid-cols-[260px_1fr]">
