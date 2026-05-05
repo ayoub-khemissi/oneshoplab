@@ -1,4 +1,4 @@
-import { Card } from '@heroui/react';
+import { Accordion, Card } from '@heroui/react';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { ChevronLeft, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -564,6 +564,8 @@ function AiImageGrid({ history }: { history: OptimHistoryItem[] }) {
   );
 }
 
+const PAST_GEN_DETAIL_LIMIT = 600;
+
 function PastGenerationsSection({
   title,
   emptyText,
@@ -573,6 +575,7 @@ function PastGenerationsSection({
   emptyText: string;
   items: OptimHistoryItem[];
 }) {
+  const tDash = useTranslations('Dashboard');
   if (items.length === 0) {
     return (
       <section className="flex flex-col gap-2">
@@ -585,33 +588,132 @@ function PastGenerationsSection({
     <section className="flex flex-col gap-2">
       <h2 className="text-lg font-semibold">{title}</h2>
       <Card variant="secondary" className="p-0">
-        <ul className="divide-y divide-[var(--border)]">
+        <Accordion>
           {items.slice(0, 30).map((h) => (
-            <li
+            <Accordion.Item
               key={h.jobId}
-              className="px-4 py-3 flex items-center justify-between gap-3 text-sm"
+              id={h.jobId}
+              className="border-b border-[var(--border)] last:border-b-0"
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-mono shrink-0 w-20">
-                  {h.field}
-                </span>
-                <span className="truncate">
-                  {Array.isArray(h.output)
-                    ? `${h.output.length} item(s)`
-                    : typeof h.output === 'string'
-                      ? stripHtmlPreview(h.output, 80)
-                      : ''}
-                </span>
-              </div>
-              <span className="text-xs text-[var(--muted)] font-mono shrink-0">
-                {h.createdAt.toLocaleDateString()}
-              </span>
-            </li>
+              <Accordion.Heading>
+                <Accordion.Trigger className="w-full px-4 py-3 flex items-center gap-3 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
+                  <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium shrink-0 min-w-[7rem]">
+                    {tDash(pastGenLabelKey(h.field))}
+                  </span>
+                  <span className="flex-1 truncate text-[var(--muted)]">
+                    {pastGenInlinePreview(h.output)}
+                  </span>
+                  <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0">
+                    {h.createdAt.toLocaleDateString()}
+                  </span>
+                  <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
+                </Accordion.Trigger>
+              </Accordion.Heading>
+              <Accordion.Panel>
+                <Accordion.Body className="px-4 py-3 bg-[var(--default)]/30 text-xs">
+                  <PastGenResult item={h} />
+                </Accordion.Body>
+              </Accordion.Panel>
+            </Accordion.Item>
           ))}
-        </ul>
+        </Accordion>
       </Card>
     </section>
   );
+}
+
+function pastGenLabelKey(field: OptimHistoryItem['field']): string {
+  switch (field) {
+    case 'title': return 'jobKindTitle';
+    case 'description': return 'jobKindDescription';
+    case 'tags': return 'jobKindTags';
+    case 'images': return 'jobKindImageEdit';
+  }
+}
+
+/** Single-line preview shown next to the action label in the collapsed row. */
+function pastGenInlinePreview(output: string | string[]): string {
+  if (Array.isArray(output)) {
+    if (output.length === 0) return '';
+    if (typeof output[0] === 'string' && /^https?:\/\//.test(output[0])) {
+      return `${output.length} image(s)`;
+    }
+    return output.slice(0, 5).join(', ');
+  }
+  if (typeof output === 'string') return stripHtmlPreview(output, 100);
+  return '';
+}
+
+/**
+ * Detail panel: shows ONLY the result. The prompt is intentionally hidden so
+ * we don't expose our prompt-engineering wording to merchants.
+ */
+function PastGenResult({ item }: { item: OptimHistoryItem }) {
+  if (item.field === 'images' && Array.isArray(item.output)) {
+    const urls = item.output.filter((u): u is string => typeof u === 'string' && u.length > 0);
+    if (urls.length === 0) {
+      return <p className="text-[var(--muted)] italic">—</p>;
+    }
+    return (
+      <div className="grid grid-cols-3 gap-2">
+        {urls.slice(0, 6).map((url) => (
+          <a
+            key={url}
+            href={url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="block aspect-square overflow-hidden rounded-md border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={url}
+              alt=""
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </a>
+        ))}
+      </div>
+    );
+  }
+  if (item.field === 'tags' && Array.isArray(item.output)) {
+    return (
+      <div className="flex flex-wrap gap-1.5">
+        {item.output.map((tag, i) => (
+          <span
+            key={`${tag}-${i}`}
+            className="px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-[11px] font-mono"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    );
+  }
+  if (item.field === 'description' && typeof item.output === 'string') {
+    // Description is HTML — render it sanitised-style via prose so <p>/<ul>
+    // come out properly. Output already comes from kie limited to outputCap
+    // but truncate defensively for very long descriptions.
+    const html = item.output.length > PAST_GEN_DETAIL_LIMIT * 4
+      ? `${item.output.slice(0, PAST_GEN_DETAIL_LIMIT * 4)}…`
+      : item.output;
+    return (
+      <div
+        className="prose prose-sm dark:prose-invert max-w-none text-xs"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+  if (typeof item.output === 'string') {
+    return (
+      <p className="whitespace-pre-wrap break-words text-[var(--foreground)]">
+        {item.output.length > PAST_GEN_DETAIL_LIMIT
+          ? `${item.output.slice(0, PAST_GEN_DETAIL_LIMIT).trimEnd()}…`
+          : item.output}
+      </p>
+    );
+  }
+  return <p className="text-[var(--muted)] italic">—</p>;
 }
 
 function ScoreBadge({ score }: { score: number }) {
