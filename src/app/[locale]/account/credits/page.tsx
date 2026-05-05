@@ -148,7 +148,7 @@ function PackCard({
           (€{(priceEur / credits).toFixed(4)} / credit)
         </span>
       </div>
-      <form action={buyCreditPackAction}>
+      <form action={buyCreditPackAction} className="mt-auto">
         <input type="hidden" name="packId" value={packId} />
         <button
           type="submit"
