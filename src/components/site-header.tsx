@@ -21,13 +21,21 @@ export async function SiteHeader() {
   return (
     <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md sticky top-0 z-20">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
-          <span className="size-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_var(--accent)]" />
-          OneShopLab
-          <span className="ml-1 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-semibold">
-            Beta
-          </span>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
+            <span className="size-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_var(--accent)]" />
+            OneShopLab
+            <span className="ml-1 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-semibold">
+              Beta
+            </span>
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          >
+            {t('pricing')}
+          </Link>
+        </div>
         <nav className="flex items-center gap-1 text-sm">
           <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
           <ThemeToggle ariaLabel={t('changeTheme')} />
