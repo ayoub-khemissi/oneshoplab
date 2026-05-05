@@ -144,7 +144,7 @@ function EmptyState() {
       </Card.Header>
       <Card.Footer>
         <Link
-          href="/"
+          href="/dashboard/sites/new"
           className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium text-sm inline-flex items-center gap-1.5"
         >
           <Sparkles className="size-4" />
