@@ -2,10 +2,12 @@ import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
+  CHAT_MODEL_REGISTRY,
   costForImage,
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits,
+  IMAGE_MODEL_REGISTRY,
   runChatOptim,
   startImageOptim,
   type ChatModelId,
@@ -152,7 +154,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  let body: { siteId?: unknown; productId?: unknown; field?: unknown; customInstructions?: unknown };
+  let body: {
+    siteId?: unknown;
+    productId?: unknown;
+    field?: unknown;
+    customInstructions?: unknown;
+    chatModelId?: unknown;
+    imageQualityId?: unknown;
+  };
   try {
     body = (await req.json()) ?? {};
   } catch {
@@ -164,6 +173,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const fieldRaw = typeof body.field === 'string' ? body.field : '';
   const customInstructions =
     typeof body.customInstructions === 'string' ? body.customInstructions : '';
+  const bodyChatModel =
+    typeof body.chatModelId === 'string' ? body.chatModelId : null;
+  const bodyImageQuality =
+    typeof body.imageQualityId === 'string' ? body.imageQualityId : null;
 
   if (!siteId || !productId || !VALID_FIELDS.includes(fieldRaw as GenField)) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
@@ -182,10 +195,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const fieldsToRun: Array<'title' | 'description' | 'tags' | 'images'> =
     field === 'all' ? ['title', 'description', 'tags', 'images'] : [field];
 
+  // Body overrides win over the persisted preference: the chips on the optim
+  // page mutate the user's selection client-side and pass it through here, so
+  // an in-flight click is honored even before the persist server action lands.
   const chatModelId: ChatModelId =
-    (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
+    (bodyChatModel != null && bodyChatModel in CHAT_MODEL_REGISTRY
+      ? (bodyChatModel as ChatModelId)
+      : (session.user.preferredChatModel as ChatModelId | undefined)) ?? DEFAULT_CHAT_MODEL;
   const imageQualityId: ImageQualityId =
-    (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
+    (bodyImageQuality != null && bodyImageQuality in IMAGE_MODEL_REGISTRY
+      ? (bodyImageQuality as ImageQualityId)
+      : (session.user.preferredImageQuality as ImageQualityId | undefined)) ?? DEFAULT_IMAGE_QUALITY;
 
   const totalCost = fieldsToRun.reduce((sum, f) => {
     if (f === 'images') return sum + costForImage(imageQualityId) * IMAGE_ANGLES.length;

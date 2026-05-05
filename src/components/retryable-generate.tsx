@@ -9,11 +9,20 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode
 } from 'react';
+import {
+  costForImage,
+  estimateChatCredits,
+  type ChatModelId,
+  type ImageQualityId
+} from '@/lib/ai/models';
 import type { GenField } from './generate-button';
+
+const IMAGE_ANGLES_PER_GEN = 3;
 
 /**
  * App-wide retry policy for AI generations:
@@ -45,6 +54,15 @@ interface ContextValue {
   setCustomInstructions: (v: string) => void;
   submit: (field: GenField) => void;
   cancel: () => void;
+  // Live model selection — drives both the cost displayed on the buttons and
+  // the chatModelId / imageQualityId sent to /api/products/generate.
+  chatModelId: ChatModelId;
+  imageQualityId: ImageQualityId;
+  setChatModelId: (id: ChatModelId) => void;
+  setImageQualityId: (id: ImageQualityId) => void;
+  creditsBalance: number;
+  costFor: (field: GenField) => number;
+  canAfford: (field: GenField) => boolean;
 }
 
 const Ctx = createContext<ContextValue | null>(null);
@@ -52,18 +70,57 @@ const Ctx = createContext<ContextValue | null>(null);
 interface ProviderProps {
   siteId: string;
   productId: string;
+  initialChatModelId: ChatModelId;
+  initialImageQualityId: ImageQualityId;
+  creditsBalance: number;
   children: ReactNode;
 }
 
 export function RetryableGenerateProvider({
   siteId,
   productId,
+  initialChatModelId,
+  initialImageQualityId,
+  creditsBalance,
   children
 }: ProviderProps) {
   const router = useRouter();
   const t = useTranslations('Product');
   const [state, setState] = useState<State>({ kind: 'idle' });
   const [customInstructions, setCustomInstructions] = useState('');
+  const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
+  const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQualityId);
+
+  // Refs so submit() always reads the latest selection without re-creating
+  // the callback (which would also re-create every memoized child).
+  const chatModelRef = useRef(chatModelId);
+  const imageQualityRef = useRef(imageQualityId);
+  useEffect(() => { chatModelRef.current = chatModelId; }, [chatModelId]);
+  useEffect(() => { imageQualityRef.current = imageQualityId; }, [imageQualityId]);
+
+  const costFor = useCallback(
+    (field: GenField): number => {
+      const cm = chatModelId;
+      const iq = imageQualityId;
+      const t = estimateChatCredits(cm, 'title');
+      const d = estimateChatCredits(cm, 'description');
+      const tg = estimateChatCredits(cm, 'tags');
+      const img = costForImage(iq) * IMAGE_ANGLES_PER_GEN;
+      switch (field) {
+        case 'title': return t;
+        case 'description': return d;
+        case 'tags': return tg;
+        case 'images': return img;
+        case 'all': return t + d + tg + img;
+      }
+    },
+    [chatModelId, imageQualityId]
+  );
+
+  const canAfford = useCallback(
+    (field: GenField) => creditsBalance >= costFor(field),
+    [creditsBalance, costFor]
+  );
 
   // Active fetch's AbortController + a "user cancelled" flag the loop checks
   // so we don't kick off the next retry after a cancel landed mid-wait.
@@ -106,7 +163,16 @@ export function RetryableGenerateProvider({
           const res = await fetch('/api/products/generate', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ siteId, productId, field, customInstructions }),
+            body: JSON.stringify({
+              siteId,
+              productId,
+              field,
+              customInstructions,
+              // Send the live selection so an in-flight chip click is
+              // honored even before the persist server action lands.
+              chatModelId: chatModelRef.current,
+              imageQualityId: imageQualityRef.current
+            }),
             signal: ctrl.signal
           });
           if (cancelledRef.current) return;
@@ -157,16 +223,38 @@ export function RetryableGenerateProvider({
     [siteId, productId, customInstructions, router, t]
   );
 
-  return (
-    <Ctx.Provider
-      value={{ state, customInstructions, setCustomInstructions, submit, cancel }}
-    >
-      {children}
-    </Ctx.Provider>
+  const value = useMemo<ContextValue>(
+    () => ({
+      state,
+      customInstructions,
+      setCustomInstructions,
+      submit,
+      cancel,
+      chatModelId,
+      imageQualityId,
+      setChatModelId,
+      setImageQualityId,
+      creditsBalance,
+      costFor,
+      canAfford
+    }),
+    [
+      state,
+      customInstructions,
+      submit,
+      cancel,
+      chatModelId,
+      imageQualityId,
+      creditsBalance,
+      costFor,
+      canAfford
+    ]
   );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
-function useGenerateContext() {
+export function useGenerateContext(): ContextValue {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error('RetryableGenerateButton used outside its provider');
   return ctx;
@@ -206,22 +294,24 @@ function useElapsedSinceMs(startMs: number | null): number {
 
 interface ButtonProps {
   field: GenField;
-  cost: number;
-  enabled: boolean;
   /** True when this field already has at least one prior AI generation. The
    *  button copy switches from "Generate" to "Regenerate" so the user
    *  understands they're overwriting / adding to existing output. */
   hasHistory?: boolean;
+  /** Optional gate on top of the credit-based affordance check (e.g. "no
+   *  source images → can't regenerate images"). Defaults to true. */
+  available?: boolean;
 }
 
 export function RetryableGenerateButton({
   field,
-  cost,
-  enabled,
-  hasHistory = false
+  hasHistory = false,
+  available = true
 }: ButtonProps) {
   const t = useTranslations('Product');
-  const { state, submit, cancel } = useGenerateContext();
+  const { state, submit, cancel, costFor, canAfford } = useGenerateContext();
+  const cost = costFor(field);
+  const enabled = available && canAfford(field);
 
   const isAll = field === 'all';
   const inflightField =

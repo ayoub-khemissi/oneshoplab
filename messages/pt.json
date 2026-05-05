@@ -244,7 +244,9 @@
     "generateDisabled": "Coming next: actual generation",
     "imagesGenerationComingNext": "Image generation comes next.",
     "noSourceImage": "No source image available on this product.",
-    "generationsHistory": "Past generations"
+    "generationsHistory": "Past generations",
+    "chatModelLabel": "Text model",
+    "imageQualityLabel": "Image quality"
   },
   "Report": {
     "queued": "Analysis queued, please wait — this usually takes about two minutes",

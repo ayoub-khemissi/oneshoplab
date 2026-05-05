@@ -14,6 +14,7 @@ import {
   RetryableGenerateButton,
   RetryableGenerateProvider
 } from '@/components/retryable-generate';
+import { ModelChips } from '@/components/model-chips';
 import {
   FieldSwap,
   FieldSwapGroup,
@@ -22,18 +23,12 @@ import {
 import { ImageZoom } from '@/components/image-zoom';
 import { ProductImageGallery } from '@/components/product-image-gallery';
 import {
-  costForImage,
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
-  estimateChatCredits,
   listOptimHistory,
-  runChatOptim,
-  startImageOptim,
-  type ChatOptimField,
   type ChatModelId,
   type ImageQualityId,
-  type OptimHistoryItem,
-  type ProductContext
+  type OptimHistoryItem
 } from '@/lib/ai';
 import { auth } from '@/lib/auth';
 import { touchProjectLastView } from '@/lib/auth-actions';
@@ -88,44 +83,6 @@ interface SummaryShape {
   allProducts?: ProductSnapshot[];
 }
 
-const IMAGE_ANGLES = ['lifestyle', 'studio', 'inuse'] as const;
-type ImageAngle = (typeof IMAGE_ANGLES)[number];
-
-const IMAGE_ANGLE_PROMPTS: Record<ImageAngle, string> = {
-  lifestyle:
-    'A lifestyle photo of this product in a natural outdoor setting, soft golden-hour lighting, slight shallow depth of field. The product remains identical to the source — only the surrounding scene changes. Photorealistic, high quality.',
-  studio:
-    'A clean studio shot of this product on a minimalist warm-neutral background, professional product photography lighting, soft shadow underneath. The product is identical to the source.',
-  inuse:
-    'A candid lifestyle scene of someone naturally using or wearing this product in an everyday context, authentic and human, warm tones. The product is identical to the source.'
-};
-
-const FIELD_DEFAULT_PROMPT: Record<ChatOptimField, string> = {
-  title:
-    'Rewrite this title to be SEO-optimised, keyword-front-loaded and more compelling. Match the source language. Stay factually consistent with the product.',
-  description:
-    'Rewrite this description as benefit-led, scannable HTML (use <p>, <ul>, <li>, <strong>). 180-350 words. Match the source language. Stay factually consistent with the product.',
-  tags:
-    'Suggest 5-10 customer-facing discovery tags for this product. Match the source language.'
-};
-
-/**
- * Pre-call credit estimates per generation field, computed from the model
- * registry. The actual chat debit comes from kie's reported `credits_consumed`
- * (× markup); the displayed cost stays predictable thanks to the per-field
- * token estimates in `FIELD_TOKEN_ESTIMATES`.
- */
-function fieldCosts(
-  chatModelId: ChatModelId,
-  imageQualityId: ImageQualityId
-): { title: number; description: number; tags: number; images: number; all: number } {
-  const t = estimateChatCredits(chatModelId, 'title');
-  const d = estimateChatCredits(chatModelId, 'description');
-  const tg = estimateChatCredits(chatModelId, 'tags');
-  const img = costForImage(imageQualityId) * IMAGE_ANGLES.length;
-  return { title: t, description: d, tags: tg, images: img, all: t + d + tg + img };
-}
-
 // ============================================================================
 // Data loading
 // ============================================================================
@@ -173,33 +130,6 @@ async function loadProductForUser(
   return product ? { projectId: project.id, product } : null;
 }
 
-function toProductContext(p: ProductSnapshot): ProductContext {
-  const text = p.descriptionHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-  return {
-    title: p.title,
-    descriptionText: text,
-    vendor: p.signals.vendor ?? null,
-    productType: p.signals.productType ?? null,
-    tags: p.signals.tags ?? [],
-    imageCount: p.images.length,
-    priceMin: p.signals.priceMin ?? null,
-    priceMax: p.signals.priceMax ?? null,
-    currency: null
-  };
-}
-
-function effectiveChatPrompt(field: ChatOptimField, custom: string): string {
-  const trimmed = custom.trim();
-  return trimmed
-    ? `${FIELD_DEFAULT_PROMPT[field]}\n\nAdditional instructions from the merchant:\n${trimmed}`
-    : FIELD_DEFAULT_PROMPT[field];
-}
-
-function effectiveImagePrompt(angle: ImageAngle, custom: string): string {
-  const trimmed = custom.trim();
-  return trimmed ? `${IMAGE_ANGLE_PROMPTS[angle]} ${trimmed}` : IMAGE_ANGLE_PROMPTS[angle];
-}
-
 // ============================================================================
 // Page
 // ============================================================================
@@ -244,14 +174,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const tReport = await getTranslations('Report');
 
   const balance = session.user.creditsBalance ?? 0;
-  const canAfford = (cost: number) => balance >= cost;
 
-  // Per-field cost estimates depend on the user's preferred models.
+  // Initial model selection — the chips on the page can flip these client-side
+  // (with persistence via the preferences server action). Costs and affordance
+  // checks are recomputed live in RetryableGenerateProvider.
   const userChatModel: ChatModelId =
     (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
-  const costs = fieldCosts(userChatModel, userImageQuality);
 
   return (
     <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
@@ -291,8 +221,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
         )}
       </div>
 
-      <RetryableGenerateProvider siteId={siteId} productId={productId}>
+      <RetryableGenerateProvider
+        siteId={siteId}
+        productId={productId}
+        initialChatModelId={userChatModel}
+        initialImageQualityId={userImageQuality}
+        creditsBalance={balance}
+      >
         <div className="flex flex-col gap-6">
+        <ModelChips />
         <CustomInstructionsField />
 
         <Card variant="secondary" className="overflow-hidden">
@@ -304,12 +241,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <span className="eyebrow">AI suggestions</span>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <RetryableGenerateButton
-                      field="all"
-                      cost={costs.all}
-                      enabled={canAfford(costs.all)}
-                      hasHistory={hasAnyHistory}
-                    />
+                    <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
                     <FieldSwapGroupToggle
                       sourceLabel={tReport('swapSource')}
                       aiLabel={tReport('swapAi')}
@@ -317,12 +249,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <FieldRow
-                  field="title"
-                  cost={costs.title}
-                  enabled={canAfford(costs.title)}
-                  hasHistory={hasHistory.title}
-                >
+                <FieldRow field="title" hasHistory={hasHistory.title}>
                   <FieldSwap
                     label={{
                       source: tReport('sourceTitleLabel'),
@@ -352,12 +279,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   />
                 </FieldRow>
 
-                <FieldRow
-                  field="description"
-                  cost={costs.description}
-                  enabled={canAfford(costs.description)}
-                  hasHistory={hasHistory.description}
-                >
+                <FieldRow field="description" hasHistory={hasHistory.description}>
                   <FieldSwap
                     label={{
                       source: tReport('sourceDescriptionLabel'),
@@ -402,12 +324,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   />
                 </FieldRow>
 
-                <FieldRow
-                  field="tags"
-                  cost={costs.tags}
-                  enabled={canAfford(costs.tags)}
-                  hasHistory={hasHistory.tags}
-                >
+                <FieldRow field="tags" hasHistory={hasHistory.tags}>
                   <FieldSwap
                     label={{
                       source: tReport('sourceTagsLabel'),
@@ -437,9 +354,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
                 <FieldRow
                   field="images"
-                  cost={costs.images}
-                  enabled={canAfford(costs.images) && product.images.length > 0}
                   hasHistory={hasHistory.images}
+                  available={product.images.length > 0}
                 >
                   <FieldSwap
                     label={{
@@ -502,15 +418,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
 function FieldRow({
   field,
-  cost,
-  enabled,
   hasHistory,
+  available = true,
   children
 }: {
   field: 'title' | 'description' | 'tags' | 'images';
-  cost: number;
-  enabled: boolean;
   hasHistory: boolean;
+  available?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -519,9 +433,8 @@ function FieldRow({
       <div className="flex justify-end">
         <RetryableGenerateButton
           field={field}
-          cost={cost}
-          enabled={enabled}
           hasHistory={hasHistory}
+          available={available}
         />
       </div>
     </div>
