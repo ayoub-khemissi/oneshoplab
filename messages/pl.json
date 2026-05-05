@@ -384,7 +384,10 @@
           "some": "<score>{count}</score> product(s) have <strong>no description</strong> — silently kill SEO and conversion, even a short paragraph helps."
         }
       }
-    }
+    },
+    "errorProcessInterrupted": "The audit was interrupted before it could finish. Please relaunch the analysis.",
+    "errorNoReport": "Couldn't read your store catalog. Check that the URL is reachable and try again.",
+    "errorAuditNotFound": "This audit no longer exists. Launch a new analysis from the dashboard."
   },
   "Issues": {
     "no_image": "No image",

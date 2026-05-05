@@ -384,7 +384,10 @@
           "some": "<score>{count}</score> produit(s) <strong>sans description</strong> — tuent silencieusement SEO et conversion, même un paragraphe court aide."
         }
       }
-    }
+    },
+    "errorProcessInterrupted": "L'analyse a été interrompue avant la fin. Relance l'analyse depuis le dashboard.",
+    "errorNoReport": "Impossible de lire ton catalogue. Vérifie que l'URL est accessible et réessaie.",
+    "errorAuditNotFound": "Cet audit n'existe plus. Lance une nouvelle analyse depuis le dashboard."
   },
   "Issues": {
     "no_image": "Aucune image",

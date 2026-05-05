@@ -356,6 +356,19 @@ function SiteHeaderBar({
   );
 }
 
+/**
+ * Map known internal error codes the worker / audit pipeline emits onto
+ * localised, user-readable strings. Anything unrecognised falls through
+ * to sanitizeUserFacingError (which strips vendor names and trims) so we
+ * never expose raw codes like `process_interrupted` or `no_report` in
+ * the UI.
+ */
+const KNOWN_ERROR_CODES: Record<string, string> = {
+  process_interrupted: 'errorProcessInterrupted',
+  no_report: 'errorNoReport',
+  audit_not_found: 'errorAuditNotFound'
+};
+
 function StatusLine({ status, error }: { status: string; error: string | null }) {
   const t = useTranslations('Report');
   if (status === 'pending') {
@@ -372,12 +385,18 @@ function StatusLine({ status, error }: { status: string; error: string | null })
       </p>
     );
   }
-  if (status === 'failed')
+  if (status === 'failed') {
+    const trimmed = (error ?? '').trim();
+    const friendly =
+      trimmed in KNOWN_ERROR_CODES
+        ? t(KNOWN_ERROR_CODES[trimmed])
+        : sanitizeUserFacingError(error);
     return (
       <p role="alert" className="text-sm text-[var(--danger)]">
-        {t('failed', { error: sanitizeUserFacingError(error) })}
+        {t('failed', { error: friendly })}
       </p>
     );
+  }
   return null;
 }
 
