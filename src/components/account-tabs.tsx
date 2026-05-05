@@ -29,7 +29,7 @@ export function AccountTabs({ labels }: AccountTabsProps) {
   return (
     <nav
       aria-label="Account sections"
-      className="border-b border-[var(--border)] flex gap-1 overflow-x-auto"
+      className="border-b border-[var(--border)] flex gap-1 flex-wrap"
     >
       {TABS.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);

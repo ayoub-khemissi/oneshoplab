@@ -500,7 +500,10 @@
     "errorMissingFields": "Remplissez tous les champs.",
     "errorMissingPassword": "Confirmez avec votre mot de passe.",
     "errorActiveSubscription": "Annulez d'abord votre abonnement avant de supprimer le compte.",
-    "errorGeneric": "Une erreur est survenue. Réessayez."
+    "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+    "deletePasswordLabel": "Mot de passe",
+    "saved": "Enregistré"
   },
   "Subscription": {
     "title": "Abonnement",

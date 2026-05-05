@@ -500,7 +500,10 @@
     "errorMissingFields": "Please fill in every field.",
     "errorMissingPassword": "Confirm with your password.",
     "errorActiveSubscription": "Cancel your subscription before deleting your account.",
-    "errorGeneric": "Something went wrong. Try again."
+    "errorGeneric": "Something went wrong. Try again.",
+    "confirmNewPasswordLabel": "Confirm new password",
+    "deletePasswordLabel": "Password",
+    "saved": "Saved"
   },
   "Subscription": {
     "title": "Subscription",

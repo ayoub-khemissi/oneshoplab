@@ -175,14 +175,20 @@ const MAX_NAME_LEN = 100;
 const MIN_PASSWORD_LEN = 8;
 const MAX_PASSWORD_LEN = 128;
 
+export interface ActionResult {
+  ok: boolean;
+  /** Error code resolved client-side to a localised message. */
+  errorCode?: string;
+}
+
 /**
  * Update the signed-in user's display name. Empty input clears the name
- * (NULL on the row). Returned silently — the form revalidates the page
- * to surface the new value.
+ * (NULL on the row). Returns a tagged result so the client form can show
+ * an inline "Saved" confirmation.
  */
-export async function updateUserProfileAction(formData: FormData): Promise<void> {
+export async function updateUserProfileAction(formData: FormData): Promise<ActionResult> {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) return { ok: false, errorCode: 'unauthorized' };
 
   const raw = String(formData.get('name') ?? '');
   const name = raw.trim().slice(0, MAX_NAME_LEN);
@@ -193,6 +199,7 @@ export async function updateUserProfileAction(formData: FormData): Promise<void>
 
   revalidatePath('/account/profile');
   revalidatePath('/account', 'layout');
+  return { ok: true };
 }
 
 /**
@@ -201,42 +208,32 @@ export async function updateUserProfileAction(formData: FormData): Promise<void>
  * fresh bcrypt hash. Existing sessions stay valid (acceptable trade-off
  * for SaaS UX — the user just changed their own password).
  *
- * Surfaces failure via a `?error=` query string on the redirect target so
- * the page can render a localised message; success uses `?saved=1`.
+ * Returns a tagged result; the client form renders the inline "Saved" /
+ * error feedback locally (matches the rest of the app's UX pattern).
  */
-export async function changePasswordAction(formData: FormData): Promise<void> {
+export async function changePasswordAction(formData: FormData): Promise<ActionResult> {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect('/login');
-  }
+  if (!session?.user?.id) return { ok: false, errorCode: 'unauthorized' };
 
   const current = String(formData.get('currentPassword') ?? '');
   const next = String(formData.get('newPassword') ?? '');
   const confirm = String(formData.get('confirmPassword') ?? '');
 
-  if (!current || !next || !confirm) {
-    redirect('/account/profile?error=missing_fields');
-  }
-  if (next !== confirm) {
-    redirect('/account/profile?error=password_mismatch');
-  }
-  if (next.length < MIN_PASSWORD_LEN || next.length > MAX_PASSWORD_LEN) {
-    redirect('/account/profile?error=password_weak');
-  }
+  if (!current || !next || !confirm) return { ok: false, errorCode: 'missing_fields' };
+  if (next !== confirm) return { ok: false, errorCode: 'password_mismatch' };
+  if (next.length < MIN_PASSWORD_LEN || next.length > MAX_PASSWORD_LEN)
+    return { ok: false, errorCode: 'password_weak' };
 
   const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
-  if (!u?.passwordHash) {
-    redirect('/account/profile?error=no_password');
-  }
+  if (!u?.passwordHash) return { ok: false, errorCode: 'no_password' };
+
   const ok = await bcrypt.compare(current, u.passwordHash);
-  if (!ok) {
-    redirect('/account/profile?error=wrong_password');
-  }
+  if (!ok) return { ok: false, errorCode: 'wrong_password' };
 
   const hashed = await hashPassword(next);
   await db.update(users).set({ passwordHash: hashed }).where(eq(users.id, u.id));
 
-  redirect('/account/profile?saved=password');
+  return { ok: true };
 }
 
 /**
@@ -252,25 +249,18 @@ export async function changePasswordAction(formData: FormData): Promise<void> {
  *
  * Requires the user's password as proof to keep the destruction explicit.
  */
-export async function deleteAccountAction(formData: FormData): Promise<void> {
+export async function deleteAccountAction(formData: FormData): Promise<ActionResult> {
   const session = await auth();
-  if (!session?.user?.id) {
-    redirect('/login');
-  }
+  if (!session?.user?.id) return { ok: false, errorCode: 'unauthorized' };
 
   const password = String(formData.get('password') ?? '');
-  if (!password) {
-    redirect('/account/profile?error=missing_password');
-  }
+  if (!password) return { ok: false, errorCode: 'missing_password' };
 
   const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
-  if (!u?.passwordHash) {
-    redirect('/account/profile?error=no_password');
-  }
+  if (!u?.passwordHash) return { ok: false, errorCode: 'no_password' };
+
   const ok = await bcrypt.compare(password, u.passwordHash);
-  if (!ok) {
-    redirect('/account/profile?error=wrong_password');
-  }
+  if (!ok) return { ok: false, errorCode: 'wrong_password' };
 
   // Active subscription guard: Stripe billing keeps charging until cancelled,
   // so we never delete a row whose Stripe state is still live.
@@ -278,11 +268,13 @@ export async function deleteAccountAction(formData: FormData): Promise<void> {
     where: eq(subscriptions.userId, u.id)
   });
   if (sub && ['active', 'trialing', 'past_due', 'cancelling'].includes(sub.status)) {
-    redirect('/account/profile?error=active_subscription');
+    return { ok: false, errorCode: 'active_subscription' };
   }
 
   await db.delete(users).where(eq(users.id, u.id));
 
   await signOut({ redirect: false });
+  // Terminal redirect — the client form's await will be interrupted by the
+  // framework's NEXT_REDIRECT signal, so we never actually return ok:true.
   redirect('/?account_deleted=1');
 }
