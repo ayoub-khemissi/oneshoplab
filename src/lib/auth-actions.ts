@@ -2,16 +2,19 @@
 
 import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import bcrypt from 'bcryptjs';
 import { auditCooldownMsForPlan, MAX_CUSTOM_INSTRUCTIONS_CHARS } from './ai/models';
 import { launchAuditForUser } from './audit/launch';
 import { refreshAuditProducts } from './audit/refresh';
-import { auth, signOut } from './auth';
+import { auth, hashPassword, signOut } from './auth';
 import { db } from './db';
 import {
   CHAT_MODEL_IDS,
   IMAGE_QUALITY_IDS,
   audits,
   projects,
+  subscriptions,
   users,
   type ChatModelDbId,
   type ImageQualityDbId
@@ -166,4 +169,120 @@ export async function refreshProjectAction(formData: FormData): Promise<void> {
     await refreshAuditProducts(latest.id);
   }
   revalidatePath('/dashboard');
+}
+
+const MAX_NAME_LEN = 100;
+const MIN_PASSWORD_LEN = 8;
+const MAX_PASSWORD_LEN = 128;
+
+/**
+ * Update the signed-in user's display name. Empty input clears the name
+ * (NULL on the row). Returned silently — the form revalidates the page
+ * to surface the new value.
+ */
+export async function updateUserProfileAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const raw = String(formData.get('name') ?? '');
+  const name = raw.trim().slice(0, MAX_NAME_LEN);
+  await db
+    .update(users)
+    .set({ name: name.length > 0 ? name : null })
+    .where(eq(users.id, session.user.id));
+
+  revalidatePath('/account/profile');
+  revalidatePath('/account', 'layout');
+}
+
+/**
+ * Change the signed-in user's password. Requires the current password as
+ * proof; bcrypt-compares server-side. The new password is stored as a
+ * fresh bcrypt hash. Existing sessions stay valid (acceptable trade-off
+ * for SaaS UX — the user just changed their own password).
+ *
+ * Surfaces failure via a `?error=` query string on the redirect target so
+ * the page can render a localised message; success uses `?saved=1`.
+ */
+export async function changePasswordAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect('/login');
+  }
+
+  const current = String(formData.get('currentPassword') ?? '');
+  const next = String(formData.get('newPassword') ?? '');
+  const confirm = String(formData.get('confirmPassword') ?? '');
+
+  if (!current || !next || !confirm) {
+    redirect('/account/profile?error=missing_fields');
+  }
+  if (next !== confirm) {
+    redirect('/account/profile?error=password_mismatch');
+  }
+  if (next.length < MIN_PASSWORD_LEN || next.length > MAX_PASSWORD_LEN) {
+    redirect('/account/profile?error=password_weak');
+  }
+
+  const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
+  if (!u?.passwordHash) {
+    redirect('/account/profile?error=no_password');
+  }
+  const ok = await bcrypt.compare(current, u.passwordHash);
+  if (!ok) {
+    redirect('/account/profile?error=wrong_password');
+  }
+
+  const hashed = await hashPassword(next);
+  await db.update(users).set({ passwordHash: hashed }).where(eq(users.id, u.id));
+
+  redirect('/account/profile?saved=password');
+}
+
+/**
+ * Permanently delete the signed-in user's account.
+ *
+ * Guard: an active / trialing / past_due subscription blocks deletion —
+ * the merchant has to cancel via the Stripe portal first. Once the row
+ * is gone, every dependent record (sessions, accounts, projects + their
+ * audits / products / jobs, credit transactions, the subscriptions row
+ * itself) is removed via the schema's ON DELETE CASCADE chain. The
+ * Stripe customer object is intentionally LEFT in place for accounting;
+ * a re-signup with the same email won't auto-link to it (we re-create).
+ *
+ * Requires the user's password as proof to keep the destruction explicit.
+ */
+export async function deleteAccountAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect('/login');
+  }
+
+  const password = String(formData.get('password') ?? '');
+  if (!password) {
+    redirect('/account/profile?error=missing_password');
+  }
+
+  const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
+  if (!u?.passwordHash) {
+    redirect('/account/profile?error=no_password');
+  }
+  const ok = await bcrypt.compare(password, u.passwordHash);
+  if (!ok) {
+    redirect('/account/profile?error=wrong_password');
+  }
+
+  // Active subscription guard: Stripe billing keeps charging until cancelled,
+  // so we never delete a row whose Stripe state is still live.
+  const sub = await db.query.subscriptions.findFirst({
+    where: eq(subscriptions.userId, u.id)
+  });
+  if (sub && ['active', 'trialing', 'past_due', 'cancelling'].includes(sub.status)) {
+    redirect('/account/profile?error=active_subscription');
+  }
+
+  await db.delete(users).where(eq(users.id, u.id));
+
+  await signOut({ redirect: false });
+  redirect('/?account_deleted=1');
 }

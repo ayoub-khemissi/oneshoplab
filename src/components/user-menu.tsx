@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   LogOut,
   Settings,
-  Sparkles
+  Sparkles,
+  UserCircle2
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -24,6 +25,8 @@ interface UserMenuProps {
   creditsLabel: string;
   planLabel: string;
   dashboardLabel: string;
+  profileLabel: string;
+  subscriptionLabel: string;
   preferencesLabel: string;
   buyCreditsLabel: string;
   manageSubscriptionLabel: string;
@@ -46,6 +49,8 @@ export function UserMenu({
   creditsLabel,
   planLabel,
   dashboardLabel,
+  profileLabel,
+  subscriptionLabel,
   preferencesLabel,
   buyCreditsLabel,
   manageSubscriptionLabel,
@@ -131,6 +136,24 @@ export function UserMenu({
           >
             <LayoutDashboard className="size-4 text-[var(--muted)]" />
             {dashboardLabel}
+          </Link>
+          <Link
+            href="/account/profile"
+            onClick={() => setOpen(false)}
+            className="px-3 py-2 text-sm hover:bg-[var(--default)] transition-colors flex items-center gap-2"
+            role="menuitem"
+          >
+            <UserCircle2 className="size-4 text-[var(--muted)]" />
+            {profileLabel}
+          </Link>
+          <Link
+            href="/account/subscription"
+            onClick={() => setOpen(false)}
+            className="px-3 py-2 text-sm hover:bg-[var(--default)] transition-colors flex items-center gap-2"
+            role="menuitem"
+          >
+            <CreditCard className="size-4 text-[var(--muted)]" />
+            {subscriptionLabel}
           </Link>
           <Link
             href="/account/preferences"
