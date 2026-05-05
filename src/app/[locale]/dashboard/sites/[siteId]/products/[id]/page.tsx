@@ -272,20 +272,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
       </header>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
-          {product.title}
-        </h1>
         {product.url ? (
           <a
             href={product.url}
             target="_blank"
             rel="noreferrer noopener"
-            className="text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1.5 w-fit max-w-full truncate"
+            className="inline-flex items-center gap-2 w-fit max-w-full hover:text-[var(--accent)] transition-colors"
           >
-            <span className="truncate">{product.url}</span>
-            <ExternalLinkIcon />
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
+              {product.title}
+            </h1>
+            <ExternalLink className="size-5 opacity-60 shrink-0" aria-hidden />
           </a>
-        ) : null}
+        ) : (
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
+            {product.title}
+          </h1>
+        )}
       </div>
 
       <RetryableGenerateProvider siteId={siteId} productId={productId}>
@@ -701,6 +704,3 @@ function BackArrow() {
   return <ChevronLeft className="size-4" aria-hidden />;
 }
 
-function ExternalLinkIcon() {
-  return <ExternalLink className="size-3.5 opacity-60 shrink-0" aria-hidden />;
-}

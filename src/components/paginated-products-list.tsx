@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, ExternalLink, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -139,9 +139,10 @@ export function PaginatedProductsList({
                       href={p.url}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="font-medium truncate hover:underline"
+                      className="font-medium hover:underline inline-flex items-center gap-1.5 min-w-0"
                     >
-                      {p.title}
+                      <span className="truncate">{p.title}</span>
+                      <ExternalLink className="size-3.5 opacity-60 shrink-0" aria-hidden />
                     </a>
                   ) : (
                     <span className="font-medium truncate">{p.title}</span>
