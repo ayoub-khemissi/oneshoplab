@@ -20,6 +20,7 @@ export const CHAT_MODEL_IDS = ['gemini-3-1-pro', 'sonnet-4-6', 'opus-4-6'] as co
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
 export const JOB_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
 export const AUDIT_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
+export const PRODUCT_STATUSES = ['active', 'archived'] as const;
 export const JOB_KINDS = [
   'audit_run',
   'kie_alt_text',
@@ -43,6 +44,7 @@ export type ImageQualityDbId = (typeof IMAGE_QUALITY_IDS)[number];
 export type JobStatus = (typeof JOB_STATUSES)[number];
 export type AuditStatus = (typeof AUDIT_STATUSES)[number];
 export type JobKind = (typeof JOB_KINDS)[number];
+export type ProductStatus = (typeof PRODUCT_STATUSES)[number];
 
 // ============================================================================
 // AUTH.JS TABLES (compatible with @auth/drizzle-adapter for MySQL)
@@ -223,11 +225,23 @@ export const products = mysqlTable(
      *  product page. Auto-saved on each generation request so the user's
      *  last guidance pre-fills the textarea on next visit. */
     customInstructions: text('custom_instructions'),
+    /** Soft-archive flag. 'archived' = product was present on a previous
+     *  scrape but is now missing from the store (deactivated, deleted,
+     *  out-of-stock-and-hidden). The row + customInstructions + jobs all
+     *  remain so a re-activation on the merchant store + re-audit
+     *  restores them. UI surfaces a banner and disables generation. */
+    status: mysqlEnum('status', PRODUCT_STATUSES).notNull().default('active'),
+    /** Last scrape that confirmed presence. Used to detect stale rows. */
+    lastSeenAt: timestamp('last_seen_at').notNull().defaultNow(),
+    /** Set when status flips to 'archived'; cleared when the product
+     *  re-appears in a scrape. */
+    archivedAt: timestamp('archived_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },
   (t) => ({
     idxProjectId: index('idx_products_project_id').on(t.projectId),
+    idxStatus: index('idx_products_status').on(t.status),
     uniqProjectSource: uniqueIndex('uniq_products_project_source').on(t.projectId, t.sourceId)
   })
 );

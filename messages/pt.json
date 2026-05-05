@@ -200,7 +200,13 @@
     "jobDetailPrompt": "Prompt",
     "jobDetailOutput": "Result",
     "jobDetailError": "Error",
-    "jobDetailEmpty": "No detail recorded for this job."
+    "jobDetailEmpty": "No detail recorded for this job.",
+    "showArchived": "Show archived ({count})",
+    "hideArchived": "Hide archived",
+    "archivedBadge": "Archived",
+    "archivedBadgeShort": "Archived",
+    "viewArchived": "View",
+    "jobProductArchived": "Product archived — no longer in your store"
   },
   "Product": {
     "backToDashboard": "Back to dashboard",
@@ -254,7 +260,9 @@
     "generationsHistory": "Past generations",
     "chatModelLabel": "Text model",
     "imageQualityLabel": "Image quality",
-    "customInstructionsSiteHint": "Site-wide instructions for this store will also be applied."
+    "customInstructionsSiteHint": "Site-wide instructions for this store will also be applied.",
+    "archivedTitle": "This product is no longer present on your store",
+    "archivedBody": "Your custom instructions and past generations are preserved. Reactivate the product on your store and relaunch the analysis to bring it back. New generations are disabled until then."
   },
   "Report": {
     "queued": "Analysis queued, please wait — this usually takes about two minutes",

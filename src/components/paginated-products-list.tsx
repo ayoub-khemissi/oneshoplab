@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { ArrowRight, ExternalLink, Search } from 'lucide-react';
+import { Archive, ArrowRight, ExternalLink, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -16,10 +16,13 @@ export interface PaginatedProduct {
   url: string | null;
   score: number;
   issues: Array<{ code: string; data?: Record<string, string | number> }>;
+  archived?: boolean;
 }
 
 interface PaginatedProductsListProps {
   products: PaginatedProduct[];
+  /** Soft-archived products — hidden by default, revealed via a toggle. */
+  archivedProducts?: PaginatedProduct[];
   /** Project UUID — used to build the per-site product URL. */
   siteId: string;
   pageSize?: number;
@@ -37,6 +40,7 @@ const DEFAULT_SORT: SortKey = 'score-asc';
  */
 export function PaginatedProductsList({
   products,
+  archivedProducts = [],
   siteId,
   pageSize = 10
 }: PaginatedProductsListProps) {
@@ -45,20 +49,29 @@ export function PaginatedProductsList({
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
+  const [showArchived, setShowArchived] = useState(false);
 
   // Reset to page 1 whenever the visible set changes. Otherwise a search +
   // current page = 7 lands the user on an empty page.
   useEffect(() => {
     setPage(1);
-  }, [query, sort]);
+  }, [query, sort, showArchived]);
+
+  const visibleSource = useMemo(
+    () => (showArchived ? [...products, ...archivedProducts] : products),
+    [products, archivedProducts, showArchived]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const base = q
-      ? products.filter((p) => p.title.toLowerCase().includes(q))
-      : products;
+      ? visibleSource.filter((p) => p.title.toLowerCase().includes(q))
+      : visibleSource;
     const sorted = [...base];
     sorted.sort((a, b) => {
+      // Archived products sink to the bottom regardless of the chosen sort —
+      // they're a "secondary" set the merchant rarely cares about.
+      if (a.archived !== b.archived) return a.archived ? 1 : -1;
       switch (sort) {
         case 'score-asc':
           return a.score - b.score;
@@ -71,9 +84,9 @@ export function PaginatedProductsList({
       }
     });
     return sorted;
-  }, [products, query, sort]);
+  }, [visibleSource, query, sort]);
 
-  if (products.length === 0) return null;
+  if (products.length === 0 && archivedProducts.length === 0) return null;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -119,6 +132,23 @@ export function PaginatedProductsList({
           </InputGroup>
         </TextField>
         <SortPicker value={sort} onChange={setSort} t={t} />
+        {archivedProducts.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setShowArchived((v) => !v)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border whitespace-nowrap ${
+              showArchived
+                ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]'
+                : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+            }`}
+            aria-pressed={showArchived}
+          >
+            <Archive className="size-3.5" aria-hidden />
+            {showArchived
+              ? t('hideArchived')
+              : t('showArchived', { count: archivedProducts.length })}
+          </button>
+        ) : null}
       </div>
 
       {filtered.length === 0 ? (
@@ -130,10 +160,22 @@ export function PaginatedProductsList({
       <ul className="flex flex-col gap-2">
         {slice.map((p) => (
           <li key={p.productId}>
-            <Card variant="secondary" className="p-4 flex flex-row items-start gap-4">
+            <Card
+              variant="secondary"
+              className={`p-4 flex flex-row items-start gap-4 ${
+                p.archived ? 'opacity-60' : ''
+              }`}
+            >
               <div className="flex-1 flex flex-col gap-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <ScoreChip score={p.score} />
+                <div className="flex items-center gap-3 flex-wrap">
+                  {p.archived ? (
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] inline-flex items-center gap-1">
+                      <Archive className="size-3" aria-hidden />
+                      {t('archivedBadge')}
+                    </span>
+                  ) : (
+                    <ScoreChip score={p.score} />
+                  )}
                   {p.url ? (
                     <a
                       href={p.url}
@@ -161,9 +203,13 @@ export function PaginatedProductsList({
               </div>
               <Link
                 href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                className="px-3 py-1.5 text-sm rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity whitespace-nowrap font-medium inline-flex items-center gap-1.5"
+                className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity ${
+                  p.archived
+                    ? 'border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]'
+                    : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'
+                }`}
               >
-                {t('optimizeButton')}
+                {p.archived ? t('viewArchived') : t('optimizeButton')}
                 <ArrowRight className="size-3.5" />
               </Link>
             </Card>

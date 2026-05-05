@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
 import { desc, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { audits, products } from '@/lib/db/schema';
+import { audits } from '@/lib/db/schema';
 import { runAudit } from './run';
+import { syncProjectProducts } from './sync-products';
 
 /** How long an audit's product data is considered fresh before it qualifies
  *  for an automatic background refresh. */
@@ -60,42 +60,11 @@ export async function refreshAuditProducts(auditId: string): Promise<{
     })
     .where(eq(audits.id, auditId));
 
-  // Mirror new products into the products table so per-product URLs resolve
-  // (URLs key off products.id). Existing rows are kept untouched — we only
-  // insert what's missing, matched by sourceId/handle.
+  // 3-way merge between scrape and DB — see syncProjectProducts for the
+  // full contract. Same code path as the initial processAudit run; refresh
+  // is essentially "sync without re-scoring".
   if (audit.projectId && result.products.length > 0) {
-    const existing = await db.query.products.findMany({
-      where: eq(products.projectId, audit.projectId),
-      columns: { sourceId: true, handle: true }
-    });
-    const existingKeys = new Set<string>();
-    for (const e of existing) {
-      if (e.sourceId) existingKeys.add(`s:${e.sourceId}`);
-      if (e.handle) existingKeys.add(`h:${e.handle}`);
-    }
-    const toInsert = result.products
-      .filter((p) => p.sourceId || p.handle)
-      .filter((p) => {
-        if (p.sourceId && existingKeys.has(`s:${p.sourceId}`)) return false;
-        if (p.handle && existingKeys.has(`h:${p.handle}`)) return false;
-        return true;
-      })
-      .map((p) => ({
-        id: randomUUID(),
-        projectId: audit.projectId!,
-        source: result.platform,
-        sourceId: p.sourceId,
-        sourceUrl: p.sourceUrl,
-        handle: p.handle,
-        title: p.title,
-        descriptionHtml: p.descriptionHtml,
-        images: p.images,
-        tags: p.tags,
-        variants: p.variants
-      }));
-    if (toInsert.length > 0) {
-      await db.insert(products).values(toInsert);
-    }
+    await syncProjectProducts(audit.projectId, result.platform, result.products);
   }
 
   return { ok: true, productsFetched: result.productsFetched };

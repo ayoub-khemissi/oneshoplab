@@ -200,7 +200,13 @@
     "jobDetailPrompt": "Prompt",
     "jobDetailOutput": "Résultat",
     "jobDetailError": "Erreur",
-    "jobDetailEmpty": "Aucun détail enregistré pour cette tâche."
+    "jobDetailEmpty": "Aucun détail enregistré pour cette tâche.",
+    "showArchived": "Voir archivés ({count})",
+    "hideArchived": "Masquer archivés",
+    "archivedBadge": "Archivé",
+    "archivedBadgeShort": "Archivé",
+    "viewArchived": "Voir",
+    "jobProductArchived": "Produit archivé — n'est plus sur la boutique"
   },
   "Product": {
     "backToDashboard": "Retour au tableau de bord",
@@ -254,7 +260,9 @@
     "generationsHistory": "Générations passées",
     "chatModelLabel": "Modèle texte",
     "imageQualityLabel": "Qualité image",
-    "customInstructionsSiteHint": "Les instructions site-level configurées sur cette boutique seront aussi appliquées."
+    "customInstructionsSiteHint": "Les instructions site-level configurées sur cette boutique seront aussi appliquées.",
+    "archivedTitle": "Ce produit n'est plus présent sur votre boutique",
+    "archivedBody": "Vos instructions personnalisées et l'historique de générations sont préservés. Réactivez le produit sur votre boutique et relancez l'analyse pour le réintégrer. Les nouvelles générations sont désactivées en attendant."
   },
   "Report": {
     "queued": "Audit en file d'attente, veuillez patienter — cela prend environ deux minutes",

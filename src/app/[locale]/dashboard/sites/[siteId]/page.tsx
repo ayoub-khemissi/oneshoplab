@@ -71,6 +71,9 @@ interface PaginatedProductPayload {
 
 interface PaginatedProductWithId extends PaginatedProductPayload {
   productId: string;
+  /** Soft-archived: present on a previous scrape but missing from the
+   *  latest one. Surface under a toggle, disable any "Generate" CTAs. */
+  archived: boolean;
 }
 
 interface SummaryShape {
@@ -154,7 +157,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   const [initialProductRows, projectJobs] = await Promise.all([
     db.query.products.findMany({
       where: eq(products.projectId, project.id),
-      columns: { id: true, sourceId: true, handle: true }
+      columns: {
+        id: true,
+        sourceId: true,
+        handle: true,
+        title: true,
+        sourceUrl: true,
+        status: true
+      }
     }),
     db.query.jobs.findMany({
       where: eq(jobs.projectId, project.id),
@@ -162,7 +172,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       limit: 30,
       with: {
         product: {
-          columns: { id: true, sourceId: true, handle: true, title: true }
+          columns: { id: true, sourceId: true, handle: true, title: true, status: true }
         }
       }
     })
@@ -195,7 +205,10 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       productRows = inserted.map((r) => ({
         id: r.id,
         sourceId: r.sourceId,
-        handle: r.handle
+        handle: r.handle,
+        title: r.title,
+        sourceUrl: r.sourceUrl,
+        status: 'active' as const
       }));
     }
   }
@@ -210,9 +223,26 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     .map((p) => {
       const key = p.sourceId ?? p.handle ?? '';
       const productId = productIdByKey.get(key);
-      return productId ? { ...p, productId } : null;
+      return productId ? { ...p, productId, archived: false } : null;
     })
     .filter((p): p is PaginatedProductWithId => p !== null);
+
+  // Archived products aren't in the latest summary (they fell out of the
+  // scrape) — surface them under the "Show archived" toggle so the
+  // merchant can still navigate to the optim page and recover their
+  // custom instructions / generation history.
+  const archivedProducts: PaginatedProductWithId[] = productRows
+    .filter((r) => r.status === 'archived')
+    .map((r) => ({
+      sourceId: r.sourceId,
+      handle: r.handle,
+      title: r.title,
+      url: r.sourceUrl,
+      score: 0,
+      issues: [],
+      productId: r.id,
+      archived: true
+    }));
 
   const hasUnfinishedJobs = projectJobs.some(
     (j) => j.status === 'pending' || j.status === 'running'
@@ -259,6 +289,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         <PaginatedProductsList
           siteId={siteId}
           products={allProductsWithIds}
+          archivedProducts={archivedProducts}
         />
       ) : (
         <ProjectJobsList items={projectJobs as ProjectJobRow[]} siteId={siteId} />
@@ -780,6 +811,7 @@ type ProjectJobRow = typeof jobs.$inferSelect & {
     sourceId: string | null;
     handle: string | null;
     title: string;
+    status: 'active' | 'archived';
   } | null;
 };
 
@@ -825,21 +857,35 @@ function ProjectJobsList({
                       <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
                     </Accordion.Trigger>
                   </Accordion.Heading>
-                  <div className="flex items-center px-4 py-3 border-l border-[var(--border)] max-w-[40%] min-w-0">
+                  <div className="flex items-center gap-1.5 px-4 py-3 border-l border-[var(--border)] max-w-[40%] min-w-0">
                     {j.product ? (
-                      productHref ? (
-                        <Link
-                          href={productHref}
-                          className="text-xs text-[var(--muted)] hover:text-[var(--accent)] hover:underline truncate"
-                          title={j.product.title}
-                        >
-                          {j.product.title}
-                        </Link>
-                      ) : (
-                        <span className="text-xs text-[var(--muted)] truncate">
-                          {j.product.title}
-                        </span>
-                      )
+                      <>
+                        {j.product.status === 'archived' ? (
+                          <span
+                            className="text-[10px] font-mono uppercase tracking-wider px-1 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] shrink-0"
+                            title={t('jobProductArchived')}
+                          >
+                            {t('archivedBadgeShort')}
+                          </span>
+                        ) : null}
+                        {productHref ? (
+                          <Link
+                            href={productHref}
+                            className={`text-xs hover:text-[var(--accent)] hover:underline truncate ${
+                              j.product.status === 'archived'
+                                ? 'text-[var(--muted)] italic'
+                                : 'text-[var(--muted)]'
+                            }`}
+                            title={j.product.title}
+                          >
+                            {j.product.title}
+                          </Link>
+                        ) : (
+                          <span className="text-xs text-[var(--muted)] truncate">
+                            {j.product.title}
+                          </span>
+                        )}
+                      </>
                     ) : (
                       <span className="text-xs text-[var(--muted)] italic">—</span>
                     )}

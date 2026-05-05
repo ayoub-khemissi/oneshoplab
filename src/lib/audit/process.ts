@@ -1,9 +1,9 @@
-import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { runDynamicAuditForProduct } from '@/lib/ai';
 import { db } from '@/lib/db';
-import { audits, products } from '@/lib/db/schema';
+import { audits } from '@/lib/db/schema';
 import { runAudit } from './run';
+import { syncProjectProducts } from './sync-products';
 
 const DYNAMIC_AUDIT_PRODUCTS = 3;
 
@@ -31,43 +31,13 @@ export async function processAudit(auditId: string): Promise<void> {
     const result = await runAudit(row.url, { maxProducts: 10000 });
     const isFailure = !result.report && result.error;
 
-    // Mirror fetched products into the `products` table so per-product URLs
-    // (which key off `products.id`) resolve. We only persist when we have a
-    // project link and at least one product, and we skip rows that already
-    // exist (matched by sourceId — adapters emit stable platform IDs).
+    // 3-way merge: refresh metadata on existing products (title rename,
+    // desc edits, new images), insert anything new, soft-archive what
+    // disappeared from the scrape. Custom instructions + AI-generation
+    // jobs are preserved across the sync so a re-audit never destroys
+    // the merchant's prior work.
     if (row.projectId && result.products.length > 0) {
-      const existing = await db.query.products.findMany({
-        where: eq(products.projectId, row.projectId),
-        columns: { sourceId: true, handle: true }
-      });
-      const existingKeys = new Set<string>();
-      for (const e of existing) {
-        if (e.sourceId) existingKeys.add(`s:${e.sourceId}`);
-        if (e.handle) existingKeys.add(`h:${e.handle}`);
-      }
-      const toInsert = result.products
-        .filter((p) => p.sourceId || p.handle)
-        .filter((p) => {
-          if (p.sourceId && existingKeys.has(`s:${p.sourceId}`)) return false;
-          if (p.handle && existingKeys.has(`h:${p.handle}`)) return false;
-          return true;
-        })
-        .map((p) => ({
-          id: randomUUID(),
-          projectId: row.projectId!,
-          source: result.platform,
-          sourceId: p.sourceId,
-          sourceUrl: p.sourceUrl,
-          handle: p.handle,
-          title: p.title,
-          descriptionHtml: p.descriptionHtml,
-          images: p.images,
-          tags: p.tags,
-          variants: p.variants
-        }));
-      if (toInsert.length > 0) {
-        await db.insert(products).values(toInsert);
-      }
+      await syncProjectProducts(row.projectId, result.platform, result.products);
     }
 
     // ---- AI dynamic audit on the 3 latest products ------------------------

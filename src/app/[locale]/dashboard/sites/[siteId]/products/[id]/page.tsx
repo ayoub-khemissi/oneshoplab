@@ -91,6 +91,9 @@ interface SummaryShape {
 interface LoadedProduct {
   projectId: string;
   product: ProductSnapshot;
+  /** Soft-archived: not in the latest scrape. Banner is shown and
+   *  generation buttons are disabled. */
+  archived: boolean;
   /** Last per-product instructions persisted by the API on previous
    *  generations. Pre-fills the textarea on render. */
   productInstructions: string;
@@ -110,8 +113,7 @@ async function loadProductForUser(
   if (!project) return null;
 
   const productRow = await db.query.products.findFirst({
-    where: and(eq(products.id, productId), eq(products.projectId, project.id)),
-    columns: { sourceId: true, handle: true, customInstructions: true }
+    where: and(eq(products.id, productId), eq(products.projectId, project.id))
   });
   if (!productRow) return null;
 
@@ -122,27 +124,53 @@ async function loadProductForUser(
     ),
     orderBy: [desc(audits.createdAt)]
   });
-  if (!audit?.summary) return null;
 
-  const summary = audit.summary as SummaryShape;
-  const all = [
-    ...(summary.allProducts ?? []),
-    ...(summary.worstProducts ?? []),
-    ...(summary.latestProducts ?? []),
-    ...(summary.bestProducts ?? [])
-  ];
-  // Snapshot in audit.summary is keyed by sourceId/handle (denormalized);
-  // we resolved the URL's productId to those keys via the products table
-  // above so the lookup is unambiguous regardless of slug content.
-  const product = all.find((p) => {
-    if (productRow.sourceId && p.sourceId === productRow.sourceId) return true;
-    if (productRow.handle && p.handle === productRow.handle) return true;
-    return false;
-  });
-  if (!product) return null;
+  const summary = (audit?.summary ?? null) as SummaryShape | null;
+
+  let product: ProductSnapshot | null = null;
+  if (summary) {
+    const all = [
+      ...(summary.allProducts ?? []),
+      ...(summary.worstProducts ?? []),
+      ...(summary.latestProducts ?? []),
+      ...(summary.bestProducts ?? [])
+    ];
+    product =
+      all.find((p) => {
+        if (productRow.sourceId && p.sourceId === productRow.sourceId) return true;
+        if (productRow.handle && p.handle === productRow.handle) return true;
+        return false;
+      }) ?? null;
+  }
+
+  // Archived path: product is missing from the latest summary OR explicitly
+  // flagged on the products row. Synthesize a snapshot from the persisted
+  // metadata so the page still renders (banner + disabled CTAs handled
+  // downstream). The score is unknown here — show 0 / "—" downstream.
+  if (!product || productRow.status === 'archived') {
+    product = {
+      sourceId: productRow.sourceId,
+      handle: productRow.handle,
+      title: productRow.title,
+      url: productRow.sourceUrl,
+      descriptionHtml: productRow.descriptionHtml ?? '',
+      images: (productRow.images ?? []) as ProductImage[],
+      variants: ((productRow.variants ?? []) as unknown as ProductVariant[]) ?? [],
+      score: product?.score ?? 0,
+      signals: {
+        tags: (productRow.tags ?? []) as string[],
+        vendor: productRow.vendor,
+        productType: productRow.productType,
+        priceMin: productRow.priceMin != null ? Number(productRow.priceMin) : null,
+        priceMax: productRow.priceMax != null ? Number(productRow.priceMax) : null
+      }
+    };
+  }
+
   return {
     projectId: project.id,
     product,
+    archived: productRow.status === 'archived',
     productInstructions: productRow.customInstructions ?? '',
     projectInstructions: project.customInstructions ?? ''
   };
@@ -160,7 +188,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const loaded = await loadProductForUser(session.user.id, siteId, productId);
   if (!loaded) notFound();
-  const { product, projectId, productInstructions, projectInstructions } = loaded;
+  const { product, projectId, productInstructions, projectInstructions, archived } = loaded;
   // sourceId is the audit-summary key for this product; needed for history
   // lookups and as the form payload key for AI generation jobs.
   const sourceId = product.sourceId ?? product.handle ?? '';
@@ -239,6 +267,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
         )}
       </div>
 
+      {archived ? (
+        <div
+          role="alert"
+          className="rounded-md border border-[var(--border)] bg-[var(--default)]/40 p-4 flex items-start gap-3 text-sm"
+        >
+          <ChevronLeft className="size-4 mt-0.5 text-[var(--muted)] shrink-0 rotate-180" aria-hidden />
+          <div className="flex flex-col gap-1">
+            <span className="font-semibold text-[var(--foreground)]">{t('archivedTitle')}</span>
+            <span className="text-[var(--muted)] leading-relaxed">{t('archivedBody')}</span>
+          </div>
+        </div>
+      ) : null}
+
       <RetryableGenerateProvider
         siteId={siteId}
         productId={productId}
@@ -246,6 +287,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         initialImageQualityId={userImageQuality}
         initialCustomInstructions={productInstructions}
         creditsBalance={balance}
+        productArchived={archived}
       >
         <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">

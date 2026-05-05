@@ -64,6 +64,7 @@ interface ContextValue {
   creditsBalance: number;
   costFor: (field: GenField) => number;
   canAfford: (field: GenField) => boolean;
+  productArchived: boolean;
 }
 
 const Ctx = createContext<ContextValue | null>(null);
@@ -77,6 +78,10 @@ interface ProviderProps {
    *  so the merchant doesn't lose their guidance between visits. */
   initialCustomInstructions?: string;
   creditsBalance: number;
+  /** Archived product: every Generate / Regenerate CTA is force-disabled
+   *  regardless of credit balance because there's no point producing
+   *  content for a product no longer present on the merchant's store. */
+  productArchived?: boolean;
   children: ReactNode;
 }
 
@@ -87,6 +92,7 @@ export function RetryableGenerateProvider({
   initialImageQualityId,
   initialCustomInstructions = '',
   creditsBalance,
+  productArchived = false,
   children
 }: ProviderProps) {
   const router = useRouter();
@@ -241,7 +247,8 @@ export function RetryableGenerateProvider({
       setImageQualityId,
       creditsBalance,
       costFor,
-      canAfford
+      canAfford,
+      productArchived
     }),
     [
       state,
@@ -252,7 +259,8 @@ export function RetryableGenerateProvider({
       imageQualityId,
       creditsBalance,
       costFor,
-      canAfford
+      canAfford,
+      productArchived
     ]
   );
 
@@ -314,9 +322,9 @@ export function RetryableGenerateButton({
   available = true
 }: ButtonProps) {
   const t = useTranslations('Product');
-  const { state, submit, cancel, costFor, canAfford } = useGenerateContext();
+  const { state, submit, cancel, costFor, canAfford, productArchived } = useGenerateContext();
   const cost = costFor(field);
-  const enabled = available && canAfford(field);
+  const enabled = available && canAfford(field) && !productArchived;
 
   const isAll = field === 'all';
   const inflightField =
