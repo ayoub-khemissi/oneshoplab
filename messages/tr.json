@@ -247,8 +247,8 @@
     "generationsHistory": "Past generations"
   },
   "Report": {
-    "queued": "Analysis queued, please wait — this usually takes about a minute",
-    "running": "Analysis in progress, please wait — this usually takes about a minute",
+    "queued": "Analysis queued, please wait — this usually takes about two minutes",
+    "running": "Analysis in progress, please wait — this usually takes about two minutes",
     "failed": "Analysis failed: {error}",
     "completed": "Analyzed {count} products on {platform}",
     "tabAi": "AI analysis",
@@ -374,5 +374,14 @@
     "no_tags": "No tags",
     "missing_alt_text": "Alt text missing on {missing}/{total} images",
     "low_resolution_image": "Low-resolution image (min {width}px wide)"
+  },
+  "AuditToast": {
+    "completedTitle": "Audit ready",
+    "completedDescription": "Your audit on {project} just finished — open it to see the report.",
+    "completedDescriptionNoProject": "Your audit just finished — open the dashboard to see the report.",
+    "viewAction": "View",
+    "failedTitle": "Audit failed",
+    "failedDescription": "We couldn't finish auditing {project}. Try again from the dashboard.",
+    "failedDescriptionNoProject": "We couldn't finish your audit. Try again from the dashboard."
   }
 }

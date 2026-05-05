@@ -247,8 +247,8 @@
     "generationsHistory": "Générations passées"
   },
   "Report": {
-    "queued": "Audit en file d'attente, veuillez patienter — cela prend environ une minute",
-    "running": "Audit en cours, veuillez patienter — cela prend environ une minute",
+    "queued": "Audit en file d'attente, veuillez patienter — cela prend environ deux minutes",
+    "running": "Audit en cours, veuillez patienter — cela prend environ deux minutes",
     "failed": "Audit échoué : {error}",
     "completed": "{count} produits analysés sur {platform}",
     "tabAi": "Analyse IA",
@@ -374,5 +374,14 @@
     "no_tags": "Aucun tag",
     "missing_alt_text": "Alt text manquant sur {missing}/{total} images",
     "low_resolution_image": "Image basse résolution (min {width}px de large)"
+  },
+  "AuditToast": {
+    "completedTitle": "Audit terminé",
+    "completedDescription": "Ton audit de {project} vient de se terminer — ouvre-le pour voir le rapport.",
+    "completedDescriptionNoProject": "Ton audit vient de se terminer — ouvre le dashboard pour voir le rapport.",
+    "viewAction": "Voir",
+    "failedTitle": "Audit échoué",
+    "failedDescription": "Impossible de terminer l'audit de {project}. Réessaie depuis le dashboard.",
+    "failedDescriptionNoProject": "Impossible de terminer ton audit. Réessaie depuis le dashboard."
   }
 }
