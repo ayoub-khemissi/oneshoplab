@@ -468,7 +468,8 @@
     "cooldownTooltip": "Available again in {time}",
     "inHoursMinutes": "{h}h {m}m",
     "inMinutesSeconds": "{m}m {s}s",
-    "inSeconds": "{s}s"
+    "inSeconds": "{s}s",
+    "quotaTooltip": "Audits used today: {used}/{limit}"
   },
   "Account": {
     "backToDashboard": "Back to dashboard",

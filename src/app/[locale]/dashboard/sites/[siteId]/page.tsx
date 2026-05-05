@@ -1,6 +1,10 @@
 import { Accordion, Card, Skeleton } from '@heroui/react';
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
 import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
+import {
+  AUDIT_RATE_LIMIT_WINDOW_MS,
+  auditRateLimitForPlan
+} from '@/lib/ai/models';
 import { useTranslations } from 'next-intl';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -250,6 +254,41 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   const auditLoading = audit.status === 'pending' || audit.status === 'running';
   const isLoading = auditLoading || hasUnfinishedJobs;
 
+  // Audit rate-limit window: count user-wide pending/running/completed
+  // audits in the last 24h. Failed/timed_out ones don't count so a bad
+  // first run doesn't lock the merchant out. The Relaunch button uses
+  // this to display "X / Y today" or a countdown to the next slot.
+  const userPlan = (session.user.plan ?? 'free') as 'free' | 'starter' | 'pro' | 'scale';
+  const auditsLimit = auditRateLimitForPlan(userPlan);
+  const userProjectIdsList = (
+    await db.query.projects.findMany({
+      where: eq(projects.userId, session.user.id),
+      columns: { id: true }
+    })
+  ).map((p) => p.id);
+  let auditsUsed = 0;
+  let nextSlotAtIso: string | null = null;
+  if (userProjectIdsList.length > 0) {
+    const since = new Date(Date.now() - AUDIT_RATE_LIMIT_WINDOW_MS);
+    const inWindow = await db.query.audits.findMany({
+      where: and(
+        inArray(audits.projectId, userProjectIdsList),
+        gte(audits.createdAt, since),
+        inArray(audits.status, ['pending', 'running', 'completed'])
+      ),
+      columns: { id: true, createdAt: true },
+      orderBy: [desc(audits.createdAt)]
+    });
+    auditsUsed = inWindow.length;
+    if (auditsUsed >= auditsLimit && inWindow.length > 0) {
+      // Oldest in the window is the last item (orderBy desc).
+      const oldest = inWindow[inWindow.length - 1];
+      nextSlotAtIso = new Date(
+        oldest.createdAt.getTime() + AUDIT_RATE_LIMIT_WINDOW_MS
+      ).toISOString();
+    }
+  }
+
   return (
     <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-8">
       {isLoading ? <AutoRefresh /> : null}
@@ -260,8 +299,9 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           url={audit.url}
           canAdd={canAddSite}
           projectId={project.id}
-          lastAuditAtIso={audit.createdAt.toISOString()}
-          plan={(session.user.plan ?? 'free') as 'free' | 'starter' | 'pro' | 'scale'}
+          auditsUsed={auditsUsed}
+          auditsLimit={auditsLimit}
+          nextSlotAtIso={nextSlotAtIso}
         />
         <StatusLine status={audit.status} error={audit.error} />
         <TabsNav active={activeTab} siteId={siteId} />
@@ -307,15 +347,17 @@ function SiteHeaderBar({
   url,
   canAdd,
   projectId,
-  lastAuditAtIso,
-  plan
+  auditsUsed,
+  auditsLimit,
+  nextSlotAtIso
 }: {
   domain: string;
   url: string;
   canAdd: boolean;
   projectId: string;
-  lastAuditAtIso: string | null;
-  plan: 'free' | 'starter' | 'pro' | 'scale';
+  auditsUsed: number;
+  auditsLimit: number;
+  nextSlotAtIso: string | null;
 }) {
   const t = useTranslations('Dashboard');
   return (
@@ -339,8 +381,9 @@ function SiteHeaderBar({
         </a>
         <RelaunchAuditButton
           projectId={projectId}
-          lastAuditAtIso={lastAuditAtIso}
-          plan={plan}
+          auditsUsed={auditsUsed}
+          auditsLimit={auditsLimit}
+          nextSlotAtIso={nextSlotAtIso}
         />
         {canAdd ? (
           <Link

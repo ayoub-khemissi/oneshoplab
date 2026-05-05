@@ -18,7 +18,12 @@ const pool =
     connectionLimit: 10,
     enableKeepAlive: true,
     waitForConnections: true,
-    queueLimit: 50
+    queueLimit: 50,
+    // Force UTC on every connection — the host runs CEST (Europe/Paris)
+    // but drizzle's timestamp serializer assumes UTC, so without this
+    // line every Date written / read drifts by the local-vs-UTC offset
+    // (e.g. cooldown countdowns showed 24h53 instead of 22h53).
+    timezone: 'Z'
   });
 
 if (process.env.NODE_ENV !== 'production') {

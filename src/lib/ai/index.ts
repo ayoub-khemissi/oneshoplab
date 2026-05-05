@@ -1,7 +1,7 @@
 export { CHAT_MODELS, KieClient, KieError, getKieClient } from './kie';
 export {
-  AUDIT_COOLDOWN_MS_BY_PLAN,
-  auditCooldownMsForPlan,
+  AUDIT_RATE_LIMIT_WINDOW_MS,
+  auditRateLimitForPlan,
   CHAT_MODEL_REGISTRY,
   CREDIT_MARKUP,
   CREDIT_PACKS,

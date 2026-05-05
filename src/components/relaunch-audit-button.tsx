@@ -4,42 +4,53 @@ import { Spinner } from '@heroui/react';
 import { RotateCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
-import { auditCooldownMsForPlan } from '@/lib/ai/models';
 import { relaunchProjectAuditAction } from '@/lib/auth-actions';
 
 interface RelaunchAuditButtonProps {
   projectId: string;
-  /** ISO string passed down from the server component (Date isn't serialisable). */
-  lastAuditAtIso: string | null;
-  plan: 'free' | 'starter' | 'pro' | 'scale';
+  /** Number of pending/running/completed audits the user already launched
+   *  in the rolling 24h window across all their projects. */
+  auditsUsed: number;
+  /** Hard cap on audits per 24h, equals the plan's site quota. */
+  auditsLimit: number;
+  /** ISO timestamp at which the next quota slot opens up — null while
+   *  the user still has slots available. */
+  nextSlotAtIso: string | null;
 }
 
 /**
- * "Relaunch analysis" button on the per-site dashboard. Disabled with a live
- * countdown until the per-plan cooldown elapses since the most recent audit.
- * Re-renders on a 1s tick so the user sees the timer count down live without
- * needing to refresh the page.
+ * "Relaunch analysis" button on the per-site dashboard. Gated by a
+ * user-wide rate limit (auditsLimit per AUDIT_RATE_LIMIT_WINDOW_MS),
+ * not a per-site cooldown — locking by site let merchants game it
+ * by deleting and re-creating projects.
+ *
+ * When the merchant still has slots, shows "Relaunch · 1/3 today" or
+ * similar so they understand the pacing. When they've burned through
+ * the quota, the button disables and ticks down to the next slot.
+ *
+ * Failed / timed_out audits don't count toward the quota (handled by
+ * the server side query) so a bad first run never locks the user out.
  */
 export function RelaunchAuditButton({
   projectId,
-  lastAuditAtIso,
-  plan
+  auditsUsed,
+  auditsLimit,
+  nextSlotAtIso
 }: RelaunchAuditButtonProps) {
   const t = useTranslations('Relaunch');
-  const cooldownMs = auditCooldownMsForPlan(plan);
-  const lastAuditAt = lastAuditAtIso ? new Date(lastAuditAtIso) : null;
-  const readyAt = lastAuditAt ? lastAuditAt.getTime() + cooldownMs : 0;
+  const readyAt = nextSlotAtIso ? new Date(nextSlotAtIso).getTime() : 0;
 
   const [now, setNow] = useState(() => Date.now());
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    if (!nextSlotAtIso) return;
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [nextSlotAtIso]);
 
-  const remainingMs = Math.max(0, readyAt - now);
-  const ready = remainingMs <= 0;
+  const remainingMs = nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
+  const locked = remainingMs > 0;
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
@@ -47,7 +58,7 @@ export function RelaunchAuditButton({
     });
   }
 
-  if (!ready) {
+  if (locked) {
     return (
       <button
         type="button"
@@ -67,6 +78,7 @@ export function RelaunchAuditButton({
       <button
         type="submit"
         disabled={isPending}
+        title={t('quotaTooltip', { used: auditsUsed, limit: auditsLimit })}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isPending ? (
@@ -78,6 +90,9 @@ export function RelaunchAuditButton({
           <>
             <RotateCw className="size-3.5" aria-hidden />
             <span>{t('relaunch')}</span>
+            <span className="text-xs opacity-70 font-mono tabular-nums">
+              {auditsUsed}/{auditsLimit}
+            </span>
           </>
         )}
       </button>
@@ -85,11 +100,6 @@ export function RelaunchAuditButton({
   );
 }
 
-/**
- * Format a remaining-ms value as a compact "5h 23m" / "12m 04s" / "47s"
- * string. Hours bucket dominates above 1h, minutes between 1m-1h, seconds
- * under 1m. Keeps the button stable-width by always showing two units.
- */
 function formatRemaining(
   ms: number,
   t: (key: string, values: Record<string, string | number>) => string

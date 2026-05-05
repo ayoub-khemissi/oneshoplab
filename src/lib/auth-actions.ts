@@ -4,7 +4,12 @@ import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import { auditCooldownMsForPlan, MAX_CUSTOM_INSTRUCTIONS_CHARS } from './ai/models';
+import { gte, inArray } from 'drizzle-orm';
+import {
+  AUDIT_RATE_LIMIT_WINDOW_MS,
+  auditRateLimitForPlan,
+  MAX_CUSTOM_INSTRUCTIONS_CHARS
+} from './ai/models';
 import { launchAuditForUser } from './audit/launch';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, hashPassword, signOut } from './auth';
@@ -97,13 +102,28 @@ export async function relaunchProjectAuditAction(formData: FormData): Promise<vo
     orderBy: [desc(audits.createdAt)]
   });
 
-  // Cooldown gate. The UI is the primary line of defence (button is
-  // disabled with a live timer); we re-check here so a forged form post
-  // can't bypass it.
-  const cooldownMs = auditCooldownMsForPlan(session.user.plan);
-  if (latest) {
-    const elapsed = Date.now() - latest.createdAt.getTime();
-    if (elapsed < cooldownMs) return;
+  // Rate-limit gate: count the user's audits launched across ALL their
+  // projects in the last 24h. Failed/timed_out runs don't count (a bad
+  // first run shouldn't lock the merchant out for a day). Limit equals
+  // the plan's site quota (1/3/10/50 for Free/Starter/Pro/Scale). This
+  // is enforced server-side regardless of the UI's own gating.
+  const userProjectIds = await db.query.projects.findMany({
+    where: eq(projects.userId, session.user.id),
+    columns: { id: true }
+  });
+  const ids = userProjectIds.map((p) => p.id);
+  const limit = auditRateLimitForPlan(session.user.plan);
+  if (ids.length > 0) {
+    const since = new Date(Date.now() - AUDIT_RATE_LIMIT_WINDOW_MS);
+    const inWindow = await db.query.audits.findMany({
+      where: and(
+        inArray(audits.projectId, ids),
+        gte(audits.createdAt, since),
+        inArray(audits.status, ['pending', 'running', 'completed'])
+      ),
+      columns: { id: true }
+    });
+    if (inWindow.length >= limit) return;
   }
 
   // Prefer the latest audit's URL (always populated) — projects.url may be
