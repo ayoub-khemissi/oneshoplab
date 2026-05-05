@@ -349,13 +349,19 @@ export function RetryableGenerateButton({
   const classes = !enabled ? unaffordableClasses : enabledClasses;
 
   if (isThisOne && state.kind === 'pending') {
+    // Hide the "X/3" badge on attempt 1 — surfacing "1/3" before anything
+    // has even failed reads as a retry counter to the user. Show it only
+    // when we're actually retrying.
+    const showAttemptBadge = state.attempt > 1;
     return (
       <div className="inline-flex items-center gap-2">
         <button type="button" disabled className={`${baseClasses} ${classes}`}>
           <Spinner size="sm" />
           <span>
             {t('generating', { seconds: elapsed })}
-            <span className="opacity-70 font-mono ml-1">· {state.attempt}/{MAX_ATTEMPTS}</span>
+            {showAttemptBadge ? (
+              <span className="opacity-70 font-mono ml-1">· {state.attempt}/{MAX_ATTEMPTS}</span>
+            ) : null}
           </span>
         </button>
         <CancelButton onCancel={cancel} label={t('cancelGeneration')} />
