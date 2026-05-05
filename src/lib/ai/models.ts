@@ -191,6 +191,11 @@ export type ImageQualityId = PricingImageQualityId;
 export interface ImageModelInfo {
   id: ImageQualityId;
   kieModelId: string;
+  /** Family name (same across resolutions) — surfaced as the row label
+   *  on the optim page, and as the provider subtitle on the
+   *  Preferences page so merchants know which model is doing the work. */
+  modelName: string;
+  provider: 'OpenAI';
   displayName: string;
   resolution: '1K' | '2K' | '4K';
   tier: 'budget' | 'balanced' | 'premium';
@@ -204,6 +209,8 @@ const IMAGE_QUALITY_META: Record<
 > = {
   'image-1k': {
     kieModelId: 'gpt-image-2-image-to-image',
+    modelName: 'GPT-Image 2',
+    provider: 'OpenAI',
     displayName: '1K · Standard',
     resolution: '1K',
     tier: 'budget',
@@ -211,6 +218,8 @@ const IMAGE_QUALITY_META: Record<
   },
   'image-2k': {
     kieModelId: 'gpt-image-2-image-to-image',
+    modelName: 'GPT-Image 2',
+    provider: 'OpenAI',
     displayName: '2K · High',
     resolution: '2K',
     tier: 'balanced',
@@ -218,6 +227,8 @@ const IMAGE_QUALITY_META: Record<
   },
   'image-4k': {
     kieModelId: 'gpt-image-2-image-to-image',
+    modelName: 'GPT-Image 2',
+    provider: 'OpenAI',
     displayName: '4K · Premium',
     resolution: '4K',
     tier: 'premium',

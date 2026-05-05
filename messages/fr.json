@@ -15,7 +15,7 @@
     "step1Title": "Détecter & auditer",
     "step1Description": "Saisis l'URL. La plateforme est détectée automatiquement, chaque produit noté sur catalogue, copy, qualité visuelle et tags — en 30 secondes.",
     "step2Title": "Choisir le modèle, donner le ton",
-    "step2Description": "Sélectionne le modèle texte (Gemini, Claude Sonnet ou Opus) et la qualité image (1K, 2K ou 4K). Ajoute si tu veux des instructions de marque, à l'échelle du site ou par produit.",
+    "step2Description": "Choisis ton modèle texte — Gemini 3.1 Pro de Google, ou Claude Sonnet 4.6 / Opus 4.6 d'Anthropic — et la qualité image (1K, 2K ou 4K) via GPT-Image 2 d'OpenAI. Ajoute si tu veux des instructions de marque, à l'échelle du site ou par produit.",
     "step3Title": "Générer et appliquer",
     "step3Description": "Reçois un nouveau titre, une description et des tags, plus 3 angles photo lifestyle. Copie le texte, télécharge les images, puis applique sur ta boutique.",
     "compatibleWith": "Compatible avec",

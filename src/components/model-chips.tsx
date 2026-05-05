@@ -32,6 +32,13 @@ export function ModelChips() {
   } = useGenerateContext();
   const [, startPersist] = useTransition();
 
+  // Image model + provider are constant across resolutions today; pick
+  // them off the first registry entry so the row label can attribute
+  // GPT-Image 2 / OpenAI without repeating it on every chip.
+  const firstImage = Object.values(IMAGE_MODEL_REGISTRY)[0];
+  const imageModelName = firstImage.modelName;
+  const imageModelProvider = firstImage.provider;
+
   function persist(next: { chatModelId?: ChatModelId; imageQualityId?: ImageQualityId }) {
     const fd = new FormData();
     fd.set('chatModel', next.chatModelId ?? chatModelId);
@@ -67,6 +74,7 @@ export function ModelChips() {
             key={m.id}
             active={m.id === chatModelId}
             label={m.displayName}
+            sublabel={m.provider}
             cost={`~${estimateChatCredits(m.id, 'fullAudit')}`}
             tier={m.tier}
             onClick={() => pickChat(m.id)}
@@ -74,7 +82,13 @@ export function ModelChips() {
         ))}
       </ChipsRow>
 
-      <ChipsRow label={t('imageQualityLabel')}>
+      <ChipsRow
+        label={t('imageQualityLabel')}
+        // The whole image row uses one model (GPT-Image 2 by OpenAI), so
+        // the attribution sits next to the row label instead of being
+        // repeated on every chip.
+        sublabel={`${imageModelName} · ${imageModelProvider}`}
+      >
         {(Object.values(IMAGE_MODEL_REGISTRY) as Array<
           (typeof IMAGE_MODEL_REGISTRY)[ImageQualityId]
         >).map((m) => (
@@ -92,11 +106,26 @@ export function ModelChips() {
   );
 }
 
-function ChipsRow({ label, children }: { label: string; children: React.ReactNode }) {
+function ChipsRow({
+  label,
+  sublabel,
+  children
+}: {
+  label: string;
+  sublabel?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] shrink-0">
-        {label}
+      <span className="flex flex-col shrink-0">
+        <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+          {label}
+        </span>
+        {sublabel ? (
+          <span className="text-[10px] font-mono text-[var(--muted)]/80">
+            {sublabel}
+          </span>
+        ) : null}
       </span>
       <div className="flex items-center gap-1.5 flex-wrap">{children}</div>
     </div>
@@ -112,12 +141,14 @@ const TIER_COLORS: Record<'budget' | 'balanced' | 'premium', string> = {
 function Chip({
   active,
   label,
+  sublabel,
   cost,
   tier,
   onClick
 }: {
   active: boolean;
   label: string;
+  sublabel?: string;
   cost: string;
   tier: 'budget' | 'balanced' | 'premium';
   onClick: () => void;
@@ -134,8 +165,16 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={`${base} ${active ? activeCls : idleCls}`}
+      title={sublabel ? `${label} · ${sublabel}` : undefined}
     >
-      <span>{label}</span>
+      <span className="inline-flex items-center gap-1">
+        <span>{label}</span>
+        {sublabel ? (
+          <span className={`text-[10px] ${active ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+            · {sublabel}
+          </span>
+        ) : null}
+      </span>
       <span
         className={`text-[10px] font-mono px-1 rounded ${
           active ? 'bg-white/20 text-current' : TIER_COLORS[tier]

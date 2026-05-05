@@ -15,7 +15,7 @@
     "step1Title": "Detect & audit",
     "step1Description": "Drop your URL. We auto-detect the platform and score every product across catalog, copy, visual quality and tagging — in 30 seconds.",
     "step2Title": "Pick the model, set the tone",
-    "step2Description": "Choose your text model (Gemini, Claude Sonnet or Opus) and image quality (1K, 2K or 4K). Optionally add brand-voice instructions, applied site-wide or per product.",
+    "step2Description": "Choose your text model — Gemini 3.1 Pro by Google, or Claude Sonnet 4.6 / Opus 4.6 by Anthropic — and your image quality (1K, 2K or 4K) on GPT-Image 2 by OpenAI. Add brand-voice instructions if you want, applied site-wide or per product.",
     "step3Title": "Generate and apply",
     "step3Description": "Get a fresh title, description and tags, plus 3 lifestyle photo angles. Copy the text, download the images, and ship them on your store.",
     "compatibleWith": "Compatible with",

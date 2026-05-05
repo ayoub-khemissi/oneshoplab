@@ -107,8 +107,8 @@ export function ModelPreferencesForm({
               <ModelOptionCard
                 key={m.id}
                 active={active}
-                title={m.displayName}
-                provider="OpenAI"
+                title={`${m.modelName} · ${m.displayName}`}
+                provider={m.provider}
                 tier={m.tier}
                 tagline={m.tagline}
                 costLabel={`${cost} ${copy.perImage}`}
