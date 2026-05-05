@@ -58,7 +58,16 @@ export const users = mysqlTable('users', {
 
   // App-specific extensions
   plan: mysqlEnum('plan', PLANS).notNull().default('free'),
+  /**
+   * Total spendable credits = credits_balance_subscription + credits_balance_pack.
+   * Maintained by applyCreditTransaction so existing reads (header chip,
+   * session token, dashboards) keep working unchanged. Don't update directly.
+   */
   creditsBalance: int('credits_balance').notNull().default(0),
+  /** Reset to plan.credits at every successful subscription renewal. */
+  creditsBalanceSubscription: int('credits_balance_subscription').notNull().default(0),
+  /** Accumulated pack purchases — never expires. */
+  creditsBalancePack: int('credits_balance_pack').notNull().default(0),
   preferredChatModel: mysqlEnum('preferred_chat_model', CHAT_MODEL_IDS)
     .notNull()
     .default('sonnet-4-6'),

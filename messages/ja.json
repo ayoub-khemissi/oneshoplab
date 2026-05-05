@@ -415,6 +415,10 @@
         "name": "Mega",
         "tagline": "Stock up at the best per-credit rate."
       }
-    }
+    },
+    "subscriptionBucketLabel": "Subscription",
+    "subscriptionBucketHint": "resets every renewal",
+    "packBucketLabel": "Packs",
+    "packBucketHint": "never expire"
   }
 }

@@ -13,9 +13,13 @@ export class InsufficientCreditsError extends Error {
   }
 }
 
+export type CreditBucket = 'subscription' | 'pack';
+
 export interface CreditTxOptions {
   userId: string;
-  /** Signed integer. Positive = grant. Negative = consume. */
+  /** Signed integer. Positive = grant, negative = consume. Ignored when
+   *  `setSubscriptionTo` is provided (the helper computes the implied
+   *  delta itself for the audit row). */
   delta: number;
   reason: string;
   jobId?: string | null;
@@ -23,6 +27,24 @@ export interface CreditTxOptions {
   /** Unique key to make this transaction idempotent across retries/webhooks. */
   idempotencyKey?: string | null;
   metadata?: Record<string, unknown> | null;
+  /**
+   * For grants only (delta > 0): which bucket the credits land in.
+   * - 'subscription' (default for grants): wiped out on next subscription
+   *   renewal. Use for monthly plan grants.
+   * - 'pack': accumulates indefinitely. Use for one-time pack purchases
+   *   and any other "earned" credits we want to protect.
+   * Has no effect on debits — debits always drain subscription first,
+   * pack second.
+   */
+  bucket?: CreditBucket;
+  /**
+   * Use-it-or-lose-it: replace the user's subscription bucket with this
+   * exact value (typical for monthly renewals). The audit row records the
+   * net delta needed to reach that target so the trail stays consistent
+   * with `delta`-style entries elsewhere.
+   * When set, the `delta` field is ignored.
+   */
+  setSubscriptionTo?: number;
 }
 
 export interface CreditTxResult {
@@ -31,10 +53,16 @@ export interface CreditTxResult {
 }
 
 /**
- * Atomically apply a credit transaction:
- *   - Insert a row in credit_transactions (idempotent via idempotencyKey).
- *   - Update users.creditsBalance.
- *   - Reject negative deltas that would push the balance below zero.
+ * Atomically apply a credit transaction.
+ *
+ * Two buckets share the spendable balance:
+ *   - subscription: granted at the start of each billing period, RESET to
+ *     plan.credits at the next renewal — use-it-or-lose-it.
+ *   - pack: pack purchases + any non-expiring grants — never reset.
+ *
+ * Spends drain the subscription bucket first, then overflow onto pack.
+ * The legacy `users.creditsBalance` column stays in sync with the sum so
+ * existing reads (header chip, session token) need no refactor.
  */
 export async function applyCreditTransaction(opts: CreditTxOptions): Promise<CreditTxResult> {
   return db.transaction(async (tx) => {
@@ -51,28 +79,85 @@ export async function applyCreditTransaction(opts: CreditTxOptions): Promise<Cre
     const u = await tx.query.users.findFirst({ where: eq(users.id, opts.userId) });
     if (!u) throw new Error(`User ${opts.userId} not found`);
 
-    if (opts.delta < 0 && u.creditsBalance + opts.delta < 0) {
-      throw new InsufficientCreditsError(-opts.delta, u.creditsBalance);
+    let nextSub = u.creditsBalanceSubscription;
+    let nextPack = u.creditsBalancePack;
+    let recordedDelta: number;
+    const metadata: Record<string, unknown> = { ...(opts.metadata ?? {}) };
+
+    if (typeof opts.setSubscriptionTo === 'number') {
+      // Renewal-style reset. The audit row gets the net delta so the
+      // running sum of `delta` over the user's transactions still matches
+      // their balance.
+      const target = Math.max(0, opts.setSubscriptionTo);
+      recordedDelta = target - u.creditsBalanceSubscription;
+      metadata.previousSubscriptionBalance = u.creditsBalanceSubscription;
+      metadata.newSubscriptionBalance = target;
+      metadata.bucket = 'subscription';
+      metadata.kind = 'subscription_reset';
+      nextSub = target;
+    } else if (opts.delta > 0) {
+      const bucket: CreditBucket = opts.bucket ?? 'subscription';
+      if (bucket === 'pack') nextPack += opts.delta;
+      else nextSub += opts.delta;
+      metadata.bucket = bucket;
+      recordedDelta = opts.delta;
+    } else if (opts.delta < 0) {
+      const need = -opts.delta;
+      const total = u.creditsBalanceSubscription + u.creditsBalancePack;
+      if (total < need) throw new InsufficientCreditsError(need, total);
+      const fromSub = Math.min(u.creditsBalanceSubscription, need);
+      const fromPack = need - fromSub;
+      nextSub -= fromSub;
+      nextPack -= fromPack;
+      metadata.spentFromSubscription = fromSub;
+      metadata.spentFromPack = fromPack;
+      recordedDelta = opts.delta;
+    } else {
+      // delta === 0 and no setSubscriptionTo. No-op, but still record for
+      // idempotency tracking.
+      recordedDelta = 0;
     }
+
+    const newTotal = nextSub + nextPack;
 
     await tx.insert(creditTransactions).values({
       id: randomUUID(),
       userId: opts.userId,
-      delta: opts.delta,
+      delta: recordedDelta,
       reason: opts.reason,
       jobId: opts.jobId ?? null,
       stripePaymentId: opts.stripePaymentId ?? null,
       idempotencyKey: opts.idempotencyKey ?? null,
-      metadata: opts.metadata ?? null
+      metadata
     });
 
     await tx
       .update(users)
-      .set({ creditsBalance: sql`${users.creditsBalance} + ${opts.delta}` })
+      .set({
+        creditsBalanceSubscription: nextSub,
+        creditsBalancePack: nextPack,
+        creditsBalance: newTotal
+      })
       .where(eq(users.id, opts.userId));
 
-    return { newBalance: u.creditsBalance + opts.delta, alreadyApplied: false };
+    return { newBalance: newTotal, alreadyApplied: false };
   });
+}
+
+export interface CreditBucketsSnapshot {
+  subscription: number;
+  pack: number;
+  total: number;
+}
+
+export async function getCreditBuckets(userId: string): Promise<CreditBucketsSnapshot> {
+  const u = await db.query.users.findFirst({ where: eq(users.id, userId) });
+  if (!u) return { subscription: 0, pack: 0, total: 0 };
+  return {
+    subscription: u.creditsBalanceSubscription,
+    pack: u.creditsBalancePack,
+    total: u.creditsBalance
+  };
 }
 
 export async function getCreditBalance(userId: string): Promise<number> {
@@ -81,14 +166,10 @@ export async function getCreditBalance(userId: string): Promise<number> {
 }
 
 /**
- * Cost of each job kind in credits. Centralized so billing changes happen
- * in one place. Audit runs are free (run on our infra, no kie call).
- */
-/**
  * Static fallback cost per job kind. Used as a budget hint and ceiling check.
- * For chat jobs the actual debit comes from `credits_consumed` in the kie
- * response (we trust kie's metering), so these values mostly matter for
- * the image jobs where kie doesn't return an inline cost.
+ * For chat jobs the actual debit comes from the deterministic field cap × the
+ * markup (see estimateChatCredits) — these values are kept for the legacy
+ * audit-runner path and image jobs where kie has a flat per-call cost.
  */
 export const CREDIT_COST: Record<JobKind, number> = {
   audit_run: 0,

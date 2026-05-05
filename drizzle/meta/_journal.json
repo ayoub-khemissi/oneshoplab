@@ -43,6 +43,13 @@
       "when": 1777832605834,
       "tag": "0005_aromatic_dorian_gray",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1777949823274,
+      "tag": "0006_classy_proemial_gods",
+      "breakpoints": true
     }
   ]
 }

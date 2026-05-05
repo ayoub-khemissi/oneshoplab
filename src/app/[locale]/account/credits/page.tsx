@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { CREDIT_PACKS } from '@/lib/ai/models';
 import { auth } from '@/lib/auth';
+import { getCreditBuckets } from '@/lib/credits';
 import { buyCreditPackAction } from '@/lib/stripe-actions';
 import { getStripePackPriceId } from '@/lib/stripe';
 
@@ -21,7 +22,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const t = await getTranslations('Credits');
 
-  const balance = session.user.creditsBalance ?? 0;
+  const buckets = await getCreditBuckets(session.user.id);
   const banner =
     params.purchase === 'success'
       ? { kind: 'success' as const, text: t('purchaseSuccess') }
@@ -71,16 +72,32 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
-      <Card variant="secondary" className="p-5 flex items-baseline justify-between gap-3 flex-wrap">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
-            {t('balanceLabel')}
-          </span>
-          <span className="text-3xl font-bold tabular-nums">
-            {balance.toLocaleString()}
-          </span>
+      <Card variant="secondary" className="p-5 flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+              {t('balanceLabel')}
+            </span>
+            <span className="text-3xl font-bold tabular-nums">
+              {buckets.total.toLocaleString()}
+            </span>
+          </div>
+          <p className="text-xs text-[var(--muted)] max-w-md">{t('balanceHint')}</p>
         </div>
-        <p className="text-xs text-[var(--muted)] max-w-md">{t('balanceHint')}</p>
+        <div className="flex flex-wrap gap-3 text-xs">
+          <BucketChip
+            label={t('subscriptionBucketLabel')}
+            value={buckets.subscription}
+            hint={t('subscriptionBucketHint')}
+            tone="accent"
+          />
+          <BucketChip
+            label={t('packBucketLabel')}
+            value={buckets.pack}
+            hint={t('packBucketHint')}
+            tone="success"
+          />
+        </div>
       </Card>
 
       <section className="flex flex-col gap-3">
@@ -106,6 +123,32 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         </div>
       </section>
     </main>
+  );
+}
+
+function BucketChip({
+  label,
+  value,
+  hint,
+  tone
+}: {
+  label: string;
+  value: number;
+  hint: string;
+  tone: 'accent' | 'success';
+}) {
+  const dot =
+    tone === 'success' ? 'bg-[var(--success)]' : 'bg-[var(--accent)]';
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--default)]">
+      <span className={`size-2 rounded-full ${dot}`} aria-hidden />
+      <span className="text-[var(--muted)]">{label}</span>
+      <span className="font-mono font-semibold tabular-nums">
+        {value.toLocaleString()}
+      </span>
+      <span className="text-[var(--muted)] hidden sm:inline">·</span>
+      <span className="text-[var(--muted)] hidden sm:inline">{hint}</span>
+    </div>
   );
 }
 

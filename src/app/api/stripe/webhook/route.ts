@@ -124,6 +124,7 @@ async function handleCreditPackPurchase(
   await applyCreditTransaction({
     userId,
     delta: pack.credits,
+    bucket: 'pack',
     reason: `pack_${pack.id}_purchase`,
     idempotencyKey: `pack-${cs.id}`,
     metadata: {
@@ -160,9 +161,14 @@ async function handleInvoicePaid(stripe: Stripe, invoice: Stripe.Invoice): Promi
   const periodStart = invoice.period_start ?? Math.floor(Date.now() / 1000);
   const idempotencyKey = `grant-${subscription.id}-${periodStart}`;
 
+  // Renewal RESETS the subscription bucket to the plan's full allowance —
+  // unused subscription credits don't roll over. Pack credits are untouched
+  // and remain spendable until consumed. delta is computed inside
+  // applyCreditTransaction so the audit trail records the net change.
   await applyCreditTransaction({
     userId,
-    delta: tier.credits,
+    delta: 0,
+    setSubscriptionTo: tier.credits,
     reason: `subscription_${resolved.plan}_${resolved.cycle}_grant`,
     idempotencyKey,
     metadata: {

@@ -53,12 +53,15 @@ async function signupAction(formData: FormData) {
 
   const userId = randomUUID();
   const passwordHash = await hashPassword(password);
+  // Free tier signup grant lands in the pack bucket — it's a one-shot
+  // never-expire welcome, not a renewable subscription allowance.
   await db.insert(users).values({
     id: userId,
     email,
     name,
     passwordHash,
     creditsBalance: SIGNUP_FREE_CREDITS,
+    creditsBalancePack: SIGNUP_FREE_CREDITS,
     plan: 'free'
   });
 

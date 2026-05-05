@@ -415,6 +415,10 @@
         "name": "Mega",
         "tagline": "Stocker au meilleur tarif par crédit."
       }
-    }
+    },
+    "subscriptionBucketLabel": "Abonnement",
+    "subscriptionBucketHint": "remis à zéro à chaque renouvellement",
+    "packBucketLabel": "Packs",
+    "packBucketHint": "n'expirent jamais"
   }
 }
