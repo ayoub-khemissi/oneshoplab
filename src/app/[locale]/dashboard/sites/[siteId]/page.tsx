@@ -853,9 +853,6 @@ function truncate(text: string, max: number): string {
 
 function JobDetail({ job }: { job: ProjectJobRow }) {
   const t = useTranslations('Dashboard');
-  const input = (job.inputPayload ?? null) as
-    | { userPrompt?: string; field?: string; chatModelId?: string; angle?: string }
-    | null;
   const result = (job.result ?? null) as
     | {
         output?: string | string[];
@@ -865,15 +862,14 @@ function JobDetail({ job }: { job: ProjectJobRow }) {
       }
     | null;
 
-  const prompt = input?.userPrompt?.trim() ?? '';
   const outputText = renderOutputText(result);
   const hasError = job.status === 'failed' || job.status === 'timed_out';
 
+  // The prompt (input.userPrompt) is intentionally NOT surfaced — exposing
+  // it would leak our prompt-engineering scaffolding to merchants. Only the
+  // result and any error message are shown.
   return (
     <dl className="flex flex-col gap-3">
-      {prompt ? (
-        <Section label={t('jobDetailPrompt')}>{truncate(prompt, DETAIL_SNIPPET_LIMIT)}</Section>
-      ) : null}
       {outputText ? (
         <Section label={t('jobDetailOutput')}>{truncate(outputText, DETAIL_SNIPPET_LIMIT)}</Section>
       ) : null}
@@ -882,7 +878,7 @@ function JobDetail({ job }: { job: ProjectJobRow }) {
           {truncate(job.error, DETAIL_SNIPPET_LIMIT)}
         </Section>
       ) : null}
-      {!prompt && !outputText && !job.error ? (
+      {!outputText && !job.error ? (
         <p className="text-[var(--muted)] italic">{t('jobDetailEmpty')}</p>
       ) : null}
     </dl>
