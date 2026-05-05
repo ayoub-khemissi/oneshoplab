@@ -5,6 +5,7 @@ import { loadEnv } from './env';
 loadEnv();
 
 const { runAuditRunner } = await import('./audit-runner');
+const { runAuditWatchdog } = await import('./audit-watchdog');
 const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
 
@@ -27,7 +28,13 @@ async function main(): Promise<void> {
   while (!stopping) {
     const t0 = Date.now();
     try {
-      const tasks: Array<Promise<unknown>> = [runAuditRunner(), runKieWatchdog()];
+      const tasks: Array<Promise<unknown>> = [
+        runAuditRunner(),
+        runKieWatchdog(),
+        runAuditWatchdog().catch((e) =>
+          console.error('[worker] audit-watchdog failed', e)
+        )
+      ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
       if (t0 - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
