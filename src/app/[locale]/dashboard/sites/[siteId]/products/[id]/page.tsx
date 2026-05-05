@@ -300,7 +300,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <SourcePreview product={product} />
 
             <FieldSwapGroup>
-              <div className="p-5 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
+              <div className="px-5 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <span className="eyebrow">AI suggestions</span>
                   <div className="flex items-center gap-2 flex-wrap">
