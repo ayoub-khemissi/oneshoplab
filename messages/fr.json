@@ -446,5 +446,13 @@
     "inDays": "Suppr. auto dans {days, plural, =1 {1 jour} other {# jours}}",
     "expired": "Suppression imminente",
     "tooltip": "Suppression automatique le {date}"
+  },
+  "Relaunch": {
+    "relaunch": "Relancer l'analyse",
+    "relaunching": "Relance en cours…",
+    "cooldownTooltip": "Disponible dans {time}",
+    "inHoursMinutes": "{h}h {m}m",
+    "inMinutesSeconds": "{m}m {s}s",
+    "inSeconds": "{s}s"
   }
 }

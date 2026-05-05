@@ -48,6 +48,26 @@ export const MAX_CUSTOM_INSTRUCTIONS_CHARS = 750;
  */
 export const IMAGE_RETENTION_DAYS = 30;
 
+/**
+ * Minimum delay between two static audit re-runs on the same project,
+ * by plan. The "Relaunch analysis" button on the site page is disabled
+ * until this many ms have elapsed since the latest audit's createdAt.
+ * Higher tiers get tighter cooldowns as part of the value ladder.
+ */
+export const AUDIT_COOLDOWN_MS_BY_PLAN: Record<'free' | 'starter' | 'pro' | 'scale', number> = {
+  free: 6 * 60 * 60 * 1000,    // 6 hours — same as Starter; Free can still relaunch but without rush
+  starter: 6 * 60 * 60 * 1000, // 6 hours
+  pro: 2 * 60 * 60 * 1000,     // 2 hours
+  scale: 30 * 60 * 1000        // 30 minutes
+};
+
+export function auditCooldownMsForPlan(plan: string | null | undefined): number {
+  if (plan === 'starter' || plan === 'pro' || plan === 'scale' || plan === 'free') {
+    return AUDIT_COOLDOWN_MS_BY_PLAN[plan];
+  }
+  return AUDIT_COOLDOWN_MS_BY_PLAN.free;
+}
+
 // ---------------------------------------------------------------------------
 // Chat models
 // ---------------------------------------------------------------------------
@@ -293,6 +313,13 @@ function fullGenerationCost(): number {
 
 const FULL_GEN_COST = fullGenerationCost();
 
+function formatCooldown(ms: number): string {
+  const minutes = Math.round(ms / 60_000);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.round(minutes / 60);
+  return `${hours} h`;
+}
+
 function buildHighlights(plan: PlanId, credits: number, siteLimit: number, recurring: boolean): string[] {
   const fullGens = credits > 0 ? Math.floor(credits / FULL_GEN_COST) : 0;
   const grant = recurring
@@ -300,7 +327,8 @@ function buildHighlights(plan: PlanId, credits: number, siteLimit: number, recur
     : `${credits.toLocaleString()} credits at signup`;
   const stores = siteLimit === 1 ? '1 store' : `Up to ${siteLimit} stores`;
   const gens = fullGens > 0 ? `~${fullGens} product generations` : null;
-  return [grant, stores, ...(gens ? [gens] : []), ...PLAN_DISPLAY[plan].highlightExtras];
+  const reaudit = `Re-audit every ${formatCooldown(AUDIT_COOLDOWN_MS_BY_PLAN[plan])}`;
+  return [grant, stores, ...(gens ? [gens] : []), reaudit, ...PLAN_DISPLAY[plan].highlightExtras];
 }
 
 export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {

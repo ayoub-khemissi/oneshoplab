@@ -2,7 +2,8 @@
 
 import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from './ai/models';
+import { auditCooldownMsForPlan, MAX_CUSTOM_INSTRUCTIONS_CHARS } from './ai/models';
+import { launchAuditForUser } from './audit/launch';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, signOut } from './auth';
 import { db } from './db';
@@ -68,6 +69,49 @@ export async function touchProjectLastView(projectId: string): Promise<void> {
     .update(projects)
     .set({ lastViewedAt: new Date() })
     .where(eq(projects.id, projectId));
+}
+
+/**
+ * Manually relaunch the static audit on a project. Throttled per-plan
+ * (see auditCooldownMsForPlan) to keep scraping costs bounded — the UI
+ * button computes its own cooldown so this is mostly a defensive check.
+ * Latest-audit createdAt is the cooldown anchor.
+ */
+export async function relaunchProjectAuditAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = String(formData.get('projectId') ?? '');
+  if (!projectId) return;
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, projectId), eq(projects.userId, session.user.id))
+  });
+  if (!project) return;
+
+  const latest = await db.query.audits.findFirst({
+    where: eq(audits.projectId, project.id),
+    orderBy: [desc(audits.createdAt)]
+  });
+
+  // Cooldown gate. The UI is the primary line of defence (button is
+  // disabled with a live timer); we re-check here so a forged form post
+  // can't bypass it.
+  const cooldownMs = auditCooldownMsForPlan(session.user.plan);
+  if (latest) {
+    const elapsed = Date.now() - latest.createdAt.getTime();
+    if (elapsed < cooldownMs) return;
+  }
+
+  // Prefer the latest audit's URL (always populated) — projects.url may be
+  // null for older rows that pre-date that column.
+  const url = latest?.url ?? project.url ?? null;
+  const domain = project.domain ?? latest?.domain ?? null;
+  if (!url || !domain) return;
+
+  await launchAuditForUser(session.user.id, { url, domain });
+
+  revalidatePath(`/dashboard/sites/${projectId}`);
 }
 
 /**

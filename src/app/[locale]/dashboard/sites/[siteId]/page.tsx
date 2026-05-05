@@ -6,6 +6,7 @@ import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
+import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import {
@@ -228,6 +229,9 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           domain={decoded}
           url={audit.url}
           canAdd={canAddSite}
+          projectId={project.id}
+          lastAuditAtIso={audit.createdAt.toISOString()}
+          plan={(session.user.plan ?? 'free') as 'free' | 'starter' | 'pro' | 'scale'}
         />
         <StatusLine status={audit.status} error={audit.error} />
         <TabsNav active={activeTab} siteId={siteId} />
@@ -270,11 +274,17 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 function SiteHeaderBar({
   domain,
   url,
-  canAdd
+  canAdd,
+  projectId,
+  lastAuditAtIso,
+  plan
 }: {
   domain: string;
   url: string;
   canAdd: boolean;
+  projectId: string;
+  lastAuditAtIso: string | null;
+  plan: 'free' | 'starter' | 'pro' | 'scale';
 }) {
   const t = useTranslations('Dashboard');
   return (
@@ -286,7 +296,7 @@ function SiteHeaderBar({
         <ArrowLeft className="size-3.5" />
         {t('backToDashboard')}
       </Link>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <a
           href={url}
           target="_blank"
@@ -296,6 +306,11 @@ function SiteHeaderBar({
           {domain}
           <ExternalLink className="size-4 opacity-60" aria-hidden />
         </a>
+        <RelaunchAuditButton
+          projectId={projectId}
+          lastAuditAtIso={lastAuditAtIso}
+          plan={plan}
+        />
         {canAdd ? (
           <Link
             href="/dashboard/sites/new"

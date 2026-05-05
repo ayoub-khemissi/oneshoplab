@@ -446,5 +446,13 @@
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",
     "tooltip": "Auto-deleted on {date}"
+  },
+  "Relaunch": {
+    "relaunch": "Relaunch analysis",
+    "relaunching": "Relaunching…",
+    "cooldownTooltip": "Available again in {time}",
+    "inHoursMinutes": "{h}h {m}m",
+    "inMinutesSeconds": "{m}m {s}s",
+    "inSeconds": "{s}s"
   }
 }
