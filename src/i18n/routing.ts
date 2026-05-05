@@ -59,7 +59,7 @@ export const RTL_LOCALES = new Set<(typeof SUPPORTED_LOCALES)[number]>(['ar']);
 export const routing = defineRouting({
   locales: SUPPORTED_LOCALES,
   defaultLocale: 'en',
-  localePrefix: 'as-needed'
+  localePrefix: 'always'
 });
 
 export type Locale = (typeof routing.locales)[number];
