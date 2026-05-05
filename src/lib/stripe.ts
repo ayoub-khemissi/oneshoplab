@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import type { BillingCycle, PlanId } from './ai/models';
+import type { BillingCycle, CreditPackId, PlanId } from './ai/models';
 
 /**
  * Lazily-instantiated Stripe client. We don't fail at import time when
@@ -51,6 +51,26 @@ export function resolvePriceId(
         return { plan, cycle };
       }
     }
+  }
+  return null;
+}
+
+/**
+ * Resolves a credit-pack id to its Stripe Price ID configured via
+ * `STRIPE_PRICE_PACK_<PACK>`. Returns null when not configured (lets the UI
+ * disable the buy button gracefully instead of erroring).
+ */
+export function getStripePackPriceId(packId: CreditPackId): string | null {
+  const key = `STRIPE_PRICE_PACK_${packId.toUpperCase()}`;
+  const value = process.env[key];
+  return value && value.length > 0 ? value : null;
+}
+
+/** Inverse: maps a price ID back to a pack id (used by the webhook). */
+export function resolvePackPriceId(priceId: string): CreditPackId | null {
+  const packs: CreditPackId[] = ['boost', 'power', 'mega'];
+  for (const pack of packs) {
+    if (getStripePackPriceId(pack) === priceId) return pack;
   }
   return null;
 }

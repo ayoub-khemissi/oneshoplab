@@ -13,10 +13,11 @@ import {
 } from './db/schema';
 import {
   PLAN_TIERS,
+  getCreditPack,
   type BillingCycle,
   type PlanId
 } from './ai/models';
-import { getStripeClient, getStripePriceId } from './stripe';
+import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
 
 /**
  * Create (or reuse) a Stripe Checkout session for the requested plan/cycle
@@ -100,6 +101,81 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
   });
 
   if (!checkout.url) redirect('/pricing?error=stripe_failed');
+  redirect(checkout.url);
+}
+
+/**
+ * Create (or reuse) a Stripe Checkout session for a one-time credit pack
+ * purchase. Mirrors createCheckoutSessionAction but with mode='payment' —
+ * the webhook handler grants the credits on checkout.session.completed when
+ * mode === 'payment'.
+ */
+export async function buyCreditPackAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/login?next=/account/credits');
+
+  const packIdRaw = String(formData.get('packId') ?? '');
+  const pack = getCreditPack(packIdRaw);
+  if (!pack) redirect('/account/credits?error=invalid_pack');
+
+  const priceId = getStripePackPriceId(pack.id);
+  if (!priceId) redirect('/account/credits?error=price_not_configured');
+
+  const stripe = getStripeClient();
+  const userId = session.user.id;
+  const email = session.user.email ?? undefined;
+  const appUrl = process.env.APP_URL ?? 'http://localhost:3000';
+
+  // Reuse the existing Stripe Customer if we already have one (subscription
+  // flow may have created one earlier).
+  const existing = await db.query.subscriptions.findFirst({
+    where: eq(subscriptions.userId, userId)
+  });
+
+  let customerId = existing?.stripeCustomerId ?? null;
+  if (!customerId) {
+    const customer = await stripe.customers.create({
+      email,
+      metadata: { oneshoplabUserId: userId }
+    });
+    customerId = customer.id;
+    if (existing) {
+      await db
+        .update(subscriptions)
+        .set({ stripeCustomerId: customerId })
+        .where(eq(subscriptions.userId, userId));
+    } else {
+      await db.insert(subscriptions).values({
+        id: randomUUID(),
+        userId,
+        stripeCustomerId: customerId,
+        plan: 'free',
+        status: 'pending'
+      });
+    }
+  }
+
+  const checkout = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    customer: customerId,
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: `${appUrl}/account/credits?purchase=success`,
+    cancel_url: `${appUrl}/account/credits?purchase=cancelled`,
+    metadata: {
+      oneshoplabUserId: userId,
+      packId: pack.id,
+      credits: String(pack.credits)
+    },
+    payment_intent_data: {
+      metadata: {
+        oneshoplabUserId: userId,
+        packId: pack.id,
+        credits: String(pack.credits)
+      }
+    }
+  });
+
+  if (!checkout.url) redirect('/account/credits?error=stripe_failed');
   redirect(checkout.url);
 }
 

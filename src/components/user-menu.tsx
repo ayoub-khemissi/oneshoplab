@@ -2,6 +2,7 @@
 
 import { Avatar } from '@heroui/react';
 import {
+  Coins,
   CreditCard,
   LayoutDashboard,
   LogOut,
@@ -24,6 +25,7 @@ interface UserMenuProps {
   planLabel: string;
   dashboardLabel: string;
   preferencesLabel: string;
+  buyCreditsLabel: string;
   manageSubscriptionLabel: string;
   upgradeLabel: string;
   signOutLabel: string;
@@ -45,6 +47,7 @@ export function UserMenu({
   planLabel,
   dashboardLabel,
   preferencesLabel,
+  buyCreditsLabel,
   manageSubscriptionLabel,
   upgradeLabel,
   signOutLabel,
@@ -137,6 +140,15 @@ export function UserMenu({
           >
             <Settings className="size-4 text-[var(--muted)]" />
             {preferencesLabel}
+          </Link>
+          <Link
+            href="/account/credits"
+            onClick={() => setOpen(false)}
+            className="px-3 py-2 text-sm hover:bg-[var(--default)] transition-colors flex items-center gap-2"
+            role="menuitem"
+          >
+            <Coins className="size-4 text-[var(--muted)]" />
+            {buyCreditsLabel}
           </Link>
           {plan === 'free' ? (
             <Link

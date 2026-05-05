@@ -1,40 +1,41 @@
 /**
- * Model registry — single source of truth for the LLMs and image models we
- * expose to merchants. Each entry stores:
- *   - kieModelId: the actual model identifier passed to the kie.ai API
- *   - kieCost: kie's billing rate (image = per call, chat = per million tokens)
- *   - oneShopLab credits price after applying the global CREDIT_MARKUP factor
- *   - tier label for grouping in UI selectors
+ * Model registry — static identifiers + display copy for the LLMs and image
+ * models we expose to merchants. All numeric levers (kie rates, markup,
+ * caps, plan credits, credit-pack pricing) live in `pricing.json` and are
+ * loaded via `./pricing`. This file only owns:
+ *   - kieModelId  (the string passed to kie's API — stable, code-y)
+ *   - displayName / provider / tier / tagline (UI copy)
+ *   - the merge function that combines static metadata with JSON numbers
  *
- * The markup is centralised here so changing it later only touches one file.
- * All credit debits in the codebase MUST run through `costForChatResponse` or
- * `costForImageGeneration` to stay consistent.
+ * Pricing math is deterministic: every chat field has a hard input/output
+ * token cap (see fieldCaps in pricing.json), the cost shown to the user is
+ * cap × kie-rate × markup, and runChatOptim sends max_tokens = outputCap
+ * to kie so we can never exceed the quoted cost. The user is debited
+ * exactly the quoted amount — no surprise tail debits.
  */
 
-/**
- * Markup applied to kie's raw credit cost when billing the merchant.
- * Default 2.5x (≈70-78% gross margin at typical usage). Tunable via env so
- * pricing can be re-balanced without a code change. Clamped to [1, 10] to
- * guard against typos that would either lose money or chase users away.
- */
-function readMarkup(): number {
-  const raw = process.env.CREDIT_MARKUP_FACTOR;
-  if (!raw) return 2.5;
-  const parsed = Number.parseFloat(raw);
-  if (!Number.isFinite(parsed) || parsed < 1 || parsed > 10) return 2.5;
-  return parsed;
-}
+import {
+  CHAT_MODEL_IDS,
+  CREDIT_PACK_IDS,
+  FIELD_IDS,
+  IMAGE_QUALITY_IDS,
+  PLAN_IDS,
+  PRICING,
+  type CreditPackId as PricingCreditPackId,
+  type PricingChatModelId,
+  type PricingFieldId,
+  type PricingImageQualityId,
+  type PricingPlanId
+} from './pricing';
 
-export const CREDIT_MARKUP = readMarkup();
-
-/** 1 OneShopLab credit = $0.005 retail. */
-export const CREDIT_USD_VALUE = 0.005;
+export const CREDIT_MARKUP = PRICING.creditMarkupFactor;
+export const CREDIT_USD_VALUE = PRICING.creditUsdValue;
 
 // ---------------------------------------------------------------------------
 // Chat models
 // ---------------------------------------------------------------------------
 
-export type ChatModelId = 'gemini-3-1-pro' | 'sonnet-4-6' | 'opus-4-6';
+export type ChatModelId = PricingChatModelId;
 
 export interface ChatModelInfo {
   id: ChatModelId;
@@ -50,38 +51,45 @@ export interface ChatModelInfo {
   tagline: string;
 }
 
-export const CHAT_MODEL_REGISTRY: Record<ChatModelId, ChatModelInfo> = {
+const CHAT_MODEL_META: Record<
+  ChatModelId,
+  Omit<ChatModelInfo, 'id' | 'kieInputPerM' | 'kieOutputPerM'>
+> = {
   'gemini-3-1-pro': {
-    id: 'gemini-3-1-pro',
     kieModelId: 'gemini-3-1-pro',
     displayName: 'Gemini 3.1 Pro',
     provider: 'Google',
     tier: 'budget',
-    kieInputPerM: 100,
-    kieOutputPerM: 700,
     tagline: 'Fast and economical — great for bulk runs.'
   },
   'sonnet-4-6': {
-    id: 'sonnet-4-6',
     kieModelId: 'claude-sonnet-4-6',
     displayName: 'Claude Sonnet 4.6',
     provider: 'Anthropic',
     tier: 'balanced',
-    kieInputPerM: 170,
-    kieOutputPerM: 855,
     tagline: 'Best price / quality balance for product copy.'
   },
   'opus-4-6': {
-    id: 'opus-4-6',
     kieModelId: 'claude-opus-4-6',
     displayName: 'Claude Opus 4.6',
     provider: 'Anthropic',
     tier: 'premium',
-    kieInputPerM: 285,
-    kieOutputPerM: 1430,
     tagline: 'Top-tier reasoning — premium tone and edge cases.'
   }
 };
+
+export const CHAT_MODEL_REGISTRY: Record<ChatModelId, ChatModelInfo> =
+  Object.fromEntries(
+    CHAT_MODEL_IDS.map((id) => [
+      id,
+      {
+        id,
+        ...CHAT_MODEL_META[id],
+        kieInputPerM: PRICING.chatModels[id].kieInputPerM,
+        kieOutputPerM: PRICING.chatModels[id].kieOutputPerM
+      } satisfies ChatModelInfo
+    ])
+  ) as Record<ChatModelId, ChatModelInfo>;
 
 export const DEFAULT_CHAT_MODEL: ChatModelId = 'sonnet-4-6';
 
@@ -92,35 +100,36 @@ export function getChatModel(id: ChatModelId | string | null | undefined): ChatM
   return CHAT_MODEL_REGISTRY[DEFAULT_CHAT_MODEL];
 }
 
-/** Convert a kie chat response's `credits_consumed` into the user-facing debit. */
-export function chatCreditsToDebit(kieCreditsConsumed: number): number {
-  return Math.ceil(kieCreditsConsumed * CREDIT_MARKUP);
-}
+// ---------------------------------------------------------------------------
+// Per-field deterministic costs
+// ---------------------------------------------------------------------------
 
-/**
- * Estimate the credit cost of a chat call BEFORE running it. Used to render
- * "Generate · X credits" buttons. Uses typical token counts per field; the
- * real debit comes from kie's `credits_consumed` after the call.
- */
 export interface ChatTokenEstimate {
   inputTokens: number;
   outputTokens: number;
 }
 
-export const FIELD_TOKEN_ESTIMATES: Record<
-  'title' | 'description' | 'tags' | 'social' | 'fullAudit',
-  ChatTokenEstimate
-> = {
-  title: { inputTokens: 600, outputTokens: 80 },
-  description: { inputTokens: 600, outputTokens: 950 },
-  tags: { inputTokens: 600, outputTokens: 90 },
-  social: { inputTokens: 600, outputTokens: 800 },
-  fullAudit: { inputTokens: 2500, outputTokens: 1900 }
-};
+export const FIELD_TOKEN_ESTIMATES: Record<PricingFieldId, ChatTokenEstimate> =
+  Object.fromEntries(
+    FIELD_IDS.map((id) => [
+      id,
+      {
+        inputTokens: PRICING.fieldCaps[id].inputTokens,
+        outputTokens: PRICING.fieldCaps[id].outputTokens
+      } satisfies ChatTokenEstimate
+    ])
+  ) as Record<PricingFieldId, ChatTokenEstimate>;
 
+/**
+ * Deterministic credit cost for a chat call. Computed from the per-field
+ * cap (input + output) × kie's per-million rate × markup, ceilinged to an
+ * integer. This is BOTH the price shown on the button AND the amount the
+ * user is debited — there is no separate "actual usage" pass, because the
+ * generation is hard-capped at outputTokens.
+ */
 export function estimateChatCredits(
   modelId: ChatModelId,
-  field: keyof typeof FIELD_TOKEN_ESTIMATES
+  field: PricingFieldId
 ): number {
   const m = CHAT_MODEL_REGISTRY[modelId];
   const t = FIELD_TOKEN_ESTIMATES[field];
@@ -130,11 +139,16 @@ export function estimateChatCredits(
   return Math.max(1, Math.ceil(kieCredits * CREDIT_MARKUP));
 }
 
+/** Output-token cap for kie's `max_tokens`. Drives the determinism guarantee. */
+export function outputTokenCapFor(field: PricingFieldId): number {
+  return FIELD_TOKEN_ESTIMATES[field].outputTokens;
+}
+
 // ---------------------------------------------------------------------------
 // Image models
 // ---------------------------------------------------------------------------
 
-export type ImageQualityId = 'image-1k' | 'image-2k' | 'image-4k';
+export type ImageQualityId = PricingImageQualityId;
 
 export interface ImageModelInfo {
   id: ImageQualityId;
@@ -142,40 +156,48 @@ export interface ImageModelInfo {
   displayName: string;
   resolution: '1K' | '2K' | '4K';
   tier: 'budget' | 'balanced' | 'premium';
-  /** kie's flat per-call cost in raw kie credits. */
   kieCost: number;
   tagline: string;
 }
 
-export const IMAGE_MODEL_REGISTRY: Record<ImageQualityId, ImageModelInfo> = {
+const IMAGE_QUALITY_META: Record<
+  ImageQualityId,
+  Omit<ImageModelInfo, 'id' | 'kieCost'>
+> = {
   'image-1k': {
-    id: 'image-1k',
     kieModelId: 'gpt-image-2-image-to-image',
     displayName: '1K · Standard',
     resolution: '1K',
     tier: 'budget',
-    kieCost: 6,
     tagline: 'Fast and crisp — fine for thumbnails and listings.'
   },
   'image-2k': {
-    id: 'image-2k',
     kieModelId: 'gpt-image-2-image-to-image',
     displayName: '2K · High',
     resolution: '2K',
     tier: 'balanced',
-    kieCost: 10,
     tagline: 'Sharp lifestyle shots — recommended for hero images.'
   },
   'image-4k': {
-    id: 'image-4k',
     kieModelId: 'gpt-image-2-image-to-image',
     displayName: '4K · Premium',
     resolution: '4K',
     tier: 'premium',
-    kieCost: 16,
     tagline: 'Print-grade quality — agencies and luxury brands.'
   }
 };
+
+export const IMAGE_MODEL_REGISTRY: Record<ImageQualityId, ImageModelInfo> =
+  Object.fromEntries(
+    IMAGE_QUALITY_IDS.map((id) => [
+      id,
+      {
+        id,
+        ...IMAGE_QUALITY_META[id],
+        kieCost: PRICING.imageQualities[id].kieCost
+      } satisfies ImageModelInfo
+    ])
+  ) as Record<ImageQualityId, ImageModelInfo>;
 
 export const DEFAULT_IMAGE_QUALITY: ImageQualityId = 'image-1k';
 
@@ -192,11 +214,13 @@ export function costForImage(qualityId: ImageQualityId): number {
   return Math.ceil(m.kieCost * CREDIT_MARKUP);
 }
 
+export const IMAGE_ANGLES_PER_GEN = PRICING.imageAnglesPerGen;
+
 // ---------------------------------------------------------------------------
-// Subscription tiers — used by the pricing page and signup flow.
+// Subscription tiers
 // ---------------------------------------------------------------------------
 
-export type PlanId = 'free' | 'starter' | 'pro' | 'scale';
+export type PlanId = PricingPlanId;
 export type BillingCycle = 'monthly' | 'yearly';
 
 /** Yearly subscriptions get a -20% discount vs 12× the monthly price. */
@@ -217,6 +241,66 @@ export interface PlanTier {
   highlights: string[];
 }
 
+const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: string[] }> = {
+  free: {
+    name: 'Free',
+    highlightExtras: ['All models available', 'No card required']
+  },
+  starter: {
+    name: 'Starter',
+    highlightExtras: ['All models available', 'Email support']
+  },
+  pro: {
+    name: 'Pro',
+    highlightExtras: ['Priority generations', 'Priority support']
+  },
+  scale: {
+    name: 'Scale',
+    highlightExtras: ['Bulk operations', 'Dedicated success manager']
+  }
+};
+
+/**
+ * One full-product run = title + description + tags + 3 lifestyle images,
+ * using the default chat model (Sonnet) and 1K image quality. Used to
+ * advertise "~N product generations" on the pricing page.
+ */
+function fullGenerationCost(): number {
+  const text =
+    estimateChatCredits(DEFAULT_CHAT_MODEL, 'title') +
+    estimateChatCredits(DEFAULT_CHAT_MODEL, 'description') +
+    estimateChatCredits(DEFAULT_CHAT_MODEL, 'tags');
+  const images = costForImage(DEFAULT_IMAGE_QUALITY) * IMAGE_ANGLES_PER_GEN;
+  return text + images;
+}
+
+const FULL_GEN_COST = fullGenerationCost();
+
+function buildHighlights(plan: PlanId, credits: number, siteLimit: number, recurring: boolean): string[] {
+  const fullGens = credits > 0 ? Math.floor(credits / FULL_GEN_COST) : 0;
+  const grant = recurring
+    ? `${credits.toLocaleString()} credits / month`
+    : `${credits.toLocaleString()} credits at signup`;
+  const stores = siteLimit === 1 ? '1 store' : `Up to ${siteLimit} stores`;
+  const gens = fullGens > 0 ? `~${fullGens} product generations` : null;
+  return [grant, stores, ...(gens ? [gens] : []), ...PLAN_DISPLAY[plan].highlightExtras];
+}
+
+export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {
+  const p = PRICING.plans[id];
+  const fullGens = p.credits > 0 ? Math.floor(p.credits / FULL_GEN_COST) : 0;
+  return {
+    id,
+    name: PLAN_DISPLAY[id].name,
+    priceEur: p.priceEur,
+    credits: p.credits,
+    recurring: p.recurring,
+    approxFullGenerations: fullGens,
+    siteLimit: p.siteLimit,
+    highlights: buildHighlights(id, p.credits, p.siteLimit, p.recurring)
+  };
+});
+
 /** Resolve the site quota for a plan id. Falls back to the free tier limit. */
 export function siteLimitForPlan(plan: string | null | undefined): number {
   const tier = PLAN_TIERS.find((p) => p.id === plan);
@@ -227,70 +311,40 @@ export function yearlyPriceEur(monthlyPriceEur: number): number {
   return Math.round(monthlyPriceEur * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100;
 }
 
-/** Monthly-equivalent display price for a yearly cycle (e.g. €39.99/mo → €31.99/mo billed yearly). */
+/** Monthly-equivalent display price for a yearly cycle. */
 export function yearlyMonthlyEquivalent(monthlyPriceEur: number): number {
   return Math.round(monthlyPriceEur * (1 - YEARLY_DISCOUNT) * 100) / 100;
 }
 
-export const PLAN_TIERS: PlanTier[] = [
-  {
-    id: 'free',
-    name: 'Free',
-    priceEur:0,
-    credits: 150,
-    recurring: false,
-    approxFullGenerations: 3,
-    siteLimit: 1,
-    highlights: ['150 credits at signup', '1 store', 'All models available', 'No card required']
-  },
-  {
-    id: 'starter',
-    name: 'Starter',
-    priceEur:39.99,
-    credits: 5500,
-    recurring: true,
-    approxFullGenerations: 110,
-    siteLimit: 3,
-    highlights: [
-      '5,500 credits / month',
-      'Up to 3 stores',
-      '~110 product generations',
-      'All models available',
-      'Email support'
-    ]
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    priceEur:89.99,
-    credits: 15000,
-    recurring: true,
-    approxFullGenerations: 300,
-    siteLimit: 10,
-    highlights: [
-      '15,000 credits / month',
-      'Up to 10 stores',
-      '~300 product generations',
-      'Priority generations',
-      'Priority support'
-    ]
-  },
-  {
-    id: 'scale',
-    name: 'Scale',
-    priceEur:199.99,
-    credits: 38000,
-    recurring: true,
-    approxFullGenerations: 760,
-    siteLimit: 50,
-    highlights: [
-      '38,000 credits / month',
-      'Up to 50 stores',
-      '~760 product generations',
-      'Bulk operations',
-      'Dedicated success manager'
-    ]
-  }
-];
-
 export const SIGNUP_FREE_CREDITS = PLAN_TIERS[0].credits;
+
+// ---------------------------------------------------------------------------
+// Credit packs (one-time top-ups)
+// ---------------------------------------------------------------------------
+
+export type CreditPackId = PricingCreditPackId;
+
+export interface CreditPack {
+  id: CreditPackId;
+  /** Marketing label. Stable, used in i18n keys. */
+  name: string;
+  credits: number;
+  priceEur: number;
+}
+
+const PACK_DISPLAY: Record<CreditPackId, { name: string }> = {
+  boost: { name: 'Boost' },
+  power: { name: 'Power' },
+  mega: { name: 'Mega' }
+};
+
+export const CREDIT_PACKS: CreditPack[] = CREDIT_PACK_IDS.map((id) => ({
+  id,
+  name: PACK_DISPLAY[id].name,
+  credits: PRICING.creditPacks[id].credits,
+  priceEur: PRICING.creditPacks[id].priceEur
+}));
+
+export function getCreditPack(id: string | null | undefined): CreditPack | null {
+  return CREDIT_PACKS.find((p) => p.id === id) ?? null;
+}

@@ -33,7 +33,8 @@
     "manageSubscription": "Gérer mon abonnement",
     "upgrade": "Passer à un plan payant",
     "changeLanguage": "Changer de langue",
-    "changeTheme": "Changer le thème"
+    "changeTheme": "Changer le thème",
+    "buyCredits": "Acheter des crédits"
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",
@@ -385,5 +386,35 @@
     "failedTitle": "Audit échoué",
     "failedDescription": "Impossible de terminer l'audit de {project}. Réessaie depuis le dashboard.",
     "failedDescriptionNoProject": "Impossible de terminer ton audit. Réessaie depuis le dashboard."
+  },
+  "Credits": {
+    "title": "Crédits",
+    "subtitle": "Recharge ton solde avec des packs de crédits ponctuels. Ils n'expirent jamais et s'ajoutent à tes crédits d'abonnement mensuels.",
+    "backToDashboard": "Retour au dashboard",
+    "balanceLabel": "Solde actuel",
+    "balanceHint": "1 crédit ≈ €0.005 de valeur retail. Utilisés pour les générations IA sur la page d'optimisation.",
+    "packsTitle": "Packs de crédits",
+    "packsHint": "Achats ponctuels — sans abonnement récurrent. Les abonnements restent le tarif le plus bas par crédit.",
+    "buyButton": "Acheter",
+    "comingSoon": "Bientôt",
+    "purchaseSuccess": "Achat réussi — tes crédits arrivent (généralement en moins d'une minute).",
+    "purchaseCancelled": "Achat annulé. Rien n'a été facturé.",
+    "errorInvalidPack": "Pack inconnu — recharge la page et réessaie.",
+    "errorPriceNotConfigured": "Ce pack n'est pas encore disponible. Reviens plus tard.",
+    "errorStripeFailed": "Stripe est injoignable. Réessaie dans un instant.",
+    "pack": {
+      "boost": {
+        "name": "Boost",
+        "tagline": "Petite recharge — termine ton batch."
+      },
+      "power": {
+        "name": "Power",
+        "tagline": "Coup de pouce mi-mois pour boutiques actives."
+      },
+      "mega": {
+        "name": "Mega",
+        "tagline": "Stocker au meilleur tarif par crédit."
+      }
+    }
   }
 }

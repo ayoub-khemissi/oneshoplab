@@ -4,9 +4,14 @@ import type Stripe from 'stripe';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';
-import { getStripeClient, getStripeWebhookSecret, resolvePriceId } from '@/lib/stripe';
+import {
+  getStripeClient,
+  getStripeWebhookSecret,
+  resolvePackPriceId,
+  resolvePriceId
+} from '@/lib/stripe';
 import { syncSubscriptionFromStripe } from '@/lib/stripe-actions';
-import { PLAN_TIERS, type PlanId } from '@/lib/ai/models';
+import { getCreditPack, PLAN_TIERS, type PlanId } from '@/lib/ai/models';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -66,15 +71,67 @@ async function handleCheckoutCompleted(
   stripe: Stripe,
   cs: Stripe.Checkout.Session
 ): Promise<void> {
-  if (cs.mode !== 'subscription' || !cs.subscription) return;
-
   const userId = (cs.metadata?.oneshoplabUserId ?? '') as string;
   if (!userId) return;
 
-  const subscription = await stripe.subscriptions.retrieve(
-    typeof cs.subscription === 'string' ? cs.subscription : cs.subscription.id
-  );
-  await syncFromStripeSubscription(userId, subscription);
+  if (cs.mode === 'subscription' && cs.subscription) {
+    const subscription = await stripe.subscriptions.retrieve(
+      typeof cs.subscription === 'string' ? cs.subscription : cs.subscription.id
+    );
+    await syncFromStripeSubscription(userId, subscription);
+    return;
+  }
+
+  if (cs.mode === 'payment') {
+    await handleCreditPackPurchase(stripe, cs, userId);
+    return;
+  }
+}
+
+/**
+ * One-time credit-pack purchase landed. Resolve the pack via the line-item
+ * price ID (preferred — survives stale metadata), fall back to the metadata
+ * we set in buyCreditPackAction. Grant atomically with an idempotency key
+ * tied to the checkout session so retries don't double-credit.
+ */
+async function handleCreditPackPurchase(
+  stripe: Stripe,
+  cs: Stripe.Checkout.Session,
+  userId: string
+): Promise<void> {
+  if (cs.payment_status !== 'paid') return;
+
+  let packId: string | null = null;
+  try {
+    const items = await stripe.checkout.sessions.listLineItems(cs.id, { limit: 1 });
+    const priceId = items.data[0]?.price?.id ?? null;
+    if (priceId) packId = resolvePackPriceId(priceId);
+  } catch {
+    // ignore — we'll fall back to metadata
+  }
+  if (!packId) packId = (cs.metadata?.packId ?? null) as string | null;
+
+  const pack = getCreditPack(packId);
+  if (!pack) {
+    console.warn('[stripe webhook] credit pack purchase with unresolved packId', {
+      sessionId: cs.id,
+      packId,
+      metadata: cs.metadata
+    });
+    return;
+  }
+
+  await applyCreditTransaction({
+    userId,
+    delta: pack.credits,
+    reason: `pack_${pack.id}_purchase`,
+    idempotencyKey: `pack-${cs.id}`,
+    metadata: {
+      checkoutSessionId: cs.id,
+      packId: pack.id,
+      packCredits: pack.credits
+    }
+  });
 }
 
 async function handleInvoicePaid(stripe: Stripe, invoice: Stripe.Invoice): Promise<void> {

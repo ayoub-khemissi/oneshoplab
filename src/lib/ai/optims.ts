@@ -4,7 +4,12 @@ import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
 import { KieClient, getKieClient, type ChatMessage } from './kie';
-import { chatCreditsToDebit, getChatModel, type ChatModelId } from './models';
+import {
+  estimateChatCredits,
+  getChatModel,
+  outputTokenCapFor,
+  type ChatModelId
+} from './models';
 import {
   buildDescriptionRewritePrompt,
   buildTagSuggestionPrompt,
@@ -40,16 +45,12 @@ const KIND_BY_FIELD: Record<ChatOptimField, JobKind> = {
   tags: 'kie_tags'
 };
 
-const MAX_TOKENS_BY_FIELD: Record<ChatOptimField, number> = {
-  title: 256,
-  description: 2048,
-  tags: 512
-};
-
 /**
  * Run a synchronous Claude generation for one of the chat-driven fields.
- * Persists the job with the result + debits credits using the exact
- * credits_consumed amount returned by kie.
+ * Pricing is deterministic: the call is hard-capped at outputTokenCapFor()
+ * so kie can never bill us more than what we already quoted the user, and
+ * we debit exactly the quoted amount (estimateChatCredits) — no surprise
+ * tail debits if the LLM ran a bit long.
  */
 export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimResult> {
   const kie = getKieClient();
@@ -69,13 +70,15 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     model: model.kieModelId,
     system: built.system,
     messages,
-    max_tokens: MAX_TOKENS_BY_FIELD[opts.field]
+    max_tokens: outputTokenCapFor(opts.field)
   });
 
   const text = KieClient.extractText(response);
   const output: string | string[] = opts.field === 'tags' ? parseTags(text) : text;
 
-  const debit = chatCreditsToDebit(response.credits_consumed);
+  // Quoted = debited. The user paid for the cap; whether kie's actual
+  // credits_consumed lands a bit under the cap is our buffer/upside.
+  const debit = estimateChatCredits(model.id, opts.field);
 
   const jobId = randomUUID();
   const now = new Date();

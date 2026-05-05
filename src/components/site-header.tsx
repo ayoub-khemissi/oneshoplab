@@ -35,7 +35,7 @@ export async function SiteHeader() {
           {user ? (
             <>
               <Link
-                href="/pricing"
+                href="/account/credits"
                 title={t('credits')}
                 aria-label={`${user.creditsBalance ?? 0} ${t('credits')}`}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-semibold hover:bg-[var(--accent)]/20 transition-colors mr-1"
@@ -53,6 +53,7 @@ export async function SiteHeader() {
                 planLabel={t('plan')}
                 dashboardLabel={t('dashboard')}
                 preferencesLabel={t('preferences')}
+                buyCreditsLabel={t('buyCredits')}
                 manageSubscriptionLabel={t('manageSubscription')}
                 upgradeLabel={t('upgrade')}
                 signOutLabel={t('signOut')}

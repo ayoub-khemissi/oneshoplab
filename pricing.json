@@ -1,0 +1,39 @@
+{
+  "creditMarkupFactor": 3.5,
+  "creditUsdValue": 0.005,
+  "kieCreditUsdValue": 0.005,
+  "imageAnglesPerGen": 3,
+
+  "plans": {
+    "free":    { "credits": 150,    "siteLimit": 1,  "priceEur": 0,      "recurring": false },
+    "starter": { "credits": 5500,   "siteLimit": 3,  "priceEur": 39.99,  "recurring": true  },
+    "pro":     { "credits": 15000,  "siteLimit": 10, "priceEur": 89.99,  "recurring": true  },
+    "scale":   { "credits": 38000,  "siteLimit": 50, "priceEur": 199.99, "recurring": true  }
+  },
+
+  "fieldCaps": {
+    "title":       { "inputTokens": 1500, "outputTokens": 80   },
+    "description": { "inputTokens": 1500, "outputTokens": 1100 },
+    "tags":        { "inputTokens": 1500, "outputTokens": 120  },
+    "social":      { "inputTokens": 1500, "outputTokens": 800  },
+    "fullAudit":   { "inputTokens": 2500, "outputTokens": 1900 }
+  },
+
+  "chatModels": {
+    "gemini-3-1-pro": { "kieInputPerM": 100, "kieOutputPerM": 700  },
+    "sonnet-4-6":     { "kieInputPerM": 170, "kieOutputPerM": 855  },
+    "opus-4-6":       { "kieInputPerM": 285, "kieOutputPerM": 1430 }
+  },
+
+  "imageQualities": {
+    "image-1k": { "kieCost": 6  },
+    "image-2k": { "kieCost": 10 },
+    "image-4k": { "kieCost": 16 }
+  },
+
+  "creditPacks": {
+    "boost": { "credits": 500,  "priceEur": 4.99  },
+    "power": { "credits": 2000, "priceEur": 17.99 },
+    "mega":  { "credits": 8000, "priceEur": 59.99 }
+  }
+}

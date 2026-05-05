@@ -33,7 +33,8 @@
     "manageSubscription": "Manage subscription",
     "upgrade": "Upgrade plan",
     "changeLanguage": "Change language",
-    "changeTheme": "Toggle theme"
+    "changeTheme": "Toggle theme",
+    "buyCredits": "Buy credits"
   },
   "Footer": {
     "tagline": "AI product page optimization",
@@ -385,5 +386,35 @@
     "failedTitle": "Audit failed",
     "failedDescription": "We couldn't finish auditing {project}. Try again from the dashboard.",
     "failedDescriptionNoProject": "We couldn't finish your audit. Try again from the dashboard."
+  },
+  "Credits": {
+    "title": "Credits",
+    "subtitle": "Top up your balance with one-time credit packs. They never expire and add to your monthly subscription credits.",
+    "backToDashboard": "Back to dashboard",
+    "balanceLabel": "Current balance",
+    "balanceHint": "1 credit ≈ €0.005 in retail value. Used to pay for AI generations on the optimisation page.",
+    "packsTitle": "Credit packs",
+    "packsHint": "One-time purchases — no recurring billing. Subscriptions remain the cheapest per-credit price.",
+    "buyButton": "Buy now",
+    "comingSoon": "Coming soon",
+    "purchaseSuccess": "Purchase successful — your credits are on the way (usually less than a minute).",
+    "purchaseCancelled": "Purchase cancelled. No charge was made.",
+    "errorInvalidPack": "Unknown pack — please refresh and try again.",
+    "errorPriceNotConfigured": "This pack isn't available yet. Please come back later.",
+    "errorStripeFailed": "Couldn't reach Stripe. Try again in a moment.",
+    "pack": {
+      "boost": {
+        "name": "Boost",
+        "tagline": "A small refill — finish that batch."
+      },
+      "power": {
+        "name": "Power",
+        "tagline": "Mid-month boost for active stores."
+      },
+      "mega": {
+        "name": "Mega",
+        "tagline": "Stock up at the best per-credit rate."
+      }
+    }
   }
 }
