@@ -55,7 +55,7 @@ export const IMAGE_RETENTION_DAYS = 30;
  * Higher tiers get tighter cooldowns as part of the value ladder.
  */
 export const AUDIT_COOLDOWN_MS_BY_PLAN: Record<'free' | 'starter' | 'pro' | 'scale', number> = {
-  free: 6 * 60 * 60 * 1000,    // 6 hours — same as Starter; Free can still relaunch but without rush
+  free: 24 * 60 * 60 * 1000,   // 24 hours — keeps free-tier scraping cost in check
   starter: 6 * 60 * 60 * 1000, // 6 hours
   pro: 2 * 60 * 60 * 1000,     // 2 hours
   scale: 30 * 60 * 1000        // 30 minutes
