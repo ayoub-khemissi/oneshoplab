@@ -6,13 +6,16 @@ loadEnv();
 
 const { runAuditRunner } = await import('./audit-runner');
 const { runKieWatchdog } = await import('./kie-watchdog');
+const { runR2Cleanup } = await import('./r2-cleanup');
 
 const TICK_MS = 5_000;
+const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
 
 async function main(): Promise<void> {
   console.log('[worker] starting');
 
   let stopping = false;
+  let lastCleanupAt = 0;
   const stop = (signal: string) => {
     if (stopping) return;
     stopping = true;
@@ -24,7 +27,18 @@ async function main(): Promise<void> {
   while (!stopping) {
     const t0 = Date.now();
     try {
-      await Promise.allSettled([runAuditRunner(), runKieWatchdog()]);
+      const tasks: Array<Promise<unknown>> = [runAuditRunner(), runKieWatchdog()];
+      // Hourly: drop R2 objects + DB rows for image jobs older than 30
+      // days. Ride on the same loop so we don't spawn a separate process.
+      if (t0 - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
+        lastCleanupAt = t0;
+        tasks.push(
+          runR2Cleanup().catch((e) =>
+            console.error('[worker] r2-cleanup failed', e)
+          )
+        );
+      }
+      await Promise.allSettled(tasks);
     } catch (e) {
       console.error('[worker] unhandled tick error', e);
     }

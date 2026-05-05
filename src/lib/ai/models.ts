@@ -40,6 +40,14 @@ export const CREDIT_USD_VALUE = PRICING.creditUsdValue;
  */
 export const MAX_CUSTOM_INSTRUCTIONS_CHARS = 750;
 
+/**
+ * Generated AI images are retained in R2 + DB for this many days, then
+ * dropped by the worker's hourly cleanup tick. Surfaced in the UI as
+ * "expires in N days" so merchants know to download anything they want
+ * to keep before the deadline.
+ */
+export const IMAGE_RETENTION_DAYS = 30;
+
 // ---------------------------------------------------------------------------
 // Chat models
 // ---------------------------------------------------------------------------

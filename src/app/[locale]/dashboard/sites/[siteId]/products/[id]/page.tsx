@@ -20,6 +20,7 @@ import {
   FieldSwapGroup,
   FieldSwapGroupToggle
 } from '@/components/field-swap';
+import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { ProductImageGallery } from '@/components/product-image-gallery';
 import {
@@ -550,16 +551,27 @@ function AiImageGrid({ history }: { history: OptimHistoryItem[] }) {
   if (urls.length === 0) {
     return <p className="text-sm text-[var(--muted)] italic">{t('noLatestGeneration')}</p>;
   }
+  // Use the most recent image-job timestamp for the expiry caption — the
+  // grid shows up to 3 URLs that almost always belong to the same generation
+  // (3 angles fired together), so a single caption fits.
+  const latestCreatedAt = history[0]?.createdAt;
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {urls.map((u, i) => (
-        <ImageZoom
-          key={`${u}-${i}`}
-          url={u}
-          alt="Generated"
-          downloadName={`ai-${i + 1}.png`}
-        />
-      ))}
+    <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-3 gap-2">
+        {urls.map((u, i) => (
+          <ImageZoom
+            key={`${u}-${i}`}
+            url={u}
+            alt="Generated"
+            downloadName={`ai-${i + 1}.png`}
+          />
+        ))}
+      </div>
+      {latestCreatedAt ? (
+        <div className="flex justify-end">
+          <ImageExpiry createdAt={latestCreatedAt} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -603,6 +615,9 @@ function PastGenerationsSection({
                   <span className="flex-1 truncate text-[var(--muted)]">
                     {pastGenInlinePreview(h.output)}
                   </span>
+                  {h.field === 'images' ? (
+                    <ImageExpiry createdAt={h.createdAt} className="shrink-0" />
+                  ) : null}
                   <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0">
                     {h.createdAt.toLocaleDateString()}
                   </span>

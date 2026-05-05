@@ -1,4 +1,4 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 interface R2Config {
   accountId: string;
@@ -83,6 +83,40 @@ export async function uploadFromUrl(sourceUrl: string, key: string): Promise<Upl
     contentType,
     size: buffer.length
   };
+}
+
+/**
+ * Resolve a public R2 URL back to its bucket key. We persist URLs (not keys)
+ * in jobs.result, so the cleanup worker needs this round-trip to call
+ * DeleteObject. Returns null when the URL doesn't belong to our configured
+ * R2_PUBLIC_URL — that includes legacy temp kie URLs that were never
+ * uploaded to R2.
+ */
+export function keyFromPublicUrl(publicUrl: string): string | null {
+  const cfg = getConfig();
+  if (!cfg) return null;
+  const base = cfg.publicUrl.replace(/\/$/, '');
+  if (!publicUrl.startsWith(base + '/')) return null;
+  return decodeURIComponent(publicUrl.slice(base.length + 1));
+}
+
+/**
+ * Delete an object from the configured R2 bucket. Best-effort: returns
+ * false on any failure so the caller can log and move on without blowing
+ * up the cleanup loop.
+ */
+export async function deleteByKey(key: string): Promise<boolean> {
+  const conn = getClient();
+  if (!conn) return false;
+  try {
+    await conn.client.send(
+      new DeleteObjectCommand({ Bucket: conn.cfg.bucket, Key: key })
+    );
+    return true;
+  } catch (e) {
+    console.error('[r2] DeleteObject failed', { key, error: (e as Error).message });
+    return false;
+  }
 }
 
 export async function uploadBuffer(

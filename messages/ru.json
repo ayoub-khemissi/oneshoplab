@@ -441,5 +441,10 @@
     "placeholder": "e.g. \"Highlight organic cotton in every description\", \"Brand voice: playful, lowercase, French\", \"Target audience: outdoor enthusiasts\"…",
     "saveButton": "Save",
     "saved": "Saved"
+  },
+  "ImageExpiry": {
+    "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
+    "expired": "Pending deletion",
+    "tooltip": "Auto-deleted on {date}"
   }
 }

@@ -441,5 +441,10 @@
     "placeholder": "ex. « Mettre en avant le coton bio dans chaque description », « Ton de marque : joueur, en minuscules, français », « Cible : amateurs d'outdoor »…",
     "saveButton": "Enregistrer",
     "saved": "Enregistré"
+  },
+  "ImageExpiry": {
+    "inDays": "Suppr. auto dans {days, plural, =1 {1 jour} other {# jours}}",
+    "expired": "Suppression imminente",
+    "tooltip": "Suppression automatique le {date}"
   }
 }
