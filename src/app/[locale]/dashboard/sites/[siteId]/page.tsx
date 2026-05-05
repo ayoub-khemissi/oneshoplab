@@ -1,4 +1,4 @@
-import { Card, Skeleton } from '@heroui/react';
+import { Accordion, Card, Skeleton } from '@heroui/react';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -785,42 +785,157 @@ function ProjectJobsList({
   }
   return (
     <Card>
-      <Card.Content className="p-0 divide-y divide-[var(--border)]">
-        {items.map((j) => {
-          const productHref = j.product?.id
-            ? `/dashboard/sites/${siteId}/products/${j.product.id}`
-            : null;
-          return (
-            <div
-              key={j.id}
-              className="px-4 py-3 flex items-center justify-between gap-3 text-sm"
-            >
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <span className="text-[var(--foreground)]">
-                  {t(jobKindLabel(j.kind as never))}
-                </span>
-                {j.product ? (
-                  productHref ? (
-                    <Link
-                      href={productHref}
-                      className="text-xs text-[var(--muted)] truncate hover:text-[var(--accent)] hover:underline"
-                    >
-                      {j.product.title}
-                    </Link>
-                  ) : (
-                    <span className="text-xs text-[var(--muted)] truncate">
-                      {j.product.title}
-                    </span>
-                  )
-                ) : null}
-              </div>
-              <ProjectJobStatusBadge status={j.status as JobStatus} />
-            </div>
-          );
-        })}
+      <Card.Content className="p-0">
+        <Accordion>
+          {items.map((j) => {
+            const productHref = j.product?.id
+              ? `/dashboard/sites/${siteId}/products/${j.product.id}`
+              : null;
+            return (
+              <Accordion.Item
+                key={j.id}
+                id={j.id}
+                className="border-b border-[var(--border)] last:border-b-0"
+              >
+                <div className="flex items-stretch w-full">
+                  <Accordion.Heading className="flex-1 min-w-0">
+                    <Accordion.Trigger className="w-full px-4 py-3 flex items-center gap-3 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
+                      <span className="flex-1 truncate text-[var(--foreground)]">
+                        {t(jobKindLabel(j.kind as never))}
+                      </span>
+                      <span className="text-xs font-mono text-[var(--muted)] tabular-nums shrink-0">
+                        {j.creditsCost > 0 ? `${j.creditsCost} cr` : '—'}
+                      </span>
+                      <ProjectJobStatusBadge status={j.status as JobStatus} />
+                      <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
+                    </Accordion.Trigger>
+                  </Accordion.Heading>
+                  <div className="flex items-center px-4 py-3 border-l border-[var(--border)] max-w-[40%] min-w-0">
+                    {j.product ? (
+                      productHref ? (
+                        <Link
+                          href={productHref}
+                          className="text-xs text-[var(--muted)] hover:text-[var(--accent)] hover:underline truncate"
+                          title={j.product.title}
+                        >
+                          {j.product.title}
+                        </Link>
+                      ) : (
+                        <span className="text-xs text-[var(--muted)] truncate">
+                          {j.product.title}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-xs text-[var(--muted)] italic">—</span>
+                    )}
+                  </div>
+                </div>
+                <Accordion.Panel>
+                  <Accordion.Body className="px-4 py-3 bg-[var(--default)]/30 text-xs">
+                    <JobDetail job={j} />
+                  </Accordion.Body>
+                </Accordion.Panel>
+              </Accordion.Item>
+            );
+          })}
+        </Accordion>
       </Card.Content>
     </Card>
   );
+}
+
+const DETAIL_SNIPPET_LIMIT = 320;
+
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  return text.slice(0, max).trimEnd() + '…';
+}
+
+function JobDetail({ job }: { job: ProjectJobRow }) {
+  const t = useTranslations('Dashboard');
+  const input = (job.inputPayload ?? null) as
+    | { userPrompt?: string; field?: string; chatModelId?: string; angle?: string }
+    | null;
+  const result = (job.result ?? null) as
+    | {
+        output?: string | string[];
+        raw?: string;
+        persistedUrls?: string[];
+        resultUrls?: string[];
+      }
+    | null;
+
+  const prompt = input?.userPrompt?.trim() ?? '';
+  const outputText = renderOutputText(result);
+  const hasError = job.status === 'failed' || job.status === 'timed_out';
+
+  return (
+    <dl className="flex flex-col gap-3">
+      {prompt ? (
+        <Section label={t('jobDetailPrompt')}>{truncate(prompt, DETAIL_SNIPPET_LIMIT)}</Section>
+      ) : null}
+      {outputText ? (
+        <Section label={t('jobDetailOutput')}>{truncate(outputText, DETAIL_SNIPPET_LIMIT)}</Section>
+      ) : null}
+      {hasError && job.error ? (
+        <Section label={t('jobDetailError')} tone="danger">
+          {truncate(job.error, DETAIL_SNIPPET_LIMIT)}
+        </Section>
+      ) : null}
+      {!prompt && !outputText && !job.error ? (
+        <p className="text-[var(--muted)] italic">{t('jobDetailEmpty')}</p>
+      ) : null}
+    </dl>
+  );
+}
+
+function Section({
+  label,
+  children,
+  tone = 'default'
+}: {
+  label: string;
+  children: React.ReactNode;
+  tone?: 'default' | 'danger';
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <dt className="text-[10px] font-medium uppercase tracking-wider text-[var(--muted)]">
+        {label}
+      </dt>
+      <dd
+        className={`whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed ${
+          tone === 'danger' ? 'text-[var(--danger)]' : 'text-[var(--foreground)]'
+        }`}
+      >
+        {children}
+      </dd>
+    </div>
+  );
+}
+
+/**
+ * Render the user-visible "what changed" string from a job's result blob.
+ * Chat jobs store either a string (title/description) or an array of strings
+ * (tags). Image jobs store URL arrays — surface their count + first URL so
+ * the merchant can spot which generation it was without leaving the tab.
+ */
+function renderOutputText(
+  result: {
+    output?: string | string[];
+    raw?: string;
+    persistedUrls?: string[];
+    resultUrls?: string[];
+  } | null
+): string {
+  if (!result) return '';
+  if (typeof result.output === 'string') return result.output;
+  if (Array.isArray(result.output)) return result.output.join(', ');
+  const urls = result.persistedUrls ?? result.resultUrls ?? [];
+  if (urls.length > 0) {
+    return urls.length === 1 ? urls[0] : `${urls.length} images · ${urls[0]}`;
+  }
+  return '';
 }
 
 /**

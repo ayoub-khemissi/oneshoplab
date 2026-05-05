@@ -196,7 +196,11 @@
     "jobKindImageEdit": "Image generation",
     "jobKindImageGenerate": "Image generation",
     "jobKindPromptSuggest": "Prompt ideas",
-    "jobKindGeneric": "Generation"
+    "jobKindGeneric": "Generation",
+    "jobDetailPrompt": "Prompt",
+    "jobDetailOutput": "Result",
+    "jobDetailError": "Error",
+    "jobDetailEmpty": "No detail recorded for this job."
   },
   "Product": {
     "backToDashboard": "Back to dashboard",

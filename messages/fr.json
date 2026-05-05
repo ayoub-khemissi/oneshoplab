@@ -196,7 +196,11 @@
     "jobKindImageEdit": "Génération d'image",
     "jobKindImageGenerate": "Génération d'image",
     "jobKindPromptSuggest": "Idées de prompts",
-    "jobKindGeneric": "Génération"
+    "jobKindGeneric": "Génération",
+    "jobDetailPrompt": "Prompt",
+    "jobDetailOutput": "Résultat",
+    "jobDetailError": "Erreur",
+    "jobDetailEmpty": "Aucun détail enregistré pour cette tâche."
   },
   "Product": {
     "backToDashboard": "Retour au tableau de bord",
