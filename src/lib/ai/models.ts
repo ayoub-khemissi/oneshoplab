@@ -205,8 +205,8 @@ export const YEARLY_DISCOUNT = 0.2;
 export interface PlanTier {
   id: PlanId;
   name: string;
-  /** Monthly retail price in USD. Yearly price = monthly × 12 × (1 - YEARLY_DISCOUNT). */
-  priceUsd: number;
+  /** Monthly retail price in EUR. Yearly price = monthly × 12 × (1 - YEARLY_DISCOUNT). */
+  priceEur: number;
   /** Monthly credits granted. For `free` this is a one-shot signup grant. */
   credits: number;
   recurring: boolean;
@@ -223,20 +223,20 @@ export function siteLimitForPlan(plan: string | null | undefined): number {
   return tier?.siteLimit ?? PLAN_TIERS[0].siteLimit;
 }
 
-export function yearlyPriceUsd(monthlyPriceUsd: number): number {
-  return Math.round(monthlyPriceUsd * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100;
+export function yearlyPriceEur(monthlyPriceEur: number): number {
+  return Math.round(monthlyPriceEur * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100;
 }
 
-/** Monthly-equivalent display price for a yearly cycle (e.g. $39.99/mo → $31.99/mo billed yearly). */
-export function yearlyMonthlyEquivalent(monthlyPriceUsd: number): number {
-  return Math.round(monthlyPriceUsd * (1 - YEARLY_DISCOUNT) * 100) / 100;
+/** Monthly-equivalent display price for a yearly cycle (e.g. €39.99/mo → €31.99/mo billed yearly). */
+export function yearlyMonthlyEquivalent(monthlyPriceEur: number): number {
+  return Math.round(monthlyPriceEur * (1 - YEARLY_DISCOUNT) * 100) / 100;
 }
 
 export const PLAN_TIERS: PlanTier[] = [
   {
     id: 'free',
     name: 'Free',
-    priceUsd: 0,
+    priceEur:0,
     credits: 150,
     recurring: false,
     approxFullGenerations: 3,
@@ -246,7 +246,7 @@ export const PLAN_TIERS: PlanTier[] = [
   {
     id: 'starter',
     name: 'Starter',
-    priceUsd: 39.99,
+    priceEur:39.99,
     credits: 5500,
     recurring: true,
     approxFullGenerations: 110,
@@ -262,7 +262,7 @@ export const PLAN_TIERS: PlanTier[] = [
   {
     id: 'pro',
     name: 'Pro',
-    priceUsd: 89.99,
+    priceEur:89.99,
     credits: 15000,
     recurring: true,
     approxFullGenerations: 300,
@@ -278,7 +278,7 @@ export const PLAN_TIERS: PlanTier[] = [
   {
     id: 'scale',
     name: 'Scale',
-    priceUsd: 199.99,
+    priceEur:199.99,
     credits: 38000,
     recurring: true,
     approxFullGenerations: 760,

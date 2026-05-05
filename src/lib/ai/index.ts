@@ -17,7 +17,7 @@ export {
   getImageModel,
   siteLimitForPlan,
   yearlyMonthlyEquivalent,
-  yearlyPriceUsd
+  yearlyPriceEur
 } from './models';
 export type {
   BillingCycle,

@@ -128,7 +128,7 @@ function PlanCard({
   available: boolean;
   copy: PricingCardsProps['copy'];
 }) {
-  const isFree = tier.priceUsd === 0;
+  const isFree = tier.priceEur === 0;
   const isFeatured = tier.id === 'pro';
 
   // Monthly-equivalent display price for both cycles (yearly = -20%).
@@ -136,8 +136,8 @@ function PlanCard({
     isFree
       ? 0
       : cycle === 'yearly'
-        ? yearlyMonthlyEquivalent(tier.priceUsd)
-        : tier.priceUsd;
+        ? yearlyMonthlyEquivalent(tier.priceEur)
+        : tier.priceEur;
 
   return (
     <div className="relative flex">
@@ -156,7 +156,7 @@ function PlanCard({
         <h3 className="text-lg font-bold tracking-tight">{tier.name}</h3>
         <div className="flex items-baseline gap-1.5">
           <span className="text-4xl font-bold">
-            ${displayPrice.toFixed(displayPrice % 1 === 0 ? 0 : 2)}
+            €{displayPrice.toFixed(displayPrice % 1 === 0 ? 0 : 2)}
           </span>
           {tier.recurring ? (
             <span className="text-sm text-[var(--muted)]">/ {copy.perMonth}</span>
@@ -226,7 +226,7 @@ function CardCta({
   const outlineClasses =
     'border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]';
 
-  if (tier.priceUsd === 0) {
+  if (tier.priceEur === 0) {
     const href = signedIn ? '/dashboard' : '/signup';
     return (
       <Link
