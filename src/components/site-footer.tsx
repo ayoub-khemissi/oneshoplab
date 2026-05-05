@@ -8,7 +8,22 @@ export async function SiteFooter() {
   return (
     <footer className="w-full border-t border-[var(--border)] mt-auto">
       <div className="max-w-6xl mx-auto px-6 py-6 text-xs text-[var(--muted)] flex flex-wrap items-center justify-between gap-4">
-        <span>© {year} OneShopLab — {t('tagline')}</span>
+        <span className="inline-flex items-center gap-1.5">
+          © {year}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/osl-dark.svg"
+            alt="OneShopLab"
+            className="block dark:hidden h-4 w-auto"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/osl-light.svg"
+            alt="OneShopLab"
+            className="hidden dark:block h-4 w-auto"
+          />
+          — {t('tagline')}
+        </span>
         <div className="flex items-center gap-5 flex-wrap">
           <Link
             href="/"
