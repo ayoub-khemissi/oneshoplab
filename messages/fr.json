@@ -40,7 +40,9 @@
     "tagline": "Optimisation IA des fiches produits",
     "home": "Accueil",
     "dashboard": "Tableau de bord",
-    "pricing": "Tarifs"
+    "pricing": "Tarifs",
+    "terms": "Conditions",
+    "privacy": "Confidentialité"
   },
   "Showcase": {
     "eyebrow": "Vraies boutiques, vrais résultats",
@@ -420,5 +422,12 @@
     "subscriptionBucketHint": "remis à zéro à chaque renouvellement",
     "packBucketLabel": "Packs",
     "packBucketHint": "n'expirent jamais"
+  },
+  "CookieBanner": {
+    "ariaLabel": "Avis cookies",
+    "body": "Nous n'utilisons que des cookies strictement nécessaires au fonctionnement du Service (authentification, langue, thème). Pas de pub, pas de tracking tiers.",
+    "learnMore": "En savoir plus",
+    "acknowledge": "Compris",
+    "close": "Fermer"
   }
 }

@@ -9,7 +9,7 @@ export async function SiteFooter() {
     <footer className="w-full border-t border-[var(--border)] mt-auto">
       <div className="max-w-6xl mx-auto px-6 py-6 text-xs text-[var(--muted)] flex flex-wrap items-center justify-between gap-4">
         <span>© {year} OneShopLab — {t('tagline')}</span>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 flex-wrap">
           <Link
             href="/"
             className="hover:text-[var(--foreground)] transition-colors"
@@ -27,6 +27,18 @@ export async function SiteFooter() {
             className="hover:text-[var(--foreground)] transition-colors"
           >
             {t('dashboard')}
+          </Link>
+          <Link
+            href="/terms"
+            className="hover:text-[var(--foreground)] transition-colors"
+          >
+            {t('terms')}
+          </Link>
+          <Link
+            href="/privacy"
+            className="hover:text-[var(--foreground)] transition-colors"
+          >
+            {t('privacy')}
           </Link>
         </div>
       </div>

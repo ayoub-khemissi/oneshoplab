@@ -40,7 +40,9 @@
     "tagline": "AI product page optimization",
     "home": "Home",
     "dashboard": "Dashboard",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "terms": "Terms",
+    "privacy": "Privacy"
   },
   "Showcase": {
     "eyebrow": "Real stores, real results",
@@ -420,5 +422,12 @@
     "subscriptionBucketHint": "resets every renewal",
     "packBucketLabel": "Packs",
     "packBucketHint": "never expire"
+  },
+  "CookieBanner": {
+    "ariaLabel": "Cookie notice",
+    "body": "We only use cookies that are strictly necessary to run the Service (authentication, locale, theme). We don't use advertising or third-party tracking cookies.",
+    "learnMore": "Learn more",
+    "acknowledge": "Got it",
+    "close": "Dismiss"
   }
 }

@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { AuditToastWatcher } from '@/components/audit-toast-watcher';
+import { CookieBanner } from '@/components/cookie-banner';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -63,6 +64,7 @@ export default async function LocaleLayout({
             <SiteFooter />
             <Toast.Provider placement="bottom end" className="bottom-8 right-8" />
             <AuditToastWatcher />
+            <CookieBanner />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
