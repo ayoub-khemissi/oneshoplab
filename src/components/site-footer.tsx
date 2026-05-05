@@ -13,16 +13,18 @@ export async function SiteFooter() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/osl-dark.svg"
-            alt="OneShopLab"
+            alt=""
+            aria-hidden
             className="block dark:hidden h-4 w-auto"
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/osl-light.svg"
-            alt="OneShopLab"
+            alt=""
+            aria-hidden
             className="hidden dark:block h-4 w-auto"
           />
-          — {t('tagline')}
+          OneShopLab — {t('tagline')}
         </span>
         <div className="flex items-center gap-5 flex-wrap">
           <Link

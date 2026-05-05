@@ -22,7 +22,7 @@ export async function SiteHeader() {
     <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md sticky top-0 z-20">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2" aria-label="OneShopLab">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
             {/* Two SVGs swapped via the dark: class — light variant on the
                 dark theme (light fill on dark bg) and vice versa. eslint-disable
                 because the project standard is plain <img>, not next/image. */}
@@ -40,7 +40,8 @@ export async function SiteHeader() {
               aria-hidden
               className="hidden dark:block h-7 w-auto"
             />
-            <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-semibold">
+            OneShopLab
+            <span className="ml-1 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-semibold">
               Beta
             </span>
           </Link>
