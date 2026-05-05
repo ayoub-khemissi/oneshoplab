@@ -20,9 +20,13 @@ module.exports = {
     },
     {
       name: 'oneshoplab-worker',
-      script: 'src/worker/index.ts',
-      interpreter: 'node',
-      interpreter_args: '--import tsx',
+      // pm2 wraps `script` in a CJS `require()` when an interpreter is set,
+      // which forces tsx to transform .mts as CJS and reject top-level await.
+      // Run tsx as the script with `interpreter: 'none'` so node is invoked
+      // with `tsx` as the entry directly — preserves ESM context.
+      script: './node_modules/.bin/tsx',
+      args: 'src/worker/index.mts',
+      interpreter: 'none',
       cwd: __dirname,
       instances: 1,
       exec_mode: 'fork',
