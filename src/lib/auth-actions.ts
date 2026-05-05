@@ -2,6 +2,7 @@
 
 import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from './ai/models';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, signOut } from './auth';
 import { db } from './db';
@@ -67,6 +68,33 @@ export async function touchProjectLastView(projectId: string): Promise<void> {
     .update(projects)
     .set({ lastViewedAt: new Date() })
     .where(eq(projects.id, projectId));
+}
+
+/**
+ * Save the site-wide AI instructions on a project. Verifies ownership before
+ * writing. Empty / whitespace-only string clears the field. Combined at
+ * generation time with any per-product instructions.
+ */
+export async function updateProjectInstructionsAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = String(formData.get('projectId') ?? '');
+  const raw = String(formData.get('customInstructions') ?? '');
+  if (!projectId) return;
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, projectId), eq(projects.userId, session.user.id))
+  });
+  if (!project) return;
+
+  const trimmed = raw.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS).trim();
+  await db
+    .update(projects)
+    .set({ customInstructions: trimmed.length > 0 ? trimmed : null })
+    .where(eq(projects.id, projectId));
+
+  revalidatePath(`/dashboard/sites/${projectId}`);
 }
 
 /**

@@ -249,7 +249,8 @@
     "noSourceImage": "Aucune image source disponible sur ce produit.",
     "generationsHistory": "Générations passées",
     "chatModelLabel": "Modèle texte",
-    "imageQualityLabel": "Qualité image"
+    "imageQualityLabel": "Qualité image",
+    "customInstructionsSiteHint": "Les instructions site-level configurées sur cette boutique seront aussi appliquées."
   },
   "Report": {
     "queued": "Audit en file d'attente, veuillez patienter — cela prend environ deux minutes",
@@ -429,5 +430,12 @@
     "learnMore": "En savoir plus",
     "acknowledge": "Compris",
     "close": "Fermer"
+  },
+  "SiteInstructions": {
+    "label": "Instructions IA à l'échelle du site",
+    "hint": "Appliquées à chaque génération sur cette boutique. À combiner avec les instructions par produit pour affiner.",
+    "placeholder": "ex. « Mettre en avant le coton bio dans chaque description », « Ton de marque : joueur, en minuscules, français », « Cible : amateurs d'outdoor »…",
+    "saveButton": "Enregistrer",
+    "saved": "Enregistré"
   }
 }

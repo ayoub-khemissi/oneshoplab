@@ -8,6 +8,7 @@ import {
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits,
   IMAGE_MODEL_REGISTRY,
+  MAX_CUSTOM_INSTRUCTIONS_CHARS,
   runChatOptim,
   startImageOptim,
   type ChatModelId,
@@ -100,11 +101,18 @@ function toProductContext(p: ProductSnapshot): ProductContext {
   };
 }
 
+interface LoadedSnapshot {
+  projectId: string;
+  product: ProductSnapshot;
+  /** Site-wide AI instructions configured on the project, if any. */
+  projectInstructions: string | null;
+}
+
 async function loadSnapshot(
   userId: string,
   siteId: string,
   productId: string
-): Promise<{ projectId: string; product: ProductSnapshot } | null> {
+): Promise<LoadedSnapshot | null> {
   const project = await db.query.projects.findFirst({
     where: and(eq(projects.userId, userId), eq(projects.id, siteId))
   });
@@ -137,7 +145,34 @@ async function loadSnapshot(
     if (productRow.handle && p.handle === productRow.handle) return true;
     return false;
   });
-  return product ? { projectId: project.id, product } : null;
+  return product
+    ? {
+        projectId: project.id,
+        product,
+        projectInstructions: project.customInstructions ?? null
+      }
+    : null;
+}
+
+/**
+ * Combine the per-call instructions (what the merchant just typed) with the
+ * site-wide instructions stored on the project. The site-wide block goes
+ * first as it represents the general brand voice; the per-product block
+ * follows as a more specific override. Empty / whitespace-only strings are
+ * dropped so the prompt stays clean.
+ */
+function combineInstructions(
+  projectInstructions: string | null,
+  productInstructions: string
+): string {
+  const parts: string[] = [];
+  if (projectInstructions && projectInstructions.trim()) {
+    parts.push(`Site-wide brand guidance:\n${projectInstructions.trim()}`);
+  }
+  if (productInstructions && productInstructions.trim()) {
+    parts.push(`Product-specific guidance:\n${productInstructions.trim()}`);
+  }
+  return parts.join('\n\n');
 }
 
 /**
@@ -171,8 +206,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const siteId = typeof body.siteId === 'string' ? body.siteId : '';
   const productId = typeof body.productId === 'string' ? body.productId : '';
   const fieldRaw = typeof body.field === 'string' ? body.field : '';
-  const customInstructions =
+  const customInstructionsRaw =
     typeof body.customInstructions === 'string' ? body.customInstructions : '';
+  // Truncate defensively — the front-end caps via maxLength but a hand-rolled
+  // request could try to bypass it. Keeps the input-token cost bounded.
+  const customInstructions = customInstructionsRaw.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS);
   const bodyChatModel =
     typeof body.chatModelId === 'string' ? body.chatModelId : null;
   const bodyImageQuality =
@@ -187,10 +225,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!loaded) {
     return NextResponse.json({ error: 'product_not_found' }, { status: 404 });
   }
-  const { product, projectId } = loaded;
+  const { product, projectId, projectInstructions } = loaded;
   const sourceId = product.sourceId ?? product.handle ?? '';
   const sourceImage = product.images[0]?.src;
   const context = toProductContext(product);
+
+  // Auto-save the per-product instructions on every generation so the
+  // textarea pre-fills with the merchant's last guidance on next visit.
+  // An empty string clears any previous value.
+  const trimmedCustom = customInstructions.trim();
+  await db
+    .update(products)
+    .set({ customInstructions: trimmedCustom.length > 0 ? trimmedCustom : null })
+    .where(eq(products.id, productId));
+
+  // Site-wide guidance (if any) prefixes the per-call instructions before
+  // they're appended to the field's default prompt.
+  const merchantInstructions = combineInstructions(projectInstructions, customInstructions);
 
   const fieldsToRun: Array<'title' | 'description' | 'tags' | 'images'> =
     field === 'all' ? ['title', 'description', 'tags', 'images'] : [field];
@@ -235,7 +286,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               projectId,
               productSourceId: sourceId,
               sourceImageUrl: sourceImage,
-              userPrompt: effectiveImagePrompt(angle, customInstructions),
+              userPrompt: effectiveImagePrompt(angle, merchantInstructions),
               appUrl: process.env.APP_URL,
               imageQualityId
             })
@@ -247,7 +298,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           projectId,
           productSourceId: sourceId,
           field: f,
-          userPrompt: effectiveChatPrompt(f, customInstructions),
+          userPrompt: effectiveChatPrompt(f, merchantInstructions),
           product: context,
           chatModelId
         });

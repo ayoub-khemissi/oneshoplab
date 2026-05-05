@@ -139,6 +139,10 @@ export const projects = mysqlTable(
     /** Last time the owner consulted this project — used to pick the default
      *  project on dashboard load when the user has multiple stores. */
     lastViewedAt: timestamp('last_viewed_at'),
+    /** Site-wide AI instructions appended to every generation in the project
+     *  (brand voice, recurring constraints, etc.). NULL = no site-wide
+     *  guidance. Combined at runtime with the per-product instructions. */
+    customInstructions: text('custom_instructions'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },
@@ -215,6 +219,10 @@ export const products = mysqlTable(
     currency: varchar('currency', { length: 8 }),
     sku: varchar('sku', { length: 128 }),
     sourceUpdatedAt: timestamp('source_updated_at'),
+    /** Per-product AI instructions appended to every generation on this
+     *  product page. Auto-saved on each generation request so the user's
+     *  last guidance pre-fills the textarea on next visit. */
+    customInstructions: text('custom_instructions'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },

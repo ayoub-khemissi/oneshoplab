@@ -87,11 +87,22 @@ interface SummaryShape {
 // Data loading
 // ============================================================================
 
+interface LoadedProduct {
+  projectId: string;
+  product: ProductSnapshot;
+  /** Last per-product instructions persisted by the API on previous
+   *  generations. Pre-fills the textarea on render. */
+  productInstructions: string;
+  /** Site-wide instructions configured on the project. Surfaced as a hint
+   *  on the product page so the merchant knows extra guidance is in flight. */
+  projectInstructions: string;
+}
+
 async function loadProductForUser(
   userId: string,
   siteId: string,
   productId: string
-): Promise<{ projectId: string; product: ProductSnapshot } | null> {
+): Promise<LoadedProduct | null> {
   const project = await db.query.projects.findFirst({
     where: and(eq(projects.userId, userId), eq(projects.id, siteId))
   });
@@ -99,7 +110,7 @@ async function loadProductForUser(
 
   const productRow = await db.query.products.findFirst({
     where: and(eq(products.id, productId), eq(products.projectId, project.id)),
-    columns: { sourceId: true, handle: true }
+    columns: { sourceId: true, handle: true, customInstructions: true }
   });
   if (!productRow) return null;
 
@@ -127,7 +138,13 @@ async function loadProductForUser(
     if (productRow.handle && p.handle === productRow.handle) return true;
     return false;
   });
-  return product ? { projectId: project.id, product } : null;
+  if (!product) return null;
+  return {
+    projectId: project.id,
+    product,
+    productInstructions: productRow.customInstructions ?? '',
+    projectInstructions: project.customInstructions ?? ''
+  };
 }
 
 // ============================================================================
@@ -142,7 +159,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const loaded = await loadProductForUser(session.user.id, siteId, productId);
   if (!loaded) notFound();
-  const { product, projectId } = loaded;
+  const { product, projectId, productInstructions, projectInstructions } = loaded;
   // sourceId is the audit-summary key for this product; needed for history
   // lookups and as the form payload key for AI generation jobs.
   const sourceId = product.sourceId ?? product.handle ?? '';
@@ -226,12 +243,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
         productId={productId}
         initialChatModelId={userChatModel}
         initialImageQualityId={userImageQuality}
+        initialCustomInstructions={productInstructions}
         creditsBalance={balance}
       >
         <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
           <ModelChips />
-          <CustomInstructionsField />
+          <CustomInstructionsField hasSiteInstructions={projectInstructions.trim().length > 0} />
         </div>
 
         <Card variant="secondary" className="overflow-hidden">

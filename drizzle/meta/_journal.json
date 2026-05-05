@@ -50,6 +50,13 @@
       "when": 1777949823274,
       "tag": "0006_classy_proemial_gods",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1777952566318,
+      "tag": "0007_fancy_dragon_man",
+      "breakpoints": true
     }
   ]
 }

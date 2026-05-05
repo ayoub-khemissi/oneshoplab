@@ -31,6 +31,15 @@ import {
 export const CREDIT_MARKUP = PRICING.creditMarkupFactor;
 export const CREDIT_USD_VALUE = PRICING.creditUsdValue;
 
+/**
+ * Hard cap on the length of merchant-supplied custom instructions, both at
+ * the per-product and at the per-site level. Enforced server-side (the API
+ * truncates) and surfaced client-side via maxLength + a counter, so the
+ * input-token portion of every generation stays bounded and the cost
+ * displayed on the buttons remains accurate.
+ */
+export const MAX_CUSTOM_INSTRUCTIONS_CHARS = 750;
+
 // ---------------------------------------------------------------------------
 // Chat models
 // ---------------------------------------------------------------------------

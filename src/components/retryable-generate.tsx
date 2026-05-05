@@ -17,6 +17,7 @@ import {
 import {
   costForImage,
   estimateChatCredits,
+  MAX_CUSTOM_INSTRUCTIONS_CHARS,
   type ChatModelId,
   type ImageQualityId
 } from '@/lib/ai/models';
@@ -72,6 +73,9 @@ interface ProviderProps {
   productId: string;
   initialChatModelId: ChatModelId;
   initialImageQualityId: ImageQualityId;
+  /** Last instructions persisted on the product — pre-fills the textarea
+   *  so the merchant doesn't lose their guidance between visits. */
+  initialCustomInstructions?: string;
   creditsBalance: number;
   children: ReactNode;
 }
@@ -81,13 +85,14 @@ export function RetryableGenerateProvider({
   productId,
   initialChatModelId,
   initialImageQualityId,
+  initialCustomInstructions = '',
   creditsBalance,
   children
 }: ProviderProps) {
   const router = useRouter();
   const t = useTranslations('Product');
   const [state, setState] = useState<State>({ kind: 'idle' });
-  const [customInstructions, setCustomInstructions] = useState('');
+  const [customInstructions, setCustomInstructions] = useState(initialCustomInstructions);
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
   const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQualityId);
 
@@ -408,7 +413,13 @@ function CancelButton({ onCancel, label }: { onCancel: () => void; label: string
  * value is included with every generation request — no need for a `<form>`
  * around the buttons anymore.
  */
-export function CustomInstructionsField() {
+interface CustomInstructionsFieldProps {
+  /** When the project carries site-wide instructions, surface a notice so
+   *  the merchant knows extra guidance is being added on top of theirs. */
+  hasSiteInstructions?: boolean;
+}
+
+export function CustomInstructionsField({ hasSiteInstructions = false }: CustomInstructionsFieldProps) {
   const t = useTranslations('Product');
   const { customInstructions, setCustomInstructions } = useGenerateContext();
   return (
@@ -423,12 +434,21 @@ export function CustomInstructionsField() {
         id="custom-instructions"
         name="customInstructions"
         rows={3}
+        maxLength={MAX_CUSTOM_INSTRUCTIONS_CHARS}
         value={customInstructions}
-        onChange={(e) => setCustomInstructions(e.target.value)}
+        onChange={(e) => setCustomInstructions(e.target.value.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS))}
         placeholder={t('customInstructionsPlaceholder')}
         className="w-full px-3 py-2 rounded-md border border-[var(--border)] bg-[var(--background)] text-sm focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition resize-y min-h-[80px]"
       />
-      <p className="text-xs text-[var(--muted)]">{t('customInstructionsHint')}</p>
+      <div className="flex items-baseline justify-between gap-3 text-xs text-[var(--muted)]">
+        <p>
+          {t('customInstructionsHint')}
+          {hasSiteInstructions ? ` ${t('customInstructionsSiteHint')}` : ''}
+        </p>
+        <span className="font-mono shrink-0 tabular-nums">
+          {customInstructions.length}/{MAX_CUSTOM_INSTRUCTIONS_CHARS}
+        </span>
+      </div>
     </div>
   );
 }

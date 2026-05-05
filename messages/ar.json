@@ -249,7 +249,8 @@
     "noSourceImage": "No source image available on this product.",
     "generationsHistory": "Past generations",
     "chatModelLabel": "Text model",
-    "imageQualityLabel": "Image quality"
+    "imageQualityLabel": "Image quality",
+    "customInstructionsSiteHint": "Site-wide instructions for this store will also be applied."
   },
   "Report": {
     "queued": "Analysis queued, please wait — this usually takes about two minutes",
@@ -429,5 +430,12 @@
     "learnMore": "Learn more",
     "acknowledge": "Got it",
     "close": "Dismiss"
+  },
+  "SiteInstructions": {
+    "label": "Site-wide AI instructions",
+    "hint": "Applied to every generation across this store. Combine with per-product instructions for fine-tuning.",
+    "placeholder": "e.g. \"Highlight organic cotton in every description\", \"Brand voice: playful, lowercase, French\", \"Target audience: outdoor enthusiasts\"…",
+    "saveButton": "Save",
+    "saved": "Saved"
   }
 }

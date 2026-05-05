@@ -7,6 +7,7 @@ import { Link } from '@/i18n/navigation';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
+import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import {
   axesValueTiers,
   commentaryTiers,
@@ -233,17 +234,23 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       </ScrollAwareSticky>
 
       {activeTab === 'overview' ? (
-        auditLoading ? (
-          <StaticSkeleton />
-        ) : audit.status === 'completed' && audit.scores != null ? (
-          <OverviewTab
-            scores={audit.scores as Scores}
-            summary={summary}
-            platform={audit.platform}
-            siteId={siteId}
-            productIdByKey={productIdByKey}
+        <>
+          <SiteInstructionsEditor
+            projectId={project.id}
+            initialValue={project.customInstructions ?? ''}
           />
-        ) : null
+          {auditLoading ? (
+            <StaticSkeleton />
+          ) : audit.status === 'completed' && audit.scores != null ? (
+            <OverviewTab
+              scores={audit.scores as Scores}
+              summary={summary}
+              platform={audit.platform}
+              siteId={siteId}
+              productIdByKey={productIdByKey}
+            />
+          ) : null}
+        </>
       ) : activeTab === 'products' ? (
         <PaginatedProductsList
           siteId={siteId}
