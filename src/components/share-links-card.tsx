@@ -39,6 +39,10 @@ interface ShareLinksCardProps {
    *  full clipboard-copy URL — server-resolved so the client doesn't
    *  guess at runtime. */
   publicAppUrl: string;
+  /** The site's bare domain (e.g. "shop.example.com") used as the
+   *  default label so each new share link is identifiable in the list
+   *  without forcing the admin to type it. They can edit before submit. */
+  defaultLabel: string;
   initialLinks: ShareLinkRow[];
   candidates: CandidateProduct[];
 }
@@ -56,6 +60,7 @@ interface ShareLinksCardProps {
 export function ShareLinksCard({
   siteId,
   publicAppUrl,
+  defaultLabel,
   initialLinks,
   candidates
 }: ShareLinksCardProps) {
@@ -170,6 +175,7 @@ export function ShareLinksCard({
       {modalOpen ? (
         <CreateModal
           siteId={siteId}
+          defaultLabel={defaultLabel}
           candidates={candidates}
           onCancel={() => setModalOpen(false)}
           onCreated={(row) => {
@@ -242,18 +248,23 @@ function RevokeButton({
 
 function CreateModal({
   siteId,
+  defaultLabel,
   candidates,
   onCancel,
   onCreated
 }: {
   siteId: string;
+  defaultLabel: string;
   candidates: CandidateProduct[];
   onCancel: () => void;
   onCreated: (row: ShareLinkRow) => void;
 }) {
   const t = useTranslations('Share');
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [label, setLabel] = useState('');
+  // Pre-fill with the site's domain so the admin's link list stays
+  // identifiable at a glance. Editable: a date suffix or prospect
+  // name is often more useful for outreach tracking.
+  const [label, setLabel] = useState<string>(defaultLabel);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 

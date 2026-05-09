@@ -421,6 +421,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             <ShareLinksCard
               siteId={siteId}
               publicAppUrl={process.env.APP_URL ?? 'http://localhost:3000'}
+              defaultLabel={project.domain ?? decoded ?? ''}
               initialLinks={shareLinks}
               candidates={shareCandidates}
             />
