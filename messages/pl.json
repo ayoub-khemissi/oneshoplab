@@ -54,7 +54,9 @@
     "subtitle": "Wycinek prawdziwych sklepów Shopify, WooCommerce i Wix. Kliknij kartę, aby otworzyć pełny audyt i sugestie AI.",
     "sourceLabel": "Przed",
     "aiLabel": "Po",
-    "viewReport": "Zobacz pełny raport"
+    "viewReport": "Zobacz pełny raport",
+    "expand": "Rozwiń",
+    "collapse": "Zwiń"
   },
   "Pricing": {
     "eyebrow": "Cennik",

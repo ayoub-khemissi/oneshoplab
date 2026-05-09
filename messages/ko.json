@@ -54,7 +54,9 @@
     "subtitle": "실제 Shopify, WooCommerce, Wix 스토어 사례. 카드를 클릭해 전체 감사와 AI 제안을 확인하세요.",
     "sourceLabel": "이전",
     "aiLabel": "이후",
-    "viewReport": "전체 보고서 보기"
+    "viewReport": "전체 보고서 보기",
+    "expand": "펼치기",
+    "collapse": "접기"
   },
   "Pricing": {
     "eyebrow": "요금",

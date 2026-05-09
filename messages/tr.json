@@ -54,7 +54,9 @@
     "subtitle": "Gerçek Shopify, WooCommerce ve Wix mağazalarından bir kesit. Tam denetim ve yapay zekâ önerilerini görmek için bir karta tıklayın.",
     "sourceLabel": "Önce",
     "aiLabel": "Sonra",
-    "viewReport": "Tam raporu görüntüle"
+    "viewReport": "Tam raporu görüntüle",
+    "expand": "Genişlet",
+    "collapse": "Daralt"
   },
   "Pricing": {
     "eyebrow": "Fiyatlandırma",

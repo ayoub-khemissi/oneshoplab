@@ -54,7 +54,9 @@
     "subtitle": "Una panoramica di store Shopify, WooCommerce e Wix reali. Clicca una card per aprire il report completo e i suggerimenti AI.",
     "sourceLabel": "Prima",
     "aiLabel": "Dopo",
-    "viewReport": "Consulta il report completo"
+    "viewReport": "Consulta il report completo",
+    "expand": "Espandi",
+    "collapse": "Comprimi"
   },
   "Pricing": {
     "eyebrow": "Prezzi",

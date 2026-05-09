@@ -54,7 +54,9 @@
     "subtitle": "Una muestra de tiendas Shopify, WooCommerce y Wix reales. Haz clic en una tarjeta para ver la auditoría completa y las sugerencias de IA.",
     "sourceLabel": "Antes",
     "aiLabel": "Después",
-    "viewReport": "Ver el informe completo"
+    "viewReport": "Ver el informe completo",
+    "expand": "Expandir",
+    "collapse": "Plegar"
   },
   "Pricing": {
     "eyebrow": "Precios",

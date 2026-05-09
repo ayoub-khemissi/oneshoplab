@@ -54,7 +54,9 @@
     "subtitle": "لمحة من متاجر Shopify وWooCommerce وWix حقيقية. اضغط بطاقة لفتح التقرير الكامل ومقترحات الذكاء الاصطناعي.",
     "sourceLabel": "قبل",
     "aiLabel": "بعد",
-    "viewReport": "عرض التقرير الكامل"
+    "viewReport": "عرض التقرير الكامل",
+    "expand": "توسيع",
+    "collapse": "طيّ"
   },
   "Pricing": {
     "eyebrow": "الأسعار",

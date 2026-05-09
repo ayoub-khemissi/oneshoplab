@@ -54,7 +54,9 @@
     "subtitle": "取自真实的 Shopify、WooCommerce 与 Wix 店铺。点击卡片打开完整审计与 AI 建议。",
     "sourceLabel": "之前",
     "aiLabel": "之后",
-    "viewReport": "查看完整报告"
+    "viewReport": "查看完整报告",
+    "expand": "展开",
+    "collapse": "收起"
   },
   "Pricing": {
     "eyebrow": "价格",

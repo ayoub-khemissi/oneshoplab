@@ -54,7 +54,9 @@
     "subtitle": "実際のShopify・WooCommerce・Wixストアからの抜粋。カードをクリックすると完全な監査とAI提案が開きます。",
     "sourceLabel": "Before",
     "aiLabel": "After",
-    "viewReport": "詳細レポートを見る"
+    "viewReport": "詳細レポートを見る",
+    "expand": "展開",
+    "collapse": "折りたたむ"
   },
   "Pricing": {
     "eyebrow": "料金",

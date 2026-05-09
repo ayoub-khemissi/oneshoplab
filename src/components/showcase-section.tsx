@@ -2,6 +2,7 @@ import { Card } from '@heroui/react';
 import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
+import { CollapsibleBody } from '@/components/collapsible-body';
 import { ImageZoom } from '@/components/image-zoom';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
@@ -51,7 +52,9 @@ export async function ShowcaseSection() {
               noTitle: tShare('noTitle'),
               noDescription: tShare('noDescription'),
               noTags: tShare('noTags'),
-              noImages: tShare('noImages')
+              noImages: tShare('noImages'),
+              expand: t('expand'),
+              collapse: t('collapse')
             }}
           />
         ))}
@@ -72,6 +75,8 @@ interface ShowcaseLabels {
   noDescription: string;
   noTags: string;
   noImages: string;
+  expand: string;
+  collapse: string;
 }
 
 function ShowcaseCard({
@@ -97,10 +102,16 @@ function ShowcaseCard({
         />
       </a>
 
-      {/* One ProductCaseStudy block per featured product. The blocks
-          share the same shape as /share/[token] but with smaller
-          paddings and a 4-image-up grid instead of full-zoom tiles. */}
-      <div className="flex flex-col gap-5">
+      {/* Foldable body — server-rendered children, client component
+          owns the expand/collapse state. Defaults to expanded so a
+          first-time visitor sees the proof immediately; toggling
+          collapses the block to the domain header + CTA when they
+          want to scroll past. */}
+      <CollapsibleBody
+        defaultExpanded
+        expandLabel={labels.expand}
+        collapseLabel={labels.collapse}
+      >
         {card.products.map((p, i) => (
           <ProductCaseStudy
             key={p.sourceId}
@@ -110,7 +121,7 @@ function ShowcaseCard({
             labels={labels}
           />
         ))}
-      </div>
+      </CollapsibleBody>
 
       {/* Primary CTA: bottom-right -------------------------------- */}
       <div className="flex justify-end mt-auto pt-1">

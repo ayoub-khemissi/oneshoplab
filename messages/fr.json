@@ -54,7 +54,9 @@
     "subtitle": "Un aperçu de boutiques Shopify, WooCommerce et Wix réelles. Cliquez sur une card pour ouvrir l'audit complet et les suggestions IA.",
     "sourceLabel": "Avant",
     "aiLabel": "Après",
-    "viewReport": "Consulter le rapport complet"
+    "viewReport": "Consulter le rapport complet",
+    "expand": "Déplier",
+    "collapse": "Replier"
   },
   "Pricing": {
     "eyebrow": "Tarifs",

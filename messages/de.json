@@ -54,7 +54,9 @@
     "subtitle": "Ein Blick auf echte Shopify-, WooCommerce- und Wix-Shops. Klicke eine Card an, um das volle Audit und die KI-Vorschläge zu sehen.",
     "sourceLabel": "Vorher",
     "aiLabel": "Nachher",
-    "viewReport": "Vollständigen Report ansehen"
+    "viewReport": "Vollständigen Report ansehen",
+    "expand": "Aufklappen",
+    "collapse": "Einklappen"
   },
   "Pricing": {
     "eyebrow": "Preise",
