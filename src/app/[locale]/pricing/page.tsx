@@ -1,10 +1,19 @@
 import { Card } from '@heroui/react';
+import { eq } from 'drizzle-orm';
 import { ChevronDown } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { PricingCards } from '@/components/pricing-cards';
-import { CREDIT_PACKS, PLAN_TIERS, yearlyPriceEur } from '@/lib/ai/models';
+import {
+  CREDIT_PACKS,
+  PLAN_TIERS,
+  yearlyPriceEur,
+  type BillingCycle,
+  type PlanId
+} from '@/lib/ai/models';
 import { auth } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { subscriptions } from '@/lib/db/schema';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 import { getStripePriceId } from '@/lib/stripe';
 
@@ -55,6 +64,28 @@ export default async function PricingPage() {
     scale_monthly: Boolean(getStripePriceId('scale', 'monthly')),
     scale_yearly: Boolean(getStripePriceId('scale', 'yearly'))
   };
+
+  // Pull the merchant's current subscription so PricingCards can render
+  // "Current plan" / "Upgrade" / "Downgrade" / "Switch cycle" rather
+  // than a uniform "Subscribe" — and route those changes through the
+  // customer portal instead of opening a duplicate checkout.
+  let current: {
+    plan: PlanId;
+    cycle: BillingCycle | null;
+    status: string;
+  } | null = null;
+  if (session?.user?.id) {
+    const sub = await db.query.subscriptions.findFirst({
+      where: eq(subscriptions.userId, session.user.id)
+    });
+    if (sub) {
+      current = {
+        plan: (sub.plan ?? 'free') as PlanId,
+        cycle: (sub.billingCycle ?? null) as BillingCycle | null,
+        status: sub.status ?? 'active'
+      };
+    }
+  }
 
   // JSON-LD: surfaces the plans (subscription) + credit packs (one-time)
   // as schema.org Offers so search engines can render them as rich
@@ -111,6 +142,7 @@ export default async function PricingPage() {
       <PricingCards
         signedIn={signedIn}
         available={available}
+        current={current}
         copy={{
           perMonth: t('perMonth'),
           perMonthBilledYearly: t('perMonthBilledYearly'),
@@ -125,7 +157,12 @@ export default async function PricingPage() {
           ctaStartFree: t('ctaStartFree'),
           ctaSubscribe: t('ctaSubscribe'),
           ctaGoToDashboard: t('ctaGoToDashboard'),
-          ctaUnavailable: t('ctaUnavailable')
+          ctaUnavailable: t('ctaUnavailable'),
+          ctaCurrentPlan: t('ctaCurrentPlan'),
+          ctaSwitchToMonthly: t('ctaSwitchToMonthly'),
+          ctaSwitchToYearly: t('ctaSwitchToYearly'),
+          ctaUpgrade: t('ctaUpgrade'),
+          ctaDowngrade: t('ctaDowngrade')
         }}
       />
 

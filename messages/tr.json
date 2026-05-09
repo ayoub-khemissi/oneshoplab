@@ -88,7 +88,12 @@
     "faq3Q": "Krediler bittiğinde ne olur?",
     "faq3A": "Üretimler yükseltmeye veya aylık döngünün yenilenmesine kadar durur. Başarısız üretimler otomatik iade edilir.",
     "faq4Q": "İptal edebilir miyim?",
-    "faq4A": "Her zaman, soru sormadan. Hesabınız geçerli faturalandırma döneminin sonuna kadar aktif kalır."
+    "faq4A": "Her zaman, soru sormadan. Hesabınız geçerli faturalandırma döneminin sonuna kadar aktif kalır.",
+    "ctaCurrentPlan": "Mevcut plan",
+    "ctaSwitchToMonthly": "Aylığa geç",
+    "ctaSwitchToYearly": "Yıllığa geç",
+    "ctaUpgrade": "Yükselt",
+    "ctaDowngrade": "Düşür"
   },
   "Preferences": {
     "title": "Üretim tercihleri",

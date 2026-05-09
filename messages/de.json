@@ -88,7 +88,12 @@
     "faq3Q": "Was passiert, wenn die Credits aufgebraucht sind?",
     "faq3A": "Generierungen pausieren bis zum Upgrade oder zum monatlichen Reset. Fehlgeschlagene Generierungen werden automatisch erstattet.",
     "faq4Q": "Kann ich kündigen?",
-    "faq4A": "Jederzeit, ohne Begründung. Dein Konto bleibt bis zum Ende der laufenden Abrechnungsperiode aktiv."
+    "faq4A": "Jederzeit, ohne Begründung. Dein Konto bleibt bis zum Ende der laufenden Abrechnungsperiode aktiv.",
+    "ctaCurrentPlan": "Aktueller Plan",
+    "ctaSwitchToMonthly": "Auf monatlich wechseln",
+    "ctaSwitchToYearly": "Auf jährlich wechseln",
+    "ctaUpgrade": "Upgraden",
+    "ctaDowngrade": "Downgrade"
   },
   "Preferences": {
     "title": "Generierungseinstellungen",

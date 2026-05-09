@@ -88,7 +88,12 @@
     "faq3Q": "O que acontece quando os créditos acabam?",
     "faq3A": "As gerações param até fazer upgrade ou ao renovar o ciclo mensal. Gerações falhadas são reembolsadas automaticamente.",
     "faq4Q": "Posso cancelar?",
-    "faq4A": "Quando quiser, sem justificações. A conta permanece ativa até ao fim do período de faturação atual."
+    "faq4A": "Quando quiser, sem justificações. A conta permanece ativa até ao fim do período de faturação atual.",
+    "ctaCurrentPlan": "Plano atual",
+    "ctaSwitchToMonthly": "Mudar para mensal",
+    "ctaSwitchToYearly": "Mudar para anual",
+    "ctaUpgrade": "Atualizar",
+    "ctaDowngrade": "Plano inferior"
   },
   "Preferences": {
     "title": "Preferências de geração",

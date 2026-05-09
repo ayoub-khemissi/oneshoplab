@@ -88,7 +88,12 @@
     "faq3Q": "Que se passe-t-il quand je n'ai plus de crédits ?",
     "faq3A": "Les générations s'arrêtent jusqu'à upgrade ou renouvellement mensuel. Les générations échouées sont remboursées automatiquement.",
     "faq4Q": "Puis-je résilier ?",
-    "faq4A": "À tout moment, sans justificatif. Votre compte reste actif jusqu'à la fin de la période de facturation en cours."
+    "faq4A": "À tout moment, sans justificatif. Votre compte reste actif jusqu'à la fin de la période de facturation en cours.",
+    "ctaCurrentPlan": "Formule actuelle",
+    "ctaSwitchToMonthly": "Passer en mensuel",
+    "ctaSwitchToYearly": "Passer en annuel",
+    "ctaUpgrade": "Mettre à niveau",
+    "ctaDowngrade": "Rétrograder"
   },
   "Preferences": {
     "title": "Préférences de génération",

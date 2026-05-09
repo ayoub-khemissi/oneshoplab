@@ -88,7 +88,12 @@
     "faq3Q": "Cosa succede quando finisco i crediti?",
     "faq3A": "Le generazioni si fermano fino all'upgrade o al rinnovo mensile. Le generazioni fallite vengono rimborsate automaticamente.",
     "faq4Q": "Posso cancellare?",
-    "faq4A": "In ogni momento, senza domande. L'account resta attivo fino alla fine del periodo di fatturazione corrente."
+    "faq4A": "In ogni momento, senza domande. L'account resta attivo fino alla fine del periodo di fatturazione corrente.",
+    "ctaCurrentPlan": "Piano attuale",
+    "ctaSwitchToMonthly": "Passa a mensile",
+    "ctaSwitchToYearly": "Passa a annuale",
+    "ctaUpgrade": "Aggiorna",
+    "ctaDowngrade": "Downgrade"
   },
   "Preferences": {
     "title": "Preferenze di generazione",

@@ -88,7 +88,12 @@
     "faq3Q": "Co dzieje się, gdy skończą się kredyty?",
     "faq3A": "Generacje się zatrzymują do upgrade'u lub odnowienia miesięcznego cyklu. Nieudane generacje są automatycznie zwracane.",
     "faq4Q": "Czy mogę anulować?",
-    "faq4A": "W dowolnym momencie, bez pytań. Konto pozostaje aktywne do końca bieżącego okresu rozliczeniowego."
+    "faq4A": "W dowolnym momencie, bez pytań. Konto pozostaje aktywne do końca bieżącego okresu rozliczeniowego.",
+    "ctaCurrentPlan": "Bieżący plan",
+    "ctaSwitchToMonthly": "Przejdź na miesięczny",
+    "ctaSwitchToYearly": "Przejdź na roczny",
+    "ctaUpgrade": "Ulepsz",
+    "ctaDowngrade": "Zmień na niższy"
   },
   "Preferences": {
     "title": "Preferencje generowania",

@@ -88,7 +88,12 @@
     "faq3Q": "What happens when I run out of credits?",
     "faq3A": "Generations stop until you upgrade or your monthly cycle renews. Failed generations are refunded automatically.",
     "faq4Q": "Can I cancel?",
-    "faq4A": "Anytime, no questions asked. Your account stays active till the end of the current billing period."
+    "faq4A": "Anytime, no questions asked. Your account stays active till the end of the current billing period.",
+    "ctaCurrentPlan": "Current plan",
+    "ctaSwitchToMonthly": "Switch to monthly",
+    "ctaSwitchToYearly": "Switch to yearly",
+    "ctaUpgrade": "Upgrade",
+    "ctaDowngrade": "Downgrade"
   },
   "Preferences": {
     "title": "Generation preferences",

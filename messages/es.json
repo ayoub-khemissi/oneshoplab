@@ -88,7 +88,12 @@
     "faq3Q": "¿Qué pasa si me quedo sin créditos?",
     "faq3A": "Las generaciones se detienen hasta que mejores el plan o se renueve el ciclo mensual. Las generaciones fallidas se reembolsan automáticamente.",
     "faq4Q": "¿Puedo cancelar?",
-    "faq4A": "Cuando quieras, sin justificación. Tu cuenta sigue activa hasta el final del periodo de facturación en curso."
+    "faq4A": "Cuando quieras, sin justificación. Tu cuenta sigue activa hasta el final del periodo de facturación en curso.",
+    "ctaCurrentPlan": "Plan actual",
+    "ctaSwitchToMonthly": "Cambiar a mensual",
+    "ctaSwitchToYearly": "Cambiar a anual",
+    "ctaUpgrade": "Mejorar",
+    "ctaDowngrade": "Bajar de plan"
   },
   "Preferences": {
     "title": "Preferencias de generación",

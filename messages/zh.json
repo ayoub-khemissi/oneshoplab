@@ -88,7 +88,12 @@
     "faq3Q": "积分用完了会怎样?",
     "faq3A": "生成将停止,直到升级套餐或新月度周期开始。失败的生成会自动退款。",
     "faq4Q": "可以取消吗?",
-    "faq4A": "随时,无需理由。账户在当前计费周期结束前保持有效。"
+    "faq4A": "随时,无需理由。账户在当前计费周期结束前保持有效。",
+    "ctaCurrentPlan": "当前套餐",
+    "ctaSwitchToMonthly": "切换为月付",
+    "ctaSwitchToYearly": "切换为年付",
+    "ctaUpgrade": "升级",
+    "ctaDowngrade": "降级"
   },
   "Preferences": {
     "title": "生成偏好",

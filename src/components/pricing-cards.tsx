@@ -11,14 +11,38 @@ import {
   YEARLY_DISCOUNT,
   yearlyMonthlyEquivalent,
   type BillingCycle,
+  type PlanId,
   type PlanTier
 } from '@/lib/ai/models';
-import { createCheckoutSessionAction } from '@/lib/stripe-actions';
+import {
+  createCheckoutSessionAction,
+  createPortalSessionAction
+} from '@/lib/stripe-actions';
+
+/** Plan ranks for upgrade/downgrade detection. The order mirrors the
+ *  PLAN_IDS source-of-truth in pricing.ts. */
+const PLAN_RANK: Record<PlanId, number> = {
+  free: 0,
+  starter: 1,
+  pro: 2,
+  scale: 3
+};
 
 interface PricingCardsProps {
   signedIn: boolean;
   /** Per-(plan, cycle) availability flags from server: false → price not configured. */
   available: Record<string, boolean>;
+  /** The user's current subscription state. Drives the per-card CTA so a
+   *  Pro subscriber sees "Current plan" on Pro and "Upgrade" / "Downgrade"
+   *  on Scale / Starter, instead of a uniform "Subscribe". */
+  current?: {
+    plan: PlanId;
+    cycle: BillingCycle | null;
+    /** Treated as no-active-subscription when 'canceled' (the period
+     *  ended). 'cancelling' / 'past_due' / 'unpaid' still count as
+     *  having a live plan that the merchant should be able to manage. */
+    status: string;
+  } | null;
   copy: {
     perMonth: string;
     perMonthBilledYearly: string;
@@ -34,11 +58,20 @@ interface PricingCardsProps {
     ctaSubscribe: string;
     ctaGoToDashboard: string;
     ctaUnavailable: string;
+    ctaCurrentPlan: string;
+    ctaSwitchToMonthly: string;
+    ctaSwitchToYearly: string;
+    ctaUpgrade: string;
+    ctaDowngrade: string;
   };
 }
 
-export function PricingCards({ signedIn, available, copy }: PricingCardsProps) {
-  const [cycle, setCycle] = useState<BillingCycle>('yearly');
+export function PricingCards({ signedIn, available, current, copy }: PricingCardsProps) {
+  // Default the cycle toggle to whatever the merchant is already on so the
+  // page lands with their current plan visually highlighted as "Current
+  // plan" rather than offering a cycle they didn't pick.
+  const initialCycle: BillingCycle = current?.cycle ?? 'yearly';
+  const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
 
   return (
     <>
@@ -59,6 +92,7 @@ export function PricingCards({ signedIn, available, copy }: PricingCardsProps) {
             cycle={cycle}
             signedIn={signedIn}
             available={tier.id === 'free' ? true : available[`${tier.id}_${cycle}`] ?? false}
+            current={current}
             copy={copy}
           />
         ))}
@@ -120,12 +154,14 @@ function PlanCard({
   cycle,
   signedIn,
   available,
+  current,
   copy
 }: {
   tier: PlanTier;
   cycle: BillingCycle;
   signedIn: boolean;
   available: boolean;
+  current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
 }) {
   const isFree = tier.priceEur === 0;
@@ -197,6 +233,7 @@ function PlanCard({
         cycle={cycle}
         signedIn={signedIn}
         available={available}
+        current={current}
         copy={copy}
         isFeatured={isFeatured}
       />
@@ -210,6 +247,7 @@ function CardCta({
   cycle,
   signedIn,
   available,
+  current,
   copy,
   isFeatured
 }: {
@@ -217,6 +255,7 @@ function CardCta({
   cycle: BillingCycle;
   signedIn: boolean;
   available: boolean;
+  current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
   isFeatured: boolean;
 }) {
@@ -226,7 +265,32 @@ function CardCta({
   const outlineClasses =
     'border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)]';
 
+  // A 'canceled' subscription means the period ended and access was lost —
+  // treat the user as if they had no live subscription so they can pick
+  // any plan as a fresh checkout. Other states (active, trialing,
+  // cancelling, past_due, unpaid) all count as "still on a paid plan"
+  // for the purpose of this UI: changes go through the customer portal.
+  const hasLiveSubscription =
+    !!current && current.plan !== 'free' && current.status !== 'canceled';
+  const isCurrentPlan = hasLiveSubscription && current!.plan === tier.id;
+  const isCurrentCycle = isCurrentPlan && current!.cycle === cycle;
+
   if (tier.priceEur === 0) {
+    // Free tier card. Behavior splits on whether the user is on a paid
+    // plan (then this card is "downgrade to free" → portal) versus a
+    // free user (existing CTA).
+    if (hasLiveSubscription) {
+      return (
+        <form action={createPortalSessionAction} className="contents">
+          <button
+            type="submit"
+            className={`${baseClasses} ${outlineClasses}`}
+          >
+            {copy.ctaDowngrade}
+          </button>
+        </form>
+      );
+    }
     const href = signedIn ? '/dashboard' : '/signup';
     return (
       <Link
@@ -251,6 +315,41 @@ function CardCta({
     );
   }
 
+  // Same plan, same cycle: this is the merchant's current subscription.
+  // No change to be made — disabled "Current plan" button.
+  if (isCurrentCycle) {
+    return (
+      <button
+        type="button"
+        disabled
+        className={`${baseClasses} ${
+          isFeatured ? featuredClasses : outlineClasses
+        } opacity-60 cursor-not-allowed`}
+      >
+        {copy.ctaCurrentPlan}
+      </button>
+    );
+  }
+
+  // Same plan, different cycle: route through the customer portal so
+  // Stripe can pro-rate the cycle swap. We don't want to spin up a
+  // brand-new checkout session against an existing active sub — that
+  // would create a second subscription rather than replace.
+  if (isCurrentPlan && !isCurrentCycle) {
+    const label =
+      cycle === 'yearly' ? copy.ctaSwitchToYearly : copy.ctaSwitchToMonthly;
+    return (
+      <form action={createPortalSessionAction} className="contents">
+        <button
+          type="submit"
+          className={`${baseClasses} ${isFeatured ? featuredClasses : outlineClasses}`}
+        >
+          {label}
+        </button>
+      </form>
+    );
+  }
+
   if (!signedIn) {
     const href = `/signup?next=${encodeURIComponent(`/pricing?plan=${tier.id}&cycle=${cycle}`)}`;
     return (
@@ -263,6 +362,23 @@ function CardCta({
     );
   }
 
+  // Paid user looking at a different paid plan: portal handles
+  // upgrade/downgrade with proration. Label depends on direction.
+  if (hasLiveSubscription) {
+    const isUpgrade = PLAN_RANK[tier.id] > PLAN_RANK[current!.plan];
+    return (
+      <form action={createPortalSessionAction} className="contents">
+        <button
+          type="submit"
+          className={`${baseClasses} ${isFeatured ? featuredClasses : outlineClasses}`}
+        >
+          {isUpgrade ? copy.ctaUpgrade : copy.ctaDowngrade}
+        </button>
+      </form>
+    );
+  }
+
+  // Free or canceled user, paid plan card → fresh checkout session.
   return (
     <form action={createCheckoutSessionAction} className="contents">
       <input type="hidden" name="plan" value={tier.id} />
