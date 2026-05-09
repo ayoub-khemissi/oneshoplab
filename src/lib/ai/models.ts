@@ -46,7 +46,35 @@ export const MAX_CUSTOM_INSTRUCTIONS_CHARS = 750;
  * "expires in N days" so merchants know to download anything they want
  * to keep before the deadline.
  */
-export const IMAGE_RETENTION_DAYS = 30;
+/**
+ * Per-plan retention period for AI-generated images on R2 storage.
+ * Free / Starter keep the original 30-day window; Pro doubles it,
+ * Scale triples. The cleanup worker reads each job's project owner's
+ * plan and applies the matching TTL — so a downgrade shortens the
+ * window naturally and an upgrade extends it for any image still
+ * within the new ceiling.
+ */
+const IMAGE_RETENTION_DAYS_BY_PLAN: Record<PricingPlanId, number> = {
+  free: 30,
+  starter: 30,
+  pro: 60,
+  scale: 90
+};
+
+export function imageRetentionDaysForPlan(plan: PricingPlanId | string | null | undefined): number {
+  const safe = (plan && plan in IMAGE_RETENTION_DAYS_BY_PLAN ? plan : 'free') as PricingPlanId;
+  return IMAGE_RETENTION_DAYS_BY_PLAN[safe];
+}
+
+/** Highest retention period across all plans. Acts as a hard upper
+ *  bound when the cleanup worker can't resolve the owning plan. */
+export const MAX_IMAGE_RETENTION_DAYS = Math.max(
+  ...Object.values(IMAGE_RETENTION_DAYS_BY_PLAN)
+);
+
+/** @deprecated Use imageRetentionDaysForPlan() — kept as the free-tier
+ *  default for any non-plan-aware callers we haven't migrated. */
+export const IMAGE_RETENTION_DAYS = IMAGE_RETENTION_DAYS_BY_PLAN.free;
 
 /**
  * Static re-audit rate limit: a fixed 24-hour rolling window, with the

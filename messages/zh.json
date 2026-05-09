@@ -99,7 +99,8 @@
       "creditsOneShot": "注册时 {credits, number} 积分",
       "stores": "{count, plural, =1 {1 家店铺} other {最多 # 家店铺}}",
       "generations": "约 {count, number} 次完整产品生成",
-      "reaudits": "{count, plural, =1 {每天 1 次重审} other {每天 # 次重审}}"
+      "reaudits": "{count, plural, =1 {每天 1 次重审} other {每天 # 次重审}}",
+      "imageRetention": "{days, number} 天图片保留"
     },
     "highlightExtras": {
       "allModels": "可用所有模型",

@@ -99,7 +99,8 @@
       "creditsOneShot": "登録時 {credits, number} クレジット",
       "stores": "{count, plural, =1 {1 ストア} other {最大 # ストア}}",
       "generations": "約 {count, number} 回のフル生成",
-      "reaudits": "{count, plural, =1 {1日1回の再監査} other {1日 # 回の再監査}}"
+      "reaudits": "{count, plural, =1 {1日1回の再監査} other {1日 # 回の再監査}}",
+      "imageRetention": "画像 {days, number} 日保存"
     },
     "highlightExtras": {
       "allModels": "全モデル利用可",

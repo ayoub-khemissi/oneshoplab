@@ -17,6 +17,10 @@ interface AiImageGridLiveProps {
   /** Visible cost per image at the user's current quality setting.
    *  Drives the cost label on the Add and Regenerate buttons. */
   costPerImage: number;
+  /** How long images stay in R2 before the cleanup worker removes
+   *  them. Plan-specific (Free/Starter 30d, Pro 60d, Scale 90d) so the
+   *  per-image expiry caption matches what the merchant has paid for. */
+  retentionDays: number;
 }
 
 /**
@@ -39,7 +43,8 @@ export function AiImageGridLive({
   siteId,
   productId,
   initial,
-  costPerImage
+  costPerImage,
+  retentionDays
 }: AiImageGridLiveProps) {
   const t = useTranslations('AiImageGrid');
 
@@ -162,6 +167,7 @@ export function AiImageGridLive({
             job={job}
             now={now}
             costPerImage={costPerImage}
+            retentionDays={retentionDays}
             isBusy={busy[job.id]}
             onDelete={() => deleteJob(job.id)}
             onRegenerate={() => openRegenerateModal(job.id)}
@@ -199,6 +205,7 @@ function ImageTile({
   job,
   now,
   costPerImage,
+  retentionDays,
   isBusy,
   onDelete,
   onRegenerate
@@ -206,6 +213,7 @@ function ImageTile({
   job: ImageJobRow;
   now: number;
   costPerImage: number;
+  retentionDays: number;
   isBusy: 'delete' | 'regenerate' | undefined;
   onDelete: () => void;
   onRegenerate: () => void;
@@ -345,7 +353,7 @@ function ImageTile({
         </div>
       </div>
       <div className="flex justify-end">
-        <ImageExpiry createdAt={job.createdAt} />
+        <ImageExpiry createdAt={job.createdAt} retentionDays={retentionDays} />
       </div>
     </div>
   );

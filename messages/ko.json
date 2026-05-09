@@ -99,7 +99,8 @@
       "creditsOneShot": "가입 시 {credits, number} 크레딧",
       "stores": "{count, plural, =1 {1 스토어} other {최대 # 스토어}}",
       "generations": "~{count, number}회 전체 생성",
-      "reaudits": "{count, plural, =1 {하루 1회 재감사} other {하루 # 회 재감사}}"
+      "reaudits": "{count, plural, =1 {하루 1회 재감사} other {하루 # 회 재감사}}",
+      "imageRetention": "이미지 {days, number}일 보관"
     },
     "highlightExtras": {
       "allModels": "모든 모델 사용 가능",

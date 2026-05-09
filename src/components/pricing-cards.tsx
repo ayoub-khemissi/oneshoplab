@@ -8,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 // Import from the leaf module (no server-only deps) so this client bundle
 // stays free of mysql2 / drizzle imports leaking through the @/lib/ai barrel.
 import {
+  imageRetentionDaysForPlan,
   PLAN_TIERS,
   YEARLY_DISCOUNT,
   yearlyMonthlyEquivalent,
@@ -262,6 +263,13 @@ function PlanHighlights({ tier }: { tier: PlanTier }) {
     items.push(tDyn('generations', { count: tier.approxFullGenerations }));
   }
   items.push(tDyn('reaudits', { count: tier.siteLimit }));
+  // Per-plan image retention — Free/Starter 30d, Pro 60d, Scale 90d.
+  // Enforced by the R2 cleanup worker; the bullet is honest.
+  items.push(
+    tDyn('imageRetention', {
+      days: imageRetentionDaysForPlan(tier.id)
+    })
+  );
   for (const extra of tier.highlightExtras) {
     items.push(t(extra));
   }

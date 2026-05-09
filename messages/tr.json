@@ -99,7 +99,8 @@
       "creditsOneShot": "Kayıtta {credits, number} kredi",
       "stores": "{count, plural, =1 {1 mağaza} other {# mağazaya kadar}}",
       "generations": "~{count, number} tam ürün üretimi",
-      "reaudits": "{count, plural, =1 {Günde 1 yeniden denetim} other {Günde # yeniden denetim}}"
+      "reaudits": "{count, plural, =1 {Günde 1 yeniden denetim} other {Günde # yeniden denetim}}",
+      "imageRetention": "{days, number} gün görsel saklama"
     },
     "highlightExtras": {
       "allModels": "Tüm modeller mevcut",

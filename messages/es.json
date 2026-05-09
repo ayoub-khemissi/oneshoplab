@@ -99,7 +99,8 @@
       "creditsOneShot": "{credits, number} créditos al registrarse",
       "stores": "{count, plural, =1 {1 tienda} other {Hasta # tiendas}}",
       "generations": "~{count, number} generaciones de productos",
-      "reaudits": "{count, plural, =1 {1 re-auditoría/día} other {# re-auditorías/día}}"
+      "reaudits": "{count, plural, =1 {1 re-auditoría/día} other {# re-auditorías/día}}",
+      "imageRetention": "Conservación de imágenes {days, number} días"
     },
     "highlightExtras": {
       "allModels": "Todos los modelos disponibles",

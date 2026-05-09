@@ -2,23 +2,25 @@
 
 import { Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { IMAGE_RETENTION_DAYS } from '@/lib/ai/models';
 
 interface ImageExpiryProps {
   /** When the source generation was recorded. */
   createdAt: Date;
+  /** Plan-specific retention window in days. Free/Starter pass 30,
+   *  Pro 60, Scale 90 — derived server-side from the merchant's plan. */
+  retentionDays: number;
   className?: string;
 }
 
 /**
  * Subtle one-line caption rendered next to a generated-image grid:
  * "Auto-deleted in 23 days · 28/05/2026". Computed live from the
- * generation timestamp so the same retention rule the worker enforces
- * is what the merchant sees.
+ * generation timestamp + the merchant's plan retention so the same
+ * rule the cleanup worker enforces is what they see.
  */
-export function ImageExpiry({ createdAt, className }: ImageExpiryProps) {
+export function ImageExpiry({ createdAt, retentionDays, className }: ImageExpiryProps) {
   const t = useTranslations('ImageExpiry');
-  const expiresAt = new Date(createdAt.getTime() + IMAGE_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(createdAt.getTime() + retentionDays * 24 * 60 * 60 * 1000);
   const msLeft = expiresAt.getTime() - Date.now();
   if (msLeft <= 0) {
     return (

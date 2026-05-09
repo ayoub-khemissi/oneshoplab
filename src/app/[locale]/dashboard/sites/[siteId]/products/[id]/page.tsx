@@ -29,6 +29,7 @@ import {
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
+  imageRetentionDaysForPlan,
   listOptimHistory,
   listProductImageJobs,
   type ChatModelId,
@@ -220,6 +221,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
       ? (session.user.preferredImageQuality as ImageQualityId)
       : DEFAULT_IMAGE_QUALITY;
   const costPerImage = costForImage(effectiveImageQuality);
+  // Plan-specific image retention drives the per-tile expiry caption
+  // and is enforced server-side by the R2 cleanup worker.
+  const retentionDays = imageRetentionDaysForPlan(session.user.plan ?? 'free');
 
   // Drive the Generate vs Regenerate label: a field with at least one prior
   // AI output flips its CTA to "Regenerate" so the user understands they're
@@ -485,6 +489,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         productId={productId}
                         initial={liveImageJobs}
                         costPerImage={costPerImage}
+                        retentionDays={retentionDays}
                       />
                     }
                   />
@@ -502,6 +507,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         items={[...titleHistory, ...descriptionHistory, ...tagsHistory, ...imagesHistory].sort(
           (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
         )}
+        retentionDays={retentionDays}
       />
     </main>
   );
@@ -635,11 +641,15 @@ const PAST_GEN_DETAIL_LIMIT = 600;
 function PastGenerationsSection({
   title,
   emptyText,
-  items
+  items,
+  retentionDays
 }: {
   title: string;
   emptyText: string;
   items: OptimHistoryItem[];
+  /** Plan-specific retention; surfaces on the per-image expiry caption
+   *  so the past-generations panel matches the live grid. */
+  retentionDays: number;
 }) {
   const tDash = useTranslations('Dashboard');
   if (items.length === 0) {
@@ -670,7 +680,11 @@ function PastGenerationsSection({
                     {pastGenInlinePreview(h.output)}
                   </span>
                   {h.field === 'images' ? (
-                    <ImageExpiry createdAt={h.createdAt} className="shrink-0" />
+                    <ImageExpiry
+                      createdAt={h.createdAt}
+                      retentionDays={retentionDays}
+                      className="shrink-0"
+                    />
                   ) : null}
                   <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0">
                     {h.createdAt.toLocaleDateString()}

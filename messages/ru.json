@@ -99,7 +99,8 @@
       "creditsOneShot": "{credits, number} кредитов при регистрации",
       "stores": "{count, plural, =1 {1 магазин} few {до # магазинов} many {до # магазинов} other {до # магазинов}}",
       "generations": "~{count, number} полных генераций",
-      "reaudits": "{count, plural, =1 {1 реаудит/день} few {# реаудита/день} many {# реаудитов/день} other {# реаудитов/день}}"
+      "reaudits": "{count, plural, =1 {1 реаудит/день} few {# реаудита/день} many {# реаудитов/день} other {# реаудитов/день}}",
+      "imageRetention": "Хранение изображений {days, number} дней"
     },
     "highlightExtras": {
       "allModels": "Все модели",

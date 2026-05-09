@@ -99,7 +99,8 @@
       "creditsOneShot": "{credits, number} رصيد عند التسجيل",
       "stores": "{count, plural, =1 {متجر واحد} =2 {متجران} few {حتى # متاجر} many {حتى # متجرًا} other {حتى # متجر}}",
       "generations": "~{count, number} توليد كامل للمنتج",
-      "reaudits": "{count, plural, =1 {تدقيق مرة/يوم} =2 {تدقيقان/يوم} few {# تدقيقات/يوم} many {# تدقيقًا/يوم} other {# تدقيق/يوم}}"
+      "reaudits": "{count, plural, =1 {تدقيق مرة/يوم} =2 {تدقيقان/يوم} few {# تدقيقات/يوم} many {# تدقيقًا/يوم} other {# تدقيق/يوم}}",
+      "imageRetention": "حفظ الصور لمدة {days, number} يومًا"
     },
     "highlightExtras": {
       "allModels": "كل النماذج متاحة",
