@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "월간으로 전환",
     "ctaSwitchToYearly": "연간으로 전환",
     "ctaUpgrade": "업그레이드",
-    "ctaDowngrade": "다운그레이드"
+    "ctaDowngrade": "다운그레이드",
+    "highlightDynamic": {
+      "creditsRecurring": "월 {credits, number} 크레딧",
+      "creditsOneShot": "가입 시 {credits, number} 크레딧",
+      "stores": "{count, plural, =1 {1 스토어} other {최대 # 스토어}}",
+      "generations": "~{count, number}회 전체 생성",
+      "reaudits": "{count, plural, =1 {하루 1회 재감사} other {하루 # 회 재감사}}"
+    },
+    "highlightExtras": {
+      "allModels": "모든 모델 사용 가능",
+      "noCard": "카드 불필요",
+      "emailSupport": "이메일 지원",
+      "priorityGen": "우선 생성",
+      "prioritySupport": "우선 지원",
+      "bulkOps": "대량 작업",
+      "dedicatedSuccess": "전담 고객 성공 매니저"
+    }
   },
   "Preferences": {
     "title": "생성 환경설정",

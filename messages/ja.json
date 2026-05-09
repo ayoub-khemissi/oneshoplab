@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "月額に切替",
     "ctaSwitchToYearly": "年額に切替",
     "ctaUpgrade": "アップグレード",
-    "ctaDowngrade": "ダウングレード"
+    "ctaDowngrade": "ダウングレード",
+    "highlightDynamic": {
+      "creditsRecurring": "月 {credits, number} クレジット",
+      "creditsOneShot": "登録時 {credits, number} クレジット",
+      "stores": "{count, plural, =1 {1 ストア} other {最大 # ストア}}",
+      "generations": "約 {count, number} 回のフル生成",
+      "reaudits": "{count, plural, =1 {1日1回の再監査} other {1日 # 回の再監査}}"
+    },
+    "highlightExtras": {
+      "allModels": "全モデル利用可",
+      "noCard": "カード不要",
+      "emailSupport": "メールサポート",
+      "priorityGen": "優先生成",
+      "prioritySupport": "優先サポート",
+      "bulkOps": "一括操作",
+      "dedicatedSuccess": "専任カスタマーサクセス"
+    }
   },
   "Preferences": {
     "title": "生成設定",

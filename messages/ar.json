@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "التبديل إلى شهري",
     "ctaSwitchToYearly": "التبديل إلى سنوي",
     "ctaUpgrade": "الترقية",
-    "ctaDowngrade": "تخفيض الخطة"
+    "ctaDowngrade": "تخفيض الخطة",
+    "highlightDynamic": {
+      "creditsRecurring": "{credits, number} رصيد / شهر",
+      "creditsOneShot": "{credits, number} رصيد عند التسجيل",
+      "stores": "{count, plural, =1 {متجر واحد} =2 {متجران} few {حتى # متاجر} many {حتى # متجرًا} other {حتى # متجر}}",
+      "generations": "~{count, number} توليد كامل للمنتج",
+      "reaudits": "{count, plural, =1 {تدقيق مرة/يوم} =2 {تدقيقان/يوم} few {# تدقيقات/يوم} many {# تدقيقًا/يوم} other {# تدقيق/يوم}}"
+    },
+    "highlightExtras": {
+      "allModels": "كل النماذج متاحة",
+      "noCard": "بدون بطاقة",
+      "emailSupport": "دعم بالبريد",
+      "priorityGen": "توليدات بأولوية",
+      "prioritySupport": "دعم بأولوية",
+      "bulkOps": "عمليات بالجملة",
+      "dedicatedSuccess": "مدير نجاح مخصص"
+    }
   },
   "Preferences": {
     "title": "تفضيلات التوليد",

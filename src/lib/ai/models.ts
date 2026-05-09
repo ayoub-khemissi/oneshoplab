@@ -287,25 +287,43 @@ export interface PlanTier {
   approxFullGenerations: number;
   /** Max number of distinct stores (projects) the user can audit on this plan. */
   siteLimit: number;
-  highlights: string[];
+  /** Per-plan marketing bullets, identified by stable keys. The client
+   *  resolves these to translated strings via next-intl in PricingCards
+   *  (`Pricing.highlightExtras.{key}`). Stored as identifiers — never as
+   *  raw English copy — so no string ends up displayed unlocalized. */
+  highlightExtras: PlanHighlightExtraId[];
 }
 
-const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: string[] }> = {
+/** Stable identifiers for per-plan marketing bullets. New ids must be
+ *  paired with a translation key under `Pricing.highlightExtras` in
+ *  every locale file. */
+export const PLAN_HIGHLIGHT_EXTRAS = [
+  'allModels',
+  'noCard',
+  'emailSupport',
+  'priorityGen',
+  'prioritySupport',
+  'bulkOps',
+  'dedicatedSuccess'
+] as const;
+export type PlanHighlightExtraId = (typeof PLAN_HIGHLIGHT_EXTRAS)[number];
+
+const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: PlanHighlightExtraId[] }> = {
   free: {
     name: 'Free',
-    highlightExtras: ['All models available', 'No card required']
+    highlightExtras: ['allModels', 'noCard']
   },
   starter: {
     name: 'Starter',
-    highlightExtras: ['All models available', 'Email support']
+    highlightExtras: ['allModels', 'emailSupport']
   },
   pro: {
     name: 'Pro',
-    highlightExtras: ['Priority generations', 'Priority support']
+    highlightExtras: ['priorityGen', 'prioritySupport']
   },
   scale: {
     name: 'Scale',
-    highlightExtras: ['Bulk operations', 'Dedicated success manager']
+    highlightExtras: ['bulkOps', 'dedicatedSuccess']
   }
 };
 
@@ -325,20 +343,6 @@ function fullGenerationCost(): number {
 
 const FULL_GEN_COST = fullGenerationCost();
 
-function buildHighlights(plan: PlanId, credits: number, siteLimit: number, recurring: boolean): string[] {
-  const fullGens = credits > 0 ? Math.floor(credits / FULL_GEN_COST) : 0;
-  const grant = recurring
-    ? `${credits.toLocaleString()} credits / month`
-    : `${credits.toLocaleString()} credits at signup`;
-  const stores = siteLimit === 1 ? '1 store' : `Up to ${siteLimit} stores`;
-  const gens = fullGens > 0 ? `~${fullGens} product generations` : null;
-  const reaudit =
-    siteLimit === 1
-      ? '1 re-audit per day'
-      : `${siteLimit} re-audits per day`;
-  return [grant, stores, ...(gens ? [gens] : []), reaudit, ...PLAN_DISPLAY[plan].highlightExtras];
-}
-
 export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {
   const p = PRICING.plans[id];
   const fullGens = p.credits > 0 ? Math.floor(p.credits / FULL_GEN_COST) : 0;
@@ -350,7 +354,7 @@ export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {
     recurring: p.recurring,
     approxFullGenerations: fullGens,
     siteLimit: p.siteLimit,
-    highlights: buildHighlights(id, p.credits, p.siteLimit, p.recurring)
+    highlightExtras: PLAN_DISPLAY[id].highlightExtras
   };
 });
 

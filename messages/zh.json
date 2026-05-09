@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "切换为月付",
     "ctaSwitchToYearly": "切换为年付",
     "ctaUpgrade": "升级",
-    "ctaDowngrade": "降级"
+    "ctaDowngrade": "降级",
+    "highlightDynamic": {
+      "creditsRecurring": "每月 {credits, number} 积分",
+      "creditsOneShot": "注册时 {credits, number} 积分",
+      "stores": "{count, plural, =1 {1 家店铺} other {最多 # 家店铺}}",
+      "generations": "约 {count, number} 次完整产品生成",
+      "reaudits": "{count, plural, =1 {每天 1 次重审} other {每天 # 次重审}}"
+    },
+    "highlightExtras": {
+      "allModels": "可用所有模型",
+      "noCard": "无需信用卡",
+      "emailSupport": "邮件支持",
+      "priorityGen": "优先生成",
+      "prioritySupport": "优先支持",
+      "bulkOps": "批量操作",
+      "dedicatedSuccess": "专属客户成功经理"
+    }
   },
   "Preferences": {
     "title": "生成偏好",

@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "Перейти на ежемесячный",
     "ctaSwitchToYearly": "Перейти на годовой",
     "ctaUpgrade": "Повысить",
-    "ctaDowngrade": "Понизить"
+    "ctaDowngrade": "Понизить",
+    "highlightDynamic": {
+      "creditsRecurring": "{credits, number} кредитов / месяц",
+      "creditsOneShot": "{credits, number} кредитов при регистрации",
+      "stores": "{count, plural, =1 {1 магазин} few {до # магазинов} many {до # магазинов} other {до # магазинов}}",
+      "generations": "~{count, number} полных генераций",
+      "reaudits": "{count, plural, =1 {1 реаудит/день} few {# реаудита/день} many {# реаудитов/день} other {# реаудитов/день}}"
+    },
+    "highlightExtras": {
+      "allModels": "Все модели",
+      "noCard": "Без карты",
+      "emailSupport": "Поддержка по email",
+      "priorityGen": "Приоритетные генерации",
+      "prioritySupport": "Приоритетная поддержка",
+      "bulkOps": "Массовые операции",
+      "dedicatedSuccess": "Персональный менеджер"
+    }
   },
   "Preferences": {
     "title": "Настройки генерации",

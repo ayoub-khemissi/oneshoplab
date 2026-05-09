@@ -2,6 +2,7 @@
 
 import { Card } from '@heroui/react';
 import { Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 // Import from the leaf module (no server-only deps) so this client bundle
@@ -219,14 +220,7 @@ function PlanCard({
         </span>
       </div>
 
-      <ul className="flex flex-col gap-2 text-sm">
-        {tier.highlights.map((h, i) => (
-          <li key={i} className="flex items-start gap-2 text-[var(--foreground)]">
-            <Check className="size-4 text-[var(--success)] mt-0.5 shrink-0" />
-            <span>{h}</span>
-          </li>
-        ))}
-      </ul>
+      <PlanHighlights tier={tier} />
 
       <CardCta
         tier={tier}
@@ -239,6 +233,48 @@ function PlanCard({
       />
       </Card>
     </div>
+  );
+}
+
+/**
+ * Localized list of bullet points under a plan card. Composes the
+ * dynamic items (credits, stores, generations, re-audits) from the
+ * tier's structured fields plus the per-plan extras (allModels,
+ * priorityGen, …) by their stable id, all routed through next-intl.
+ *
+ * Lives inside the client bundle so we get ICU plural rules per locale
+ * (1 store / # stores) without having to precompute strings server-side.
+ */
+function PlanHighlights({ tier }: { tier: PlanTier }) {
+  const t = useTranslations('Pricing.highlightExtras');
+  const tDyn = useTranslations('Pricing.highlightDynamic');
+
+  const items: string[] = [];
+  // Monthly recurring plans phrase the credit grant differently from
+  // the one-shot signup grant on the free tier.
+  items.push(
+    tier.recurring
+      ? tDyn('creditsRecurring', { credits: tier.credits })
+      : tDyn('creditsOneShot', { credits: tier.credits })
+  );
+  items.push(tDyn('stores', { count: tier.siteLimit }));
+  if (tier.approxFullGenerations > 0) {
+    items.push(tDyn('generations', { count: tier.approxFullGenerations }));
+  }
+  items.push(tDyn('reaudits', { count: tier.siteLimit }));
+  for (const extra of tier.highlightExtras) {
+    items.push(t(extra));
+  }
+
+  return (
+    <ul className="flex flex-col gap-2 text-sm">
+      {items.map((line, i) => (
+        <li key={i} className="flex items-start gap-2 text-[var(--foreground)]">
+          <Check className="size-4 text-[var(--success)] mt-0.5 shrink-0" />
+          <span>{line}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 

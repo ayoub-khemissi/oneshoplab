@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "Przejdź na miesięczny",
     "ctaSwitchToYearly": "Przejdź na roczny",
     "ctaUpgrade": "Ulepsz",
-    "ctaDowngrade": "Zmień na niższy"
+    "ctaDowngrade": "Zmień na niższy",
+    "highlightDynamic": {
+      "creditsRecurring": "{credits, number} kredytów / miesiąc",
+      "creditsOneShot": "{credits, number} kredytów przy rejestracji",
+      "stores": "{count, plural, =1 {1 sklep} few {do # sklepów} many {do # sklepów} other {do # sklepów}}",
+      "generations": "~{count, number} pełnych generacji",
+      "reaudits": "{count, plural, =1 {1 re-audyt/dzień} few {# re-audyty/dzień} many {# re-audytów/dzień} other {# re-audytów/dzień}}"
+    },
+    "highlightExtras": {
+      "allModels": "Wszystkie modele",
+      "noCard": "Bez karty",
+      "emailSupport": "Wsparcie e-mail",
+      "priorityGen": "Priorytetowe generacje",
+      "prioritySupport": "Priorytetowe wsparcie",
+      "bulkOps": "Operacje masowe",
+      "dedicatedSuccess": "Dedykowany customer success"
+    }
   },
   "Preferences": {
     "title": "Preferencje generowania",

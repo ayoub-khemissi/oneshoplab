@@ -93,7 +93,23 @@
     "ctaSwitchToMonthly": "Aylığa geç",
     "ctaSwitchToYearly": "Yıllığa geç",
     "ctaUpgrade": "Yükselt",
-    "ctaDowngrade": "Düşür"
+    "ctaDowngrade": "Düşür",
+    "highlightDynamic": {
+      "creditsRecurring": "{credits, number} kredi / ay",
+      "creditsOneShot": "Kayıtta {credits, number} kredi",
+      "stores": "{count, plural, =1 {1 mağaza} other {# mağazaya kadar}}",
+      "generations": "~{count, number} tam ürün üretimi",
+      "reaudits": "{count, plural, =1 {Günde 1 yeniden denetim} other {Günde # yeniden denetim}}"
+    },
+    "highlightExtras": {
+      "allModels": "Tüm modeller mevcut",
+      "noCard": "Kart gerekmez",
+      "emailSupport": "E-posta desteği",
+      "priorityGen": "Öncelikli üretimler",
+      "prioritySupport": "Öncelikli destek",
+      "bulkOps": "Toplu işlemler",
+      "dedicatedSuccess": "Özel müşteri başarı yöneticisi"
+    }
   },
   "Preferences": {
     "title": "Üretim tercihleri",
