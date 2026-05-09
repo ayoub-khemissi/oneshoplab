@@ -285,7 +285,7 @@
     "aiDescription": "Rewritten description",
     "aiTags": "Suggested tags",
     "aiInstagram": "Social post suggestion",
-    "aiImagesLabel": "ИИ-изображения",
+    "aiImagesLabel": "3 изображения: Lifestyle | Студия | В использовании",
     "aiNoImage": "No image",
     "aiNoProducts": "Couldn't extract products from this store yet.",
     "aiTextFailed": "AI suggestions failed to generate.",

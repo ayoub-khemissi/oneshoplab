@@ -285,7 +285,7 @@
     "aiDescription": "Description réécrite",
     "aiTags": "Tags suggérés",
     "aiInstagram": "Suggestion de post social",
-    "aiImagesLabel": "Images IA",
+    "aiImagesLabel": "3 images : Lifestyle | Studio | En usage",
     "aiNoImage": "Pas d'image",
     "aiNoProducts": "Pas encore réussi à extraire de produits de cette boutique.",
     "aiTextFailed": "Échec de la génération des suggestions.",
