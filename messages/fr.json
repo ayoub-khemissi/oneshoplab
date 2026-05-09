@@ -210,7 +210,8 @@
     "archivedBadge": "Archivé",
     "archivedBadgeShort": "Archivé",
     "viewArchived": "Voir",
-    "jobProductArchived": "Produit archivé — n'est plus sur la boutique"
+    "jobProductArchived": "Produit archivé — n'est plus sur la boutique",
+    "tabSettings": "Paramètres"
   },
   "Product": {
     "backToDashboard": "Retour au tableau de bord",

@@ -82,11 +82,8 @@ export function LocaleSwitcher({ current, ariaLabel }: LocaleSwitcherProps) {
                 }`}
                 aria-current={active ? 'true' : undefined}
               >
-                <span className="inline-flex items-center gap-2">
+                <span className="inline-flex items-center gap-3">
                   <span className="text-base leading-none">{LOCALE_FLAGS[loc]}</span>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)]">
-                    {loc}
-                  </span>
                   <span>{LOCALE_LABELS[loc]}</span>
                 </span>
                 {active ? <Check className="size-3.5" /> : null}

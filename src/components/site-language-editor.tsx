@@ -115,11 +115,10 @@ export function SiteLanguageEditor({
                   <ListBox.Item
                     key={l.code}
                     id={l.code}
-                    textValue={`${l.code} ${l.name}`}
+                    textValue={`${l.name} ${l.promptName} ${l.code}`}
                     className="flex items-center justify-between gap-3"
                   >
                     <span>{l.name}</span>
-                    <span className="text-xs font-mono text-[var(--muted)]">{l.code}</span>
                     <ListBox.ItemIndicator />
                   </ListBox.Item>
                 ))}

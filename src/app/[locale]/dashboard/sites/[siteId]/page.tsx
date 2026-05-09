@@ -27,7 +27,7 @@ import { sanitizeUserFacingError } from '@/lib/errors';
 
 export const dynamic = 'force-dynamic';
 
-type Tab = 'overview' | 'products' | 'jobs';
+type Tab = 'overview' | 'products' | 'jobs' | 'settings';
 
 interface PageProps {
   params: Promise<{ siteId: string }>;
@@ -107,7 +107,13 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   const { siteId } = await params;
   const { tab: rawTab } = await searchParams;
   const activeTab: Tab =
-    rawTab === 'products' ? 'products' : rawTab === 'jobs' ? 'jobs' : 'overview';
+    rawTab === 'products'
+      ? 'products'
+      : rawTab === 'jobs'
+        ? 'jobs'
+        : rawTab === 'settings'
+          ? 'settings'
+          : 'overview';
 
   // Reports are owner-only. Anonymous visitors get bounced to /login;
   // logged-in users who don't own this project get sent to their dashboard.
@@ -309,7 +315,28 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       </ScrollAwareSticky>
 
       {activeTab === 'overview' ? (
-        <>
+        auditLoading ? (
+          <StaticSkeleton />
+        ) : audit.status === 'completed' && audit.scores != null ? (
+          <OverviewTab
+            scores={audit.scores as Scores}
+            summary={summary}
+            platform={audit.platform}
+            siteId={siteId}
+            productIdByKey={productIdByKey}
+          />
+        ) : null
+      ) : activeTab === 'products' ? (
+        <PaginatedProductsList
+          siteId={siteId}
+          products={allProductsWithIds}
+          archivedProducts={archivedProducts}
+        />
+      ) : activeTab === 'jobs' ? (
+        <ProjectJobsList items={projectJobs as ProjectJobRow[]} siteId={siteId} />
+      ) : (
+        // settings tab
+        <div className="flex flex-col gap-4">
           <SiteLanguageEditor
             projectId={project.id}
             initialOverride={project.languageOverride ?? null}
@@ -319,26 +346,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             projectId={project.id}
             initialValue={project.customInstructions ?? ''}
           />
-          {auditLoading ? (
-            <StaticSkeleton />
-          ) : audit.status === 'completed' && audit.scores != null ? (
-            <OverviewTab
-              scores={audit.scores as Scores}
-              summary={summary}
-              platform={audit.platform}
-              siteId={siteId}
-              productIdByKey={productIdByKey}
-            />
-          ) : null}
-        </>
-      ) : activeTab === 'products' ? (
-        <PaginatedProductsList
-          siteId={siteId}
-          products={allProductsWithIds}
-          archivedProducts={archivedProducts}
-        />
-      ) : (
-        <ProjectJobsList items={projectJobs as ProjectJobRow[]} siteId={siteId} />
+        </div>
       )}
     </main>
   );
@@ -476,6 +484,11 @@ function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
         href={`/dashboard/sites/${siteId}?tab=jobs`}
         active={active === 'jobs'}
         label={t('tabJobs')}
+      />
+      <TabLink
+        href={`/dashboard/sites/${siteId}?tab=settings`}
+        active={active === 'settings'}
+        label={t('tabSettings')}
       />
     </nav>
   );
