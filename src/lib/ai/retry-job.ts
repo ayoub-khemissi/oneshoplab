@@ -1,4 +1,5 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { getEffectiveLanguage } from '@/lib/audit/language';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
@@ -181,7 +182,10 @@ async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
     .where(eq(jobs.id, job.id));
 
   const kie = getKieClient();
-  const langCode = input.language ?? 'en';
+  // Re-resolve language from the project override (or audit detection) at
+  // retry time, not from the stored payload. An override set after the
+  // first run is "a future generation" per the product spec.
+  const langCode = await getEffectiveLanguage(job.projectId);
   const langName = languageNameForPrompt(langCode);
   const platform = input.platform ?? audit.platform;
 

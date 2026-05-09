@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { runDynamicAuditForProduct } from '@/lib/ai';
 import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { audits, projects } from '@/lib/db/schema';
 import { runAudit } from './run';
 import { syncProjectProducts } from './sync-products';
 
@@ -45,7 +45,18 @@ export async function processAudit(auditId: string): Promise<void> {
     // the AI text suggestions are persisted. Image jobs fire asynchronously
     // and resolve later via the kie webhook.
     if (result.report && result.report.latestProducts.length > 0) {
-      const language = result.report.detectedLanguage;
+      // Effective language for the dynamic audit text generation:
+      // override → detection. We resolve inline (vs getEffectiveLanguage)
+      // because detectedLanguage is already in memory and the audit row
+      // hasn't been committed yet — the helper would re-query for nothing.
+      let language = result.report.detectedLanguage;
+      if (row.projectId) {
+        const project = await db.query.projects.findFirst({
+          where: eq(projects.id, row.projectId),
+          columns: { languageOverride: true }
+        });
+        language = project?.languageOverride ?? language;
+      }
       const platform = result.platform;
       const appUrl = process.env.APP_URL ?? null;
 
