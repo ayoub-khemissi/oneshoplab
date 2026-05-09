@@ -713,6 +713,7 @@
     "ctaSubtitle": "OneShopLab audite votre boutique en 30 secondes et réécrit vos produits avec le modèle IA de votre choix. Essai gratuit.",
     "ctaPrimary": "Essayer gratuitement",
     "ctaSecondary": "Voir les tarifs",
-    "footerNote": "Généré par OneShopLab le {date}."
+    "footerNote": "Généré par OneShopLab le {date}.",
+    "preconditionNoCandidates": "{count, plural, =0 {Aucun produit de ce site n'a encore de génération IA.} =1 {Seul 1 produit a des générations IA — il en faut 2 pour faire un avant/après.} other {Il faut au moins 2 produits avec des générations IA.}} Va dans l'onglet Produits et lance « Tout générer » sur 2 produits (ou la génération en masse sur Scale) — le bouton s'activera automatiquement."
   }
 }

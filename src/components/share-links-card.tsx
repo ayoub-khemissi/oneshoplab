@@ -5,6 +5,7 @@ import {
   Check,
   Copy,
   ExternalLink,
+  Info,
   Link2,
   Trash2,
   X
@@ -93,11 +94,27 @@ export function ShareLinksCard({
           onClick={() => setModalOpen(true)}
           disabled={candidates.length < 2}
           className="px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-          title={candidates.length < 2 ? t('errorNeedTwoProducts') : undefined}
+          title={candidates.length < 2 ? t('preconditionNoCandidates') : undefined}
         >
           {t('createButton')}
         </button>
       </div>
+
+      {/* Precondition prompt: a share link needs at least 2 products
+          with completed AI generations to render a meaningful before/
+          after page. If none, surface a clear next step inline (a
+          tooltip alone is too easy to miss). */}
+      {candidates.length < 2 ? (
+        <div
+          role="status"
+          className="flex items-start gap-2 p-3 rounded-md border border-[var(--accent)]/30 bg-[var(--accent)]/5 text-xs text-[var(--foreground)]"
+        >
+          <Info className="size-4 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
+          <span className="leading-relaxed">
+            {t('preconditionNoCandidates', { count: candidates.length })}
+          </span>
+        </div>
+      ) : null}
 
       {links.length === 0 ? (
         <p className="text-sm text-[var(--muted)] italic">{t('empty')}</p>
