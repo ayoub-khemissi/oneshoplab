@@ -1,12 +1,10 @@
 import { Card } from '@heroui/react';
-import { CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { CREDIT_PACKS } from '@/lib/ai/models';
+import { CreditPackCards } from '@/components/credit-pack-cards';
 import { auth } from '@/lib/auth';
 import { getCreditBuckets } from '@/lib/credits';
-import { buyCreditPackAction } from '@/lib/stripe-actions';
-import { getStripePackPriceId } from '@/lib/stripe';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,24 +93,19 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{t('packsTitle')}</h2>
         <p className="text-sm text-[var(--muted)] max-w-2xl">{t('packsHint')}</p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {CREDIT_PACKS.map((pack) => {
-            const configured = getStripePackPriceId(pack.id) !== null;
-            return (
-              <PackCard
-                key={pack.id}
-                packId={pack.id}
-                name={t(`pack.${pack.id}.name`)}
-                tagline={t(`pack.${pack.id}.tagline`)}
-                credits={pack.credits}
-                priceEur={pack.priceEur}
-                configured={configured}
-                buyLabel={t('buyButton')}
-                comingSoonLabel={t('comingSoon')}
-              />
-            );
-          })}
-        </div>
+        <CreditPackCards
+          copy={{
+            pack: {
+              boost: { name: t('pack.boost.name'), tagline: t('pack.boost.tagline') },
+              power: { name: t('pack.power.name'), tagline: t('pack.power.tagline') },
+              mega: { name: t('pack.mega.name'), tagline: t('pack.mega.tagline') }
+            },
+            creditsLabel: t('packBucketLabel').toLowerCase(),
+            buyLabel: t('buyButton'),
+            comingSoonLabel: t('comingSoon'),
+            perCreditLabel: (perCredit: string) => `(€${perCredit} / credit)`
+          }}
+        />
       </section>
     </main>
   );
@@ -144,56 +137,3 @@ function BucketChip({
   );
 }
 
-function PackCard({
-  packId,
-  name,
-  tagline,
-  credits,
-  priceEur,
-  configured,
-  buyLabel,
-  comingSoonLabel
-}: {
-  packId: string;
-  name: string;
-  tagline: string;
-  credits: number;
-  priceEur: number;
-  configured: boolean;
-  buyLabel: string;
-  comingSoonLabel: string;
-}) {
-  return (
-    <Card variant="secondary" className="p-5 flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h3 className="text-base font-bold tracking-tight">{name}</h3>
-        <p className="text-xs text-[var(--muted)]">{tagline}</p>
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-3xl font-bold tabular-nums">
-          {credits.toLocaleString()}
-        </span>
-        <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider">
-          credits
-        </span>
-      </div>
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-2xl font-bold">€{priceEur.toFixed(2)}</span>
-        <span className="text-xs text-[var(--muted)]">
-          (€{(priceEur / credits).toFixed(4)} / credit)
-        </span>
-      </div>
-      <form action={buyCreditPackAction} className="mt-auto">
-        <input type="hidden" name="packId" value={packId} />
-        <button
-          type="submit"
-          disabled={!configured}
-          className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
-        >
-          <Sparkles className="size-3.5" />
-          {configured ? buyLabel : comingSoonLabel}
-        </button>
-      </form>
-    </Card>
-  );
-}

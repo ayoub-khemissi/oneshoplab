@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { ChevronDown } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { CreditPackCards } from '@/components/credit-pack-cards';
 import { PricingCards } from '@/components/pricing-cards';
 import {
   CREDIT_PACKS,
@@ -51,6 +52,7 @@ export async function generateMetadata({
 
 export default async function PricingPage() {
   const t = await getTranslations('Pricing');
+  const tCredits = await getTranslations('Credits');
   const session = await auth();
   const signedIn = Boolean(session?.user);
 
@@ -176,6 +178,39 @@ export default async function PricingPage() {
             <Stat label={t('costDescription')} value={`~5 ${t('credits')}`} />
           </div>
         </Card>
+      </section>
+
+      <section className="flex flex-col gap-3 max-w-4xl mx-auto w-full">
+        <div className="flex flex-col gap-2 text-center">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {tCredits('packsTitle')}
+          </h2>
+          <p className="text-sm text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
+            {tCredits('packsHint')}
+          </p>
+        </div>
+        <CreditPackCards
+          copy={{
+            pack: {
+              boost: {
+                name: tCredits('pack.boost.name'),
+                tagline: tCredits('pack.boost.tagline')
+              },
+              power: {
+                name: tCredits('pack.power.name'),
+                tagline: tCredits('pack.power.tagline')
+              },
+              mega: {
+                name: tCredits('pack.mega.name'),
+                tagline: tCredits('pack.mega.tagline')
+              }
+            },
+            creditsLabel: tCredits('packBucketLabel').toLowerCase(),
+            buyLabel: tCredits('buyButton'),
+            comingSoonLabel: tCredits('comingSoon'),
+            perCreditLabel: (perCredit: string) => `(€${perCredit} / credit)`
+          }}
+        />
       </section>
 
       <section className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
