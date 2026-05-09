@@ -1,17 +1,10 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
+import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { CHAT_MODELS, KieClient, getKieClient } from './kie';
 
 const IMAGE_MODEL = 'gpt-image-2-image-to-image';
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: 'English',
-  fr: 'French',
-  es: 'Spanish',
-  de: 'German',
-  it: 'Italian'
-};
 
 export type RetryResult =
   | { ok: true; status: 'completed' | 'running' }
@@ -189,7 +182,7 @@ async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
 
   const kie = getKieClient();
   const langCode = input.language ?? 'en';
-  const langName = LANGUAGE_NAMES[langCode] ?? 'English';
+  const langName = languageNameForPrompt(langCode);
   const platform = input.platform ?? audit.platform;
 
   const description = product.descriptionHtml

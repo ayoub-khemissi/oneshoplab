@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, type ProductField } from '@/lib/db/schema';
+import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { CHAT_MODELS, KieClient, getKieClient } from './kie';
 import { buildSuggestionPrompt, type ProductContext } from './prompts';
 
@@ -29,6 +30,8 @@ export async function getOrGenerateSuggestions(opts: {
   productSourceId: string;
   field: ProductField;
   product: ProductContext;
+  /** Effective ISO 639-1 language code resolved by getEffectiveLanguage(). */
+  languageCode: string;
 }): Promise<SuggestionsResult> {
   const cached = await findCachedJob(opts.projectId, opts.productSourceId, opts.field);
   if (cached) {
@@ -36,7 +39,11 @@ export async function getOrGenerateSuggestions(opts: {
   }
 
   const kie = getKieClient();
-  const userPrompt = buildSuggestionPrompt(opts.field, opts.product);
+  const userPrompt = buildSuggestionPrompt(
+    opts.field,
+    opts.product,
+    languageNameForPrompt(opts.languageCode)
+  );
 
   const response = await kie.chat({
     model: CHAT_MODELS.haiku,

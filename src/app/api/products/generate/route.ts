@@ -16,6 +16,7 @@ import {
   type ImageQualityId,
   type ProductContext
 } from '@/lib/ai';
+import { getEffectiveLanguage } from '@/lib/audit/language';
 import { auth } from '@/lib/auth';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
@@ -35,11 +36,11 @@ const IMAGE_ANGLE_PROMPTS: Record<ImageAngle, string> = {
 
 const FIELD_DEFAULT_PROMPT: Record<ChatOptimField, string> = {
   title:
-    'Rewrite this title to be SEO-optimised, keyword-front-loaded and more compelling. Match the source language. Stay factually consistent with the product.',
+    'Rewrite this title to be SEO-optimised, keyword-front-loaded and more compelling. Stay factually consistent with the product.',
   description:
-    'Rewrite this description as benefit-led, scannable HTML (use <p>, <ul>, <li>, <strong>). 180-350 words. Match the source language. Stay factually consistent with the product.',
+    'Rewrite this description as benefit-led, scannable HTML (use <p>, <ul>, <li>, <strong>). 180-350 words. Stay factually consistent with the product.',
   tags:
-    'Suggest 5-10 customer-facing discovery tags for this product. Match the source language.'
+    'Suggest 5-10 customer-facing discovery tags for this product.'
 };
 
 type GenField = 'title' | 'description' | 'tags' | 'images' | 'all';
@@ -106,6 +107,8 @@ interface LoadedSnapshot {
   product: ProductSnapshot;
   /** Site-wide AI instructions configured on the project, if any. */
   projectInstructions: string | null;
+  /** Effective language for AI generations (override → detected → 'en'). */
+  languageCode: string;
 }
 
 async function loadSnapshot(
@@ -145,13 +148,14 @@ async function loadSnapshot(
     if (productRow.handle && p.handle === productRow.handle) return true;
     return false;
   });
-  return product
-    ? {
-        projectId: project.id,
-        product,
-        projectInstructions: project.customInstructions ?? null
-      }
-    : null;
+  if (!product) return null;
+  const languageCode = await getEffectiveLanguage(project.id);
+  return {
+    projectId: project.id,
+    product,
+    projectInstructions: project.customInstructions ?? null,
+    languageCode
+  };
 }
 
 /**
@@ -225,7 +229,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!loaded) {
     return NextResponse.json({ error: 'product_not_found' }, { status: 404 });
   }
-  const { product, projectId, projectInstructions } = loaded;
+  const { product, projectId, projectInstructions, languageCode } = loaded;
   const sourceId = product.sourceId ?? product.handle ?? '';
   const sourceImage = product.images[0]?.src;
   const context = toProductContext(product);
@@ -300,7 +304,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           field: f,
           userPrompt: effectiveChatPrompt(f, merchantInstructions),
           product: context,
-          chatModelId
+          chatModelId,
+          languageCode
         });
       }
     } catch (e) {

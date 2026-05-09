@@ -28,7 +28,11 @@ const FIELD_BRIEFS: Record<ProductField, string> = {
  * the field being optimised. Output spec is strict JSON so we can parse
  * reliably and surface as clickable cards in the UI.
  */
-export function buildSuggestionPrompt(field: ProductField, p: ProductContext): string {
+export function buildSuggestionPrompt(
+  field: ProductField,
+  p: ProductContext,
+  languageName: string
+): string {
   const brief = FIELD_BRIEFS[field];
 
   const priceLine =
@@ -54,7 +58,7 @@ Output rules:
 1. Return ONLY a JSON array. No preamble, no markdown fences, no commentary.
 2. Each item is an object with "tone" (a short label, max 4 words) and "prompt" (the actual prompt the merchant will hand off to the generator, written in instruction form, max 200 chars).
 3. Vary tone genuinely — no two items should overlap.
-4. Match the language of the product: if the title/description is in French, write the prompts in French.
+4. Write the prompts in ${languageName}.
 
 Example format (illustrative only, do not copy):
 [{"tone":"Punchy","prompt":"Rewrite as a sharp 6-word title that leads with the main benefit."},{"tone":"SEO-optimised","prompt":"…"}]`;
@@ -63,12 +67,12 @@ Example format (illustrative only, do not copy):
 /** Build the actual user prompt + system prompt pair for a description rewrite. */
 export function buildDescriptionRewritePrompt(
   p: ProductContext,
-  userPrompt: string
+  userPrompt: string,
+  languageName: string
 ): { system: string; user: string } {
   const tagLine = p.tags.length > 0 ? `Existing tags: ${p.tags.slice(0, 15).join(', ')}` : '';
   return {
-    system:
-      'You are an expert e-commerce copywriter. Output ONLY the rewritten description, in clean HTML. MUST split into 2-4 short <p> paragraphs (no wall-of-text). MUST include one <ul> with 3-5 <li> bullet points covering key benefits or specs. Use <strong> on the key value props. Use <em> sparingly. The output must paste cleanly into Shopify / WooCommerce / Wix rich-text editors. No preamble, no commentary, no markdown fences. Match the source language.',
+    system: `You are an expert e-commerce copywriter. Output ONLY the rewritten description, in clean HTML. MUST split into 2-4 short <p> paragraphs (no wall-of-text). MUST include one <ul> with 3-5 <li> bullet points covering key benefits or specs. Use <strong> on the key value props. Use <em> sparingly. The output must paste cleanly into Shopify / WooCommerce / Wix rich-text editors. No preamble, no commentary, no markdown fences. Write the output in ${languageName}.`,
     user: `Rewrite the following product description per this instruction: "${userPrompt}"
 
 Product context:
@@ -85,11 +89,11 @@ ${p.descriptionText || '(empty)'}`
 /** Build prompt for tag suggestion: returns a JSON array of strings. */
 export function buildTagSuggestionPrompt(
   p: ProductContext,
-  userPrompt: string
+  userPrompt: string,
+  languageName: string
 ): { system: string; user: string } {
   return {
-    system:
-      'You output strictly a JSON array of distinct tag strings (3-15 items). No preamble, no commentary, no markdown fences.',
+    system: `You output strictly a JSON array of distinct tag strings (3-15 items). No preamble, no commentary, no markdown fences. Write the tags in ${languageName}.`,
     user: `Suggest tags for this product per this instruction: "${userPrompt}"
 
 Product:
@@ -103,11 +107,11 @@ ${p.tags.length > 0 ? `\nExisting tags (suggest different ones): ${p.tags.slice(
 /** Build prompt for title rewriting: returns plain text title (single line). */
 export function buildTitleRewritePrompt(
   p: ProductContext,
-  userPrompt: string
+  userPrompt: string,
+  languageName: string
 ): { system: string; user: string } {
   return {
-    system:
-      'You output strictly the rewritten product title — a single line, no quotes, no preamble, no commentary, no trailing punctuation. Match the source language.',
+    system: `You output strictly the rewritten product title — a single line, no quotes, no preamble, no commentary, no trailing punctuation. Write the output in ${languageName}.`,
     user: `Rewrite this product title per this instruction: "${userPrompt}"
 
 Current title: ${p.title}

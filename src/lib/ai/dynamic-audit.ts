@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
+import { languageNameForPrompt } from '@/lib/i18n/languages';
 import {
   CHAT_MODELS,
   KieClient,
@@ -28,14 +29,6 @@ const IMAGE_ANGLE_PROMPTS: Record<ImageAngle, string> = {
     'A clean studio shot of this product on a minimalist warm-neutral background, professional product photography lighting, soft shadow underneath. The product is identical to the source.',
   inuse:
     'A candid lifestyle scene of someone naturally using or wearing this product in an everyday context, authentic and human, warm tones. The product is identical to the source.'
-};
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: 'English',
-  fr: 'French',
-  es: 'Spanish',
-  de: 'German',
-  it: 'Italian'
 };
 
 export interface ProductSummaryContext {
@@ -118,7 +111,7 @@ function buildEvidenceContext(opts: DynamicAuditOptions): {
   langCode: string;
 } {
   const langCode = opts.language ?? 'en';
-  const langName = LANGUAGE_NAMES[langCode] ?? 'English';
+  const langName = languageNameForPrompt(langCode);
   const description = opts.product.descriptionHtml
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')

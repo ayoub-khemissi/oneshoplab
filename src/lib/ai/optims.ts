@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
+import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { KieClient, getKieClient, type ChatMessage } from './kie';
 import {
   estimateChatCredits,
@@ -29,6 +30,8 @@ export interface ChatOptimRequest {
   product: ProductContext;
   /** Caller-selected chat model. Falls back to the user's preference / default. */
   chatModelId?: ChatModelId;
+  /** Effective ISO 639-1 language code resolved by getEffectiveLanguage(). */
+  languageCode: string;
 }
 
 export interface ChatOptimResult {
@@ -55,12 +58,14 @@ const KIND_BY_FIELD: Record<ChatOptimField, JobKind> = {
 export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimResult> {
   const kie = getKieClient();
 
+  const languageName = languageNameForPrompt(opts.languageCode);
+
   const built =
     opts.field === 'title'
-      ? buildTitleRewritePrompt(opts.product, opts.userPrompt)
+      ? buildTitleRewritePrompt(opts.product, opts.userPrompt, languageName)
       : opts.field === 'description'
-        ? buildDescriptionRewritePrompt(opts.product, opts.userPrompt)
-        : buildTagSuggestionPrompt(opts.product, opts.userPrompt);
+        ? buildDescriptionRewritePrompt(opts.product, opts.userPrompt, languageName)
+        : buildTagSuggestionPrompt(opts.product, opts.userPrompt, languageName);
 
   const messages: ChatMessage[] = [{ role: 'user', content: built.user }];
 
