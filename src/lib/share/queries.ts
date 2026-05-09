@@ -268,6 +268,10 @@ export interface HomeShowcaseCard {
   products: Array<{
     sourceId: string;
     sourceTitle: string;
+    /** Direct product URL on the merchant's storefront (when the audit
+     *  summary captured one). Drives the clickable title link in the
+     *  home card; falls back to siteUrl when missing. */
+    productUrl: string | null;
     aiTitle: string | null;
     sourceDescriptionHtml: string;
     aiDescriptionHtml: string | null;
@@ -311,6 +315,7 @@ export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
         sourceId?: string | null;
         handle?: string | null;
         title: string;
+        url?: string | null;
         descriptionHtml?: string;
         images?: Array<{ src: string; alt?: string | null }>;
         signals?: { tags?: string[] };
@@ -356,6 +361,7 @@ export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
       products.push({
         sourceId,
         sourceTitle: matched.title,
+        productUrl: matched.url ?? null,
         aiTitle,
         sourceDescriptionHtml: matched.descriptionHtml ?? '',
         aiDescriptionHtml,

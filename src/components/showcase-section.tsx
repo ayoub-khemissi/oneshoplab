@@ -1,8 +1,8 @@
 import { Card } from '@heroui/react';
-import { ArrowRight, ExternalLink, Sparkles } from 'lucide-react';
+import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { ProductImageGallery } from '@/components/product-image-gallery';
+import { ImageZoom } from '@/components/image-zoom';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
 /**
@@ -12,14 +12,10 @@ import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/querie
  * self-hides when no link is flagged so the marketing page doesn't
  * render an empty slot.
  *
- * Card layout (per product on the home, full card width):
- *   - title before / after side-by-side at the top
- *   - left: source-images carousel + AI-images carousel
- *   - right: description before/after (truncated) + tags before/after
- *   On mobile every column stacks naturally (single column).
- *
- * A primary-styled "Consulter le rapport complet" button at the
- * bottom-right of each card opens the full /share/{token} page.
+ * Per-product layout mirrors the /share/[token] case-study page,
+ * deliberately compact (smaller paddings + 4-up image strip instead
+ * of full-size zoom panels) so a homepage card with two products
+ * stays readable at one glance.
  */
 export async function ShowcaseSection() {
   const cards = await loadHomeShowcaseCards();
@@ -39,7 +35,6 @@ export async function ShowcaseSection() {
           {t('subtitle')}
         </p>
       </header>
-      {/* Full-width cards, one per share link — stacked vertically. */}
       <div className="flex flex-col gap-6">
         {cards.map((card) => (
           <ShowcaseCard
@@ -49,8 +44,10 @@ export async function ShowcaseSection() {
               source: t('sourceLabel'),
               ai: t('aiLabel'),
               view: t('viewReport'),
+              title: tShare('fieldTitle'),
               description: tShare('fieldDescription'),
               tags: tShare('fieldTags'),
+              images: tShare('fieldImages'),
               noTitle: tShare('noTitle'),
               noDescription: tShare('noDescription'),
               noTags: tShare('noTags'),
@@ -67,8 +64,10 @@ interface ShowcaseLabels {
   source: string;
   ai: string;
   view: string;
+  title: string;
   description: string;
   tags: string;
+  images: string;
   noTitle: string;
   noDescription: string;
   noTags: string;
@@ -98,15 +97,17 @@ function ShowcaseCard({
         />
       </a>
 
-      {/* One block per featured product ---------------------------- */}
-      <div className="flex flex-col gap-5 divide-y divide-[var(--border)]">
+      {/* One ProductCaseStudy block per featured product. The blocks
+          share the same shape as /share/[token] but with smaller
+          paddings and a 4-image-up grid instead of full-zoom tiles. */}
+      <div className="flex flex-col gap-5">
         {card.products.map((p, i) => (
-          <ProductBlock
+          <ProductCaseStudy
             key={p.sourceId}
             index={i + 1}
             product={p}
+            fallbackUrl={card.siteUrl}
             labels={labels}
-            firstChild={i === 0}
           />
         ))}
       </div>
@@ -125,287 +126,182 @@ function ShowcaseCard({
   );
 }
 
-function ProductBlock({
+/**
+ * Compact version of the share page's ProductCaseStudy. Same Source
+ * vs AI two-column structure (Title / Description / Tags / Images);
+ * the only delta is tighter typography + image grid so a homepage
+ * card hosting two of these doesn't blow past the fold.
+ *
+ * Header line is a clickable link to the merchant's storefront page
+ * for this specific product (productUrl), with an external-link
+ * badge that opacifies on hover — same pattern as the /share/[token]
+ * domain header.
+ */
+function ProductCaseStudy({
   index,
   product,
-  labels,
-  firstChild
+  fallbackUrl,
+  labels
 }: {
   index: number;
   product: HomeShowcaseCard['products'][number];
+  /** Used when the audit summary didn't capture a product-specific
+   *  URL — at least the storefront opens. */
+  fallbackUrl: string;
   labels: ShowcaseLabels;
-  firstChild: boolean;
 }) {
-  const sourceText = product.sourceDescriptionHtml
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const sourceText =
+    product.sourceDescriptionHtml
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim() || labels.noDescription;
   const aiText = (product.aiDescriptionHtml ?? '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+  const productHref = product.productUrl ?? fallbackUrl;
 
   return (
-    <div className={`flex flex-col gap-4 ${firstChild ? '' : 'pt-5'}`}>
-      <span className="text-[10px] uppercase tracking-wider font-mono text-[var(--muted)]">
-        #{index}
-      </span>
-
-      {/* Title — before / after side by side (stack on mobile) ----- */}
-      <div className="grid md:grid-cols-2 gap-3 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)]">
-        <TitleColumn
-          label={labels.source}
-          title={product.sourceTitle}
-          tone="muted"
-        />
-        <TitleColumn
-          label={labels.ai}
-          title={product.aiTitle}
-          fallback={labels.noTitle}
-          tone="accent"
-        />
+    <div className="flex flex-col gap-4 p-4 rounded-md bg-[var(--default)]/30 border border-[var(--border)]">
+      <div className="flex items-baseline justify-between gap-3 flex-wrap">
+        <a
+          href={productHref}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="inline-flex items-center gap-1.5 hover:text-[var(--accent)] transition-colors group/title"
+        >
+          <h3 className="text-base md:text-lg font-bold tracking-tight">
+            <span className="text-[var(--muted)] mr-2">#{index}</span>
+            {product.sourceTitle}
+          </h3>
+          <ExternalLink
+            className="size-3.5 mt-0.5 shrink-0 opacity-50 group-hover/title:opacity-100 transition-opacity"
+            aria-hidden
+          />
+        </a>
       </div>
 
-      {/* Body grid: image carousels (2/3) + sidebar text (1/3) ------ */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {/* Carousels — span 2 cols on desktop --------------------- */}
-        <div className="md:col-span-2 grid sm:grid-cols-2 gap-3">
-          <GalleryColumn
-            label={labels.source}
-            images={product.sourceImages}
-            emptyLabel={labels.noImages}
-            tone="muted"
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Source column ------------------------------------------- */}
+        <div className="flex flex-col gap-2.5">
+          <span className="eyebrow">{labels.source}</span>
+          <Field label={labels.title} value={product.sourceTitle} muted={false} />
+          <Field
+            label={labels.description}
+            value={sourceText}
+            muted={!product.sourceDescriptionHtml}
+            multiline
           />
-          <GalleryColumn
-            label={labels.ai}
-            images={product.aiImages}
+          <Field
+            label={labels.tags}
+            value={
+              product.sourceTags.length > 0
+                ? product.sourceTags.join(', ')
+                : labels.noTags
+            }
+            muted={product.sourceTags.length === 0}
+          />
+          <ImageRow
+            label={labels.images}
+            urls={product.sourceImages.map((i) => i.src)}
             emptyLabel={labels.noImages}
-            tone="accent"
           />
         </div>
 
-        {/* Sidebar: description + tags ---------------------------- */}
-        <aside className="flex flex-col gap-3">
-          <TextPair
-            heading={labels.description}
-            sourceLabel={labels.source}
-            aiLabel={labels.ai}
-            sourceText={sourceText}
-            aiText={aiText}
-            empty={labels.noDescription}
+        {/* AI column ----------------------------------------------- */}
+        <div className="flex flex-col gap-2.5">
+          <span className="eyebrow inline-flex items-center gap-2">
+            {labels.ai}
+            <Sparkles className="size-3 text-[var(--accent)]" aria-hidden />
+          </span>
+          <Field
+            label={labels.title}
+            value={product.aiTitle ?? labels.noTitle}
+            muted={!product.aiTitle}
           />
-          <TagsPair
-            heading={labels.tags}
-            sourceLabel={labels.source}
-            aiLabel={labels.ai}
-            sourceTags={product.sourceTags}
-            aiTags={product.aiTags}
-            empty={labels.noTags}
+          <Field
+            label={labels.description}
+            value={aiText || labels.noDescription}
+            muted={!aiText}
+            multiline
           />
-        </aside>
+          <Field
+            label={labels.tags}
+            value={
+              product.aiTags.length > 0 ? product.aiTags.join(', ') : labels.noTags
+            }
+            muted={product.aiTags.length === 0}
+          />
+          <ImageRow
+            label={labels.images}
+            urls={product.aiImages.map((i) => i.src)}
+            emptyLabel={labels.noImages}
+            ai
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-function TitleColumn({
+function Field({
   label,
-  title,
-  fallback,
-  tone
+  value,
+  muted,
+  multiline = false
 }: {
   label: string;
-  title: string | null;
-  fallback?: string;
-  tone: 'muted' | 'accent';
+  value: string;
+  muted: boolean;
+  multiline?: boolean;
 }) {
-  const showsFallback = !title || !title.trim();
   return (
     <div className="flex flex-col gap-1">
-      <span
-        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
-          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
-        }`}
-      >
+      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)]">
         {label}
-        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
       </span>
       <p
-        className={`text-sm md:text-base font-medium leading-relaxed line-clamp-2 ${
-          showsFallback ? 'text-[var(--muted)] italic' : ''
+        className={`text-xs leading-relaxed ${muted ? 'text-[var(--muted)] italic' : ''} ${
+          multiline ? 'line-clamp-4' : 'line-clamp-2'
         }`}
       >
-        {showsFallback ? fallback ?? '' : title}
+        {value}
       </p>
     </div>
   );
 }
 
-function GalleryColumn({
+function ImageRow({
   label,
-  images,
+  urls,
   emptyLabel,
-  tone
+  ai = false
 }: {
   label: string;
-  images: Array<{ src: string; alt: string | null }>;
+  urls: string[];
   emptyLabel: string;
-  tone: 'muted' | 'accent';
+  ai?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span
-        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
-          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
-        }`}
-      >
+    <div className="flex flex-col gap-1">
+      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] inline-flex items-center gap-1.5">
         {label}
-        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
+        {ai ? <Sparkles className="size-3 text-[var(--accent)]" aria-hidden /> : null}
       </span>
-      <div className="rounded-md overflow-hidden border border-[var(--border)]">
-        <ProductImageGallery
-          images={images}
-          aspect="aspect-square"
-          emptyLabel={emptyLabel}
-        />
-      </div>
-    </div>
-  );
-}
-
-function TextPair({
-  heading,
-  sourceLabel,
-  aiLabel,
-  sourceText,
-  aiText,
-  empty
-}: {
-  heading: string;
-  sourceLabel: string;
-  aiLabel: string;
-  sourceText: string;
-  aiText: string;
-  empty: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-        {heading}
-      </span>
-      <TextBlock label={sourceLabel} text={sourceText} empty={empty} tone="muted" />
-      <TextBlock label={aiLabel} text={aiText} empty={empty} tone="accent" />
-    </div>
-  );
-}
-
-function TextBlock({
-  label,
-  text,
-  empty,
-  tone
-}: {
-  label: string;
-  text: string;
-  empty: string;
-  tone: 'muted' | 'accent';
-}) {
-  const isEmpty = !text;
-  return (
-    <div
-      className={`flex flex-col gap-1 p-2.5 rounded-md border ${
-        tone === 'accent'
-          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/5'
-          : 'border-[var(--border)] bg-[var(--default)]/40'
-      }`}
-    >
-      <span
-        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
-          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
-        }`}
-      >
-        {label}
-        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
-      </span>
-      <p
-        className={`text-xs leading-relaxed line-clamp-4 ${
-          isEmpty ? 'text-[var(--muted)] italic' : ''
-        }`}
-      >
-        {isEmpty ? empty : text}
-      </p>
-    </div>
-  );
-}
-
-function TagsPair({
-  heading,
-  sourceLabel,
-  aiLabel,
-  sourceTags,
-  aiTags,
-  empty
-}: {
-  heading: string;
-  sourceLabel: string;
-  aiLabel: string;
-  sourceTags: string[];
-  aiTags: string[];
-  empty: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-        {heading}
-      </span>
-      <TagsBlock label={sourceLabel} tags={sourceTags} empty={empty} tone="muted" />
-      <TagsBlock label={aiLabel} tags={aiTags} empty={empty} tone="accent" />
-    </div>
-  );
-}
-
-function TagsBlock({
-  label,
-  tags,
-  empty,
-  tone
-}: {
-  label: string;
-  tags: string[];
-  empty: string;
-  tone: 'muted' | 'accent';
-}) {
-  return (
-    <div
-      className={`flex flex-col gap-1 p-2.5 rounded-md border ${
-        tone === 'accent'
-          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/5'
-          : 'border-[var(--border)] bg-[var(--default)]/40'
-      }`}
-    >
-      <span
-        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
-          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
-        }`}
-      >
-        {label}
-        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
-      </span>
-      {tags.length === 0 ? (
-        <span className="text-xs text-[var(--muted)] italic">{empty}</span>
+      {urls.length === 0 ? (
+        <div className="aspect-[4/1] rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex items-center justify-center text-xs text-[var(--muted)] italic">
+          <ImageIcon className="size-4 mr-1.5 shrink-0" aria-hidden />
+          {emptyLabel}
+        </div>
       ) : (
-        <div className="flex flex-wrap gap-1">
-          {tags.map((tag, i) => (
-            <span
-              key={`${tag}-${i}`}
-              className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                tone === 'accent'
-                  ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
-                  : 'bg-[var(--default)] text-[var(--muted)]'
-              }`}
-            >
-              {tag}
-            </span>
+        <div className="grid grid-cols-3 gap-1.5">
+          {urls.slice(0, 3).map((url, i) => (
+            <ImageZoom
+              key={`${url}-${i}`}
+              url={url}
+              alt={ai ? 'AI generated' : 'Source product image'}
+              downloadName={ai ? `ai-${i + 1}.png` : `source-${i + 1}.jpg`}
+            />
           ))}
         </div>
       )}
