@@ -646,6 +646,22 @@
     "costPerProductChat": "Pro Produkt · Textfelder",
     "costPerProductImages": "Pro Produkt · 3 Bilder",
     "costModels": "Mit {chat} + {image}",
-    "balanceLine": "Dein Guthaben"
+    "balanceLine": "Dein Guthaben",
+    "selectionTitle": "Produkte für die Massengenerierung auswählen",
+    "selectionBody": "Der Bulk füllt nur fehlende Felder — bereits vollständig generierte Produkte werden ausgeschlossen. Verwende die Budgetleiste, um die Kosten im Griff zu halten.",
+    "selectionEmpty": "Alle Produkte dieser Seite sind bereits generiert.",
+    "subtitleNoCandidates": "Alle Produkte sind bereits generiert. Aktuell nichts zu bulken.",
+    "hintFullCost": "{count} Produkte mit fehlenden Feldern · {cost, number} Credits bei voller Auswahl",
+    "budgetLabel": "Auswahl vs Guthaben",
+    "selectionCount": "{selected}/{total} ausgewählt",
+    "selectAllWithinBudget": "Alle auswählen (im Budget)",
+    "clearSelection": "Leeren",
+    "rowDisabledHint": "Nicht genug Credits übrig, um dieses Produkt aufzunehmen",
+    "summarySelected": "{count, plural, =0 {Keine Auswahl} =1 {1 Produkt · # Credits} other {# Produkte · # Credits}}",
+    "confirmSelection": "Generieren ({count})",
+    "retryFailed": "Fehlgeschlagene wiederholen",
+    "errorInvalidSelection": "Ein ausgewähltes Produkt ist nicht mehr verfügbar.",
+    "errorSourceNotFound": "Der vorherige Bulk-Lauf wurde nicht gefunden.",
+    "errorNoFailures": "Keine fehlgeschlagenen Produkte zum Wiederholen."
   }
 }

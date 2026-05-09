@@ -646,6 +646,22 @@
     "costPerProductChat": "Per product · text fields",
     "costPerProductImages": "Per product · 3 images",
     "costModels": "Using {chat} + {image}",
-    "balanceLine": "Your balance"
+    "balanceLine": "Your balance",
+    "selectionTitle": "Select products to bulk generate",
+    "selectionBody": "Bulk only fills missing fields — products already fully generated are excluded. Use the budget bar to keep costs under control.",
+    "selectionEmpty": "All products on this site are already generated.",
+    "subtitleNoCandidates": "All products are already generated. Nothing to bulk for now.",
+    "hintFullCost": "{count} products with missing fields · {cost, number} cr if you select them all",
+    "budgetLabel": "Selected vs balance",
+    "selectionCount": "{selected}/{total} selected",
+    "selectAllWithinBudget": "Select all (within budget)",
+    "clearSelection": "Clear",
+    "rowDisabledHint": "Not enough credits left to add this product to the selection",
+    "summarySelected": "{count, plural, =0 {No selection} =1 {1 product · # cr} other {# products · # cr}}",
+    "confirmSelection": "Generate ({count})",
+    "retryFailed": "Retry failed",
+    "errorInvalidSelection": "One of the selected products is no longer available.",
+    "errorSourceNotFound": "The original bulk run could not be found.",
+    "errorNoFailures": "No failed products to retry in the last bulk."
   }
 }

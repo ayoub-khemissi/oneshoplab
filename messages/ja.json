@@ -646,6 +646,22 @@
     "costPerProductChat": "商品ごと · テキストフィールド",
     "costPerProductImages": "商品ごと · 画像3枚",
     "costModels": "{chat} + {image} 使用",
-    "balanceLine": "あなたの残高"
+    "balanceLine": "あなたの残高",
+    "selectionTitle": "一括生成する商品を選択",
+    "selectionBody": "一括は欠落フィールドのみを埋めます — 完全生成済みの商品は除外されます。予算バーでコストを管理してください。",
+    "selectionEmpty": "このサイトの全商品はすでに生成済みです。",
+    "subtitleNoCandidates": "すべての商品が生成済み。今は一括対象がありません。",
+    "hintFullCost": "欠落フィールドのある商品: {count} · 全選択時 {cost, number} クレジット",
+    "budgetLabel": "選択 / 残高",
+    "selectionCount": "{selected}/{total} 選択中",
+    "selectAllWithinBudget": "すべて選択（予算内）",
+    "clearSelection": "クリア",
+    "rowDisabledHint": "この商品を追加するクレジットが不足しています",
+    "summarySelected": "{count} 商品 · {cost} クレジット",
+    "confirmSelection": "生成 ({count})",
+    "retryFailed": "失敗を再試行",
+    "errorInvalidSelection": "選択された商品の1つが利用できなくなりました。",
+    "errorSourceNotFound": "前回の実行が見つかりませんでした。",
+    "errorNoFailures": "前回の一括に失敗商品はありません。"
   }
 }

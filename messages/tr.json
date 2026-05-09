@@ -646,6 +646,22 @@
     "costPerProductChat": "Ürün başına · metin alanları",
     "costPerProductImages": "Ürün başına · 3 görsel",
     "costModels": "{chat} + {image} ile",
-    "balanceLine": "Bakiyeniz"
+    "balanceLine": "Bakiyeniz",
+    "selectionTitle": "Toplu üretim için ürün seçin",
+    "selectionBody": "Toplu üretim yalnızca eksik alanları doldurur — tamamen üretilmiş ürünler hariç tutulur. Maliyeti kontrol altında tutmak için bütçe çubuğunu kullanın.",
+    "selectionEmpty": "Bu sitedeki tüm ürünler zaten üretilmiş.",
+    "subtitleNoCandidates": "Tüm ürünler zaten üretilmiş. Şimdilik toplu için bir şey yok.",
+    "hintFullCost": "{count} ürün eksik alanlı · hepsini seçerseniz {cost, number} kredi",
+    "budgetLabel": "Seçim vs bakiye",
+    "selectionCount": "{selected}/{total} seçili",
+    "selectAllWithinBudget": "Hepsini seç (bütçe içinde)",
+    "clearSelection": "Temizle",
+    "rowDisabledHint": "Bu ürünü eklemek için yeterli kredi yok",
+    "summarySelected": "{count, plural, =0 {Seçim yok} =1 {1 ürün · # kredi} other {# ürün · # kredi}}",
+    "confirmSelection": "Üret ({count})",
+    "retryFailed": "Başarısızları tekrarla",
+    "errorInvalidSelection": "Seçili ürünlerden biri artık mevcut değil.",
+    "errorSourceNotFound": "Önceki çalışma bulunamadı.",
+    "errorNoFailures": "Tekrarlanacak başarısız ürün yok."
   }
 }

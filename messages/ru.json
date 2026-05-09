@@ -646,6 +646,22 @@
     "costPerProductChat": "На товар · текстовые поля",
     "costPerProductImages": "На товар · 3 изображения",
     "costModels": "С {chat} + {image}",
-    "balanceLine": "Ваш баланс"
+    "balanceLine": "Ваш баланс",
+    "selectionTitle": "Выберите товары для массовой генерации",
+    "selectionBody": "Массовая генерация заполняет только недостающие поля — уже полностью сгенерированные товары исключаются. Используйте полосу бюджета для контроля затрат.",
+    "selectionEmpty": "Все товары этого сайта уже сгенерированы.",
+    "subtitleNoCandidates": "Все товары уже сгенерированы. Сейчас нечего обрабатывать массово.",
+    "hintFullCost": "{count} товаров с недостающими полями · {cost, number} кр при полной выборке",
+    "budgetLabel": "Выбрано vs баланс",
+    "selectionCount": "{selected}/{total} выбрано",
+    "selectAllWithinBudget": "Выбрать всё (в рамках бюджета)",
+    "clearSelection": "Сбросить",
+    "rowDisabledHint": "Не хватает кредитов, чтобы добавить этот товар",
+    "summarySelected": "{count, plural, =0 {Ничего не выбрано} =1 {1 товар · # кр} few {# товара · # кр} many {# товаров · # кр} other {# товаров · # кр}}",
+    "confirmSelection": "Сгенерировать ({count})",
+    "retryFailed": "Повторить неудачные",
+    "errorInvalidSelection": "Один из выбранных товаров больше не доступен.",
+    "errorSourceNotFound": "Предыдущий запуск не найден.",
+    "errorNoFailures": "В последнем запуске нет неудачных товаров."
   }
 }

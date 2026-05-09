@@ -646,6 +646,22 @@
     "costPerProductChat": "لكل منتج · الحقول النصية",
     "costPerProductImages": "لكل منتج · 3 صور",
     "costModels": "باستخدام {chat} + {image}",
-    "balanceLine": "رصيدك"
+    "balanceLine": "رصيدك",
+    "selectionTitle": "اختر المنتجات للتوليد الجماعي",
+    "selectionBody": "التوليد الجماعي يملأ الحقول الناقصة فقط — المنتجات المكتملة مستثناة. استخدم شريط الميزانية للتحكم بالتكلفة.",
+    "selectionEmpty": "كل منتجات هذا الموقع تم توليدها بالفعل.",
+    "subtitleNoCandidates": "كل المنتجات مولّدة بالفعل. لا شيء للتوليد الجماعي حاليًا.",
+    "hintFullCost": "{count} منتج بحقول ناقصة · {cost, number} رصيد لو اخترتها كلها",
+    "budgetLabel": "المختار / الرصيد",
+    "selectionCount": "{selected}/{total} مختار",
+    "selectAllWithinBudget": "اختر الكل (ضمن الميزانية)",
+    "clearSelection": "مسح",
+    "rowDisabledHint": "الأرصدة غير كافية لإضافة هذا المنتج",
+    "summarySelected": "{count, plural, =0 {لا يوجد اختيار} =1 {منتج واحد · # رصيد} =2 {منتجان · # رصيد} few {# منتجات · # رصيد} many {# منتجًا · # رصيد} other {# منتج · # رصيد}}",
+    "confirmSelection": "توليد ({count})",
+    "retryFailed": "إعادة محاولة الفشل",
+    "errorInvalidSelection": "أحد المنتجات المختارة لم يعد متاحًا.",
+    "errorSourceNotFound": "تعذّر العثور على التشغيل السابق.",
+    "errorNoFailures": "لا توجد منتجات فاشلة لإعادة المحاولة."
   }
 }

@@ -646,6 +646,22 @@
     "costPerProductChat": "每个产品 · 文本字段",
     "costPerProductImages": "每个产品 · 3 张图",
     "costModels": "使用 {chat} + {image}",
-    "balanceLine": "您的余额"
+    "balanceLine": "您的余额",
+    "selectionTitle": "选择要批量生成的产品",
+    "selectionBody": "批量生成只补齐缺失字段——已完整生成的产品被排除。使用预算条控制成本。",
+    "selectionEmpty": "本站所有产品已生成。",
+    "subtitleNoCandidates": "所有产品已生成,目前无可批量项。",
+    "hintFullCost": "{count} 个产品有缺失字段 · 全部选中需 {cost, number} 积分",
+    "budgetLabel": "已选 / 余额",
+    "selectionCount": "{selected}/{total} 已选",
+    "selectAllWithinBudget": "全选（预算内）",
+    "clearSelection": "清空",
+    "rowDisabledHint": "剩余积分不足,无法加入此产品",
+    "summarySelected": "{count} 个产品 · {cost} 积分",
+    "confirmSelection": "生成 ({count})",
+    "retryFailed": "重试失败",
+    "errorInvalidSelection": "所选其中一项产品已不可用。",
+    "errorSourceNotFound": "未找到上一次生成。",
+    "errorNoFailures": "上次批量没有失败的产品可重试。"
   }
 }

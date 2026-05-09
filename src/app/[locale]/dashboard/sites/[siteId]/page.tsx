@@ -20,10 +20,10 @@ import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
 import {
-  estimateBulkCost,
   getActiveBulkJob,
   getLatestBulkJobDetail,
-  listBulkCandidates
+  listBulkCandidates,
+  listBulkCandidatesWithStatus
 } from '@/lib/bulk/site-generate';
 import {
   axesValueTiers,
@@ -316,11 +316,18 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
   const bulkImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
-  const bulkCandidates = await listBulkCandidates(project.id);
-  const bulkCostEstimate = estimateBulkCost(
-    bulkCandidates.length,
+  const bulkCandidatesAll = await listBulkCandidates(project.id);
+  // Candidates "with status" excludes products that already have all
+  // four fields generated (bulk never overwrites). Cost reflects only
+  // the pending fields per product.
+  const bulkCandidatesPending = await listBulkCandidatesWithStatus(
+    project.id,
     bulkChatModel,
     bulkImageQuality
+  );
+  const bulkCostEstimate = bulkCandidatesPending.reduce(
+    (sum, c) => sum + c.pendingCost,
+    0
   );
   const bulkActive = await getActiveBulkJob(project.id);
   const bulkDetail = await getLatestBulkJobDetail(project.id);
@@ -369,8 +376,9 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           <BulkGenerateSection
             siteId={siteId}
             plan={userPlan}
-            productCount={bulkCandidates.length}
+            productCount={bulkCandidatesAll.length}
             costEstimate={bulkCostEstimate}
+            initialCandidates={bulkCandidatesPending}
             initialActive={bulkActive}
             initialDetail={bulkDetail}
             creditsBalance={session.user.creditsBalance ?? 0}

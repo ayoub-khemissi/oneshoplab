@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull, lt, or, desc } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, lt, or, desc } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import {
   CHAT_MODEL_REGISTRY,
@@ -18,7 +18,14 @@ import {
 import { getEffectiveLanguage } from '@/lib/audit/language';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { audits, jobs, projects, products, type JobStatus } from '@/lib/db/schema';
+import {
+  audits,
+  jobs,
+  projects,
+  products,
+  type JobKind,
+  type JobStatus
+} from '@/lib/db/schema';
 
 /**
  * Bulk catalog generation — Scale plan only.
@@ -239,6 +246,161 @@ export async function listBulkCandidates(projectId: string): Promise<
 }
 
 // ---------------------------------------------------------------------------
+// "Already generated" detection
+// ---------------------------------------------------------------------------
+
+const FIELD_TO_KIND: Record<BulkFieldKey, JobKind> = {
+  title: 'kie_title',
+  description: 'kie_description',
+  tags: 'kie_tags',
+  images: 'kie_image_edit'
+};
+
+const KIND_TO_FIELD: Partial<Record<JobKind, BulkFieldKey>> = {
+  kie_title: 'title',
+  kie_description: 'description',
+  kie_tags: 'tags',
+  kie_image_edit: 'images'
+};
+
+/**
+ * Map productSourceId → set of fields that already have a completed,
+ * non-hidden generation. The bulk worker uses this per-product to skip
+ * fields the merchant has already generated (by hand or in a previous
+ * bulk) — bulk should never overwrite existing AI output.
+ *
+ * For images, only count completed image-edit jobs that actually
+ * produced a persisted URL AND aren't soft-hidden by the merchant
+ * (the merchant deleting their AI images is a signal they want them
+ * regenerated).
+ */
+async function getCompletedFieldsByProduct(
+  projectId: string
+): Promise<Map<string, Set<BulkFieldKey>>> {
+  const rows = await db.query.jobs.findMany({
+    where: and(
+      eq(jobs.projectId, projectId),
+      inArray(jobs.kind, ['kie_title', 'kie_description', 'kie_tags', 'kie_image_edit']),
+      eq(jobs.status, 'completed'),
+      isNull(jobs.hiddenAt)
+    )
+  });
+
+  const map = new Map<string, Set<BulkFieldKey>>();
+  for (const r of rows) {
+    const field = KIND_TO_FIELD[r.kind];
+    if (!field) continue;
+    const input = r.inputPayload as { productSourceId?: string } | null;
+    const sourceId = input?.productSourceId;
+    if (!sourceId) continue;
+    if (field === 'images') {
+      const result = r.result as { persistedUrls?: string[] } | null;
+      if (!result?.persistedUrls || result.persistedUrls.length === 0) continue;
+    }
+    let set = map.get(sourceId);
+    if (!set) {
+      set = new Set();
+      map.set(sourceId, set);
+    }
+    set.add(field);
+  }
+  return map;
+}
+
+/** Single-(product, field) lookup for the worker's mid-tick skip. */
+async function hasExistingCompletedField(
+  projectId: string,
+  productSourceId: string,
+  field: BulkFieldKey
+): Promise<boolean> {
+  const kind = FIELD_TO_KIND[field];
+  const rows = await db.query.jobs.findMany({
+    where: and(
+      eq(jobs.projectId, projectId),
+      eq(jobs.kind, kind),
+      eq(jobs.status, 'completed'),
+      isNull(jobs.hiddenAt)
+    ),
+    limit: 20
+  });
+  for (const r of rows) {
+    const input = r.inputPayload as { productSourceId?: string } | null;
+    if (input?.productSourceId !== productSourceId) continue;
+    if (field === 'images') {
+      const result = r.result as { persistedUrls?: string[] } | null;
+      if (result?.persistedUrls && result.persistedUrls.length > 0) return true;
+    } else {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Candidate listing with per-field "pending" status
+// ---------------------------------------------------------------------------
+
+export interface BulkCandidate {
+  id: string;
+  title: string;
+  /** Stable identifier used to match against jobs.inputPayload.productSourceId. */
+  sourceId: string;
+  /** Fields that don't yet have a completed generation. The bulk only
+   *  ever touches these; an empty list means the product is fully
+   *  generated and won't appear in the candidates response. */
+  pendingFields: BulkFieldKey[];
+  /** Sum of per-field costs for the pending fields, computed at the
+   *  user's CURRENT preferred chat model + image quality. */
+  pendingCost: number;
+}
+
+export async function listBulkCandidatesWithStatus(
+  projectId: string,
+  chatModelId: ChatModelId,
+  imageQualityId: ImageQualityId
+): Promise<BulkCandidate[]> {
+  const rows = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      sourceId: products.sourceId,
+      handle: products.handle
+    })
+    .from(products)
+    .where(
+      and(
+        eq(products.projectId, projectId),
+        or(eq(products.status, 'active'), isNull(products.status))
+      )
+    );
+  const completed = await getCompletedFieldsByProduct(projectId);
+  const out: BulkCandidate[] = [];
+
+  for (const p of rows) {
+    const sourceId = p.sourceId ?? p.handle ?? '';
+    if (!sourceId) continue;
+    const done = completed.get(sourceId) ?? new Set<BulkFieldKey>();
+    const pending = ALL_FIELDS.filter((f) => !done.has(f));
+    if (pending.length === 0) continue;
+    let cost = 0;
+    for (const f of pending) {
+      cost +=
+        f === 'images'
+          ? costForImage(imageQualityId) * IMAGE_ANGLES.length
+          : estimateChatCredits(chatModelId, f);
+    }
+    out.push({
+      id: p.id,
+      title: p.title,
+      sourceId,
+      pendingFields: pending,
+      pendingCost: cost
+    });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // Start / cancel
 // ---------------------------------------------------------------------------
 
@@ -304,6 +466,58 @@ export async function startBulkSiteGenerate(opts: {
 
   if (!inserted) return { ok: false, reason: 'already_running' };
   return { ok: true, jobId: inserted };
+}
+
+/**
+ * Take a bulk job that ended (any terminal state) and queue a new
+ * one targeting only the productIds whose previous run had at least
+ * one field error. Combined with the worker's per-field skip, this
+ * means the retry only re-attempts the actually-failed fields and
+ * doesn't re-bill the ones that succeeded.
+ *
+ * Uses the same atomic-insert path as a fresh start, so it 409s if
+ * a bulk is already running for the same site.
+ */
+export async function retryFailedFromBulk(opts: {
+  projectId: string;
+  sourceJobId: string;
+  chatModelId?: ChatModelId;
+  imageQualityId?: ImageQualityId;
+  customInstructions?: string;
+  totalCreditsBudget: number;
+}): Promise<
+  | { ok: true; jobId: string; productCount: number }
+  | { ok: false; reason: 'already_running' | 'source_not_found' | 'no_failures' }
+> {
+  const source = await db.query.jobs.findFirst({
+    where: and(
+      eq(jobs.id, opts.sourceJobId),
+      eq(jobs.projectId, opts.projectId),
+      eq(jobs.kind, 'bulk_site_generate')
+    )
+  });
+  if (!source) return { ok: false, reason: 'source_not_found' };
+
+  const sourceResult = readResult(source.result);
+  const failedProductIds = Object.entries(sourceResult.perProduct)
+    .filter(([, state]) =>
+      Object.values(state.fields).some((v) => v && v !== 'done')
+    )
+    .map(([id]) => id);
+  if (failedProductIds.length === 0) {
+    return { ok: false, reason: 'no_failures' };
+  }
+
+  const out = await startBulkSiteGenerate({
+    projectId: opts.projectId,
+    productIds: failedProductIds,
+    chatModelId: opts.chatModelId,
+    imageQualityId: opts.imageQualityId,
+    customInstructions: opts.customInstructions,
+    totalCreditsBudget: opts.totalCreditsBudget
+  });
+  if (!out.ok) return { ok: false, reason: 'already_running' };
+  return { ok: true, jobId: out.jobId, productCount: failedProductIds.length };
 }
 
 /**
@@ -481,6 +695,20 @@ export async function processNextBulkProduct(): Promise<boolean> {
       // Cancelled or already finalised by another path; bail without
       // touching the row further.
       return true;
+    }
+
+    // Skip fields that already have a non-hidden completed generation
+    // (created by a per-product action, an earlier bulk, or this bulk
+    // before it crashed). Bulk never overwrites existing AI output —
+    // its job is to fill the gaps, not to re-pay for work already done.
+    if (await hasExistingCompletedField(project.id, sourceId, field)) {
+      state.fields[field] = 'done';
+      result.lastProgressAtMs = Date.now();
+      await db
+        .update(jobs)
+        .set({ result: result as unknown as Record<string, unknown> })
+        .where(eq(jobs.id, job.id));
+      continue;
     }
 
     try {

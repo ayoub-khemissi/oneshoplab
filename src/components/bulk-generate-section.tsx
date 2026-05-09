@@ -7,12 +7,17 @@ import {
   ChevronDown,
   ChevronRight,
   Layers,
+  RotateCcw,
   Sparkles,
   X
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
+
+// ---------------------------------------------------------------------
+// Shared types (mirror the server module)
+// ---------------------------------------------------------------------
 
 interface ActiveBulkJob {
   id: string;
@@ -22,10 +27,11 @@ interface ActiveBulkJob {
   errors: number;
 }
 
+type FieldKey = 'title' | 'description' | 'tags' | 'images';
 type FieldOutcome = 'done' | { error: string };
 
 interface ProductBulkState {
-  fields: Partial<Record<'title' | 'description' | 'tags' | 'images', FieldOutcome>>;
+  fields: Partial<Record<FieldKey, FieldOutcome>>;
 }
 
 interface BulkJobStatusForUi {
@@ -48,20 +54,28 @@ interface CostBreakdown {
   imageQualityId: string;
 }
 
+interface BulkCandidate {
+  id: string;
+  title: string;
+  sourceId: string;
+  pendingFields: FieldKey[];
+  pendingCost: number;
+}
+
 interface BulkGenerateSectionProps {
   siteId: string;
-  /** Initial server-rendered snapshot, refreshed via the GET endpoint
-   *  every poll cycle so model-preference changes mid-flight surface. */
   plan: string;
+  /** Total active products on the site — informs the upgrade hint copy. */
   productCount: number;
+  /** Sum of pendingCost across candidates, computed server-side at the
+   *  user's current preferences. Drives the cost label on the entry CTA. */
   costEstimate: number;
+  /** Per-product candidate list. Products fully generated are excluded
+   *  by the server. The selection modal renders one row per entry. */
+  initialCandidates: BulkCandidate[];
   initialActive: ActiveBulkJob | null;
   initialDetail: BulkJobStatusForUi | null;
   creditsBalance: number;
-  /** Map productId → human-readable title for the failure detail
-   *  modal. The component only needs the products that ended up in
-   *  the bulk's perProduct map, but passing the full set keeps the
-   *  data path simple. */
   productTitleById: Record<string, string>;
 }
 
@@ -70,6 +84,7 @@ export function BulkGenerateSection({
   plan,
   productCount,
   costEstimate,
+  initialCandidates,
   initialActive,
   initialDetail,
   creditsBalance,
@@ -78,16 +93,15 @@ export function BulkGenerateSection({
   const t = useTranslations('BulkGenerate');
   const [active, setActive] = useState<ActiveBulkJob | null>(initialActive);
   const [detail, setDetail] = useState<BulkJobStatusForUi | null>(initialDetail);
+  const [candidates, setCandidates] = useState<BulkCandidate[]>(initialCandidates);
   const [estimate, setEstimate] = useState<{ total: number; breakdown: CostBreakdown | null }>(
-    {
-      total: costEstimate,
-      breakdown: null
-    }
+    { total: costEstimate, breakdown: null }
   );
   const [balance, setBalance] = useState<number>(creditsBalance);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [detailExpanded, setDetailExpanded] = useState(false);
 
@@ -102,10 +116,12 @@ export function BulkGenerateSection({
         active: ActiveBulkJob | null;
         detail: BulkJobStatusForUi | null;
         estimate: CostBreakdown;
+        candidates: BulkCandidate[];
         creditsBalance: number;
       };
       setActive(data.active);
       setDetail(data.detail);
+      setCandidates(data.candidates);
       setEstimate({ total: data.estimate.total, breakdown: data.estimate });
       setBalance(data.creditsBalance);
     } catch {
@@ -113,9 +129,6 @@ export function BulkGenerateSection({
     }
   }, [siteId]);
 
-  // Poll while active. Also refresh once on modal open so the cost
-  // shown reflects current preferences regardless of how stale the
-  // SSR snapshot was.
   useEffect(() => {
     if (!active || active.status === 'completed' || active.status === 'failed') {
       return;
@@ -135,22 +148,23 @@ export function BulkGenerateSection({
     if (modalOpen) refresh();
   }, [modalOpen, refresh]);
 
-  async function startBulk() {
+  async function startBulk(productIds: string[]) {
     setSubmitting(true);
     setErrorMsg(null);
     try {
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ siteId })
+        body: JSON.stringify({ siteId, productIds })
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         setErrorMsg(t(errorKey(body.error)));
-        return;
+        return false;
       }
       setModalOpen(false);
       await refresh();
+      return true;
     } finally {
       setSubmitting(false);
     }
@@ -172,8 +186,29 @@ export function BulkGenerateSection({
     }
   }
 
+  async function retryFailed() {
+    if (!detail || retrying) return;
+    setRetrying(true);
+    setErrorMsg(null);
+    try {
+      const res = await fetch('/api/sites/bulk-generate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ siteId, retryFromBulkId: detail.id })
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        setErrorMsg(t(errorKey(body.error)));
+        return;
+      }
+      await refresh();
+    } finally {
+      setRetrying(false);
+    }
+  }
+
   // ---------------------------------------------------------------------
-  // Active progress banner (pending / running)
+  // Active progress banner
   // ---------------------------------------------------------------------
   if (active) {
     const progress =
@@ -220,8 +255,7 @@ export function BulkGenerateSection({
   }
 
   // ---------------------------------------------------------------------
-  // Post-completion summary banner (the latest bulk's outcome — we
-  // keep showing it until the merchant launches another or dismisses).
+  // Post-completion summary banner
   // ---------------------------------------------------------------------
   if (detail && detail.status !== 'pending' && detail.status !== 'running') {
     const cancelled = detail.error === 'cancelled_by_user';
@@ -242,6 +276,8 @@ export function BulkGenerateSection({
       danger: 'border-[var(--danger)]/40 bg-[var(--danger)]/5 text-[var(--danger)]',
       muted: 'border-[var(--border)] bg-[var(--default)]/40 text-[var(--muted)]'
     }[tone];
+
+    const hasFailures = detail.partiallySucceeded + detail.fullyFailed > 0;
 
     return (
       <>
@@ -271,18 +307,31 @@ export function BulkGenerateSection({
                 })}
               </span>
             </div>
-            {plan === 'scale' && productCount > 0 ? (
-              <button
-                type="button"
-                onClick={() => setModalOpen(true)}
-                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
-              >
-                {t('relaunch')}
-              </button>
-            ) : null}
+            <div className="flex flex-col gap-2 shrink-0">
+              {plan === 'scale' && hasFailures ? (
+                <button
+                  type="button"
+                  onClick={retryFailed}
+                  disabled={retrying}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 disabled:opacity-50 inline-flex items-center gap-1.5"
+                >
+                  {retrying ? <Spinner size="sm" /> : <RotateCcw className="size-3.5" />}
+                  {t('retryFailed')}
+                </button>
+              ) : null}
+              {plan === 'scale' && candidates.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(true)}
+                  className="px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+                >
+                  {t('relaunch')}
+                </button>
+              ) : null}
+            </div>
           </div>
 
-          {detail.partiallySucceeded + detail.fullyFailed > 0 ? (
+          {hasFailures ? (
             <button
               type="button"
               onClick={() => setDetailExpanded((v) => !v)}
@@ -303,19 +352,20 @@ export function BulkGenerateSection({
               productTitleById={productTitleById}
             />
           ) : null}
+
+          {errorMsg ? (
+            <p className="text-xs text-[var(--danger)]">{errorMsg}</p>
+          ) : null}
         </div>
 
         {modalOpen ? (
-          <ConfirmModal
-            productCount={productCount}
-            costEstimate={estimate.total}
-            costBreakdown={estimate.breakdown}
+          <SelectionModal
+            candidates={candidates}
             balance={balance}
-            insufficient={balance < estimate.total}
             submitting={submitting}
             errorMsg={errorMsg}
             onCancel={() => setModalOpen(false)}
-            onConfirm={startBulk}
+            onConfirm={(ids) => startBulk(ids)}
           />
         ) : null}
       </>
@@ -323,11 +373,11 @@ export function BulkGenerateSection({
   }
 
   // ---------------------------------------------------------------------
-  // No active bulk + no recent detail → CTA card.
+  // No active + no recent detail → CTA card
   // ---------------------------------------------------------------------
   const isScale = plan === 'scale';
-  const insufficient = balance < estimate.total;
   const noProducts = productCount === 0;
+  const noCandidates = candidates.length === 0;
 
   return (
     <>
@@ -336,16 +386,26 @@ export function BulkGenerateSection({
         <div className="flex-1 flex flex-col gap-1">
           <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
           <p className="text-xs text-[var(--muted)] leading-relaxed">
-            {isScale ? t('subtitle', { count: productCount }) : t('upgradeHint')}
+            {!isScale
+              ? t('upgradeHint')
+              : noCandidates
+                ? t('subtitleNoCandidates')
+                : t('subtitle', { count: candidates.length })}
           </p>
         </div>
         {isScale ? (
           <button
             type="button"
-            disabled={noProducts}
+            disabled={noProducts || noCandidates}
             onClick={() => setModalOpen(true)}
             className="px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-            title={noProducts ? t('errorNoProducts') : undefined}
+            title={
+              noProducts
+                ? t('errorNoProducts')
+                : noCandidates
+                  ? t('subtitleNoCandidates')
+                  : undefined
+            }
           >
             {t('cta')}
           </button>
@@ -360,24 +420,325 @@ export function BulkGenerateSection({
       </div>
 
       {modalOpen ? (
-        <ConfirmModal
-          productCount={productCount}
-          costEstimate={estimate.total}
-          costBreakdown={estimate.breakdown}
+        <SelectionModal
+          candidates={candidates}
           balance={balance}
-          insufficient={insufficient}
           submitting={submitting}
           errorMsg={errorMsg}
           onCancel={() => setModalOpen(false)}
-          onConfirm={startBulk}
+          onConfirm={(ids) => startBulk(ids)}
         />
+      ) : null}
+
+      {/* surface "fresh start, no bulk yet" cost estimate too */}
+      {!noCandidates && estimate.breakdown ? (
+        <p className="text-xs text-[var(--muted)] -mt-2 ml-1">
+          {t('hintFullCost', {
+            count: candidates.length,
+            cost: estimate.total
+          })}
+        </p>
       ) : null}
     </>
   );
 }
 
 // ---------------------------------------------------------------------
-// Detail breakdown (atomic-failure UI)
+// Selection modal — checkbox list + virtual budget counter
+// ---------------------------------------------------------------------
+
+function SelectionModal({
+  candidates,
+  balance,
+  submitting,
+  errorMsg,
+  onCancel,
+  onConfirm
+}: {
+  candidates: BulkCandidate[];
+  balance: number;
+  submitting: boolean;
+  errorMsg: string | null;
+  onCancel: () => void;
+  onConfirm: (productIds: string[]) => Promise<boolean>;
+}) {
+  const t = useTranslations('BulkGenerate');
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [onCancel]);
+
+  const selectedCost = useMemo(() => {
+    let sum = 0;
+    for (const c of candidates) {
+      if (selected.has(c.id)) sum += c.pendingCost;
+    }
+    return sum;
+  }, [candidates, selected]);
+  const remaining = balance - selectedCost;
+  const overBudget = remaining < 0;
+
+  function toggle(id: string, cost: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        // Defensive: shouldn't be reachable since the row is disabled
+        // when over-budget, but enforce here too.
+        if (cost > balance - selectedCost) return prev;
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  /**
+   * Greedy top-down fill — walk the list in display order, check while
+   * we can fit, stop and leave the rest disabled when the next product
+   * doesn't fit. Matches the user's mental model: "select all jusqu'à
+   * ce qu'il y ait plus assez de crédit, les produits suivants ne
+   * seront donc pas sélectionnés."
+   */
+  function selectAllWithinBudget() {
+    const next = new Set<string>();
+    let used = 0;
+    for (const c of candidates) {
+      if (used + c.pendingCost > balance) break;
+      next.add(c.id);
+      used += c.pendingCost;
+    }
+    setSelected(next);
+  }
+
+  function clearSelection() {
+    setSelected(new Set());
+  }
+
+  async function handleConfirm() {
+    if (selected.size === 0 || overBudget) return;
+    await onConfirm(Array.from(selected));
+  }
+
+  const allSelected = selected.size === candidates.length && candidates.length > 0;
+  const noneSelected = selected.size === 0;
+  const budgetPct =
+    balance > 0 ? Math.min(100, Math.round((selectedCost / balance) * 100)) : 0;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onCancel}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col"
+      >
+        {/* Header --------------------------------------------------- */}
+        <div className="p-5 border-b border-[var(--border)] flex flex-col gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <h3 className="text-base font-semibold">{t('selectionTitle')}</h3>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">
+                {t('selectionBody')}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              aria-label={t('cancel')}
+              className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+
+          {/* Virtual budget bar */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[var(--muted)]">{t('budgetLabel')}</span>
+              <span className="font-mono tabular-nums">
+                <span className={overBudget ? 'text-[var(--danger)]' : ''}>
+                  {selectedCost.toLocaleString()}
+                </span>
+                <span className="text-[var(--muted)]"> / {balance.toLocaleString()} cr.</span>
+              </span>
+            </div>
+            <div className="h-1.5 rounded-full bg-[var(--default)] overflow-hidden">
+              <div
+                className={`h-full transition-all ${
+                  overBudget
+                    ? 'bg-[var(--danger)]'
+                    : budgetPct >= 90
+                      ? 'bg-[var(--warning)]'
+                      : 'bg-[var(--accent)]'
+                }`}
+                style={{ width: `${budgetPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Toolbar */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+              {t('selectionCount', {
+                selected: selected.size,
+                total: candidates.length
+              })}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={selectAllWithinBudget}
+                disabled={candidates.length === 0 || allSelected}
+                className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
+              >
+                {t('selectAllWithinBudget')}
+              </button>
+              <button
+                type="button"
+                onClick={clearSelection}
+                disabled={noneSelected}
+                className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
+              >
+                {t('clearSelection')}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Product list ------------------------------------------- */}
+        <div className="overflow-y-auto flex-1 divide-y divide-[var(--border)]">
+          {candidates.length === 0 ? (
+            <div className="p-5 text-sm text-[var(--muted)] text-center">
+              {t('selectionEmpty')}
+            </div>
+          ) : (
+            candidates.map((c) => {
+              const isSelected = selected.has(c.id);
+              const fits = c.pendingCost <= remaining;
+              const enabled = isSelected || fits;
+              return (
+                <CandidateRow
+                  key={c.id}
+                  candidate={c}
+                  selected={isSelected}
+                  enabled={enabled}
+                  onToggle={() => toggle(c.id, c.pendingCost)}
+                />
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer ------------------------------------------------ */}
+        <div className="p-5 border-t border-[var(--border)] flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex flex-col gap-0.5 text-xs">
+            <span className="text-[var(--muted)]">
+              {t('summarySelected', {
+                count: selected.size,
+                cost: selectedCost
+              })}
+            </span>
+            {errorMsg ? (
+              <span className="text-[var(--danger)]">{errorMsg}</span>
+            ) : null}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
+            >
+              {t('cancel')}
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              disabled={submitting || selected.size === 0 || overBudget}
+              className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+            >
+              {submitting ? <Spinner size="sm" /> : null}
+              {t('confirmSelection', {
+                count: selected.size,
+                cost: selectedCost
+              })}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CandidateRow({
+  candidate,
+  selected,
+  enabled,
+  onToggle
+}: {
+  candidate: BulkCandidate;
+  selected: boolean;
+  enabled: boolean;
+  onToggle: () => void;
+}) {
+  const t = useTranslations('BulkGenerate');
+  const fieldLabel: Record<FieldKey, string> = {
+    title: t('fieldTitle'),
+    description: t('fieldDescription'),
+    tags: t('fieldTags'),
+    images: t('fieldImages')
+  };
+  return (
+    <label
+      className={`flex items-center gap-3 px-5 py-3 hover:bg-[var(--default)]/40 ${
+        enabled ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
+      } ${selected ? 'bg-[var(--accent)]/5' : ''}`}
+      title={!enabled ? t('rowDisabledHint') : undefined}
+    >
+      <input
+        type="checkbox"
+        checked={selected}
+        disabled={!enabled}
+        onChange={onToggle}
+        className="size-4 accent-[var(--accent)] cursor-pointer disabled:cursor-not-allowed"
+      />
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+        <span className="text-sm font-medium text-[var(--foreground)] truncate">
+          {candidate.title}
+        </span>
+        <div className="flex items-center gap-1 flex-wrap">
+          {candidate.pendingFields.map((f) => (
+            <span
+              key={f}
+              className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] font-mono"
+            >
+              {fieldLabel[f]}
+            </span>
+          ))}
+        </div>
+      </div>
+      <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
+        {candidate.pendingCost.toLocaleString()} cr.
+      </span>
+    </label>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Failure breakdown (atomic UI for the post-completion banner)
 // ---------------------------------------------------------------------
 
 function FailureBreakdown({
@@ -388,18 +749,16 @@ function FailureBreakdown({
   productTitleById: Record<string, string>;
 }) {
   const t = useTranslations('BulkGenerate');
-  const fieldLabel: Record<keyof ProductBulkState['fields'], string> = {
+  const fieldLabel: Record<FieldKey, string> = {
     title: t('fieldTitle'),
     description: t('fieldDescription'),
     tags: t('fieldTags'),
     images: t('fieldImages')
   };
 
-  // Show only products that hit at least one field error.
   const rows = Object.entries(perProduct).filter(([, state]) =>
     Object.values(state.fields).some((v) => v && v !== 'done')
   );
-
   if (rows.length === 0) return null;
 
   return (
@@ -415,13 +774,19 @@ function FailureBreakdown({
               if (!outcome) return null;
               if (outcome === 'done') {
                 return (
-                  <li key={f} className="text-[var(--success)] inline-flex items-center gap-1.5">
+                  <li
+                    key={f}
+                    className="text-[var(--success)] inline-flex items-center gap-1.5"
+                  >
                     <CheckCircle2 className="size-3" /> {fieldLabel[f]}
                   </li>
                 );
               }
               return (
-                <li key={f} className="text-[var(--danger)] inline-flex items-start gap-1.5">
+                <li
+                  key={f}
+                  className="text-[var(--danger)] inline-flex items-start gap-1.5"
+                >
                   <X className="size-3 mt-0.5 shrink-0" />
                   <span>
                     <span className="font-medium">{fieldLabel[f]}</span>
@@ -437,160 +802,23 @@ function FailureBreakdown({
   );
 }
 
-// ---------------------------------------------------------------------
-// Confirmation modal
-// ---------------------------------------------------------------------
-
-function ConfirmModal({
-  productCount,
-  costEstimate,
-  costBreakdown,
-  balance,
-  insufficient,
-  submitting,
-  errorMsg,
-  onCancel,
-  onConfirm
-}: {
-  productCount: number;
-  costEstimate: number;
-  costBreakdown: CostBreakdown | null;
-  balance: number;
-  insufficient: boolean;
-  submitting: boolean;
-  errorMsg: string | null;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  const t = useTranslations('BulkGenerate');
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCancel();
-    };
-    document.addEventListener('keydown', onKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onCancel]);
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onCancel}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-md w-full p-5 flex flex-col gap-4"
-      >
-        <div className="flex flex-col gap-1">
-          <h3 className="text-base font-semibold">{t('modalTitle')}</h3>
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            {t('modalBody', { count: productCount })}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-2 p-3 rounded-md bg-[var(--default)]/40 text-sm">
-          <div className="flex justify-between">
-            <span className="text-[var(--muted)]">{t('productsLine')}</span>
-            <span className="font-mono tabular-nums">{productCount}</span>
-          </div>
-          {costBreakdown ? (
-            <>
-              <div className="flex justify-between text-xs">
-                <span className="text-[var(--muted)]">
-                  {t('costPerProductChat')}
-                </span>
-                <span className="font-mono tabular-nums">
-                  {costBreakdown.perProduct.chat} cr.
-                </span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-[var(--muted)]">
-                  {t('costPerProductImages')}
-                </span>
-                <span className="font-mono tabular-nums">
-                  {costBreakdown.perProduct.images} cr.
-                </span>
-              </div>
-              <div className="border-t border-[var(--border)] pt-2 flex justify-between text-xs">
-                <span className="text-[var(--muted)]">
-                  {t('costModels', {
-                    chat: costBreakdown.chatModelId,
-                    image: costBreakdown.imageQualityId
-                  })}
-                </span>
-              </div>
-            </>
-          ) : null}
-          <div className="flex justify-between border-t border-[var(--border)] pt-2">
-            <span className="font-semibold">{t('costLine')}</span>
-            <span className="font-mono font-semibold tabular-nums">
-              {costEstimate.toLocaleString()} cr.
-            </span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-[var(--muted)]">{t('balanceLine')}</span>
-            <span
-              className={`font-mono tabular-nums ${
-                insufficient ? 'text-[var(--danger)]' : ''
-              }`}
-            >
-              {balance.toLocaleString()} cr.
-            </span>
-          </div>
-        </div>
-
-        {insufficient ? (
-          <div
-            role="alert"
-            className="flex items-start gap-2 p-3 rounded-md bg-[var(--danger)]/5 border border-[var(--danger)]/40 text-xs text-[var(--danger)]"
-          >
-            <AlertTriangle className="size-4 mt-0.5 shrink-0" aria-hidden />
-            <span>{t('errorInsufficientCredits')}</span>
-          </div>
-        ) : null}
-
-        {errorMsg ? <p className="text-xs text-[var(--danger)]">{errorMsg}</p> : null}
-
-        <div className="flex justify-end gap-2 pt-1">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
-          >
-            {t('cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={submitting || insufficient}
-            className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
-          >
-            {submitting ? <Spinner size="sm" /> : null}
-            {t('confirm')}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function errorKey(code: string | undefined): string {
   switch (code) {
     case 'plan_not_eligible':
       return 'errorPlanNotEligible';
     case 'bulk_already_running':
+    case 'already_running':
       return 'errorAlreadyRunning';
     case 'no_products':
       return 'errorNoProducts';
     case 'insufficient_credits':
       return 'errorInsufficientCredits';
+    case 'invalid_selection':
+      return 'errorInvalidSelection';
+    case 'source_not_found':
+      return 'errorSourceNotFound';
+    case 'no_failures':
+      return 'errorNoFailures';
     default:
       return 'errorGeneric';
   }

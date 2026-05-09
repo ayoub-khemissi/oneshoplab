@@ -13,7 +13,8 @@ import {
   estimateBulkCostBreakdown,
   getActiveBulkJob,
   getLatestBulkJobDetail,
-  listBulkCandidates,
+  listBulkCandidatesWithStatus,
+  retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/lib/bulk/site-generate';
 import { auth } from '@/lib/auth';
@@ -23,16 +24,18 @@ import { projects } from '@/lib/db/schema';
 /**
  * Bulk catalog generation endpoint.
  *
- *   POST   — start a bulk for the site (Scale plan only). Atomic
- *            against double-click via DB transaction in
- *            startBulkSiteGenerate(); returns 409 if a bulk is already
- *            running for the same site.
- *   GET    — returns the merchant's current cost estimate (computed
- *            from their LIVE preferred chat model + image quality so
- *            the modal never shows a stale number) plus the latest
- *            bulk job detail so the UI can render the active progress
- *            and the post-completion failure breakdown.
- *   DELETE — cancel the active bulk for a site.
+ *   POST   — start a bulk for the site (Scale plan only). Body must
+ *            include productIds (the merchant-selected subset). Server
+ *            re-validates ownership + the budget against current
+ *            preferences. The per-field "skip already-generated"
+ *            behaviour lives in the worker, not here, so this only
+ *            checks ceilings.
+ *   GET    — returns: candidates with per-product pending fields +
+ *            cost; the live cost estimate; the latest bulk detail for
+ *            the post-completion banner; current credit balance; user
+ *            plan.
+ *   DELETE — cancel the active bulk for a site. Optional ?retryFailed=
+ *            triggers retryFailedFromBulk against the latest bulk.
  */
 
 function resolveModels(session: {
@@ -68,7 +71,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'plan_not_eligible' }, { status: 403 });
   }
 
-  let body: { siteId?: unknown; customInstructions?: unknown };
+  let body: {
+    siteId?: unknown;
+    productIds?: unknown;
+    customInstructions?: unknown;
+    /** When provided, the server clones the prior bulk's failed-product
+     *  set instead of taking productIds from the body. Mutually
+     *  exclusive with productIds (retryFromBulkId wins). */
+    retryFromBulkId?: unknown;
+  };
   try {
     body = (await req.json()) ?? {};
   } catch {
@@ -86,38 +97,110 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  const candidates = await listBulkCandidates(project.id);
-  if (candidates.length === 0) {
-    return NextResponse.json({ error: 'no_products' }, { status: 400 });
-  }
-
   const { chatModelId, imageQualityId } = resolveModels(session);
-  const breakdown = estimateBulkCostBreakdown(
-    candidates.length,
-    chatModelId,
-    imageQualityId
-  );
-
-  if ((session.user.creditsBalance ?? 0) < breakdown.total) {
-    return NextResponse.json(
-      { error: 'insufficient_credits', required: breakdown.total },
-      { status: 402 }
-    );
-  }
-
   const customInstructions =
     typeof body.customInstructions === 'string'
       ? body.customInstructions.slice(0, 750)
       : '';
 
-  const productIds = candidates.map((c) => c.id);
+  // Retry-failed branch — clones a previous bulk's failed productIds
+  // and queues a new run. The worker's per-field skip means succeeded
+  // fields aren't re-billed.
+  if (typeof body.retryFromBulkId === 'string' && body.retryFromBulkId) {
+    const candidates = await listBulkCandidatesWithStatus(
+      project.id,
+      chatModelId,
+      imageQualityId
+    );
+    const total = candidates.reduce((sum, c) => sum + c.pendingCost, 0);
+    if ((session.user.creditsBalance ?? 0) < total) {
+      return NextResponse.json(
+        { error: 'insufficient_credits', required: total },
+        { status: 402 }
+      );
+    }
+    const out = await retryFailedFromBulk({
+      projectId: project.id,
+      sourceJobId: body.retryFromBulkId,
+      chatModelId,
+      imageQualityId,
+      customInstructions,
+      totalCreditsBudget: total
+    });
+    if (!out.ok) {
+      const code =
+        out.reason === 'already_running'
+          ? 409
+          : out.reason === 'source_not_found'
+            ? 404
+            : 400;
+      return NextResponse.json({ error: out.reason }, { status: code });
+    }
+    return NextResponse.json({
+      ok: true,
+      jobId: out.jobId,
+      productCount: out.productCount
+    });
+  }
+
+  // Fresh-bulk branch — body.productIds is the merchant's explicit
+  // selection. We always use the candidates list from the DB to
+  // intersect (so a stale client can't queue a generation for an
+  // archived or already-fully-generated product), and re-derive cost
+  // from the resulting set.
+  const requestedIds = Array.isArray(body.productIds)
+    ? (body.productIds.filter((s): s is string => typeof s === 'string') as string[])
+    : null;
+
+  const candidates = await listBulkCandidatesWithStatus(
+    project.id,
+    chatModelId,
+    imageQualityId
+  );
+  if (candidates.length === 0) {
+    return NextResponse.json({ error: 'no_products' }, { status: 400 });
+  }
+  const candidateMap = new Map(candidates.map((c) => [c.id, c]));
+
+  // No selection passed = backward-compat path: take everything.
+  // With selection = filter to the intersection.
+  const selected =
+    requestedIds === null
+      ? candidates
+      : candidates.filter((c) => requestedIds.includes(c.id));
+  if (selected.length === 0) {
+    return NextResponse.json({ error: 'no_products' }, { status: 400 });
+  }
+
+  const totalCost = selected.reduce((sum, c) => sum + c.pendingCost, 0);
+  if ((session.user.creditsBalance ?? 0) < totalCost) {
+    return NextResponse.json(
+      { error: 'insufficient_credits', required: totalCost },
+      { status: 402 }
+    );
+  }
+
+  // Final defensive check — make sure every requested id is a real
+  // candidate (catches a forged body that smuggled in an archived
+  // product id or a product from another site).
+  if (requestedIds) {
+    for (const id of requestedIds) {
+      if (!candidateMap.has(id)) {
+        return NextResponse.json(
+          { error: 'invalid_selection' },
+          { status: 400 }
+        );
+      }
+    }
+  }
+
   const result = await startBulkSiteGenerate({
     projectId: project.id,
-    productIds,
+    productIds: selected.map((c) => c.id),
     chatModelId,
     imageQualityId,
     customInstructions,
-    totalCreditsBudget: breakdown.total
+    totalCreditsBudget: totalCost
   });
 
   if (!result.ok) {
@@ -130,8 +213,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   return NextResponse.json({
     ok: true,
     jobId: result.jobId,
-    productCount: productIds.length,
-    totalCreditsBudget: breakdown.total
+    productCount: selected.length,
+    totalCreditsBudget: totalCost
   });
 }
 
@@ -153,11 +236,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  // Fresh cost estimate from the merchant's LIVE preferences. Avoids
-  // the stale-snapshot trap where the dashboard SSR picked one model
-  // but the user changed it in another tab.
-  const candidates = await listBulkCandidates(project.id);
   const { chatModelId, imageQualityId } = resolveModels(session);
+  const candidates = await listBulkCandidatesWithStatus(
+    project.id,
+    chatModelId,
+    imageQualityId
+  );
   const breakdown = estimateBulkCostBreakdown(
     candidates.length,
     chatModelId,
@@ -171,6 +255,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     active,
     detail,
     estimate: breakdown,
+    candidates,
     creditsBalance: session.user.creditsBalance ?? 0,
     plan: (session.user.plan ?? 'free') as string
   });

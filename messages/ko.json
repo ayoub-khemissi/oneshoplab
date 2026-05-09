@@ -646,6 +646,22 @@
     "costPerProductChat": "상품당 · 텍스트 필드",
     "costPerProductImages": "상품당 · 이미지 3장",
     "costModels": "{chat} + {image} 사용",
-    "balanceLine": "귀하의 잔액"
+    "balanceLine": "귀하의 잔액",
+    "selectionTitle": "일괄 생성할 상품 선택",
+    "selectionBody": "일괄 생성은 누락된 필드만 채웁니다 — 이미 완전히 생성된 상품은 제외됩니다. 예산 바로 비용을 관리하세요.",
+    "selectionEmpty": "이 사이트의 모든 상품이 이미 생성되었습니다.",
+    "subtitleNoCandidates": "모든 상품이 이미 생성되었습니다. 지금 일괄 처리할 항목이 없습니다.",
+    "hintFullCost": "필드 누락 상품 {count}개 · 전체 선택 시 {cost, number} 크레딧",
+    "budgetLabel": "선택 / 잔액",
+    "selectionCount": "{selected}/{total} 선택",
+    "selectAllWithinBudget": "모두 선택(예산 내)",
+    "clearSelection": "지우기",
+    "rowDisabledHint": "이 상품을 추가할 크레딧이 부족합니다",
+    "summarySelected": "{count}개 상품 · {cost} 크레딧",
+    "confirmSelection": "생성 ({count})",
+    "retryFailed": "실패 재시도",
+    "errorInvalidSelection": "선택된 상품 중 하나가 더 이상 사용할 수 없습니다.",
+    "errorSourceNotFound": "이전 실행을 찾을 수 없습니다.",
+    "errorNoFailures": "재시도할 실패 상품이 없습니다."
   }
 }

@@ -646,6 +646,22 @@
     "costPerProductChat": "Na produkt · pola tekstowe",
     "costPerProductImages": "Na produkt · 3 obrazy",
     "costModels": "Z {chat} + {image}",
-    "balanceLine": "Twoje saldo"
+    "balanceLine": "Twoje saldo",
+    "selectionTitle": "Wybierz produkty do masowej generacji",
+    "selectionBody": "Masowa generacja wypełnia tylko brakujące pola — produkty już w pełni wygenerowane są wykluczone. Użyj paska budżetu, aby kontrolować koszty.",
+    "selectionEmpty": "Wszystkie produkty z tej strony są już wygenerowane.",
+    "subtitleNoCandidates": "Wszystkie produkty są już wygenerowane. Nic do masowej generacji.",
+    "hintFullCost": "{count} produktów z brakującymi polami · {cost, number} kr przy pełnym wyborze",
+    "budgetLabel": "Wybór vs saldo",
+    "selectionCount": "{selected}/{total} wybranych",
+    "selectAllWithinBudget": "Wybierz wszystkie (w budżecie)",
+    "clearSelection": "Wyczyść",
+    "rowDisabledHint": "Za mało kredytów, aby dodać ten produkt",
+    "summarySelected": "{count, plural, =0 {Brak wyboru} =1 {1 produkt · # kr} few {# produkty · # kr} many {# produktów · # kr} other {# produktów · # kr}}",
+    "confirmSelection": "Generuj ({count})",
+    "retryFailed": "Powtórz nieudane",
+    "errorInvalidSelection": "Jeden z wybranych produktów nie jest już dostępny.",
+    "errorSourceNotFound": "Nie znaleziono poprzedniej generacji.",
+    "errorNoFailures": "Brak nieudanych produktów do powtórzenia."
   }
 }

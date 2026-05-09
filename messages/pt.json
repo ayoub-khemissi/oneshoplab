@@ -646,6 +646,22 @@
     "costPerProductChat": "Por produto · campos texto",
     "costPerProductImages": "Por produto · 3 imagens",
     "costModels": "Com {chat} + {image}",
-    "balanceLine": "Seu saldo"
+    "balanceLine": "Seu saldo",
+    "selectionTitle": "Selecionar produtos para geração em massa",
+    "selectionBody": "O massivo só preenche campos em falta — produtos já totalmente gerados são excluídos. Usa a barra de orçamento para controlar o custo.",
+    "selectionEmpty": "Todos os produtos deste site já estão gerados.",
+    "subtitleNoCandidates": "Todos os produtos já estão gerados. Nada para gerar em massa.",
+    "hintFullCost": "{count} produtos com campos em falta · {cost, number} cr se selecionares tudo",
+    "budgetLabel": "Selecionado vs saldo",
+    "selectionCount": "{selected}/{total} selecionados",
+    "selectAllWithinBudget": "Selecionar tudo (no orçamento)",
+    "clearSelection": "Limpar",
+    "rowDisabledHint": "Créditos insuficientes para adicionar este produto",
+    "summarySelected": "{count, plural, =0 {Sem seleção} =1 {1 produto · # cr} other {# produtos · # cr}}",
+    "confirmSelection": "Gerar ({count})",
+    "retryFailed": "Repetir falhados",
+    "errorInvalidSelection": "Um dos produtos selecionados já não está disponível.",
+    "errorSourceNotFound": "Geração anterior não encontrada.",
+    "errorNoFailures": "Sem produtos falhados para repetir."
   }
 }

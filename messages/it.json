@@ -646,6 +646,22 @@
     "costPerProductChat": "Per prodotto · campi testo",
     "costPerProductImages": "Per prodotto · 3 immagini",
     "costModels": "Con {chat} + {image}",
-    "balanceLine": "Il tuo saldo"
+    "balanceLine": "Il tuo saldo",
+    "selectionTitle": "Seleziona i prodotti da generare in blocco",
+    "selectionBody": "Il blocco riempie solo i campi mancanti — i prodotti già completi sono esclusi. Usa la barra del budget per tenere i costi sotto controllo.",
+    "selectionEmpty": "Tutti i prodotti di questo sito sono già generati.",
+    "subtitleNoCandidates": "Tutti i prodotti sono già generati. Niente da fare in blocco per ora.",
+    "hintFullCost": "{count} prodotti con campi mancanti · {cost, number} cr se selezioni tutto",
+    "budgetLabel": "Selezione vs saldo",
+    "selectionCount": "{selected}/{total} selezionati",
+    "selectAllWithinBudget": "Seleziona tutto (nel budget)",
+    "clearSelection": "Pulisci",
+    "rowDisabledHint": "Crediti insufficienti per aggiungere questo prodotto",
+    "summarySelected": "{count, plural, =0 {Nessuna selezione} =1 {1 prodotto · # cr} other {# prodotti · # cr}}",
+    "confirmSelection": "Genera ({count})",
+    "retryFailed": "Riprova falliti",
+    "errorInvalidSelection": "Uno dei prodotti selezionati non è più disponibile.",
+    "errorSourceNotFound": "Generazione precedente non trovata.",
+    "errorNoFailures": "Nessun prodotto fallito da riprovare."
   }
 }

@@ -646,6 +646,22 @@
     "costPerProductChat": "Par produit · champs texte",
     "costPerProductImages": "Par produit · 3 images",
     "costModels": "Avec {chat} + {image}",
-    "balanceLine": "Votre solde"
+    "balanceLine": "Votre solde",
+    "selectionTitle": "Sélectionner les produits à générer",
+    "selectionBody": "Le bulk ne remplit que les champs manquants — les produits entièrement générés sont exclus. Utilise la barre de budget pour rester dans tes crédits.",
+    "selectionEmpty": "Tous les produits du site sont déjà générés.",
+    "subtitleNoCandidates": "Tous les produits sont déjà générés. Rien à bulker pour le moment.",
+    "hintFullCost": "{count} produits avec des champs manquants · {cost, number} cr si tout est sélectionné",
+    "budgetLabel": "Sélection vs solde",
+    "selectionCount": "{selected}/{total} sélectionnés",
+    "selectAllWithinBudget": "Tout sélectionner (dans le budget)",
+    "clearSelection": "Vider",
+    "rowDisabledHint": "Pas assez de crédits restants pour ajouter ce produit à la sélection",
+    "summarySelected": "{count, plural, =0 {Aucune sélection} =1 {1 produit · # cr} other {# produits · # cr}}",
+    "confirmSelection": "Générer ({count})",
+    "retryFailed": "Relancer les échecs",
+    "errorInvalidSelection": "Un des produits sélectionnés n'est plus disponible.",
+    "errorSourceNotFound": "La génération précédente est introuvable.",
+    "errorNoFailures": "Aucun produit en échec à relancer dans le dernier bulk."
   }
 }
