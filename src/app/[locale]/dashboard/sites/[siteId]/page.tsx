@@ -17,8 +17,14 @@ import { BulkGenerateSection } from '@/components/bulk-generate-section';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
+import { ShareLinksCard } from '@/components/share-links-card';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
+import { isAdminEmail } from '@/lib/admin';
+import {
+  listProductsWithGenerations,
+  listShareLinksForSite
+} from '@/lib/share/queries';
 import {
   getActiveBulkJob,
   getLatestBulkJobDetail,
@@ -331,6 +337,13 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   );
   const bulkActive = await getActiveBulkJob(project.id);
   const bulkDetail = await getLatestBulkJobDetail(project.id);
+
+  // Admin-only: pre-load share links + candidate products for the
+  // sales-prospection card. ADMIN_EMAILS env gates rendering, so a
+  // regular merchant pays no DB cost on this branch.
+  const isAdmin = isAdminEmail(session.user.email);
+  const shareLinks = isAdmin ? await listShareLinksForSite(session.user.id, project.id) : [];
+  const shareCandidates = isAdmin ? await listProductsWithGenerations(project.id) : [];
   // Map productId → title for the failure-detail modal so the merchant
   // sees product names rather than UUIDs.
   const productTitleById: Record<string, string> = {};
@@ -404,6 +417,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             projectId={project.id}
             initialValue={project.customInstructions ?? ''}
           />
+          {isAdmin ? (
+            <ShareLinksCard
+              siteId={siteId}
+              publicAppUrl={process.env.APP_URL ?? 'http://localhost:3000'}
+              initialLinks={shareLinks}
+              candidates={shareCandidates}
+            />
+          ) : null}
         </div>
       )}
     </main>
