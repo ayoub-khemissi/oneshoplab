@@ -1,0 +1,1 @@
+ALTER TABLE `jobs` ADD `hidden_at` timestamp;

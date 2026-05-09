@@ -71,6 +71,13 @@
       "when": 1778340656852,
       "tag": "0009_organic_namor",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1778344997413,
+      "tag": "0010_round_butterfly",
+      "breakpoints": true
     }
   ]
 }

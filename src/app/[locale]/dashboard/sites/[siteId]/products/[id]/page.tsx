@@ -23,10 +23,14 @@ import {
 import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { ProductImageGallery } from '@/components/product-image-gallery';
+import { AiImageGridLive } from '@/components/ai-image-grid-live';
 import {
+  costForImage,
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
+  IMAGE_MODEL_REGISTRY,
   listOptimHistory,
+  listProductImageJobs,
   type ChatModelId,
   type ImageQualityId,
   type OptimHistoryItem
@@ -197,12 +201,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // dashboard auto-picks it on next visit.
   await touchProjectLastView(projectId);
 
-  const [titleHistory, descriptionHistory, tagsHistory, imagesHistory] = await Promise.all([
-    listOptimHistory(projectId, sourceId, 'title'),
-    listOptimHistory(projectId, sourceId, 'description'),
-    listOptimHistory(projectId, sourceId, 'tags'),
-    listOptimHistory(projectId, sourceId, 'images')
-  ]);
+  const [titleHistory, descriptionHistory, tagsHistory, imagesHistory, liveImageJobs] =
+    await Promise.all([
+      listOptimHistory(projectId, sourceId, 'title'),
+      listOptimHistory(projectId, sourceId, 'description'),
+      listOptimHistory(projectId, sourceId, 'tags'),
+      listOptimHistory(projectId, sourceId, 'images'),
+      listProductImageJobs(projectId, sourceId)
+    ]);
+
+  // Resolve the user's effective image quality so we can show the
+  // matching credit cost on the Add / Regenerate tiles. Body overrides
+  // for chat models live on the optim form's own state and don't apply
+  // here — these tiles fire one-off image jobs at the persisted setting.
+  const effectiveImageQuality: ImageQualityId =
+    (session.user.preferredImageQuality as ImageQualityId | undefined) &&
+    session.user.preferredImageQuality! in IMAGE_MODEL_REGISTRY
+      ? (session.user.preferredImageQuality as ImageQualityId)
+      : DEFAULT_IMAGE_QUALITY;
+  const costPerImage = costForImage(effectiveImageQuality);
 
   // Drive the Generate vs Regenerate label: a field with at least one prior
   // AI output flips its CTA to "Regenerate" so the user understands they're
@@ -211,7 +228,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     title: titleHistory.length > 0,
     description: descriptionHistory.length > 0,
     tags: tagsHistory.length > 0,
-    images: imagesHistory.length > 0
+    // Images count any visible job (pending / running / completed / failed)
+    // so the FieldSwap auto-flips to the AI side as soon as the user has
+    // kicked off a generation, even before kie returns.
+    images: imagesHistory.length > 0 || liveImageJobs.length > 0
   };
   const hasAnyHistory =
     hasHistory.title || hasHistory.description || hasHistory.tags || hasHistory.images;
@@ -438,12 +458,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       ) : null
                     }
                     aiAction={(() => {
-                      const aiUrls = imagesHistory
-                        .flatMap((h) => (Array.isArray(h.output) ? h.output : [h.output]))
+                      // Download-all only over images visible AND completed —
+                      // i.e. the same set the merchant currently sees in the
+                      // live grid. Pending/failed/hidden jobs are excluded.
+                      const aiUrls = liveImageJobs
                         .filter(
-                          (u): u is string => typeof u === 'string' && u.length > 0
+                          (j) =>
+                            j.status === 'completed' &&
+                            typeof j.imageUrl === 'string' &&
+                            j.imageUrl.length > 0
                         )
-                        .slice(0, 3);
+                        .map((j) => j.imageUrl as string);
                       return aiUrls.length > 0 ? (
                         <DownloadAllButton
                           urls={aiUrls}
@@ -454,7 +479,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       ) : null;
                     })()}
                     source={<SourceImageGrid images={product.images} />}
-                    ai={<AiImageGrid history={imagesHistory} />}
+                    ai={
+                      <AiImageGridLive
+                        siteId={siteId}
+                        productId={productId}
+                        initial={liveImageJobs}
+                        costPerImage={costPerImage}
+                      />
+                    }
                   />
                 </FieldRow>
               </div>
@@ -577,43 +609,6 @@ function SourceImageGrid({ images }: { images: ProductImage[] }) {
           downloadName={`source-${i + 1}.jpg`}
         />
       ))}
-    </div>
-  );
-}
-
-function AiImageGrid({ history }: { history: OptimHistoryItem[] }) {
-  const t = useTranslations('Product');
-  // Take the most recent batch — group by ~recent generation. For simplicity
-  // we display the 3 latest result URLs across all completed image jobs.
-  const urls = history
-    .flatMap((h) => (Array.isArray(h.output) ? h.output : [h.output]))
-    .filter((u): u is string => typeof u === 'string' && u.length > 0)
-    .slice(0, 3);
-
-  if (urls.length === 0) {
-    return <p className="text-sm text-[var(--muted)] italic">{t('noLatestGeneration')}</p>;
-  }
-  // Use the most recent image-job timestamp for the expiry caption — the
-  // grid shows up to 3 URLs that almost always belong to the same generation
-  // (3 angles fired together), so a single caption fits.
-  const latestCreatedAt = history[0]?.createdAt;
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="grid grid-cols-3 gap-2">
-        {urls.map((u, i) => (
-          <ImageZoom
-            key={`${u}-${i}`}
-            url={u}
-            alt="Generated"
-            downloadName={`ai-${i + 1}.png`}
-          />
-        ))}
-      </div>
-      {latestCreatedAt ? (
-        <div className="flex justify-end">
-          <ImageExpiry createdAt={latestCreatedAt} />
-        </div>
-      ) : null}
     </div>
   );
 }

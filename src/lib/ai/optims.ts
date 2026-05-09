@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
@@ -156,7 +156,12 @@ export async function listOptimHistory(
     where: and(
       eq(jobs.projectId, projectId),
       eq(jobs.kind, kind),
-      eq(jobs.status, 'completed')
+      eq(jobs.status, 'completed'),
+      // Image jobs the merchant has soft-deleted from the live grid
+      // shouldn't reappear under "past generations" either — that would
+      // look like a broken delete. The flag is unused on chat jobs so
+      // the predicate is a no-op for title / description / tags.
+      isNull(jobs.hiddenAt)
     ),
     orderBy: [desc(jobs.createdAt)],
     limit: 20

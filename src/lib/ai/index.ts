@@ -44,6 +44,10 @@ export { listOptimHistory, runChatOptim } from './optims';
 export type { ChatOptimField, ChatOptimRequest, ChatOptimResult, OptimHistoryItem } from './optims';
 export { IMAGE_COST_CREDITS, startImageOptim } from './image-optim';
 export type { StartImageOptimOptions, StartImageOptimResult } from './image-optim';
+export { listProductImageJobs, MAX_IMAGES_PER_PRODUCT } from './image-jobs';
+export type { ImageJobRow } from './image-jobs';
+export { IMAGE_ANGLES, IMAGE_ANGLE_PROMPTS, buildImagePrompt } from './image-prompts';
+export type { ImageAngle as ImageAnglePreset } from './image-prompts';
 export { persistKieJobFailure, persistKieJobSuccess } from './persist-result';
 export { regenerateProductSection, runDynamicAuditForProduct } from './dynamic-audit';
 export type {

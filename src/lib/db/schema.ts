@@ -279,7 +279,12 @@ export const jobs = mysqlTable(
     creditsCost: int('credits_cost').notNull().default(0),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     startedAt: timestamp('started_at'),
-    finishedAt: timestamp('finished_at')
+    finishedAt: timestamp('finished_at'),
+    /** Soft-hide flag for image jobs the merchant has dismissed from the
+     *  grid. Set on user-driven delete and on regenerate (the slot's old
+     *  job is hidden when the new one starts). The row stays for audit /
+     *  history purposes. */
+    hiddenAt: timestamp('hidden_at')
   },
   (t) => ({
     idxStatus: index('idx_jobs_status').on(t.status),
