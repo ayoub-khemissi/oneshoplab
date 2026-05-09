@@ -56,7 +56,9 @@
     "aiLabel": "Nachher",
     "viewReport": "Vollständigen Report ansehen",
     "expand": "Aufklappen",
-    "collapse": "Einklappen"
+    "collapse": "Einklappen",
+    "showMore": "Mehr anzeigen",
+    "showLess": "Weniger anzeigen"
   },
   "Pricing": {
     "eyebrow": "Preise",

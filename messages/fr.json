@@ -56,7 +56,9 @@
     "aiLabel": "Après",
     "viewReport": "Consulter le rapport complet",
     "expand": "Déplier",
-    "collapse": "Replier"
+    "collapse": "Replier",
+    "showMore": "Voir plus",
+    "showLess": "Voir moins"
   },
   "Pricing": {
     "eyebrow": "Tarifs",

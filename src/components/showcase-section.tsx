@@ -2,6 +2,7 @@ import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { CollapsibleCardShell } from '@/components/collapsible-card-shell';
+import { ExpandableText } from '@/components/expandable-text';
 import { ImageZoom } from '@/components/image-zoom';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
@@ -53,7 +54,9 @@ export async function ShowcaseSection() {
               noTags: tShare('noTags'),
               noImages: tShare('noImages'),
               expand: t('expand'),
-              collapse: t('collapse')
+              collapse: t('collapse'),
+              showMore: t('showMore'),
+              showLess: t('showLess')
             }}
           />
         ))}
@@ -76,6 +79,8 @@ interface ShowcaseLabels {
   noImages: string;
   expand: string;
   collapse: string;
+  showMore: string;
+  showLess: string;
 }
 
 function ShowcaseCard({
@@ -195,11 +200,12 @@ function ProductCaseStudy({
         <div className="flex flex-col gap-2.5">
           <span className="eyebrow">{labels.source}</span>
           <Field label={labels.title} value={product.sourceTitle} muted={false} />
-          <Field
+          <DescriptionField
             label={labels.description}
-            value={sourceText}
-            muted={!product.sourceDescriptionHtml}
-            multiline
+            text={sourceText}
+            empty={labels.noDescription}
+            showMore={labels.showMore}
+            showLess={labels.showLess}
           />
           <Field
             label={labels.tags}
@@ -228,11 +234,12 @@ function ProductCaseStudy({
             value={product.aiTitle ?? labels.noTitle}
             muted={!product.aiTitle}
           />
-          <Field
+          <DescriptionField
             label={labels.description}
-            value={aiText || labels.noDescription}
-            muted={!aiText}
-            multiline
+            html={product.aiDescriptionHtml ?? ''}
+            empty={labels.noDescription}
+            showMore={labels.showMore}
+            showLess={labels.showLess}
           />
           <Field
             label={labels.tags}
@@ -276,6 +283,59 @@ function Field({
       >
         {value}
       </p>
+    </div>
+  );
+}
+
+/**
+ * Description block for the homepage showcase. Defaults to a 5-line
+ * clamp; <ExpandableText> exposes a "Show more / Show less" toggle
+ * when the body actually overflows. The AI variant (`html` prop)
+ * renders the merchant-facing rewrite as formatted HTML — same
+ * `prose`-driven path as the dashboard product page — so paragraphs,
+ * lists and emphasis carry through. The Source variant takes plain
+ * text (already stripped upstream) since marketing-page real estate
+ * doesn't need the merchant's full markup tree.
+ */
+function DescriptionField({
+  label,
+  text,
+  html,
+  empty,
+  showMore,
+  showLess
+}: {
+  label: string;
+  text?: string;
+  html?: string;
+  empty: string;
+  showMore: string;
+  showLess: string;
+}) {
+  const hasHtml = typeof html === 'string' && html.trim().length > 0;
+  const hasText = typeof text === 'string' && text.trim().length > 0;
+  if (!hasHtml && !hasText) {
+    return (
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)]">
+          {label}
+        </span>
+        <p className="text-xs leading-relaxed text-[var(--muted)] italic">{empty}</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)]">
+        {label}
+      </span>
+      <ExpandableText
+        text={hasHtml ? html! : text!}
+        html={hasHtml}
+        lineClamp={5}
+        expandLabel={showMore}
+        collapseLabel={showLess}
+      />
     </div>
   );
 }

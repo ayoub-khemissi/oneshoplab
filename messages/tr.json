@@ -56,7 +56,9 @@
     "aiLabel": "Sonra",
     "viewReport": "Tam raporu görüntüle",
     "expand": "Genişlet",
-    "collapse": "Daralt"
+    "collapse": "Daralt",
+    "showMore": "Daha fazla göster",
+    "showLess": "Daha az göster"
   },
   "Pricing": {
     "eyebrow": "Fiyatlandırma",

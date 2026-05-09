@@ -56,7 +56,9 @@
     "aiLabel": "이후",
     "viewReport": "전체 보고서 보기",
     "expand": "펼치기",
-    "collapse": "접기"
+    "collapse": "접기",
+    "showMore": "더 보기",
+    "showLess": "간단히 보기"
   },
   "Pricing": {
     "eyebrow": "요금",

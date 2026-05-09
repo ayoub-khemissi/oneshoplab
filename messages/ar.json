@@ -56,7 +56,9 @@
     "aiLabel": "بعد",
     "viewReport": "عرض التقرير الكامل",
     "expand": "توسيع",
-    "collapse": "طيّ"
+    "collapse": "طيّ",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل"
   },
   "Pricing": {
     "eyebrow": "الأسعار",

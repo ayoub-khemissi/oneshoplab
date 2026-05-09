@@ -56,7 +56,9 @@
     "aiLabel": "После",
     "viewReport": "Открыть полный отчёт",
     "expand": "Развернуть",
-    "collapse": "Свернуть"
+    "collapse": "Свернуть",
+    "showMore": "Показать больше",
+    "showLess": "Показать меньше"
   },
   "Pricing": {
     "eyebrow": "Тарифы",

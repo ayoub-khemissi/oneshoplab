@@ -56,7 +56,9 @@
     "aiLabel": "After",
     "viewReport": "View the full report",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "Pricing": {
     "eyebrow": "Pricing",

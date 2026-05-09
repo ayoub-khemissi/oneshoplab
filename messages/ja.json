@@ -56,7 +56,9 @@
     "aiLabel": "After",
     "viewReport": "詳細レポートを見る",
     "expand": "展開",
-    "collapse": "折りたたむ"
+    "collapse": "折りたたむ",
+    "showMore": "もっと見る",
+    "showLess": "閉じる"
   },
   "Pricing": {
     "eyebrow": "料金",

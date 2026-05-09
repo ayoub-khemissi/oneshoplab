@@ -56,7 +56,9 @@
     "aiLabel": "之后",
     "viewReport": "查看完整报告",
     "expand": "展开",
-    "collapse": "收起"
+    "collapse": "收起",
+    "showMore": "显示更多",
+    "showLess": "收起内容"
   },
   "Pricing": {
     "eyebrow": "价格",
