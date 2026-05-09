@@ -1,5 +1,5 @@
 import { Card } from '@heroui/react';
-import { ArrowRight, ImageIcon, Sparkles } from 'lucide-react';
+import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -46,9 +46,26 @@ export default async function SharePage({ params }: PageProps) {
       {/* Header ----------------------------------------------------- */}
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('publicEyebrow')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-          {data.domain}
-        </h1>
+        {data.siteUrl ? (
+          <a
+            href={data.siteUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center justify-center gap-2 self-center hover:text-[var(--accent)] transition-colors group"
+          >
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              {data.domain}
+            </h1>
+            <ExternalLink
+              className="size-5 opacity-50 group-hover:opacity-100 transition-opacity shrink-0"
+              aria-hidden
+            />
+          </a>
+        ) : (
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            {data.domain}
+          </h1>
+        )}
         <p className="text-sm text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
           {t('publicSubtitle', {
             platform: data.platform ?? 'your platform'

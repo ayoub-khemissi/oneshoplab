@@ -132,6 +132,10 @@ export interface SharedProduct {
 export interface SharedAuditSnapshot {
   /** Site domain shown in the case-study header. */
   domain: string;
+  /** Full URL of the merchant's storefront — used to make the header
+   *  domain clickable. Falls back to https://{domain} when the
+   *  project / audit didn't capture an explicit URL. */
+  siteUrl: string;
   platform: string | null;
   scores: {
     catalogCompleteness: number;
@@ -228,8 +232,14 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
     });
   }
 
+  const domain = project.domain ?? audit.url ?? '';
+  const siteUrl =
+    project.url ??
+    audit.url ??
+    (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
   return {
-    domain: project.domain ?? audit.url ?? '',
+    domain,
+    siteUrl,
     platform: audit.platform,
     scores:
       audit.scores != null
