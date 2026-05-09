@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "Site dili",
+    "hint": "Bu mağazadaki tüm yapay zekâ üretimlerini yönlendirir. Bulmak için ISO kodunu (fr) veya yerel adı (Français) yazın.",
+    "placeholder": "Dil seçin…",
+    "searchPlaceholder": "Kod veya ad ile ara",
+    "detectedBadge": "Tespit edildi",
+    "customBadge": "Özel",
+    "empty": "Dil bulunamadı",
+    "saveButton": "Kaydet",
+    "saved": "Kaydedildi"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

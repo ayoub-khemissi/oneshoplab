@@ -457,6 +457,17 @@
     "saveButton": "Enregistrer",
     "saved": "Enregistré"
   },
+  "SiteLanguage": {
+    "label": "Langue du site",
+    "hint": "Pilote toutes les générations IA sur cette boutique. Tapez le code ISO (fr) ou le nom natif (Français) pour la trouver.",
+    "placeholder": "Choisir une langue…",
+    "searchPlaceholder": "Rechercher par code ou nom",
+    "detectedBadge": "Détectée",
+    "customBadge": "Personnalisée",
+    "empty": "Aucune langue trouvée",
+    "saveButton": "Enregistrer",
+    "saved": "Enregistré"
+  },
   "ImageExpiry": {
     "inDays": "Suppr. auto dans {days, plural, =1 {1 jour} other {# jours}}",
     "expired": "Suppression imminente",

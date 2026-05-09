@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "サイトの言語",
+    "hint": "このストアのすべての AI 生成に適用されます。ISO コード（fr）または現地名（Français）を入力して検索できます。",
+    "placeholder": "言語を選択…",
+    "searchPlaceholder": "コードまたは名前で検索",
+    "detectedBadge": "検出",
+    "customBadge": "カスタム",
+    "empty": "言語が見つかりません",
+    "saveButton": "保存",
+    "saved": "保存しました"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "网站语言",
+    "hint": "用于本店所有 AI 生成。输入 ISO 代码（fr）或母语名称（Français）即可查找。",
+    "placeholder": "选择一种语言…",
+    "searchPlaceholder": "按代码或名称搜索",
+    "detectedBadge": "已检测",
+    "customBadge": "自定义",
+    "empty": "未找到语言",
+    "saveButton": "保存",
+    "saved": "已保存"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

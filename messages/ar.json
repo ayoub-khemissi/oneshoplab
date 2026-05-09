@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "لغة الموقع",
+    "hint": "تتحكم في كل توليد بالذكاء الاصطناعي على هذا المتجر. اكتب رمز ISO (fr) أو الاسم الأصلي (Français) للعثور عليه.",
+    "placeholder": "اختر لغة…",
+    "searchPlaceholder": "البحث بالرمز أو الاسم",
+    "detectedBadge": "مكتشفة",
+    "customBadge": "مخصصة",
+    "empty": "لا توجد لغة",
+    "saveButton": "حفظ",
+    "saved": "تم الحفظ"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "Язык сайта",
+    "hint": "Используется для всех ИИ-генераций в этом магазине. Введите ISO-код (fr) или родное название (Français), чтобы найти.",
+    "placeholder": "Выбрать язык…",
+    "searchPlaceholder": "Поиск по коду или названию",
+    "detectedBadge": "Определён",
+    "customBadge": "Свой",
+    "empty": "Язык не найден",
+    "saveButton": "Сохранить",
+    "saved": "Сохранено"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

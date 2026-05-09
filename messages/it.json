@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "Lingua del sito",
+    "hint": "Guida tutte le generazioni IA di questo negozio. Digita il codice ISO (fr) o il nome nativo (Français) per trovarla.",
+    "placeholder": "Scegli una lingua…",
+    "searchPlaceholder": "Cerca per codice o nome",
+    "detectedBadge": "Rilevata",
+    "customBadge": "Personalizzata",
+    "empty": "Nessuna lingua trovata",
+    "saveButton": "Salva",
+    "saved": "Salvato"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",

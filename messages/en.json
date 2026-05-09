@@ -457,6 +457,17 @@
     "saveButton": "Save",
     "saved": "Saved"
   },
+  "SiteLanguage": {
+    "label": "Site language",
+    "hint": "Drives every AI generation on this store. Type the ISO code (fr) or the language's own name (Français) to find it.",
+    "placeholder": "Pick a language…",
+    "searchPlaceholder": "Search by code or name",
+    "detectedBadge": "Detected",
+    "customBadge": "Custom",
+    "empty": "No language found",
+    "saveButton": "Save",
+    "saved": "Saved"
+  },
   "ImageExpiry": {
     "inDays": "Auto-deleted in {days, plural, =1 {1 day} other {# days}}",
     "expired": "Pending deletion",
