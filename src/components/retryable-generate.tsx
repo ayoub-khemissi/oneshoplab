@@ -170,6 +170,19 @@ export function RetryableGenerateProvider({
         abortRef.current = ctrl;
         setState({ kind: 'pending', field, attempt, startedAt: Date.now() });
 
+        // For 'all' and 'images', the server queues async image jobs
+        // before chat finishes (chat is sync, ~30s). Notify the live
+        // image grid to start polling immediately so the merchant sees
+        // the 3 skeleton placeholders within ~1s of clicking, instead
+        // of waiting for the request to return + router.refresh().
+        if (typeof window !== 'undefined' && (field === 'all' || field === 'images')) {
+          window.dispatchEvent(
+            new CustomEvent('oneshoplab:kick-image-poll', {
+              detail: { siteId, productId }
+            })
+          );
+        }
+
         try {
           const res = await fetch('/api/products/generate', {
             method: 'POST',

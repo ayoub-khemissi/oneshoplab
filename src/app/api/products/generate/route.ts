@@ -247,8 +247,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // they're appended to the field's default prompt.
   const merchantInstructions = combineInstructions(projectInstructions, customInstructions);
 
+  // For 'all', queue images FIRST: startImageOptim is async (creates the
+  // jobs + posts to kie + returns in <1s), so the merchant's image grid
+  // shows the 3 skeleton placeholders immediately while the synchronous
+  // chat fields run for the next ~25-30s. Without this, the request
+  // blocks on chat for the full duration before image jobs even exist
+  // in the DB and the user sees nothing.
   const fieldsToRun: Array<'title' | 'description' | 'tags' | 'images'> =
-    field === 'all' ? ['title', 'description', 'tags', 'images'] : [field];
+    field === 'all' ? ['images', 'title', 'description', 'tags'] : [field];
 
   // Body overrides win over the persisted preference: the chips on the optim
   // page mutate the user's selection client-side and pass it through here, so

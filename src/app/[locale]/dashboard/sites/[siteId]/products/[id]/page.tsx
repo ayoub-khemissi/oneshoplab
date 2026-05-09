@@ -225,20 +225,30 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // and is enforced server-side by the R2 cleanup worker.
   const retentionDays = imageRetentionDaysForPlan(session.user.plan ?? 'free');
 
-  // Drive the Generate vs Regenerate label: a field with at least one prior
-  // AI output flips its CTA to "Regenerate" so the user understands they're
-  // overwriting / appending rather than first-time generating.
+  // Two related-but-different flags about image state:
+  //   - hasHistory.images is consumed by FieldRow/FieldSwap to decide
+  //     whether the AI side has anything to show. We want the AI side
+  //     (skeletons) to surface as soon as a job is queued, so this
+  //     counts pending/running too.
+  //   - hasCompletedImages reflects ACTUAL delivered AI images. Used
+  //     by the bottom "Generate all" button so it doesn't flip to
+  //     "Regenerate all" while the user is still waiting on the first
+  //     batch — which would imply the run is over when it isn't.
   const hasHistory = {
     title: titleHistory.length > 0,
     description: descriptionHistory.length > 0,
     tags: tagsHistory.length > 0,
-    // Images count any visible job (pending / running / completed / failed)
-    // so the FieldSwap auto-flips to the AI side as soon as the user has
-    // kicked off a generation, even before kie returns.
     images: imagesHistory.length > 0 || liveImageJobs.length > 0
   };
+  const hasCompletedImages = imagesHistory.length > 0;
+  // "Regenerate all" only makes sense once at least one full pass has
+  // landed across every field type — otherwise the click is effectively
+  // a first-generation for whatever's still missing.
   const hasAnyHistory =
-    hasHistory.title || hasHistory.description || hasHistory.tags || hasHistory.images;
+    hasHistory.title &&
+    hasHistory.description &&
+    hasHistory.tags &&
+    hasCompletedImages;
 
   const t = await getTranslations('Product');
   const tReport = await getTranslations('Report');
