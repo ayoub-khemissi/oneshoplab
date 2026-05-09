@@ -606,5 +606,26 @@
     "bannerPastDueBody": "上一张账单扣款失败。请更新付款方式，以免被暂停。",
     "bannerUnpaidTitle": "订阅已暂停",
     "bannerUnpaidBody": "您的订阅因未付款被暂停。请更新付款方式并支付账单以重新激活。"
+  },
+  "BulkGenerate": {
+    "title": "目录批量生成",
+    "subtitle": "一次性为本站 {count, plural, =0 {所有产品} =1 {1 件产品} other {全部 # 件产品}} 生成 AI 文案 + 图片。在后台运行。",
+    "upgradeHint": "批量生成是 Scale 套餐功能。",
+    "cta": "为所有产品生成",
+    "upgradeCta": "升级到 Scale",
+    "modalTitle": "确认批量生成",
+    "modalBody": "将为本站 {count, plural, =0 {所有产品} =1 {1 件产品} other {全部 # 件产品}} 排队文案 + 图片。Worker 在后台逐个处理。",
+    "costLine": "预计费用",
+    "productsLine": "产品数",
+    "confirm": "启动批量生成",
+    "cancel": "取消",
+    "bannerInProgress": "批量生成进行中",
+    "bannerHint": "Worker 每个 tick 处理一个产品。可离开本页，进度会保留。",
+    "bannerErrors": "{count} 个错误",
+    "errorPlanNotEligible": "批量生成需要 Scale 套餐。",
+    "errorAlreadyRunning": "此站点已有批量生成在进行。",
+    "errorNoProducts": "没有可生成的产品。",
+    "errorInsufficientCredits": "积分不足，无法支持完整批量。",
+    "errorGeneric": "批量生成无法启动,请重试。"
   }
 }

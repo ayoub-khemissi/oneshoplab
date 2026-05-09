@@ -606,5 +606,26 @@
     "bannerPastDueBody": "Son faturanız tahsil edilemedi. Askıya alınmasını önlemek için ödeme yönteminizi güncelleyin.",
     "bannerUnpaidTitle": "Abonelik askıya alındı",
     "bannerUnpaidBody": "Aboneliğiniz ödenmediği için askıya alındı. Yeniden etkinleştirmek için ödeme yöntemini güncelleyin ve faturayı ödeyin."
+  },
+  "BulkGenerate": {
+    "title": "Toplu katalog üretimi",
+    "subtitle": "Bu sitedeki {count, plural, =0 {tüm ürünler} =1 {1 ürün} other {# ürünün tümü}} için bir kerede metin + görsel AI üretin. Arka planda çalışır.",
+    "upgradeHint": "Toplu üretim Scale planına özeldir.",
+    "cta": "Tüm ürünler için üret",
+    "upgradeCta": "Scale'e geç",
+    "modalTitle": "Toplu üretimi onayla",
+    "modalBody": "Bu sitedeki {count, plural, =0 {tüm ürünler} =1 {1 ürün} other {# ürünün tümü}} için metin + görsel kuyruğa eklenir. Worker arka planda birer birer işler.",
+    "costLine": "Tahmini maliyet",
+    "productsLine": "Ürün",
+    "confirm": "Toplu üretimi başlat",
+    "cancel": "İptal",
+    "bannerInProgress": "Toplu üretim devam ediyor",
+    "bannerHint": "Worker tick başına bir ürün. Sayfadan ayrılabilirsiniz — ilerleme korunur.",
+    "bannerErrors": "{count, plural, =1 {1 hata} other {# hata}}",
+    "errorPlanNotEligible": "Toplu üretim Scale planı gerektirir.",
+    "errorAlreadyRunning": "Bu site için zaten bir toplu üretim çalışıyor.",
+    "errorNoProducts": "Üretilecek ürün yok.",
+    "errorInsufficientCredits": "Tam çalışmayı karşılayacak kredi yok.",
+    "errorGeneric": "Toplu üretim başlatılamadı. Tekrar deneyin."
   }
 }

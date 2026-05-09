@@ -606,5 +606,26 @@
     "bannerPastDueBody": "Sua última fatura não pôde ser cobrada. Atualize o método de pagamento para evitar suspensão.",
     "bannerUnpaidTitle": "Assinatura suspensa",
     "bannerUnpaidBody": "Sua assinatura está suspensa por falta de pagamento. Atualize o método de pagamento e pague a fatura para reativar."
+  },
+  "BulkGenerate": {
+    "title": "Geração em massa do catálogo",
+    "subtitle": "Gera textos + imagens IA para {count, plural, =0 {todos os produtos} =1 {1 produto} other {todos os # produtos}} deste site de uma vez. Corre em segundo plano.",
+    "upgradeHint": "A geração em massa é uma funcionalidade do plano Scale.",
+    "cta": "Gerar para todos os produtos",
+    "upgradeCta": "Passar para Scale",
+    "modalTitle": "Confirmar geração em massa",
+    "modalBody": "Coloca em fila textos + imagens para {count, plural, =0 {todos os produtos} =1 {1 produto} other {todos os # produtos}} do site. O worker processa um produto de cada vez em segundo plano.",
+    "costLine": "Custo estimado",
+    "productsLine": "Produtos",
+    "confirm": "Lançar geração",
+    "cancel": "Cancelar",
+    "bannerInProgress": "Geração em massa em curso",
+    "bannerHint": "Um produto por tick. Pode sair da página, o progresso é preservado.",
+    "bannerErrors": "{count, plural, =1 {1 erro} other {# erros}}",
+    "errorPlanNotEligible": "A geração em massa requer o plano Scale.",
+    "errorAlreadyRunning": "Uma geração em massa já está em curso para este site.",
+    "errorNoProducts": "Sem produtos para gerar.",
+    "errorInsufficientCredits": "Créditos insuficientes para cobrir a geração completa.",
+    "errorGeneric": "Não foi possível iniciar a geração. Tente novamente."
   }
 }

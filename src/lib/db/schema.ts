@@ -23,6 +23,7 @@ export const AUDIT_STATUSES = ['pending', 'running', 'completed', 'failed', 'tim
 export const PRODUCT_STATUSES = ['active', 'archived'] as const;
 export const JOB_KINDS = [
   'audit_run',
+  'bulk_site_generate',
   'kie_alt_text',
   'kie_description',
   'kie_tags',

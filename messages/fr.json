@@ -606,5 +606,26 @@
     "bannerPastDueBody": "La dernière facture n'a pas pu être prélevée. Mettez à jour votre moyen de paiement pour éviter une suspension.",
     "bannerUnpaidTitle": "Abonnement suspendu",
     "bannerUnpaidBody": "Votre abonnement est suspendu pour impayé. Mettez à jour votre moyen de paiement et réglez la facture pour réactiver."
+  },
+  "BulkGenerate": {
+    "title": "Génération en masse du catalogue",
+    "subtitle": "Génère textes + images IA pour {count, plural, =0 {tous les produits} =1 {1 produit} other {tous les # produits}} de ce site d'un coup. Tourne en arrière-plan — tu peux continuer à utiliser l'app.",
+    "upgradeHint": "La génération en masse est une fonctionnalité du plan Scale.",
+    "cta": "Générer pour tous les produits",
+    "upgradeCta": "Passer en Scale",
+    "modalTitle": "Confirmer la génération en masse",
+    "modalBody": "Va mettre en file textes + images pour {count, plural, =0 {tous les produits} =1 {1 produit} other {les # produits}} de ce site. Le worker traite un produit à la fois en arrière-plan.",
+    "costLine": "Coût estimé",
+    "productsLine": "Produits",
+    "confirm": "Lancer la génération",
+    "cancel": "Annuler",
+    "bannerInProgress": "Génération en masse en cours",
+    "bannerHint": "Un produit traité par tick du worker. Tu peux quitter la page, la progression est conservée.",
+    "bannerErrors": "{count, plural, =1 {1 erreur} other {# erreurs}}",
+    "errorPlanNotEligible": "La génération en masse nécessite le plan Scale.",
+    "errorAlreadyRunning": "Une génération en masse est déjà en cours pour ce site.",
+    "errorNoProducts": "Aucun produit à générer.",
+    "errorInsufficientCredits": "Crédits insuffisants pour couvrir la génération complète.",
+    "errorGeneric": "Impossible de démarrer la génération. Réessaie."
   }
 }

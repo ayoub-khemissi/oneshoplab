@@ -182,7 +182,11 @@ export const CREDIT_COST: Record<JobKind, number> = {
   kie_image_generate: 25,
   /** Dynamic audit chat is run on our infra for the public report — not
    *  debited to a user, just budgeted. */
-  kie_dynamic_audit: 0
+  kie_dynamic_audit: 0,
+  /** Parent of a bulk catalog generation. Children (chat / image) carry
+   *  the actual credit cost; the parent row itself is purely for status
+   *  tracking. */
+  bulk_site_generate: 0
 };
 
 export function costForJob(kind: JobKind): number {

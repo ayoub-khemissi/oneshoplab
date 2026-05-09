@@ -606,5 +606,26 @@
     "bannerPastDueBody": "마지막 청구 결제가 실패했습니다. 일시 중지를 방지하려면 결제 수단을 업데이트하세요.",
     "bannerUnpaidTitle": "구독이 일시 중지되었습니다",
     "bannerUnpaidBody": "미납으로 구독이 일시 중지되었습니다. 결제 수단을 업데이트하고 청구서를 결제하여 다시 활성화하세요."
+  },
+  "BulkGenerate": {
+    "title": "카탈로그 일괄 생성",
+    "subtitle": "이 사이트의 {count, plural, =0 {모든 상품} =1 {1개 상품} other {전체 # 개 상품}}에 대해 AI 텍스트 + 이미지를 한 번에 생성. 백그라운드 실행.",
+    "upgradeHint": "일괄 생성은 Scale 플랜 기능입니다.",
+    "cta": "모든 상품에 대해 생성",
+    "upgradeCta": "Scale로 업그레이드",
+    "modalTitle": "일괄 생성 확인",
+    "modalBody": "이 사이트의 {count, plural, =0 {모든 상품} =1 {1개 상품} other {전체 # 개 상품}}에 대해 텍스트 + 이미지를 큐에 넣습니다. 워커가 백그라운드에서 하나씩 처리합니다.",
+    "costLine": "예상 비용",
+    "productsLine": "상품 수",
+    "confirm": "일괄 생성 시작",
+    "cancel": "취소",
+    "bannerInProgress": "일괄 생성 진행 중",
+    "bannerHint": "워커 틱당 한 개의 상품 처리. 페이지를 떠나도 진행 상황은 유지됩니다.",
+    "bannerErrors": "{count}개 오류",
+    "errorPlanNotEligible": "일괄 생성은 Scale 플랜이 필요합니다.",
+    "errorAlreadyRunning": "이 사이트에 이미 일괄 생성이 실행 중입니다.",
+    "errorNoProducts": "생성할 상품이 없습니다.",
+    "errorInsufficientCredits": "전체 실행을 위한 크레딧이 부족합니다.",
+    "errorGeneric": "일괄 생성을 시작할 수 없습니다. 다시 시도하세요."
   }
 }

@@ -3,17 +3,27 @@ import { and, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
 import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
 import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
-  auditRateLimitForPlan
+  auditRateLimitForPlan,
+  DEFAULT_CHAT_MODEL,
+  DEFAULT_IMAGE_QUALITY,
+  type ChatModelId,
+  type ImageQualityId
 } from '@/lib/ai/models';
 import { useTranslations } from 'next-intl';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { AutoRefresh } from '@/components/auto-refresh';
+import { BulkGenerateSection } from '@/components/bulk-generate-section';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
+import {
+  estimateBulkCost,
+  getActiveBulkJob,
+  listBulkCandidates
+} from '@/lib/bulk/site-generate';
 import {
   axesValueTiers,
   commentaryTiers,
@@ -296,6 +306,23 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     }
   }
 
+  // Bulk catalog generation (Scale only). Pre-compute the eligible
+  // product count + cost estimate at the merchant's current model
+  // preferences so the modal in <BulkGenerateSection> shows the
+  // budget without a round-trip. Also surface any in-flight bulk
+  // job for the progress banner.
+  const bulkChatModel: ChatModelId =
+    (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
+  const bulkImageQuality: ImageQualityId =
+    (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
+  const bulkCandidates = await listBulkCandidates(project.id);
+  const bulkCostEstimate = estimateBulkCost(
+    bulkCandidates.length,
+    bulkChatModel,
+    bulkImageQuality
+  );
+  const bulkActive = await getActiveBulkJob(project.id);
+
   return (
     <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-8">
       {isLoading ? <AutoRefresh /> : null}
@@ -327,11 +354,21 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           />
         ) : null
       ) : activeTab === 'products' ? (
-        <PaginatedProductsList
-          siteId={siteId}
-          products={allProductsWithIds}
-          archivedProducts={archivedProducts}
-        />
+        <div className="flex flex-col gap-4">
+          <BulkGenerateSection
+            siteId={siteId}
+            plan={userPlan}
+            productCount={bulkCandidates.length}
+            costEstimate={bulkCostEstimate}
+            initialActive={bulkActive}
+            creditsBalance={session.user.creditsBalance ?? 0}
+          />
+          <PaginatedProductsList
+            siteId={siteId}
+            products={allProductsWithIds}
+            archivedProducts={archivedProducts}
+          />
+        </div>
       ) : activeTab === 'jobs' ? (
         <ProjectJobsList items={projectJobs as ProjectJobRow[]} siteId={siteId} />
       ) : (

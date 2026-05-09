@@ -606,5 +606,26 @@
     "bannerPastDueBody": "L'ultima fattura non è stata addebitata. Aggiorna il metodo di pagamento per evitare la sospensione.",
     "bannerUnpaidTitle": "Abbonamento sospeso",
     "bannerUnpaidBody": "Il tuo abbonamento è sospeso per mancato pagamento. Aggiorna il metodo di pagamento e salda la fattura per riattivare."
+  },
+  "BulkGenerate": {
+    "title": "Generazione in blocco del catalogo",
+    "subtitle": "Genera testi + immagini AI per {count, plural, =0 {tutti i prodotti} =1 {1 prodotto} other {tutti i # prodotti}} di questo sito in una volta. Gira in background.",
+    "upgradeHint": "La generazione in blocco è una funzione del piano Scale.",
+    "cta": "Genera per tutti i prodotti",
+    "upgradeCta": "Passa a Scale",
+    "modalTitle": "Conferma generazione in blocco",
+    "modalBody": "Mette in coda testi + immagini per {count, plural, =0 {tutti i prodotti} =1 {1 prodotto} other {tutti i # prodotti}} del sito. Il worker processa un prodotto alla volta in background.",
+    "costLine": "Costo stimato",
+    "productsLine": "Prodotti",
+    "confirm": "Lancia generazione",
+    "cancel": "Annulla",
+    "bannerInProgress": "Generazione in blocco in corso",
+    "bannerHint": "Un prodotto per tick. Puoi uscire dalla pagina, il progresso è preservato.",
+    "bannerErrors": "{count, plural, =1 {1 errore} other {# errori}}",
+    "errorPlanNotEligible": "La generazione in blocco richiede il piano Scale.",
+    "errorAlreadyRunning": "Una generazione in blocco è già in corso per questo sito.",
+    "errorNoProducts": "Nessun prodotto da generare.",
+    "errorInsufficientCredits": "Crediti insufficienti per coprire la generazione completa.",
+    "errorGeneric": "Impossibile avviare la generazione. Riprova."
   }
 }

@@ -606,5 +606,26 @@
     "bannerPastDueBody": "Ostatnia faktura nie mogła zostać pobrana. Zaktualizuj metodę płatności, aby uniknąć zawieszenia.",
     "bannerUnpaidTitle": "Subskrypcja zawieszona",
     "bannerUnpaidBody": "Twoja subskrypcja jest zawieszona z powodu braku płatności. Zaktualizuj metodę płatności i opłać fakturę, aby wznowić."
+  },
+  "BulkGenerate": {
+    "title": "Masowa generacja katalogu",
+    "subtitle": "Generuj teksty + obrazy AI dla {count, plural, =0 {wszystkich produktów} =1 {1 produktu} few {wszystkich # produktów} many {wszystkich # produktów} other {wszystkich # produktów}} z tego sklepu naraz. Działa w tle.",
+    "upgradeHint": "Masowa generacja to funkcja planu Scale.",
+    "cta": "Generuj dla wszystkich produktów",
+    "upgradeCta": "Przejdź na Scale",
+    "modalTitle": "Potwierdź masową generację",
+    "modalBody": "Doda do kolejki teksty + obrazy dla {count, plural, =0 {wszystkich produktów} =1 {1 produktu} few {wszystkich # produktów} many {wszystkich # produktów} other {wszystkich # produktów}} sklepu. Worker przetwarza po jednym w tle.",
+    "costLine": "Szacowany koszt",
+    "productsLine": "Produkty",
+    "confirm": "Uruchom generację",
+    "cancel": "Anuluj",
+    "bannerInProgress": "Masowa generacja w toku",
+    "bannerHint": "Jeden produkt na tick. Możesz wyjść ze strony, postęp jest zachowany.",
+    "bannerErrors": "{count, plural, =1 {1 błąd} few {# błędy} many {# błędów} other {# błędów}}",
+    "errorPlanNotEligible": "Masowa generacja wymaga planu Scale.",
+    "errorAlreadyRunning": "Masowa generacja już trwa dla tego sklepu.",
+    "errorNoProducts": "Brak produktów do generowania.",
+    "errorInsufficientCredits": "Za mało kredytów na pełny przebieg.",
+    "errorGeneric": "Nie udało się uruchomić generacji. Spróbuj ponownie."
   }
 }

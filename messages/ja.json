@@ -606,5 +606,26 @@
     "bannerPastDueBody": "前回の請求を処理できませんでした。停止を避けるためにお支払い方法を更新してください。",
     "bannerUnpaidTitle": "サブスクリプションを一時停止中",
     "bannerUnpaidBody": "未払いのためサブスクリプションは一時停止されています。お支払い方法を更新して請求を支払うと再開されます。"
+  },
+  "BulkGenerate": {
+    "title": "カタログ一括生成",
+    "subtitle": "このサイトの {count, plural, =0 {全商品} =1 {1商品} other {全 # 商品}} に対して AI テキスト + 画像を一度に生成します。バックグラウンドで実行。",
+    "upgradeHint": "一括生成は Scale プランの機能です。",
+    "cta": "全商品で生成",
+    "upgradeCta": "Scale にアップグレード",
+    "modalTitle": "一括生成の確認",
+    "modalBody": "このサイトの {count, plural, =0 {全商品} =1 {1商品} other {全 # 商品}} に対してテキスト + 画像をキューに入れます。ワーカーがバックグラウンドで一つずつ処理します。",
+    "costLine": "推定コスト",
+    "productsLine": "商品数",
+    "confirm": "一括生成を開始",
+    "cancel": "キャンセル",
+    "bannerInProgress": "一括生成中",
+    "bannerHint": "ワーカーの 1 tick につき 1 商品。ページを離れても進行は保持されます。",
+    "bannerErrors": "エラー {count} 件",
+    "errorPlanNotEligible": "一括生成には Scale プランが必要です。",
+    "errorAlreadyRunning": "このサイトでは一括生成が既に実行中です。",
+    "errorNoProducts": "生成対象の商品がありません。",
+    "errorInsufficientCredits": "完全な一括実行に必要なクレジットが不足しています。",
+    "errorGeneric": "一括生成を開始できませんでした。再度お試しを。"
   }
 }
