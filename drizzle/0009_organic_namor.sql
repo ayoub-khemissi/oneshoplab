@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `language_override` varchar(8);

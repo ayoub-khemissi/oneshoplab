@@ -145,6 +145,11 @@ export const projects = mysqlTable(
      *  (brand voice, recurring constraints, etc.). NULL = no site-wide
      *  guidance. Combined at runtime with the per-product instructions. */
     customInstructions: text('custom_instructions'),
+    /** Two-letter ISO 639-1 code overriding the audit-detected language for
+     *  every AI generation on this project. NULL = use detectedLanguage from
+     *  the latest audit summary, ultimately falling back to 'en'. Survives
+     *  re-audits (audit refresh never overwrites this column). */
+    languageOverride: varchar('language_override', { length: 8 }),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },

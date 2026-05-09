@@ -64,6 +64,13 @@
       "when": 1777955760424,
       "tag": "0008_steady_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1778340656852,
+      "tag": "0009_organic_namor",
+      "breakpoints": true
     }
   ]
 }
