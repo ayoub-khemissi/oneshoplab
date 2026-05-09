@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
@@ -73,6 +73,11 @@ export async function persistKieJobSuccess(
     }
   }
 
+  // Defense-in-depth: only flip to `completed` from a non-terminal state.
+  // The kie webhook guards against this at the call site, but the watchdog
+  // and any future caller could miss the check — and a late kie webhook
+  // arriving after a user-cancelled job (already failed + refunded) must
+  // NOT silently re-enable a job whose credits have already been refunded.
   await db
     .update(jobs)
     .set({
@@ -80,7 +85,7 @@ export async function persistKieJobSuccess(
       result: parsed,
       finishedAt: new Date()
     })
-    .where(eq(jobs.id, jobId));
+    .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
 }
 
 /**
@@ -95,15 +100,26 @@ export async function persistKieJobFailure(
 ): Promise<void> {
   const errorText = failMsg ?? failCode ?? 'kie reported failure';
 
+  // Read the job *first* so we can decide whether to flip it to failed
+  // and whether to issue a refund. Two terminal-state guards live here:
+  //   - if the row is already `completed`, we don't change status (the
+  //     image was actually delivered) and we don't refund (would credit
+  //     the user for a successful delivery).
+  //   - if the row is already `failed` / `timed_out`, we leave it; the
+  //     refund's idempotency key still keeps it safe but we save the
+  //     write and avoid pointlessly clobbering the original error.
+  const job = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId) });
+  if (!job) return;
+  if (job.status !== 'pending' && job.status !== 'running') return;
+
   await db
     .update(jobs)
     .set({ status: 'failed', error: errorText, finishedAt: new Date() })
-    .where(eq(jobs.id, jobId));
+    .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
 
   if (!isImageJob(jobKind)) return;
 
-  const job = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId) });
-  if (!job?.projectId || job.creditsCost <= 0) return;
+  if (!job.projectId || job.creditsCost <= 0) return;
 
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, job.projectId)
