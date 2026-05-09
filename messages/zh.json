@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "审计在结束前被中断。请重新启动分析。",
     "errorNoReport": "无法读取你的店铺目录。请确认 URL 可访问后再试。",
-    "errorAuditNotFound": "此审计已不存在。请从控制台启动新的分析。"
+    "errorAuditNotFound": "此审计已不存在。请从控制台启动新的分析。",
+    "copyPlain": "复制为文本"
   },
   "Issues": {
     "no_image": "无图片",

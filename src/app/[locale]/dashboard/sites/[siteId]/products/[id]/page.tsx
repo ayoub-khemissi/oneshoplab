@@ -387,12 +387,27 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     aiAction={
                       descriptionHistory[0] &&
                       typeof descriptionHistory[0].output === 'string' ? (
-                        <CopyButton
-                          value={descriptionHistory[0].output as string}
-                          asHtml
-                          label={tReport('copyHtml')}
-                          copiedLabel={tReport('copied')}
-                        />
+                        // Two adjacent copy buttons: one preserves the HTML
+                        // formatting (paste into Shopify / WooCommerce rich
+                        // editors keeps <p>, <ul>, <strong>), the other
+                        // strips tags so a paste into a plain-text field or
+                        // an email reads cleanly.
+                        <div className="inline-flex items-center gap-1.5">
+                          <CopyButton
+                            value={descriptionHistory[0].output as string}
+                            asHtml
+                            label={tReport('copyHtml')}
+                            copiedLabel={tReport('copied')}
+                          />
+                          <CopyButton
+                            value={(descriptionHistory[0].output as string)
+                              .replace(/<[^>]+>/g, ' ')
+                              .replace(/\s+/g, ' ')
+                              .trim()}
+                            label={tReport('copyPlain')}
+                            copiedLabel={tReport('copied')}
+                          />
+                        </div>
                       ) : null
                     }
                     source={

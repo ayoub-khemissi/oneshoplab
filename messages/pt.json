@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "A auditoria foi interrompida antes de terminar. Volte a lançá-la.",
     "errorNoReport": "Não foi possível ler o catálogo. Verifique se o URL está acessível e tente novamente.",
-    "errorAuditNotFound": "Esta auditoria já não existe. Lance uma nova análise a partir do painel."
+    "errorAuditNotFound": "Esta auditoria já não existe. Lance uma nova análise a partir do painel.",
+    "copyPlain": "Copiar como texto"
   },
   "Issues": {
     "no_image": "Sem imagem",

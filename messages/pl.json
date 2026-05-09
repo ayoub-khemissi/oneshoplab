@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "Audyt został przerwany przed zakończeniem. Uruchom ponownie analizę.",
     "errorNoReport": "Nie udało się odczytać katalogu. Sprawdź, czy URL jest osiągalny, i spróbuj ponownie.",
-    "errorAuditNotFound": "Ten audyt już nie istnieje. Uruchom nową analizę z panelu."
+    "errorAuditNotFound": "Ten audyt już nie istnieje. Uruchom nową analizę z panelu.",
+    "copyPlain": "Kopiuj jako tekst"
   },
   "Issues": {
     "no_image": "Brak obrazu",

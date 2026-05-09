@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "監査が完了前に中断されました。再度実行してください。",
     "errorNoReport": "ストアのカタログを読み取れませんでした。URLが到達可能か確認して再試行を。",
-    "errorAuditNotFound": "この監査は存在しません。ダッシュボードから新しい分析を開始してください。"
+    "errorAuditNotFound": "この監査は存在しません。ダッシュボードから新しい分析を開始してください。",
+    "copyPlain": "テキストとしてコピー"
   },
   "Issues": {
     "no_image": "画像なし",

@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "The audit was interrupted before it could finish. Please relaunch the analysis.",
     "errorNoReport": "Couldn't read your store catalog. Check that the URL is reachable and try again.",
-    "errorAuditNotFound": "This audit no longer exists. Launch a new analysis from the dashboard."
+    "errorAuditNotFound": "This audit no longer exists. Launch a new analysis from the dashboard.",
+    "copyPlain": "Copy as text"
   },
   "Issues": {
     "no_image": "No image",

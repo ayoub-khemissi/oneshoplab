@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "Das Audit wurde vor Abschluss unterbrochen. Bitte erneut starten.",
     "errorNoReport": "Konnte den Shop-Katalog nicht lesen. Prüfe, ob die URL erreichbar ist, und versuche es erneut.",
-    "errorAuditNotFound": "Dieses Audit existiert nicht mehr. Starte ein neues Audit vom Dashboard."
+    "errorAuditNotFound": "Dieses Audit existiert nicht mehr. Starte ein neues Audit vom Dashboard.",
+    "copyPlain": "Als Text kopieren"
   },
   "Issues": {
     "no_image": "Kein Bild",

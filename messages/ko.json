@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "감사가 끝나기 전에 중단되었습니다. 분석을 다시 실행하세요.",
     "errorNoReport": "스토어 카탈로그를 읽을 수 없었습니다. URL이 접근 가능한지 확인하고 다시 시도하세요.",
-    "errorAuditNotFound": "이 감사는 더 이상 존재하지 않습니다. 대시보드에서 새 분석을 시작하세요."
+    "errorAuditNotFound": "이 감사는 더 이상 존재하지 않습니다. 대시보드에서 새 분석을 시작하세요.",
+    "copyPlain": "텍스트로 복사"
   },
   "Issues": {
     "no_image": "이미지 없음",

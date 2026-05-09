@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "L'analyse a été interrompue avant la fin. Relance l'analyse depuis le dashboard.",
     "errorNoReport": "Impossible de lire ton catalogue. Vérifie que l'URL est accessible et réessaie.",
-    "errorAuditNotFound": "Cet audit n'existe plus. Lance une nouvelle analyse depuis le dashboard."
+    "errorAuditNotFound": "Cet audit n'existe plus. Lance une nouvelle analyse depuis le dashboard.",
+    "copyPlain": "Copier en texte"
   },
   "Issues": {
     "no_image": "Aucune image",

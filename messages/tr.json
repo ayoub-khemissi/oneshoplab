@@ -411,7 +411,8 @@
     },
     "errorProcessInterrupted": "Denetim bitmeden kesildi. Lütfen analizi yeniden başlatın.",
     "errorNoReport": "Mağaza kataloğu okunamadı. URL'nin erişilebilir olduğunu kontrol edin ve tekrar deneyin.",
-    "errorAuditNotFound": "Bu denetim artık yok. Panelden yeni bir analiz başlatın."
+    "errorAuditNotFound": "Bu denetim artık yok. Panelden yeni bir analiz başlatın.",
+    "copyPlain": "Metin olarak kopyala"
   },
   "Issues": {
     "no_image": "Görsel yok",
