@@ -25,6 +25,7 @@
     "bcryptjs": "^2.4.3",
     "client-zip": "^2.5.0",
     "drizzle-orm": "^0.36.0",
+    "flag-icons": "^7.5.0",
     "lucide-react": "^1.14.0",
     "mysql2": "^3.11.0",
     "next": "^16.2.0",

@@ -11,6 +11,10 @@ import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import '../globals.css';
+// SVG flag glyphs — Windows doesn't ship flag emoji in its system fonts,
+// so the locale switcher fell back to the country code letters. flag-icons
+// gives us a cross-platform <span class="fi fi-xx" /> rendering.
+import 'flag-icons/css/flag-icons.min.css';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 

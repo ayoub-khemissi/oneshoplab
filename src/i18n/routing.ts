@@ -53,6 +53,27 @@ export const LOCALE_FLAGS: Record<(typeof SUPPORTED_LOCALES)[number], string> = 
   ko: '🇰🇷'
 };
 
+/**
+ * ISO 3166-1 alpha-2 country code per locale, used by the flag-icons CSS
+ * classes (`fi fi-${code}`). Cross-platform SVG flags so Windows users
+ * who don't ship flag glyphs in Segoe UI Emoji still see a flag.
+ */
+export const LOCALE_COUNTRY_CODES: Record<(typeof SUPPORTED_LOCALES)[number], string> = {
+  en: 'gb',
+  fr: 'fr',
+  es: 'es',
+  de: 'de',
+  it: 'it',
+  pt: 'pt',
+  ru: 'ru',
+  pl: 'pl',
+  tr: 'tr',
+  ar: 'sa',
+  zh: 'cn',
+  ja: 'jp',
+  ko: 'kr'
+};
+
 /** Locales that read right-to-left. */
 export const RTL_LOCALES = new Set<(typeof SUPPORTED_LOCALES)[number]>(['ar']);
 

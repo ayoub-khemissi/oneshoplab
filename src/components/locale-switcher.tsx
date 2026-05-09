@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import {
-  LOCALE_FLAGS,
+  LOCALE_COUNTRY_CODES,
   LOCALE_LABELS,
   SUPPORTED_LOCALES,
   type Locale
@@ -54,13 +54,17 @@ export function LocaleSwitcher({ current, ariaLabel }: LocaleSwitcherProps) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="size-9 rounded-md inline-flex items-center justify-center text-lg leading-none hover:bg-[var(--default)] transition-colors"
+        className="size-9 rounded-md inline-flex items-center justify-center hover:bg-[var(--default)] transition-colors"
         aria-label={ariaLabel}
         aria-expanded={open}
         aria-haspopup="menu"
-        title={`${LOCALE_FLAGS[current]} ${LOCALE_LABELS[current]}`}
+        title={LOCALE_LABELS[current]}
       >
-        <span className="text-base">{LOCALE_FLAGS[current]}</span>
+        <span
+          className={`fi fi-${LOCALE_COUNTRY_CODES[current]} rounded-sm`}
+          style={{ width: '1.25rem', height: '0.94rem' }}
+          aria-hidden
+        />
       </button>
       {open ? (
         <div
@@ -83,7 +87,11 @@ export function LocaleSwitcher({ current, ariaLabel }: LocaleSwitcherProps) {
                 aria-current={active ? 'true' : undefined}
               >
                 <span className="inline-flex items-center gap-3">
-                  <span className="text-base leading-none">{LOCALE_FLAGS[loc]}</span>
+                  <span
+                    className={`fi fi-${LOCALE_COUNTRY_CODES[loc]} rounded-sm shrink-0`}
+                    style={{ width: '1.25rem', height: '0.94rem' }}
+                    aria-hidden
+                  />
                   <span>{LOCALE_LABELS[loc]}</span>
                 </span>
                 {active ? <Check className="size-3.5" /> : null}
