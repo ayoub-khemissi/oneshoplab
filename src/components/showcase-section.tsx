@@ -88,13 +88,15 @@ function ShowcaseCard({
       </div>
 
       {/* CTA to full case study ------------------------------------ */}
-      <Link
-        href={`/share/${card.token}`}
-        className="mt-1 self-start text-xs font-medium text-[var(--accent)] hover:underline inline-flex items-center gap-1"
-      >
-        {viewLabel}
-        <ArrowRight className="size-3.5" />
-      </Link>
+      <div className="flex justify-end mt-auto pt-1">
+        <Link
+          href={`/share/${card.token}`}
+          className="px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+        >
+          {viewLabel}
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
     </Card>
   );
 }

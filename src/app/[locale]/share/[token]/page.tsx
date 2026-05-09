@@ -1,10 +1,10 @@
 import { Card } from '@heroui/react';
-import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
+import { ArrowRight, ExternalLink, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { ImageZoom } from '@/components/image-zoom';
+import { ProductImageGallery } from '@/components/product-image-gallery';
 import { loadSharedAudit, type SharedProduct } from '@/lib/share/queries';
 
 export const dynamic = 'force-dynamic';
@@ -168,6 +168,24 @@ function ScoreBox({ label, value }: { label: string; value: number }) {
   );
 }
 
+/**
+ * Per-product case study row. Layout:
+ *
+ *   - Header line: "#N — Product source title"
+ *   - Title before/after: two columns (mobile-stacked) showing the
+ *     pre-existing title vs the AI rewrite, side by side so the
+ *     prospect can compare in one glance.
+ *   - Body grid (3 columns on desktop, all stacked on mobile):
+ *       - cols 1-2: Image gallery BEFORE + Image gallery AFTER, both
+ *         rendered through <ProductImageGallery> for arrow-keys /
+ *         chevrons / dot indicators (matches the carousel used on
+ *         the per-product dashboard page).
+ *       - col 3: Description (truncated, before then after) and Tags
+ *         before/after, kept compact since this is a marketing page.
+ *
+ * Each section uses the full card width — on mobile, the columns
+ * stack naturally and the images sit above the description.
+ */
 function ProductCaseStudy({
   index,
   product,
@@ -188,171 +206,296 @@ function ProductCaseStudy({
     noImages: string;
   };
 }) {
-  const sourceText =
-    product.source.descriptionHtml
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim() || labels.noDescription;
+  const sourceDescriptionPlain = product.source.descriptionHtml
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const aiDescriptionPlain = (product.ai.descriptionHtml ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const sourceImages = product.source.images;
+  const aiImages = product.ai.imageUrls.map((url, i) => ({
+    src: url,
+    alt: `AI image ${i + 1}`
+  }));
+
   return (
-    <Card variant="secondary" className="p-6 flex flex-col gap-5">
-      <div className="flex items-baseline justify-between gap-3 flex-wrap">
-        <h3 className="text-xl font-bold tracking-tight">
-          <span className="text-[var(--muted)] mr-2">#{index}</span>
-          {product.title}
-        </h3>
+    <Card variant="secondary" className="p-6 flex flex-col gap-6 w-full">
+      {/* Header ----------------------------------------------------- */}
+      <h3 className="text-xl md:text-2xl font-bold tracking-tight">
+        <span className="text-[var(--muted)] mr-2">#{index}</span>
+        {product.title}
+      </h3>
+
+      {/* Title before / after -------------------------------------- */}
+      <div className="grid md:grid-cols-2 gap-3 p-4 rounded-md bg-[var(--default)]/40 border border-[var(--border)]">
+        <TitleColumn
+          label={labels.source}
+          title={product.title}
+          tone="muted"
+        />
+        <TitleColumn
+          label={labels.ai}
+          title={product.ai.title}
+          fallback={labels.noTitle}
+          tone="accent"
+        />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-5">
-        {/* Source column ------------------------------------------- */}
-        <div className="flex flex-col gap-3">
-          <span className="eyebrow">{labels.source}</span>
-          <Field label={labels.title} value={product.title} muted={false} />
-          <Field
-            label={labels.description}
-            value={sourceText}
-            muted={!product.source.descriptionHtml}
-            multiline
-          />
-          <Field
-            label={labels.tags}
-            value={
-              product.source.tags.length > 0
-                ? product.source.tags.join(', ')
-                : labels.noTags
-            }
-            muted={product.source.tags.length === 0}
-          />
-          <ImageRow
-            label={labels.images}
-            urls={product.source.images.map((i) => i.src)}
+      {/* Body grid: images (2 cols) + sidebar text (1 col) ---------- */}
+      <div className="grid md:grid-cols-3 gap-5">
+        {/* Image carousels ----------------------------------------- */}
+        <div className="md:col-span-2 grid sm:grid-cols-2 gap-4">
+          <GalleryColumn
+            label={labels.source}
+            ariaLabel={labels.images}
+            images={sourceImages}
             emptyLabel={labels.noImages}
+            tone="muted"
+          />
+          <GalleryColumn
+            label={labels.ai}
+            ariaLabel={labels.images}
+            images={aiImages}
+            emptyLabel={labels.noImages}
+            tone="accent"
           />
         </div>
 
-        {/* AI column ----------------------------------------------- */}
-        <div className="flex flex-col gap-3">
-          <span className="eyebrow inline-flex items-center gap-2">
-            {labels.ai}
-            <Sparkles className="size-3 text-[var(--accent)]" aria-hidden />
-          </span>
-          <Field
-            label={labels.title}
-            value={product.ai.title ?? labels.noTitle}
-            muted={!product.ai.title}
-          />
-          <AiHtmlField
-            label={labels.description}
-            html={product.ai.descriptionHtml}
+        {/* Sidebar — descriptions + tags --------------------------- */}
+        <aside className="flex flex-col gap-4">
+          <DescriptionPair
+            heading={labels.description}
+            sourceLabel={labels.source}
+            aiLabel={labels.ai}
+            sourceText={sourceDescriptionPlain}
+            aiText={aiDescriptionPlain}
             empty={labels.noDescription}
           />
-          <Field
-            label={labels.tags}
-            value={
-              product.ai.tags.length > 0 ? product.ai.tags.join(', ') : labels.noTags
-            }
-            muted={product.ai.tags.length === 0}
+          <TagsPair
+            heading={labels.tags}
+            sourceLabel={labels.source}
+            aiLabel={labels.ai}
+            sourceTags={product.source.tags}
+            aiTags={product.ai.tags}
+            empty={labels.noTags}
           />
-          <ImageRow
-            label={labels.images}
-            urls={product.ai.imageUrls}
-            emptyLabel={labels.noImages}
-            ai
-          />
-        </div>
+        </aside>
       </div>
     </Card>
   );
 }
 
-function Field({
+function TitleColumn({
   label,
-  value,
-  muted,
-  multiline = false
+  title,
+  fallback,
+  tone
 }: {
   label: string;
-  value: string;
-  muted: boolean;
-  multiline?: boolean;
+  title: string | null;
+  fallback?: string;
+  tone: 'muted' | 'accent';
 }) {
+  const showsFallback = !title || !title.trim();
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-        {label}
-      </span>
-      <p
-        className={`text-sm leading-relaxed ${muted ? 'text-[var(--muted)] italic' : ''} ${
-          multiline ? 'line-clamp-6' : 'line-clamp-2'
+    <div className="flex flex-col gap-1.5">
+      <span
+        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1.5 ${
+          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
         }`}
       >
-        {value}
+        {label}
+        {tone === 'accent' ? (
+          <Sparkles className="size-3" aria-hidden />
+        ) : null}
+      </span>
+      <p
+        className={`text-sm md:text-base font-medium leading-relaxed ${
+          showsFallback ? 'text-[var(--muted)] italic' : ''
+        }`}
+      >
+        {title?.trim() ? title : fallback ?? ''}
       </p>
     </div>
   );
 }
 
-function AiHtmlField({
+function GalleryColumn({
   label,
-  html,
-  empty
+  ariaLabel,
+  images,
+  emptyLabel,
+  tone
 }: {
   label: string;
-  html: string | null;
-  empty: string;
+  ariaLabel: string;
+  images: Array<{ src: string; alt: string | null }>;
+  emptyLabel: string;
+  tone: 'muted' | 'accent';
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+    <div className="flex flex-col gap-2">
+      <span
+        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1.5 ${
+          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
+        }`}
+      >
         {label}
+        {tone === 'accent' ? (
+          <Sparkles className="size-3" aria-hidden />
+        ) : null}
       </span>
-      {html ? (
-        // The AI description is HTML produced by the optim flow with a
-        // tightly-scoped tag set (<p>, <ul>, <li>, <strong>, etc.). We
-        // render it via dangerouslySetInnerHTML for fidelity; the flow
-        // never produces script tags. Wrapped in `prose` for spacing.
-        <div
-          className="prose text-sm max-w-none"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: html }}
+      <div
+        role="region"
+        aria-label={`${label} — ${ariaLabel}`}
+        className="rounded-md overflow-hidden border border-[var(--border)]"
+      >
+        <ProductImageGallery
+          images={images}
+          aspect="aspect-square"
+          emptyLabel={emptyLabel}
         />
-      ) : (
-        <p className="text-sm text-[var(--muted)] italic">{empty}</p>
-      )}
+      </div>
     </div>
   );
 }
 
-function ImageRow({
-  label,
-  urls,
-  emptyLabel,
-  ai = false
+function DescriptionPair({
+  heading,
+  sourceLabel,
+  aiLabel,
+  sourceText,
+  aiText,
+  empty
 }: {
-  label: string;
-  urls: string[];
-  emptyLabel: string;
-  ai?: boolean;
+  heading: string;
+  sourceLabel: string;
+  aiLabel: string;
+  sourceText: string;
+  aiText: string;
+  empty: string;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)] inline-flex items-center gap-1.5">
-        {label}
-        {ai ? <Sparkles className="size-3 text-[var(--accent)]" aria-hidden /> : null}
+    <div className="flex flex-col gap-2.5">
+      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+        {heading}
       </span>
-      {urls.length === 0 ? (
-        <div className="aspect-[4/1] rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex items-center justify-center text-xs text-[var(--muted)] italic">
-          <ImageIcon className="size-4 mr-1.5 shrink-0" aria-hidden />
-          {emptyLabel}
-        </div>
+      <DescriptionBlock label={sourceLabel} text={sourceText} empty={empty} tone="muted" />
+      <DescriptionBlock label={aiLabel} text={aiText} empty={empty} tone="accent" />
+    </div>
+  );
+}
+
+function DescriptionBlock({
+  label,
+  text,
+  empty,
+  tone
+}: {
+  label: string;
+  text: string;
+  empty: string;
+  tone: 'muted' | 'accent';
+}) {
+  const isEmpty = !text;
+  return (
+    <div
+      className={`flex flex-col gap-1 p-2.5 rounded-md border ${
+        tone === 'accent'
+          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/5'
+          : 'border-[var(--border)] bg-[var(--default)]/40'
+      }`}
+    >
+      <span
+        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
+          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
+        }`}
+      >
+        {label}
+        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
+      </span>
+      <p
+        className={`text-xs leading-relaxed line-clamp-4 ${
+          isEmpty ? 'text-[var(--muted)] italic' : ''
+        }`}
+      >
+        {isEmpty ? empty : text}
+      </p>
+    </div>
+  );
+}
+
+function TagsPair({
+  heading,
+  sourceLabel,
+  aiLabel,
+  sourceTags,
+  aiTags,
+  empty
+}: {
+  heading: string;
+  sourceLabel: string;
+  aiLabel: string;
+  sourceTags: string[];
+  aiTags: string[];
+  empty: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2.5">
+      <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+        {heading}
+      </span>
+      <TagsBlock label={sourceLabel} tags={sourceTags} empty={empty} tone="muted" />
+      <TagsBlock label={aiLabel} tags={aiTags} empty={empty} tone="accent" />
+    </div>
+  );
+}
+
+function TagsBlock({
+  label,
+  tags,
+  empty,
+  tone
+}: {
+  label: string;
+  tags: string[];
+  empty: string;
+  tone: 'muted' | 'accent';
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-1.5 p-2.5 rounded-md border ${
+        tone === 'accent'
+          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/5'
+          : 'border-[var(--border)] bg-[var(--default)]/40'
+      }`}
+    >
+      <span
+        className={`text-[10px] uppercase tracking-wider font-mono inline-flex items-center gap-1 ${
+          tone === 'accent' ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
+        }`}
+      >
+        {label}
+        {tone === 'accent' ? <Sparkles className="size-3" aria-hidden /> : null}
+      </span>
+      {tags.length === 0 ? (
+        <span className="text-xs text-[var(--muted)] italic">{empty}</span>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
-          {urls.slice(0, 3).map((url, i) => (
-            <ImageZoom
-              key={`${url}-${i}`}
-              url={url}
-              alt={ai ? 'AI generated' : 'Source product image'}
-              downloadName={ai ? `ai-${i + 1}.png` : `source-${i + 1}.jpg`}
-            />
+        <div className="flex flex-wrap gap-1">
+          {tags.map((tag, i) => (
+            <span
+              key={`${tag}-${i}`}
+              className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+                tone === 'accent'
+                  ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
+                  : 'bg-[var(--default)] text-[var(--muted)]'
+              }`}
+            >
+              {tag}
+            </span>
           ))}
         </div>
       )}
