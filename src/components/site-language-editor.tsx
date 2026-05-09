@@ -91,8 +91,13 @@ export function SiteLanguageEditor({
         <Autocomplete
           className="w-full max-w-sm"
           selectionMode="single"
-          value={selected}
-          onChange={(key: Key | Key[] | null) => setSelected(key as Key | null)}
+          // HeroUI's Autocomplete wraps react-aria's Select — the controlled
+          // props are selectedKey / onSelectionChange, not value / onChange.
+          // Using the wrong pair leaves the component uncontrolled, so the
+          // ClearButton bounces back to the previous value.
+          selectedKey={selected}
+          onSelectionChange={(key: Key | null) => setSelected(key)}
+          onClear={() => setSelected(null)}
           placeholder={t('placeholder')}
         >
           <Label className="sr-only">{t('label')}</Label>
