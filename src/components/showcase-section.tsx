@@ -1,8 +1,7 @@
-import { Card } from '@heroui/react';
 import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { CollapsibleBody } from '@/components/collapsible-body';
+import { CollapsibleCardShell } from '@/components/collapsible-card-shell';
 import { ImageZoom } from '@/components/image-zoom';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
@@ -86,44 +85,43 @@ function ShowcaseCard({
   card: HomeShowcaseCard;
   labels: ShowcaseLabels;
 }) {
+  // Header is always visible (domain link); body (products + CTA)
+  // hides when the visitor collapses the card. The shell owns the
+  // expand state and lays the toggle button top-right of the row.
+  const header = (
+    <a
+      href={card.siteUrl}
+      target="_blank"
+      rel="noreferrer noopener"
+      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
+    >
+      <span className="font-mono truncate">{card.domain}</span>
+      <ExternalLink
+        className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
+        aria-hidden
+      />
+    </a>
+  );
+
   return (
-    <Card variant="secondary" className="p-5 md:p-6 flex flex-col gap-5 w-full">
-      {/* Header — clickable storefront domain ---------------------- */}
-      <a
-        href={card.siteUrl}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="self-start inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
-      >
-        <span className="font-mono">{card.domain}</span>
-        <ExternalLink
-          className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
-          aria-hidden
+    <CollapsibleCardShell
+      header={header}
+      defaultExpanded
+      expandLabel={labels.expand}
+      collapseLabel={labels.collapse}
+    >
+      {card.products.map((p, i) => (
+        <ProductCaseStudy
+          key={p.sourceId}
+          index={i + 1}
+          product={p}
+          fallbackUrl={card.siteUrl}
+          labels={labels}
         />
-      </a>
+      ))}
 
-      {/* Foldable body — server-rendered children, client component
-          owns the expand/collapse state. Defaults to expanded so a
-          first-time visitor sees the proof immediately; toggling
-          collapses the block to the domain header + CTA when they
-          want to scroll past. */}
-      <CollapsibleBody
-        defaultExpanded
-        expandLabel={labels.expand}
-        collapseLabel={labels.collapse}
-      >
-        {card.products.map((p, i) => (
-          <ProductCaseStudy
-            key={p.sourceId}
-            index={i + 1}
-            product={p}
-            fallbackUrl={card.siteUrl}
-            labels={labels}
-          />
-        ))}
-      </CollapsibleBody>
-
-      {/* Primary CTA: bottom-right -------------------------------- */}
+      {/* Primary CTA: bottom-right (hidden along with the body
+          when the card is collapsed). */}
       <div className="flex justify-end mt-auto pt-1">
         <Link
           href={`/share/${card.token}`}
@@ -133,7 +131,7 @@ function ShowcaseCard({
           <ArrowRight className="size-3.5" />
         </Link>
       </div>
-    </Card>
+    </CollapsibleCardShell>
   );
 }
 
