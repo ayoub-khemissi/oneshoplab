@@ -1,4 +1,4 @@
-import { and, eq, isNull, or, desc } from 'drizzle-orm';
+import { and, asc, eq, isNull, lt, or, desc } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import {
   CHAT_MODEL_REGISTRY,
@@ -16,34 +16,55 @@ import {
   type ProductContext
 } from '@/lib/ai';
 import { getEffectiveLanguage } from '@/lib/audit/language';
+import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { audits, jobs, products, projects, type JobStatus } from '@/lib/db/schema';
+import { audits, jobs, projects, products, type JobStatus } from '@/lib/db/schema';
 
 /**
  * Bulk catalog generation — Scale plan only.
  *
- * One parent job (kind='bulk_site_generate') is inserted by
- * startBulkSiteGenerate() for the requested site. The worker then
- * processes products one-per-tick via processNextBulkProduct():
+ * Lifecycle:
  *
- *   - text fields (title / description / tags) run synchronously via
- *     runChatOptim and complete in the same tick.
- *   - image fields fan out 3 angles via startImageOptim; kie returns
- *     async via webhook + watchdog so the parent tick doesn't wait
- *     for image completion before marking the product processed.
+ *   1. startBulkSiteGenerate(): inserts the parent job (kind=
+ *      bulk_site_generate) inside a DB transaction so a double-click
+ *      can't insert two rows for the same site.
  *
- * Progress is tracked on the parent job's `result` field:
- *   {
- *     processed: string[],          // productId list, ordered
- *     errors: { productId, error }[],
- *     total: number,                 // initial product count
- *     totalCreditsBudget: number    // from the pre-flight estimate
- *   }
+ *   2. processNextBulkProduct() ticks once per worker iteration,
+ *      FIFO-draining the oldest pending/running bulk. Each tick:
+ *        - re-checks the parent's status (cancellation can land between
+ *          ticks; we bail mid-product gracefully if status flipped)
+ *        - finds the next product whose perProduct entry isn't fully
+ *          terminal yet
+ *        - runs each chat field (title/desc/tags) and the image fan-out
+ *          INDEPENDENTLY: a single field that errors marks ONLY that
+ *          field as failed; other fields still try, so a partial
+ *          product is recorded as such. This is the "atomic" failure
+ *          granularity — one field per product, not the whole chain.
+ *        - persists per-field outcome on the parent's `result.perProduct`
+ *          BEFORE moving to the next field, so a worker crash mid-
+ *          product picks up where it left off without re-running (and
+ *          re-billing) work that already succeeded.
  *
- * One product per tick caps tick latency at the chat-call duration
- * (~30s) which keeps audit-watchdog / kie-watchdog from starving for
- * too long inside the same Promise.allSettled.
+ *   3. cancelBulkJob() flips a non-terminal job to status='failed' with
+ *      error='cancelled_by_user'. The next tick's status guard skips
+ *      it; in-flight work in the current tick finishes and persists
+ *      whatever it had time to do.
+ *
+ *   4. runBulkWatchdog() is invoked from the worker tick alongside the
+ *      kie watchdog. Any bulk in 'running' that hasn't touched its
+ *      result in BULK_STALL_TIMEOUT_MS gets force-failed.
  */
+
+export const BULK_STALL_TIMEOUT_MS = 15 * 60_000;
+
+export type BulkFieldKey = 'title' | 'description' | 'tags' | 'images';
+
+export type BulkFieldOutcome = 'done' | { error: string };
+
+export interface BulkProductState {
+  /** Per-field outcome. Absence = not attempted yet. */
+  fields: Partial<Record<BulkFieldKey, BulkFieldOutcome>>;
+}
 
 export interface BulkInputPayload {
   siteId: string;
@@ -54,11 +75,16 @@ export interface BulkInputPayload {
 }
 
 export interface BulkResult {
-  processed: string[];
-  errors: Array<{ productId: string; error: string }>;
   total: number;
   totalCreditsBudget: number;
+  /** Last time the worker wrote progress — drives the stall watchdog. */
+  lastProgressAtMs: number | null;
+  /** Per-product field map. Stays the same shape across ticks so the
+   *  worker can resume cleanly. */
+  perProduct: Record<string, BulkProductState>;
 }
+
+const ALL_FIELDS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
 
 interface ProductImage {
   src: string;
@@ -136,31 +162,64 @@ function toProductContext(p: SummaryProduct): ProductContext {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Cost / candidate helpers (used by both /api routes and the dashboard SSR)
+// ---------------------------------------------------------------------------
+
 /**
- * Pre-flight cost estimate for the full bulk run. Mirrors the per-
- * product fan-out used by /api/products/generate (4 fields total) so
- * the credit budget shown to the merchant lines up with what they'll
- * actually spend.
+ * Pre-flight cost estimate for a bulk run. Mirrors the per-product
+ * fan-out used by /api/products/generate so the budget shown to the
+ * merchant lines up with the actual debits.
+ *
+ * Returns a structured breakdown so the UI can show "{N} products ×
+ * ({chat} + {images} cr) = {total} cr" rather than a single opaque
+ * number.
  */
+export interface BulkCostBreakdown {
+  productCount: number;
+  perProduct: {
+    chat: number;
+    images: number;
+    total: number;
+  };
+  total: number;
+  chatModelId: ChatModelId;
+  imageQualityId: ImageQualityId;
+}
+
+export function estimateBulkCostBreakdown(
+  productCount: number,
+  chatModelId: ChatModelId,
+  imageQualityId: ImageQualityId
+): BulkCostBreakdown {
+  const chatPerProduct =
+    estimateChatCredits(chatModelId, 'title') +
+    estimateChatCredits(chatModelId, 'description') +
+    estimateChatCredits(chatModelId, 'tags');
+  const imagesPerProduct = costForImage(imageQualityId) * IMAGE_ANGLES.length;
+  const perProductTotal = chatPerProduct + imagesPerProduct;
+  return {
+    productCount,
+    perProduct: {
+      chat: chatPerProduct,
+      images: imagesPerProduct,
+      total: perProductTotal
+    },
+    total: perProductTotal * productCount,
+    chatModelId,
+    imageQualityId
+  };
+}
+
+/** Backwards-compat wrapper used by the page's SSR. */
 export function estimateBulkCost(
   productCount: number,
   chatModelId: ChatModelId,
   imageQualityId: ImageQualityId
 ): number {
-  const perProduct =
-    estimateChatCredits(chatModelId, 'title') +
-    estimateChatCredits(chatModelId, 'description') +
-    estimateChatCredits(chatModelId, 'tags') +
-    costForImage(imageQualityId) * IMAGE_ANGLES.length;
-  return perProduct * productCount;
+  return estimateBulkCostBreakdown(productCount, chatModelId, imageQualityId).total;
 }
 
-/**
- * Find the project's currently-visible products (non-archived) for
- * the bulk run. Returns the `products.id` set in stable order so the
- * parent job's processed list, the UI, and re-runs all reference the
- * same identifiers.
- */
 export async function listBulkCandidates(projectId: string): Promise<
   { id: string; sourceId: string | null; handle: string | null }[]
 > {
@@ -179,9 +238,16 @@ export async function listBulkCandidates(projectId: string): Promise<
     );
 }
 
+// ---------------------------------------------------------------------------
+// Start / cancel
+// ---------------------------------------------------------------------------
+
 /**
- * Insert the parent bulk job row. Caller is responsible for the
- * pre-flight credit check + plan gate.
+ * Insert the parent bulk job atomically. The (existence-check, insert)
+ * pair runs inside a DB transaction so two concurrent submits can't
+ * each see "no active bulk" and both insert. The second one finds the
+ * first inside the same transaction window and returns an error that
+ * the API route surfaces as 409.
  */
 export async function startBulkSiteGenerate(opts: {
   projectId: string;
@@ -190,7 +256,7 @@ export async function startBulkSiteGenerate(opts: {
   imageQualityId?: ImageQualityId;
   customInstructions?: string;
   totalCreditsBudget: number;
-}): Promise<string> {
+}): Promise<{ ok: true; jobId: string } | { ok: false; reason: 'already_running' }> {
   const id = randomUUID();
   const chatModelId =
     opts.chatModelId && opts.chatModelId in CHAT_MODEL_REGISTRY
@@ -209,79 +275,121 @@ export async function startBulkSiteGenerate(opts: {
     customInstructions: opts.customInstructions ?? ''
   };
   const result: BulkResult = {
-    processed: [],
-    errors: [],
     total: opts.productIds.length,
-    totalCreditsBudget: opts.totalCreditsBudget
+    totalCreditsBudget: opts.totalCreditsBudget,
+    lastProgressAtMs: null,
+    perProduct: {}
   };
 
-  await db.insert(jobs).values({
-    id,
-    projectId: opts.projectId,
-    kind: 'bulk_site_generate',
-    status: 'pending',
-    inputPayload: input as unknown as Record<string, unknown>,
-    result: result as unknown as Record<string, unknown>,
-    creditsCost: 0
+  const inserted = await db.transaction(async (tx) => {
+    const existing = await tx.query.jobs.findFirst({
+      where: and(
+        eq(jobs.projectId, opts.projectId),
+        eq(jobs.kind, 'bulk_site_generate'),
+        or(eq(jobs.status, 'pending'), eq(jobs.status, 'running'))
+      )
+    });
+    if (existing) return null;
+    await tx.insert(jobs).values({
+      id,
+      projectId: opts.projectId,
+      kind: 'bulk_site_generate',
+      status: 'pending',
+      inputPayload: input as unknown as Record<string, unknown>,
+      result: result as unknown as Record<string, unknown>,
+      creditsCost: 0
+    });
+    return id;
   });
-  return id;
+
+  if (!inserted) return { ok: false, reason: 'already_running' };
+  return { ok: true, jobId: inserted };
 }
 
 /**
- * Single worker tick: pick one bulk job, process its next product,
- * persist progress, return.
- *
- * Returns true when work was done (so the worker can keep ticking
- * tightly), false when no bulk job is currently in flight.
+ * Cancel an in-flight bulk job. Best-effort: any per-field work
+ * already committed in the current tick is kept (the credit ledger
+ * and chat job rows are independent and durable). Future ticks see
+ * the cancelled status and skip this row.
+ */
+export async function cancelBulkJob(jobId: string, projectId: string): Promise<boolean> {
+  const result = await db
+    .update(jobs)
+    .set({
+      status: 'failed',
+      error: 'cancelled_by_user',
+      finishedAt: new Date()
+    })
+    .where(
+      and(
+        eq(jobs.id, jobId),
+        eq(jobs.projectId, projectId),
+        eq(jobs.kind, 'bulk_site_generate'),
+        or(eq(jobs.status, 'pending'), eq(jobs.status, 'running'))
+      )
+    );
+  // mysql2 returns affectedRows in the result header; a 0-affected
+  // update means the job was already terminal (completed / earlier
+  // cancel). We treat that as "no-op success" — caller doesn't care.
+  return result != null;
+}
+
+// ---------------------------------------------------------------------------
+// Worker tick
+// ---------------------------------------------------------------------------
+
+/**
+ * Worker tick. Returns true when work happened (caller can keep
+ * ticking tightly), false when nothing was queued.
  */
 export async function processNextBulkProduct(): Promise<boolean> {
-  // Oldest-first to drain the queue fairly and avoid starvation.
+  // FIFO so the oldest queued bulk drains first; older bug picked the
+  // newest, which let a freshly-launched bulk leapfrog an in-flight
+  // one for another site.
   const job = await db.query.jobs.findFirst({
     where: and(
       eq(jobs.kind, 'bulk_site_generate'),
       or(eq(jobs.status, 'pending'), eq(jobs.status, 'running'))
     ),
-    orderBy: [desc(jobs.createdAt)]
+    orderBy: [asc(jobs.createdAt)]
   });
   if (!job) return false;
 
   const input = job.inputPayload as unknown as BulkInputPayload | null;
-  const result = (job.result as unknown as BulkResult | null) ?? {
-    processed: [],
-    errors: [],
-    total: 0,
-    totalCreditsBudget: 0
-  };
+  const result = readResult(job.result);
   if (!input || !job.projectId) {
     await markJobStatus(job.id, 'failed', 'Bulk job has no input payload');
     return true;
   }
 
-  // Flip pending → running on first touch. We also stamp startedAt so
-  // the watchdog has a reference timestamp.
+  // Flip pending → running on first touch and stamp progressAt so the
+  // stall watchdog has a reference.
   if (job.status === 'pending') {
+    result.lastProgressAtMs = Date.now();
     await db
       .update(jobs)
-      .set({ status: 'running' as JobStatus, startedAt: new Date() })
+      .set({
+        status: 'running' as JobStatus,
+        startedAt: new Date(),
+        result: result as unknown as Record<string, unknown>
+      })
       .where(eq(jobs.id, job.id));
   }
 
-  const processedSet = new Set(result.processed);
-  const erroredSet = new Set(result.errors.map((e) => e.productId));
-  const nextProductId = input.productIds.find(
-    (id) => !processedSet.has(id) && !erroredSet.has(id)
-  );
+  // Find the next product not yet fully attempted (every field has
+  // either 'done' or { error } recorded).
+  const nextProductId = input.productIds.find((pid) => {
+    const state = result.perProduct[pid];
+    if (!state) return true;
+    return ALL_FIELDS.some((f) => !(f in state.fields));
+  });
 
   if (!nextProductId) {
-    // Nothing left to do — finalise.
-    await db
-      .update(jobs)
-      .set({ status: 'completed' as JobStatus, finishedAt: new Date() })
-      .where(eq(jobs.id, job.id));
+    await markJobStatus(job.id, 'completed');
     return true;
   }
 
-  // Resolve the project owner so we can charge credits to them.
+  // Resolve project + product context.
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, job.projectId)
   });
@@ -290,8 +398,6 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
-  // Pull the latest audit summary for the rich product context (bulk
-  // gen reuses the same context shape that the per-product flow does).
   const audit = await db.query.audits.findFirst({
     where: or(
       eq(audits.projectId, project.id),
@@ -314,7 +420,12 @@ export async function processNextBulkProduct(): Promise<boolean> {
     where: and(eq(products.id, nextProductId), eq(products.projectId, project.id))
   });
   if (!productRow) {
-    await appendError(job.id, result, nextProductId, 'Product row not found');
+    await markFieldsErrored(
+      job.id,
+      result,
+      nextProductId,
+      'Product row not found'
+    );
     return true;
   }
 
@@ -325,7 +436,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
       return false;
     }) ?? null;
   if (!matched) {
-    await appendError(
+    await markFieldsErrored(
       job.id,
       result,
       nextProductId,
@@ -336,7 +447,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
   const sourceId = matched.sourceId ?? matched.handle ?? '';
   const sourceImage = matched.images[0]?.src ?? null;
   if (!sourceId) {
-    await appendError(job.id, result, nextProductId, 'Product has no source id');
+    await markFieldsErrored(job.id, result, nextProductId, 'Product has no source id');
     return true;
   }
 
@@ -347,61 +458,192 @@ export async function processNextBulkProduct(): Promise<boolean> {
   const languageCode = await getEffectiveLanguage(project.id);
   const context = toProductContext(matched);
 
-  try {
-    // Text fields run synchronously and finish within this tick.
-    for (const field of ['title', 'description', 'tags'] as const) {
-      await runChatOptim({
-        userId: project.userId,
-        projectId: project.id,
-        productSourceId: sourceId,
-        field,
-        userPrompt: effectiveChatPrompt(field, merchantInstructions),
-        product: context,
-        chatModelId: input.chatModelId,
-        languageCode
-      });
+  const state: BulkProductState = result.perProduct[nextProductId] ?? { fields: {} };
+  result.perProduct[nextProductId] = state;
+
+  // Process each field independently — atomic failure granularity.
+  // After each field, persist + re-check parent status so a cancel
+  // request lands quickly. If credits run out, mark the remaining
+  // fields as errored with a clear message and stop the bulk.
+  for (const field of ALL_FIELDS) {
+    if (field in state.fields) continue;
+
+    // Cancellation re-check between fields. The status was loaded at
+    // the top of the tick; could have flipped via DELETE since.
+    const fresh = await db.query.jobs.findFirst({
+      where: eq(jobs.id, job.id),
+      columns: { status: true, error: true }
+    });
+    if (
+      !fresh ||
+      (fresh.status !== 'running' && fresh.status !== 'pending')
+    ) {
+      // Cancelled or already finalised by another path; bail without
+      // touching the row further.
+      return true;
     }
 
-    // Images fan out via kie webhook; only their startImageOptim phase
-    // is awaited here. Completion lands later via /api/kie/callback.
-    if (sourceImage) {
-      await Promise.allSettled(
-        IMAGE_ANGLES.map((angle) =>
-          startImageOptim({
-            userId: project.userId,
-            projectId: project.id,
-            productSourceId: sourceId,
-            sourceImageUrl: sourceImage,
-            userPrompt: buildImagePrompt(angle, '', merchantInstructions),
-            appUrl: process.env.APP_URL,
-            imageQualityId: input.imageQualityId
-          })
-        )
-      );
+    try {
+      if (field === 'images') {
+        if (!sourceImage) {
+          state.fields.images = { error: 'No source image on this product' };
+        } else {
+          const settled = await Promise.allSettled(
+            IMAGE_ANGLES.map((angle) =>
+              startImageOptim({
+                userId: project.userId,
+                projectId: project.id,
+                productSourceId: sourceId,
+                sourceImageUrl: sourceImage,
+                userPrompt: buildImagePrompt(angle, '', merchantInstructions),
+                appUrl: process.env.APP_URL,
+                imageQualityId: input.imageQualityId
+              })
+            )
+          );
+          const allFailed = settled.every((s) => s.status === 'rejected');
+          if (allFailed) {
+            const reason =
+              (settled.find((s) => s.status === 'rejected') as
+                | PromiseRejectedResult
+                | undefined)?.reason ?? null;
+            const message =
+              reason instanceof Error ? reason.message : 'Image fan-out failed';
+            state.fields.images = { error: message };
+          } else {
+            state.fields.images = 'done';
+          }
+        }
+      } else {
+        await runChatOptim({
+          userId: project.userId,
+          projectId: project.id,
+          productSourceId: sourceId,
+          field,
+          userPrompt: effectiveChatPrompt(field, merchantInstructions),
+          product: context,
+          chatModelId: input.chatModelId,
+          languageCode
+        });
+        state.fields[field] = 'done';
+      }
+    } catch (e) {
+      // Insufficient credits is the one error worth aborting the entire
+      // bulk for — every subsequent product / field will hit the same
+      // wall. Mark this field + everything still pending as errored,
+      // flip the bulk to failed, and exit.
+      if (e instanceof InsufficientCreditsError) {
+        state.fields[field] = { error: 'insufficient_credits' };
+        await stopBulkOnInsufficient(job.id, result);
+        return true;
+      }
+      const msg = (e as Error).message ?? 'Unknown error';
+      state.fields[field] = { error: msg };
     }
 
-    result.processed.push(nextProductId);
+    result.lastProgressAtMs = Date.now();
     await db
       .update(jobs)
       .set({ result: result as unknown as Record<string, unknown> })
       .where(eq(jobs.id, job.id));
-  } catch (e) {
-    await appendError(job.id, result, nextProductId, (e as Error).message);
   }
 
   return true;
 }
 
-async function appendError(
+// ---------------------------------------------------------------------------
+// Stall watchdog
+// ---------------------------------------------------------------------------
+
+/**
+ * Reaper for bulks stuck in 'running' that haven't written progress
+ * within BULK_STALL_TIMEOUT_MS. Runs once per worker tick alongside
+ * kie-watchdog; cheap when nothing is stuck.
+ */
+export async function runBulkWatchdog(): Promise<void> {
+  const stuck = await db.query.jobs.findMany({
+    where: and(
+      eq(jobs.kind, 'bulk_site_generate'),
+      eq(jobs.status, 'running'),
+      lt(jobs.startedAt, new Date(Date.now() - BULK_STALL_TIMEOUT_MS))
+    ),
+    limit: 5
+  });
+  if (stuck.length === 0) return;
+
+  for (const job of stuck) {
+    const result = readResult(job.result);
+    const lastProgress = result.lastProgressAtMs ?? job.startedAt?.getTime() ?? 0;
+    if (Date.now() - lastProgress < BULK_STALL_TIMEOUT_MS) continue;
+    console.warn(
+      `[bulk-watchdog] reaping stalled bulk ${job.id} (no progress for ${
+        (Date.now() - lastProgress) / 1000
+      }s)`
+    );
+    await markJobStatus(job.id, 'failed', 'bulk_stalled');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Read helpers
+// ---------------------------------------------------------------------------
+
+function readResult(raw: unknown): BulkResult {
+  const value = (raw as BulkResult | null) ?? null;
+  if (
+    !value ||
+    typeof value !== 'object' ||
+    !('perProduct' in value) ||
+    typeof value.perProduct !== 'object'
+  ) {
+    return {
+      total: 0,
+      totalCreditsBudget: 0,
+      lastProgressAtMs: null,
+      perProduct: {}
+    };
+  }
+  return {
+    total: typeof value.total === 'number' ? value.total : 0,
+    totalCreditsBudget:
+      typeof value.totalCreditsBudget === 'number' ? value.totalCreditsBudget : 0,
+    lastProgressAtMs:
+      typeof value.lastProgressAtMs === 'number' ? value.lastProgressAtMs : null,
+    perProduct: (value.perProduct as Record<string, BulkProductState>) ?? {}
+  };
+}
+
+async function markFieldsErrored(
   jobId: string,
   result: BulkResult,
   productId: string,
   error: string
 ): Promise<void> {
-  result.errors.push({ productId, error });
+  const state: BulkProductState = result.perProduct[productId] ?? { fields: {} };
+  for (const f of ALL_FIELDS) {
+    if (!(f in state.fields)) state.fields[f] = { error };
+  }
+  result.perProduct[productId] = state;
+  result.lastProgressAtMs = Date.now();
   await db
     .update(jobs)
     .set({ result: result as unknown as Record<string, unknown> })
+    .where(eq(jobs.id, jobId));
+}
+
+async function stopBulkOnInsufficient(
+  jobId: string,
+  result: BulkResult
+): Promise<void> {
+  result.lastProgressAtMs = Date.now();
+  await db
+    .update(jobs)
+    .set({
+      status: 'failed' as JobStatus,
+      error: 'insufficient_credits',
+      finishedAt: new Date(),
+      result: result as unknown as Record<string, unknown>
+    })
     .where(eq(jobs.id, jobId));
 }
 
@@ -420,10 +662,54 @@ async function markJobStatus(
     .where(eq(jobs.id, jobId));
 }
 
-/**
- * Read summary of the active bulk job for a site, if any. Used by the
- * dashboard banner and the bulk button to gate against double-starts.
- */
+// ---------------------------------------------------------------------------
+// Status / progress accessors for the UI
+// ---------------------------------------------------------------------------
+
+export interface BulkJobStatusForUi {
+  id: string;
+  status: JobStatus;
+  error: string | null;
+  total: number;
+  /** All four fields recorded as 'done'. */
+  fullySucceeded: number;
+  /** Mix of 'done' and { error } across the four fields. */
+  partiallySucceeded: number;
+  /** All four fields errored. */
+  fullyFailed: number;
+  /** Sum of products with at least one field still missing. */
+  notYetAttempted: number;
+  /** Per-product detail so the UI can render the failure modal. */
+  perProduct: Record<string, BulkProductState>;
+}
+
+function aggregate(result: BulkResult, total: number): {
+  fullySucceeded: number;
+  partiallySucceeded: number;
+  fullyFailed: number;
+  notYetAttempted: number;
+} {
+  let fullySucceeded = 0;
+  let partiallySucceeded = 0;
+  let fullyFailed = 0;
+  for (const state of Object.values(result.perProduct)) {
+    const present = ALL_FIELDS.filter((f) => f in state.fields);
+    if (present.length < ALL_FIELDS.length) continue;
+    const doneCount = present.filter((f) => state.fields[f] === 'done').length;
+    if (doneCount === ALL_FIELDS.length) fullySucceeded++;
+    else if (doneCount === 0) fullyFailed++;
+    else partiallySucceeded++;
+  }
+  const attempted = fullySucceeded + partiallySucceeded + fullyFailed;
+  return {
+    fullySucceeded,
+    partiallySucceeded,
+    fullyFailed,
+    notYetAttempted: Math.max(0, total - attempted)
+  };
+}
+
+/** Active (non-terminal) bulk for a site, if any. */
 export async function getActiveBulkJob(projectId: string): Promise<{
   id: string;
   status: JobStatus;
@@ -440,17 +726,41 @@ export async function getActiveBulkJob(projectId: string): Promise<{
     orderBy: [desc(jobs.createdAt)]
   });
   if (!job) return null;
-  const result = (job.result as unknown as BulkResult | null) ?? {
-    processed: [],
-    errors: [],
-    total: 0,
-    totalCreditsBudget: 0
-  };
+  const result = readResult(job.result);
+  const agg = aggregate(result, result.total);
+  // For the simple progress bar we count attempts of any kind.
+  const processed = agg.fullySucceeded + agg.partiallySucceeded + agg.fullyFailed;
+  const errors = agg.partiallySucceeded + agg.fullyFailed;
   return {
     id: job.id,
     status: job.status,
     total: result.total,
-    processed: result.processed.length,
-    errors: result.errors.length
+    processed,
+    errors
+  };
+}
+
+/** Most recent bulk for a site (any status), with full per-product
+ *  state for the failure-detail modal. */
+export async function getLatestBulkJobDetail(
+  projectId: string
+): Promise<BulkJobStatusForUi | null> {
+  const job = await db.query.jobs.findFirst({
+    where: and(
+      eq(jobs.projectId, projectId),
+      eq(jobs.kind, 'bulk_site_generate')
+    ),
+    orderBy: [desc(jobs.createdAt)]
+  });
+  if (!job) return null;
+  const result = readResult(job.result);
+  const agg = aggregate(result, result.total);
+  return {
+    id: job.id,
+    status: job.status,
+    error: job.error,
+    total: result.total,
+    perProduct: result.perProduct,
+    ...agg
   };
 }

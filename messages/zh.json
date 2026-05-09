@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "此站点已有批量生成在进行。",
     "errorNoProducts": "没有可生成的产品。",
     "errorInsufficientCredits": "积分不足，无法支持完整批量。",
-    "errorGeneric": "批量生成无法启动,请重试。"
+    "errorGeneric": "批量生成无法启动,请重试。",
+    "cancelBulk": "取消",
+    "cancellingShort": "取消中…",
+    "summaryAllSucceeded": "批量生成完成",
+    "summaryMixed": "批量生成完成（有错误）",
+    "summaryAllFailed": "批量生成失败",
+    "summaryCancelled": "批量生成已取消",
+    "summaryInsufficientCredits": "已停止：积分不足",
+    "summaryStalled": "批量生成超时",
+    "summaryStats": "{ok} 成功 · {partial} 部分 · {failed} 失败 · 共 {total}",
+    "showErrors": "显示错误",
+    "hideErrors": "隐藏错误",
+    "relaunch": "重新运行",
+    "fieldTitle": "标题",
+    "fieldDescription": "描述",
+    "fieldTags": "标签",
+    "fieldImages": "图片",
+    "costPerProductChat": "每个产品 · 文本字段",
+    "costPerProductImages": "每个产品 · 3 张图",
+    "costModels": "使用 {chat} + {image}",
+    "balanceLine": "您的余额"
   }
 }

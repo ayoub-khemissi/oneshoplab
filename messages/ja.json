@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "このサイトでは一括生成が既に実行中です。",
     "errorNoProducts": "生成対象の商品がありません。",
     "errorInsufficientCredits": "完全な一括実行に必要なクレジットが不足しています。",
-    "errorGeneric": "一括生成を開始できませんでした。再度お試しを。"
+    "errorGeneric": "一括生成を開始できませんでした。再度お試しを。",
+    "cancelBulk": "キャンセル",
+    "cancellingShort": "キャンセル中…",
+    "summaryAllSucceeded": "一括生成が完了",
+    "summaryMixed": "一括生成完了（エラーあり）",
+    "summaryAllFailed": "一括生成失敗",
+    "summaryCancelled": "一括生成キャンセル",
+    "summaryInsufficientCredits": "停止: クレジット不足",
+    "summaryStalled": "一括生成タイムアウト",
+    "summaryStats": "成功 {ok} · 部分 {partial} · 失敗 {failed} · 計 {total}",
+    "showErrors": "エラーを表示",
+    "hideErrors": "エラーを隠す",
+    "relaunch": "再実行",
+    "fieldTitle": "タイトル",
+    "fieldDescription": "説明",
+    "fieldTags": "タグ",
+    "fieldImages": "画像",
+    "costPerProductChat": "商品ごと · テキストフィールド",
+    "costPerProductImages": "商品ごと · 画像3枚",
+    "costModels": "{chat} + {image} 使用",
+    "balanceLine": "あなたの残高"
   }
 }

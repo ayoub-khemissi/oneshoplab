@@ -8,7 +8,7 @@ const { runAuditRunner } = await import('./audit-runner');
 const { runAuditWatchdog } = await import('./audit-watchdog');
 const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
-const { processNextBulkProduct } = await import('@/lib/bulk/site-generate');
+const { processNextBulkProduct, runBulkWatchdog } = await import('@/lib/bulk/site-generate');
 
 const TICK_MS = 5_000;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
@@ -40,6 +40,9 @@ async function main(): Promise<void> {
         // no bulk job is in flight.
         processNextBulkProduct().catch((e) =>
           console.error('[worker] bulk-generator failed', e)
+        ),
+        runBulkWatchdog().catch((e) =>
+          console.error('[worker] bulk-watchdog failed', e)
         )
       ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30

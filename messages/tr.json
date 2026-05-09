@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "Bu site için zaten bir toplu üretim çalışıyor.",
     "errorNoProducts": "Üretilecek ürün yok.",
     "errorInsufficientCredits": "Tam çalışmayı karşılayacak kredi yok.",
-    "errorGeneric": "Toplu üretim başlatılamadı. Tekrar deneyin."
+    "errorGeneric": "Toplu üretim başlatılamadı. Tekrar deneyin.",
+    "cancelBulk": "İptal",
+    "cancellingShort": "İptal ediliyor…",
+    "summaryAllSucceeded": "Toplu üretim tamamlandı",
+    "summaryMixed": "Toplu üretim hatalarla tamamlandı",
+    "summaryAllFailed": "Toplu üretim başarısız",
+    "summaryCancelled": "Toplu üretim iptal edildi",
+    "summaryInsufficientCredits": "Durduruldu: kredi yetersiz",
+    "summaryStalled": "Toplu üretim zaman aşımı",
+    "summaryStats": "{ok} başarılı · {partial} kısmî · {failed} başarısız · toplam {total}",
+    "showErrors": "Hataları göster",
+    "hideErrors": "Hataları gizle",
+    "relaunch": "Tekrar çalıştır",
+    "fieldTitle": "Başlık",
+    "fieldDescription": "Açıklama",
+    "fieldTags": "Etiketler",
+    "fieldImages": "Görseller",
+    "costPerProductChat": "Ürün başına · metin alanları",
+    "costPerProductImages": "Ürün başına · 3 görsel",
+    "costModels": "{chat} + {image} ile",
+    "balanceLine": "Bakiyeniz"
   }
 }

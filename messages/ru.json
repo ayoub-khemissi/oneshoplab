@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "Массовая генерация уже выполняется для этого сайта.",
     "errorNoProducts": "Нет товаров для генерации.",
     "errorInsufficientCredits": "Недостаточно кредитов для полного запуска.",
-    "errorGeneric": "Не удалось запустить генерацию. Повторите."
+    "errorGeneric": "Не удалось запустить генерацию. Повторите.",
+    "cancelBulk": "Отменить",
+    "cancellingShort": "Отмена…",
+    "summaryAllSucceeded": "Массовая генерация завершена",
+    "summaryMixed": "Массовая генерация завершена с ошибками",
+    "summaryAllFailed": "Массовая генерация провалена",
+    "summaryCancelled": "Массовая генерация отменена",
+    "summaryInsufficientCredits": "Остановлено: недостаточно кредитов",
+    "summaryStalled": "Тайм-аут массовой генерации",
+    "summaryStats": "{ok} успех · {partial} частично · {failed} провал · всего {total}",
+    "showErrors": "Показать ошибки",
+    "hideErrors": "Скрыть ошибки",
+    "relaunch": "Запустить снова",
+    "fieldTitle": "Заголовок",
+    "fieldDescription": "Описание",
+    "fieldTags": "Теги",
+    "fieldImages": "Изображения",
+    "costPerProductChat": "На товар · текстовые поля",
+    "costPerProductImages": "На товар · 3 изображения",
+    "costModels": "С {chat} + {image}",
+    "balanceLine": "Ваш баланс"
   }
 }

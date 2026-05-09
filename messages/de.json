@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "Eine Massengenerierung läuft bereits für diese Seite.",
     "errorNoProducts": "Keine Produkte zum Generieren.",
     "errorInsufficientCredits": "Nicht genug Credits für den gesamten Lauf.",
-    "errorGeneric": "Massengenerierung konnte nicht gestartet werden. Erneut versuchen."
+    "errorGeneric": "Massengenerierung konnte nicht gestartet werden. Erneut versuchen.",
+    "cancelBulk": "Abbrechen",
+    "cancellingShort": "Wird abgebrochen…",
+    "summaryAllSucceeded": "Bulk abgeschlossen",
+    "summaryMixed": "Bulk mit Fehlern abgeschlossen",
+    "summaryAllFailed": "Bulk fehlgeschlagen",
+    "summaryCancelled": "Bulk abgebrochen",
+    "summaryInsufficientCredits": "Bulk gestoppt: nicht genug Credits",
+    "summaryStalled": "Bulk-Timeout",
+    "summaryStats": "{ok} erfolgreich · {partial} teilweise · {failed} fehlgeschlagen · {total} gesamt",
+    "showErrors": "Fehler anzeigen",
+    "hideErrors": "Fehler ausblenden",
+    "relaunch": "Erneut starten",
+    "fieldTitle": "Titel",
+    "fieldDescription": "Beschreibung",
+    "fieldTags": "Tags",
+    "fieldImages": "Bilder",
+    "costPerProductChat": "Pro Produkt · Textfelder",
+    "costPerProductImages": "Pro Produkt · 3 Bilder",
+    "costModels": "Mit {chat} + {image}",
+    "balanceLine": "Dein Guthaben"
   }
 }

@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "A bulk generation is already running for this site.",
     "errorNoProducts": "No products to generate for.",
     "errorInsufficientCredits": "Not enough credits to cover the full bulk run.",
-    "errorGeneric": "Could not start the bulk job. Try again."
+    "errorGeneric": "Could not start the bulk job. Try again.",
+    "cancelBulk": "Cancel",
+    "cancellingShort": "Cancelling…",
+    "summaryAllSucceeded": "Bulk completed",
+    "summaryMixed": "Bulk completed with errors",
+    "summaryAllFailed": "Bulk failed",
+    "summaryCancelled": "Bulk cancelled",
+    "summaryInsufficientCredits": "Bulk stopped: not enough credits",
+    "summaryStalled": "Bulk timed out",
+    "summaryStats": "{ok} successful · {partial} partial · {failed} failed · {total} total",
+    "showErrors": "Show errors",
+    "hideErrors": "Hide errors",
+    "relaunch": "Run again",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldTags": "Tags",
+    "fieldImages": "Images",
+    "costPerProductChat": "Per product · text fields",
+    "costPerProductImages": "Per product · 3 images",
+    "costModels": "Using {chat} + {image}",
+    "balanceLine": "Your balance"
   }
 }

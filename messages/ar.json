@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "يوجد توليد جماعي قيد التنفيذ لهذا الموقع.",
     "errorNoProducts": "لا توجد منتجات للتوليد.",
     "errorInsufficientCredits": "الأرصدة غير كافية لتغطية التشغيل الكامل.",
-    "errorGeneric": "تعذّر بدء التوليد. حاول مجددًا."
+    "errorGeneric": "تعذّر بدء التوليد. حاول مجددًا.",
+    "cancelBulk": "إلغاء",
+    "cancellingShort": "جارٍ الإلغاء…",
+    "summaryAllSucceeded": "اكتمل التوليد الجماعي",
+    "summaryMixed": "اكتمل مع أخطاء",
+    "summaryAllFailed": "فشل التوليد الجماعي",
+    "summaryCancelled": "تم إلغاء التوليد الجماعي",
+    "summaryInsufficientCredits": "متوقف: الأرصدة غير كافية",
+    "summaryStalled": "انتهى الوقت",
+    "summaryStats": "{ok} ناجح · {partial} جزئي · {failed} فشل · {total} الإجمالي",
+    "showErrors": "إظهار الأخطاء",
+    "hideErrors": "إخفاء الأخطاء",
+    "relaunch": "إعادة التشغيل",
+    "fieldTitle": "العنوان",
+    "fieldDescription": "الوصف",
+    "fieldTags": "الوسوم",
+    "fieldImages": "الصور",
+    "costPerProductChat": "لكل منتج · الحقول النصية",
+    "costPerProductImages": "لكل منتج · 3 صور",
+    "costModels": "باستخدام {chat} + {image}",
+    "balanceLine": "رصيدك"
   }
 }

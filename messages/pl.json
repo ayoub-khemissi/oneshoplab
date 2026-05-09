@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "Masowa generacja już trwa dla tego sklepu.",
     "errorNoProducts": "Brak produktów do generowania.",
     "errorInsufficientCredits": "Za mało kredytów na pełny przebieg.",
-    "errorGeneric": "Nie udało się uruchomić generacji. Spróbuj ponownie."
+    "errorGeneric": "Nie udało się uruchomić generacji. Spróbuj ponownie.",
+    "cancelBulk": "Anuluj",
+    "cancellingShort": "Anulowanie…",
+    "summaryAllSucceeded": "Generacja zakończona",
+    "summaryMixed": "Generacja zakończona z błędami",
+    "summaryAllFailed": "Generacja nieudana",
+    "summaryCancelled": "Generacja anulowana",
+    "summaryInsufficientCredits": "Zatrzymano: brak kredytów",
+    "summaryStalled": "Przerwano (timeout)",
+    "summaryStats": "{ok} OK · {partial} częściowe · {failed} błąd · {total} łącznie",
+    "showErrors": "Pokaż błędy",
+    "hideErrors": "Ukryj błędy",
+    "relaunch": "Uruchom ponownie",
+    "fieldTitle": "Tytuł",
+    "fieldDescription": "Opis",
+    "fieldTags": "Tagi",
+    "fieldImages": "Obrazy",
+    "costPerProductChat": "Na produkt · pola tekstowe",
+    "costPerProductImages": "Na produkt · 3 obrazy",
+    "costModels": "Z {chat} + {image}",
+    "balanceLine": "Twoje saldo"
   }
 }

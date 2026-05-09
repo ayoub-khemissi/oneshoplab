@@ -626,6 +626,26 @@
     "errorAlreadyRunning": "Uma geração em massa já está em curso para este site.",
     "errorNoProducts": "Sem produtos para gerar.",
     "errorInsufficientCredits": "Créditos insuficientes para cobrir a geração completa.",
-    "errorGeneric": "Não foi possível iniciar a geração. Tente novamente."
+    "errorGeneric": "Não foi possível iniciar a geração. Tente novamente.",
+    "cancelBulk": "Cancelar",
+    "cancellingShort": "A cancelar…",
+    "summaryAllSucceeded": "Geração concluída",
+    "summaryMixed": "Geração concluída com erros",
+    "summaryAllFailed": "Geração falhou",
+    "summaryCancelled": "Geração cancelada",
+    "summaryInsufficientCredits": "Geração parada: créditos insuficientes",
+    "summaryStalled": "Geração interrompida (timeout)",
+    "summaryStats": "{ok} OK · {partial} parciais · {failed} falhados · {total} no total",
+    "showErrors": "Ver erros",
+    "hideErrors": "Ocultar erros",
+    "relaunch": "Relançar",
+    "fieldTitle": "Título",
+    "fieldDescription": "Descrição",
+    "fieldTags": "Tags",
+    "fieldImages": "Imagens",
+    "costPerProductChat": "Por produto · campos texto",
+    "costPerProductImages": "Por produto · 3 imagens",
+    "costModels": "Com {chat} + {image}",
+    "balanceLine": "Seu saldo"
   }
 }

@@ -22,6 +22,7 @@ import { SiteLanguageEditor } from '@/components/site-language-editor';
 import {
   estimateBulkCost,
   getActiveBulkJob,
+  getLatestBulkJobDetail,
   listBulkCandidates
 } from '@/lib/bulk/site-generate';
 import {
@@ -322,6 +323,16 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     bulkImageQuality
   );
   const bulkActive = await getActiveBulkJob(project.id);
+  const bulkDetail = await getLatestBulkJobDetail(project.id);
+  // Map productId → title for the failure-detail modal so the merchant
+  // sees product names rather than UUIDs.
+  const productTitleById: Record<string, string> = {};
+  for (const p of allProductsWithIds) {
+    if (p.productId) productTitleById[p.productId] = p.title;
+  }
+  for (const p of archivedProducts) {
+    if (p.productId) productTitleById[p.productId] = p.title;
+  }
 
   return (
     <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-8">
@@ -361,7 +372,9 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             productCount={bulkCandidates.length}
             costEstimate={bulkCostEstimate}
             initialActive={bulkActive}
+            initialDetail={bulkDetail}
             creditsBalance={session.user.creditsBalance ?? 0}
+            productTitleById={productTitleById}
           />
           <PaginatedProductsList
             siteId={siteId}

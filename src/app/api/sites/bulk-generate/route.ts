@@ -9,8 +9,10 @@ import {
   type ImageQualityId
 } from '@/lib/ai';
 import {
-  estimateBulkCost,
+  cancelBulkJob,
+  estimateBulkCostBreakdown,
   getActiveBulkJob,
+  getLatestBulkJobDetail,
   listBulkCandidates,
   startBulkSiteGenerate
 } from '@/lib/bulk/site-generate';
@@ -19,38 +21,59 @@ import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 
 /**
- * Start a bulk catalog generation for a site. Plan-gated to Scale only.
- * Pre-flight checks: ownership, no other bulk in flight, sufficient
- * credit balance covers the projected total. The actual work is done
- * by the worker via processNextBulkProduct() — this route returns as
- * soon as the parent job row is inserted.
+ * Bulk catalog generation endpoint.
+ *
+ *   POST   — start a bulk for the site (Scale plan only). Atomic
+ *            against double-click via DB transaction in
+ *            startBulkSiteGenerate(); returns 409 if a bulk is already
+ *            running for the same site.
+ *   GET    — returns the merchant's current cost estimate (computed
+ *            from their LIVE preferred chat model + image quality so
+ *            the modal never shows a stale number) plus the latest
+ *            bulk job detail so the UI can render the active progress
+ *            and the post-completion failure breakdown.
+ *   DELETE — cancel the active bulk for a site.
  */
+
+function resolveModels(session: {
+  user?: {
+    preferredChatModel?: string | null;
+    preferredImageQuality?: string | null;
+  } | null;
+}): {
+  chatModelId: ChatModelId;
+  imageQualityId: ImageQualityId;
+} {
+  const chatModelId: ChatModelId =
+    session.user?.preferredChatModel &&
+    session.user.preferredChatModel in CHAT_MODEL_REGISTRY
+      ? (session.user.preferredChatModel as ChatModelId)
+      : DEFAULT_CHAT_MODEL;
+  const imageQualityId: ImageQualityId =
+    session.user?.preferredImageQuality &&
+    session.user.preferredImageQuality in IMAGE_MODEL_REGISTRY
+      ? (session.user.preferredImageQuality as ImageQualityId)
+      : DEFAULT_IMAGE_QUALITY;
+  return { chatModelId, imageQualityId };
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  // Plan gate. The Scale tier is the only one that exposes bulk in
-  // the marketing copy and the only one we honour here — undercutting
-  // it would break the differentiator.
   const plan = (session.user.plan ?? 'free') as string;
   if (plan !== 'scale') {
     return NextResponse.json({ error: 'plan_not_eligible' }, { status: 403 });
   }
 
-  let body: {
-    siteId?: unknown;
-    chatModelId?: unknown;
-    imageQualityId?: unknown;
-    customInstructions?: unknown;
-  };
+  let body: { siteId?: unknown; customInstructions?: unknown };
   try {
     body = (await req.json()) ?? {};
   } catch {
     return NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
-
   const siteId = typeof body.siteId === 'string' ? body.siteId : '';
   if (!siteId) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
@@ -63,65 +86,55 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  const inFlight = await getActiveBulkJob(project.id);
-  if (inFlight) {
-    return NextResponse.json(
-      { error: 'bulk_already_running', jobId: inFlight.id },
-      { status: 409 }
-    );
-  }
-
   const candidates = await listBulkCandidates(project.id);
   if (candidates.length === 0) {
     return NextResponse.json({ error: 'no_products' }, { status: 400 });
   }
 
-  const chatModelId: ChatModelId =
-    typeof body.chatModelId === 'string' && body.chatModelId in CHAT_MODEL_REGISTRY
-      ? (body.chatModelId as ChatModelId)
-      : (session.user.preferredChatModel as ChatModelId | undefined) ??
-        DEFAULT_CHAT_MODEL;
-  const imageQualityId: ImageQualityId =
-    typeof body.imageQualityId === 'string' &&
-    body.imageQualityId in IMAGE_MODEL_REGISTRY
-      ? (body.imageQualityId as ImageQualityId)
-      : (session.user.preferredImageQuality as ImageQualityId | undefined) ??
-        DEFAULT_IMAGE_QUALITY;
+  const { chatModelId, imageQualityId } = resolveModels(session);
+  const breakdown = estimateBulkCostBreakdown(
+    candidates.length,
+    chatModelId,
+    imageQualityId
+  );
+
+  if ((session.user.creditsBalance ?? 0) < breakdown.total) {
+    return NextResponse.json(
+      { error: 'insufficient_credits', required: breakdown.total },
+      { status: 402 }
+    );
+  }
+
   const customInstructions =
     typeof body.customInstructions === 'string'
       ? body.customInstructions.slice(0, 750)
       : '';
 
-  const total = estimateBulkCost(candidates.length, chatModelId, imageQualityId);
-  if ((session.user.creditsBalance ?? 0) < total) {
-    return NextResponse.json(
-      { error: 'insufficient_credits', required: total },
-      { status: 402 }
-    );
-  }
-
   const productIds = candidates.map((c) => c.id);
-  const id = await startBulkSiteGenerate({
+  const result = await startBulkSiteGenerate({
     projectId: project.id,
     productIds,
     chatModelId,
     imageQualityId,
     customInstructions,
-    totalCreditsBudget: total
+    totalCreditsBudget: breakdown.total
   });
+
+  if (!result.ok) {
+    return NextResponse.json(
+      { error: 'bulk_already_running' },
+      { status: 409 }
+    );
+  }
 
   return NextResponse.json({
     ok: true,
-    jobId: id,
+    jobId: result.jobId,
     productCount: productIds.length,
-    totalCreditsBudget: total
+    totalCreditsBudget: breakdown.total
   });
 }
 
-/**
- * Poll endpoint — returns the current bulk job's progress for the
- * dashboard banner.
- */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const session = await auth();
   if (!session?.user) {
@@ -140,6 +153,48 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
+  // Fresh cost estimate from the merchant's LIVE preferences. Avoids
+  // the stale-snapshot trap where the dashboard SSR picked one model
+  // but the user changed it in another tab.
+  const candidates = await listBulkCandidates(project.id);
+  const { chatModelId, imageQualityId } = resolveModels(session);
+  const breakdown = estimateBulkCostBreakdown(
+    candidates.length,
+    chatModelId,
+    imageQualityId
+  );
+
   const active = await getActiveBulkJob(project.id);
-  return NextResponse.json({ active });
+  const detail = await getLatestBulkJobDetail(project.id);
+
+  return NextResponse.json({
+    active,
+    detail,
+    estimate: breakdown,
+    creditsBalance: session.user.creditsBalance ?? 0,
+    plan: (session.user.plan ?? 'free') as string
+  });
+}
+
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  const url = new URL(req.url);
+  const siteId = url.searchParams.get('siteId') ?? '';
+  const jobId = url.searchParams.get('jobId') ?? '';
+  if (!siteId || !jobId) {
+    return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+  }
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, siteId), eq(projects.userId, session.user.id))
+  });
+  if (!project) {
+    return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
+  }
+
+  await cancelBulkJob(jobId, project.id);
+  return NextResponse.json({ ok: true });
 }
