@@ -113,14 +113,14 @@ export default async function SubscriptionPage() {
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-sm font-medium"
               >
                 <CreditCard className="size-3.5" aria-hidden />
-                {t('manageInStripe')}
+                {t('manageBilling')}
                 <ExternalLink className="size-3" aria-hidden />
               </button>
             </form>
           ) : null}
         </div>
         {isPaid ? (
-          <p className="text-xs text-[var(--muted)]">{t('stripeHint')}</p>
+          <p className="text-xs text-[var(--muted)]">{t('manageBillingHint')}</p>
         ) : null}
       </Card>
 

@@ -423,7 +423,6 @@
     "purchaseCancelled": "Achat annulé. Rien n'a été facturé.",
     "errorInvalidPack": "Pack inconnu — recharge la page et réessaie.",
     "errorPriceNotConfigured": "Ce pack n'est pas encore disponible. Reviens plus tard.",
-    "errorStripeFailed": "Stripe est injoignable. Réessaie dans un instant.",
     "pack": {
       "boost": {
         "name": "Boost",
@@ -441,7 +440,8 @@
     "subscriptionBucketLabel": "Abonnement",
     "subscriptionBucketHint": "remis à zéro à chaque renouvellement",
     "packBucketLabel": "Packs",
-    "packBucketHint": "n'expirent jamais"
+    "packBucketHint": "n'expirent jamais",
+    "errorPaymentFailed": "Impossible de joindre le service de paiement. Réessayez dans un instant."
   },
   "CookieBanner": {
     "ariaLabel": "Avis cookies",
@@ -528,7 +528,7 @@
     "subtitle": "Gérez votre identité, votre mot de passe et la suppression de votre compte.",
     "identityTitle": "Identité",
     "emailLabel": "E-mail",
-    "emailHint": "L'e-mail sert à la connexion et à la facturation Stripe. Contactez le support pour le modifier.",
+    "emailHint": "L'email sert à la connexion et à la facturation. Contactez le support pour le modifier.",
     "nameLabel": "Nom d'affichage",
     "namePlaceholder": "Facultatif",
     "saveButton": "Enregistrer",
@@ -564,8 +564,6 @@
     "endsOn": "Fin d'accès le {date}",
     "chooseAPlan": "Choisir une formule",
     "changePlan": "Changer de formule",
-    "manageInStripe": "Gérer dans Stripe",
-    "stripeHint": "Modifier le moyen de paiement, changer de cycle, voir les factures, ou annuler — tout dans le portail client Stripe.",
     "balanceLabel": "Solde de crédits",
     "buyMore": "Acheter des crédits",
     "bucketSubscription": "Abonnement",
@@ -579,6 +577,8 @@
     "statusCanceled": "Annulé",
     "statusPending": "En attente",
     "statusUnpaid": "Impayé",
-    "statusUnknown": "Inconnu"
+    "statusUnknown": "Inconnu",
+    "manageBilling": "Gérer mon abonnement",
+    "manageBillingHint": "Modifier le moyen de paiement, changer la fréquence, consulter les factures, ou résilier — depuis le portail client."
   }
 }

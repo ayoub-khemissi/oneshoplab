@@ -100,7 +100,7 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
     allow_promotion_codes: true
   });
 
-  if (!checkout.url) redirect('/pricing?error=stripe_failed');
+  if (!checkout.url) redirect('/pricing?error=payment_failed');
   redirect(checkout.url);
 }
 
@@ -175,7 +175,7 @@ export async function buyCreditPackAction(formData: FormData): Promise<void> {
     }
   });
 
-  if (!checkout.url) redirect('/account/credits?error=stripe_failed');
+  if (!checkout.url) redirect('/account/credits?error=payment_failed');
   redirect(checkout.url);
 }
 

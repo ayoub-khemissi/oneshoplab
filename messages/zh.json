@@ -423,7 +423,6 @@
     "purchaseCancelled": "Purchase cancelled. No charge was made.",
     "errorInvalidPack": "Unknown pack — please refresh and try again.",
     "errorPriceNotConfigured": "This pack isn't available yet. Please come back later.",
-    "errorStripeFailed": "Couldn't reach Stripe. Try again in a moment.",
     "pack": {
       "boost": {
         "name": "Boost",
@@ -441,7 +440,8 @@
     "subscriptionBucketLabel": "Subscription",
     "subscriptionBucketHint": "resets every renewal",
     "packBucketLabel": "Packs",
-    "packBucketHint": "never expire"
+    "packBucketHint": "never expire",
+    "errorPaymentFailed": "无法连接到支付服务。请稍后重试。"
   },
   "CookieBanner": {
     "ariaLabel": "Cookie notice",
@@ -528,7 +528,7 @@
     "subtitle": "Manage your account identity, password, and account deletion.",
     "identityTitle": "Identity",
     "emailLabel": "Email",
-    "emailHint": "Email is used for sign-in and Stripe billing. Contact support to change it.",
+    "emailHint": "邮箱用于登录和账单。如需更改，请联系客服。",
     "nameLabel": "Display name",
     "namePlaceholder": "Optional",
     "saveButton": "Save",
@@ -564,8 +564,6 @@
     "endsOn": "Access ends on {date}",
     "chooseAPlan": "Choose a plan",
     "changePlan": "Change plan",
-    "manageInStripe": "Manage in Stripe",
-    "stripeHint": "Update payment method, change cycle, view past invoices, or cancel — all in your Stripe customer portal.",
     "balanceLabel": "Credit balance",
     "buyMore": "Buy more credits",
     "bucketSubscription": "Subscription",
@@ -579,6 +577,8 @@
     "statusCanceled": "Canceled",
     "statusPending": "Pending",
     "statusUnpaid": "Unpaid",
-    "statusUnknown": "Unknown"
+    "statusUnknown": "Unknown",
+    "manageBilling": "管理订阅",
+    "manageBillingHint": "在客户门户中更新付款方式、更改周期、查看历史账单或取消订阅。"
   }
 }

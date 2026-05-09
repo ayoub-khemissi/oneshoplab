@@ -423,7 +423,6 @@
     "purchaseCancelled": "Purchase cancelled. No charge was made.",
     "errorInvalidPack": "Unknown pack — please refresh and try again.",
     "errorPriceNotConfigured": "This pack isn't available yet. Please come back later.",
-    "errorStripeFailed": "Couldn't reach Stripe. Try again in a moment.",
     "pack": {
       "boost": {
         "name": "Boost",
@@ -441,7 +440,8 @@
     "subscriptionBucketLabel": "Subscription",
     "subscriptionBucketHint": "resets every renewal",
     "packBucketLabel": "Packs",
-    "packBucketHint": "never expire"
+    "packBucketHint": "never expire",
+    "errorPaymentFailed": "결제 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요."
   },
   "CookieBanner": {
     "ariaLabel": "Cookie notice",
@@ -528,7 +528,7 @@
     "subtitle": "Manage your account identity, password, and account deletion.",
     "identityTitle": "Identity",
     "emailLabel": "Email",
-    "emailHint": "Email is used for sign-in and Stripe billing. Contact support to change it.",
+    "emailHint": "이메일은 로그인과 청구에 사용됩니다. 변경하려면 지원팀에 문의하세요.",
     "nameLabel": "Display name",
     "namePlaceholder": "Optional",
     "saveButton": "Save",
@@ -564,8 +564,6 @@
     "endsOn": "Access ends on {date}",
     "chooseAPlan": "Choose a plan",
     "changePlan": "Change plan",
-    "manageInStripe": "Manage in Stripe",
-    "stripeHint": "Update payment method, change cycle, view past invoices, or cancel — all in your Stripe customer portal.",
     "balanceLabel": "Credit balance",
     "buyMore": "Buy more credits",
     "bucketSubscription": "Subscription",
@@ -579,6 +577,8 @@
     "statusCanceled": "Canceled",
     "statusPending": "Pending",
     "statusUnpaid": "Unpaid",
-    "statusUnknown": "Unknown"
+    "statusUnknown": "Unknown",
+    "manageBilling": "구독 관리",
+    "manageBillingHint": "고객 포털에서 결제 수단 변경, 주기 변경, 과거 청구서 확인, 또는 해지를 할 수 있습니다."
   }
 }

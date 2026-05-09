@@ -31,8 +31,8 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
           ? { kind: 'error' as const, text: t('errorInvalidPack') }
           : params.error === 'price_not_configured'
             ? { kind: 'error' as const, text: t('errorPriceNotConfigured') }
-            : params.error === 'stripe_failed'
-              ? { kind: 'error' as const, text: t('errorStripeFailed') }
+            : params.error === 'payment_failed'
+              ? { kind: 'error' as const, text: t('errorPaymentFailed') }
               : null;
 
   return (

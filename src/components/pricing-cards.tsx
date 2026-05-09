@@ -244,7 +244,7 @@ function CardCta({
         type="button"
         disabled
         className={`${baseClasses} ${outlineClasses} opacity-50 cursor-not-allowed`}
-        title="Stripe price not configured yet"
+        title="Plan not yet available"
       >
         {copy.ctaUnavailable}
       </button>
