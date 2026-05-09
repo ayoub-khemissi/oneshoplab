@@ -229,7 +229,11 @@
     "archivedBadgeShort": "مؤرشف",
     "viewArchived": "عرض",
     "jobProductArchived": "المنتج مؤرشف — لم يعد في متجرك",
-    "tabSettings": "الإعدادات"
+    "tabSettings": "الإعدادات",
+    "deleteSiteAria": "حذف {domain}",
+    "deleteSiteConfirm": "حذف",
+    "deleteSitePending": "جارٍ الحذف…",
+    "cancel": "إلغاء"
   },
   "Product": {
     "backToDashboard": "العودة إلى اللوحة",

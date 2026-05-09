@@ -229,7 +229,11 @@
     "archivedBadgeShort": "Archivado",
     "viewArchived": "Ver",
     "jobProductArchived": "Producto archivado — ya no está en tu tienda",
-    "tabSettings": "Ajustes"
+    "tabSettings": "Ajustes",
+    "deleteSiteAria": "Eliminar {domain}",
+    "deleteSiteConfirm": "Eliminar sitio",
+    "deleteSitePending": "Eliminando…",
+    "cancel": "Cancelar"
   },
   "Product": {
     "backToDashboard": "Volver al panel",

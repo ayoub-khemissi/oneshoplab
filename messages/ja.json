@@ -229,7 +229,11 @@
     "archivedBadgeShort": "アーカイブ",
     "viewArchived": "表示",
     "jobProductArchived": "商品はアーカイブされました——ストアにありません",
-    "tabSettings": "設定"
+    "tabSettings": "設定",
+    "deleteSiteAria": "{domain} を削除",
+    "deleteSiteConfirm": "ストアを削除",
+    "deleteSitePending": "削除中…",
+    "cancel": "キャンセル"
   },
   "Product": {
     "backToDashboard": "ダッシュボードに戻る",

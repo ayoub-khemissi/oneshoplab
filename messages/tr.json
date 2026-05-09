@@ -229,7 +229,11 @@
     "archivedBadgeShort": "Arşiv",
     "viewArchived": "Görüntüle",
     "jobProductArchived": "Ürün arşivlendi — mağazanızda yok",
-    "tabSettings": "Ayarlar"
+    "tabSettings": "Ayarlar",
+    "deleteSiteAria": "{domain} sil",
+    "deleteSiteConfirm": "Mağazayı sil",
+    "deleteSitePending": "Siliniyor…",
+    "cancel": "İptal"
   },
   "Product": {
     "backToDashboard": "Panele dön",

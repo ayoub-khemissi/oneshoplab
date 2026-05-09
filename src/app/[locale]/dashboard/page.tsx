@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
+import { DeleteSiteButton } from '@/components/delete-site-button';
 import { siteLimitForPlan } from '@/lib/ai/models';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
@@ -170,13 +171,16 @@ function SiteCard({ site }: { site: SiteCardData }) {
           </span>
           <h3 className="font-semibold truncate">{site.domain}</h3>
         </div>
-        {site.overallScore != null ? (
-          <ScoreBadge score={site.overallScore} />
-        ) : (
-          <span className="text-xs px-2 py-0.5 rounded font-mono text-[var(--muted)] border border-[var(--border)]">
-            —
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {site.overallScore != null ? (
+            <ScoreBadge score={site.overallScore} />
+          ) : (
+            <span className="text-xs px-2 py-0.5 rounded font-mono text-[var(--muted)] border border-[var(--border)]">
+              —
+            </span>
+          )}
+          <DeleteSiteButton projectId={site.projectId} domain={site.domain} />
+        </div>
       </div>
 
       <SiteCardStatus

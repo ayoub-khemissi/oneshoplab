@@ -229,7 +229,11 @@
     "archivedBadgeShort": "已归档",
     "viewArchived": "查看",
     "jobProductArchived": "产品已归档——已不在你的店铺中",
-    "tabSettings": "设置"
+    "tabSettings": "设置",
+    "deleteSiteAria": "删除 {domain}",
+    "deleteSiteConfirm": "删除店铺",
+    "deleteSitePending": "删除中…",
+    "cancel": "取消"
   },
   "Product": {
     "backToDashboard": "返回控制台",

@@ -229,7 +229,11 @@
     "archivedBadgeShort": "Архив",
     "viewArchived": "Открыть",
     "jobProductArchived": "Товар в архиве — больше нет в магазине",
-    "tabSettings": "Настройки"
+    "tabSettings": "Настройки",
+    "deleteSiteAria": "Удалить {domain}",
+    "deleteSiteConfirm": "Удалить",
+    "deleteSitePending": "Удаление…",
+    "cancel": "Отмена"
   },
   "Product": {
     "backToDashboard": "В панель",

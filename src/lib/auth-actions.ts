@@ -219,6 +219,32 @@ export async function refreshProjectAction(formData: FormData): Promise<void> {
   revalidatePath('/dashboard');
 }
 
+/**
+ * Permanently delete a site (project) and everything that hangs off
+ * it: audits, products, jobs, share links — all removed via FK
+ * cascades on `projects.id`. Subscription / credit ledger live on
+ * the user, not the project, so they're untouched.
+ *
+ * Idempotent: deleting an already-gone project is a no-op (the
+ * ownership check returns early). The dashboard list revalidates so
+ * the card disappears without a manual reload.
+ */
+export async function deleteProjectAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = String(formData.get('projectId') ?? '');
+  if (!projectId) return;
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, projectId), eq(projects.userId, session.user.id))
+  });
+  if (!project) return;
+
+  await db.delete(projects).where(eq(projects.id, projectId));
+  revalidatePath('/dashboard');
+}
+
 const MAX_NAME_LEN = 100;
 const MIN_PASSWORD_LEN = 8;
 const MAX_PASSWORD_LEN = 128;

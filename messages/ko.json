@@ -229,7 +229,11 @@
     "archivedBadgeShort": "보관됨",
     "viewArchived": "보기",
     "jobProductArchived": "제품이 보관됨 — 스토어에 더 이상 없음",
-    "tabSettings": "설정"
+    "tabSettings": "설정",
+    "deleteSiteAria": "{domain} 삭제",
+    "deleteSiteConfirm": "스토어 삭제",
+    "deleteSitePending": "삭제 중…",
+    "cancel": "취소"
   },
   "Product": {
     "backToDashboard": "대시보드로",
