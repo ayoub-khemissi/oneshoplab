@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
+  boolean,
   decimal,
   index,
   int,
@@ -344,6 +345,10 @@ export const shareLinks = mysqlTable(
     /** Optional admin-facing label so the dashboard list is readable
      *  when the same site has several historical share links. */
     label: varchar('label', { length: 120 }),
+    /** When true, the home page's showcase strip surfaces this case
+     *  study (provided the link isn't revoked). Replaces the legacy
+     *  SHOWCASE_PROJECT_IDS env list with admin-controlled curation. */
+    showOnHome: boolean('show_on_home').notNull().default(false),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     revokedAt: timestamp('revoked_at')
   },

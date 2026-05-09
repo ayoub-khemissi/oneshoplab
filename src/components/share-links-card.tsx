@@ -5,6 +5,7 @@ import {
   Check,
   Copy,
   ExternalLink,
+  Home,
   Info,
   Link2,
   Trash2,
@@ -14,12 +15,14 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 import {
   createShareLinkAction,
-  revokeShareLinkAction
+  revokeShareLinkAction,
+  setShareLinkShowOnHomeAction
 } from '@/lib/share/actions';
 
 interface ShareLinkRow {
   id: string;
   label: string | null;
+  showOnHome: boolean;
   createdAt: Date | string;
   productSourceIds: string[];
 }
@@ -131,9 +134,19 @@ export function ShareLinksCard({
               className="flex items-start gap-3 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)]"
             >
               <div className="flex-1 min-w-0 flex flex-col gap-1">
-                {link.label ? (
-                  <span className="text-sm font-medium">{link.label}</span>
-                ) : null}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {link.label ? (
+                    <span className="text-sm font-medium">{link.label}</span>
+                  ) : null}
+                  {link.showOnHome ? (
+                    <span
+                      className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/15 text-[var(--accent)] font-mono"
+                      title={t('onHomeBadge')}
+                    >
+                      <Home className="size-3" aria-hidden /> {t('onHomeBadge')}
+                    </span>
+                  ) : null}
+                </div>
                 <a
                   href={urlFor(link.id)}
                   target="_blank"
@@ -151,6 +164,16 @@ export function ShareLinksCard({
                   {t('productCount', { count: link.productSourceIds.length })}
                 </span>
               </div>
+              <ShowOnHomeToggle
+                linkId={link.id}
+                siteId={siteId}
+                value={link.showOnHome}
+                onChange={(next) =>
+                  setLinks((prev) =>
+                    prev.map((l) => (l.id === link.id ? { ...l, showOnHome: next } : l))
+                  )
+                }
+              />
               <button
                 type="button"
                 onClick={() => copyToClipboard(link.id)}
@@ -185,6 +208,52 @@ export function ShareLinksCard({
         />
       ) : null}
     </Card>
+  );
+}
+
+function ShowOnHomeToggle({
+  linkId,
+  siteId,
+  value,
+  onChange
+}: {
+  linkId: string;
+  siteId: string;
+  value: boolean;
+  onChange: (next: boolean) => void;
+}) {
+  const t = useTranslations('Share');
+  const [pending, startTransition] = useTransition();
+
+  function handleToggle() {
+    const next = !value;
+    // Optimistic flip — server result reconciles via revalidate.
+    onChange(next);
+    const formData = new FormData();
+    formData.set('linkId', linkId);
+    formData.set('siteId', siteId);
+    formData.set('showOnHome', next ? '1' : '0');
+    startTransition(async () => {
+      const res = await setShareLinkShowOnHomeAction(formData);
+      if (!res.ok) onChange(value);
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleToggle}
+      disabled={pending}
+      aria-pressed={value}
+      title={value ? t('hideFromHome') : t('showOnHomeAria')}
+      className={`size-8 rounded-md inline-flex items-center justify-center transition-colors ${
+        value
+          ? 'bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25'
+          : 'hover:bg-[var(--default)] text-[var(--muted)]'
+      } disabled:opacity-50`}
+    >
+      <Home className="size-4" aria-hidden />
+    </button>
   );
 }
 
@@ -265,6 +334,7 @@ function CreateModal({
   // identifiable at a glance. Editable: a date suffix or prospect
   // name is often more useful for outreach tracking.
   const [label, setLabel] = useState<string>(defaultLabel);
+  const [showOnHome, setShowOnHome] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -301,6 +371,7 @@ function CreateModal({
     const formData = new FormData();
     formData.set('siteId', siteId);
     if (label.trim()) formData.set('label', label.trim());
+    if (showOnHome) formData.set('showOnHome', '1');
     for (const id of selected) formData.append('productSourceIds', id);
     try {
       const res = await createShareLinkAction(formData);
@@ -314,6 +385,7 @@ function CreateModal({
       onCreated({
         id: res.jobId!,
         label: label.trim() || null,
+        showOnHome,
         createdAt: new Date().toISOString(),
         productSourceIds: Array.from(selected)
       });
@@ -355,6 +427,21 @@ function CreateModal({
               placeholder={t('labelPlaceholder')}
               className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--card)] px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             />
+          </label>
+
+          <label className="flex items-start gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showOnHome}
+              onChange={(e) => setShowOnHome(e.target.checked)}
+              className="size-4 mt-0.5 accent-[var(--accent)] cursor-pointer"
+            />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-medium">{t('showOnHomeLabel')}</span>
+              <span className="text-xs text-[var(--muted)] leading-relaxed">
+                {t('showOnHomeHint')}
+              </span>
+            </div>
           </label>
 
           <div className="flex flex-col gap-1.5">

@@ -1,40 +1,23 @@
 import { Card } from '@heroui/react';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { db } from '@/lib/db';
-import { audits, jobs } from '@/lib/db/schema';
+import { Link } from '@/i18n/navigation';
+import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
 /**
- * Public showcase strip for the landing page. Renders before/after cards from
- * the projects whose IDs are listed in the `SHOWCASE_PROJECT_IDS` env var
- * (comma-separated). For each, we pull the latest completed audit, pick its
- * first AI-generated product, and render a side-by-side preview.
+ * Public showcase strip on the landing page. Each card surfaces one
+ * admin-curated case study — driven by share_links.show_on_home
+ * (replaces the legacy SHOWCASE_PROJECT_IDS env var). The section
+ * self-hides when no link is flagged for the home so the marketing
+ * page doesn't render an empty section.
  *
- * Editing the env var (and redeploying) is the simplest way to swap the
- * showcased stores without a UI flow — sufficient for prospection.
+ * Per card: clickable site domain (external-link badge), the two
+ * featured products' before/after side-by-side, and a CTA that opens
+ * the full /share/[token] case-study page.
  */
 export async function ShowcaseSection() {
-  const ids = (process.env.SHOWCASE_PROJECT_IDS ?? '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (ids.length === 0) return null;
-
-  const showcaseAudits = await Promise.all(ids.map((id) => loadShowcase(id)));
-  // Dedupe by domain — even if two different users have audits on the same
-  // store we don't want duplicate cards. First-found wins (preserves the
-  // env var ordering).
-  const seen = new Set<string>();
-  const items: ShowcaseItem[] = [];
-  for (const item of showcaseAudits) {
-    if (!item) continue;
-    const key = item.domain.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    items.push(item);
-    if (items.length >= 6) break;
-  }
-  if (items.length === 0) return null;
+  const cards = await loadHomeShowcaseCards();
+  if (cards.length === 0) return null;
 
   const t = await getTranslations('Showcase');
 
@@ -49,13 +32,14 @@ export async function ShowcaseSection() {
           {t('subtitle')}
         </p>
       </header>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => (
+      <div className="grid md:grid-cols-2 gap-4">
+        {cards.map((card) => (
           <ShowcaseCard
-            key={item.auditId}
-            item={item}
+            key={card.token}
+            card={card}
             sourceLabel={t('sourceLabel')}
             aiLabel={t('aiLabel')}
+            viewLabel={t('viewReport')}
           />
         ))}
       </div>
@@ -63,159 +47,143 @@ export async function ShowcaseSection() {
   );
 }
 
-interface ShowcaseItem {
-  auditId: string;
-  domain: string;
-  platform: string;
-  productSourceId: string | null;
-  sourceTitle: string;
-  aiTitle: string;
-  sourceImage: string | null;
-  aiImage: string | null;
-}
-
-async function loadShowcase(projectId: string): Promise<ShowcaseItem | null> {
-  const audit = await db.query.audits.findFirst({
-    where: and(eq(audits.projectId, projectId), eq(audits.status, 'completed')),
-    orderBy: [desc(audits.createdAt)]
-  });
-  if (!audit?.summary) return null;
-
-  const summary = audit.summary as {
-    latestProducts?: Array<{
-      sourceId: string | null;
-      title: string;
-      images: Array<{ src: string }>;
-    }>;
-  };
-  const candidates = summary.latestProducts ?? [];
-  if (candidates.length === 0) return null;
-
-  // Pull the AI jobs for this audit, then iterate over candidate products to
-  // find the FIRST one with a clean, complete generation (both AI image AND
-  // a distinct AI title). Products with failed/missing gens are skipped.
-  const candidateJobs = await db.query.jobs.findMany({
-    where: and(
-      eq(jobs.auditId, audit.id),
-      inArray(jobs.kind, ['kie_dynamic_audit', 'kie_image_edit'])
-    )
-  });
-
-  for (const candidate of candidates) {
-    const sourceId = candidate.sourceId;
-    if (!sourceId) continue;
-
-    const dynJob = candidateJobs.find(
-      (j) =>
-        j.kind === 'kie_dynamic_audit' &&
-        (j.inputPayload as { productSourceId?: string | null } | null)?.productSourceId ===
-          sourceId
-    );
-    const imgJob = candidateJobs.find(
-      (j) =>
-        j.kind === 'kie_image_edit' &&
-        j.status === 'completed' &&
-        (j.inputPayload as { productSourceId?: string | null } | null)?.productSourceId ===
-          sourceId
-    );
-
-    const aiTitleRaw = (dynJob?.result as { newTitle?: string } | null)?.newTitle;
-    const imgResult = imgJob?.result as
-      | { persistedUrls?: string[]; resultUrls?: string[] }
-      | null;
-    const aiImage = imgResult?.persistedUrls?.[0] ?? imgResult?.resultUrls?.[0] ?? null;
-    const sourceImage = candidate.images?.[0]?.src ?? null;
-
-    // Skip products whose generation didn't deliver both the visible
-    // pieces (image + title) — we can't show a meaningful before/after.
-    if (!aiImage || !aiTitleRaw || aiTitleRaw.trim().length === 0) continue;
-    if (!sourceImage) continue;
-
-    return {
-      auditId: audit.id,
-      domain: audit.domain,
-      platform: audit.platform,
-      productSourceId: sourceId,
-      sourceTitle: candidate.title,
-      aiTitle: aiTitleRaw,
-      sourceImage,
-      aiImage
-    };
-  }
-
-  return null;
-}
-
 function ShowcaseCard({
-  item,
+  card,
+  sourceLabel,
+  aiLabel,
+  viewLabel
+}: {
+  card: HomeShowcaseCard;
+  sourceLabel: string;
+  aiLabel: string;
+  viewLabel: string;
+}) {
+  return (
+    <Card variant="secondary" className="p-5 flex flex-col gap-4">
+      {/* Header — clickable domain --------------------------------- */}
+      <a
+        href={card.siteUrl}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="self-start inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
+      >
+        <span className="font-mono">{card.domain}</span>
+        <ExternalLink
+          className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
+          aria-hidden
+        />
+      </a>
+
+      {/* Two product before/after rows ----------------------------- */}
+      <div className="flex flex-col gap-3">
+        {card.products.map((p, i) => (
+          <ProductRow
+            key={p.sourceId}
+            index={i + 1}
+            product={p}
+            sourceLabel={sourceLabel}
+            aiLabel={aiLabel}
+          />
+        ))}
+      </div>
+
+      {/* CTA to full case study ------------------------------------ */}
+      <Link
+        href={`/share/${card.token}`}
+        className="mt-1 self-start text-xs font-medium text-[var(--accent)] hover:underline inline-flex items-center gap-1"
+      >
+        {viewLabel}
+        <ArrowRight className="size-3.5" />
+      </Link>
+    </Card>
+  );
+}
+
+function ProductRow({
+  index,
+  product,
   sourceLabel,
   aiLabel
 }: {
-  item: ShowcaseItem;
+  index: number;
+  product: HomeShowcaseCard['products'][number];
   sourceLabel: string;
   aiLabel: string;
 }) {
   return (
-    <Card variant="secondary" className="p-0 flex flex-col overflow-hidden">
-      <div className="grid grid-cols-2 aspect-[2/1] bg-[var(--default)]">
-        <div className="relative">
-          {item.sourceImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={item.sourceImage}
-              alt={item.sourceTitle}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-xs text-[var(--muted)]">
-              —
-            </div>
-          )}
-          <span className="absolute top-1.5 right-1.5 text-[10px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded bg-black/60 text-white">
-            {sourceLabel}
-          </span>
-        </div>
-        <div className="relative border-l border-[var(--border)]">
-          {item.aiImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={item.aiImage}
-              alt={item.aiTitle}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-xs text-[var(--muted)]">
-              —
-            </div>
-          )}
-          <span className="absolute top-1.5 left-1.5 text-[10px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded bg-[var(--accent)] text-[var(--accent-foreground)] font-semibold">
-            {aiLabel}
-          </span>
-        </div>
+    <div className="flex flex-col gap-2 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)]">
+      <span className="text-[10px] uppercase tracking-wider font-mono text-[var(--muted)]">
+        #{index}
+      </span>
+      <div className="grid grid-cols-2 gap-2">
+        <Tile
+          src={product.sourceImage}
+          title={product.sourceTitle}
+          label={sourceLabel}
+          tone="muted"
+        />
+        <Tile
+          src={product.aiImage}
+          title={product.aiTitle ?? product.sourceTitle}
+          label={aiLabel}
+          tone="accent"
+        />
       </div>
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        <div className="flex flex-col gap-1.5">
-          <p className="text-xs text-[var(--muted)] line-clamp-1">
-            <span className="font-mono uppercase tracking-wider mr-1.5">
+      {product.aiTitle ? (
+        <div className="flex flex-col gap-0.5 text-xs">
+          <p className="text-[var(--muted)] line-clamp-1">
+            <span className="font-mono uppercase tracking-wider mr-1.5 text-[10px]">
               {sourceLabel}:
             </span>
-            {item.sourceTitle}
+            {product.sourceTitle}
           </p>
-          <p className="text-sm font-semibold line-clamp-2">
+          <p className="font-medium line-clamp-1">
             <span className="font-mono uppercase tracking-wider mr-1.5 text-[10px] text-[var(--accent)]">
               {aiLabel}:
             </span>
-            {item.aiTitle}
+            {product.aiTitle}
           </p>
         </div>
-        <div className="flex items-center mt-auto pt-2 border-t border-[var(--border)]">
-          <span className="text-xs text-[var(--muted)] font-mono truncate">
-            {item.domain}
-          </span>
+      ) : null}
+    </div>
+  );
+}
+
+function Tile({
+  src,
+  title,
+  label,
+  tone
+}: {
+  src: string | null;
+  title: string;
+  label: string;
+  tone: 'muted' | 'accent';
+}) {
+  return (
+    <div className="aspect-square rounded-md overflow-hidden relative bg-[var(--default)]">
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-xs text-[var(--muted)]">
+          —
         </div>
-      </div>
-    </Card>
+      )}
+      <span
+        className={`absolute top-1.5 left-1.5 text-[9px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded font-semibold ${
+          tone === 'accent'
+            ? 'bg-[var(--accent)] text-[var(--accent-foreground)]'
+            : 'bg-black/60 text-white'
+        }`}
+      >
+        {label}
+      </span>
+    </div>
   );
 }

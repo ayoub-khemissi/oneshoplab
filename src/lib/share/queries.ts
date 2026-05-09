@@ -15,6 +15,7 @@ export async function listShareLinksForSite(
   {
     id: string;
     label: string | null;
+    showOnHome: boolean;
     createdAt: Date;
     productSourceIds: string[];
   }[]
@@ -30,6 +31,7 @@ export async function listShareLinksForSite(
   return rows.map((r) => ({
     id: r.id,
     label: r.label,
+    showOnHome: Boolean(r.showOnHome),
     createdAt: r.createdAt,
     productSourceIds: (r.productSourceIds as string[]) ?? []
   }));
@@ -249,4 +251,107 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
     generatedAt: link.createdAt,
     label: link.label
   };
+}
+
+// ---------------------------------------------------------------------------
+// Home-page showcase data
+// ---------------------------------------------------------------------------
+
+export interface HomeShowcaseCard {
+  /** Token used in the /share/[token] URL the prospect clicks. */
+  token: string;
+  domain: string;
+  siteUrl: string;
+  /** Both products from the share link, with their source vs AI text
+   *  + AI image so the homepage card can render two before/after rows
+   *  without an extra round-trip. */
+  products: Array<{
+    sourceId: string;
+    sourceTitle: string;
+    aiTitle: string | null;
+    sourceImage: string | null;
+    aiImage: string | null;
+  }>;
+}
+
+/**
+ * Active share links the admin has flagged as `showOnHome`. Powers the
+ * <ShowcaseSection> on the landing page. Returns an empty array when
+ * no links are flagged so the section self-hides.
+ *
+ * Capped at 6 cards — beyond that the homepage strip gets visually
+ * crowded.
+ */
+export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
+  const links = await db.query.shareLinks.findMany({
+    where: and(eq(shareLinks.showOnHome, true), isNull(shareLinks.revokedAt)),
+    orderBy: [desc(shareLinks.createdAt)],
+    limit: 6
+  });
+  if (links.length === 0) return [];
+
+  const out: HomeShowcaseCard[] = [];
+  for (const link of links) {
+    const project = await db.query.projects.findFirst({
+      where: eq(projects.id, link.projectId)
+    });
+    if (!project) continue;
+    const audit = await db.query.audits.findFirst({
+      where: eq(audits.projectId, project.id),
+      orderBy: [desc(audits.createdAt)]
+    });
+    if (!audit?.summary) continue;
+
+    const summary = audit.summary as {
+      allProducts?: Array<{
+        sourceId?: string | null;
+        handle?: string | null;
+        title: string;
+        images?: Array<{ src: string }>;
+      }>;
+    };
+    const allProducts = summary.allProducts ?? [];
+    const ids = (link.productSourceIds as string[]) ?? [];
+
+    const products: HomeShowcaseCard['products'] = [];
+    for (const sourceId of ids) {
+      const matched = allProducts.find(
+        (p) => (p.sourceId ?? p.handle ?? '') === sourceId
+      );
+      if (!matched) continue;
+      const [titleHist, images] = await Promise.all([
+        listOptimHistory(project.id, sourceId, 'title'),
+        listProductImageJobs(project.id, sourceId)
+      ]);
+      const aiTitle =
+        titleHist[0] && typeof titleHist[0].output === 'string'
+          ? titleHist[0].output
+          : null;
+      const aiImage =
+        images.find((j) => j.status === 'completed' && j.imageUrl)?.imageUrl ?? null;
+      products.push({
+        sourceId,
+        sourceTitle: matched.title,
+        aiTitle,
+        sourceImage: matched.images?.[0]?.src ?? null,
+        aiImage
+      });
+    }
+
+    if (products.length === 0) continue;
+
+    const domain = project.domain ?? audit.url ?? '';
+    const siteUrl =
+      project.url ??
+      audit.url ??
+      (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
+
+    out.push({
+      token: link.id,
+      domain,
+      siteUrl,
+      products
+    });
+  }
+  return out;
 }
