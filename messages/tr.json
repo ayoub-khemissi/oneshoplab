@@ -58,8 +58,8 @@
   },
   "Pricing": {
     "eyebrow": "Fiyatlandırma",
-    "title": "Sadece ürettiğiniz kadar ödeyin.",
-    "subtitle": "Tüm planlar tüm modelleri içerir. Aktif aboneliklerde krediler süresiz. İstediğiniz zaman iptal.",
+    "title": "Her katalog boyutu için bir plan",
+    "subtitle": "Her yenilemede yenilenen kredilerle aylık aboneliği seçin — veya hiç sona ermeyen paketlerle yükleyin. Her plan tüm modelleri içerir. İstediğiniz zaman iptal edin.",
     "perMonth": "ay",
     "perMonthBilledYearly": "yıllık faturalandırılır",
     "signupOnce": "tek seferlik",
