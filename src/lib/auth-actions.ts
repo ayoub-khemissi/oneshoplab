@@ -14,6 +14,7 @@ import { launchAuditForUser } from './audit/launch';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, hashPassword, signOut } from './auth';
 import { db } from './db';
+import { findLanguage } from './i18n/languages';
 import {
   CHAT_MODEL_IDS,
   IMAGE_QUALITY_IDS,
@@ -159,6 +160,33 @@ export async function updateProjectInstructionsAction(formData: FormData): Promi
   await db
     .update(projects)
     .set({ customInstructions: trimmed.length > 0 ? trimmed : null })
+    .where(eq(projects.id, projectId));
+
+  revalidatePath(`/dashboard/sites/${projectId}`);
+}
+
+/**
+ * Persist a site-wide language override on a project. Verifies ownership
+ * before writing. An empty string or unknown ISO code clears the override
+ * (NULL in the DB, falling back to detection at generation time).
+ */
+export async function updateProjectLanguageAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const projectId = String(formData.get('projectId') ?? '');
+  const rawCode = String(formData.get('languageCode') ?? '').trim().toLowerCase();
+  if (!projectId) return;
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, projectId), eq(projects.userId, session.user.id))
+  });
+  if (!project) return;
+
+  const validated = findLanguage(rawCode);
+  await db
+    .update(projects)
+    .set({ languageOverride: validated ? validated.code : null })
     .where(eq(projects.id, projectId));
 
   revalidatePath(`/dashboard/sites/${projectId}`);
