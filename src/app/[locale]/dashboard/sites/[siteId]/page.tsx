@@ -13,6 +13,7 @@ import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
+import { SiteLanguageEditor } from '@/components/site-language-editor';
 import {
   axesValueTiers,
   commentaryTiers,
@@ -309,6 +310,11 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
       {activeTab === 'overview' ? (
         <>
+          <SiteLanguageEditor
+            projectId={project.id}
+            initialOverride={project.languageOverride ?? null}
+            detectedLanguage={summary.detectedLanguage ?? null}
+          />
           <SiteInstructionsEditor
             projectId={project.id}
             initialValue={project.customInstructions ?? ''}
