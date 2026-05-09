@@ -21,8 +21,8 @@ interface SiteLanguageEditorProps {
   projectId: string;
   /** Currently persisted override on the project, or null when on auto-detect. */
   initialOverride: string | null;
-  /** Latest audit-detected language. Used as the visible default when there
-   *  is no override yet. */
+  /** Latest audit-detected language. Surfaced as a "detected: …" badge
+   *  next to the picker when no override is set. */
   detectedLanguage: string | null;
 }
 
@@ -40,17 +40,25 @@ export function SiteLanguageEditor({
   const t = useTranslations('SiteLanguage');
   const { contains } = useFilter({ sensitivity: 'base' });
 
-  const initialKey = initialOverride ?? detectedLanguage ?? null;
-  const [selected, setSelected] = useState<Key | null>(initialKey);
+  // The dropdown only reflects what's actually persisted as an override.
+  // Pre-filling with the audit-detected language led to a confusing UX
+  // where the user saw a value selected they hadn't saved, and clicking
+  // the clear button looked like it was bouncing. The auto-detect state
+  // is conveyed by the "detected: …" badge instead.
+  const [selected, setSelected] = useState<Key | null>(initialOverride);
   const [savedOverride, setSavedOverride] = useState<string | null>(initialOverride);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const dirty = (selected ?? null) !== (savedOverride ?? detectedLanguage ?? null);
+  const dirty = (selected ?? null) !== (savedOverride ?? null);
   const isCustom = savedOverride !== null;
 
-  function handleSubmit(formData: FormData) {
+  function handleSave() {
+    if (!dirty || isPending) return;
     const next = typeof selected === 'string' ? selected : '';
+    const formData = new FormData();
+    formData.set('projectId', projectId);
+    formData.set('languageCode', next);
     startTransition(async () => {
       await updateProjectLanguageAction(formData);
       setSavedOverride(next || null);
@@ -81,13 +89,15 @@ export function SiteLanguageEditor({
         </div>
         <Globe className="size-4 text-[var(--accent)] shrink-0" aria-hidden />
       </div>
-      <form action={handleSubmit} className="flex flex-col gap-3">
-        <input type="hidden" name="projectId" value={projectId} />
-        <input
-          type="hidden"
-          name="languageCode"
-          value={typeof selected === 'string' ? selected : ''}
-        />
+      {/* No native <form> here on purpose: HeroUI's Autocomplete renders
+          internal buttons (trigger, ClearButton, indicator) without an
+          explicit `type` attribute, so they default to `type="submit"`
+          when nested in a form. Clicking the X used to instantly submit
+          the form *and* update React state in the same tick, which both
+          auto-saved (without the user pressing Save) and re-rendered with
+          stale DOM values. Driving the save from a plain button click
+          sidesteps the whole class of bugs. */}
+      <div className="flex flex-col gap-3">
         <Autocomplete
           className="w-full max-w-sm"
           selectionMode="single"
@@ -108,7 +118,7 @@ export function SiteLanguageEditor({
           </Autocomplete.Trigger>
           <Autocomplete.Popover>
             <Autocomplete.Filter filter={contains}>
-              <SearchField autoFocus name="search" variant="secondary">
+              <SearchField autoFocus variant="secondary">
                 <SearchField.Group>
                   <SearchField.SearchIcon />
                   <SearchField.Input placeholder={t('searchPlaceholder')} />
@@ -138,14 +148,15 @@ export function SiteLanguageEditor({
             </span>
           ) : null}
           <button
-            type="submit"
+            type="button"
+            onClick={handleSave}
             disabled={!dirty || isPending}
             className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
           >
             {isPending ? <Spinner size="sm" /> : t('saveButton')}
           </button>
         </div>
-      </form>
+      </div>
     </Card>
   );
 }
