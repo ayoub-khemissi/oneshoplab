@@ -579,6 +579,14 @@
     "statusUnpaid": "Impayé",
     "statusUnknown": "Inconnu",
     "manageBilling": "Gérer mon abonnement",
-    "manageBillingHint": "Modifier le moyen de paiement, changer la fréquence, consulter les factures, ou résilier — depuis le portail client."
+    "manageBillingHint": "Modifier le moyen de paiement, changer la fréquence, consulter les factures, ou résilier — depuis le portail client.",
+    "bannerCancellingTitle": "Abonnement annulé",
+    "bannerCancellingBody": "Vous gardez votre accès {plan} et vos crédits jusqu'au {date}. Plus aucun prélèvement. Réactivable à tout moment depuis le portail client.",
+    "bannerCanceledTitle": "Abonnement terminé",
+    "bannerCanceledBody": "Votre accès payant a expiré. Choisissez une formule pour continuer.",
+    "bannerPastDueTitle": "Paiement en retard",
+    "bannerPastDueBody": "La dernière facture n'a pas pu être prélevée. Mettez à jour votre moyen de paiement pour éviter une suspension.",
+    "bannerUnpaidTitle": "Abonnement suspendu",
+    "bannerUnpaidBody": "Votre abonnement est suspendu pour impayé. Mettez à jour votre moyen de paiement et réglez la facture pour réactiver."
   }
 }

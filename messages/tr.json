@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Aboneliği yönet",
-    "manageBillingHint": "Ödeme yöntemini güncelleyin, döngüyü değiştirin, faturaları görüntüleyin veya iptal edin — tümü müşteri portalından."
+    "manageBillingHint": "Ödeme yöntemini güncelleyin, döngüyü değiştirin, faturaları görüntüleyin veya iptal edin — tümü müşteri portalından.",
+    "bannerCancellingTitle": "Abonelik iptal edildi",
+    "bannerCancellingBody": "{date} tarihine kadar {plan} erişiminiz ve kredileriniz korunur. Başka ücret alınmaz. Müşteri portalından yeniden etkinleştirebilirsiniz.",
+    "bannerCanceledTitle": "Abonelik sona erdi",
+    "bannerCanceledBody": "Ücretli erişiminizin süresi doldu. Devam etmek için bir plan seçin.",
+    "bannerPastDueTitle": "Ödeme gecikti",
+    "bannerPastDueBody": "Son faturanız tahsil edilemedi. Askıya alınmasını önlemek için ödeme yönteminizi güncelleyin.",
+    "bannerUnpaidTitle": "Abonelik askıya alındı",
+    "bannerUnpaidBody": "Aboneliğiniz ödenmediği için askıya alındı. Yeniden etkinleştirmek için ödeme yöntemini güncelleyin ve faturayı ödeyin."
   }
 }

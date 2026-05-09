@@ -1,6 +1,14 @@
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
-import { ArrowRight, CreditCard, ExternalLink, Sparkles } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  CalendarClock,
+  CreditCard,
+  ExternalLink,
+  Info,
+  Sparkles
+} from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -72,6 +80,12 @@ export default async function SubscriptionPage() {
           {t('subtitle')}
         </p>
       </header>
+
+      {/* Status banner — surfaced for any non-active state so the merchant
+          can't miss a cancellation, past-due or suspension. The plan card
+          below still carries the StatusPill, but the banner is the
+          impossible-to-overlook signal. */}
+      <StatusBanner status={status} planName={planName} periodEnd={periodEnd} t={t} />
 
       {/* Plan + status overview ------------------------------------------- */}
       <Card variant="secondary" className="p-5 flex flex-col gap-4">
@@ -181,6 +195,90 @@ function StatusPill({
     <span className={`text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded font-semibold ${cls}`}>
       {label}
     </span>
+  );
+}
+
+/**
+ * Top-of-page banner shown for non-active subscription states. Returns
+ * null for `active` / `trialing` (the StatusPill on the card is enough)
+ * and for unknown statuses we'd rather not invent copy for.
+ */
+function StatusBanner({
+  status,
+  planName,
+  periodEnd,
+  t
+}: {
+  status: string;
+  planName: string;
+  periodEnd: string | null;
+  t: Awaited<ReturnType<typeof getTranslations<'Subscription'>>>;
+}) {
+  type BannerSpec = {
+    tone: 'warning' | 'danger' | 'muted';
+    icon: typeof AlertTriangle;
+    title: string;
+    body: string;
+  };
+  let spec: BannerSpec | null = null;
+  switch (status) {
+    case 'cancelling':
+      spec = {
+        tone: 'warning',
+        icon: CalendarClock,
+        title: t('bannerCancellingTitle'),
+        body: t('bannerCancellingBody', {
+          plan: planName,
+          date: periodEnd ?? '—'
+        })
+      };
+      break;
+    case 'canceled':
+      spec = {
+        tone: 'muted',
+        icon: Info,
+        title: t('bannerCanceledTitle'),
+        body: t('bannerCanceledBody')
+      };
+      break;
+    case 'past_due':
+      spec = {
+        tone: 'danger',
+        icon: AlertTriangle,
+        title: t('bannerPastDueTitle'),
+        body: t('bannerPastDueBody')
+      };
+      break;
+    case 'unpaid':
+      spec = {
+        tone: 'danger',
+        icon: AlertTriangle,
+        title: t('bannerUnpaidTitle'),
+        body: t('bannerUnpaidBody')
+      };
+      break;
+  }
+  if (!spec) return null;
+  const Icon = spec.icon;
+  const toneCls = {
+    warning:
+      'border-[var(--warning)]/40 bg-[var(--warning)]/5 text-[var(--warning)]',
+    danger: 'border-[var(--danger)]/40 bg-[var(--danger)]/5 text-[var(--danger)]',
+    muted: 'border-[var(--border)] bg-[var(--default)]/40 text-[var(--muted)]'
+  }[spec.tone];
+  return (
+    <div
+      role="alert"
+      className={`flex items-start gap-3 p-4 rounded-md border ${toneCls}`}
+    >
+      <Icon className="size-5 mt-0.5 shrink-0" aria-hidden />
+      <div className="flex flex-col gap-1">
+        <span className="font-semibold text-[var(--foreground)]">{spec.title}</span>
+        <span className="text-sm text-[var(--muted)] leading-relaxed">
+          {spec.body}
+        </span>
+      </div>
+    </div>
   );
 }
 

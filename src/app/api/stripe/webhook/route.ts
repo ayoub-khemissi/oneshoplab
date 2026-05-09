@@ -255,8 +255,26 @@ async function syncFromStripeSubscription(
       : typeof legacyPeriodEnd === 'number'
         ? legacyPeriodEnd
         : null;
-  const periodEnd = periodEndUnix != null ? new Date(periodEndUnix * 1000) : null;
-  const status = sub.cancel_at_period_end ? 'cancelling' : sub.status;
+
+  // Cancellation signal moved in API 2026: instead of setting
+  // `cancel_at_period_end=true` and leaving `status='active'`, Stripe
+  // now sets `cancel_at` to a future timestamp on an otherwise-active
+  // subscription. Treat both shapes as "cancelling" — the user has
+  // already cancelled but their plan is still live until period end.
+  // When `cancel_at` is set, we surface that as the effective end
+  // date even if it doesn't match `current_period_end` (in practice
+  // they're equal for cycle-end cancellations, but a custom cancel-at
+  // date should display correctly too).
+  const cancelAtUnix = typeof sub.cancel_at === 'number' ? sub.cancel_at : null;
+  const isCancellingNew = cancelAtUnix !== null && sub.status !== 'canceled';
+  const isCancellingLegacy = sub.cancel_at_period_end === true;
+  const isCancelling = isCancellingNew || isCancellingLegacy;
+  const effectivePeriodEndUnix = isCancellingNew
+    ? cancelAtUnix
+    : periodEndUnix;
+  const periodEnd =
+    effectivePeriodEndUnix != null ? new Date(effectivePeriodEndUnix * 1000) : null;
+  const status = isCancelling ? 'cancelling' : sub.status;
   const planForDb = sub.status === 'canceled' ? ('free' as PlanId) : resolved.plan;
 
   await syncSubscriptionFromStripe({

@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Gerir assinatura",
-    "manageBillingHint": "Atualize o método de pagamento, mude o ciclo, veja faturas anteriores ou cancele — tudo no portal do cliente."
+    "manageBillingHint": "Atualize o método de pagamento, mude o ciclo, veja faturas anteriores ou cancele — tudo no portal do cliente.",
+    "bannerCancellingTitle": "Assinatura cancelada",
+    "bannerCancellingBody": "Você mantém o acesso {plan} e os créditos até {date}. Sem cobranças futuras. Reative quando quiser pelo portal do cliente.",
+    "bannerCanceledTitle": "Assinatura encerrada",
+    "bannerCanceledBody": "Seu acesso pago expirou. Escolha um plano para continuar.",
+    "bannerPastDueTitle": "Pagamento atrasado",
+    "bannerPastDueBody": "Sua última fatura não pôde ser cobrada. Atualize o método de pagamento para evitar suspensão.",
+    "bannerUnpaidTitle": "Assinatura suspensa",
+    "bannerUnpaidBody": "Sua assinatura está suspensa por falta de pagamento. Atualize o método de pagamento e pague a fatura para reativar."
   }
 }

@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Abonnement verwalten",
-    "manageBillingHint": "Zahlungsmethode aktualisieren, Zyklus ändern, Rechnungen einsehen oder kündigen — alles im Kundenportal."
+    "manageBillingHint": "Zahlungsmethode aktualisieren, Zyklus ändern, Rechnungen einsehen oder kündigen — alles im Kundenportal.",
+    "bannerCancellingTitle": "Abonnement gekündigt",
+    "bannerCancellingBody": "Du behältst deinen {plan}-Zugang und deine Credits bis zum {date}. Keine weiteren Abbuchungen. Reaktivierbar im Kundenportal.",
+    "bannerCanceledTitle": "Abonnement beendet",
+    "bannerCanceledBody": "Dein bezahlter Zugang ist abgelaufen. Wähle einen Plan, um fortzufahren.",
+    "bannerPastDueTitle": "Zahlung überfällig",
+    "bannerPastDueBody": "Die letzte Rechnung konnte nicht abgebucht werden. Aktualisiere deine Zahlungsmethode, um eine Sperrung zu vermeiden.",
+    "bannerUnpaidTitle": "Abonnement gesperrt",
+    "bannerUnpaidBody": "Dein Abonnement ist wegen Nichtzahlung gesperrt. Aktualisiere deine Zahlungsmethode und begleiche die Rechnung, um es zu reaktivieren."
   }
 }

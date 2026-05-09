@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Manage subscription",
-    "manageBillingHint": "Update payment method, change cycle, view past invoices, or cancel — all from the customer portal."
+    "manageBillingHint": "Update payment method, change cycle, view past invoices, or cancel — all from the customer portal.",
+    "bannerCancellingTitle": "Subscription cancelled",
+    "bannerCancellingBody": "You'll keep your {plan} access and credits until {date}. No further charges. Reactivate any time from the customer portal.",
+    "bannerCanceledTitle": "Subscription ended",
+    "bannerCanceledBody": "Your paid access has expired. Pick a plan to continue.",
+    "bannerPastDueTitle": "Payment past due",
+    "bannerPastDueBody": "Your last invoice couldn't be charged. Update your payment method to avoid a suspension.",
+    "bannerUnpaidTitle": "Subscription suspended",
+    "bannerUnpaidBody": "Your subscription is suspended for non-payment. Update your payment method and settle the invoice to reactivate."
   }
 }

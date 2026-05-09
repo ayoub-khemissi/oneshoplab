@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Gestisci abbonamento",
-    "manageBillingHint": "Aggiorna il metodo di pagamento, cambia il ciclo, consulta le fatture o annulla — tutto dal portale cliente."
+    "manageBillingHint": "Aggiorna il metodo di pagamento, cambia il ciclo, consulta le fatture o annulla — tutto dal portale cliente.",
+    "bannerCancellingTitle": "Abbonamento annullato",
+    "bannerCancellingBody": "Manterrai l'accesso {plan} e i crediti fino al {date}. Nessun ulteriore addebito. Riattivabile dal portale cliente.",
+    "bannerCanceledTitle": "Abbonamento terminato",
+    "bannerCanceledBody": "Il tuo accesso a pagamento è scaduto. Scegli un piano per continuare.",
+    "bannerPastDueTitle": "Pagamento in ritardo",
+    "bannerPastDueBody": "L'ultima fattura non è stata addebitata. Aggiorna il metodo di pagamento per evitare la sospensione.",
+    "bannerUnpaidTitle": "Abbonamento sospeso",
+    "bannerUnpaidBody": "Il tuo abbonamento è sospeso per mancato pagamento. Aggiorna il metodo di pagamento e salda la fattura per riattivare."
   }
 }

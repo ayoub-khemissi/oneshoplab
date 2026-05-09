@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "管理订阅",
-    "manageBillingHint": "在客户门户中更新付款方式、更改周期、查看历史账单或取消订阅。"
+    "manageBillingHint": "在客户门户中更新付款方式、更改周期、查看历史账单或取消订阅。",
+    "bannerCancellingTitle": "订阅已取消",
+    "bannerCancellingBody": "在 {date} 之前，您仍可使用 {plan} 计划及其积分。不会再有任何扣款。可随时在客户门户中重新激活。",
+    "bannerCanceledTitle": "订阅已结束",
+    "bannerCanceledBody": "您的付费访问已过期。请选择一个计划以继续使用。",
+    "bannerPastDueTitle": "付款逾期",
+    "bannerPastDueBody": "上一张账单扣款失败。请更新付款方式，以免被暂停。",
+    "bannerUnpaidTitle": "订阅已暂停",
+    "bannerUnpaidBody": "您的订阅因未付款被暂停。请更新付款方式并支付账单以重新激活。"
   }
 }

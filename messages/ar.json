@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "إدارة الاشتراك",
-    "manageBillingHint": "حدّث طريقة الدفع، غيّر الدورة، اطّلع على الفواتير، أو ألغِ — كل ذلك من بوابة العميل."
+    "manageBillingHint": "حدّث طريقة الدفع، غيّر الدورة، اطّلع على الفواتير، أو ألغِ — كل ذلك من بوابة العميل.",
+    "bannerCancellingTitle": "تم إلغاء الاشتراك",
+    "bannerCancellingBody": "ستحتفظ بصلاحيات {plan} ورصيدك حتى {date}. لا مزيد من الخصومات. يمكنك إعادة التفعيل من بوابة العميل.",
+    "bannerCanceledTitle": "انتهى الاشتراك",
+    "bannerCanceledBody": "انتهت صلاحية وصولك المدفوع. اختر خطة للمتابعة.",
+    "bannerPastDueTitle": "دفع متأخر",
+    "bannerPastDueBody": "تعذّر تحصيل آخر فاتورة. حدّث طريقة الدفع لتجنّب التعليق.",
+    "bannerUnpaidTitle": "تم تعليق الاشتراك",
+    "bannerUnpaidBody": "تم تعليق اشتراكك بسبب عدم الدفع. حدّث طريقة الدفع واسدّد الفاتورة لإعادة التفعيل."
   }
 }

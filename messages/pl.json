@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "Zarządzaj subskrypcją",
-    "manageBillingHint": "Zmień metodę płatności, cykl, zobacz faktury lub anuluj — wszystko w portalu klienta."
+    "manageBillingHint": "Zmień metodę płatności, cykl, zobacz faktury lub anuluj — wszystko w portalu klienta.",
+    "bannerCancellingTitle": "Subskrypcja anulowana",
+    "bannerCancellingBody": "Zachowasz dostęp {plan} i kredyty do {date}. Bez kolejnych obciążeń. Możesz reaktywować z portalu klienta.",
+    "bannerCanceledTitle": "Subskrypcja zakończona",
+    "bannerCanceledBody": "Twój dostęp płatny wygasł. Wybierz plan, aby kontynuować.",
+    "bannerPastDueTitle": "Zaległa płatność",
+    "bannerPastDueBody": "Ostatnia faktura nie mogła zostać pobrana. Zaktualizuj metodę płatności, aby uniknąć zawieszenia.",
+    "bannerUnpaidTitle": "Subskrypcja zawieszona",
+    "bannerUnpaidBody": "Twoja subskrypcja jest zawieszona z powodu braku płatności. Zaktualizuj metodę płatności i opłać fakturę, aby wznowić."
   }
 }

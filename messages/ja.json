@@ -579,6 +579,14 @@
     "statusUnpaid": "Unpaid",
     "statusUnknown": "Unknown",
     "manageBilling": "サブスクリプションを管理",
-    "manageBillingHint": "支払い方法の変更、サイクルの変更、請求書の確認、解約はカスタマーポータルから行えます。"
+    "manageBillingHint": "支払い方法の変更、サイクルの変更、請求書の確認、解約はカスタマーポータルから行えます。",
+    "bannerCancellingTitle": "サブスクリプションをキャンセルしました",
+    "bannerCancellingBody": "{date} までは {plan} のアクセスとクレジットを引き続きご利用いただけます。これ以上の請求はありません。カスタマーポータルからいつでも再開できます。",
+    "bannerCanceledTitle": "サブスクリプションは終了しました",
+    "bannerCanceledBody": "有料アクセスが期限切れです。続けるにはプランをお選びください。",
+    "bannerPastDueTitle": "支払いが期限切れです",
+    "bannerPastDueBody": "前回の請求を処理できませんでした。停止を避けるためにお支払い方法を更新してください。",
+    "bannerUnpaidTitle": "サブスクリプションを一時停止中",
+    "bannerUnpaidBody": "未払いのためサブスクリプションは一時停止されています。お支払い方法を更新して請求を支払うと再開されます。"
   }
 }
