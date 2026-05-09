@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "Tüm modeller mevcut",
       "noCard": "Kart gerekmez",
-      "emailSupport": "E-posta desteği",
-      "priorityGen": "Öncelikli üretimler",
-      "prioritySupport": "Öncelikli destek",
-      "bulkOps": "Toplu işlemler",
-      "dedicatedSuccess": "Özel müşteri başarı yöneticisi"
+      "bulkOps": "Toplu katalog üretimi"
     }
   },
   "Preferences": {

@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "可用所有模型",
       "noCard": "无需信用卡",
-      "emailSupport": "邮件支持",
-      "priorityGen": "优先生成",
-      "prioritySupport": "优先支持",
-      "bulkOps": "批量操作",
-      "dedicatedSuccess": "专属客户成功经理"
+      "bulkOps": "目录批量生成"
     }
   },
   "Preferences": {

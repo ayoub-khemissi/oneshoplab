@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "全モデル利用可",
       "noCard": "カード不要",
-      "emailSupport": "メールサポート",
-      "priorityGen": "優先生成",
-      "prioritySupport": "優先サポート",
-      "bulkOps": "一括操作",
-      "dedicatedSuccess": "専任カスタマーサクセス"
+      "bulkOps": "カタログ一括生成"
     }
   },
   "Preferences": {

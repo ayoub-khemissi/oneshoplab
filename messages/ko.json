@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "모든 모델 사용 가능",
       "noCard": "카드 불필요",
-      "emailSupport": "이메일 지원",
-      "priorityGen": "우선 생성",
-      "prioritySupport": "우선 지원",
-      "bulkOps": "대량 작업",
-      "dedicatedSuccess": "전담 고객 성공 매니저"
+      "bulkOps": "카탈로그 일괄 생성"
     }
   },
   "Preferences": {

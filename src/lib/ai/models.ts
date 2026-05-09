@@ -294,18 +294,12 @@ export interface PlanTier {
   highlightExtras: PlanHighlightExtraId[];
 }
 
-/** Stable identifiers for per-plan marketing bullets. New ids must be
- *  paired with a translation key under `Pricing.highlightExtras` in
- *  every locale file. */
-export const PLAN_HIGHLIGHT_EXTRAS = [
-  'allModels',
-  'noCard',
-  'emailSupport',
-  'priorityGen',
-  'prioritySupport',
-  'bulkOps',
-  'dedicatedSuccess'
-] as const;
+/** Stable identifiers for per-plan marketing bullets. Each id MUST
+ *  correspond to a real, shipped feature — we don't list aspirational
+ *  copy. Any addition here pairs with a translation key under
+ *  `Pricing.highlightExtras` in every locale and an actual code path
+ *  in the app. */
+export const PLAN_HIGHLIGHT_EXTRAS = ['allModels', 'noCard', 'bulkOps'] as const;
 export type PlanHighlightExtraId = (typeof PLAN_HIGHLIGHT_EXTRAS)[number];
 
 const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: PlanHighlightExtraId[] }> = {
@@ -315,15 +309,18 @@ const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: PlanHighligh
   },
   starter: {
     name: 'Starter',
-    highlightExtras: ['allModels', 'emailSupport']
+    highlightExtras: ['allModels']
   },
   pro: {
     name: 'Pro',
-    highlightExtras: ['priorityGen', 'prioritySupport']
+    highlightExtras: ['allModels']
   },
   scale: {
+    // bulkOps will be true once the bulk-generation feature ships in
+    // a follow-up commit; the bullet stays here so this turn's commit
+    // sequence lines up with the implementation.
     name: 'Scale',
-    highlightExtras: ['bulkOps', 'dedicatedSuccess']
+    highlightExtras: ['allModels', 'bulkOps']
   }
 };
 

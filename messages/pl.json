@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "Wszystkie modele",
       "noCard": "Bez karty",
-      "emailSupport": "Wsparcie e-mail",
-      "priorityGen": "Priorytetowe generacje",
-      "prioritySupport": "Priorytetowe wsparcie",
-      "bulkOps": "Operacje masowe",
-      "dedicatedSuccess": "Dedykowany customer success"
+      "bulkOps": "Masowa generacja katalogu"
     }
   },
   "Preferences": {

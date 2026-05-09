@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "كل النماذج متاحة",
       "noCard": "بدون بطاقة",
-      "emailSupport": "دعم بالبريد",
-      "priorityGen": "توليدات بأولوية",
-      "prioritySupport": "دعم بأولوية",
-      "bulkOps": "عمليات بالجملة",
-      "dedicatedSuccess": "مدير نجاح مخصص"
+      "bulkOps": "توليد جماعي للكتالوج"
     }
   },
   "Preferences": {

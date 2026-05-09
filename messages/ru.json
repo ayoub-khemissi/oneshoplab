@@ -104,11 +104,7 @@
     "highlightExtras": {
       "allModels": "Все модели",
       "noCard": "Без карты",
-      "emailSupport": "Поддержка по email",
-      "priorityGen": "Приоритетные генерации",
-      "prioritySupport": "Приоритетная поддержка",
-      "bulkOps": "Массовые операции",
-      "dedicatedSuccess": "Персональный менеджер"
+      "bulkOps": "Массовая генерация каталога"
     }
   },
   "Preferences": {
