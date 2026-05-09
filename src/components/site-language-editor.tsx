@@ -118,23 +118,7 @@ export function SiteLanguageEditor({
                     textValue={`${l.name} ${l.promptName} ${l.code}`}
                     className="flex items-center justify-between gap-3"
                   >
-                    <span className="inline-flex items-center gap-3">
-                      {l.country ? (
-                        <span
-                          className={`fi fi-${l.country} rounded-sm shrink-0`}
-                          style={{ width: '1.25rem', height: '0.94rem' }}
-                          aria-hidden
-                        />
-                      ) : (
-                        // Reserve the same width so labels stay aligned.
-                        <span
-                          className="shrink-0"
-                          style={{ width: '1.25rem', height: '0.94rem' }}
-                          aria-hidden
-                        />
-                      )}
-                      <span>{l.name}</span>
-                    </span>
+                    <span>{l.name}</span>
                     <ListBox.ItemIndicator />
                   </ListBox.Item>
                 ))}
