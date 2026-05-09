@@ -183,6 +183,33 @@
     background: var(--color-brand-200);
     color: var(--color-brand-900);
   }
+
+  /* Tailwind v4 reverted button's default cursor from `pointer` back to
+     the native browser behavior (`default`). That breaks the affordance
+     for everyone who's used to it, so we restore `pointer` globally for
+     anything that should obviously look clickable. Links keep their
+     browser default (already pointer when they have an href). Disabled
+     interactives get `not-allowed` to mirror the HeroUI design tokens
+     used by the rest of the system. */
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not(:disabled):not([aria-disabled="true"]),
+  summary,
+  label[for],
+  select:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  input[type="button"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  button[aria-disabled="true"],
+  [role="button"]:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 @layer components {
