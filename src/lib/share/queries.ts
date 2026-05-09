@@ -262,15 +262,19 @@ export interface HomeShowcaseCard {
   token: string;
   domain: string;
   siteUrl: string;
-  /** Both products from the share link, with their source vs AI text
-   *  + AI image so the homepage card can render two before/after rows
-   *  without an extra round-trip. */
+  /** Both products from the share link with full before/after data:
+   *  source + AI title, description, tags, plus image arrays for the
+   *  carousel-style browsing on the home strip. */
   products: Array<{
     sourceId: string;
     sourceTitle: string;
     aiTitle: string | null;
-    sourceImage: string | null;
-    aiImage: string | null;
+    sourceDescriptionHtml: string;
+    aiDescriptionHtml: string | null;
+    sourceTags: string[];
+    aiTags: string[];
+    sourceImages: Array<{ src: string; alt: string | null }>;
+    aiImages: Array<{ src: string; alt: string | null }>;
   }>;
 }
 
@@ -307,7 +311,9 @@ export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
         sourceId?: string | null;
         handle?: string | null;
         title: string;
-        images?: Array<{ src: string }>;
+        descriptionHtml?: string;
+        images?: Array<{ src: string; alt?: string | null }>;
+        signals?: { tags?: string[] };
       }>;
     };
     const allProducts = summary.allProducts ?? [];
@@ -319,22 +325,44 @@ export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
         (p) => (p.sourceId ?? p.handle ?? '') === sourceId
       );
       if (!matched) continue;
-      const [titleHist, images] = await Promise.all([
+      const [titleHist, descHist, tagsHist, imageJobs] = await Promise.all([
         listOptimHistory(project.id, sourceId, 'title'),
+        listOptimHistory(project.id, sourceId, 'description'),
+        listOptimHistory(project.id, sourceId, 'tags'),
         listProductImageJobs(project.id, sourceId)
       ]);
       const aiTitle =
         titleHist[0] && typeof titleHist[0].output === 'string'
           ? titleHist[0].output
           : null;
-      const aiImage =
-        images.find((j) => j.status === 'completed' && j.imageUrl)?.imageUrl ?? null;
+      const aiDescriptionHtml =
+        descHist[0] && typeof descHist[0].output === 'string'
+          ? descHist[0].output
+          : null;
+      const aiTags = Array.isArray(tagsHist[0]?.output)
+        ? (tagsHist[0]!.output as string[])
+        : [];
+      const aiImages = imageJobs
+        .filter((j) => j.status === 'completed' && j.imageUrl)
+        .slice(0, 4)
+        .map((j, i) => ({
+          src: j.imageUrl!,
+          alt: `AI image ${i + 1}`
+        }));
+      const sourceImages = (matched.images ?? []).slice(0, 6).map((img) => ({
+        src: img.src,
+        alt: img.alt ?? null
+      }));
       products.push({
         sourceId,
         sourceTitle: matched.title,
         aiTitle,
-        sourceImage: matched.images?.[0]?.src ?? null,
-        aiImage
+        sourceDescriptionHtml: matched.descriptionHtml ?? '',
+        aiDescriptionHtml,
+        sourceTags: matched.signals?.tags ?? [],
+        aiTags,
+        sourceImages,
+        aiImages
       });
     }
 
