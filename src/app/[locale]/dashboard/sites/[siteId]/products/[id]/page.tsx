@@ -583,7 +583,24 @@ function SourcePreview({ product }: { product: ProductSnapshot }) {
       />
       <div className="p-4 flex flex-col gap-2">
         <span className="eyebrow">{t('aiSourceLabel')}</span>
-        <h3 className="font-semibold leading-tight line-clamp-2">{product.title}</h3>
+        {product.url ? (
+          <a
+            href={product.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-start gap-1.5 hover:text-[var(--accent)] transition-colors group/title"
+          >
+            <h3 className="font-semibold leading-tight line-clamp-2">
+              {product.title}
+            </h3>
+            <ExternalLink
+              className="size-3.5 mt-0.5 shrink-0 opacity-50 group-hover/title:opacity-100 transition-opacity"
+              aria-hidden
+            />
+          </a>
+        ) : (
+          <h3 className="font-semibold leading-tight line-clamp-2">{product.title}</h3>
+        )}
         {descriptionExcerpt ? (
           <p className="text-xs text-[var(--muted)] line-clamp-3">{descriptionExcerpt}</p>
         ) : null}
