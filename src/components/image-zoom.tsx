@@ -3,6 +3,7 @@
 import { Spinner } from '@heroui/react';
 import { Download, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ImageZoomProps {
   url: string;
@@ -35,6 +36,12 @@ export function ImageZoom({
 }: ImageZoomProps) {
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // createPortal needs document.body, which only exists after hydration.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -132,46 +139,55 @@ export function ImageZoom({
         )}
       </div>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
-          onClick={() => setOpen(false)}
-        >
-          <button
-            type="button"
-            onClick={(e) => downloadImage(e)}
-            disabled={downloading}
-            className="absolute top-4 right-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center disabled:opacity-50"
-            aria-label="Download image"
-            title="Download"
-          >
-            {downloading ? (
-              <Spinner size="md" className="text-white" />
-            ) : (
-              <Download className="size-5 text-white" />
-            )}
-          </button>
+      {/* Modal goes through a portal to <body> so it escapes any ancestor
+          stacking context. HeroUI Card / our backdrop-blur wrappers create
+          one via `transform`, `filter`, or `backdrop-filter` — without a
+          portal, `fixed` would be containing-block-scoped to that parent
+          and the modal would render *behind* sibling cards. z-[9999]
+          keeps it above any popover or sticky header in the app shell. */}
+      {open && mounted
+        ? createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+              onClick={() => setOpen(false)}
+            >
+              <button
+                type="button"
+                onClick={(e) => downloadImage(e)}
+                disabled={downloading}
+                className="absolute top-4 right-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center disabled:opacity-50"
+                aria-label="Download image"
+                title="Download"
+              >
+                {downloading ? (
+                  <Spinner size="md" className="text-white" />
+                ) : (
+                  <Download className="size-5 text-white" />
+                )}
+              </button>
 
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="absolute top-4 left-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center"
-            aria-label="Close"
-          >
-            <X className="size-5 text-white" />
-          </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="absolute top-4 left-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center"
+                aria-label="Close"
+              >
+                <X className="size-5 text-white" />
+              </button>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={url}
-            alt={alt}
-            className="max-w-full max-h-full object-contain rounded shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={url}
+                alt={alt}
+                className="max-w-full max-h-full object-contain rounded shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }
