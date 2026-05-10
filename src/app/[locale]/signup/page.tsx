@@ -158,6 +158,14 @@ export default async function SignupPage({ searchParams }: PageProps) {
             <RecaptchaWrapper siteKey={recaptchaSiteKey!} action="signup" />
           ) : null}
           <Card.Content className="flex flex-col gap-5">
+            {errorMessage ? (
+              <div
+                role="alert"
+                className="text-sm rounded-md border border-[var(--danger)] bg-[var(--danger)]/10 text-[var(--danger)] px-3 py-2 leading-relaxed"
+              >
+                {errorMessage}
+              </div>
+            ) : null}
             <TextField fullWidth name="name" type="text" autoFocus>
               <Label>{t('nameLabel')}</Label>
               <Input placeholder="Jane Doe" autoComplete="name" />

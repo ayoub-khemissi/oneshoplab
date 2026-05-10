@@ -76,6 +76,14 @@ export default async function ResetPasswordPage({ searchParams }: PageProps) {
         <Form action={resetPasswordAction}>
           <input type="hidden" name="token" value={token} />
           <Card.Content className="flex flex-col gap-5">
+            {errorMessage ? (
+              <div
+                role="alert"
+                className="text-sm rounded-md border border-[var(--danger)] bg-[var(--danger)]/10 text-[var(--danger)] px-3 py-2 leading-relaxed"
+              >
+                {errorMessage}
+              </div>
+            ) : null}
             <TextField
               fullWidth
               isRequired

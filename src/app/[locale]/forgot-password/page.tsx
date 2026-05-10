@@ -63,6 +63,14 @@ export default async function ForgotPasswordPage({ searchParams }: PageProps) {
         ) : (
           <Form action={requestPasswordResetAction}>
             <Card.Content className="flex flex-col gap-5">
+              {errorMessage ? (
+                <div
+                  role="alert"
+                  className="text-sm rounded-md border border-[var(--danger)] bg-[var(--danger)]/10 text-[var(--danger)] px-3 py-2 leading-relaxed"
+                >
+                  {errorMessage}
+                </div>
+              ) : null}
               <TextField
                 fullWidth
                 isRequired

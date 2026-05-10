@@ -95,6 +95,14 @@ export default async function LoginPage({ searchParams }: PageProps) {
           <input type="hidden" name="audit" value={auditParam} />
           <input type="hidden" name="next" value={nextParam} />
           <Card.Content className="flex flex-col gap-5">
+            {errorMessage ? (
+              <div
+                role="alert"
+                className="text-sm rounded-md border border-[var(--danger)] bg-[var(--danger)]/10 text-[var(--danger)] px-3 py-2 leading-relaxed"
+              >
+                {errorMessage}
+              </div>
+            ) : null}
             <TextField fullWidth isRequired name="email" type="email" autoFocus>
               <Label>{t('emailLabel')}</Label>
               <Input placeholder="you@example.com" autoComplete="email" />
