@@ -168,18 +168,6 @@ export default async function PricingPage() {
         }}
       />
 
-      <section className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
-        <h2 className="text-2xl font-bold tracking-tight text-center">{t('whatIsCreditTitle')}</h2>
-        <Card variant="secondary" className="p-6 flex flex-col gap-4">
-          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody')}</p>
-          <div className="grid sm:grid-cols-3 gap-3">
-            <Stat label={t('costFullGen')} value={`~50 ${t('credits')}`} />
-            <Stat label={t('costImage1k')} value={`15 ${t('credits')}`} />
-            <Stat label={t('costDescription')} value={`~5 ${t('credits')}`} />
-          </div>
-        </Card>
-      </section>
-
       <section className="flex flex-col gap-3 max-w-4xl mx-auto w-full">
         <div className="flex flex-col gap-2 text-center">
           <h2 className="text-2xl font-bold tracking-tight">
@@ -211,6 +199,21 @@ export default async function PricingPage() {
             perCreditLabel: (perCredit: string) => `(€${perCredit} / credit)`
           }}
         />
+      </section>
+
+      {/* "What is a credit worth?" sits below the packs because the
+          packs are the primary purchase CTA on this page; the cost
+          breakdown below is reference / educational copy. */}
+      <section className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
+        <h2 className="text-2xl font-bold tracking-tight text-center">{t('whatIsCreditTitle')}</h2>
+        <Card variant="secondary" className="p-6 flex flex-col gap-4">
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody')}</p>
+          <div className="grid sm:grid-cols-3 gap-3">
+            <Stat label={t('costFullGen')} value={`~50 ${t('credits')}`} />
+            <Stat label={t('costImage1k')} value={`15 ${t('credits')}`} />
+            <Stat label={t('costDescription')} value={`~5 ${t('credits')}`} />
+          </div>
+        </Card>
       </section>
 
       <section className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
