@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true }
 };
 
-const LAST_UPDATED = 'May 5, 2026';
+const LAST_UPDATED = 'May 10, 2026';
 const CONTACT_EMAIL = 'privacy@oneshoplab.com';
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
@@ -45,10 +45,22 @@ export default function PrivacyPolicyPage() {
         <p>
           When you sign up, we collect your email address, your display
           name (optional), and a hashed password (we never store your
-          password in clear). When you sign in via a third-party identity
-          provider, we receive the data they share with us in accordance
-          with the scopes you grant (typically email, name, and profile
-          picture).
+          password in clear). You may alternatively sign in with{' '}
+          <strong>Google</strong> via OAuth 2.0; in that case Google
+          shares with us the email address, display name, profile
+          picture URL, and a Google account identifier under the
+          standard OpenID profile scope, and we link them to your
+          OneShopLab account. You can stop using Google sign-in at any
+          time by setting an OneShopLab password and revoking the
+          OneShopLab application from your{' '}
+          <a
+            href="https://myaccount.google.com/permissions"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            Google account permissions
+          </a>
+          .
         </p>
 
         <h3>1.2 Billing data</h3>
@@ -111,7 +123,39 @@ export default function PrivacyPolicyPage() {
           We do <strong>not</strong> currently use third-party advertising
           cookies or third-party analytics that track you across other
           websites. Stripe sets its own cookies on payment pages, governed
-          by Stripe&apos;s own policy.
+          by Stripe&apos;s own policy. Google reCAPTCHA sets its own
+          cookies on the signup page (see Section 1.8 below).
+        </p>
+
+        <h3>1.8 Anti-bot verification (reCAPTCHA)</h3>
+        <p>
+          Our signup page is protected by{' '}
+          <strong>Google reCAPTCHA v2</strong> (&quot;I&apos;m not a
+          robot&quot; checkbox). When you interact with the checkbox,
+          your browser sends environmental and behavioural data to
+          Google (e.g. mouse movements, IP address, browser/device
+          fingerprint, referrer, and reCAPTCHA cookies set on
+          <code>google.com</code>). Google uses this data to determine
+          whether you are a human and to combat spam and abuse on its
+          and our services. We receive only a binary verification token
+          which we forward to Google for confirmation; we do not see
+          the underlying signals. This processing is governed by the{' '}
+          <a
+            href="https://policies.google.com/privacy"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            Google Privacy Policy
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://policies.google.com/terms"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            Google Terms of Service
+          </a>
+          .
         </p>
 
         <h2>2. How We Use Your Data</h2>
@@ -216,13 +260,22 @@ export default function PrivacyPolicyPage() {
             </tr>
             <tr>
               <td>Google LLC</td>
-              <td>Gemini (text generation), via kie.ai</td>
-              <td>USA</td>
+              <td>
+                Gemini (text generation, via kie.ai); Google Sign-In
+                (OAuth, optional sign-in method); Google reCAPTCHA
+                (anti-bot verification on signup)
+              </td>
+              <td>USA / EU</td>
             </tr>
             <tr>
               <td>OpenAI, L.L.C.</td>
               <td>gpt-image (image generation), via kie.ai</td>
               <td>USA</td>
+            </tr>
+            <tr>
+              <td>Sendinblue SAS (Brevo)</td>
+              <td>Transactional email relay (e.g. password reset)</td>
+              <td>France (EU)</td>
             </tr>
             <tr>
               <td>Hostinger / domain registrar</td>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true }
 };
 
-const LAST_UPDATED = 'May 5, 2026';
+const LAST_UPDATED = 'May 10, 2026';
 const CONTACT_EMAIL = 'legal@oneshoplab.com';
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
@@ -48,6 +48,16 @@ export default function TermsOfServicePage() {
           an account, and to keep that information up to date. You are
           responsible for all activity that occurs under your account, and
           for keeping your credentials confidential.
+        </p>
+        <p>
+          You may sign up and sign in either with an email and password
+          you choose, or with your Google account via Google Sign-In. If
+          you use Google Sign-In, you also agree to Google&apos;s
+          applicable terms; we do not control, and are not responsible
+          for, the availability of that third-party service. Our signup
+          page is protected by Google reCAPTCHA, and your interaction
+          with the &quot;I&apos;m not a robot&quot; checkbox is subject
+          to the Google Privacy Policy and Terms of Service.
         </p>
 
         <h2>2. Description of the Service</h2>
@@ -214,13 +224,17 @@ export default function TermsOfServicePage() {
         <p>
           The Service relies on third-party providers, including but not
           limited to: kie.ai (AI generation gateway), Anthropic (Claude),
-          Google (Gemini), OpenAI (image generation), Stripe (payments),
-          Cloudflare (object storage and DNS), and OVH (hosting). Their
-          availability, pricing, and policies may change. Where their terms
-          flow down to you (for example, Stripe&apos;s acceptable-use policy),
-          you agree to comply with them. We are not responsible for outages
-          or actions of these providers, but we will use commercially
-          reasonable efforts to mitigate their impact on the Service.
+          Google (Gemini for text generation, Google Sign-In, and
+          reCAPTCHA anti-bot verification), OpenAI (image generation),
+          Stripe (payments), Cloudflare (object storage and DNS), Brevo
+          (transactional email), and OVH (hosting). Their availability,
+          pricing, and policies may change. Where their terms flow down
+          to you (for example, Stripe&apos;s acceptable-use policy or
+          Google&apos;s reCAPTCHA terms when you complete the signup
+          challenge), you agree to comply with them. We are not
+          responsible for outages or actions of these providers, but we
+          will use commercially reasonable efforts to mitigate their
+          impact on the Service.
         </p>
 
         <h2>9. Intellectual Property</h2>
