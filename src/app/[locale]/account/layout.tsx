@@ -3,32 +3,55 @@ import { ChevronLeft } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { AccountTabs } from '@/components/account-tabs';
+import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 
 // Authenticated account area: noindex everywhere under /account.
 export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
 
+/**
+ * Account section shell. The back-to-dashboard link + tabs are wrapped
+ * in <ScrollAwareSticky> using the same configuration as the per-site
+ * dashboard (<dashboard/sites/[siteId]>) sub-header so behaviour is
+ * identical: the bar shrinks (compact mode) on scroll and tucks
+ * directly under the visible main header — sliding up to top:0 on
+ * mobile when the main header hides on scroll-down (the
+ * --site-header-h CSS var does that automatically).
+ *
+ * The wrapping container uses the same `p-4 md:p-10` rhythm as the
+ * per-site main, so the sticky bar's negative gutters
+ * (`-mx-4 md:-mx-10`) line up with the parent's padding edge.
+ */
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations('Account');
   return (
     <div className="flex-1 flex flex-col">
-      <div className="max-w-3xl w-full mx-auto px-6 md:px-10 pt-10 pb-4 flex flex-col gap-4">
-        <Link
-          href="/dashboard"
-          className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5 w-fit transition-colors"
-        >
-          <ChevronLeft className="size-4" aria-hidden />
-          {t('backToDashboard')}
-        </Link>
-        <AccountTabs
-          labels={{
-            profile: t('tabProfile'),
-            subscription: t('tabSubscription'),
-            preferences: t('tabPreferences'),
-            credits: t('tabCredits')
-          }}
-        />
+      <div className="max-w-3xl w-full mx-auto px-4 md:px-10 pt-4 md:pt-10 flex flex-col gap-4">
+        <ScrollAwareSticky topOffsetPx={68}>
+          {/* Compact-mode driven by data-compact on the sticky group:
+              shrinks the back link to text-xs and tightens the icon
+              once the user has scrolled past the threshold, mirroring
+              the per-site dashboard sticky bar behaviour. */}
+          <Link
+            href="/dashboard"
+            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5 w-fit transition-[font-size,gap] duration-200 group-data-[compact=true]/sticky:text-xs group-data-[compact=true]/sticky:gap-1"
+          >
+            <ChevronLeft
+              className="size-4 transition-[width,height] duration-200 group-data-[compact=true]/sticky:size-3.5"
+              aria-hidden
+            />
+            {t('backToDashboard')}
+          </Link>
+          <AccountTabs
+            labels={{
+              profile: t('tabProfile'),
+              subscription: t('tabSubscription'),
+              preferences: t('tabPreferences'),
+              credits: t('tabCredits')
+            }}
+          />
+        </ScrollAwareSticky>
       </div>
       {children}
     </div>
