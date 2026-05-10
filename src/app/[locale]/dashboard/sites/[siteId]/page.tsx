@@ -557,11 +557,18 @@ function SiteHeaderBar({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 md:gap-2 font-semibold hover:text-[var(--accent)] transition-colors min-w-0"
+          title={domain}
+          className="inline-flex items-center gap-1 md:gap-2 text-sm md:text-base font-semibold hover:text-[var(--accent)] transition-colors min-w-0"
         >
-          <SiteFavicon domain={domain} size={18} className="rounded-sm shrink-0" />
-          <span className="truncate max-w-[200px] md:max-w-none">{domain}</span>
-          <ExternalLink className="size-3.5 md:size-4 opacity-60 shrink-0" aria-hidden />
+          <SiteFavicon
+            domain={domain}
+            size={18}
+            className="rounded-sm shrink-0 !size-3.5 md:!size-[18px]"
+          />
+          <span className="truncate max-w-[110px] sm:max-w-[180px] md:max-w-none">
+            {domain}
+          </span>
+          <ExternalLink className="size-3 md:size-4 opacity-60 shrink-0" aria-hidden />
         </a>
         <RelaunchAuditButton
           projectId={projectId}
