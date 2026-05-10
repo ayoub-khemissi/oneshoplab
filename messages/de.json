@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "Massengenerierung für Katalog",
     "subtitle": "Generiere KI-Texte + Bilder für {count, plural, =0 {alle Produkte} =1 {1 Produkt} other {alle # Produkte}} auf dieser Seite auf einmal. Läuft im Hintergrund.",
-    "upgradeHint": "Massengenerierung ist eine Funktion des Scale-Plans.",
+    "upgradeHint": "Massengenerierung ist ab dem Pro-Plan verfügbar.",
     "cta": "Für alle Produkte generieren",
     "upgradeCta": "Auf Scale wechseln",
     "modalTitle": "Massengenerierung bestätigen",

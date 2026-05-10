@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "カタログ一括生成",
     "subtitle": "このサイトの {count, plural, =0 {全商品} =1 {1商品} other {全 # 商品}} に対して AI テキスト + 画像を一度に生成します。バックグラウンドで実行。",
-    "upgradeHint": "一括生成は Scale プランの機能です。",
+    "upgradeHint": "一括生成は Pro プラン以上でご利用いただけます。",
     "cta": "全商品で生成",
     "upgradeCta": "Scale にアップグレード",
     "modalTitle": "一括生成の確認",

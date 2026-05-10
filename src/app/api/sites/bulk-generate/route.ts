@@ -66,8 +66,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
+  // Bulk catalog generation is available from the Pro plan upwards.
+  // Free / Starter need to upgrade — the UI hides the CTA for them.
   const plan = (session.user.plan ?? 'free') as string;
-  if (plan !== 'scale') {
+  if (plan !== 'pro' && plan !== 'scale') {
     return NextResponse.json({ error: 'plan_not_eligible' }, { status: 403 });
   }
 

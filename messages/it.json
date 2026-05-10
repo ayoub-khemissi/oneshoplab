@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "Generazione in blocco del catalogo",
     "subtitle": "Genera testi + immagini AI per {count, plural, =0 {tutti i prodotti} =1 {1 prodotto} other {tutti i # prodotti}} di questo sito in una volta. Gira in background.",
-    "upgradeHint": "La generazione in blocco è una funzione del piano Scale.",
+    "upgradeHint": "La generazione in blocco è disponibile a partire dal piano Pro.",
     "cta": "Genera per tutti i prodotti",
     "upgradeCta": "Passa a Scale",
     "modalTitle": "Conferma generazione in blocco",

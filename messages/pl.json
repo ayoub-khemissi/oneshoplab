@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "Masowa generacja katalogu",
     "subtitle": "Generuj teksty + obrazy AI dla {count, plural, =0 {wszystkich produktów} =1 {1 produktu} few {wszystkich # produktów} many {wszystkich # produktów} other {wszystkich # produktów}} z tego sklepu naraz. Działa w tle.",
-    "upgradeHint": "Masowa generacja to funkcja planu Scale.",
+    "upgradeHint": "Masowa generacja jest dostępna od planu Pro.",
     "cta": "Generuj dla wszystkich produktów",
     "upgradeCta": "Przejdź na Scale",
     "modalTitle": "Potwierdź masową generację",

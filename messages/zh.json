@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "目录批量生成",
     "subtitle": "一次性为本站 {count, plural, =0 {所有产品} =1 {1 件产品} other {全部 # 件产品}} 生成 AI 文案 + 图片。在后台运行。",
-    "upgradeHint": "批量生成是 Scale 套餐功能。",
+    "upgradeHint": "批量生成从 Pro 套餐起可用。",
     "cta": "为所有产品生成",
     "upgradeCta": "升级到 Scale",
     "modalTitle": "确认批量生成",

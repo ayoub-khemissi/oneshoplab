@@ -91,6 +91,9 @@ export function BulkGenerateSection({
   productTitleById
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
+  // Bulk catalog generation is unlocked from the Pro plan upwards. Free
+  // and Starter see the upgrade hint instead of the CTA.
+  const canBulk = plan === 'pro' || plan === 'scale';
   const [active, setActive] = useState<ActiveBulkJob | null>(initialActive);
   const [detail, setDetail] = useState<BulkJobStatusForUi | null>(initialDetail);
   const [candidates, setCandidates] = useState<BulkCandidate[]>(initialCandidates);
@@ -308,7 +311,7 @@ export function BulkGenerateSection({
               </span>
             </div>
             <div className="flex flex-col gap-2 shrink-0">
-              {plan === 'scale' && hasFailures ? (
+              {canBulk && hasFailures ? (
                 <button
                   type="button"
                   onClick={retryFailed}
@@ -319,7 +322,7 @@ export function BulkGenerateSection({
                   {t('retryFailed')}
                 </button>
               ) : null}
-              {plan === 'scale' && candidates.length > 0 ? (
+              {canBulk && candidates.length > 0 ? (
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
@@ -375,7 +378,6 @@ export function BulkGenerateSection({
   // ---------------------------------------------------------------------
   // No active + no recent detail → CTA card
   // ---------------------------------------------------------------------
-  const isScale = plan === 'scale';
   const noProducts = productCount === 0;
   const noCandidates = candidates.length === 0;
 
@@ -386,14 +388,14 @@ export function BulkGenerateSection({
         <div className="flex-1 flex flex-col gap-1">
           <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
           <p className="text-xs text-[var(--muted)] leading-relaxed">
-            {!isScale
+            {!canBulk
               ? t('upgradeHint')
               : noCandidates
                 ? t('subtitleNoCandidates')
                 : t('subtitle', { count: candidates.length })}
           </p>
         </div>
-        {isScale ? (
+        {canBulk ? (
           <button
             type="button"
             disabled={noProducts || noCandidates}

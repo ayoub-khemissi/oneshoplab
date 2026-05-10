@@ -341,12 +341,9 @@ const PLAN_DISPLAY: Record<PlanId, { name: string; highlightExtras: PlanHighligh
   },
   pro: {
     name: 'Pro',
-    highlightExtras: ['allModels']
+    highlightExtras: ['allModels', 'bulkOps']
   },
   scale: {
-    // bulkOps will be true once the bulk-generation feature ships in
-    // a follow-up commit; the bullet stays here so this turn's commit
-    // sequence lines up with the implementation.
     name: 'Scale',
     highlightExtras: ['allModels', 'bulkOps']
   }

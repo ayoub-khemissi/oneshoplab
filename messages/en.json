@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "Bulk catalog generation",
     "subtitle": "Generate AI text + images for all {count, plural, =0 {products} =1 {1 product} other {# products}} in this site at once. Runs in the background — you can keep using the app.",
-    "upgradeHint": "Bulk generation is a Scale plan feature.",
+    "upgradeHint": "Bulk generation is available from the Pro plan.",
     "cta": "Generate for all products",
     "upgradeCta": "Upgrade to Scale",
     "modalTitle": "Confirm bulk generation",

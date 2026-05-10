@@ -619,7 +619,7 @@
   "BulkGenerate": {
     "title": "Génération en masse du catalogue",
     "subtitle": "Génère textes + images IA pour {count, plural, =0 {tous les produits} =1 {1 produit} other {tous les # produits}} de ce site d'un coup. Tourne en arrière-plan — tu peux continuer à utiliser l'app.",
-    "upgradeHint": "La génération en masse est une fonctionnalité du plan Scale.",
+    "upgradeHint": "La génération en masse est disponible à partir du plan Pro.",
     "cta": "Générer pour tous les produits",
     "upgradeCta": "Passer en Scale",
     "modalTitle": "Confirmer la génération en masse",
