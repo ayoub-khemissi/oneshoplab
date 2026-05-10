@@ -609,16 +609,17 @@
     "dangerBody": "Удаление аккаунта необратимо удалит проекты, аудиты, генерации и историю кредитов. Подтвердите паролем.",
     "dangerActiveSub": "Отмените подписку во вкладке «Подписка», прежде чем удалять аккаунт.",
     "deleteAccountButton": "Удалить мой аккаунт",
-    "errorWrongPassword": "Текущий пароль неверен.",
     "errorPasswordMismatch": "Новые пароли не совпадают.",
     "errorPasswordWeak": "Пароль должен быть от 8 до 128 символов.",
     "errorMissingFields": "Заполните все поля.",
-    "errorMissingPassword": "Подтвердите паролем.",
     "errorActiveSubscription": "Отмените подписку перед удалением аккаунта.",
     "errorGeneric": "Что-то пошло не так. Повторите.",
     "confirmNewPasswordLabel": "Подтвердите новый пароль",
-    "deletePasswordLabel": "Пароль",
-    "saved": "Сохранено"
+    "saved": "Сохранено",
+    "deleteEmailConfirmLabel": "Подтвердите, введя ваш email",
+    "deleteEmailConfirmHint": "Введите {email}, чтобы активировать кнопку удаления.",
+    "errorMissingEmail": "Введите email аккаунта для подтверждения.",
+    "errorEmailMismatch": "Этот email не совпадает с email аккаунта."
   },
   "Subscription": {
     "title": "Подписка",

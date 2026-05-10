@@ -609,16 +609,17 @@
     "dangerBody": "アカウントを削除すると、プロジェクト・監査・生成・クレジット履歴が完全に削除されます。取消不可。パスワードで確認してください。",
     "dangerActiveSub": "アカウント削除前に「サブスク」タブで解約してください。",
     "deleteAccountButton": "アカウントを削除",
-    "errorWrongPassword": "現在のパスワードが正しくありません。",
     "errorPasswordMismatch": "新しいパスワードが一致しません。",
     "errorPasswordWeak": "パスワードは8〜128文字で。",
     "errorMissingFields": "すべてのフィールドを入力してください。",
-    "errorMissingPassword": "パスワードで確認してください。",
     "errorActiveSubscription": "アカウント削除前に解約してください。",
     "errorGeneric": "問題が発生しました。再度お試しを。",
     "confirmNewPasswordLabel": "新しいパスワードの確認",
-    "deletePasswordLabel": "パスワード",
-    "saved": "保存しました"
+    "saved": "保存しました",
+    "deleteEmailConfirmLabel": "メールアドレスを入力して確認",
+    "deleteEmailConfirmHint": "削除ボタンを有効にするには {email} と入力してください。",
+    "errorMissingEmail": "確認のためアカウントのメールアドレスを入力してください。",
+    "errorEmailMismatch": "入力されたメールアドレスはこのアカウントのものと一致しません。"
   },
   "Subscription": {
     "title": "サブスク",

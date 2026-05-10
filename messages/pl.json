@@ -609,16 +609,17 @@
     "dangerBody": "Usunięcie konta trwale usuwa projekty, audyty, generacje i historię kredytów. Nieodwracalne. Potwierdź hasłem.",
     "dangerActiveSub": "Anuluj subskrypcję w zakładce Subskrypcja przed usunięciem konta.",
     "deleteAccountButton": "Usuń moje konto",
-    "errorWrongPassword": "Obecne hasło jest nieprawidłowe.",
     "errorPasswordMismatch": "Dwa nowe hasła się nie zgadzają.",
     "errorPasswordWeak": "Hasło musi mieć od 8 do 128 znaków.",
     "errorMissingFields": "Wypełnij wszystkie pola.",
-    "errorMissingPassword": "Potwierdź hasłem.",
     "errorActiveSubscription": "Anuluj subskrypcję przed usunięciem konta.",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
     "confirmNewPasswordLabel": "Potwierdź nowe hasło",
-    "deletePasswordLabel": "Hasło",
-    "saved": "Zapisano"
+    "saved": "Zapisano",
+    "deleteEmailConfirmLabel": "Potwierdź, wpisując swój email",
+    "deleteEmailConfirmHint": "Wpisz {email}, aby aktywować przycisk usunięcia.",
+    "errorMissingEmail": "Wpisz email konta, aby potwierdzić.",
+    "errorEmailMismatch": "Ten email nie pasuje do tego konta."
   },
   "Subscription": {
     "title": "Subskrypcja",

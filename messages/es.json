@@ -609,16 +609,17 @@
     "dangerBody": "Eliminar tu cuenta borra de forma permanente proyectos, auditorías, generaciones e historial de créditos. Es irreversible. Confirma con tu contraseña.",
     "dangerActiveSub": "Cancela la suscripción desde la pestaña Suscripción antes de eliminar la cuenta.",
     "deleteAccountButton": "Eliminar mi cuenta",
-    "errorWrongPassword": "La contraseña actual es incorrecta.",
     "errorPasswordMismatch": "Las dos contraseñas nuevas no coinciden.",
     "errorPasswordWeak": "La contraseña debe tener entre 8 y 128 caracteres.",
     "errorMissingFields": "Rellena todos los campos.",
-    "errorMissingPassword": "Confirma con tu contraseña.",
     "errorActiveSubscription": "Cancela la suscripción antes de eliminar la cuenta.",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
     "confirmNewPasswordLabel": "Confirmar nueva contraseña",
-    "deletePasswordLabel": "Contraseña",
-    "saved": "Guardado"
+    "saved": "Guardado",
+    "deleteEmailConfirmLabel": "Confirma escribiendo tu correo",
+    "deleteEmailConfirmHint": "Escribe {email} para habilitar el botón de eliminar.",
+    "errorMissingEmail": "Escribe el correo de tu cuenta para confirmar.",
+    "errorEmailMismatch": "Ese correo no coincide con el de la cuenta."
   },
   "Subscription": {
     "title": "Suscripción",

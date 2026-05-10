@@ -609,16 +609,17 @@
     "dangerBody": "계정 삭제는 프로젝트, 감사, 생성, 크레딧 기록을 영구 삭제합니다. 되돌릴 수 없습니다. 비밀번호로 확인하세요.",
     "dangerActiveSub": "계정 삭제 전에 「구독」 탭에서 구독을 취소하세요.",
     "deleteAccountButton": "내 계정 삭제",
-    "errorWrongPassword": "현재 비밀번호가 올바르지 않습니다.",
     "errorPasswordMismatch": "두 새 비밀번호가 일치하지 않습니다.",
     "errorPasswordWeak": "비밀번호는 8~128자여야 합니다.",
     "errorMissingFields": "모든 필드를 입력하세요.",
-    "errorMissingPassword": "비밀번호로 확인하세요.",
     "errorActiveSubscription": "계정 삭제 전에 구독을 취소하세요.",
     "errorGeneric": "문제가 발생했습니다. 다시 시도하세요.",
     "confirmNewPasswordLabel": "새 비밀번호 확인",
-    "deletePasswordLabel": "비밀번호",
-    "saved": "저장됨"
+    "saved": "저장됨",
+    "deleteEmailConfirmLabel": "이메일을 입력해 확인",
+    "deleteEmailConfirmHint": "삭제 버튼을 활성화하려면 {email}을 입력하세요.",
+    "errorMissingEmail": "확인을 위해 계정 이메일을 입력하세요.",
+    "errorEmailMismatch": "이 이메일은 계정의 이메일과 일치하지 않습니다."
   },
   "Subscription": {
     "title": "구독",

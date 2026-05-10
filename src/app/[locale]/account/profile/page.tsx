@@ -38,9 +38,8 @@ export default async function ProfilePage() {
     generic: t('errorGeneric')
   };
   const deleteErrors: Record<string, string> = {
-    wrong_password: t('errorWrongPassword'),
-    missing_password: t('errorMissingPassword'),
-    no_password: t('errorGeneric'),
+    missing_email: t('errorMissingEmail'),
+    email_mismatch: t('errorEmailMismatch'),
     active_subscription: t('errorActiveSubscription'),
     unauthorized: t('errorGeneric'),
     generic: t('errorGeneric')
@@ -84,11 +83,15 @@ export default async function ProfilePage() {
 
       <AccountDeleteForm
         hasActiveSubscription={hasActiveSubscription}
+        email={session.user.email ?? ''}
         copy={{
           dangerTitle: t('dangerTitle'),
           dangerBody: t('dangerBody'),
           dangerActiveSub: t('dangerActiveSub'),
-          deletePasswordLabel: t('deletePasswordLabel'),
+          deleteEmailConfirmLabel: t('deleteEmailConfirmLabel'),
+          deleteEmailConfirmHint: t('deleteEmailConfirmHint', {
+            email: session.user.email ?? ''
+          }),
           deleteAccountButton: t('deleteAccountButton'),
           errors: deleteErrors
         }}

@@ -609,16 +609,17 @@
     "dangerBody": "Eliminare l'account rimuove in modo permanente progetti, analisi, generazioni e storico crediti. Irreversibile. Conferma con la password.",
     "dangerActiveSub": "Annulla l'abbonamento dalla scheda Abbonamento prima di eliminare l'account.",
     "deleteAccountButton": "Elimina il mio account",
-    "errorWrongPassword": "La password attuale è errata.",
     "errorPasswordMismatch": "Le due nuove password non coincidono.",
     "errorPasswordWeak": "La password deve essere di 8-128 caratteri.",
     "errorMissingFields": "Compila tutti i campi.",
-    "errorMissingPassword": "Conferma con la password.",
     "errorActiveSubscription": "Annulla l'abbonamento prima di eliminare l'account.",
     "errorGeneric": "Qualcosa è andato storto. Riprova.",
     "confirmNewPasswordLabel": "Conferma nuova password",
-    "deletePasswordLabel": "Password",
-    "saved": "Salvato"
+    "saved": "Salvato",
+    "deleteEmailConfirmLabel": "Conferma digitando la tua email",
+    "deleteEmailConfirmHint": "Digita {email} per abilitare il pulsante di eliminazione.",
+    "errorMissingEmail": "Digita l'email del tuo account per confermare.",
+    "errorEmailMismatch": "Quell'email non corrisponde a questo account."
   },
   "Subscription": {
     "title": "Abbonamento",

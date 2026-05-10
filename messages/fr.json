@@ -609,16 +609,17 @@
     "dangerBody": "Supprimer votre compte efface définitivement vos projets, audits, générations et historique de crédits. Action irréversible. Confirmez avec votre mot de passe.",
     "dangerActiveSub": "Annulez votre abonnement depuis l'onglet Abonnement avant de supprimer votre compte.",
     "deleteAccountButton": "Supprimer mon compte",
-    "errorWrongPassword": "Mot de passe actuel incorrect.",
     "errorPasswordMismatch": "Les deux nouveaux mots de passe ne correspondent pas.",
     "errorPasswordWeak": "Le mot de passe doit faire entre 8 et 128 caractères.",
     "errorMissingFields": "Remplissez tous les champs.",
-    "errorMissingPassword": "Confirmez avec votre mot de passe.",
     "errorActiveSubscription": "Annulez d'abord votre abonnement avant de supprimer le compte.",
     "errorGeneric": "Une erreur est survenue. Réessayez.",
     "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
-    "deletePasswordLabel": "Mot de passe",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "deleteEmailConfirmLabel": "Confirme en tapant ton email",
+    "deleteEmailConfirmHint": "Tape {email} pour activer le bouton de suppression.",
+    "errorMissingEmail": "Tape ton email de compte pour confirmer.",
+    "errorEmailMismatch": "Cet email ne correspond pas à ton compte."
   },
   "Subscription": {
     "title": "Abonnement",

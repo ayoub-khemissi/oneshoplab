@@ -329,20 +329,24 @@ export async function changePasswordAction(formData: FormData): Promise<ActionRe
  * Stripe customer object is intentionally LEFT in place for accounting;
  * a re-signup with the same email won't auto-link to it (we re-create).
  *
- * Requires the user's password as proof to keep the destruction explicit.
+ * Confirmation gate: the user must re-type their own email exactly
+ * (case-insensitive). Email works regardless of how the user signed
+ * up — password-only users, Google-OAuth users, or hybrid (linked).
+ * Bcrypt password matching used to be the gate but it locked OAuth
+ * users out of self-deletion entirely.
  */
 export async function deleteAccountAction(formData: FormData): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user?.id) return { ok: false, errorCode: 'unauthorized' };
 
-  const password = String(formData.get('password') ?? '');
-  if (!password) return { ok: false, errorCode: 'missing_password' };
-
   const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
-  if (!u?.passwordHash) return { ok: false, errorCode: 'no_password' };
+  if (!u) return { ok: false, errorCode: 'unauthorized' };
 
-  const ok = await bcrypt.compare(password, u.passwordHash);
-  if (!ok) return { ok: false, errorCode: 'wrong_password' };
+  const typed = String(formData.get('email_confirmation') ?? '').toLowerCase().trim();
+  if (!typed) return { ok: false, errorCode: 'missing_email' };
+  if (typed !== (u.email ?? '').toLowerCase().trim()) {
+    return { ok: false, errorCode: 'email_mismatch' };
+  }
 
   // Active subscription guard: Stripe billing keeps charging until cancelled,
   // so we never delete a row whose Stripe state is still live.

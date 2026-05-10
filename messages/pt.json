@@ -609,16 +609,17 @@
     "dangerBody": "Eliminar a conta remove permanentemente projetos, auditorias, gerações e histórico de créditos. Irreversível. Confirme com a palavra-passe.",
     "dangerActiveSub": "Cancele a assinatura no separador Assinatura antes de eliminar a conta.",
     "deleteAccountButton": "Eliminar a minha conta",
-    "errorWrongPassword": "A palavra-passe atual está incorreta.",
     "errorPasswordMismatch": "As duas novas palavras-passe não coincidem.",
     "errorPasswordWeak": "A palavra-passe deve ter 8 a 128 caracteres.",
     "errorMissingFields": "Preencha todos os campos.",
-    "errorMissingPassword": "Confirme com a palavra-passe.",
     "errorActiveSubscription": "Cancele a assinatura antes de eliminar a conta.",
     "errorGeneric": "Algo correu mal. Tente novamente.",
     "confirmNewPasswordLabel": "Confirmar nova palavra-passe",
-    "deletePasswordLabel": "Palavra-passe",
-    "saved": "Guardado"
+    "saved": "Guardado",
+    "deleteEmailConfirmLabel": "Confirma digitando o teu email",
+    "deleteEmailConfirmHint": "Digita {email} para ativar o botão de eliminar.",
+    "errorMissingEmail": "Digita o email da tua conta para confirmar.",
+    "errorEmailMismatch": "Esse email não corresponde a esta conta."
   },
   "Subscription": {
     "title": "Assinatura",

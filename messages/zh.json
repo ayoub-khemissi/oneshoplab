@@ -609,16 +609,17 @@
     "dangerBody": "删除账户将永久移除项目、审计、生成与积分历史。无法撤销。请用密码确认。",
     "dangerActiveSub": "删除账户前请在「订阅」标签取消订阅。",
     "deleteAccountButton": "删除我的账户",
-    "errorWrongPassword": "当前密码不正确。",
     "errorPasswordMismatch": "两次新密码不一致。",
     "errorPasswordWeak": "密码必须为 8 到 128 个字符。",
     "errorMissingFields": "请填写所有字段。",
-    "errorMissingPassword": "请用密码确认。",
     "errorActiveSubscription": "请先取消订阅再删除账户。",
     "errorGeneric": "出错了,请重试。",
     "confirmNewPasswordLabel": "确认新密码",
-    "deletePasswordLabel": "密码",
-    "saved": "已保存"
+    "saved": "已保存",
+    "deleteEmailConfirmLabel": "输入你的邮箱进行确认",
+    "deleteEmailConfirmHint": "输入 {email} 以启用删除按钮。",
+    "errorMissingEmail": "请输入账户邮箱以确认。",
+    "errorEmailMismatch": "该邮箱与本账户不匹配。"
   },
   "Subscription": {
     "title": "订阅",

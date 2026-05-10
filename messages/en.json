@@ -609,16 +609,17 @@
     "dangerBody": "Deleting your account permanently removes your projects, audits, generations and credit history. This cannot be undone. Confirm with your password.",
     "dangerActiveSub": "Cancel your subscription via the Subscription tab before deleting your account.",
     "deleteAccountButton": "Delete my account",
-    "errorWrongPassword": "The current password is incorrect.",
     "errorPasswordMismatch": "The two new password fields don't match.",
     "errorPasswordWeak": "Password must be 8 to 128 characters long.",
     "errorMissingFields": "Please fill in every field.",
-    "errorMissingPassword": "Confirm with your password.",
     "errorActiveSubscription": "Cancel your subscription before deleting your account.",
     "errorGeneric": "Something went wrong. Try again.",
     "confirmNewPasswordLabel": "Confirm new password",
-    "deletePasswordLabel": "Password",
-    "saved": "Saved"
+    "saved": "Saved",
+    "deleteEmailConfirmLabel": "Confirm by typing your email",
+    "deleteEmailConfirmHint": "Type {email} to enable the delete button.",
+    "errorMissingEmail": "Type your account email to confirm.",
+    "errorEmailMismatch": "That email doesn't match the one on this account."
   },
   "Subscription": {
     "title": "Subscription",

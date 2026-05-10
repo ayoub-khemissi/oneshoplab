@@ -150,20 +150,30 @@ export function ProfilePasswordForm({
 
 export function AccountDeleteForm({
   hasActiveSubscription,
+  email,
   copy
 }: {
   hasActiveSubscription: boolean;
+  /** Current user's email — surfaced as the placeholder so the user
+   *  knows exactly what to retype. Compared server-side too. */
+  email: string;
   copy: {
     dangerTitle: string;
     dangerBody: string;
     dangerActiveSub: string;
-    deletePasswordLabel: string;
+    deleteEmailConfirmLabel: string;
+    deleteEmailConfirmHint: string;
     deleteAccountButton: string;
     errors: Record<string, string>;
   };
 }) {
   const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [typed, setTyped] = useState('');
   const [isPending, startTransition] = useTransition();
+
+  // Client-side gate so the destructive button only enables when the
+  // typed email matches exactly. Server still re-validates.
+  const matches = typed.toLowerCase().trim() === (email ?? '').toLowerCase().trim();
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
@@ -188,12 +198,19 @@ export function AccountDeleteForm({
         </p>
       ) : null}
       <form action={handleSubmit} className="flex flex-col gap-3">
-        <Field label={copy.deletePasswordLabel}>
-          <PasswordInput
-            name="password"
-            autoComplete="current-password"
+        <Field label={copy.deleteEmailConfirmLabel} hint={copy.deleteEmailConfirmHint}>
+          <input
+            type="email"
+            name="email_confirmation"
+            value={typed}
+            onChange={(e) => {
+              setTyped(e.target.value);
+              if (errorCode) setErrorCode(null);
+            }}
+            autoComplete="off"
+            placeholder={email}
             disabled={hasActiveSubscription}
-            danger
+            className="w-full px-3 py-2 rounded-md text-sm bg-[var(--background)] border border-[var(--danger)]/40 focus:border-[var(--danger)] focus:outline-none disabled:opacity-50"
           />
         </Field>
         {errorCode ? (
@@ -202,7 +219,7 @@ export function AccountDeleteForm({
         <div className="flex justify-end">
           <button
             type="submit"
-            disabled={isPending || hasActiveSubscription}
+            disabled={isPending || hasActiveSubscription || !matches}
             className="px-4 py-2 rounded-md bg-[var(--danger)] text-white text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
             {isPending ? <Spinner size="sm" /> : null}
@@ -227,11 +244,22 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-xs font-medium text-[var(--foreground)]">{label}</span>
       {children}
+      {hint ? (
+        <span className="text-xs text-[var(--muted)] leading-relaxed">{hint}</span>
+      ) : null}
     </label>
   );
 }

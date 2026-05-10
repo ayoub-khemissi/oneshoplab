@@ -609,16 +609,17 @@
     "dangerBody": "Konto-Löschung entfernt Projekte, Audits, Generierungen und Credit-Verlauf endgültig. Nicht rückgängig zu machen. Mit Passwort bestätigen.",
     "dangerActiveSub": "Kündige dein Abonnement im Tab Abonnement, bevor du dein Konto löschst.",
     "deleteAccountButton": "Mein Konto löschen",
-    "errorWrongPassword": "Aktuelles Passwort ist falsch.",
     "errorPasswordMismatch": "Die beiden neuen Passwörter stimmen nicht überein.",
     "errorPasswordWeak": "Passwort muss 8 bis 128 Zeichen haben.",
     "errorMissingFields": "Bitte alle Felder ausfüllen.",
-    "errorMissingPassword": "Mit Passwort bestätigen.",
     "errorActiveSubscription": "Kündige das Abonnement, bevor du das Konto löschst.",
     "errorGeneric": "Etwas ist schiefgegangen. Erneut versuchen.",
     "confirmNewPasswordLabel": "Neues Passwort bestätigen",
-    "deletePasswordLabel": "Passwort",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "deleteEmailConfirmLabel": "Bestätige durch Eingabe deiner E-Mail",
+    "deleteEmailConfirmHint": "Gib {email} ein, um den Löschen-Button zu aktivieren.",
+    "errorMissingEmail": "Gib deine Konto-E-Mail zur Bestätigung ein.",
+    "errorEmailMismatch": "Diese E-Mail stimmt nicht mit dem Konto überein."
   },
   "Subscription": {
     "title": "Abonnement",

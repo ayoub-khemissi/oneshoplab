@@ -609,16 +609,17 @@
     "dangerBody": "حذف الحساب يزيل المشاريع والتدقيقات والتوليدات وسجل الأرصدة نهائيًا. لا رجعة. أكّد بكلمة المرور.",
     "dangerActiveSub": "ألغِ اشتراكك من تبويب «الاشتراك» قبل حذف حسابك.",
     "deleteAccountButton": "حذف حسابي",
-    "errorWrongPassword": "كلمة المرور الحالية غير صحيحة.",
     "errorPasswordMismatch": "كلمتا المرور الجديدتان غير متطابقتين.",
     "errorPasswordWeak": "يجب أن تكون كلمة المرور بين 8 و128 حرفًا.",
     "errorMissingFields": "يرجى ملء جميع الحقول.",
-    "errorMissingPassword": "أكّد بكلمة المرور.",
     "errorActiveSubscription": "ألغِ الاشتراك قبل حذف الحساب.",
     "errorGeneric": "حدث خطأ. حاول مجددًا.",
     "confirmNewPasswordLabel": "تأكيد كلمة المرور الجديدة",
-    "deletePasswordLabel": "كلمة المرور",
-    "saved": "تم الحفظ"
+    "saved": "تم الحفظ",
+    "deleteEmailConfirmLabel": "أكِّد عبر كتابة بريدك",
+    "deleteEmailConfirmHint": "اكتب {email} لتفعيل زر الحذف.",
+    "errorMissingEmail": "اكتب بريد حسابك للتأكيد.",
+    "errorEmailMismatch": "هذا البريد لا يطابق بريد الحساب."
   },
   "Subscription": {
     "title": "الاشتراك",

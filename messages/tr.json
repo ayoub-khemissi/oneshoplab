@@ -609,16 +609,17 @@
     "dangerBody": "Hesabınızı silmek; projeleri, denetimleri, üretimleri ve kredi geçmişini kalıcı olarak siler. Geri alınamaz. Şifreyle onaylayın.",
     "dangerActiveSub": "Hesabı silmeden önce Abonelik sekmesinden aboneliğinizi iptal edin.",
     "deleteAccountButton": "Hesabımı sil",
-    "errorWrongPassword": "Mevcut şifre yanlış.",
     "errorPasswordMismatch": "İki yeni şifre eşleşmiyor.",
     "errorPasswordWeak": "Şifre 8 ile 128 karakter arasında olmalı.",
     "errorMissingFields": "Tüm alanları doldurun.",
-    "errorMissingPassword": "Şifreyle onaylayın.",
     "errorActiveSubscription": "Hesabı silmeden önce aboneliği iptal edin.",
     "errorGeneric": "Bir şeyler ters gitti. Tekrar deneyin.",
     "confirmNewPasswordLabel": "Yeni şifreyi onayla",
-    "deletePasswordLabel": "Şifre",
-    "saved": "Kaydedildi"
+    "saved": "Kaydedildi",
+    "deleteEmailConfirmLabel": "E-postanı yazarak onayla",
+    "deleteEmailConfirmHint": "{email} yazınca silme butonu etkinleşir.",
+    "errorMissingEmail": "Onaylamak için hesap e-postanı yaz.",
+    "errorEmailMismatch": "Bu e-posta hesapla eşleşmiyor."
   },
   "Subscription": {
     "title": "Abonelik",
