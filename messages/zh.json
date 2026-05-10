@@ -331,6 +331,8 @@
     "copy": "复制",
     "copyHtml": "复制 HTML",
     "copyTags": "复制标签",
+    "tagModeHuman": "可读",
+    "tagModeSlug": "Slug",
     "copyText": "复制",
     "copied": "已复制",
     "downloadAll": "下载全部",

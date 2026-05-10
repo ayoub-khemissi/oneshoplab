@@ -331,6 +331,8 @@
     "copy": "コピー",
     "copyHtml": "HTMLをコピー",
     "copyTags": "タグをコピー",
+    "tagModeHuman": "読みやすい",
+    "tagModeSlug": "Slug",
     "copyText": "コピー",
     "copied": "コピー済み",
     "downloadAll": "すべてダウンロード",

@@ -331,6 +331,8 @@
     "copy": "복사",
     "copyHtml": "HTML 복사",
     "copyTags": "태그 복사",
+    "tagModeHuman": "읽기 쉬움",
+    "tagModeSlug": "Slug",
     "copyText": "복사",
     "copied": "복사됨",
     "downloadAll": "모두 다운로드",

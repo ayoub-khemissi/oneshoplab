@@ -51,6 +51,14 @@ export async function SiteHeader() {
           >
             {t('pricing')}
           </Link>
+          {user ? (
+            <Link
+              href="/dashboard"
+              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            >
+              {t('dashboard')}
+            </Link>
+          ) : null}
         </div>
         <nav className="flex items-center gap-1 text-sm">
           <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />

@@ -331,6 +331,8 @@
     "copy": "Скопировать",
     "copyHtml": "Скопировать HTML",
     "copyTags": "Скопировать теги",
+    "tagModeHuman": "Читаемые",
+    "tagModeSlug": "Slug",
     "copyText": "Скопировать",
     "copied": "Скопировано",
     "downloadAll": "Скачать всё",

@@ -331,6 +331,8 @@
     "copy": "نسخ",
     "copyHtml": "نسخ HTML",
     "copyTags": "نسخ الوسوم",
+    "tagModeHuman": "قابل للقراءة",
+    "tagModeSlug": "Slug",
     "copyText": "نسخ",
     "copied": "تم النسخ",
     "downloadAll": "تحميل الكل",

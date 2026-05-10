@@ -331,6 +331,8 @@
     "copy": "Copia",
     "copyHtml": "Copia HTML",
     "copyTags": "Copia tag",
+    "tagModeHuman": "Leggibile",
+    "tagModeSlug": "Slug",
     "copyText": "Copia",
     "copied": "Copiato",
     "downloadAll": "Scarica tutto",

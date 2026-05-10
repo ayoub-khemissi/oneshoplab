@@ -331,6 +331,8 @@
     "copy": "Kopyala",
     "copyHtml": "HTML kopyala",
     "copyTags": "Etiketleri kopyala",
+    "tagModeHuman": "Okunaklı",
+    "tagModeSlug": "Slug",
     "copyText": "Kopyala",
     "copied": "Kopyalandı",
     "downloadAll": "Hepsini indir",

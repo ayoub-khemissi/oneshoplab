@@ -23,6 +23,7 @@ import {
 import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { ProductImageGallery } from '@/components/product-image-gallery';
+import { TagPills } from '@/components/tag-pills';
 import { AiImageGridLive } from '@/components/ai-image-grid-live';
 import {
   costForImage,
@@ -444,19 +445,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     }}
                     sourceLabel={tReport('swapSource')}
                     aiLabel={tReport('swapAi')}
-                    aiAction={
-                      tagsHistory[0] && Array.isArray(tagsHistory[0].output) ? (
-                        <CopyButton
-                          value={tagsHistory[0].output.join(', ')}
-                          label={tReport('copyTags')}
-                          copiedLabel={tReport('copied')}
-                        />
-                      ) : null
+                    source={
+                      <TagPills
+                        tags={product.signals.tags ?? []}
+                        variant="muted"
+                        copyLabel={tReport('copyTags')}
+                        copiedLabel={tReport('copied')}
+                      />
                     }
-                    source={<TagPills tags={product.signals.tags ?? []} variant="muted" />}
                     ai={
                       tagsHistory[0] && Array.isArray(tagsHistory[0].output) ? (
-                        <TagPills tags={tagsHistory[0].output} variant="accent" />
+                        <TagPills
+                          tags={tagsHistory[0].output}
+                          variant="accent"
+                          copyLabel={tReport('copyTags')}
+                          copiedLabel={tReport('copied')}
+                        />
                       ) : (
                         <NoLatestGen />
                       )
@@ -572,30 +576,6 @@ function NoLatestGen() {
   return <p className="text-sm text-[var(--muted)] italic">{t('noLatestGeneration')}</p>;
 }
 
-function TagPills({
-  tags,
-  variant
-}: {
-  tags: string[];
-  variant: 'muted' | 'accent';
-}) {
-  if (tags.length === 0) {
-    return <p className="text-sm text-[var(--muted)] italic">—</p>;
-  }
-  const pillClass =
-    variant === 'accent'
-      ? 'text-xs px-2 py-1 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-medium'
-      : 'text-xs px-2 py-1 rounded bg-[var(--default)] text-[var(--muted)]';
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {tags.map((tag, i) => (
-        <span key={`${variant}-${tag}-${i}`} className={pillClass}>
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 function SourcePreview({ product }: { product: ProductSnapshot }) {
   const t = useTranslations('Report');
