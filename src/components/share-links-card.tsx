@@ -134,7 +134,7 @@ export function ShareLinksCard({
           {links.map((link) => (
             <li
               key={link.id}
-              className="flex items-start gap-3 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)]"
+              className="flex flex-col gap-3 md:flex-row md:items-start p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)]"
             >
               <div className="flex-1 min-w-0 flex flex-col gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -167,44 +167,57 @@ export function ShareLinksCard({
                   {t('productCount', { count: link.productSourceIds.length })}
                 </span>
               </div>
-              <ShowOnHomeToggle
-                linkId={link.id}
-                siteId={siteId}
-                value={link.showOnHome}
-                onChange={(next) =>
-                  setLinks((prev) =>
-                    prev.map((l) => (l.id === link.id ? { ...l, showOnHome: next } : l))
-                  )
-                }
-              />
-              {link.showOnHome ? (
-                <HomeOrderInput
+              {/* Action cluster — full row on mobile (justified to the
+                  end so taps are reachable with the thumb), inline on
+                  desktop. */}
+              <div className="flex items-center gap-1.5 md:gap-1 justify-end shrink-0">
+                <ShowOnHomeToggle
                   linkId={link.id}
                   siteId={siteId}
-                  value={link.homeOrder ?? null}
+                  value={link.showOnHome}
                   onChange={(next) =>
                     setLinks((prev) =>
-                      prev.map((l) => (l.id === link.id ? { ...l, homeOrder: next } : l))
+                      prev.map((l) =>
+                        l.id === link.id ? { ...l, showOnHome: next } : l
+                      )
                     )
                   }
                 />
-              ) : null}
-              <button
-                type="button"
-                onClick={() => copyToClipboard(link.id)}
-                aria-label={t('copyAria')}
-                title={t('copyAria')}
-                className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center"
-              >
-                {copiedId === link.id ? (
-                  <Check className="size-4 text-[var(--success)]" />
-                ) : (
-                  <Copy className="size-4" />
-                )}
-              </button>
-              <RevokeButton linkId={link.id} siteId={siteId} onDone={() => {
-                setLinks((prev) => prev.filter((l) => l.id !== link.id));
-              }} />
+                {link.showOnHome ? (
+                  <HomeOrderInput
+                    linkId={link.id}
+                    siteId={siteId}
+                    value={link.homeOrder ?? null}
+                    onChange={(next) =>
+                      setLinks((prev) =>
+                        prev.map((l) =>
+                          l.id === link.id ? { ...l, homeOrder: next } : l
+                        )
+                      )
+                    }
+                  />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(link.id)}
+                  aria-label={t('copyAria')}
+                  title={t('copyAria')}
+                  className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center"
+                >
+                  {copiedId === link.id ? (
+                    <Check className="size-4 text-[var(--success)]" />
+                  ) : (
+                    <Copy className="size-4" />
+                  )}
+                </button>
+                <RevokeButton
+                  linkId={link.id}
+                  siteId={siteId}
+                  onDone={() => {
+                    setLinks((prev) => prev.filter((l) => l.id !== link.id));
+                  }}
+                />
+              </div>
             </li>
           ))}
         </ul>
