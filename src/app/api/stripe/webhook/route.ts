@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { subscriptions } from '@/lib/db/schema';
+import { creditTransactions, subscriptions } from '@/lib/db/schema';
 import {
   getStripeClient,
   getStripeWebhookSecret,
@@ -32,9 +32,12 @@ export const dynamic = 'force-dynamic';
  *   - invoice.payment_failed         flips DB to past_due as soon as the failed-payment event
  *                                    fires, without waiting for the asynchronous
  *                                    customer.subscription.updated
+ *   - charge.refunded                revokes pack credits proportionally when a pack purchase
+ *                                    is refunded (full or partial). Pack-bucket only — sub
+ *                                    credits stay untouched.
  *
- * All credit grants pass an idempotencyKey tied to invoice.id so a Stripe-side retry of
- * the same event never double-grants.
+ * All credit grants pass an idempotencyKey tied to invoice.id (or refund.id) so a Stripe-side
+ * retry of the same event never double-grants/double-revokes.
  */
 export async function POST(req: Request): Promise<NextResponse> {
   const stripe = getStripeClient();
@@ -68,6 +71,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
         await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+        break;
+      case 'charge.refunded':
+        await handleChargeRefunded(stripe, event.data.object as Stripe.Charge);
         break;
       default:
         // Ignore unrelated events. Stripe expects 2xx within 30s.
@@ -137,16 +143,26 @@ async function handleCreditPackPurchase(
     return;
   }
 
+  // Stash the payment_intent so a future charge.refunded event can find
+  // this grant directly via creditTransactions.stripePaymentId. Falls
+  // back to null on the legacy guest path (no PI on the session).
+  const paymentIntentId =
+    typeof cs.payment_intent === 'string'
+      ? cs.payment_intent
+      : (cs.payment_intent?.id ?? null);
+
   await applyCreditTransaction({
     userId,
     delta: pack.credits,
     bucket: 'pack',
     reason: `pack_${pack.id}_purchase`,
     idempotencyKey: `pack-${cs.id}`,
+    stripePaymentId: paymentIntentId,
     metadata: {
       checkoutSessionId: cs.id,
       packId: pack.id,
-      packCredits: pack.credits
+      packCredits: pack.credits,
+      paymentIntentId
     }
   });
 }
@@ -334,6 +350,78 @@ async function handleInvoicePaymentFailed(
   });
   if (!found) return;
   await syncFromStripeSubscription(found.userId, subscription);
+}
+
+/**
+ * A pack-purchase charge was refunded (full or partial). Find the
+ * matching grant in `creditTransactions` via the payment_intent we
+ * stashed at purchase time, then revoke pack credits proportionally to
+ * the refund amount. Each Refund row on the charge gets its own
+ * idempotent reversal (key = `refund-<refund.id>`), so a Stripe-side
+ * retry of the event — or even an additional refund landing on the
+ * same charge — never double-revokes.
+ *
+ * `bucket: 'pack'` + `allowShortfall: true` are what make this safe: we
+ * touch only the pack bucket (the user's monthly subscription credits
+ * are unrelated to the refunded purchase) and we clamp the deduction
+ * if the customer has already burned through some of those credits
+ * before asking for the refund. The audit row carries `shortfall` so
+ * the gap stays visible.
+ *
+ * No-ops cleanly when the charge isn't tied to a pack purchase
+ * (subscription invoices land here too — those refunds are handled by
+ * Stripe's regular sub-state events).
+ */
+async function handleChargeRefunded(stripe: Stripe, charge: Stripe.Charge): Promise<void> {
+  const piId =
+    typeof charge.payment_intent === 'string'
+      ? charge.payment_intent
+      : (charge.payment_intent?.id ?? null);
+  if (!piId) return;
+
+  const grant = await db.query.creditTransactions.findFirst({
+    where: eq(creditTransactions.stripePaymentId, piId)
+  });
+  if (!grant) return;
+  // Only revoke pack-purchase grants. Subscription grants are not
+  // tagged with stripePaymentId today, but defend against a future
+  // change that would tag them.
+  if (grant.delta <= 0 || !grant.reason?.startsWith('pack_')) return;
+
+  // Fetch refunds explicitly — the embedded `charge.refunds` list can
+  // be a stub on some events, and we want every refund row tied to
+  // this charge to be applied (idempotent on refund.id).
+  const refunds = await stripe.refunds.list({ charge: charge.id, limit: 100 });
+  const chargeAmount = charge.amount;
+  if (chargeAmount <= 0) return;
+
+  for (const refund of refunds.data) {
+    if (refund.status !== 'succeeded') continue;
+    const fraction = refund.amount / chargeAmount;
+    const credits = Math.round(grant.delta * fraction);
+    if (credits <= 0) continue;
+
+    await applyCreditTransaction({
+      userId: grant.userId,
+      delta: -credits,
+      bucket: 'pack',
+      allowShortfall: true,
+      reason: 'pack_refund',
+      idempotencyKey: `refund-${refund.id}`,
+      stripePaymentId: piId,
+      metadata: {
+        chargeId: charge.id,
+        refundId: refund.id,
+        paymentIntentId: piId,
+        originalGrantId: grant.id,
+        originalGrantCredits: grant.delta,
+        chargeAmount,
+        refundAmount: refund.amount,
+        refundFraction: fraction,
+        creditsRevoked: credits
+      }
+    });
+  }
 }
 
 /**

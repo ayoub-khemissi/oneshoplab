@@ -45,6 +45,17 @@ export interface CreditTxOptions {
    * When set, the `delta` field is ignored.
    */
   setSubscriptionTo?: number;
+  /**
+   * For debits (delta < 0) only. When true, clamp the deduction to the
+   * available balance instead of throwing InsufficientCreditsError if
+   * the user has already burned through some of the credits we're now
+   * trying to revoke (typical of refund flows: customer used 400 of a
+   * 500-pack then asks for a partial refund — we revoke what's still
+   * there and let the rest go). The audit row records the actual
+   * deducted amount in `delta` plus a `shortfall` metadata field so the
+   * gap stays auditable.
+   */
+  allowShortfall?: boolean;
 }
 
 export interface CreditTxResult {
@@ -103,15 +114,33 @@ export async function applyCreditTransaction(opts: CreditTxOptions): Promise<Cre
       recordedDelta = opts.delta;
     } else if (opts.delta < 0) {
       const need = -opts.delta;
-      const total = u.creditsBalanceSubscription + u.creditsBalancePack;
-      if (total < need) throw new InsufficientCreditsError(need, total);
-      const fromSub = Math.min(u.creditsBalanceSubscription, need);
-      const fromPack = need - fromSub;
-      nextSub -= fromSub;
-      nextPack -= fromPack;
-      metadata.spentFromSubscription = fromSub;
-      metadata.spentFromPack = fromPack;
-      recordedDelta = opts.delta;
+
+      if (opts.bucket === 'pack') {
+        // Pack-targeted debit (refund of a pack purchase). We only touch
+        // the pack bucket — subscription credits are unrelated to the
+        // refunded purchase and stay intact. allowShortfall is the
+        // refund-flow knob that lets us record the partial revocation
+        // when the customer has already spent some of those credits.
+        const available = u.creditsBalancePack;
+        if (available < need && !opts.allowShortfall) {
+          throw new InsufficientCreditsError(need, available);
+        }
+        const taken = Math.min(available, need);
+        nextPack -= taken;
+        metadata.spentFromPack = taken;
+        if (taken < need) metadata.shortfall = need - taken;
+        recordedDelta = -taken;
+      } else {
+        const total = u.creditsBalanceSubscription + u.creditsBalancePack;
+        if (total < need) throw new InsufficientCreditsError(need, total);
+        const fromSub = Math.min(u.creditsBalanceSubscription, need);
+        const fromPack = need - fromSub;
+        nextSub -= fromSub;
+        nextPack -= fromPack;
+        metadata.spentFromSubscription = fromSub;
+        metadata.spentFromPack = fromPack;
+        recordedDelta = opts.delta;
+      }
     } else {
       // delta === 0 and no setSubscriptionTo. No-op, but still record for
       // idempotency tracking.
