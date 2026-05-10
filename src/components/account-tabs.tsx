@@ -33,7 +33,11 @@ export function AccountTabs({ labels }: AccountTabsProps) {
   return (
     <nav
       aria-label="Account sections"
-      className="border-b border-[var(--border)] flex gap-1 overflow-x-auto"
+      // overflow-y:hidden suppresses the spurious vertical scrollbar
+      // some browsers add when overflow-x:auto is set on a flex row
+      // whose intrinsic content height oscillates during the
+      // compact-mode transition.
+      className="border-b border-[var(--border)] flex gap-1 overflow-x-auto overflow-y-hidden"
     >
       {TABS.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
