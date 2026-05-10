@@ -72,12 +72,20 @@ export async function updateUserPreferencesAction(formData: FormData): Promise<v
  * orders projects by this timestamp to auto-pick the most recently consulted
  * store when the user has more than one. Cheap UPDATE; safe to call on any
  * project page render.
+ *
+ * Auth-gated: scoped to the project's owner so an attacker who guesses a
+ * project UUID can't keep refreshing arbitrary `lastViewedAt` values to
+ * mess with another merchant's dashboard ordering. No-ops silently when
+ * the caller isn't authorised (this is a fire-and-forget action — the
+ * page render shouldn't blow up on an auth glitch).
  */
 export async function touchProjectLastView(projectId: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
   await db
     .update(projects)
     .set({ lastViewedAt: new Date() })
-    .where(eq(projects.id, projectId));
+    .where(and(eq(projects.id, projectId), eq(projects.userId, session.user.id)));
 }
 
 /**

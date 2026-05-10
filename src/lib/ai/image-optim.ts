@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, users } from '@/lib/db/schema';
-import { getKieClient } from './kie';
+import { buildKieCallbackUrl, getKieClient } from './kie';
 import { costForImage, getImageModel, type ImageQualityId } from './models';
 
 /** Legacy default — used when no quality is passed. Mirrors `costForImage('image-1k')`. */
@@ -50,7 +50,7 @@ export async function startImageOptim(
   }
 
   const jobId = randomUUID();
-  const callBackUrl = opts.appUrl ? `${opts.appUrl.replace(/\/$/, '')}/api/kie/callback` : undefined;
+  const callBackUrl = buildKieCallbackUrl(opts.appUrl);
 
   await db.insert(jobs).values({
     id: jobId,

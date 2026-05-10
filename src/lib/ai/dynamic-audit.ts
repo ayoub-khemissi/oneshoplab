@@ -6,6 +6,7 @@ import { languageNameForPrompt } from '@/lib/i18n/languages';
 import {
   CHAT_MODELS,
   KieClient,
+  buildKieCallbackUrl,
   getKieClient,
   type ChatContentBlock,
   type ChatImageContent,
@@ -335,9 +336,7 @@ async function startProductImageJob(opts: StartImageJobOptions): Promise<void> {
   });
 
   try {
-    const callBackUrl = opts.appUrl
-      ? `${opts.appUrl.replace(/\/$/, '')}/api/kie/callback`
-      : undefined;
+    const callBackUrl = buildKieCallbackUrl(opts.appUrl);
 
     const { taskId } = await kie.createTask({
       model: IMAGE_MODEL,

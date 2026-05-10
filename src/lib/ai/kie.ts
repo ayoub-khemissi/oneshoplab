@@ -1,5 +1,34 @@
 const DEFAULT_BASE = 'https://api.kie.ai';
 
+/**
+ * Build the kie webhook URL we hand to `createTask` so kie can POST
+ * back when a task finishes. When `KIE_CALLBACK_SECRET` is set we
+ * append it as a `?token=` param — the route handler rejects POSTs
+ * whose token doesn't match. kie taskIds aren't secret (they appear
+ * in logs, retry payloads, etc.), so without a token the callback is
+ * forgeable: anyone who guesses or learns a taskId could mark the job
+ * "completed" with attacker-controlled image URLs.
+ *
+ * Returns `undefined` when `appUrl` is missing — the watchdog poll
+ * path picks up jobs without a callback in dev.
+ */
+export function buildKieCallbackUrl(appUrl: string | null | undefined): string | undefined {
+  if (!appUrl) return undefined;
+  const base = `${appUrl.replace(/\/$/, '')}/api/kie/callback`;
+  const secret = process.env.KIE_CALLBACK_SECRET;
+  if (!secret) {
+    // Defensively warn at the call site so prod misconfigurations
+    // don't fail silently. The route still accepts un-tokened POSTs
+    // when KIE_CALLBACK_SECRET is also unset on the server, so the
+    // app stays functional in dev/test envs.
+    console.warn(
+      '[kie] KIE_CALLBACK_SECRET not set — webhook callbacks are unauthenticated'
+    );
+    return base;
+  }
+  return `${base}?token=${encodeURIComponent(secret)}`;
+}
+
 export type KieState = 'waiting' | 'queuing' | 'generating' | 'success' | 'fail';
 
 export interface KieTaskInfo {

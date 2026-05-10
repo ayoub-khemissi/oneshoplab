@@ -6,7 +6,7 @@ import {
   persistKieJobSuccess,
   type ImageQualityId
 } from '@/lib/ai';
-import type { KieClient } from '@/lib/ai/kie';
+import { buildKieCallbackUrl, type KieClient } from '@/lib/ai/kie';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
 
@@ -158,9 +158,7 @@ async function retryCreateImagePending(
   }
 
   const quality = getImageModel(payload.imageQualityId as ImageQualityId);
-  const callBackUrl = process.env.APP_URL
-    ? `${process.env.APP_URL.replace(/\/$/, '')}/api/kie/callback`
-    : undefined;
+  const callBackUrl = buildKieCallbackUrl(process.env.APP_URL);
 
   console.log(
     `[kie-watchdog] retrying createTask for orphan job ${job.id} (kind=${job.kind})`

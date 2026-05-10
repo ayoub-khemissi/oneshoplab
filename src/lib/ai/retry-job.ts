@@ -3,7 +3,7 @@ import { getEffectiveLanguage } from '@/lib/audit/language';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
-import { CHAT_MODELS, KieClient, getKieClient } from './kie';
+import { CHAT_MODELS, KieClient, buildKieCallbackUrl, getKieClient } from './kie';
 
 const IMAGE_MODEL = 'gpt-image-2-image-to-image';
 
@@ -124,9 +124,7 @@ async function retryImageEditJob(job: JobRow): Promise<RetryResult> {
 
   try {
     const kie = getKieClient();
-    const callBackUrl = process.env.APP_URL
-      ? `${process.env.APP_URL.replace(/\/$/, '')}/api/kie/callback`
-      : undefined;
+    const callBackUrl = buildKieCallbackUrl(process.env.APP_URL);
     const { taskId } = await kie.createTask({
       model: IMAGE_MODEL,
       input: {

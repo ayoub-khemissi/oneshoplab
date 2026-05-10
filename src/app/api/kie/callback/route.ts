@@ -28,6 +28,20 @@ interface CallbackBody {
  * can display them long after kie's URLs expire.
  */
 export async function POST(req: Request) {
+  // Webhook signature: kie doesn't sign callbacks, so we put a shared
+  // secret in the `?token=` query param when handing them the URL via
+  // buildKieCallbackUrl(). Anyone forging a body without the token gets
+  // rejected. When KIE_CALLBACK_SECRET isn't configured (dev), we
+  // accept everything — easier to debug locally without proxies.
+  const expected = process.env.KIE_CALLBACK_SECRET;
+  if (expected) {
+    const url = new URL(req.url);
+    const provided = url.searchParams.get('token');
+    if (provided !== expected) {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    }
+  }
+
   let payload: CallbackBody;
   try {
     payload = (await req.json()) as CallbackBody;
