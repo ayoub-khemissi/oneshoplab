@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { CollapsibleCardShell } from '@/components/collapsible-card-shell';
 import { ExpandableText } from '@/components/expandable-text';
 import { ImageZoom } from '@/components/image-zoom';
+import { SiteFavicon } from '@/components/site-favicon';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
 /**
@@ -98,8 +99,9 @@ function ShowcaseCard({
       href={card.siteUrl}
       target="_blank"
       rel="noreferrer noopener"
-      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
     >
+      <SiteFavicon domain={card.domain} size={18} className="rounded-sm shrink-0" />
       <span className="font-mono truncate">{card.domain}</span>
       <ExternalLink
         className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"

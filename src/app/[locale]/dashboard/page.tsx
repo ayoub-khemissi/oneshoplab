@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { DeleteSiteButton } from '@/components/delete-site-button';
+import { SiteFavicon } from '@/components/site-favicon';
 import { siteLimitForPlan } from '@/lib/ai/models';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
@@ -164,8 +165,13 @@ function SiteCard({ site }: { site: SiteCardData }) {
       href={href}
       className="group rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4"
     >
-      <div className="flex items-start justify-between gap-3 min-w-0">
-        <div className="flex flex-col gap-0.5 min-w-0">
+      <div className="flex items-start gap-3 min-w-0">
+        <SiteFavicon
+          domain={site.domain}
+          size={28}
+          className="rounded shrink-0 mt-0.5"
+        />
+        <div className="flex flex-col gap-0.5 min-w-0 flex-1">
           <span className="text-xs uppercase tracking-wide text-[var(--muted)] font-mono">
             {site.name !== site.domain ? site.name : ' '}
           </span>

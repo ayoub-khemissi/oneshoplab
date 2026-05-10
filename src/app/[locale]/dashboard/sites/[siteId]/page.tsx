@@ -18,6 +18,7 @@ import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { ShareLinksCard } from '@/components/share-links-card';
+import { SiteFavicon } from '@/components/site-favicon';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
 import { isAdminEmail } from '@/lib/admin';
@@ -556,6 +557,7 @@ function SiteHeaderBar({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 font-semibold hover:text-[var(--accent)] transition-colors"
         >
+          <SiteFavicon domain={domain} size={20} className="rounded-sm shrink-0" />
           {domain}
           <ExternalLink className="size-4 opacity-60" aria-hidden />
         </a>
