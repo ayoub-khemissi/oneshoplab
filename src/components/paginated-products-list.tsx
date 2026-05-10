@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { Archive, ArrowRight, ExternalLink, Search, Sparkles } from 'lucide-react';
+import { Archive, ArrowRight, Search, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -210,18 +210,15 @@ export function PaginatedProductsList({
                       {t('aiStartedBadge')}
                     </span>
                   ) : null}
-                  {p.url ? (
-                    <a
-                      href={p.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="font-medium hover:underline inline-flex items-center gap-1.5 min-w-0"
-                    >
-                      <span className="truncate">{p.title}</span>
-                      <ExternalLink className="size-3.5 opacity-60 shrink-0" aria-hidden />
-                    </a>
-                  ) : (
+                  {p.archived ? (
                     <span className="font-medium truncate">{p.title}</span>
+                  ) : (
+                    <Link
+                      href={`/dashboard/sites/${siteId}/products/${p.productId}`}
+                      className="font-medium hover:underline truncate min-w-0"
+                    >
+                      {p.title}
+                    </Link>
                   )}
                 </div>
                 {p.issues.length > 0 && (
