@@ -7,8 +7,10 @@ export async function SiteFooter() {
 
   return (
     <footer className="w-full border-t border-[var(--border)] mt-auto">
-      <div className="max-w-6xl mx-auto px-6 py-6 text-xs text-[var(--muted)] flex flex-wrap items-center justify-between gap-4">
-        <span className="inline-flex items-center gap-1.5">
+      {/* Mobile: vertical stack centred, nav-row first then copyright.
+          md+: original side-by-side row with copyright left, nav right. */}
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-5 md:py-6 text-xs text-[var(--muted)] flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <span className="inline-flex items-center gap-1.5 justify-center md:justify-start text-center md:text-left">
           © {year}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -24,13 +26,10 @@ export async function SiteFooter() {
             aria-hidden
             className="hidden dark:block h-4 w-auto"
           />
-          OneShopLab — {t('tagline')}
+          <span className="truncate">OneShopLab — {t('tagline')}</span>
         </span>
-        <div className="flex items-center gap-5 flex-wrap">
-          <Link
-            href="/"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+        <nav className="flex items-center justify-center md:justify-end flex-wrap gap-x-4 gap-y-2 md:gap-x-5">
+          <Link href="/" className="hover:text-[var(--foreground)] transition-colors">
             {t('home')}
           </Link>
           <Link
@@ -57,7 +56,7 @@ export async function SiteFooter() {
           >
             {t('privacy')}
           </Link>
-        </div>
+        </nav>
       </div>
     </footer>
   );

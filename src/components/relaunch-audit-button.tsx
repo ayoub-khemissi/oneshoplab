@@ -64,7 +64,8 @@ export function RelaunchAuditButton({
         type="button"
         disabled
         title={t('cooldownTooltip', { time: formatRemaining(remainingMs, t) })}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] text-sm font-medium opacity-60 cursor-not-allowed"
+        aria-label={t('relaunch')}
+        className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md border border-[var(--border)] text-[var(--muted)] text-sm font-medium opacity-60 cursor-not-allowed"
       >
         <RotateCw className="size-3.5" aria-hidden />
         <span className="font-mono tabular-nums">{formatRemaining(remainingMs, t)}</span>
@@ -79,17 +80,18 @@ export function RelaunchAuditButton({
         type="submit"
         disabled={isPending}
         title={t('quotaTooltip', { used: auditsUsed, limit: auditsLimit })}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+        aria-label={t('relaunch')}
+        className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isPending ? (
           <>
             <Spinner size="sm" />
-            <span>{t('relaunching')}</span>
+            <span className="hidden md:inline">{t('relaunching')}</span>
           </>
         ) : (
           <>
             <RotateCw className="size-3.5" aria-hidden />
-            <span>{t('relaunch')}</span>
+            <span className="hidden md:inline">{t('relaunch')}</span>
             <span className="text-xs opacity-70 font-mono tabular-nums">
               {auditsUsed}/{auditsLimit}
             </span>

@@ -542,24 +542,26 @@ function SiteHeaderBar({
 }) {
   const t = useTranslations('Dashboard');
   return (
-    <header className="flex items-center justify-between gap-3 flex-wrap">
+    <header className="flex items-center justify-between gap-2 md:gap-3 flex-wrap">
       <Link
         href="/dashboard"
+        title={t('backToDashboard')}
+        aria-label={t('backToDashboard')}
         className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
       >
-        <ArrowLeft className="size-3.5" />
-        {t('backToDashboard')}
+        <ArrowLeft className="size-3.5 md:size-3.5" />
+        <span className="hidden md:inline">{t('backToDashboard')}</span>
       </Link>
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-1.5 md:gap-2 flex-wrap min-w-0">
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 font-semibold hover:text-[var(--accent)] transition-colors"
+          className="inline-flex items-center gap-1.5 md:gap-2 font-semibold hover:text-[var(--accent)] transition-colors min-w-0"
         >
-          <SiteFavicon domain={domain} size={20} className="rounded-sm shrink-0" />
-          {domain}
-          <ExternalLink className="size-4 opacity-60" aria-hidden />
+          <SiteFavicon domain={domain} size={18} className="rounded-sm shrink-0" />
+          <span className="truncate max-w-[200px] md:max-w-none">{domain}</span>
+          <ExternalLink className="size-3.5 md:size-4 opacity-60 shrink-0" aria-hidden />
         </a>
         <RelaunchAuditButton
           projectId={projectId}
@@ -570,10 +572,12 @@ function SiteHeaderBar({
         {canAdd ? (
           <Link
             href="/dashboard/sites/new"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium"
+            title={t('addSite')}
+            aria-label={t('addSite')}
+            className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium"
           >
             <Plus className="size-3.5" />
-            {t('addSite')}
+            <span className="hidden md:inline">{t('addSite')}</span>
           </Link>
         ) : null}
       </div>
