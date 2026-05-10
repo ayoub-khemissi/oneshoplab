@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { Archive, ArrowRight, ExternalLink, Search } from 'lucide-react';
+import { Archive, ArrowRight, ExternalLink, Search, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -17,6 +17,13 @@ export interface PaginatedProduct {
   score: number;
   issues: Array<{ code: string; data?: Record<string, string | number> }>;
   archived?: boolean;
+  /** Number of completed AI generations for this product. Drives the
+   *  "AI started" badge. Defaults to 0 (legacy callers that pre-date the
+   *  feature simply see no badge — no behaviour regression). */
+  optimCount?: number;
+  /** ISO timestamp of the most recent completed AI generation. Drives
+   *  the default "recently optimized" sort. Null = never optimized. */
+  lastOptimAtIso?: string | null;
 }
 
 interface PaginatedProductsListProps {
@@ -28,15 +35,22 @@ interface PaginatedProductsListProps {
   pageSize?: number;
 }
 
-type SortKey = 'score-asc' | 'score-desc' | 'title-asc' | 'title-desc';
+type SortKey =
+  | 'recently-optimized'
+  | 'score-asc'
+  | 'score-desc'
+  | 'title-asc'
+  | 'title-desc';
 
-const DEFAULT_SORT: SortKey = 'score-asc';
+const DEFAULT_SORT: SortKey = 'recently-optimized';
 
 /**
  * Dashboard list of every product in the user's latest audit, with search +
- * sort + pagination. Sorted worst-first by default — the most actionable
- * items surface immediately. The caller passes already-sorted products; we
- * resort client-side when the user picks a different option.
+ * sort + pagination. The default sort puts the most-recently optimized
+ * products first (lastOptimAtIso DESC) so the merchant lands directly on
+ * the work-in-progress; products with no AI activity sink to the bottom
+ * but stay reachable via search and pagination. A "AI started" badge
+ * marks every product that already has at least one finished generation.
  */
 export function PaginatedProductsList({
   products,
@@ -73,6 +87,17 @@ export function PaginatedProductsList({
       // they're a "secondary" set the merchant rarely cares about.
       if (a.archived !== b.archived) return a.archived ? 1 : -1;
       switch (sort) {
+        case 'recently-optimized': {
+          // Optimized products first (most recent on top); the rest in
+          // worst-score-first order so the actionable items surface even
+          // among the never-optimized tail.
+          const aT = a.lastOptimAtIso ? new Date(a.lastOptimAtIso).getTime() : null;
+          const bT = b.lastOptimAtIso ? new Date(b.lastOptimAtIso).getTime() : null;
+          if (aT !== null && bT !== null) return bT - aT;
+          if (aT !== null) return -1;
+          if (bT !== null) return 1;
+          return a.score - b.score;
+        }
         case 'score-asc':
           return a.score - b.score;
         case 'score-desc':
@@ -176,6 +201,15 @@ export function PaginatedProductsList({
                   ) : (
                     <ScoreChip score={p.score} />
                   )}
+                  {!p.archived && (p.optimCount ?? 0) > 0 ? (
+                    <span
+                      className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] inline-flex items-center gap-1"
+                      title={t('aiStartedTitle')}
+                    >
+                      <Sparkles className="size-3" aria-hidden />
+                      {t('aiStartedBadge')}
+                    </span>
+                  ) : null}
                   {p.url ? (
                     <a
                       href={p.url}
@@ -268,6 +302,7 @@ function SortPicker({
   t: (key: string) => string;
 }) {
   const options: Array<{ id: SortKey; label: string }> = [
+    { id: 'recently-optimized', label: t('sortRecentlyOptimized') },
     { id: 'score-asc', label: t('sortScoreAsc') },
     { id: 'score-desc', label: t('sortScoreDesc') },
     { id: 'title-asc', label: t('sortTitleAsc') },

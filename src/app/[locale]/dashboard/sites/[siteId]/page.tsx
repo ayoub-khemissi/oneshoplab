@@ -1,5 +1,5 @@
 import { Accordion, Card, Skeleton } from '@heroui/react';
-import { and, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, isNull, or, sql } from 'drizzle-orm';
 import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
 import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
@@ -96,6 +96,12 @@ interface PaginatedProductWithId extends PaginatedProductPayload {
   /** Soft-archived: present on a previous scrape but missing from the
    *  latest one. Surface under a toggle, disable any "Generate" CTAs. */
   archived: boolean;
+  /** Number of completed kie_* generations for this product. Drives the
+   *  "AI started" badge in the list. Zero = no AI work yet. */
+  optimCount: number;
+  /** ISO timestamp of the most recent completed kie_* generation. Drives
+   *  the default "recently optimized" sort. Null = never optimized. */
+  lastOptimAtIso: string | null;
 }
 
 interface SummaryShape {
@@ -247,11 +253,61 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     if (p.handle) productIdByKey.set(p.handle, p.id);
   }
 
+  // Per-product AI activity. We aggregate completed kie_* jobs into
+  // (count, lastOptimAt) so the products list can:
+  //   - flag products with at least one finished generation via a badge,
+  //   - default-sort the list by most-recently optimized first.
+  // Single GROUP BY query — cheaper than per-product lookups regardless
+  // of catalog size. Excludes audit-runner kinds (kie_dynamic_audit,
+  // kie_prompt_suggest) which aren't user-visible "optims".
+  const PRODUCT_OPTIM_KINDS = [
+    'kie_title',
+    'kie_description',
+    'kie_tags',
+    'kie_alt_text',
+    'kie_image_edit',
+    'kie_image_generate'
+  ] as const;
+  const optimAggRows = await db
+    .select({
+      productId: jobs.productId,
+      lastOptimAt: sql<Date | null>`MAX(${jobs.finishedAt})`.as('last_optim_at'),
+      optimCount: sql<number>`COUNT(*)`.as('optim_count')
+    })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.projectId, project.id),
+        eq(jobs.status, 'completed'),
+        inArray(jobs.kind, [...PRODUCT_OPTIM_KINDS])
+      )
+    )
+    .groupBy(jobs.productId);
+  const optimByProductId = new Map<
+    string,
+    { lastOptimAt: Date | null; count: number }
+  >();
+  for (const r of optimAggRows) {
+    if (!r.productId) continue;
+    optimByProductId.set(r.productId, {
+      lastOptimAt: r.lastOptimAt ? new Date(r.lastOptimAt) : null,
+      count: Number(r.optimCount)
+    });
+  }
+
   const allProductsWithIds: PaginatedProductWithId[] = (summary.allProducts ?? [])
     .map((p) => {
       const key = p.sourceId ?? p.handle ?? '';
       const productId = productIdByKey.get(key);
-      return productId ? { ...p, productId, archived: false } : null;
+      if (!productId) return null;
+      const opt = optimByProductId.get(productId);
+      return {
+        ...p,
+        productId,
+        archived: false,
+        optimCount: opt?.count ?? 0,
+        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null
+      };
     })
     .filter((p): p is PaginatedProductWithId => p !== null);
 
@@ -261,16 +317,21 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // custom instructions / generation history.
   const archivedProducts: PaginatedProductWithId[] = productRows
     .filter((r) => r.status === 'archived')
-    .map((r) => ({
-      sourceId: r.sourceId,
-      handle: r.handle,
-      title: r.title,
-      url: r.sourceUrl,
-      score: 0,
-      issues: [],
-      productId: r.id,
-      archived: true
-    }));
+    .map((r) => {
+      const opt = optimByProductId.get(r.id);
+      return {
+        sourceId: r.sourceId,
+        handle: r.handle,
+        title: r.title,
+        url: r.sourceUrl,
+        score: 0,
+        issues: [],
+        productId: r.id,
+        archived: true,
+        optimCount: opt?.count ?? 0,
+        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null
+      };
+    });
 
   const hasUnfinishedJobs = projectJobs.some(
     (j) => j.status === 'pending' || j.status === 'running'
