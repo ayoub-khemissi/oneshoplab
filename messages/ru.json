@@ -735,6 +735,8 @@
     "showOnHomeHint": "Добавляет этот кейс на публичную главную. Карточка 2 товара до/после со ссылкой на /share/{token}.",
     "showOnHomeAria": "Показывать на главной",
     "hideFromHome": "Скрыть с главной",
-    "onHomeBadge": "На главной"
+    "onHomeBadge": "На главной",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Позиция на главной (меньше = выше, пусто = без сортировки)"
   }
 }

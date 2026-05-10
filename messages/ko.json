@@ -735,6 +735,8 @@
     "showOnHomeHint": "이 사례 연구를 홈페이지 공개 쇼케이스에 추가합니다. 2개 상품 전후 카드와 /share/{token} 링크.",
     "showOnHomeAria": "홈에 표시",
     "hideFromHome": "홈에서 숨기기",
-    "onHomeBadge": "홈 노출"
+    "onHomeBadge": "홈 노출",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "홈 위치 (작을수록 먼저, 비우면 미지정)"
   }
 }

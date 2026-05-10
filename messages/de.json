@@ -735,6 +735,8 @@
     "showOnHomeHint": "Fügt diese Fallstudie der öffentlichen Showcase-Reihe auf / hinzu. 2-Produkt Vorher/Nachher Karte mit Link zu /share/{token}.",
     "showOnHomeAria": "Auf Startseite anzeigen",
     "hideFromHome": "Von Startseite ausblenden",
-    "onHomeBadge": "Auf Home"
+    "onHomeBadge": "Auf Home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Home-Position (kleinere Zahl zuerst, leer = unsortiert)"
   }
 }

@@ -16,6 +16,7 @@ export async function listShareLinksForSite(
     id: string;
     label: string | null;
     showOnHome: boolean;
+    homeOrder: number | null;
     createdAt: Date;
     productSourceIds: string[];
   }[]
@@ -32,6 +33,7 @@ export async function listShareLinksForSite(
     id: r.id,
     label: r.label,
     showOnHome: Boolean(r.showOnHome),
+    homeOrder: r.homeOrder,
     createdAt: r.createdAt,
     productSourceIds: (r.productSourceIds as string[]) ?? []
   }));
@@ -262,6 +264,10 @@ export interface HomeShowcaseCard {
   token: string;
   domain: string;
   siteUrl: string;
+  /** Detected e-commerce platform of the site, when known. Drives the
+   *  brand badge in the showcase header (Shopify / WooCommerce / Wix).
+   *  Null = `manual` audit or unrecognised platform — no badge shown. */
+  platform: 'shopify' | 'woocommerce' | 'wix' | null;
   /** Both products from the share link with full before/after data:
    *  source + AI title, description, tags, plus image arrays for the
    *  carousel-style browsing on the home strip. */
@@ -304,7 +310,7 @@ interface LoadHomeShowcaseCardsOptions {
 export async function loadHomeShowcaseCards(
   opts: LoadHomeShowcaseCardsOptions = {}
 ): Promise<HomeShowcaseCard[]> {
-  const limit = opts.limit ?? 6;
+  const limit = opts.limit ?? 3;
   // Pool size: well over the cap so the locale tier still has candidates
   // when the latest few links happen to be in a different language.
   const POOL_SIZE = Math.max(limit * 5, 30);
@@ -331,6 +337,7 @@ export async function loadHomeShowcaseCards(
   const enriched: Array<{
     card: HomeShowcaseCard;
     lang: string | null;
+    homeOrder: number | null;
     createdAt: Date;
   }> = [];
 
@@ -420,26 +427,38 @@ export async function loadHomeShowcaseCards(
       audit.url ??
       (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
 
+    // Audit platforms include 'manual' for hand-typed audits. We only
+    // surface a brand badge for the three real e-commerce stacks the
+    // adapters cover.
+    const platform: HomeShowcaseCard['platform'] =
+      audit.platform === 'shopify' || audit.platform === 'woocommerce' || audit.platform === 'wix'
+        ? audit.platform
+        : null;
+
     enriched.push({
       card: {
         token: link.id,
         domain,
         siteUrl,
+        platform,
         products
       },
       lang: effectiveLanguage,
+      homeOrder: link.homeOrder,
       createdAt: link.createdAt
     });
   }
 
-  // Tier sort: locale match first, then English fallback, then the
-  // rest. Within each tier preserve recency DESC. JS sort is stable on
-  // Node 12+, so equal `tierOf` keys keep their input order — but we
-  // sort by createdAt explicitly to be defensive against driver-level
-  // reordering of the underlying findMany result.
+  // Sort key: (tier, homeOrder ASC NULLS LAST, createdAt DESC).
+  // Tier ensures language-matched cards always win over the English
+  // fallback. Within a tier the admin-curated `home_order` pins the
+  // top slots; unranked rows trail in recency order.
   enriched.sort((a, b) => {
     const tDiff = tierOf(a.lang) - tierOf(b.lang);
     if (tDiff !== 0) return tDiff;
+    const aOrder = a.homeOrder ?? Number.POSITIVE_INFINITY;
+    const bOrder = b.homeOrder ?? Number.POSITIVE_INFINITY;
+    if (aOrder !== bOrder) return aOrder - bOrder;
     return b.createdAt.getTime() - a.createdAt.getTime();
   });
 

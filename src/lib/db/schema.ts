@@ -349,6 +349,11 @@ export const shareLinks = mysqlTable(
      *  study (provided the link isn't revoked). Replaces the legacy
      *  SHOWCASE_PROJECT_IDS env list with admin-controlled curation. */
     showOnHome: boolean('show_on_home').notNull().default(false),
+    /** Admin-curated sort weight for the home showcase. Lower comes
+     *  first, NULL trails. Used as the primary tiebreaker inside each
+     *  language tier so the admin can pin "always top-3" cards
+     *  regardless of recency. NULL = unranked (default). */
+    homeOrder: int('home_order'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     revokedAt: timestamp('revoked_at')
   },

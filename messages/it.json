@@ -735,6 +735,8 @@
     "showOnHomeHint": "Aggiunge questo caso di studio nella sezione pubblica della home. Card 2 prodotti prima/dopo con link a /share/{token}.",
     "showOnHomeAria": "Mostra in homepage",
     "hideFromHome": "Nascondi dalla homepage",
-    "onHomeBadge": "In home"
+    "onHomeBadge": "In home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Posizione in home (più basso = prima, vuoto = non classificato)"
   }
 }

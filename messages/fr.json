@@ -735,6 +735,8 @@
     "showOnHomeHint": "Ajoute cette étude de cas dans la section publique de la home. Card 2 produits avant/après avec lien vers la page /share/{token} complète.",
     "showOnHomeAria": "Afficher sur la page d'accueil",
     "hideFromHome": "Retirer de la page d'accueil",
-    "onHomeBadge": "En home"
+    "onHomeBadge": "En home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Position en home (plus petit = en premier, laisser vide pour non-classé)"
   }
 }

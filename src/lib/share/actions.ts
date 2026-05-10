@@ -103,6 +103,50 @@ export async function setShareLinkShowOnHomeAction(
   return { ok: true };
 }
 
+/**
+ * Set / clear the admin-curated home showcase order on a share link.
+ * Lower numbers surface first within the visitor's language tier; null
+ * means "unranked" and the link sorts by createdAt DESC at the end of
+ * its tier. Pass an empty string (or non-numeric input) from the form
+ * to clear the order back to NULL.
+ */
+export async function setShareLinkHomeOrderAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  const session = await auth();
+  if (!session?.user?.id || !isAdminEmail(session.user.email)) {
+    return { ok: false, error: 'unauthorized' };
+  }
+  const linkId = String(formData.get('linkId') ?? '');
+  const siteId = String(formData.get('siteId') ?? '');
+  const orderRaw = String(formData.get('homeOrder') ?? '').trim();
+  if (!linkId) return { ok: false, error: 'bad_request' };
+
+  let nextOrder: number | null = null;
+  if (orderRaw !== '') {
+    const parsed = Number.parseInt(orderRaw, 10);
+    if (!Number.isFinite(parsed) || parsed < 1 || parsed > 9999) {
+      return { ok: false, error: 'invalid_order' };
+    }
+    nextOrder = parsed;
+  }
+
+  await db
+    .update(shareLinks)
+    .set({ homeOrder: nextOrder })
+    .where(
+      and(
+        eq(shareLinks.id, linkId),
+        eq(shareLinks.userId, session.user.id),
+        isNull(shareLinks.revokedAt)
+      )
+    );
+
+  if (siteId) revalidatePath(`/dashboard/sites/${siteId}`);
+  revalidateAllHomePages();
+  return { ok: true };
+}
+
 export async function revokeShareLinkAction(
   formData: FormData
 ): Promise<{ ok: boolean; error?: string }> {

@@ -735,6 +735,8 @@
     "showOnHomeHint": "Adds this case study to the public showcase strip on /. Two-product before/after card linking back to the full /share/{token} page.",
     "showOnHomeAria": "Show on home page",
     "hideFromHome": "Hide from home page",
-    "onHomeBadge": "On home"
+    "onHomeBadge": "On home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Home position (lower comes first, leave empty to unrank)"
   }
 }

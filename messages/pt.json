@@ -735,6 +735,8 @@
     "showOnHomeHint": "Adiciona este caso à seção pública da home. Card 2 produtos antes/depois com link para /share/{token}.",
     "showOnHomeAria": "Mostrar na home",
     "hideFromHome": "Ocultar da home",
-    "onHomeBadge": "Na home"
+    "onHomeBadge": "Na home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Posição na home (menor = primeiro, vazio = sem classificação)"
   }
 }

@@ -735,6 +735,8 @@
     "showOnHomeHint": "将该案例研究添加到首页公开展示区。展示 2 个产品前后对比卡片,并链接到 /share/{token}。",
     "showOnHomeAria": "在首页展示",
     "hideFromHome": "从首页移除",
-    "onHomeBadge": "首页"
+    "onHomeBadge": "首页",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "首页位置（数字越小越靠前，留空表示不排序）"
   }
 }

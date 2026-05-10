@@ -735,6 +735,8 @@
     "showOnHomeHint": "يضيف دراسة الحالة هذه إلى القسم العام للصفحة الرئيسية. بطاقة منتجين قبل/بعد مع رابط إلى /share/{token}.",
     "showOnHomeAria": "عرض في الرئيسية",
     "hideFromHome": "إخفاء من الرئيسية",
-    "onHomeBadge": "في الرئيسية"
+    "onHomeBadge": "في الرئيسية",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "موضع الصفحة الرئيسية (أصغر = أولًا، فارغ = غير مرتب)"
   }
 }

@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { CollapsibleCardShell } from '@/components/collapsible-card-shell';
 import { ExpandableText } from '@/components/expandable-text';
 import { ImageZoom } from '@/components/image-zoom';
+import { PlatformLogo } from '@/components/brand-logos';
 import { SiteFavicon } from '@/components/site-favicon';
 import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
 
@@ -85,6 +86,13 @@ interface ShowcaseLabels {
   showLess: string;
 }
 
+function platformDisplayName(p: NonNullable<HomeShowcaseCard['platform']>): string {
+  // Brand casing — never localised, these are product names.
+  if (p === 'shopify') return 'Shopify';
+  if (p === 'woocommerce') return 'WooCommerce';
+  return 'Wix';
+}
+
 function ShowcaseCard({
   card,
   labels
@@ -96,19 +104,30 @@ function ShowcaseCard({
   // hides when the visitor collapses the card. The shell owns the
   // expand state and lays the toggle button top-right of the row.
   const header = (
-    <a
-      href={card.siteUrl}
-      target="_blank"
-      rel="noreferrer noopener"
-      className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
-    >
-      <SiteFavicon domain={card.domain} size={18} className="rounded-sm shrink-0" />
-      <span className="font-mono truncate">{card.domain}</span>
-      <ExternalLink
-        className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
-        aria-hidden
-      />
-    </a>
+    <div className="inline-flex items-center gap-2 flex-wrap">
+      <a
+        href={card.siteUrl}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
+      >
+        <SiteFavicon domain={card.domain} size={18} className="rounded-sm shrink-0" />
+        <span className="font-mono truncate">{card.domain}</span>
+        <ExternalLink
+          className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
+          aria-hidden
+        />
+      </a>
+      {card.platform ? (
+        <span
+          className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-[var(--default)]/60 border border-[var(--border)] text-[var(--muted)]"
+          title={platformDisplayName(card.platform)}
+        >
+          <PlatformLogo platform={card.platform} className="size-3.5" />
+          {platformDisplayName(card.platform)}
+        </span>
+      ) : null}
+    </div>
   );
 
   return (

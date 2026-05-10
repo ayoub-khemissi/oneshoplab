@@ -735,6 +735,8 @@
     "showOnHomeHint": "Dodaje ten case study do publicznej sekcji strony głównej. Karta 2 produkty przed/po z linkiem do /share/{token}.",
     "showOnHomeAria": "Pokaż na stronie głównej",
     "hideFromHome": "Ukryj ze strony głównej",
-    "onHomeBadge": "Na home"
+    "onHomeBadge": "Na home",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Pozycja na home (mniejsza = wyżej, puste = bez kolejności)"
   }
 }

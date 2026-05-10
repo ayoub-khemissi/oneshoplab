@@ -735,6 +735,8 @@
     "showOnHomeHint": "このケーススタディをホームページの公開ショーケースに追加します。2商品の前後比較カードと /share/{token} へのリンク。",
     "showOnHomeAria": "ホームに表示",
     "hideFromHome": "ホームから非表示",
-    "onHomeBadge": "ホーム掲載"
+    "onHomeBadge": "ホーム掲載",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "ホーム表示順（小さいほど上、空白で順不同）"
   }
 }

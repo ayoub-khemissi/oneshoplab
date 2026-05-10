@@ -735,6 +735,8 @@
     "showOnHomeHint": "Bu vaka çalışmasını ana sayfanın açık bölümüne ekler. 2 ürün öncesi/sonrası kart, /share/{token}'a bağlanır.",
     "showOnHomeAria": "Ana sayfada göster",
     "hideFromHome": "Ana sayfadan gizle",
-    "onHomeBadge": "Ana sayfada"
+    "onHomeBadge": "Ana sayfada",
+    "homeOrderPlaceholder": "#",
+    "homeOrderAria": "Ana sayfa konumu (küçük = önde, boş = sırasız)"
   }
 }
