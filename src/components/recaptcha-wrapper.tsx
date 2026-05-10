@@ -1,102 +1,50 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (cb: () => void) => void;
-      execute: (siteKey: string, opts: { action: string }) => Promise<string>;
-    };
-  }
-}
+import { useEffect } from 'react';
 
 interface RecaptchaWrapperProps {
-  /** v3 public site key (NEXT_PUBLIC_*). Safe to ship to the client. */
+  /** v2 public site key (NEXT_PUBLIC_*). Safe to ship to the client. */
   siteKey: string;
-  /** The "action" label sent to Google. Helps them score by intent
-   *  (signup, login, …) and shows up in the admin console. */
-  action: string;
-  /** Optional — pass to render extra siblings of the hidden input.
-   *  Most callers don't need this and just drop the wrapper inside the
-   *  form alongside their existing fields. */
-  children?: React.ReactNode;
+  /** Visual theme of the widget. Defaults to 'light' since the auth
+   *  pages have a light card. */
+  theme?: 'light' | 'dark';
 }
 
 /**
- * Silent reCAPTCHA v3 form wrapper. Renders a hidden `recaptcha_token`
- * input inside the parent <form>, then on submit:
+ * Visible reCAPTCHA v2 "I'm not a robot" checkbox. Drops the v3
+ * silent score-based flow because v3 false-positives too often on
+ * legitimate users (VPN, mobile cellular, privacy-first browsers).
  *
- *   1. Cancels the original submit
- *   2. Calls grecaptcha.execute() to fetch a fresh token (~250ms)
- *   3. Writes the token into the hidden input
- *   4. Re-submits the form with `bypass=true` so this handler skips
- *      the second pass and lets the browser deliver the form data
- *      (including the populated token) to the server action.
+ * The Google widget auto-detects every div.g-recaptcha on the page
+ * once the script loads and renders the checkbox into it. On
+ * successful challenge, the widget fills a hidden form field named
+ * `g-recaptcha-response` with the verification token — our server
+ * action then reads that field by name.
  *
- * The script tag for grecaptcha loads once per page via useEffect —
- * subsequent <RecaptchaWrapper> mounts on the same page reuse it.
- *
- * If grecaptcha never finishes loading (network blocked, ad-blocker)
- * we still submit, with an empty token. The server-side verifier
- * rejects empty tokens, so the user gets the "captcha failed" error
- * rather than a silently abandoned form.
+ * The script tag loads exactly once per page via useEffect; nothing
+ * for the page to do beyond placing this component inside the form.
  */
-export function RecaptchaWrapper({ siteKey, action, children }: RecaptchaWrapperProps) {
-  const tokenRef = useRef<HTMLInputElement>(null);
-
+export function RecaptchaWrapper({ siteKey, theme = 'light' }: RecaptchaWrapperProps) {
   useEffect(() => {
-    if (document.querySelector('script[data-recaptcha-v3]')) return;
+    if (document.querySelector('script[data-recaptcha-v2]')) return;
     const s = document.createElement('script');
-    s.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
+    s.src = 'https://www.google.com/recaptcha/api.js';
     s.async = true;
     s.defer = true;
-    s.dataset.recaptchaV3 = '1';
+    s.dataset.recaptchaV2 = '1';
     document.head.appendChild(s);
-  }, [siteKey]);
+  }, []);
 
-  useEffect(() => {
-    const input = tokenRef.current;
-    const form = input?.closest('form');
-    if (!form || !input) return;
-
-    let bypass = false;
-
-    const onSubmit = (e: SubmitEvent) => {
-      if (bypass) {
-        bypass = false;
-        return;
-      }
-      e.preventDefault();
-      const g = window.grecaptcha;
-      if (!g) {
-        // Script blocked / still loading — submit without token, server rejects.
-        bypass = true;
-        form.requestSubmit();
-        return;
-      }
-      g.ready(() => {
-        g.execute(siteKey, { action })
-          .then((token) => {
-            input.value = token;
-            bypass = true;
-            form.requestSubmit();
-          })
-          .catch(() => {
-            bypass = true;
-            form.requestSubmit();
-          });
-      });
-    };
-
-    form.addEventListener('submit', onSubmit);
-    return () => form.removeEventListener('submit', onSubmit);
-  }, [siteKey, action]);
-
+  // Centred so the widget doesn't visually fight the rest of the
+  // form fields (Google ships ~304x78px). The g-recaptcha class is
+  // the hook the script searches for.
   return (
-    <>
-      <input ref={tokenRef} type="hidden" name="recaptcha_token" />
-      {children}
-    </>
+    <div className="flex justify-center">
+      <div
+        className="g-recaptcha"
+        data-sitekey={siteKey}
+        data-theme={theme}
+      />
+    </div>
   );
 }

@@ -43,17 +43,23 @@ async function signupAction(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim() || null;
   const audit = String(formData.get('audit') ?? '').trim();
   const next = String(formData.get('next') ?? '').trim();
-  const recaptchaToken = String(formData.get('recaptcha_token') ?? '');
+  // reCAPTCHA v2 widget fills `g-recaptcha-response`; older v3 sites
+  // used `recaptcha_token`. Read both so swapping the keys doesn't
+  // require touching server code.
+  const recaptchaToken =
+    String(formData.get('g-recaptcha-response') ?? '') ||
+    String(formData.get('recaptcha_token') ?? '');
 
   const carry = new URLSearchParams();
   if (audit) carry.set('audit', audit);
   if (next) carry.set('next', next);
   const carryQs = carry.toString() ? `&${carry.toString()}` : '';
 
-  // reCAPTCHA v3 score check. Silent — no challenge. When the env is
-  // unconfigured (dev / contributor onboarding) verifyRecaptcha returns
-  // ok=true so the form still works locally without a key.
-  const captcha = await verifyRecaptcha(recaptchaToken, 'signup');
+  // reCAPTCHA v2 challenge. The user has to actively click the
+  // checkbox before the widget supplies a token, so unlike v3 there's
+  // no false-positive on legitimate users with low score. Falls
+  // through (ok: true) when no secret env is set (dev).
+  const captcha = await verifyRecaptcha(recaptchaToken);
   if (!captcha.ok) {
     redirect(`/signup?error=captcha${carryQs}`);
   }
@@ -155,9 +161,6 @@ export default async function SignupPage({ searchParams }: PageProps) {
         <Form action={signupAction}>
           <input type="hidden" name="audit" value={auditParam} />
           <input type="hidden" name="next" value={nextParam} />
-          {recaptchaOn ? (
-            <RecaptchaWrapper siteKey={recaptchaSiteKey!} action="signup" />
-          ) : null}
           <Card.Content className="flex flex-col gap-5">
             {errorMessage ? (
               <div
@@ -199,6 +202,7 @@ export default async function SignupPage({ searchParams }: PageProps) {
                 <FieldError>{errorMessage}</FieldError>
               ) : null}
             </TextField>
+            {recaptchaOn ? <RecaptchaWrapper siteKey={recaptchaSiteKey!} /> : null}
           </Card.Content>
           <Card.Footer className="flex flex-col gap-4 pt-2">
             <Button type="submit" variant="primary" size="lg" fullWidth>
