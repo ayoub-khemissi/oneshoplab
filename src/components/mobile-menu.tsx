@@ -1,7 +1,16 @@
 'use client';
 
 import { Button, Drawer, ListBox } from '@heroui/react';
-import { Coins, LogOut, Menu, Settings, User2 } from 'lucide-react';
+import {
+  Coins,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Repeat,
+  Settings,
+  Tag,
+  User2
+} from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { signOutAction } from '@/lib/auth-actions';
@@ -106,6 +115,7 @@ export function MobileMenu({
                   textValue={labels.pricing}
                   onAction={() => setIsOpen(false)}
                 >
+                  <Tag className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.pricing}
                 </ListBox.Item>
                 {user ? (
@@ -116,6 +126,10 @@ export function MobileMenu({
                       textValue={labels.dashboard}
                       onAction={() => setIsOpen(false)}
                     >
+                      <LayoutDashboard
+                        className="size-4 mr-2 text-[var(--muted)]"
+                        aria-hidden
+                      />
                       {labels.dashboard}
                     </ListBox.Item>
                     <ListBox.Item
@@ -142,6 +156,7 @@ export function MobileMenu({
                       textValue={labels.subscription}
                       onAction={() => setIsOpen(false)}
                     >
+                      <Repeat className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                       {labels.subscription}
                     </ListBox.Item>
                     <ListBox.Item
