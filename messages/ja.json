@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}時間 {m}分",
     "inMinutesSeconds": "{m}分 {s}秒",
     "inSeconds": "{s}秒",
-    "quotaTooltip": "本日の監査: {used}/{limit}"
+    "quotaTooltip": "本日の監査: {used}/{limit}",
+    "confirmRelaunchTitle": "解析を再実行しますか？",
+    "confirmRelaunchBody": "ストアを再スクレイピングし、各商品を再評価します。本日 {used}/{limit} 回使用済み。",
+    "cancelLabel": "キャンセル"
   },
   "Account": {
     "backToDashboard": "ダッシュボードに戻る",

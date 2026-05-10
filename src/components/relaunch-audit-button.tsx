@@ -3,7 +3,8 @@
 import { Spinner } from '@heroui/react';
 import { RotateCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { relaunchProjectAuditAction } from '@/lib/auth-actions';
 
 interface RelaunchAuditButtonProps {
@@ -42,6 +43,11 @@ export function RelaunchAuditButton({
 
   const [now, setNow] = useState(() => Date.now());
   const [isPending, startTransition] = useTransition();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  // Holds the FormData that will be posted on confirm. We capture it
+  // synchronously inside the form's `action` so React doesn't reuse
+  // the same FormData object after the user dismisses the dialog.
+  const pendingFormDataRef = useRef<FormData | null>(null);
 
   useEffect(() => {
     if (!nextSlotAtIso) return;
@@ -52,7 +58,22 @@ export function RelaunchAuditButton({
   const remainingMs = nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
   const locked = remainingMs > 0;
 
-  function handleSubmit(formData: FormData) {
+  function requestConfirm(formData: FormData) {
+    // Server form action fires on submit; we intercept to ask for
+    // confirmation first and stash the FormData so the eventual
+    // confirm-click can replay it. Since the relaunch button always
+    // renders on a page that already has at least one prior audit
+    // (you reach this URL through the dashboard listing), every
+    // relaunch is technically a re-run — hence we always prompt.
+    pendingFormDataRef.current = formData;
+    setConfirmOpen(true);
+  }
+
+  async function handleConfirm() {
+    const formData = pendingFormDataRef.current;
+    if (!formData) return;
+    pendingFormDataRef.current = null;
+    setConfirmOpen(false);
     startTransition(async () => {
       await relaunchProjectAuditAction(formData);
     });
@@ -74,31 +95,50 @@ export function RelaunchAuditButton({
   }
 
   return (
-    <form action={handleSubmit}>
-      <input type="hidden" name="projectId" value={projectId} />
-      <button
-        type="submit"
-        disabled={isPending}
-        title={t('quotaTooltip', { used: auditsUsed, limit: auditsLimit })}
-        aria-label={t('relaunch')}
-        className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {isPending ? (
-          <>
-            <Spinner size="sm" />
-            <span className="hidden md:inline">{t('relaunching')}</span>
-          </>
-        ) : (
-          <>
-            <RotateCw className="size-3.5" aria-hidden />
-            <span className="hidden md:inline">{t('relaunch')}</span>
-            <span className="text-xs opacity-70 font-mono tabular-nums">
-              {auditsUsed}/{auditsLimit}
-            </span>
-          </>
-        )}
-      </button>
-    </form>
+    <>
+      <form action={requestConfirm}>
+        <input type="hidden" name="projectId" value={projectId} />
+        <button
+          type="submit"
+          disabled={isPending}
+          title={t('quotaTooltip', { used: auditsUsed, limit: auditsLimit })}
+          aria-label={t('relaunch')}
+          className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isPending ? (
+            <>
+              <Spinner size="sm" />
+              <span className="hidden md:inline">{t('relaunching')}</span>
+            </>
+          ) : (
+            <>
+              <RotateCw className="size-3.5" aria-hidden />
+              <span className="hidden md:inline">{t('relaunch')}</span>
+              <span className="text-xs opacity-70 font-mono tabular-nums">
+                {auditsUsed}/{auditsLimit}
+              </span>
+            </>
+          )}
+        </button>
+      </form>
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onOpenChange={(open) => {
+          setConfirmOpen(open);
+          if (!open) pendingFormDataRef.current = null;
+        }}
+        title={t('confirmRelaunchTitle')}
+        description={t('confirmRelaunchBody', {
+          used: auditsUsed,
+          limit: auditsLimit
+        })}
+        confirmLabel={t('relaunch')}
+        cancelLabel={t('cancelLabel')}
+        destructive={false}
+        isPending={isPending}
+        onConfirm={handleConfirm}
+      />
+    </>
   );
 }
 

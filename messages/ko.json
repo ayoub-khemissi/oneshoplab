@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}시간 {m}분",
     "inMinutesSeconds": "{m}분 {s}초",
     "inSeconds": "{s}초",
-    "quotaTooltip": "오늘 감사: {used}/{limit}"
+    "quotaTooltip": "오늘 감사: {used}/{limit}",
+    "confirmRelaunchTitle": "분석을 다시 실행하시겠습니까?",
+    "confirmRelaunchBody": "스토어를 다시 스크레이핑하고 각 상품을 다시 채점합니다. 오늘 사용: {used}/{limit}.",
+    "cancelLabel": "취소"
   },
   "Account": {
     "backToDashboard": "대시보드로",

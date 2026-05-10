@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}h {m}m",
     "inMinutesSeconds": "{m}m {s}s",
     "inSeconds": "{s}s",
-    "quotaTooltip": "Auditorias hoje: {used}/{limit}"
+    "quotaTooltip": "Auditorias hoje: {used}/{limit}",
+    "confirmRelaunchTitle": "Relançar a análise?",
+    "confirmRelaunchBody": "Vamos voltar a recolher dados da loja e a avaliar cada produto. {used} de {limit} análises usadas hoje.",
+    "cancelLabel": "Cancelar"
   },
   "Account": {
     "backToDashboard": "Voltar ao painel",

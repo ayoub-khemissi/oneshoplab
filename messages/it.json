@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}h {m}m",
     "inMinutesSeconds": "{m}m {s}s",
     "inSeconds": "{s}s",
-    "quotaTooltip": "Analisi oggi: {used}/{limit}"
+    "quotaTooltip": "Analisi oggi: {used}/{limit}",
+    "confirmRelaunchTitle": "Rilanciare l'analisi?",
+    "confirmRelaunchBody": "Faremo un nuovo scraping del negozio e una nuova valutazione di ogni prodotto. {used} su {limit} analisi usate oggi.",
+    "cancelLabel": "Annulla"
   },
   "Account": {
     "backToDashboard": "Torna alla dashboard",

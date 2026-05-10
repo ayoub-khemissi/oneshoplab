@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h} 时 {m} 分",
     "inMinutesSeconds": "{m} 分 {s} 秒",
     "inSeconds": "{s} 秒",
-    "quotaTooltip": "今日审计: {used}/{limit}"
+    "quotaTooltip": "今日审计: {used}/{limit}",
+    "confirmRelaunchTitle": "重新启动分析？",
+    "confirmRelaunchBody": "将重新抓取店铺并对每个产品重新评分。今日已使用：{used}/{limit}。",
+    "cancelLabel": "取消"
   },
   "Account": {
     "backToDashboard": "返回控制台",

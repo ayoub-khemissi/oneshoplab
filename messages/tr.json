@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}s {m}d",
     "inMinutesSeconds": "{m}d {s}s",
     "inSeconds": "{s}s",
-    "quotaTooltip": "Bugün denetimler: {used}/{limit}"
+    "quotaTooltip": "Bugün denetimler: {used}/{limit}",
+    "confirmRelaunchTitle": "Analiz yeniden başlatılsın mı?",
+    "confirmRelaunchBody": "Mağaza yeniden taranır ve her ürün yeniden puanlanır. Bugün kullanılan: {used} / {limit}.",
+    "cancelLabel": "İptal"
   },
   "Account": {
     "backToDashboard": "Panele dön",

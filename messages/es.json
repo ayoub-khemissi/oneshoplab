@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}h {m}m",
     "inMinutesSeconds": "{m}m {s}s",
     "inSeconds": "{s}s",
-    "quotaTooltip": "Auditorías hoy: {used}/{limit}"
+    "quotaTooltip": "Auditorías hoy: {used}/{limit}",
+    "confirmRelaunchTitle": "¿Relanzar el análisis?",
+    "confirmRelaunchBody": "Volveremos a leer la tienda y a puntuar cada producto. {used} de {limit} análisis usados hoy.",
+    "cancelLabel": "Cancelar"
   },
   "Account": {
     "backToDashboard": "Volver al panel",

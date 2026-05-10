@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h} ч {m} мин",
     "inMinutesSeconds": "{m} мин {s} с",
     "inSeconds": "{s} с",
-    "quotaTooltip": "Аудитов сегодня: {used}/{limit}"
+    "quotaTooltip": "Аудитов сегодня: {used}/{limit}",
+    "confirmRelaunchTitle": "Запустить анализ заново?",
+    "confirmRelaunchBody": "Магазин будет повторно прочитан, каждый товар оценён заново. Использовано сегодня: {used} из {limit}.",
+    "cancelLabel": "Отмена"
   },
   "Account": {
     "backToDashboard": "В панель",

@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}h {m}m",
     "inMinutesSeconds": "{m}m {s}s",
     "inSeconds": "{s}s",
-    "quotaTooltip": "Audits used today: {used}/{limit}"
+    "quotaTooltip": "Audits used today: {used}/{limit}",
+    "confirmRelaunchTitle": "Relaunch the analysis?",
+    "confirmRelaunchBody": "We'll re-scrape the storefront and re-score every product. {used} of {limit} audits used today.",
+    "cancelLabel": "Cancel"
   },
   "Account": {
     "backToDashboard": "Back to dashboard",

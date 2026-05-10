@@ -52,8 +52,15 @@ export function ScrollAwareSticky({
   return (
     <div
       data-compact={compact ? 'true' : 'false'}
-      style={{ top: topOffsetPx }}
-      className={`group/sticky sticky z-10 -mx-6 md:-mx-10 px-6 md:px-10 bg-[var(--background)]/85 backdrop-blur-md flex flex-col transition-[padding,gap] duration-200 ${
+      // Stick directly under the visible main header. The
+      // --site-header-h CSS var is published by <ScrollHidingHeader>
+      // and tracks the header's actual rendered height (0 when the
+      // header is hidden on mobile scroll-down). Falls back to
+      // topOffsetPx when the var isn't set (e.g. pages without the
+      // ScrollHidingHeader wrapper) so this component stays drop-in
+      // safe.
+      style={{ top: `var(--site-header-h, ${topOffsetPx}px)` }}
+      className={`group/sticky sticky z-10 -mx-4 md:-mx-10 px-4 md:px-10 bg-[var(--background)]/85 backdrop-blur-md flex flex-col transition-[top,padding,gap] duration-200 ${
         compact ? 'pt-1.5 pb-0 gap-1 border-b border-[var(--border)]' : 'pt-4 pb-2 gap-4'
       } ${className}`}
     >

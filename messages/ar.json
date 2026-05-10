@@ -577,7 +577,10 @@
     "inHoursMinutes": "{h}س {m}د",
     "inMinutesSeconds": "{m}د {s}ث",
     "inSeconds": "{s}ث",
-    "quotaTooltip": "تدقيقات اليوم: {used}/{limit}"
+    "quotaTooltip": "تدقيقات اليوم: {used}/{limit}",
+    "confirmRelaunchTitle": "إعادة تشغيل التحليل؟",
+    "confirmRelaunchBody": "سنعيد قراءة المتجر وتقييم كل منتج من جديد. اُستخدم اليوم: {used} من {limit}.",
+    "cancelLabel": "إلغاء"
   },
   "Account": {
     "backToDashboard": "العودة إلى اللوحة",
