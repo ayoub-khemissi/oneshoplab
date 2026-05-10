@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ error?: string; audit?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; audit?: string; next?: string; reset?: string }>;
 }
 
 async function loginAction(formData: FormData) {
@@ -60,6 +60,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
 
   const auditParam = params.audit ?? '';
   const nextParam = params.next ?? '';
+  const justReset = params.reset === '1';
 
   const errorMessage =
     params.error === 'credentials'
@@ -73,7 +74,9 @@ export default async function LoginPage({ searchParams }: PageProps) {
       <Card className="w-full max-w-md">
         <Card.Header>
           <Card.Title>{t('loginTitle')}</Card.Title>
-          <Card.Description>{t('loginSubtitle')}</Card.Description>
+          <Card.Description>
+            {justReset ? t('resetSuccessSubtitle') : t('loginSubtitle')}
+          </Card.Description>
         </Card.Header>
         {isGoogleAuthEnabled() ? (
           <Card.Content className="flex flex-col gap-3 pt-0">
@@ -112,6 +115,14 @@ export default async function LoginPage({ searchParams }: PageProps) {
             <Button type="submit" variant="primary" size="lg" fullWidth>
               {t('loginButton')}
             </Button>
+            <p className="text-sm text-center text-[var(--muted)]">
+              <Link
+                href="/forgot-password"
+                className="text-[var(--accent)] font-medium hover:underline"
+              >
+                {t('forgotLink')}
+              </Link>
+            </p>
             <p className="text-sm text-center text-[var(--muted)]">
               {t('switchToSignup')}{' '}
               <Link

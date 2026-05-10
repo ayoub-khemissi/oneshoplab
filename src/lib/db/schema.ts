@@ -363,6 +363,32 @@ export const shareLinks = mysqlTable(
   })
 );
 
+/**
+ * One-time tokens for the password reset flow. We email the plaintext
+ * token to the user and store only its sha256 in the DB so a leaked
+ * dump can't be replayed. Each row carries an expiry (1h) and a
+ * `used_at` column so a token can't be reused after the reset
+ * succeeds. The unique index on `token_hash` is what makes the lookup
+ * cheap on the reset page.
+ */
+export const passwordResetTokens = mysqlTable(
+  'password_reset_tokens',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: varchar('token_hash', { length: 64 }).notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    usedAt: timestamp('used_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxUserId: index('idx_password_reset_user_id').on(t.userId),
+    uniqHash: uniqueIndex('uniq_password_reset_token_hash').on(t.tokenHash)
+  })
+);
+
 export const subscriptions = mysqlTable('subscriptions', {
   id: varchar('id', { length: 36 }).primaryKey(),
   userId: varchar('user_id', { length: 36 })
