@@ -4,6 +4,7 @@ import { Spinner, toast } from '@heroui/react';
 import { Sparkles, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import {
   createContext,
   useCallback,
@@ -338,6 +339,12 @@ export function RetryableGenerateButton({
   const { state, submit, cancel, costFor, canAfford, productArchived } = useGenerateContext();
   const cost = costFor(field);
   const enabled = available && canAfford(field) && !productArchived;
+  // Confirmation dialog only on the "Generate / Regenerate everything"
+  // button. Per-field actions go through directly — they're cheap
+  // single-shot calls and their cost is already on the button label.
+  // The all-button hits 4-5 generations at once + can overwrite
+  // existing outputs on regenerate, hence the explicit prompt.
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const isAll = field === 'all';
   const inflightField =
@@ -398,25 +405,47 @@ export function RetryableGenerateButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => submit(field)}
-      disabled={!enabled || someoneElse}
-      className={`${baseClasses} ${classes}`}
-      title={!enabled ? t('insufficientCredits') : undefined}
-    >
+    <>
+      <button
+        type="button"
+        onClick={() => (isAll ? setConfirmOpen(true) : submit(field))}
+        disabled={!enabled || someoneElse}
+        className={`${baseClasses} ${classes}`}
+        title={!enabled ? t('insufficientCredits') : undefined}
+      >
+        {isAll ? (
+          <>
+            <Sparkles className="size-3.5" />
+            <span>{hasHistory ? t('regenerateAll') : t('generateAll')}</span>
+          </>
+        ) : (
+          <span>{hasHistory ? t('regenerateField') : t('generateField')}</span>
+        )}
+        <span className={`text-xs font-mono ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+          · {t('creditsCost', { cost })}
+        </span>
+      </button>
       {isAll ? (
-        <>
-          <Sparkles className="size-3.5" />
-          <span>{hasHistory ? t('regenerateAll') : t('generateAll')}</span>
-        </>
-      ) : (
-        <span>{hasHistory ? t('regenerateField') : t('generateField')}</span>
-      )}
-      <span className={`text-xs font-mono ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
-        · {t('creditsCost', { cost })}
-      </span>
-    </button>
+        <ConfirmDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={
+            hasHistory
+              ? t('confirmRegenerateAllTitle')
+              : t('confirmGenerateAllTitle')
+          }
+          description={
+            hasHistory
+              ? t('confirmRegenerateAllBody', { cost })
+              : t('confirmGenerateAllBody', { cost })
+          }
+          confirmLabel={hasHistory ? t('regenerateAll') : t('generateAll')}
+          cancelLabel={t('cancelGeneration')}
+          destructive={hasHistory}
+          onConfirm={() => submit(field)}
+        />
+      ) : null}
+    </>
   );
 }
 

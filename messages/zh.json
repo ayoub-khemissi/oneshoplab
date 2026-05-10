@@ -321,7 +321,11 @@
     "imageQualityLabel": "图像质量",
     "customInstructionsSiteHint": "此店铺的全站指令也会一并应用。",
     "archivedTitle": "此产品已不在你的店铺中",
-    "archivedBody": "你的自定义指令与历史生成已保留。请在店铺重新激活该产品并重新启动分析以恢复。在此之前,新的生成已禁用。"
+    "archivedBody": "你的自定义指令与历史生成已保留。请在店铺重新激活该产品并重新启动分析以恢复。在此之前,新的生成已禁用。",
+    "confirmGenerateAllTitle": "全部生成？",
+    "confirmGenerateAllBody": "将生成标题、描述、标签和 3 张图片。成本：{cost} 积分。",
+    "confirmRegenerateAllTitle": "全部重新生成？",
+    "confirmRegenerateAllBody": "当前的标题、描述、标签和图片将被新的 AI 生成内容替换。成本：{cost} 积分。"
   },
   "Report": {
     "queued": "分析已排队,请稍候——通常约两分钟",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "取消并退款",
     "cancellingShort": "正在取消…",
     "refundedNote": "已退还 {cost} 积分",
-    "retryWithCost": "重试 · {cost} 积分"
+    "retryWithCost": "重试 · {cost} 积分",
+    "confirmDeleteTitle": "删除此图片？",
+    "confirmDeleteBody": "将从网格中移除。生成历史会被保留。"
   },
   "Relaunch": {
     "relaunch": "重新分析",

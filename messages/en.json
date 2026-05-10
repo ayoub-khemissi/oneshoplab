@@ -321,7 +321,11 @@
     "imageQualityLabel": "Image quality",
     "customInstructionsSiteHint": "Site-wide instructions for this store will also be applied.",
     "archivedTitle": "This product is no longer present on your store",
-    "archivedBody": "Your custom instructions and past generations are preserved. Reactivate the product on your store and relaunch the analysis to bring it back. New generations are disabled until then."
+    "archivedBody": "Your custom instructions and past generations are preserved. Reactivate the product on your store and relaunch the analysis to bring it back. New generations are disabled until then.",
+    "confirmGenerateAllTitle": "Generate everything?",
+    "confirmGenerateAllBody": "Title, description, tags and 3 images will be generated. Cost: {cost} credits.",
+    "confirmRegenerateAllTitle": "Regenerate everything?",
+    "confirmRegenerateAllBody": "The current title, description, tags and images will be replaced with new AI generations. Cost: {cost} credits."
   },
   "Report": {
     "queued": "Analysis queued, please wait — this usually takes about two minutes",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "Cancel & refund",
     "cancellingShort": "Cancelling…",
     "refundedNote": "{cost} credits refunded",
-    "retryWithCost": "Retry · {cost} credits"
+    "retryWithCost": "Retry · {cost} credits",
+    "confirmDeleteTitle": "Delete this image?",
+    "confirmDeleteBody": "It will be removed from the grid. The generation history is preserved."
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",

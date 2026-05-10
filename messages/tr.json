@@ -321,7 +321,11 @@
     "imageQualityLabel": "Görsel kalitesi",
     "customInstructionsSiteHint": "Bu mağaza için site geneli talimatlar da uygulanacak.",
     "archivedTitle": "Bu ürün artık mağazanızda yok",
-    "archivedBody": "Özel talimatlarınız ve geçmiş üretimleriniz korunur. Mağazada ürünü yeniden etkinleştirin ve tekrar analiz başlatarak geri getirin. O zamana kadar yeni üretimler devre dışı."
+    "archivedBody": "Özel talimatlarınız ve geçmiş üretimleriniz korunur. Mağazada ürünü yeniden etkinleştirin ve tekrar analiz başlatarak geri getirin. O zamana kadar yeni üretimler devre dışı.",
+    "confirmGenerateAllTitle": "Hepsini üret?",
+    "confirmGenerateAllBody": "Başlık, açıklama, etiketler ve 3 görsel üretilir. Maliyet: {cost} kredi.",
+    "confirmRegenerateAllTitle": "Hepsini yeniden üret?",
+    "confirmRegenerateAllBody": "Mevcut başlık, açıklama, etiketler ve görseller yeni AI üretimleriyle değiştirilir. Maliyet: {cost} kredi."
   },
   "Report": {
     "queued": "Analiz sırada, lütfen bekleyin — genelde yaklaşık iki dakika sürer",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "İptal et ve iade al",
     "cancellingShort": "İptal ediliyor…",
     "refundedNote": "{cost} kredi iade edildi",
-    "retryWithCost": "Yeniden dene · {cost} kredi"
+    "retryWithCost": "Yeniden dene · {cost} kredi",
+    "confirmDeleteTitle": "Bu görsel silinsin mi?",
+    "confirmDeleteBody": "Izgaradan kaldırılır. Üretim geçmişi korunur."
   },
   "Relaunch": {
     "relaunch": "Analizi yeniden başlat",

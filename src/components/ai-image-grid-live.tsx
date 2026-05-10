@@ -5,6 +5,7 @@ import { Plus, RefreshCw, Trash2, X, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { MAX_IMAGES_PER_PRODUCT, type ImageJobRow } from '@/lib/ai/image-jobs-types';
@@ -279,6 +280,12 @@ function ImageTile({
   onRegenerate: () => void;
 }) {
   const t = useTranslations('AiImageGrid');
+  // Confirmation guard for the destructive paths only (failed +
+  // completed). Pending/running cancellations skip the dialog since
+  // they're reversible (credits get refunded) and asking for
+  // confirmation each time would be friction the merchant doesn't
+  // need on an in-flight job.
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (job.status === 'pending' || job.status === 'running') {
     const startedAt = job.startedAt ?? job.createdAt;
@@ -349,7 +356,7 @@ function ImageTile({
         </button>
         <button
           type="button"
-          onClick={onDelete}
+          onClick={() => setConfirmOpen(true)}
           disabled={isBusy === 'delete'}
           aria-label={t('delete')}
           title={t('delete')}
@@ -361,6 +368,16 @@ function ImageTile({
             <X className="size-3.5" />
           )}
         </button>
+        <ConfirmDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t('confirmDeleteTitle')}
+          description={t('confirmDeleteBody')}
+          confirmLabel={t('delete')}
+          cancelLabel={t('cancel')}
+          isPending={isBusy === 'delete'}
+          onConfirm={onDelete}
+        />
       </div>
     );
   }
@@ -398,7 +415,7 @@ function ImageTile({
           </button>
           <button
             type="button"
-            onClick={onDelete}
+            onClick={() => setConfirmOpen(true)}
             disabled={isBusy === 'delete'}
             aria-label={t('delete')}
             title={t('delete')}
@@ -412,6 +429,16 @@ function ImageTile({
           </button>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t('confirmDeleteTitle')}
+        description={t('confirmDeleteBody')}
+        confirmLabel={t('delete')}
+        cancelLabel={t('cancel')}
+        isPending={isBusy === 'delete'}
+        onConfirm={onDelete}
+      />
       <div className="flex justify-end">
         <ImageExpiry createdAt={job.createdAt} retentionDays={retentionDays} />
       </div>

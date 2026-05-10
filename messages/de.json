@@ -321,7 +321,11 @@
     "imageQualityLabel": "Bildqualität",
     "customInstructionsSiteHint": "Sitewide Anweisungen dieses Shops werden ebenfalls angewendet.",
     "archivedTitle": "Dieses Produkt ist nicht mehr in deinem Shop",
-    "archivedBody": "Deine eigenen Anweisungen und der Generierungsverlauf bleiben erhalten. Reaktiviere das Produkt im Shop und starte die Analyse erneut, um es zurückzubringen. Neue Generierungen sind bis dahin deaktiviert."
+    "archivedBody": "Deine eigenen Anweisungen und der Generierungsverlauf bleiben erhalten. Reaktiviere das Produkt im Shop und starte die Analyse erneut, um es zurückzubringen. Neue Generierungen sind bis dahin deaktiviert.",
+    "confirmGenerateAllTitle": "Alles generieren?",
+    "confirmGenerateAllBody": "Titel, Beschreibung, Tags und 3 Bilder werden generiert. Kosten: {cost} Credits.",
+    "confirmRegenerateAllTitle": "Alles neu generieren?",
+    "confirmRegenerateAllBody": "Aktueller Titel, Beschreibung, Tags und Bilder werden durch neue KI-Generierungen ersetzt. Kosten: {cost} Credits."
   },
   "Report": {
     "queued": "Analyse in der Warteschlange, bitte warten — dauert meist etwa zwei Minuten",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "Abbrechen & erstatten",
     "cancellingShort": "Wird abgebrochen…",
     "refundedNote": "{cost} Credits erstattet",
-    "retryWithCost": "Erneut · {cost} Credits"
+    "retryWithCost": "Erneut · {cost} Credits",
+    "confirmDeleteTitle": "Dieses Bild löschen?",
+    "confirmDeleteBody": "Es wird aus dem Raster entfernt. Der Generierungsverlauf bleibt erhalten."
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",

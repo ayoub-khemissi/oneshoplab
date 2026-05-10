@@ -321,7 +321,11 @@
     "imageQualityLabel": "이미지 품질",
     "customInstructionsSiteHint": "이 스토어의 사이트 전체 지침도 적용됩니다.",
     "archivedTitle": "이 제품은 더 이상 스토어에 없습니다",
-    "archivedBody": "사용자 지정 지침과 과거 생성은 보존됩니다. 스토어에서 제품을 다시 활성화하고 분석을 다시 시작하세요. 그때까지 새 생성은 비활성화됩니다."
+    "archivedBody": "사용자 지정 지침과 과거 생성은 보존됩니다. 스토어에서 제품을 다시 활성화하고 분석을 다시 시작하세요. 그때까지 새 생성은 비활성화됩니다.",
+    "confirmGenerateAllTitle": "모두 생성하시겠습니까?",
+    "confirmGenerateAllBody": "제목, 설명, 태그, 이미지 3개가 생성됩니다. 비용: {cost} 크레딧.",
+    "confirmRegenerateAllTitle": "모두 재생성하시겠습니까?",
+    "confirmRegenerateAllBody": "현재 제목, 설명, 태그, 이미지가 새 AI 생성으로 대체됩니다. 비용: {cost} 크레딧."
   },
   "Report": {
     "queued": "분석 대기 중, 잠시만 기다려 주세요 — 보통 약 2분 소요",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "취소하고 환불",
     "cancellingShort": "취소 중…",
     "refundedNote": "{cost} 크레딧 환불됨",
-    "retryWithCost": "재시도 · {cost} 크레딧"
+    "retryWithCost": "재시도 · {cost} 크레딧",
+    "confirmDeleteTitle": "이 이미지를 삭제하시겠습니까?",
+    "confirmDeleteBody": "그리드에서 제거됩니다. 생성 기록은 유지됩니다."
   },
   "Relaunch": {
     "relaunch": "분석 다시 실행",

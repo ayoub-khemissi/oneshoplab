@@ -321,7 +321,11 @@
     "imageQualityLabel": "Qualità immagine",
     "customInstructionsSiteHint": "Verranno applicate anche le istruzioni globali di questo store.",
     "archivedTitle": "Questo prodotto non è più presente sul tuo store",
-    "archivedBody": "Le tue istruzioni personalizzate e lo storico delle generazioni vengono mantenuti. Riattiva il prodotto sul tuo store e rilancia l'analisi per recuperarlo. Le nuove generazioni sono disabilitate fino ad allora."
+    "archivedBody": "Le tue istruzioni personalizzate e lo storico delle generazioni vengono mantenuti. Riattiva il prodotto sul tuo store e rilancia l'analisi per recuperarlo. Le nuove generazioni sono disabilitate fino ad allora.",
+    "confirmGenerateAllTitle": "Generare tutto?",
+    "confirmGenerateAllBody": "Titolo, descrizione, tag e 3 immagini verranno generati. Costo: {cost} crediti.",
+    "confirmRegenerateAllTitle": "Rigenerare tutto?",
+    "confirmRegenerateAllBody": "Titolo, descrizione, tag e immagini attuali saranno sostituiti da nuove generazioni IA. Costo: {cost} crediti."
   },
   "Report": {
     "queued": "Analisi in coda, attendere — di solito impiega un paio di minuti",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "Annulla e rimborsa",
     "cancellingShort": "Annullamento…",
     "refundedNote": "{cost} crediti rimborsati",
-    "retryWithCost": "Riprova · {cost} crediti"
+    "retryWithCost": "Riprova · {cost} crediti",
+    "confirmDeleteTitle": "Eliminare questa immagine?",
+    "confirmDeleteBody": "Sarà rimossa dalla griglia. La cronologia di generazione viene preservata."
   },
   "Relaunch": {
     "relaunch": "Rilancia analisi",

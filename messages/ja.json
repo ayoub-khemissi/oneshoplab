@@ -321,7 +321,11 @@
     "imageQualityLabel": "画像品質",
     "customInstructionsSiteHint": "このストアのサイト全体指示も適用されます。",
     "archivedTitle": "この商品はストアに存在しません",
-    "archivedBody": "カスタム指示と過去の生成は保持されます。ストアで商品を再有効化し、再分析すると復帰します。それまで新規生成は無効です。"
+    "archivedBody": "カスタム指示と過去の生成は保持されます。ストアで商品を再有効化し、再分析すると復帰します。それまで新規生成は無効です。",
+    "confirmGenerateAllTitle": "すべて生成しますか？",
+    "confirmGenerateAllBody": "タイトル、説明、タグ、画像 3 枚を生成します。コスト：{cost} クレジット。",
+    "confirmRegenerateAllTitle": "すべて再生成しますか？",
+    "confirmRegenerateAllBody": "現在のタイトル、説明、タグ、画像が新しい AI 生成に置き換わります。コスト：{cost} クレジット。"
   },
   "Report": {
     "queued": "分析キュー中、お待ちください——通常2分ほど",
@@ -562,7 +566,9 @@
     "cancelAndRefund": "キャンセルして返金",
     "cancellingShort": "キャンセル中…",
     "refundedNote": "{cost} クレジットを返金",
-    "retryWithCost": "再試行 · {cost} クレジット"
+    "retryWithCost": "再試行 · {cost} クレジット",
+    "confirmDeleteTitle": "この画像を削除しますか？",
+    "confirmDeleteBody": "グリッドから削除されます。生成履歴は保持されます。"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",
