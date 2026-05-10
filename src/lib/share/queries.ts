@@ -349,12 +349,12 @@ export async function loadHomeShowcaseCards(): Promise<HomeShowcaseCard[]> {
         : [];
       const aiImages = imageJobs
         .filter((j) => j.status === 'completed' && j.imageUrl)
-        .slice(0, 4)
+        .slice(0, 3)
         .map((j, i) => ({
           src: j.imageUrl!,
           alt: `AI image ${i + 1}`
         }));
-      const sourceImages = (matched.images ?? []).slice(0, 6).map((img) => ({
+      const sourceImages = (matched.images ?? []).slice(0, 3).map((img) => ({
         src: img.src,
         alt: img.alt ?? null
       }));
