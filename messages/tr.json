@@ -163,7 +163,8 @@
     "newPasswordLabel": "Yeni şifre",
     "confirmPasswordLabel": "Şifreyi doğrula",
     "errorPasswordMismatch": "Şifreler eşleşmiyor.",
-    "resetSuccessSubtitle": "Şifre güncellendi. Şimdi giriş yapabilirsin."
+    "resetSuccessSubtitle": "Şifre güncellendi. Şimdi giriş yapabilirsin.",
+    "recaptchaNotice": "Bu site reCAPTCHA tarafından korunmaktadır; Google <privacy>Gizlilik Politikası</privacy> ve <terms>Hizmet Şartları</terms> geçerlidir."
   },
   "Dashboard": {
     "title": "Panel",

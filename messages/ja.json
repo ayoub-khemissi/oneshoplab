@@ -163,7 +163,8 @@
     "newPasswordLabel": "新しいパスワード",
     "confirmPasswordLabel": "パスワードを確認",
     "errorPasswordMismatch": "パスワードが一致しません。",
-    "resetSuccessSubtitle": "パスワードを更新しました。サインインできます。"
+    "resetSuccessSubtitle": "パスワードを更新しました。サインインできます。",
+    "recaptchaNotice": "このサイトは reCAPTCHA によって保護されており、Google の<privacy>プライバシー ポリシー</privacy>と<terms>利用規約</terms>が適用されます。"
   },
   "Dashboard": {
     "title": "ダッシュボード",

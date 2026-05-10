@@ -163,7 +163,8 @@
     "newPasswordLabel": "Nouveau mot de passe",
     "confirmPasswordLabel": "Confirmer le mot de passe",
     "errorPasswordMismatch": "Les mots de passe ne correspondent pas.",
-    "resetSuccessSubtitle": "Mot de passe mis à jour. Tu peux te connecter avec."
+    "resetSuccessSubtitle": "Mot de passe mis à jour. Tu peux te connecter avec.",
+    "recaptchaNotice": "Ce site est protégé par reCAPTCHA et soumis aux <privacy>Règles de confidentialité</privacy> et aux <terms>Conditions d'utilisation</terms> de Google."
   },
   "Dashboard": {
     "title": "Tableau de bord",

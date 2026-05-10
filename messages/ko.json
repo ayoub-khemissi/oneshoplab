@@ -163,7 +163,8 @@
     "newPasswordLabel": "새 비밀번호",
     "confirmPasswordLabel": "비밀번호 확인",
     "errorPasswordMismatch": "비밀번호가 일치하지 않습니다.",
-    "resetSuccessSubtitle": "비밀번호가 업데이트되었습니다. 이제 로그인할 수 있습니다."
+    "resetSuccessSubtitle": "비밀번호가 업데이트되었습니다. 이제 로그인할 수 있습니다.",
+    "recaptchaNotice": "이 사이트는 reCAPTCHA로 보호되며 Google의 <privacy>개인정보처리방침</privacy>과 <terms>서비스 약관</terms>이 적용됩니다."
   },
   "Dashboard": {
     "title": "대시보드",

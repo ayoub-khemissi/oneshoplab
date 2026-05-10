@@ -163,7 +163,8 @@
     "newPasswordLabel": "Nueva contraseña",
     "confirmPasswordLabel": "Confirmar contraseña",
     "errorPasswordMismatch": "Las contraseñas no coinciden.",
-    "resetSuccessSubtitle": "Contraseña actualizada. Ya puedes iniciar sesión."
+    "resetSuccessSubtitle": "Contraseña actualizada. Ya puedes iniciar sesión.",
+    "recaptchaNotice": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos del Servicio</terms> de Google."
   },
   "Dashboard": {
     "title": "Panel",

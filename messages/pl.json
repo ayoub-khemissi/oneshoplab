@@ -163,7 +163,8 @@
     "newPasswordLabel": "Nowe hasło",
     "confirmPasswordLabel": "Potwierdź hasło",
     "errorPasswordMismatch": "Hasła nie pasują do siebie.",
-    "resetSuccessSubtitle": "Hasło zaktualizowane. Możesz się zalogować."
+    "resetSuccessSubtitle": "Hasło zaktualizowane. Możesz się zalogować.",
+    "recaptchaNotice": "Ta strona jest chroniona przez reCAPTCHA — obowiązują <privacy>Polityka prywatności</privacy> oraz <terms>Warunki korzystania z usług</terms> Google."
   },
   "Dashboard": {
     "title": "Panel",

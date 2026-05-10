@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
 import { GoogleSignInButton } from '@/components/google-signin-button';
+import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
 import { claimAnonAudits, clearAnonToken, getAnonToken } from '@/lib/anon';
@@ -218,6 +219,7 @@ export default async function SignupPage({ searchParams }: PageProps) {
                 {t('loginLink')}
               </Link>
             </p>
+            {recaptchaOn ? <RecaptchaLegalNotice /> : null}
           </Card.Footer>
         </Form>
       </Card>

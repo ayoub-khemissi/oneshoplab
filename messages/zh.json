@@ -163,7 +163,8 @@
     "newPasswordLabel": "新密码",
     "confirmPasswordLabel": "确认密码",
     "errorPasswordMismatch": "两次输入的密码不一致。",
-    "resetSuccessSubtitle": "密码已更新。现在可以登录了。"
+    "resetSuccessSubtitle": "密码已更新。现在可以登录了。",
+    "recaptchaNotice": "此网站受 reCAPTCHA 保护，适用 Google <privacy>隐私政策</privacy>和<terms>服务条款</terms>。"
   },
   "Dashboard": {
     "title": "控制台",

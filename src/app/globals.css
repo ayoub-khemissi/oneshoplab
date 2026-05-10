@@ -415,3 +415,12 @@
     border-left: none;
   }
 }
+
+/* =============================================================================
+   reCAPTCHA v3 — hide the floating badge.
+   Required Google branding lives in the legal notice rendered by
+   <RecaptchaLegalNotice> wherever the script runs (today only /signup).
+   ============================================================================= */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}

@@ -163,7 +163,8 @@
     "newPasswordLabel": "Новый пароль",
     "confirmPasswordLabel": "Подтвердите пароль",
     "errorPasswordMismatch": "Пароли не совпадают.",
-    "resetSuccessSubtitle": "Пароль обновлён. Теперь можно войти."
+    "resetSuccessSubtitle": "Пароль обновлён. Теперь можно войти.",
+    "recaptchaNotice": "Этот сайт защищён reCAPTCHA, применяются <privacy>Политика конфиденциальности</privacy> и <terms>Условия использования</terms> Google."
   },
   "Dashboard": {
     "title": "Панель",

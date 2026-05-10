@@ -163,7 +163,8 @@
     "newPasswordLabel": "New password",
     "confirmPasswordLabel": "Confirm password",
     "errorPasswordMismatch": "The passwords don't match.",
-    "resetSuccessSubtitle": "Password updated. You can now sign in with the new one."
+    "resetSuccessSubtitle": "Password updated. You can now sign in with the new one.",
+    "recaptchaNotice": "This site is protected by reCAPTCHA and the Google <privacy>Privacy Policy</privacy> and <terms>Terms of Service</terms> apply."
   },
   "Dashboard": {
     "title": "Dashboard",

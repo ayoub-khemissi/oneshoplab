@@ -163,7 +163,8 @@
     "newPasswordLabel": "Neues Passwort",
     "confirmPasswordLabel": "Passwort bestätigen",
     "errorPasswordMismatch": "Die Passwörter stimmen nicht überein.",
-    "resetSuccessSubtitle": "Passwort aktualisiert. Du kannst dich jetzt anmelden."
+    "resetSuccessSubtitle": "Passwort aktualisiert. Du kannst dich jetzt anmelden.",
+    "recaptchaNotice": "Diese Website ist durch reCAPTCHA geschützt; es gelten die <privacy>Datenschutzerklärung</privacy> und <terms>Nutzungsbedingungen</terms> von Google."
   },
   "Dashboard": {
     "title": "Dashboard",

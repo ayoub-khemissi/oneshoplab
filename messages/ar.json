@@ -163,7 +163,8 @@
     "newPasswordLabel": "كلمة المرور الجديدة",
     "confirmPasswordLabel": "تأكيد كلمة المرور",
     "errorPasswordMismatch": "كلمتا المرور غير متطابقتين.",
-    "resetSuccessSubtitle": "تم تحديث كلمة المرور. يمكنك تسجيل الدخول الآن."
+    "resetSuccessSubtitle": "تم تحديث كلمة المرور. يمكنك تسجيل الدخول الآن.",
+    "recaptchaNotice": "هذا الموقع محمي بواسطة reCAPTCHA وتنطبق <privacy>سياسة الخصوصية</privacy> و<terms>شروط الخدمة</terms> الخاصة بـ Google."
   },
   "Dashboard": {
     "title": "لوحة التحكم",
