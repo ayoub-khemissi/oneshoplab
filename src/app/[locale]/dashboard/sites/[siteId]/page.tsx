@@ -1,5 +1,5 @@
 import { Accordion, Card, Skeleton } from '@heroui/react';
-import { and, desc, eq, gte, inArray, isNull, or, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
 import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
 import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
@@ -257,9 +257,12 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // (count, lastOptimAt) so the products list can:
   //   - flag products with at least one finished generation via a badge,
   //   - default-sort the list by most-recently optimized first.
-  // Single GROUP BY query — cheaper than per-product lookups regardless
-  // of catalog size. Excludes audit-runner kinds (kie_dynamic_audit,
-  // kie_prompt_suggest) which aren't user-visible "optims".
+  // Excludes audit-runner kinds (kie_dynamic_audit, kie_prompt_suggest)
+  // which aren't user-visible "optims".
+  //
+  // Note on resolution: legacy chat/image insert paths never populated
+  // `jobs.productId` — they only stash the `productSourceId` inside the
+  // JSON `inputPayload`. Match on either so we count those rows too.
   const PRODUCT_OPTIM_KINDS = [
     'kie_title',
     'kie_description',
@@ -268,31 +271,35 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     'kie_image_edit',
     'kie_image_generate'
   ] as const;
-  const optimAggRows = await db
-    .select({
-      productId: jobs.productId,
-      lastOptimAt: sql<Date | null>`MAX(${jobs.finishedAt})`.as('last_optim_at'),
-      optimCount: sql<number>`COUNT(*)`.as('optim_count')
-    })
-    .from(jobs)
-    .where(
-      and(
-        eq(jobs.projectId, project.id),
-        eq(jobs.status, 'completed'),
-        inArray(jobs.kind, [...PRODUCT_OPTIM_KINDS])
-      )
-    )
-    .groupBy(jobs.productId);
+  const optimRows = await db.query.jobs.findMany({
+    where: and(
+      eq(jobs.projectId, project.id),
+      eq(jobs.status, 'completed'),
+      inArray(jobs.kind, [...PRODUCT_OPTIM_KINDS])
+    ),
+    columns: {
+      productId: true,
+      inputPayload: true,
+      finishedAt: true
+    }
+  });
   const optimByProductId = new Map<
     string,
     { lastOptimAt: Date | null; count: number }
   >();
-  for (const r of optimAggRows) {
-    if (!r.productId) continue;
-    optimByProductId.set(r.productId, {
-      lastOptimAt: r.lastOptimAt ? new Date(r.lastOptimAt) : null,
-      count: Number(r.optimCount)
-    });
+  for (const r of optimRows) {
+    const sourceId =
+      r.inputPayload && typeof r.inputPayload === 'object' && 'productSourceId' in r.inputPayload
+        ? ((r.inputPayload as { productSourceId?: string | null }).productSourceId ?? null)
+        : null;
+    const id = r.productId ?? (sourceId ? (productIdByKey.get(sourceId) ?? null) : null);
+    if (!id) continue;
+    const cur = optimByProductId.get(id) ?? { lastOptimAt: null, count: 0 };
+    cur.count += 1;
+    if (r.finishedAt && (!cur.lastOptimAt || r.finishedAt > cur.lastOptimAt)) {
+      cur.lastOptimAt = r.finishedAt;
+    }
+    optimByProductId.set(id, cur);
   }
 
   const allProductsWithIds: PaginatedProductWithId[] = (summary.allProducts ?? [])
