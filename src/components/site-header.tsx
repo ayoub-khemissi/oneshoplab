@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
 import { LocaleSwitcher } from './locale-switcher';
 import { MobileMenu } from './mobile-menu';
+import { ScrollHidingHeader } from './scroll-hiding-header';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu } from './user-menu';
 import type { Locale } from '@/i18n/routing';
@@ -22,8 +23,9 @@ export async function SiteHeader() {
   const creditsDisplay = (user?.creditsBalance ?? 0).toLocaleString(locale);
 
   return (
-    <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md sticky top-0 z-20">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 md:gap-4">
+    <ScrollHidingHeader>
+      <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 md:gap-4">
         <div className="flex items-center gap-4 md:gap-4 min-w-0">
           <Link href="/" className="flex items-center gap-2 font-bold tracking-tight shrink-0">
             {/* Two SVGs swapped via the dark: class — light variant on the
@@ -165,7 +167,8 @@ export async function SiteHeader() {
             themeToggle={<ThemeToggle ariaLabel={t('changeTheme')} />}
           />
         </div>
-      </div>
-    </header>
+        </div>
+      </header>
+    </ScrollHidingHeader>
   );
 }
