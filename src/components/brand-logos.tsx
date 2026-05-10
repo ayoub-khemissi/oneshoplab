@@ -1,72 +1,41 @@
-import {
-  SiShopify,
-  SiShopifyHex,
-  SiWix,
-  SiWixHex,
-  SiWoocommerce,
-  SiWoocommerceHex
-} from '@icons-pack/react-simple-icons';
-
 /**
- * Vector logos of the e-commerce platforms we support. Sourced from
- * @icons-pack/react-simple-icons which mirrors the official Simple Icons
- * collection — paths and brand colours stay in sync with whatever the
- * platforms publish.
+ * Vector logos of the e-commerce platforms we support. Sourced as
+ * static SVGs in `public/brand/` (shipped from this repo, no CDN
+ * dependency) so we don't rely on a third-party icon package.
  *
- * Pass `monochrome` to ignore brand colour and fall back to currentColor —
- * useful when the parent context (footer, dimmed surfaces) needs uniform
- * tone instead of brand colours.
+ * Brand colours are baked into the SVGs themselves — no `monochrome`
+ * variant. If a context needs a flat tone (e.g. a dim footer), wrap
+ * the logo in a div with a CSS filter rather than re-render the
+ * vector.
  */
 
 interface LogoProps {
   className?: string;
-  monochrome?: boolean;
 }
 
-export function ShopifyLogo({ className = 'size-5', monochrome = false }: LogoProps) {
-  return (
-    <SiShopify
-      className={className}
-      color={monochrome ? 'currentColor' : SiShopifyHex}
-      aria-label="Shopify"
-    />
-  );
+export function ShopifyLogo({ className = 'size-5' }: LogoProps) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/brand/shopify.svg" alt="Shopify" className={className} />;
 }
 
-export function WoocommerceLogo({
-  className = 'size-5',
-  monochrome = false
-}: LogoProps) {
-  return (
-    <SiWoocommerce
-      className={className}
-      color={monochrome ? 'currentColor' : SiWoocommerceHex}
-      aria-label="WooCommerce"
-    />
-  );
+export function WoocommerceLogo({ className = 'size-5' }: LogoProps) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/brand/woocommerce.svg" alt="WooCommerce" className={className} />;
 }
 
-export function WixLogo({ className = 'size-5', monochrome = false }: LogoProps) {
-  return (
-    <SiWix
-      className={className}
-      color={monochrome ? 'currentColor' : SiWixHex}
-      aria-label="Wix"
-    />
-  );
+export function WixLogo({ className = 'size-5' }: LogoProps) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/brand/wix.svg" alt="Wix" className={className} />;
 }
 
 export function PlatformLogo({
   platform,
-  className,
-  monochrome
+  className
 }: {
   platform: 'shopify' | 'woocommerce' | 'wix';
   className?: string;
-  monochrome?: boolean;
 }) {
-  if (platform === 'shopify') return <ShopifyLogo className={className} monochrome={monochrome} />;
-  if (platform === 'woocommerce')
-    return <WoocommerceLogo className={className} monochrome={monochrome} />;
-  return <WixLogo className={className} monochrome={monochrome} />;
+  if (platform === 'shopify') return <ShopifyLogo className={className} />;
+  if (platform === 'woocommerce') return <WoocommerceLogo className={className} />;
+  return <WixLogo className={className} />;
 }
