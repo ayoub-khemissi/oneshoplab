@@ -543,16 +543,19 @@ function SiteHeaderBar({
   const t = useTranslations('Dashboard');
   return (
     <header className="flex items-center justify-between gap-2 md:gap-3 flex-wrap">
-      <Link
-        href="/dashboard"
-        title={t('backToDashboard')}
-        aria-label={t('backToDashboard')}
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
-      >
-        <ArrowLeft className="size-3.5 md:size-3.5" />
-        <span className="hidden md:inline">{t('backToDashboard')}</span>
-      </Link>
-      <div className="flex items-center gap-1.5 md:gap-2 flex-wrap min-w-0">
+      {/* Left cluster — back arrow + domain. min-w-0 + flex-1 keeps the
+          truncate working when there's not enough room next to the
+          action buttons. */}
+      <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+        <Link
+          href="/dashboard"
+          title={t('backToDashboard')}
+          aria-label={t('backToDashboard')}
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors shrink-0"
+        >
+          <ArrowLeft className="size-3.5" />
+          <span className="hidden md:inline">{t('backToDashboard')}</span>
+        </Link>
         <a
           href={url}
           target="_blank"
@@ -565,11 +568,13 @@ function SiteHeaderBar({
             size={18}
             className="rounded-sm shrink-0 !size-3.5 md:!size-[18px]"
           />
-          <span className="truncate max-w-[110px] sm:max-w-[180px] md:max-w-none">
-            {domain}
-          </span>
+          <span className="truncate">{domain}</span>
           <ExternalLink className="size-3 md:size-4 opacity-60 shrink-0" aria-hidden />
         </a>
+      </div>
+      {/* Right cluster — action buttons. shrink-0 keeps them at full
+          width while the left cluster absorbs the squeeze. */}
+      <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
         <RelaunchAuditButton
           projectId={projectId}
           auditsUsed={auditsUsed}
