@@ -1,5 +1,12 @@
 import { and, eq, inArray, isNotNull, isNull, lt, or } from 'drizzle-orm';
-import { getKieClient, persistKieJobFailure, persistKieJobSuccess } from '@/lib/ai';
+import {
+  getImageModel,
+  getKieClient,
+  persistKieJobFailure,
+  persistKieJobSuccess,
+  type ImageQualityId
+} from '@/lib/ai';
+import type { KieClient } from '@/lib/ai/kie';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
 
@@ -20,15 +27,24 @@ const GENERIC_TIMEOUT_MS = 24 * 60 * 60_000;
 const IMAGE_PENDING_TIMEOUT_MS = 5 * 60_000;
 const IMAGE_RUNNING_TIMEOUT_MS = 8 * 60_000;
 
+// When the orphan first becomes eligible for a retry. 30s is well past
+// kie's normal createTask round-trip (~1-3s), so a row sitting at
+// pending+no-taskId past this window means the original web request
+// died (typical cause: a pm2 reload mid-deploy). We try ONE recreate
+// before giving up — at the cost of, in the rare race where the
+// original call did reach kie before being killed, paying for one
+// duplicate kie task whose webhook we'll then drop on the floor.
+const IMAGE_PENDING_RETRY_AFTER_MS = 30_000;
+
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];
 
 /**
  * Runs every worker tick. Three concerns, each independent:
  *
- *   1. Image jobs in `pending` past IMAGE_PENDING_TIMEOUT_MS: createTask
- *      never wrote a kieTaskId — most likely the web process died
- *      between debiting credits and posting to kie, so the row is an
- *      orphan with no upstream task at all. Mark failed + refund.
+ *   1. Image jobs in `pending` with no kieTaskId: at IMAGE_PENDING_RETRY_AFTER
+ *      we try ONE recreate against kie (resilient to pm2 reload that killed
+ *      the original web request mid-fetch); past IMAGE_PENDING_TIMEOUT we
+ *      give up and refund the user.
  *
  *   2. Image jobs in `running` past IMAGE_RUNNING_TIMEOUT_MS: try one
  *      last poll to kie; if kie doesn't say "success", treat as a
@@ -53,33 +69,134 @@ export async function runKieWatchdog(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 async function reconcilePendingImageJobs(now: number): Promise<void> {
-  const cutoff = new Date(now - IMAGE_PENDING_TIMEOUT_MS);
+  const retryCutoff = new Date(now - IMAGE_PENDING_RETRY_AFTER_MS);
+  const giveupCutoff = new Date(now - IMAGE_PENDING_TIMEOUT_MS);
+
   const orphans = await db.query.jobs.findMany({
     where: and(
       eq(jobs.status, 'pending'),
       inArray(jobs.kind, IMAGE_KINDS),
       isNull(jobs.kieTaskId),
-      // createdAt is always set; startedAt is set in startImageOptim
-      // before kie returns, so a pending job's age is best read from
-      // createdAt. Fall back via OR to cover legacy rows.
-      or(lt(jobs.createdAt, cutoff), lt(jobs.startedAt, cutoff))
+      // Aged past the retry-eligibility window. createdAt is always set;
+      // startedAt is set in startImageOptim BEFORE kie returns so it's
+      // an equally valid age signal — we OR them for legacy rows.
+      or(lt(jobs.createdAt, retryCutoff), lt(jobs.startedAt, retryCutoff))
     ),
     limit: 20
   });
   if (orphans.length === 0) return;
 
-  console.log(`[kie-watchdog] reaping ${orphans.length} orphaned pending image job(s)`);
+  let kie: KieClient | null = null;
+  try {
+    kie = getKieClient();
+  } catch (e) {
+    console.error('[kie-watchdog] kie client unavailable, skipping orphan retry tick', e);
+  }
+
   for (const job of orphans) {
-    try {
-      await persistKieJobFailure(
-        job.id,
-        job.kind,
-        'createTask never returned a taskId — likely a web restart killed the request before kie was reached',
-        'kie_create_lost'
-      );
-    } catch (e) {
-      console.error(`[kie-watchdog] failed to reap orphan ${job.id}`, e);
+    const ageRef = job.createdAt < (job.startedAt ?? job.createdAt) ? job.createdAt : (job.startedAt ?? job.createdAt);
+    const pastGiveup = ageRef < giveupCutoff;
+
+    if (pastGiveup) {
+      try {
+        await persistKieJobFailure(
+          job.id,
+          job.kind,
+          'createTask never returned a taskId — gave up after retry window expired',
+          'kie_create_lost'
+        );
+      } catch (e) {
+        console.error(`[kie-watchdog] failed to reap orphan ${job.id}`, e);
+      }
+      continue;
     }
+
+    // Already retried once: leave it for the giveup branch above.
+    if ((job.attempts ?? 0) > 0) continue;
+
+    // Try to (re)create the kie task from the cached inputPayload. No
+    // kie client = bail until next tick.
+    if (!kie) continue;
+    try {
+      await retryCreateImagePending(kie, job);
+    } catch (e) {
+      console.error(`[kie-watchdog] orphan retry threw for ${job.id}`, e);
+    }
+  }
+}
+
+/**
+ * One-shot retry of `kie.createTask` for an image job whose original web
+ * request died before recording the kieTaskId (typical cause: pm2
+ * reload mid-fetch). Reads the prompt + source URL from the cached
+ * `inputPayload`, bumps `attempts` BEFORE the network call so a hung
+ * retry doesn't get retried by the next tick, and on success flips the
+ * row to `running` — letting the existing running-job watchdog take
+ * over. Failure to reach kie is left as `pending` so the giveup branch
+ * eventually refunds the user.
+ */
+async function retryCreateImagePending(
+  kie: KieClient,
+  job: typeof jobs.$inferSelect
+): Promise<void> {
+  const payload = job.inputPayload as
+    | {
+        userPrompt?: string;
+        sourceImageUrl?: string;
+        imageQualityId?: string;
+      }
+    | null;
+
+  if (!payload?.userPrompt || !payload?.sourceImageUrl || !payload?.imageQualityId) {
+    await persistKieJobFailure(
+      job.id,
+      job.kind,
+      'createTask retry impossible: cached input payload missing fields',
+      'kie_retry_unrecoverable'
+    );
+    return;
+  }
+
+  const quality = getImageModel(payload.imageQualityId as ImageQualityId);
+  const callBackUrl = process.env.APP_URL
+    ? `${process.env.APP_URL.replace(/\/$/, '')}/api/kie/callback`
+    : undefined;
+
+  console.log(
+    `[kie-watchdog] retrying createTask for orphan job ${job.id} (kind=${job.kind})`
+  );
+  // Bump attempts up-front so a slow / hung retry can't be retried
+  // again by the next tick. The next tick will see attempts > 0 and
+  // wait for the giveup window.
+  await db
+    .update(jobs)
+    .set({ attempts: (job.attempts ?? 0) + 1 })
+    .where(eq(jobs.id, job.id));
+
+  try {
+    const { taskId } = await kie.createTask({
+      model: quality.kieModelId,
+      input: {
+        prompt: payload.userPrompt,
+        input_urls: [payload.sourceImageUrl],
+        aspect_ratio: 'auto',
+        resolution: quality.resolution
+      },
+      ...(callBackUrl ? { callBackUrl } : {})
+    });
+    await db
+      .update(jobs)
+      .set({ kieTaskId: taskId, status: 'running', startedAt: new Date() })
+      .where(eq(jobs.id, job.id));
+    console.log(`[kie-watchdog] orphan ${job.id} recovered → kie task ${taskId}`);
+  } catch (e) {
+    // Couldn't reach kie — leave the row pending. The giveup branch
+    // will refund the user once the 5-min cutoff lapses. We don't fail
+    // immediately because a transient kie outage shouldn't burn the
+    // user's credits.
+    console.error(
+      `[kie-watchdog] retry createTask network error for ${job.id}: ${(e as Error).message}`
+    );
   }
 }
 
