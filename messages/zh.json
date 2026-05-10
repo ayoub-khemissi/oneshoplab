@@ -197,6 +197,8 @@
     "sortLabel": "排序",
     "aiStartedBadge": "AI 已开始",
     "aiStartedTitle": "该产品已开始 AI 生成",
+    "aiCompletedBadge": "AI 已完成",
+    "aiCompletedTitle": "该产品的所有 AI 生成均已完成（标题、描述、标签和至少一张图片）",
     "sortRecentlyOptimized": "最近优化",
     "sortScoreAsc": "低分优先",
     "sortScoreDesc": "高分优先",

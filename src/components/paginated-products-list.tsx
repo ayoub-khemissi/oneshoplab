@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { Archive, ArrowRight, Search, Sparkles } from 'lucide-react';
+import { Archive, ArrowRight, CheckCircle2, Search, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -24,6 +24,10 @@ export interface PaginatedProduct {
   /** ISO timestamp of the most recent completed AI generation. Drives
    *  the default "recently optimized" sort. Null = never optimized. */
   lastOptimAtIso?: string | null;
+  /** True when title + description + tags are all generated AND at least
+   *  one image has been generated. Drives the green "AI completed"
+   *  badge, which takes precedence over the "started" one. */
+  aiCompleted?: boolean;
 }
 
 interface PaginatedProductsListProps {
@@ -201,7 +205,15 @@ export function PaginatedProductsList({
                   ) : (
                     <ScoreChip score={p.score} />
                   )}
-                  {!p.archived && (p.optimCount ?? 0) > 0 ? (
+                  {!p.archived && p.aiCompleted ? (
+                    <span
+                      className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--success)]/10 text-[var(--success)] inline-flex items-center gap-1"
+                      title={t('aiCompletedTitle')}
+                    >
+                      <CheckCircle2 className="size-3" aria-hidden />
+                      {t('aiCompletedBadge')}
+                    </span>
+                  ) : !p.archived && (p.optimCount ?? 0) > 0 ? (
                     <span
                       className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] inline-flex items-center gap-1"
                       title={t('aiStartedTitle')}

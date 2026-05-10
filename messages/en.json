@@ -197,6 +197,8 @@
     "sortLabel": "Sort by",
     "aiStartedBadge": "AI started",
     "aiStartedTitle": "AI generation has already started for this product",
+    "aiCompletedBadge": "AI completed",
+    "aiCompletedTitle": "All AI generations are done for this product (title, description, tags, and at least one image)",
     "sortRecentlyOptimized": "Recently optimized",
     "sortScoreAsc": "Lowest score first",
     "sortScoreDesc": "Highest score first",

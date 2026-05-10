@@ -197,6 +197,8 @@
     "sortLabel": "Sortieren nach",
     "aiStartedBadge": "KI begonnen",
     "aiStartedTitle": "KI-Generierung wurde für dieses Produkt bereits gestartet",
+    "aiCompletedBadge": "KI abgeschlossen",
+    "aiCompletedTitle": "Alle KI-Generierungen für dieses Produkt sind abgeschlossen (Titel, Beschreibung, Tags und mindestens ein Bild)",
     "sortRecentlyOptimized": "Zuletzt optimiert",
     "sortScoreAsc": "Niedrigster Score zuerst",
     "sortScoreDesc": "Höchster Score zuerst",

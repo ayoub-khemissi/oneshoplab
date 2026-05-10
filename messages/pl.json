@@ -197,6 +197,8 @@
     "sortLabel": "Sortuj wg",
     "aiStartedBadge": "AI rozpoczęte",
     "aiStartedTitle": "Generowanie AI już rozpoczęte dla tego produktu",
+    "aiCompletedBadge": "AI ukończone",
+    "aiCompletedTitle": "Wszystkie generowania AI ukończone dla tego produktu (tytuł, opis, tagi i co najmniej jeden obraz)",
     "sortRecentlyOptimized": "Ostatnio zoptymalizowane",
     "sortScoreAsc": "Najniższa ocena pierwsza",
     "sortScoreDesc": "Najwyższa ocena pierwsza",

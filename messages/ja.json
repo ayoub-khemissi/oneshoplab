@@ -197,6 +197,8 @@
     "sortLabel": "並び替え",
     "aiStartedBadge": "AI 開始済み",
     "aiStartedTitle": "この商品の AI 生成はすでに開始されています",
+    "aiCompletedBadge": "AI 完了",
+    "aiCompletedTitle": "この商品のすべての AI 生成が完了しました（タイトル、説明、タグ、画像 1 枚以上）",
     "sortRecentlyOptimized": "最近最適化",
     "sortScoreAsc": "スコア低い順",
     "sortScoreDesc": "スコア高い順",

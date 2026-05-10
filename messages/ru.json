@@ -197,6 +197,8 @@
     "sortLabel": "Сортировать по",
     "aiStartedBadge": "ИИ начат",
     "aiStartedTitle": "Генерация ИИ уже начата для этого товара",
+    "aiCompletedBadge": "ИИ завершён",
+    "aiCompletedTitle": "Все генерации ИИ завершены для этого товара (название, описание, теги и хотя бы одно изображение)",
     "sortRecentlyOptimized": "Недавно оптимизированные",
     "sortScoreAsc": "Сначала худшие",
     "sortScoreDesc": "Сначала лучшие",

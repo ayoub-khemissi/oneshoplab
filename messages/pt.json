@@ -197,6 +197,8 @@
     "sortLabel": "Ordenar por",
     "aiStartedBadge": "IA iniciada",
     "aiStartedTitle": "Geração IA já iniciada para este produto",
+    "aiCompletedBadge": "IA concluída",
+    "aiCompletedTitle": "Todas as gerações IA concluídas para este produto (título, descrição, tags e pelo menos uma imagem)",
     "sortRecentlyOptimized": "Otimizados recentemente",
     "sortScoreAsc": "Pior pontuação primeiro",
     "sortScoreDesc": "Melhor pontuação primeiro",

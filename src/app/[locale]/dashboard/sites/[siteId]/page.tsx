@@ -102,6 +102,10 @@ interface PaginatedProductWithId extends PaginatedProductPayload {
   /** ISO timestamp of the most recent completed kie_* generation. Drives
    *  the default "recently optimized" sort. Null = never optimized. */
   lastOptimAtIso: string | null;
+  /** True when title + description + tags + at least one image have all
+   *  been generated. Drives the green "AI completed" badge. Takes
+   *  precedence over the "started" badge when both apply. */
+  aiCompleted: boolean;
 }
 
 interface SummaryShape {
@@ -280,12 +284,13 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     columns: {
       productId: true,
       inputPayload: true,
-      finishedAt: true
+      finishedAt: true,
+      kind: true
     }
   });
   const optimByProductId = new Map<
     string,
-    { lastOptimAt: Date | null; count: number }
+    { lastOptimAt: Date | null; count: number; kinds: Set<string> }
   >();
   for (const r of optimRows) {
     const sourceId =
@@ -294,13 +299,24 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         : null;
     const id = r.productId ?? (sourceId ? (productIdByKey.get(sourceId) ?? null) : null);
     if (!id) continue;
-    const cur = optimByProductId.get(id) ?? { lastOptimAt: null, count: 0 };
+    const cur =
+      optimByProductId.get(id) ??
+      { lastOptimAt: null, count: 0, kinds: new Set<string>() };
     cur.count += 1;
+    cur.kinds.add(r.kind);
     if (r.finishedAt && (!cur.lastOptimAt || r.finishedAt > cur.lastOptimAt)) {
       cur.lastOptimAt = r.finishedAt;
     }
     optimByProductId.set(id, cur);
   }
+  // A product is "AI completed" when title + description + tags are all
+  // done AND at least one image has been generated (edit or generate).
+  // alt_text is not required — it's an auto-add, not a user-driven optim.
+  const isAiCompleted = (kinds: Set<string>): boolean =>
+    kinds.has('kie_title') &&
+    kinds.has('kie_description') &&
+    kinds.has('kie_tags') &&
+    (kinds.has('kie_image_edit') || kinds.has('kie_image_generate'));
 
   const allProductsWithIds: PaginatedProductWithId[] = (summary.allProducts ?? [])
     .map((p) => {
@@ -313,7 +329,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         productId,
         archived: false,
         optimCount: opt?.count ?? 0,
-        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null
+        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null,
+        aiCompleted: opt ? isAiCompleted(opt.kinds) : false
       };
     })
     .filter((p): p is PaginatedProductWithId => p !== null);
@@ -336,7 +353,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         productId: r.id,
         archived: true,
         optimCount: opt?.count ?? 0,
-        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null
+        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null,
+        aiCompleted: opt ? isAiCompleted(opt.kinds) : false
       };
     });
 

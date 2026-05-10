@@ -197,6 +197,8 @@
     "sortLabel": "Sırala",
     "aiStartedBadge": "AI başladı",
     "aiStartedTitle": "Bu ürün için AI üretimi zaten başladı",
+    "aiCompletedBadge": "AI tamamlandı",
+    "aiCompletedTitle": "Bu ürün için tüm AI üretimleri tamamlandı (başlık, açıklama, etiketler ve en az bir görsel)",
     "sortRecentlyOptimized": "Son optimize edilenler",
     "sortScoreAsc": "Önce düşük puan",
     "sortScoreDesc": "Önce yüksek puan",

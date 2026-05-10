@@ -197,6 +197,8 @@
     "sortLabel": "정렬",
     "aiStartedBadge": "AI 시작됨",
     "aiStartedTitle": "이 상품의 AI 생성이 이미 시작되었습니다",
+    "aiCompletedBadge": "AI 완료됨",
+    "aiCompletedTitle": "이 상품의 모든 AI 생성이 완료되었습니다 (제목, 설명, 태그, 이미지 1개 이상)",
     "sortRecentlyOptimized": "최근 최적화",
     "sortScoreAsc": "낮은 점수부터",
     "sortScoreDesc": "높은 점수부터",
