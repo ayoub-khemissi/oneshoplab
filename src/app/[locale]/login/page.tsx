@@ -12,7 +12,8 @@ import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { signIn } from '@/lib/auth';
+import { GoogleSignInButton } from '@/components/google-signin-button';
+import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'Sign in',
@@ -74,6 +75,19 @@ export default async function LoginPage({ searchParams }: PageProps) {
           <Card.Title>{t('loginTitle')}</Card.Title>
           <Card.Description>{t('loginSubtitle')}</Card.Description>
         </Card.Header>
+        {isGoogleAuthEnabled() ? (
+          <Card.Content className="flex flex-col gap-3 pt-0">
+            <GoogleSignInButton
+              redirectTo={nextParam && nextParam.startsWith('/') ? nextParam : '/dashboard'}
+              label={t('continueWithGoogle')}
+            />
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider font-mono text-[var(--muted)]">
+              <span className="flex-1 h-px bg-[var(--border)]" />
+              {t('orSeparator')}
+              <span className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+          </Card.Content>
+        ) : null}
         <Form action={loginAction}>
           <input type="hidden" name="audit" value={auditParam} />
           <input type="hidden" name="next" value={nextParam} />

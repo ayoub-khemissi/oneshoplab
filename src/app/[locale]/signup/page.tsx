@@ -20,11 +20,14 @@ export const metadata: Metadata = {
   title: 'Sign up',
   robots: { index: false, follow: false }
 };
+import { GoogleSignInButton } from '@/components/google-signin-button';
+import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
 import { claimAnonAudits, clearAnonToken, getAnonToken } from '@/lib/anon';
-import { hashPassword, signIn } from '@/lib/auth';
+import { hashPassword, isGoogleAuthEnabled, signIn } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
+import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 
 interface PageProps {
   searchParams: Promise<{ error?: string; audit?: string; next?: string }>;
@@ -39,11 +42,20 @@ async function signupAction(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim() || null;
   const audit = String(formData.get('audit') ?? '').trim();
   const next = String(formData.get('next') ?? '').trim();
+  const recaptchaToken = String(formData.get('recaptcha_token') ?? '');
 
   const carry = new URLSearchParams();
   if (audit) carry.set('audit', audit);
   if (next) carry.set('next', next);
   const carryQs = carry.toString() ? `&${carry.toString()}` : '';
+
+  // reCAPTCHA v3 score check. Silent — no challenge. When the env is
+  // unconfigured (dev / contributor onboarding) verifyRecaptcha returns
+  // ok=true so the form still works locally without a key.
+  const captcha = await verifyRecaptcha(recaptchaToken, 'signup');
+  if (!captcha.ok) {
+    redirect(`/signup?error=captcha${carryQs}`);
+  }
 
   if (!email.includes('@') || email.length < 3) {
     redirect(`/signup?error=invalid_email${carryQs}`);
@@ -111,9 +123,13 @@ export default async function SignupPage({ searchParams }: PageProps) {
         ? t('errorPasswordTooShort')
         : params.error === 'invalid_email'
           ? t('errorInvalidEmail')
-          : params.error
-            ? t('errorGeneric')
-            : null;
+          : params.error === 'captcha'
+            ? t('errorCaptcha')
+            : params.error
+              ? t('errorGeneric')
+              : null;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const recaptchaOn = isRecaptchaEnabled() && Boolean(recaptchaSiteKey);
 
   return (
     <main className="flex-1 flex items-center justify-center p-8">
@@ -122,9 +138,25 @@ export default async function SignupPage({ searchParams }: PageProps) {
           <Card.Title>{t('signupTitle')}</Card.Title>
           <Card.Description>{t('signupSubtitle')}</Card.Description>
         </Card.Header>
+        {isGoogleAuthEnabled() ? (
+          <Card.Content className="flex flex-col gap-3 pt-0">
+            <GoogleSignInButton
+              redirectTo={nextParam && nextParam.startsWith('/') ? nextParam : '/dashboard'}
+              label={t('continueWithGoogle')}
+            />
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider font-mono text-[var(--muted)]">
+              <span className="flex-1 h-px bg-[var(--border)]" />
+              {t('orSeparator')}
+              <span className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+          </Card.Content>
+        ) : null}
         <Form action={signupAction}>
           <input type="hidden" name="audit" value={auditParam} />
           <input type="hidden" name="next" value={nextParam} />
+          {recaptchaOn ? (
+            <RecaptchaWrapper siteKey={recaptchaSiteKey!} action="signup" />
+          ) : null}
           <Card.Content className="flex flex-col gap-5">
             <TextField fullWidth name="name" type="text" autoFocus>
               <Label>{t('nameLabel')}</Label>
