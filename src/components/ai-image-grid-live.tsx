@@ -221,7 +221,7 @@ export function AiImageGridLive({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {rawJobs.map((job) => (
           <ImageTile
             key={job.id}
@@ -398,7 +398,7 @@ function ImageTile({
       <div className="relative group">
         <ImageZoom url={url} alt="Generated" downloadName={`ai-${job.id}.png`} />
         {/* Per-image action overlay: delete + regenerate, hover-revealed */}
-        <div className="absolute top-1.5 left-1.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity z-10">
+        <div className="absolute top-1.5 left-1.5 flex flex-col gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100 transition-opacity z-10">
           <button
             type="button"
             onClick={onRegenerate}

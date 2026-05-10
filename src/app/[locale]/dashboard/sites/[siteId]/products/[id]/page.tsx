@@ -743,7 +743,7 @@ function PastGenResult({ item }: { item: OptimHistoryItem }) {
       return <p className="text-[var(--muted)] italic">—</p>;
     }
     return (
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {urls.slice(0, 6).map((url) => (
           <a
             key={url}

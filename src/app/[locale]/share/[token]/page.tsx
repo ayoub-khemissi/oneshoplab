@@ -345,7 +345,7 @@ function ImageRow({
           {emptyLabel}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {urls.slice(0, 3).map((url, i) => (
             <ImageZoom
               key={`${url}-${i}`}

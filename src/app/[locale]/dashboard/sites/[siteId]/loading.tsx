@@ -32,7 +32,7 @@ export default function ReportLoading() {
                   <Skeleton className="h-3 w-24 rounded" />
                   <Skeleton className="h-5 w-3/4 rounded" />
                   <Skeleton className="h-16 w-full rounded" />
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     <Skeleton className="aspect-square rounded-md" />
                     <Skeleton className="aspect-square rounded-md" />
                     <Skeleton className="aspect-square rounded-md" />

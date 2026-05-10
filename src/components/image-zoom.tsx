@@ -110,7 +110,7 @@ export function ImageZoom({
           type="button"
           onClick={downloadImage}
           disabled={downloading}
-          className="absolute top-1.5 right-1.5 size-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity disabled:opacity-50"
+          className="absolute top-1.5 right-1.5 size-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100 transition-opacity disabled:opacity-50"
           aria-label="Download image"
           title="Download"
         >
