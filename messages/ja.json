@@ -38,7 +38,10 @@
     "changeTheme": "テーマ切替",
     "buyCredits": "クレジット購入",
     "profile": "プロフィール",
-    "subscription": "サブスク"
+    "subscription": "サブスク",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "menuTitle": "メニュー"
   },
   "Footer": {
     "tagline": "AIによる商品ページ最適化",

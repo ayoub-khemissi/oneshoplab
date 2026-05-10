@@ -38,7 +38,10 @@
     "changeTheme": "Cambia tema",
     "buyCredits": "Acquista crediti",
     "profile": "Profilo",
-    "subscription": "Abbonamento"
+    "subscription": "Abbonamento",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
+    "menuTitle": "Menu"
   },
   "Footer": {
     "tagline": "Ottimizzazione AI delle schede prodotto",

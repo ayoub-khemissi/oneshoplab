@@ -8,7 +8,7 @@ import { Card, Skeleton } from '@heroui/react';
  */
 export default function DashboardLoading() {
   return (
-    <main className="flex-1 p-8 max-w-5xl w-full mx-auto flex flex-col gap-6">
+    <main className="flex-1 p-4 md:p-8 max-w-5xl w-full mx-auto flex flex-col gap-6">
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div className="flex flex-col gap-2">
           <Skeleton className="h-9 w-48 rounded" />

@@ -442,7 +442,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   }
 
   return (
-    <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-8">
+    <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       {isLoading ? <AutoRefresh /> : null}
 
       <ScrollAwareSticky topOffsetPx={68}>

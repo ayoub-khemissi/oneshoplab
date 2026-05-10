@@ -78,7 +78,7 @@ export default async function DashboardPage() {
   const canAddSite = sites.length < siteLimit;
 
   return (
-    <main className="flex-1 p-8 max-w-6xl w-full mx-auto flex flex-col gap-8">
+    <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-4xl font-bold tracking-tight">{t('title')}</h1>

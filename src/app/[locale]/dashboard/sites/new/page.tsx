@@ -66,7 +66,7 @@ export default async function AddSitePage({ searchParams }: PageProps) {
           : null;
 
   return (
-    <main className="flex-1 p-6 md:p-10 max-w-2xl w-full mx-auto flex flex-col gap-8">
+    <main className="flex-1 p-4 md:p-10 max-w-2xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       <Link
         href="/dashboard"
         className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors w-fit"

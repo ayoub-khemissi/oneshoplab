@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
 import { LocaleSwitcher } from './locale-switcher';
+import { MobileMenu } from './mobile-menu';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu } from './user-menu';
 import type { Locale } from '@/i18n/routing';
@@ -18,11 +19,13 @@ export async function SiteHeader() {
   const user = session?.user;
   const locale = (await getLocale()) as Locale;
 
+  const creditsDisplay = (user?.creditsBalance ?? 0).toLocaleString(locale);
+
   return (
     <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md sticky top-0 z-20">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 md:gap-4">
+        <div className="flex items-center gap-4 md:gap-4 min-w-0">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight shrink-0">
             {/* Two SVGs swapped via the dark: class — light variant on the
                 dark theme (light fill on dark bg) and vice versa. eslint-disable
                 because the project standard is plain <img>, not next/image. */}
@@ -47,20 +50,20 @@ export async function SiteHeader() {
           </Link>
           <Link
             href="/pricing"
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="hidden md:inline text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
           >
             {t('pricing')}
           </Link>
           {user ? (
             <Link
               href="/dashboard"
-              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="hidden md:inline text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
             >
               {t('dashboard')}
             </Link>
           ) : null}
         </div>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="hidden md:flex items-center gap-1 text-sm">
           <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
           <ThemeToggle ariaLabel={t('changeTheme')} />
           <span className="w-px h-6 bg-[var(--border)] mx-1.5" aria-hidden />
@@ -111,6 +114,57 @@ export async function SiteHeader() {
             </>
           )}
         </nav>
+
+        {/* Mobile-only: credits chip (when signed in) + burger drawer.
+            Hidden on md+ where the full nav above takes over. */}
+        <div className="md:hidden flex items-center gap-2">
+          {user ? (
+            <Link
+              href="/account/credits"
+              title={t('credits')}
+              aria-label={`${creditsDisplay} ${t('credits')}`}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-semibold hover:bg-[var(--accent)]/20 transition-colors"
+            >
+              <Coins className="size-3.5" aria-hidden />
+              {creditsDisplay}
+            </Link>
+          ) : null}
+          <MobileMenu
+            user={
+              user
+                ? {
+                    name: user.name ?? null,
+                    email: user.email ?? null,
+                    plan: user.plan ?? 'free',
+                    creditsBalance: user.creditsBalance ?? 0
+                  }
+                : null
+            }
+            creditsDisplay={creditsDisplay}
+            labels={{
+              signIn: t('signIn'),
+              signUp: t('signUp'),
+              pricing: t('pricing'),
+              dashboard: t('dashboard'),
+              credits: t('credits'),
+              signedInAs: t('signedInAs'),
+              profile: t('profile'),
+              subscription: t('subscription'),
+              preferences: t('preferences'),
+              buyCredits: t('buyCredits'),
+              signOut: t('signOut'),
+              appearance: t('changeTheme'),
+              language: t('changeLanguage'),
+              closeMenu: t('closeMenu'),
+              openMenu: t('openMenu'),
+              menuTitle: t('menuTitle')
+            }}
+            localeSwitcher={
+              <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
+            }
+            themeToggle={<ThemeToggle ariaLabel={t('changeTheme')} />}
+          />
+        </div>
       </div>
     </header>
   );

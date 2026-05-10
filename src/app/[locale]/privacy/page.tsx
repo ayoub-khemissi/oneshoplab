@@ -13,7 +13,7 @@ const SERVICE_URL = 'https://oneshoplab.com';
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="flex-1 px-6 md:px-10 py-10 max-w-3xl w-full mx-auto">
+    <main className="flex-1 px-4 md:px-10 py-6 md:py-10 max-w-3xl w-full mx-auto">
       <article className="prose prose-sm dark:prose-invert max-w-none leading-relaxed">
         <header className="not-prose flex flex-col gap-2 mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Privacy Policy</h1>

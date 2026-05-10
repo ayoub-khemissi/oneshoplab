@@ -38,7 +38,10 @@
     "changeTheme": "Tema değiştir",
     "buyCredits": "Kredi satın al",
     "profile": "Profil",
-    "subscription": "Abonelik"
+    "subscription": "Abonelik",
+    "openMenu": "Menüyü aç",
+    "closeMenu": "Menüyü kapat",
+    "menuTitle": "Menü"
   },
   "Footer": {
     "tagline": "Yapay zekâ tabanlı ürün sayfası optimizasyonu",

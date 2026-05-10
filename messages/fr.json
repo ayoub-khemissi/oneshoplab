@@ -38,7 +38,10 @@
     "changeTheme": "Changer le thème",
     "buyCredits": "Acheter des crédits",
     "profile": "Profil",
-    "subscription": "Abonnement"
+    "subscription": "Abonnement",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "menuTitle": "Menu"
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",

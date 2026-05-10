@@ -38,7 +38,10 @@
     "changeTheme": "Сменить тему",
     "buyCredits": "Купить кредиты",
     "profile": "Профиль",
-    "subscription": "Подписка"
+    "subscription": "Подписка",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню",
+    "menuTitle": "Меню"
   },
   "Footer": {
     "tagline": "ИИ-оптимизация товарных страниц",

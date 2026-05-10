@@ -34,7 +34,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
               : null;
 
   return (
-    <main className="px-6 md:px-10 pb-10 max-w-4xl w-full mx-auto flex flex-col gap-6">
+    <main className="px-4 md:px-10 pb-8 md:pb-10 max-w-4xl w-full mx-auto flex flex-col gap-6">
       <header className="flex flex-col gap-2 mt-4">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">

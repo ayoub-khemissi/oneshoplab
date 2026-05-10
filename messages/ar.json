@@ -38,7 +38,10 @@
     "changeTheme": "تبديل السمة",
     "buyCredits": "شراء أرصدة",
     "profile": "الملف الشخصي",
-    "subscription": "الاشتراك"
+    "subscription": "الاشتراك",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "menuTitle": "القائمة"
   },
   "Footer": {
     "tagline": "تحسين صفحات المنتجات بالذكاء الاصطناعي",

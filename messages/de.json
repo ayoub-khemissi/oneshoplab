@@ -38,7 +38,10 @@
     "changeTheme": "Theme wechseln",
     "buyCredits": "Credits kaufen",
     "profile": "Profil",
-    "subscription": "Abonnement"
+    "subscription": "Abonnement",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "menuTitle": "Menü"
   },
   "Footer": {
     "tagline": "KI-Optimierung von Produktseiten",

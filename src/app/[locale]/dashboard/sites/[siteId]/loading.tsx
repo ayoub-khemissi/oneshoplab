@@ -7,7 +7,7 @@ import { Card, Skeleton } from '@heroui/react';
  */
 export default function ReportLoading() {
   return (
-    <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-8">
+    <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       <header className="flex flex-col gap-2">
         <Skeleton className="h-10 w-72 rounded" />
         <Skeleton className="h-4 w-48 rounded" />

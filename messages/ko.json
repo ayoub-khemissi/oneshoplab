@@ -38,7 +38,10 @@
     "changeTheme": "테마 변경",
     "buyCredits": "크레딧 구매",
     "profile": "프로필",
-    "subscription": "구독"
+    "subscription": "구독",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "menuTitle": "메뉴"
   },
   "Footer": {
     "tagline": "AI 기반 제품 페이지 최적화",

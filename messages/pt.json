@@ -38,7 +38,10 @@
     "changeTheme": "Mudar tema",
     "buyCredits": "Comprar créditos",
     "profile": "Perfil",
-    "subscription": "Assinatura"
+    "subscription": "Assinatura",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "menuTitle": "Menu"
   },
   "Footer": {
     "tagline": "Otimização IA de páginas de produto",

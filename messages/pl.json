@@ -38,7 +38,10 @@
     "changeTheme": "Zmień motyw",
     "buyCredits": "Kup kredyty",
     "profile": "Profil",
-    "subscription": "Subskrypcja"
+    "subscription": "Subskrypcja",
+    "openMenu": "Otwórz menu",
+    "closeMenu": "Zamknij menu",
+    "menuTitle": "Menu"
   },
   "Footer": {
     "tagline": "Optymalizacja AI stron produktów",

@@ -42,7 +42,7 @@ export default async function SharePage({ params }: PageProps) {
   const t = await getTranslations('Share');
 
   return (
-    <main className="flex-1 px-6 md:px-10 py-10 max-w-5xl w-full mx-auto flex flex-col gap-10">
+    <main className="flex-1 px-4 md:px-10 py-6 md:py-10 max-w-5xl w-full mx-auto flex flex-col gap-8 md:gap-10">
       {/* Header ----------------------------------------------------- */}
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('publicEyebrow')}</span>

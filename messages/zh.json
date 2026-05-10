@@ -38,7 +38,10 @@
     "changeTheme": "切换主题",
     "buyCredits": "购买积分",
     "profile": "资料",
-    "subscription": "订阅"
+    "subscription": "订阅",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "menuTitle": "菜单"
   },
   "Footer": {
     "tagline": "AI 产品页优化",

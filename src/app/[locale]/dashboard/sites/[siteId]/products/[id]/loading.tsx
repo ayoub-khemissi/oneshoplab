@@ -7,7 +7,7 @@ import { Card, Skeleton } from '@heroui/react';
  */
 export default function ProductDetailLoading() {
   return (
-    <main className="flex-1 p-6 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
+    <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
       <header className="flex items-center justify-between gap-4 flex-wrap">
         <Skeleton className="h-4 w-44 rounded" />
         <div className="flex items-center gap-3">
