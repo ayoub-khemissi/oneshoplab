@@ -40,10 +40,11 @@ export async function ShowcaseSection() {
         </p>
       </header>
       <div className="flex flex-col gap-6">
-        {cards.map((card) => (
+        {cards.map((card, index) => (
           <ShowcaseCard
             key={card.token}
             card={card}
+            defaultExpanded={index === 0}
             labels={{
               source: t('sourceLabel'),
               ai: t('aiLabel'),
@@ -95,10 +96,16 @@ function platformDisplayName(p: NonNullable<HomeShowcaseCard['platform']>): stri
 
 function ShowcaseCard({
   card,
-  labels
+  labels,
+  defaultExpanded
 }: {
   card: HomeShowcaseCard;
   labels: ShowcaseLabels;
+  /** Whether the card body is open on first paint. We default the
+   *  first card to true and the rest to false so the homepage doesn't
+   *  open with three full-height case studies stacked — the visitor
+   *  expands the next ones as they scroll. */
+  defaultExpanded: boolean;
 }) {
   // Header is always visible (domain link); body (products + CTA)
   // hides when the visitor collapses the card. The shell owns the
@@ -133,7 +140,7 @@ function ShowcaseCard({
   return (
     <CollapsibleCardShell
       header={header}
-      defaultExpanded
+      defaultExpanded={defaultExpanded}
       expandLabel={labels.expand}
       collapseLabel={labels.collapse}
     >
