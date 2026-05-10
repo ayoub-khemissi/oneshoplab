@@ -1,5 +1,5 @@
 import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { CollapsibleCardShell } from '@/components/collapsible-card-shell';
 import { ExpandableText } from '@/components/expandable-text';
@@ -20,7 +20,8 @@ import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/querie
  * stays readable at one glance.
  */
 export async function ShowcaseSection() {
-  const cards = await loadHomeShowcaseCards();
+  const locale = await getLocale();
+  const cards = await loadHomeShowcaseCards({ preferredLocale: locale });
   if (cards.length === 0) return null;
 
   const t = await getTranslations('Showcase');
