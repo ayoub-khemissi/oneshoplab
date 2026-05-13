@@ -1,11 +1,22 @@
 import { Card } from '@heroui/react';
-import { ArrowRight, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronDown,
+  ExternalLink,
+  ImageIcon,
+  Sparkles
+} from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ImageZoom } from '@/components/image-zoom';
-import { loadSharedAudit, type SharedProduct } from '@/lib/share/queries';
+import {
+  loadSharedAudit,
+  type SharedAuditSnapshot,
+  type SharedProduct
+} from '@/lib/share/queries';
+import { translateIssueText } from '@/lib/share/issue-text';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +51,8 @@ export default async function SharePage({ params }: PageProps) {
   if (!data) notFound();
 
   const t = await getTranslations('Share');
+  const tIssues = await getTranslations('Issues');
+  const tReport = await getTranslations('Report');
 
   return (
     <main className="flex-1 px-4 md:px-10 py-6 md:py-10 max-w-5xl w-full mx-auto flex flex-col gap-8 md:gap-10">
@@ -89,6 +102,35 @@ export default async function SharePage({ params }: PageProps) {
             <ScoreBox label={t('axisVisual')} value={data.scores.visualQuality} />
             <ScoreBox label={t('axisTagging')} value={data.scores.taggingQuality} />
           </div>
+
+          {/* Collapsible "audit detail" — kept inside the scores card so
+              the layout reads as one block. Closed by default so the
+              before/after products below stay visible without
+              scrolling past a wall of stats. */}
+          {data.details ? (
+            <AuditDetailDisclosure
+              details={data.details}
+              labels={{
+                toggle: t('detailToggle'),
+                toggleHide: t('detailToggleHide'),
+                statsTitle: tReport('quickStats'),
+                avgScore: tReport('avgScore'),
+                avgImages: tReport('avgImages'),
+                avgDescLength: tReport('avgDescLength'),
+                avgTags: tReport('avgTags'),
+                productsNoImage: tReport('productsNoImage'),
+                productsNoDesc: tReport('productsNoDesc'),
+                productsNoTags: t('detailProductsNoTags'),
+                productsNoAlt: t('detailProductsNoAlt'),
+                worstTitle: t('detailWorstTitle'),
+                worstHint: t('detailWorstHint'),
+                sampledLabel: t('detailSampledLabel'),
+                charsSuffix: t('detailCharsSuffix'),
+                issuesLabel: t('detailIssuesLabel')
+              }}
+              translateIssue={(issue) => translateIssueText(tIssues, issue)}
+            />
+          ) : null}
         </Card>
       ) : null}
 
@@ -148,6 +190,170 @@ export default async function SharePage({ params }: PageProps) {
         {t('footerNote', { date: data.generatedAt.toLocaleDateString(locale) })}
       </p>
     </main>
+  );
+}
+
+interface AuditDetailLabels {
+  toggle: string;
+  toggleHide: string;
+  statsTitle: string;
+  avgScore: string;
+  avgImages: string;
+  avgDescLength: string;
+  avgTags: string;
+  productsNoImage: string;
+  productsNoDesc: string;
+  productsNoTags: string;
+  productsNoAlt: string;
+  worstTitle: string;
+  worstHint: string;
+  sampledLabel: string;
+  charsSuffix: string;
+  issuesLabel: string;
+}
+
+function AuditDetailDisclosure({
+  details,
+  labels,
+  translateIssue
+}: {
+  details: NonNullable<SharedAuditSnapshot['details']>;
+  labels: AuditDetailLabels;
+  translateIssue: (issue: {
+    code: string;
+    data?: Record<string, string | number>;
+  }) => string;
+}) {
+  // Render statistic tiles only when the backing field is present so
+  // legacy audits don't show "—" everywhere.
+  const stats: Array<{ label: string; value: string }> = [];
+  if (details.avgProductScore != null) {
+    stats.push({
+      label: labels.avgScore,
+      value: `${Math.round(details.avgProductScore)} / 100`
+    });
+  }
+  if (details.averages.imageCount != null) {
+    stats.push({
+      label: labels.avgImages,
+      value: details.averages.imageCount.toFixed(1)
+    });
+  }
+  if (details.averages.descriptionLength != null) {
+    stats.push({
+      label: labels.avgDescLength,
+      value: `${Math.round(details.averages.descriptionLength)} ${labels.charsSuffix}`
+    });
+  }
+  if (details.averages.tagCount != null) {
+    stats.push({
+      label: labels.avgTags,
+      value: details.averages.tagCount.toFixed(1)
+    });
+  }
+  if (details.distribution.imagesZero != null) {
+    stats.push({
+      label: labels.productsNoImage,
+      value: String(details.distribution.imagesZero)
+    });
+  }
+  if (details.distribution.descEmpty != null) {
+    stats.push({
+      label: labels.productsNoDesc,
+      value: String(details.distribution.descEmpty)
+    });
+  }
+  if (details.distribution.tagsZero != null) {
+    stats.push({
+      label: labels.productsNoTags,
+      value: String(details.distribution.tagsZero)
+    });
+  }
+  if (details.distribution.altNone != null) {
+    stats.push({
+      label: labels.productsNoAlt,
+      value: String(details.distribution.altNone)
+    });
+  }
+
+  const hasContent = stats.length > 0 || details.worstProducts.length > 0;
+  if (!hasContent) return null;
+
+  return (
+    <details className="group rounded-md border border-[var(--border)] bg-[var(--background)]/40 mt-1">
+      <summary className="flex items-center justify-between gap-2 cursor-pointer list-none px-4 py-3 text-sm font-medium hover:text-[var(--accent)] transition-colors [&::-webkit-details-marker]:hidden">
+        <span className="inline-flex items-center gap-2">
+          {labels.toggle}
+          {details.sampled != null ? (
+            <span className="text-xs text-[var(--muted)] font-normal">
+              · {labels.sampledLabel.replace('{count}', String(details.sampled))}
+            </span>
+          ) : null}
+        </span>
+        <ChevronDown
+          className="size-4 shrink-0 text-[var(--muted)] transition-transform duration-200 group-open:rotate-180"
+          aria-hidden
+        />
+      </summary>
+      <div className="px-4 pb-4 flex flex-col gap-5 text-sm">
+        {stats.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium">
+              {labels.statsTitle}
+            </span>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {stats.map((s) => (
+                <div
+                  key={s.label}
+                  className="px-3 py-2 rounded-md bg-[var(--default)]/40 border border-[var(--border)]"
+                >
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--muted)] font-mono">
+                    {s.label}
+                  </div>
+                  <div className="text-base font-semibold mt-0.5 tabular-nums">
+                    {s.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {details.worstProducts.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium">
+              {labels.worstTitle}
+            </span>
+            <p className="text-xs text-[var(--muted)] leading-relaxed">
+              {labels.worstHint}
+            </p>
+            <ul className="flex flex-col gap-2">
+              {details.worstProducts.map((p, idx) => (
+                <li
+                  key={`${idx}-${p.title}`}
+                  className="px-3 py-2 rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex flex-col gap-1"
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="font-medium text-sm truncate">{p.title}</span>
+                    <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
+                      {p.score}/100
+                    </span>
+                  </div>
+                  {p.issues.length > 0 ? (
+                    <p className="text-xs text-[var(--muted)] leading-relaxed">
+                      <span className="text-[var(--foreground)] font-medium">
+                        {labels.issuesLabel}:
+                      </span>{' '}
+                      {p.issues.map((i) => translateIssue(i)).join(' · ')}
+                    </p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
+    </details>
   );
 }
 

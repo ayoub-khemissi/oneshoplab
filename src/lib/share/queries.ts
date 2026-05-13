@@ -1,6 +1,6 @@
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { audits, projects, shareLinks } from '@/lib/db/schema';
+import { audits, jobs, projects, shareLinks } from '@/lib/db/schema';
 import { listOptimHistory, listProductImageJobs } from '@/lib/ai';
 
 /**
@@ -66,10 +66,14 @@ export async function listProductsWithGenerations(
   });
   if (!project) return [];
 
-  const audit = await db.query.audits.findFirst({
-    where: eq(audits.projectId, project.id),
-    orderBy: [desc(audits.createdAt)]
-  });
+  const { findLatestAuditIdWhere } = await import('@/lib/audit/find-latest');
+  const auditId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
+  const audit = auditId
+    ? await db.query.audits.findFirst({
+        where: eq(audits.id, auditId),
+        columns: { summary: true }
+      })
+    : null;
   const summary = audit?.summary as
     | {
         allProducts?: { sourceId?: string | null; handle?: string | null; title: string }[];
@@ -87,25 +91,68 @@ export async function listProductsWithGenerations(
     hasImages: boolean;
   }[] = [];
 
+  // Single bulk query: pull every completed kie_title / description /
+  // tags / image_edit job for the project, then bucket in memory by
+  // productSourceId. On big catalogs this replaces N × 4 round-trips
+  // (5000 products → 20K queries, ~30s) with a single one.
+  const completedJobs = await db.query.jobs.findMany({
+    where: and(
+      eq(jobs.projectId, project.id),
+      eq(jobs.status, 'completed'),
+      inArray(jobs.kind, ['kie_title', 'kie_description', 'kie_tags', 'kie_image_edit']),
+      isNull(jobs.hiddenAt)
+    ),
+    columns: { kind: true, inputPayload: true, result: true }
+  });
+
+  // Map sourceId → the set of kinds it has at least one valid result for.
+  // For image jobs, "valid" means status=completed AND result.imageUrl is
+  // populated (legacy pre-R2 rows that never got an imageUrl don't count).
+  const flagsBySourceId = new Map<string, {
+    title: boolean;
+    description: boolean;
+    tags: boolean;
+    images: boolean;
+  }>();
+  for (const j of completedJobs) {
+    const sid = (j.inputPayload && typeof j.inputPayload === 'object'
+      ? ((j.inputPayload as { productSourceId?: string | null }).productSourceId ?? null)
+      : null);
+    if (!sid) continue;
+    const slot = flagsBySourceId.get(sid) ?? {
+      title: false,
+      description: false,
+      tags: false,
+      images: false
+    };
+    if (j.kind === 'kie_title') slot.title = true;
+    else if (j.kind === 'kie_description') slot.description = true;
+    else if (j.kind === 'kie_tags') slot.tags = true;
+    else if (j.kind === 'kie_image_edit') {
+      const hasUrl =
+        j.result &&
+        typeof j.result === 'object' &&
+        'imageUrl' in j.result &&
+        typeof (j.result as { imageUrl?: unknown }).imageUrl === 'string' &&
+        ((j.result as { imageUrl: string }).imageUrl.length > 0);
+      if (hasUrl) slot.images = true;
+    }
+    flagsBySourceId.set(sid, slot);
+  }
+
   for (const p of all) {
     const sourceId = p.sourceId ?? p.handle ?? '';
     if (!sourceId) continue;
-    const [title, description, tags, images] = await Promise.all([
-      listOptimHistory(project.id, sourceId, 'title'),
-      listOptimHistory(project.id, sourceId, 'description'),
-      listOptimHistory(project.id, sourceId, 'tags'),
-      listProductImageJobs(project.id, sourceId)
-    ]);
-    const hasTitle = title.length > 0;
-    const hasDescription = description.length > 0;
-    if (!hasTitle && !hasDescription) continue;
+    const flags = flagsBySourceId.get(sourceId);
+    if (!flags) continue;
+    if (!flags.title && !flags.description) continue;
     result.push({
       sourceId,
       title: p.title,
-      hasTitle,
-      hasDescription,
-      hasTags: tags.length > 0,
-      hasImages: images.some((j) => j.status === 'completed' && j.imageUrl)
+      hasTitle: flags.title,
+      hasDescription: flags.description,
+      hasTags: flags.tags,
+      hasImages: flags.images
     });
   }
   return result;
@@ -148,6 +195,33 @@ export interface SharedAuditSnapshot {
     taggingQuality: number;
     overall: number;
   } | null;
+  /** Optional summary insights surfaced inside the scores card via a
+   *  collapsible "See full audit detail" toggle. All fields are
+   *  resilient to missing data on legacy audits — `null` means the
+   *  audit predates that summary field and the toggle hides the row. */
+  details: {
+    sampled: number | null;
+    avgProductScore: number | null;
+    averages: {
+      imageCount: number | null;
+      descriptionLength: number | null;
+      tagCount: number | null;
+    };
+    distribution: {
+      imagesZero: number | null;
+      descEmpty: number | null;
+      tagsZero: number | null;
+      altNone: number | null;
+    };
+    /** Up to 6 worst-scoring products with their issue codes — used to
+     *  illustrate what the audit found without exposing the full list
+     *  on a public page. */
+    worstProducts: Array<{
+      title: string;
+      score: number;
+      issues: Array<{ code: string; data?: Record<string, string | number> }>;
+    }>;
+  } | null;
   products: SharedProduct[];
   /** When the share link was created — surfaced as "Generated on {date}". */
   generatedAt: Date;
@@ -171,13 +245,29 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
   });
   if (!project) return null;
 
-  const audit = await db.query.audits.findFirst({
-    where: eq(audits.projectId, project.id),
-    orderBy: [desc(audits.createdAt)]
-  });
+  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const audit = await findLatestAuditForProject(project.id, project.domain);
   if (!audit?.summary) return null;
 
   const summary = audit.summary as {
+    sampled?: number;
+    avgProductScore?: number;
+    averages?: {
+      imageCount?: number;
+      descriptionLength?: number;
+      tagCount?: number;
+    };
+    distribution?: {
+      imagesZero?: number;
+      descEmpty?: number;
+      tagsZero?: number;
+      altNone?: number;
+    };
+    worstProducts?: Array<{
+      title: string;
+      score: number;
+      issues?: Array<{ code: string; data?: Record<string, string | number> }>;
+    }>;
     allProducts?: Array<{
       sourceId?: string | null;
       handle?: string | null;
@@ -241,6 +331,33 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
     project.url ??
     audit.url ??
     (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
+  // Build the collapsible "audit detail" block from the persisted
+  // summary. Legacy audits without these fields render the toggle but
+  // with reduced content — that's fine, the consumer guards each row.
+  const details: SharedAuditSnapshot['details'] = {
+    sampled: typeof summary.sampled === 'number' ? summary.sampled : null,
+    avgProductScore:
+      typeof summary.avgProductScore === 'number' ? summary.avgProductScore : null,
+    averages: {
+      imageCount: summary.averages?.imageCount ?? null,
+      descriptionLength: summary.averages?.descriptionLength ?? null,
+      tagCount: summary.averages?.tagCount ?? null
+    },
+    distribution: {
+      imagesZero: summary.distribution?.imagesZero ?? null,
+      descEmpty: summary.distribution?.descEmpty ?? null,
+      tagsZero: summary.distribution?.tagsZero ?? null,
+      altNone: summary.distribution?.altNone ?? null
+    },
+    worstProducts: (summary.worstProducts ?? [])
+      .slice(0, 6)
+      .map((p) => ({
+        title: p.title,
+        score: p.score,
+        issues: p.issues ?? []
+      }))
+  };
+
   return {
     domain,
     siteUrl,
@@ -249,6 +366,7 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
       audit.scores != null
         ? (audit.scores as SharedAuditSnapshot['scores'])
         : null,
+    details,
     products,
     generatedAt: link.createdAt,
     label: link.label
@@ -346,10 +464,8 @@ export async function loadHomeShowcaseCards(
       where: eq(projects.id, link.projectId)
     });
     if (!project) continue;
-    const audit = await db.query.audits.findFirst({
-      where: eq(audits.projectId, project.id),
-      orderBy: [desc(audits.createdAt)]
-    });
+    const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+    const audit = await findLatestAuditForProject(project.id, project.domain);
     if (!audit?.summary) continue;
 
     const summary = audit.summary as {
