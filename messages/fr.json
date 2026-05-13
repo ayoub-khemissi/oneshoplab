@@ -2,7 +2,7 @@
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",
     "headline": "Vos fiches produits,<br></br><gradient>réécrites pour convertir.</gradient>",
-    "lead": "Audit IA en 30 secondes. Score par produit. Titres, descriptions et photos réécrits — vous décidez.",
+    "lead": "Audit IA en environ une minute. Score par produit. Titres, descriptions et photos réécrits — vous décidez.",
     "urlLabel": "URL de la boutique",
     "urlHint": "URL publique de la vitrine. La plateforme est détectée automatiquement.",
     "errorInvalidUrl": "Merci de saisir une URL valide.",
@@ -13,14 +13,14 @@
     "howItWorksEyebrow": "Fonctionnement",
     "howItWorksTitle": "De l'URL aux propositions IA en trois étapes.",
     "step1Title": "Détecter & auditer",
-    "step1Description": "Saisis l'URL. La plateforme est détectée automatiquement, chaque produit noté sur catalogue, copy, qualité visuelle et tags — en 30 secondes.",
+    "step1Description": "Saisis l'URL. La plateforme est détectée automatiquement, chaque produit noté sur catalogue, copy, qualité visuelle et tags — en environ une minute.",
     "step2Title": "Choisir le modèle, donner le ton",
     "step2Description": "Choisis ton modèle texte — Gemini 3.1 Pro de Google, ou Claude Sonnet 4.6 / Opus 4.6 d'Anthropic — et la qualité image (1K, 2K ou 4K) via GPT-Image 2 d'OpenAI. Ajoute si tu veux des instructions de marque, à l'échelle du site ou par produit.",
     "step3Title": "Générer et appliquer",
     "step3Description": "Reçois un nouveau titre, une description et des tags, plus 3 angles photo lifestyle. Copie le texte, télécharge les images, puis applique sur ta boutique.",
     "compatibleWith": "Compatible avec",
     "seoTitle": "OneShopLab — Optimisation IA des pages produits Shopify, WooCommerce, Wix",
-    "seoDescription": "Auditez votre boutique en 30 secondes. Notez chaque produit sur le copy, les visuels, le catalogue et les tags. L'IA réécrit, régénère et redesigne — avec vos propres prompts."
+    "seoDescription": "Auditez votre boutique en environ une minute. Notez chaque produit sur le copy, les visuels, le catalogue et les tags. L'IA réécrit, régénère et redesigne — avec vos propres prompts."
   },
   "Nav": {
     "signIn": "Se connecter",
@@ -42,7 +42,8 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "menuTitle": "Menu",
-    "joinDiscord": "Rejoindre notre Discord"
+    "joinDiscord": "Rejoindre notre Discord",
+    "faq": "FAQ"
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",
@@ -50,7 +51,8 @@
     "dashboard": "Tableau de bord",
     "pricing": "Tarifs",
     "terms": "Conditions",
-    "privacy": "Confidentialité"
+    "privacy": "Confidentialité",
+    "faq": "FAQ"
   },
   "Showcase": {
     "eyebrow": "Vraies boutiques, vrais résultats",
@@ -449,7 +451,8 @@
     "errorProcessInterrupted": "L'analyse a été interrompue avant la fin. Relance l'analyse depuis le dashboard.",
     "errorNoReport": "Impossible de lire ton catalogue. Vérifie que l'URL est accessible et réessaie.",
     "errorAuditNotFound": "Cet audit n'existe plus. Lance une nouvelle analyse depuis le dashboard.",
-    "copyPlain": "Copier en texte"
+    "copyPlain": "Copier en texte",
+    "errorNoProductsFetched": "Audit terminé mais aucun produit détecté. Ta boutique bloque peut-être notre scraper, n'expose pas d'endpoint catalogue public, ou la plateforme a été mal identifiée. Relance l'audit ou contacte-nous si ça persiste."
   },
   "Issues": {
     "no_image": "Aucune image",
@@ -760,7 +763,7 @@
     "noTags": "Pas de tags",
     "noImages": "Pas d'images",
     "ctaTitle": "Vous voulez ça pour votre boutique ?",
-    "ctaSubtitle": "OneShopLab audite votre boutique en 30 secondes et réécrit vos produits avec le modèle IA de votre choix. Essai gratuit.",
+    "ctaSubtitle": "OneShopLab audite votre boutique en environ une minute et réécrit vos produits avec le modèle IA de votre choix. Essai gratuit.",
     "ctaPrimary": "Essayer gratuitement",
     "ctaSecondary": "Voir les tarifs",
     "footerNote": "Généré par OneShopLab le {date}.",
@@ -771,6 +774,56 @@
     "hideFromHome": "Retirer de la page d'accueil",
     "onHomeBadge": "En home",
     "homeOrderPlaceholder": "#",
-    "homeOrderAria": "Position en home (plus petit = en premier, laisser vide pour non-classé)"
+    "homeOrderAria": "Position en home (plus petit = en premier, laisser vide pour non-classé)",
+    "detailToggle": "Voir le détail de l'audit",
+    "detailToggleHide": "Masquer le détail",
+    "detailProductsNoTags": "Produits sans tags",
+    "detailProductsNoAlt": "Produits sans texte alt",
+    "detailWorstTitle": "Produits avec le score le plus bas",
+    "detailWorstHint": "Un échantillon des produits qui font baisser le score global — avec les problèmes précis détectés par l'audit.",
+    "detailSampledLabel": "{count} produits analysés",
+    "detailCharsSuffix": "car.",
+    "detailIssuesLabel": "Problèmes"
+  },
+  "Errors": {
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "notFoundHome": "Retour à l'accueil",
+    "errorTitle": "Une erreur est survenue",
+    "errorBody": "Une erreur inattendue s'est produite de notre côté. Veuillez réessayer.",
+    "errorRetry": "Réessayer",
+    "errorHome": "Retour à l'accueil"
+  },
+  "Faq": {
+    "title": "Questions fréquentes",
+    "subtitle": "Tout ce qu'il faut savoir avant de vous lancer.",
+    "ctaHeading": "Encore hésitant ?",
+    "ctaBody": "Lancez un audit gratuit de votre boutique. Pas de carte, pas d'engagement — consultez le score, testez l'IA, décidez par vous-même.",
+    "ctaButton": "Auditer ma boutique",
+    "ctaSignupHint": "Ou passez directement à vos 150 crédits gratuits",
+    "q01q": "Peut-on essayer OneShopLab gratuitement ?",
+    "q01a": "Oui. Chaque nouveau compte reçoit 150 crédits gratuits, sans carte bancaire. De quoi auditer une boutique et lancer une génération IA complète (titre + description + tags + 3 images) sur environ un à deux produits — assez pour juger de la qualité du résultat avant de dépenser quoi que ce soit.",
+    "q02q": "L'IA va-t-elle produire un texte générique ou robotique ?",
+    "q02a": "C'est vous qui pilotez le ton. Ajoutez une fois pour toutes une instruction de voix de marque, à l'échelle du site (ou par produit) — « chaleureux, décontracté, sans points d'exclamation » — et OneShopLab la transmet au modèle de votre choix : Gemini 3.1 Pro de Google, ou Claude Sonnet 4.6 / Opus 4.6 d'Anthropic. La sortie est générée à partir des attributs réels de vos produits, pas d'un gabarit.",
+    "q03q": "Quelles plateformes sont prises en charge ?",
+    "q03a": "Shopify, WooCommerce et Wix nativement — nous détectons automatiquement la plateforme à partir de l'URL de votre boutique. Sur un stack custom ? Utilisez l'import manuel : collez les champs produit, générez, puis recopiez la sortie dans votre back-office.",
+    "q04q": "Faut-il installer quelque chose sur ma boutique ?",
+    "q04a": "Aucune application, aucune autorisation à accorder. Les générations se font sur OneShopLab. Vous copiez le nouveau titre et la description, vous téléchargez les images, et vous les collez dans l'admin de votre boutique quand le résultat vous convient.",
+    "q05q": "Mes textes et images d'origine sont-ils préservés ?",
+    "q05a": "Toujours. Les sorties IA vivent sur OneShopLab sous forme d'historique avant/après côte à côte. Rien n'est envoyé vers votre boutique tant que vous ne le faites pas vous-même.",
+    "q06q": "Que se passe-t-il si je n'ai plus de crédits ?",
+    "q06a": "Vos audits, votre historique et vos contenus restent accessibles. Des packs de recharge sont disponibles sur la page Tarifs (paiement unique, sans renouvellement automatique), ou vous pouvez passer à un plan supérieur pour une enveloppe mensuelle plus large.",
+    "q07q": "Puis-je annuler mon abonnement à tout moment ?",
+    "q07a": "Oui. Depuis Compte → Abonnement, ouvrez le portail de facturation Stripe et annulez en un clic. Vous gardez l'accès jusqu'à la fin de la période de facturation en cours, et les crédits non utilisés restent dépensables sur votre compte.",
+    "q08q": "Pourquoi utiliser OneShopLab plutôt que ChatGPT directement ?",
+    "q08a": "ChatGPT vous donne le modèle. OneShopLab vous donne le flux de travail : audit automatique de tout votre catalogue, scoring par produit, historique versionné avant/après, « Tout générer » en un clic par produit (sur tous les plans), et génération en masse sur des milliers de produits avec les plans Pro et Scale. Mêmes modèles, dix fois moins de travail manuel.",
+    "q09q": "Dans quelles langues puis-je générer du contenu ?",
+    "q09a": "L'interface est livrée en 13 langues, et vous pouvez définir la langue de sortie par site — pratique pour les boutiques multilingues où le site français a besoin de texte en français et le site allemand de texte en allemand.",
+    "q10q": "Mes données sont-elles en sécurité ? Les utilisez-vous pour entraîner les modèles ?",
+    "q10a": "Notre base de données et notre application web tournent sur OVH en France (UE) ; les images sont stockées sur Cloudflare R2. Les prompts passent par kie.ai et sont routés vers Anthropic / Google / OpenAI sous accord de non-entraînement (les fournisseurs peuvent conserver les prompts jusqu'à 30 jours uniquement pour la prévention des abus). Liste complète des sous-traitants sur notre page Confidentialité.",
+    "q11q": "Faut-il maîtriser le prompt engineering ?",
+    "q11a": "Non. Les prompts par défaut sont calibrés par modèle et par champ (titre, description, tags, images). Le champ optionnel de voix de marque est rédigé en langage clair — comme un brief que vous donneriez à un rédacteur.",
+    "q12q": "Un audit, c'est rapide ?",
+    "q12a": "Une boutique typique d'une cinquantaine de produits s'audite en 1 à 1,5 minute environ. Les catalogues plus larges montent en charge de façon linéaire — nous récupérons jusqu'à 10 000 produits par audit — et les scores par produit s'affichent en flux continu dès qu'un produit est traité."
   }
 }
