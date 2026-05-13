@@ -3,6 +3,7 @@
 import { Button, Drawer, ListBox } from '@heroui/react';
 import {
   Coins,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -29,6 +30,7 @@ interface MobileMenuProps {
     signIn: string;
     signUp: string;
     pricing: string;
+    faq: string;
     dashboard: string;
     credits: string;
     signedInAs: string;
@@ -143,6 +145,18 @@ export function MobileMenu({
                 >
                   <Tag className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.pricing}
+                </ListBox.Item>
+                <ListBox.Item
+                  id="faq"
+                  href="/faq"
+                  textValue={labels.faq}
+                  onAction={() => setIsOpen(false)}
+                >
+                  <HelpCircle
+                    className="size-4 mr-2 text-[var(--muted)]"
+                    aria-hidden
+                  />
+                  {labels.faq}
                 </ListBox.Item>
                 {discordUrl ? (
                   <ListBox.Item

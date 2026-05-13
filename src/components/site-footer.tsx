@@ -39,6 +39,12 @@ export async function SiteFooter() {
             {t('pricing')}
           </Link>
           <Link
+            href="/faq"
+            className="hover:text-[var(--foreground)] transition-colors"
+          >
+            {t('faq')}
+          </Link>
+          <Link
             href="/dashboard"
             className="hover:text-[var(--foreground)] transition-colors"
           >

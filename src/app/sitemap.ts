@@ -19,6 +19,7 @@ const PUBLIC_PATHS: Array<{
 }> = [
   { path: '', changeFrequency: 'weekly', priority: 1 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/faq', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/terms', changeFrequency: 'monthly', priority: 0.3 },
   { path: '/privacy', changeFrequency: 'monthly', priority: 0.3 }
 ];
