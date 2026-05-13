@@ -71,6 +71,12 @@ export function buildDescriptionRewritePrompt(
   languageName: string
 ): { system: string; user: string } {
   const tagLine = p.tags.length > 0 ? `Existing tags: ${p.tags.slice(0, 15).join(', ')}` : '';
+  // descriptionText is sliced to 2000 chars (~500 tokens). The
+  // pricing.json `description.inputTokens` cap (1500) assumes this
+  // truncation — without it merchants with long HTML descriptions
+  // can push real input to 25K+ tokens, blowing through the kie cost
+  // we quote and shrinking margin to ~1.5×. Keep this slice in sync
+  // with the cap or update pricing.json in parallel.
   return {
     system: `You are an expert e-commerce copywriter. Output ONLY the rewritten description, in clean HTML. MUST split into 2-4 short <p> paragraphs (no wall-of-text). MUST include one <ul> with 3-5 <li> bullet points covering key benefits or specs. Use <strong> on the key value props. Use <em> sparingly. The output must paste cleanly into Shopify / WooCommerce / Wix rich-text editors. No preamble, no commentary, no markdown fences. Write the output in ${languageName}.`,
     user: `Rewrite the following product description per this instruction: "${userPrompt}"
@@ -82,7 +88,7 @@ Product context:
 ${tagLine}
 
 Current description:
-${p.descriptionText || '(empty)'}`
+${p.descriptionText.slice(0, 2000) || '(empty)'}`
   };
 }
 
