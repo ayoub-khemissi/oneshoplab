@@ -153,15 +153,19 @@ export function FieldSwap({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between gap-3">
+      {/* Header layout: on mobile (<sm) the heading and the action /
+          toggle row stack and center so action buttons don't wrap into
+          two lines against the heading. On sm+ they spread apart with
+          the heading on the left and the actions right-aligned. */}
+      <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         {heading ? (
-          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] text-center sm:text-left">
             {heading}
           </span>
         ) : (
-          <span />
+          <span className="hidden sm:block" />
         )}
-        <div className="flex items-center gap-2 flex-wrap justify-end">
+        <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-end">
           {view === 'ai' && aiAction ? aiAction : null}
           {view === 'source' && sourceAction ? sourceAction : null}
           <Toggle view={view} setView={setView} sourceLabel={sourceLabel} aiLabel={aiLabel} />

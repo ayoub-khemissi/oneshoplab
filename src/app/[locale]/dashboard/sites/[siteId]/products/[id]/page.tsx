@@ -123,13 +123,8 @@ async function loadProductForUser(
   });
   if (!productRow) return null;
 
-  const audit = await db.query.audits.findFirst({
-    where: or(
-      eq(audits.projectId, project.id),
-      and(isNull(audits.projectId), eq(audits.domain, project.domain ?? ''))
-    ),
-    orderBy: [desc(audits.createdAt)]
-  });
+  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const audit = await findLatestAuditForProject(project.id, project.domain);
 
   const summary = (audit?.summary ?? null) as SummaryShape | null;
 
@@ -336,9 +331,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             <FieldSwapGroup>
               <div className="px-5 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <span className="eyebrow">AI suggestions</span>
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:flex-wrap">
+                  <span className="eyebrow text-center sm:text-left">AI suggestions</span>
+                  <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-end">
                     <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
                     <FieldSwapGroupToggle
                       sourceLabel={tReport('swapSource')}

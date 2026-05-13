@@ -42,20 +42,35 @@ const IMAGE_ANGLES_PER_GEN = 3;
 const RETRY_DELAYS_MS = [2000, 5000] as const;
 const MAX_ATTEMPTS = RETRY_DELAYS_MS.length + 1; // 3
 
-type State =
+type FieldState =
   | { kind: 'idle' }
-  | { kind: 'pending'; field: GenField; attempt: number; startedAt: number }
-  | { kind: 'waiting'; field: GenField; nextAttempt: number; resumeAt: number; lastError: string }
-  | { kind: 'error'; field: GenField; message: string }
+  | { kind: 'pending'; attempt: number; startedAt: number }
+  | { kind: 'waiting'; nextAttempt: number; resumeAt: number; lastError: string }
+  | { kind: 'error'; message: string }
   | { kind: 'cancelled' }
   | { kind: 'success' };
 
+const FIELDS: GenField[] = ['title', 'description', 'tags', 'images', 'all'];
+
+const IDLE_STATES = (): Record<GenField, FieldState> =>
+  FIELDS.reduce(
+    (acc, f) => {
+      acc[f] = { kind: 'idle' };
+      return acc;
+    },
+    {} as Record<GenField, FieldState>
+  );
+
+function isInflight(s: FieldState): boolean {
+  return s.kind === 'pending' || s.kind === 'waiting';
+}
+
 interface ContextValue {
-  state: State;
+  states: Record<GenField, FieldState>;
   customInstructions: string;
   setCustomInstructions: (v: string) => void;
   submit: (field: GenField) => void;
-  cancel: () => void;
+  cancel: (field: GenField) => void;
   // Live model selection — drives both the cost displayed on the buttons and
   // the chatModelId / imageQualityId sent to /api/products/generate.
   chatModelId: ChatModelId;
@@ -98,7 +113,15 @@ export function RetryableGenerateProvider({
 }: ProviderProps) {
   const router = useRouter();
   const t = useTranslations('Product');
-  const [state, setState] = useState<State>({ kind: 'idle' });
+  // One slot per field so a Description rewrite doesn't lock the
+  // Title button — each generation is genuinely independent. The
+  // 'all' slot is special: a running 'all' grabs every field at
+  // once, so it acts as a global lock at the button-disable layer
+  // (see RetryableGenerateButton below).
+  const [states, setStates] = useState<Record<GenField, FieldState>>(IDLE_STATES);
+  const setFieldState = useCallback((field: GenField, next: FieldState) => {
+    setStates((prev) => ({ ...prev, [field]: next }));
+  }, []);
   const [customInstructions, setCustomInstructions] = useState(initialCustomInstructions);
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
   const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQualityId);
@@ -134,42 +157,45 @@ export function RetryableGenerateProvider({
     [creditsBalance, costFor]
   );
 
-  // Active fetch's AbortController + a "user cancelled" flag the loop checks
-  // so we don't kick off the next retry after a cancel landed mid-wait.
-  const abortRef = useRef<AbortController | null>(null);
-  const cancelledRef = useRef(false);
+  // Per-field abort controllers + cancel flags. A submit running on
+  // field X needs to be cancellable without disturbing a concurrent
+  // submit on field Y — so each slot tracks its own pair.
+  const abortRefs = useRef<Partial<Record<GenField, AbortController>>>({});
+  const cancelledRefs = useRef<Partial<Record<GenField, boolean>>>({});
 
-  const cancel = useCallback(() => {
-    cancelledRef.current = true;
-    abortRef.current?.abort();
-    setState({ kind: 'cancelled' });
-    toast(t('generationCancelledTitle'));
-  }, [t]);
+  const cancel = useCallback(
+    (field: GenField) => {
+      cancelledRefs.current[field] = true;
+      abortRefs.current[field]?.abort();
+      setFieldState(field, { kind: 'cancelled' });
+      toast(t('generationCancelledTitle'));
+    },
+    [t, setFieldState]
+  );
 
   const submit = useCallback(
     async (field: GenField) => {
-      cancelledRef.current = false;
+      cancelledRefs.current[field] = false;
       let lastError = '';
       for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-        if (cancelledRef.current) return;
+        if (cancelledRefs.current[field]) return;
 
         // Inter-attempt wait (skipped on first try).
         if (attempt > 1) {
           const delay = RETRY_DELAYS_MS[attempt - 2];
-          setState({
+          setFieldState(field, {
             kind: 'waiting',
-            field,
             nextAttempt: attempt,
             resumeAt: Date.now() + delay,
             lastError
           });
           await new Promise<void>((resolve) => setTimeout(resolve, delay));
-          if (cancelledRef.current) return;
+          if (cancelledRefs.current[field]) return;
         }
 
         const ctrl = new AbortController();
-        abortRef.current = ctrl;
-        setState({ kind: 'pending', field, attempt, startedAt: Date.now() });
+        abortRefs.current[field] = ctrl;
+        setFieldState(field, { kind: 'pending', attempt, startedAt: Date.now() });
 
         // For 'all' and 'images', the server queues async image jobs
         // before chat finishes (chat is sync, ~30s). Notify the live
@@ -200,10 +226,10 @@ export function RetryableGenerateProvider({
             }),
             signal: ctrl.signal
           });
-          if (cancelledRef.current) return;
+          if (cancelledRefs.current[field]) return;
 
           if (res.ok) {
-            setState({ kind: 'success' });
+            setFieldState(field, { kind: 'success' });
             toast.success(t('generationSuccessTitle'));
             router.refresh();
             return;
@@ -227,14 +253,14 @@ export function RetryableGenerateProvider({
                 ? t('errorInsufficientCredits')
                 : t('errorGenerationFailed');
             toast.danger(message, { description: t('generationFailedTitle') });
-            setState({ kind: 'error', field, message: code });
+            setFieldState(field, { kind: 'error', message: code });
             return;
           }
 
           // 5xx → retryable.
           lastError = payload.message ?? payload.error ?? `HTTP ${res.status}`;
         } catch (e) {
-          if (cancelledRef.current) return;
+          if (cancelledRefs.current[field]) return;
           // AbortError lands here too — but cancelledRef is set when the user
           // cancels, so we'd have returned above. Reach this branch only on
           // genuine network failure.
@@ -242,15 +268,15 @@ export function RetryableGenerateProvider({
         }
       }
       const message = lastError || 'generation_failed';
-      setState({ kind: 'error', field, message });
+      setFieldState(field, { kind: 'error', message });
       toast.danger(t('errorGenerationFailed'), { description: message });
     },
-    [siteId, productId, customInstructions, router, t]
+    [siteId, productId, customInstructions, router, t, setFieldState]
   );
 
   const value = useMemo<ContextValue>(
     () => ({
-      state,
+      states,
       customInstructions,
       setCustomInstructions,
       submit,
@@ -265,7 +291,7 @@ export function RetryableGenerateProvider({
       productArchived
     }),
     [
-      state,
+      states,
       customInstructions,
       submit,
       cancel,
@@ -336,7 +362,9 @@ export function RetryableGenerateButton({
   available = true
 }: ButtonProps) {
   const t = useTranslations('Product');
-  const { state, submit, cancel, costFor, canAfford, productArchived } = useGenerateContext();
+  const { states, submit, cancel, costFor, canAfford, productArchived } = useGenerateContext();
+  const state = states[field];
+  const allState = states.all;
   const cost = costFor(field);
   const enabled = available && canAfford(field) && !productArchived;
   // Confirmation dialog only on the "Generate / Regenerate everything"
@@ -347,16 +375,26 @@ export function RetryableGenerateButton({
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const isAll = field === 'all';
-  const inflightField =
-    state.kind === 'pending' || state.kind === 'waiting' ? state.field : null;
-  const isThisOne = inflightField === field;
-  const someoneElse = inflightField !== null && !isThisOne;
+  // This specific field is in flight (clicking "Title" while title runs
+  // shows the spinner here, not on Description).
+  const isThisOne = isInflight(state);
+  // Global lock: when the "Generate all" button is running, every
+  // single-field button locks because that's exactly what 'all' is
+  // doing server-side. For the 'all' button itself, lock when any
+  // *other* field is running too — running a chat + image lane in
+  // parallel is fine, but kicking off another "all" on top is not.
+  const allInflight = isInflight(allState);
+  const otherSingleInflight = isAll
+    ? FIELDS.some((f) => f !== 'all' && isInflight(states[f]))
+    : false;
+  const blockedByGlobal =
+    (!isAll && allInflight) || (isAll && otherSingleInflight);
 
   const elapsed = useElapsedSinceMs(
-    state.kind === 'pending' && state.field === field ? state.startedAt : null
+    state.kind === 'pending' ? state.startedAt : null
   );
   const waitSeconds = useCountdownTo(
-    state.kind === 'waiting' && state.field === field ? state.resumeAt : null
+    state.kind === 'waiting' ? state.resumeAt : null
   );
 
   const baseClasses =
@@ -384,7 +422,7 @@ export function RetryableGenerateButton({
             ) : null}
           </span>
         </button>
-        <CancelButton onCancel={cancel} label={t('cancelGeneration')} />
+        <CancelButton onCancel={() => cancel(field)} label={t('cancelGeneration')} />
       </div>
     );
   }
@@ -399,7 +437,7 @@ export function RetryableGenerateButton({
             <span className="opacity-70 font-mono ml-1">· {state.nextAttempt}/{MAX_ATTEMPTS}</span>
           </span>
         </button>
-        <CancelButton onCancel={cancel} label={t('cancelGeneration')} />
+        <CancelButton onCancel={() => cancel(field)} label={t('cancelGeneration')} />
       </div>
     );
   }
@@ -409,7 +447,7 @@ export function RetryableGenerateButton({
       <button
         type="button"
         onClick={() => (isAll ? setConfirmOpen(true) : submit(field))}
-        disabled={!enabled || someoneElse}
+        disabled={!enabled || blockedByGlobal}
         className={`${baseClasses} ${classes}`}
         title={!enabled ? t('insufficientCredits') : undefined}
       >
