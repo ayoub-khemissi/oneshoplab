@@ -106,10 +106,16 @@ export async function relaunchProjectAuditAction(formData: FormData): Promise<vo
   });
   if (!project) return;
 
-  const latest = await db.query.audits.findFirst({
-    where: eq(audits.projectId, project.id),
-    orderBy: [desc(audits.createdAt)]
-  });
+  // Use the two-step lookup so the multi-MB `summary` JSON never
+  // hits MySQL's sort buffer. Only url / domain are needed below.
+  const { findLatestAuditIdWhere } = await import('./audit/find-latest');
+  const latestId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
+  const latest = latestId
+    ? await db.query.audits.findFirst({
+        where: eq(audits.id, latestId),
+        columns: { url: true, domain: true }
+      })
+    : null;
 
   // Rate-limit gate: count the user's audits launched across ALL their
   // projects in the last 24h. Failed/timed_out runs don't count (a bad
@@ -217,12 +223,10 @@ export async function refreshProjectAction(formData: FormData): Promise<void> {
   if (!project) return;
 
   // Manual refresh — forces a re-scrape regardless of freshness.
-  const latest = await db.query.audits.findFirst({
-    where: eq(audits.projectId, project.id),
-    orderBy: [desc(audits.createdAt)]
-  });
-  if (latest) {
-    await refreshAuditProducts(latest.id);
+  const { findLatestAuditIdWhere } = await import('./audit/find-latest');
+  const latestId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
+  if (latestId) {
+    await refreshAuditProducts(latestId);
   }
   revalidatePath('/dashboard');
 }

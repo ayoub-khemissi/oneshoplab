@@ -160,32 +160,78 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // Primary key: projectId. Fall back to matching by domain for legacy
   // audits that were inserted before the projects/audits FK was wired up
   // (their projectId is NULL).
-  const audit = await db.query.audits.findFirst({
-    where: or(
-      eq(audits.projectId, project.id),
-      and(isNull(audits.projectId), eq(audits.domain, project.domain ?? ''))
-    ),
-    orderBy: [desc(audits.createdAt)]
-  });
+  //
+  // `audit.summary` is a JSON blob that scales linearly with the
+  // catalog size (≈1-2 MB on a 200-product store) — only the
+  // overview and products tabs actually read from it. The Activity
+  // and Settings tabs render fine off the small `status` + `scores`
+  // fields, so we use a two-step lookup that omits `summary` for
+  // those tabs and saves a multi-MB roundtrip per navigation.
+  const { findLatestAuditForProject, findLatestAuditIdWhere } = await import(
+    '@/lib/audit/find-latest'
+  );
+  const needsSummary = activeTab === 'overview' || activeTab === 'products';
+  // Loose type: the slim variant omits `summary` / `anonToken` etc.
+  // but downstream code never reaches for those when needsSummary is
+  // false (overview / products are the only consumers of summary).
+  type AuditRow = Awaited<ReturnType<typeof findLatestAuditForProject>>;
+  let audit: AuditRow;
+  if (needsSummary) {
+    audit = await findLatestAuditForProject(project.id, project.domain);
+  } else {
+    // Pick the latest id with the same OR fallback as the full helper,
+    // then fetch only the cheap columns we actually consume below.
+    const { or, and, isNull, eq: eqx } = await import('drizzle-orm');
+    const id = await findLatestAuditIdWhere(
+      or(
+        eqx(audits.projectId, project.id),
+        and(isNull(audits.projectId), eqx(audits.domain, project.domain ?? ''))
+      )!
+    );
+    audit = id
+      ? (((await db.query.audits.findFirst({
+          where: eq(audits.id, id),
+          columns: {
+            id: true,
+            url: true,
+            domain: true,
+            platform: true,
+            status: true,
+            scores: true,
+            productsSampled: true,
+            createdAt: true,
+            startedAt: true,
+            completedAt: true
+          }
+        })) ?? null) as AuditRow)
+      : null;
+  }
   if (!audit) notFound();
 
-  const summary = (audit.summary ?? {}) as SummaryShape;
+  const summary = ((audit as { summary?: unknown }).summary ?? {}) as SummaryShape;
   const decoded = project.domain ?? project.name;
 
+  // Both writes are documented "fire-and-forget" — awaiting them
+  // blocks the page render for a DB write the user doesn't see.
   const { touchProjectLastView } = await import('@/lib/auth-actions');
   const { refreshProjectIfStale } = await import('@/lib/audit');
-  await touchProjectLastView(project.id);
+  void touchProjectLastView(project.id).catch((e) =>
+    console.error('[sites page last-view]', e)
+  );
   void refreshProjectIfStale(project.id).catch((e) =>
     console.error('[sites page auto-refresh]', e)
   );
 
   // Site quota — drives the conditional Add-site button. Back-to-dashboard
   // is always visible now that we navigate via the hub (no auto-redirect).
+  // This list is reused below for the audit rate-limit window — keep ONE
+  // copy so we don't fan out duplicate queries on every tab click.
   const { siteLimitForPlan } = await import('@/lib/ai/models');
   const userSites = await db.query.projects.findMany({
     where: eq(projects.userId, session.user.id),
     columns: { id: true }
   });
+  const userProjectIdsList = userSites.map((p) => p.id);
   const siteLimit = siteLimitForPlan(session.user.plan);
   const canAddSite = userSites.length < siteLimit;
 
@@ -276,19 +322,26 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     'kie_image_edit',
     'kie_image_generate'
   ] as const;
-  const optimRows = await db.query.jobs.findMany({
-    where: and(
-      eq(jobs.projectId, project.id),
-      eq(jobs.status, 'completed'),
-      inArray(jobs.kind, [...PRODUCT_OPTIM_KINDS])
-    ),
-    columns: {
-      productId: true,
-      inputPayload: true,
-      finishedAt: true,
-      kind: true
-    }
-  });
+  // This per-product aggregation is only consumed by the products
+  // tab's list (badges + sort by last-optim). Skipping it on
+  // overview/jobs/settings avoids a full table scan on `jobs` whose
+  // size scales with how many generations the user has run.
+  const optimRows =
+    activeTab === 'products'
+      ? await db.query.jobs.findMany({
+          where: and(
+            eq(jobs.projectId, project.id),
+            eq(jobs.status, 'completed'),
+            inArray(jobs.kind, [...PRODUCT_OPTIM_KINDS])
+          ),
+          columns: {
+            productId: true,
+            inputPayload: true,
+            finishedAt: true,
+            kind: true
+          }
+        })
+      : [];
   const optimByProductId = new Map<
     string,
     { lastOptimAt: Date | null; count: number; kinds: Set<string> }
@@ -319,22 +372,29 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     kinds.has('kie_tags') &&
     (kinds.has('kie_image_edit') || kinds.has('kie_image_generate'));
 
-  const allProductsWithIds: PaginatedProductWithId[] = (summary.allProducts ?? [])
-    .map((p) => {
-      const key = p.sourceId ?? p.handle ?? '';
-      const productId = productIdByKey.get(key);
-      if (!productId) return null;
-      const opt = optimByProductId.get(productId);
-      return {
-        ...p,
-        productId,
-        archived: false,
-        optimCount: opt?.count ?? 0,
-        lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null,
-        aiCompleted: opt ? isAiCompleted(opt.kinds) : false
-      };
-    })
-    .filter((p): p is PaginatedProductWithId => p !== null);
+  // Same gating — only the products tab renders the paginated list
+  // and the bulk-section's productTitleById map. Saves an O(n)
+  // iteration over a 200+ entry array on every nav to overview /
+  // jobs / settings on big catalogs.
+  const allProductsWithIds: PaginatedProductWithId[] =
+    activeTab === 'products'
+      ? (summary.allProducts ?? [])
+          .map((p) => {
+            const key = p.sourceId ?? p.handle ?? '';
+            const productId = productIdByKey.get(key);
+            if (!productId) return null;
+            const opt = optimByProductId.get(productId);
+            return {
+              ...p,
+              productId,
+              archived: false,
+              optimCount: opt?.count ?? 0,
+              lastOptimAtIso: opt?.lastOptimAt ? opt.lastOptimAt.toISOString() : null,
+              aiCompleted: opt ? isAiCompleted(opt.kinds) : false
+            };
+          })
+          .filter((p): p is PaginatedProductWithId => p !== null)
+      : [];
 
   // Archived products aren't in the latest summary (they fell out of the
   // scrape) — surface them under the "Show archived" toggle so the
@@ -362,7 +422,23 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   const hasUnfinishedJobs = projectJobs.some(
     (j) => j.status === 'pending' || j.status === 'running'
   );
-  const auditLoading = audit.status === 'pending' || audit.status === 'running';
+  // An audit that says "completed" but pulled 0 products is a soft
+  // failure — the scraper either hit a closed platform endpoint or
+  // picked the wrong adapter. The audit row itself stays
+  // status=completed (no exception was thrown), but for everything
+  // user-visible — the StatusLine error band, the dashboard card
+  // colour, the overview tab gating — we promote it to "failed" and
+  // synthesise a friendly message via the `no_products_fetched`
+  // code.
+  const effectiveStatus =
+    audit.status === 'completed' && (audit.productsSampled ?? 0) === 0
+      ? ('failed' as const)
+      : audit.status;
+  const effectiveError =
+    effectiveStatus === 'failed' && audit.status === 'completed'
+      ? 'no_products_fetched'
+      : audit.error;
+  const auditLoading = effectiveStatus === 'pending' || effectiveStatus === 'running';
   const isLoading = auditLoading || hasUnfinishedJobs;
 
   // Audit rate-limit window: count user-wide pending/running/completed
@@ -371,12 +447,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // this to display "X / Y today" or a countdown to the next slot.
   const userPlan = (session.user.plan ?? 'free') as 'free' | 'starter' | 'pro' | 'scale';
   const auditsLimit = auditRateLimitForPlan(userPlan);
-  const userProjectIdsList = (
-    await db.query.projects.findMany({
-      where: eq(projects.userId, session.user.id),
-      columns: { id: true }
-    })
-  ).map((p) => p.id);
+  // Reuses `userProjectIdsList` computed above — see comment.
   let auditsUsed = 0;
   let nextSlotAtIso: string | null = null;
   if (userProjectIdsList.length > 0) {
@@ -400,37 +471,51 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     }
   }
 
-  // Bulk catalog generation (Scale only). Pre-compute the eligible
-  // product count + cost estimate at the merchant's current model
-  // preferences so the modal in <BulkGenerateSection> shows the
-  // budget without a round-trip. Also surface any in-flight bulk
-  // job for the progress banner.
+  // Bulk catalog generation (Pro+ only) — five DB queries between
+  // listBulkCandidates / listBulkCandidatesWithStatus / active /
+  // detail. Skip them entirely when:
+  //   - the plan can't bulk-generate (Free / Starter never see the CTA), or
+  //   - the user is on a tab that doesn't render the bulk section
+  //     (only `products` does).
+  // Saves ~5 round-trips per tab click for the common case.
   const bulkChatModel: ChatModelId =
     (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
   const bulkImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
-  const bulkCandidatesAll = await listBulkCandidates(project.id);
-  // Candidates "with status" excludes products that already have all
-  // four fields generated (bulk never overwrites). Cost reflects only
-  // the pending fields per product.
-  const bulkCandidatesPending = await listBulkCandidatesWithStatus(
-    project.id,
-    bulkChatModel,
-    bulkImageQuality
-  );
+  const needsBulk =
+    activeTab === 'products' && (userPlan === 'pro' || userPlan === 'scale');
+  const [
+    bulkCandidatesAll,
+    bulkCandidatesPending,
+    bulkActive,
+    bulkDetail
+  ] = needsBulk
+    ? await Promise.all([
+        listBulkCandidates(project.id),
+        listBulkCandidatesWithStatus(project.id, bulkChatModel, bulkImageQuality),
+        getActiveBulkJob(project.id),
+        getLatestBulkJobDetail(project.id)
+      ])
+    : [[], [], null, null];
   const bulkCostEstimate = bulkCandidatesPending.reduce(
     (sum, c) => sum + c.pendingCost,
     0
   );
-  const bulkActive = await getActiveBulkJob(project.id);
-  const bulkDetail = await getLatestBulkJobDetail(project.id);
 
   // Admin-only: pre-load share links + candidate products for the
-  // sales-prospection card. ADMIN_EMAILS env gates rendering, so a
-  // regular merchant pays no DB cost on this branch.
+  // sales-prospection card on Settings. Gated by tab too because
+  // `listProductsWithGenerations` walks the audit summary and was
+  // adding ~30s to every tab on big catalogs (5096 products → 20K+
+  // individual DB calls). ADMIN_EMAILS env gates the broader admin
+  // surface so a regular merchant pays no DB cost regardless.
   const isAdmin = isAdminEmail(session.user.email);
-  const shareLinks = isAdmin ? await listShareLinksForSite(session.user.id, project.id) : [];
-  const shareCandidates = isAdmin ? await listProductsWithGenerations(project.id) : [];
+  const needsAdminShare = isAdmin && activeTab === 'settings';
+  const [shareLinks, shareCandidates] = needsAdminShare
+    ? await Promise.all([
+        listShareLinksForSite(session.user.id, project.id),
+        listProductsWithGenerations(project.id)
+      ])
+    : [[], []];
   // Map productId → title for the failure-detail modal so the merchant
   // sees product names rather than UUIDs.
   const productTitleById: Record<string, string> = {};
@@ -455,14 +540,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           auditsLimit={auditsLimit}
           nextSlotAtIso={nextSlotAtIso}
         />
-        <StatusLine status={audit.status} error={audit.error} />
+        <StatusLine status={effectiveStatus} error={effectiveError} />
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
 
       {activeTab === 'overview' ? (
         auditLoading ? (
           <StaticSkeleton />
-        ) : audit.status === 'completed' && audit.scores != null ? (
+        ) : effectiveStatus === 'completed' && audit.scores != null ? (
           <OverviewTab
             scores={audit.scores as Scores}
             summary={summary}
@@ -607,7 +692,8 @@ function SiteHeaderBar({
 const KNOWN_ERROR_CODES: Record<string, string> = {
   process_interrupted: 'errorProcessInterrupted',
   no_report: 'errorNoReport',
-  audit_not_found: 'errorAuditNotFound'
+  audit_not_found: 'errorAuditNotFound',
+  no_products_fetched: 'errorNoProductsFetched'
 };
 
 function StatusLine({ status, error }: { status: string; error: string | null }) {

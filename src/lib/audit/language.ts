@@ -24,9 +24,14 @@ export async function getEffectiveLanguage(projectId: string | null): Promise<st
   const override = project?.languageOverride?.trim();
   if (override) return override;
 
+  // Two-step lookup: pick the latest audit id by tiny projection,
+  // then fetch only `summary` by primary key. Avoids filesort on the
+  // multi-MB JSON column.
+  const { findLatestAuditIdWhere } = await import('./find-latest');
+  const latestId = await findLatestAuditIdWhere(eq(audits.projectId, projectId));
+  if (!latestId) return 'en';
   const latest = await db.query.audits.findFirst({
-    where: eq(audits.projectId, projectId),
-    orderBy: [desc(audits.createdAt)],
+    where: eq(audits.id, latestId),
     columns: { summary: true }
   });
   const summary = (latest?.summary ?? null) as { detectedLanguage?: string | null } | null;

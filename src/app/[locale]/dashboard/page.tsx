@@ -44,12 +44,24 @@ export default async function DashboardPage() {
   const relTimeFormat = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
 
   // Pull the latest audit per project so we can render score + product count
-  // on each site card. One query, then group in JS.
+  // on each site card. One query, then group in JS. Project only the
+  // columns the site cards need — `summary` is multi-MB JSON and
+  // including it in the ORDER BY result set blows MySQL's sort buffer
+  // ("Out of sort memory") on accounts with >1 site.
   const projectIds = userProjects.map((p) => p.id);
   const allAudits = projectIds.length
     ? await db.query.audits.findMany({
         where: inArray(audits.projectId, projectIds),
-        orderBy: [desc(audits.createdAt)]
+        orderBy: [desc(audits.createdAt)],
+        columns: {
+          id: true,
+          projectId: true,
+          status: true,
+          scores: true,
+          productsSampled: true,
+          createdAt: true,
+          completedAt: true
+        }
       })
     : [];
   const latestAuditByProject = new Map<string, (typeof allAudits)[number]>();
@@ -63,14 +75,24 @@ export default async function DashboardPage() {
     const latest = latestAuditByProject.get(p.id);
     const scores = (latest?.scores ?? null) as ScoresShape | null;
     const lastUpdatedAt = latest?.completedAt ?? latest?.createdAt ?? null;
+    const productsCount = latest?.productsSampled ?? null;
+    // A "completed" audit with zero products fetched is functionally
+    // a failure for the merchant — the storefront either blocked our
+    // scraper, exposes no public catalog endpoint, or the platform
+    // detection picked the wrong adapter. Surface it as `failed` on
+    // the card so the merchant gets the same red badge + CTA they'd
+    // see for a hard crash.
+    const rawStatus = (latest?.status ?? null) as AuditStatus | null;
+    const auditStatus: AuditStatus | null =
+      rawStatus === 'completed' && productsCount === 0 ? 'failed' : rawStatus;
     return {
       projectId: p.id,
       domain: p.domain ?? p.name,
       name: p.name,
       overallScore: scores?.overall ?? null,
-      productsCount: latest?.productsSampled ?? null,
+      productsCount,
       lastUpdatedRelative: lastUpdatedAt ? formatRelative(lastUpdatedAt, relTimeFormat) : null,
-      auditStatus: (latest?.status ?? null) as AuditStatus | null
+      auditStatus
     };
   });
 

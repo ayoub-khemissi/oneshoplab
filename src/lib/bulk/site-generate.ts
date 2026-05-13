@@ -612,13 +612,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
-  const audit = await db.query.audits.findFirst({
-    where: or(
-      eq(audits.projectId, project.id),
-      and(isNull(audits.projectId), eq(audits.domain, project.domain ?? ''))
-    ),
-    orderBy: [desc(audits.createdAt)]
-  });
+  const { findLatestAuditForProject } = await import('../audit/find-latest');
+  const audit = await findLatestAuditForProject(project.id, project.domain);
 
   const summary = (audit?.summary ?? null) as SummaryShape | null;
   const all: SummaryProduct[] = summary

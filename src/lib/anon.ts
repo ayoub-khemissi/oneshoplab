@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { randomUUID } from 'node:crypto';
 import { db } from './db';
@@ -43,12 +43,28 @@ export async function claimAnonAudits(
   userId: string,
   anonToken: string
 ): Promise<{ projectId: string | null }> {
+  // Two-step: get the candidate ids ordered by recency (tiny
+  // projection — sort buffer stays small), then fetch only the
+  // fields we need from the most-recent one. Avoids filesort on the
+  // multi-MB `summary` JSON.
+  const candidateIds = await db
+    .select({ id: audits.id })
+    .from(audits)
+    .where(and(eq(audits.anonToken, anonToken), isNull(audits.projectId)))
+    .orderBy(desc(audits.createdAt))
+    .limit(10);
+  if (candidateIds.length === 0) return { projectId: null };
+
   const candidates = await db.query.audits.findMany({
-    where: and(eq(audits.anonToken, anonToken), isNull(audits.projectId)),
-    orderBy: [desc(audits.createdAt)],
-    limit: 10
+    where: inArray(
+      audits.id,
+      candidateIds.map((r) => r.id)
+    ),
+    columns: { id: true, domain: true, platform: true, url: true, createdAt: true }
   });
-  if (candidates.length === 0) return { projectId: null };
+  // findMany order isn't guaranteed; pick the most recent ourselves
+  // from the small in-memory set.
+  candidates.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   const mostRecent = candidates[0];
   const projectId = randomUUID();

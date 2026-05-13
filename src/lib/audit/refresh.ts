@@ -1,6 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
+import { findLatestAuditIdWhere } from './find-latest';
 import { runAudit } from './run';
 import { syncProjectProducts } from './sync-products';
 
@@ -81,9 +82,18 @@ export async function refreshAuditProducts(auditId: string): Promise<{
 export async function refreshProjectIfStale(
   projectId: string
 ): Promise<{ refreshed: boolean; reason?: string }> {
+  const latestId = await findLatestAuditIdWhere(eq(audits.projectId, projectId));
+  if (!latestId) return { refreshed: false, reason: 'no_audit' };
+  // Re-fetch only the small fields we need to gate on. Skipping
+  // `summary` / `scores` keeps this query fast even on big catalogs.
   const latest = await db.query.audits.findFirst({
-    where: eq(audits.projectId, projectId),
-    orderBy: [desc(audits.createdAt)]
+    where: eq(audits.id, latestId),
+    columns: {
+      id: true,
+      status: true,
+      createdAt: true,
+      completedAt: true
+    }
   });
   if (!latest) return { refreshed: false, reason: 'no_audit' };
   if (latest.status !== 'completed') return { refreshed: false, reason: 'not_completed' };

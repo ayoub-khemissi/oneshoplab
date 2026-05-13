@@ -127,13 +127,8 @@ async function loadSnapshot(
   });
   if (!productRow) return null;
 
-  const audit = await db.query.audits.findFirst({
-    where: or(
-      eq(audits.projectId, project.id),
-      and(isNull(audits.projectId), eq(audits.domain, project.domain ?? ''))
-    ),
-    orderBy: [desc(audits.createdAt)]
-  });
+  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const audit = await findLatestAuditForProject(project.id, project.domain);
   if (!audit?.summary) return null;
 
   const summary = audit.summary as SummaryShape;
