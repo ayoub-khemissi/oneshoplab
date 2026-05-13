@@ -41,7 +41,8 @@
     "subscription": "Abonnement",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
-    "menuTitle": "Menü"
+    "menuTitle": "Menü",
+    "joinDiscord": "Tritt unserem Discord bei"
   },
   "Footer": {
     "tagline": "KI-Optimierung von Produktseiten",

@@ -41,7 +41,8 @@
     "subscription": "Abbonamento",
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
-    "menuTitle": "Menu"
+    "menuTitle": "Menu",
+    "joinDiscord": "Unisciti al nostro Discord"
   },
   "Footer": {
     "tagline": "Ottimizzazione AI delle schede prodotto",

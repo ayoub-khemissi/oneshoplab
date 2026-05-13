@@ -41,7 +41,8 @@
     "subscription": "Abonelik",
     "openMenu": "Menüyü aç",
     "closeMenu": "Menüyü kapat",
-    "menuTitle": "Menü"
+    "menuTitle": "Menü",
+    "joinDiscord": "Discord sunucumuza katıl"
   },
   "Footer": {
     "tagline": "Yapay zekâ tabanlı ürün sayfası optimizasyonu",

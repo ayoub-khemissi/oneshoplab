@@ -41,7 +41,8 @@
     "subscription": "Subskrypcja",
     "openMenu": "Otwórz menu",
     "closeMenu": "Zamknij menu",
-    "menuTitle": "Menu"
+    "menuTitle": "Menu",
+    "joinDiscord": "Dołącz do naszego Discorda"
   },
   "Footer": {
     "tagline": "Optymalizacja AI stron produktów",

@@ -41,7 +41,8 @@
     "subscription": "Abonnement",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
-    "menuTitle": "Menu"
+    "menuTitle": "Menu",
+    "joinDiscord": "Rejoindre notre Discord"
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",

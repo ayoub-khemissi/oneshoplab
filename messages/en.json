@@ -41,7 +41,8 @@
     "subscription": "Subscription",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "menuTitle": "Menu"
+    "menuTitle": "Menu",
+    "joinDiscord": "Join our Discord"
   },
   "Footer": {
     "tagline": "AI product page optimization",

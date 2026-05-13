@@ -14,6 +14,7 @@ import {
 import { useState, type ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { signOutAction } from '@/lib/auth-actions';
+import { DiscordGlyph } from './discord-glyph';
 
 interface MobileMenuProps {
   user: {
@@ -41,7 +42,12 @@ interface MobileMenuProps {
     closeMenu: string;
     openMenu: string;
     menuTitle: string;
+    joinDiscord: string;
   };
+  /** Public Discord invite URL — optional. When set, a Discord link
+   *  appears below the primary nav so visitors can jump to the
+   *  community server. */
+  discordUrl?: string | null;
   /** Slot for the LocaleSwitcher client component (rendered by the
    *  parent so we don't duplicate the locale list). */
   localeSwitcher: ReactNode;
@@ -63,7 +69,8 @@ export function MobileMenu({
   creditsDisplay,
   labels,
   localeSwitcher,
-  themeToggle
+  themeToggle,
+  discordUrl
 }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -108,7 +115,26 @@ export function MobileMenu({
                 </div>
               ) : null}
 
+              {/* Primary nav — dashboard first when signed in (the
+                  most useful destination), then pricing, then the
+                  Discord shortcut if configured. Account-specific
+                  rows live below a divider so they don't compete
+                  visually with the public links. */}
               <ListBox aria-label={labels.menuTitle} className="flex flex-col gap-0.5">
+                {user ? (
+                  <ListBox.Item
+                    id="dashboard"
+                    href="/dashboard"
+                    textValue={labels.dashboard}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <LayoutDashboard
+                      className="size-4 mr-2 text-[var(--muted)]"
+                      aria-hidden
+                    />
+                    {labels.dashboard}
+                  </ListBox.Item>
+                ) : null}
                 <ListBox.Item
                   id="pricing"
                   href="/pricing"
@@ -118,59 +144,63 @@ export function MobileMenu({
                   <Tag className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.pricing}
                 </ListBox.Item>
-                {user ? (
-                  <>
-                    <ListBox.Item
-                      id="dashboard"
-                      href="/dashboard"
-                      textValue={labels.dashboard}
-                      onAction={() => setIsOpen(false)}
-                    >
-                      <LayoutDashboard
-                        className="size-4 mr-2 text-[var(--muted)]"
-                        aria-hidden
-                      />
-                      {labels.dashboard}
-                    </ListBox.Item>
-                    <ListBox.Item
-                      id="profile"
-                      href="/account/profile"
-                      textValue={labels.profile}
-                      onAction={() => setIsOpen(false)}
-                    >
-                      <User2 className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
-                      {labels.profile}
-                    </ListBox.Item>
-                    <ListBox.Item
-                      id="preferences"
-                      href="/account/preferences"
-                      textValue={labels.preferences}
-                      onAction={() => setIsOpen(false)}
-                    >
-                      <Settings className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
-                      {labels.preferences}
-                    </ListBox.Item>
-                    <ListBox.Item
-                      id="subscription"
-                      href="/account/subscription"
-                      textValue={labels.subscription}
-                      onAction={() => setIsOpen(false)}
-                    >
-                      <Repeat className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
-                      {labels.subscription}
-                    </ListBox.Item>
-                    <ListBox.Item
-                      id="credits"
-                      href="/account/credits"
-                      textValue={labels.buyCredits}
-                      onAction={() => setIsOpen(false)}
-                    >
-                      <Coins className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
-                      {labels.buyCredits}
-                    </ListBox.Item>
-                  </>
+                {discordUrl ? (
+                  <ListBox.Item
+                    id="discord"
+                    href={discordUrl}
+                    target="_blank"
+                    textValue={labels.joinDiscord}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <DiscordGlyph className="size-4 mr-2 text-[#5865F2]" />
+                    {labels.joinDiscord}
+                  </ListBox.Item>
                 ) : null}
               </ListBox>
+
+              {user ? (
+                <ListBox
+                  aria-label="Account"
+                  className="flex flex-col gap-0.5 border-t border-[var(--border)] pt-3"
+                >
+                  <ListBox.Item
+                    id="profile"
+                    href="/account/profile"
+                    textValue={labels.profile}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <User2 className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                    {labels.profile}
+                  </ListBox.Item>
+                  <ListBox.Item
+                    id="preferences"
+                    href="/account/preferences"
+                    textValue={labels.preferences}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <Settings className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                    {labels.preferences}
+                  </ListBox.Item>
+                  <ListBox.Item
+                    id="subscription"
+                    href="/account/subscription"
+                    textValue={labels.subscription}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <Repeat className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                    {labels.subscription}
+                  </ListBox.Item>
+                  <ListBox.Item
+                    id="credits"
+                    href="/account/credits"
+                    textValue={labels.buyCredits}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <Coins className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                    {labels.buyCredits}
+                  </ListBox.Item>
+                </ListBox>
+              ) : null}
 
               <div className="border-t border-[var(--border)] pt-4 px-2 flex items-center justify-between gap-3">
                 <span className="text-sm text-[var(--muted)]">{labels.language}</span>

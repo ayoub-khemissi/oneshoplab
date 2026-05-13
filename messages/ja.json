@@ -41,7 +41,8 @@
     "subscription": "サブスク",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
-    "menuTitle": "メニュー"
+    "menuTitle": "メニュー",
+    "joinDiscord": "Discord に参加"
   },
   "Footer": {
     "tagline": "AIによる商品ページ最適化",

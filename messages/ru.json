@@ -41,7 +41,8 @@
     "subscription": "Подписка",
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
-    "menuTitle": "Меню"
+    "menuTitle": "Меню",
+    "joinDiscord": "Присоединиться к Discord"
   },
   "Footer": {
     "tagline": "ИИ-оптимизация товарных страниц",

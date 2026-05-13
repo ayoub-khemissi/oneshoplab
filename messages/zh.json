@@ -41,7 +41,8 @@
     "subscription": "订阅",
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
-    "menuTitle": "菜单"
+    "menuTitle": "菜单",
+    "joinDiscord": "加入我们的 Discord"
   },
   "Footer": {
     "tagline": "AI 产品页优化",

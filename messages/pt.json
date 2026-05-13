@@ -41,7 +41,8 @@
     "subscription": "Assinatura",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu",
-    "menuTitle": "Menu"
+    "menuTitle": "Menu",
+    "joinDiscord": "Junta-te ao nosso Discord"
   },
   "Footer": {
     "tagline": "Otimização IA de páginas de produto",

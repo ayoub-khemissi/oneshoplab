@@ -41,7 +41,8 @@
     "subscription": "구독",
     "openMenu": "메뉴 열기",
     "closeMenu": "메뉴 닫기",
-    "menuTitle": "메뉴"
+    "menuTitle": "메뉴",
+    "joinDiscord": "Discord 참여하기"
   },
   "Footer": {
     "tagline": "AI 기반 제품 페이지 최적화",

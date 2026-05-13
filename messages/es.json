@@ -41,7 +41,8 @@
     "subscription": "Suscripción",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "menuTitle": "Menú"
+    "menuTitle": "Menú",
+    "joinDiscord": "Únete a nuestro Discord"
   },
   "Footer": {
     "tagline": "Optimización IA de fichas de producto",

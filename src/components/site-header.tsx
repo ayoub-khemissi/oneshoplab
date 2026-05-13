@@ -2,6 +2,7 @@ import { Coins } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
+import { DiscordGlyph } from './discord-glyph';
 import { LocaleSwitcher } from './locale-switcher';
 import { MobileMenu } from './mobile-menu';
 import { ScrollHidingHeader } from './scroll-hiding-header';
@@ -66,6 +67,18 @@ export async function SiteHeader() {
           ) : null}
         </div>
         <nav className="hidden md:flex items-center gap-1 text-sm">
+          {process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ? (
+            <a
+              href={process.env.NEXT_PUBLIC_DISCORD_INVITE_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              title={t('joinDiscord')}
+              aria-label={t('joinDiscord')}
+              className="inline-flex items-center justify-center size-9 rounded-md hover:bg-[var(--default)] text-[var(--muted)] hover:text-[#5865F2] transition-colors"
+            >
+              <DiscordGlyph className="size-4" />
+            </a>
+          ) : null}
           <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
           <ThemeToggle ariaLabel={t('changeTheme')} />
           <span className="w-px h-6 bg-[var(--border)] mx-1.5" aria-hidden />
@@ -159,8 +172,10 @@ export async function SiteHeader() {
               language: t('changeLanguage'),
               closeMenu: t('closeMenu'),
               openMenu: t('openMenu'),
-              menuTitle: t('menuTitle')
+              menuTitle: t('menuTitle'),
+              joinDiscord: t('joinDiscord')
             }}
+            discordUrl={process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? null}
             localeSwitcher={
               <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
             }

@@ -41,7 +41,8 @@
     "subscription": "الاشتراك",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة",
-    "menuTitle": "القائمة"
+    "menuTitle": "القائمة",
+    "joinDiscord": "انضم إلى Discord الخاص بنا"
   },
   "Footer": {
     "tagline": "تحسين صفحات المنتجات بالذكاء الاصطناعي",
