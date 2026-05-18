@@ -828,7 +828,12 @@
     "retryFailed": "Repetir falhados",
     "errorInvalidSelection": "Um dos produtos selecionados já não está disponível.",
     "errorSourceNotFound": "Geração anterior não encontrada.",
-    "errorNoFailures": "Sem produtos falhados para repetir."
+    "errorNoFailures": "Sem produtos falhados para repetir.",
+    "configTitle": "O que gerar",
+    "configHint": "Guardado por site. O bulk gera apenas os elementos marcados — e só para os produtos que não os têm.",
+    "imageTypesLabel": "Tipos de imagem (uma imagem por tipo)",
+    "errorNoFields": "Seleciona pelo menos um elemento para gerar.",
+    "prefsSaving": "A guardar…"
   },
   "Share": {
     "title": "Partilha com prospects",

@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from '@heroui/react';
+import { Checkbox, Spinner } from '@heroui/react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -13,7 +13,7 @@ import {
   X
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 
 // ---------------------------------------------------------------------
@@ -63,6 +63,14 @@ interface BulkCandidate {
   pendingCost: number;
 }
 
+type ImageAngle = 'lifestyle' | 'studio' | 'inuse';
+const ALL_ANGLES: ImageAngle[] = ['lifestyle', 'studio', 'inuse'];
+
+interface BulkPrefs {
+  fields: Record<FieldKey, boolean>;
+  imageAngles: ImageAngle[];
+}
+
 interface BulkGenerateSectionProps {
   siteId: string;
   plan: string;
@@ -78,6 +86,9 @@ interface BulkGenerateSectionProps {
   initialDetail: BulkJobStatusForUi | null;
   creditsBalance: number;
   productTitleById: Record<string, string>;
+  /** Site bulk prefs (resolved server-side) — seeds the config
+   *  checkboxes with no first-paint flash. */
+  initialPrefs: BulkPrefs;
 }
 
 export function BulkGenerateSection({
@@ -89,9 +100,13 @@ export function BulkGenerateSection({
   initialActive,
   initialDetail,
   creditsBalance,
-  productTitleById
+  productTitleById,
+  initialPrefs
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
+  // Image-angle labels are already translated under Report.aiAngle in
+  // all 13 locales — reuse them rather than duplicating strings.
+  const tAngle = useTranslations('Report');
   // Bulk catalog generation is unlocked from the Pro plan upwards. Free
   // and Starter see the upgrade hint instead of the CTA.
   const canBulk = plan === 'pro' || plan === 'scale';
@@ -108,6 +123,11 @@ export function BulkGenerateSection({
   const [retrying, setRetrying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [detailExpanded, setDetailExpanded] = useState(false);
+  const [prefs, setPrefs] = useState<BulkPrefs>(initialPrefs);
+  // Skip the save effect on first render (no point PUT-ing the value we
+  // just received). Flipped true after the first user-driven change.
+  const prefsDirty = useRef(false);
+  const [savingPrefs, setSavingPrefs] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -132,6 +152,44 @@ export function BulkGenerateSection({
       /* next tick will retry */
     }
   }, [siteId]);
+
+  // Mark a user-driven prefs change; the debounced effect persists it.
+  const updatePrefs = useCallback((next: BulkPrefs) => {
+    prefsDirty.current = true;
+    setPrefs(next);
+  }, []);
+
+  // Debounced per-site save. Persists prefs ~600ms after the last
+  // toggle, then refreshes so the cost estimate / candidate list
+  // reflect the new selection. The server canonicalizes (e.g. images
+  // on + 0 angles → all 3) and we re-hydrate from its response.
+  useEffect(() => {
+    if (!prefsDirty.current) return;
+    const id = window.setTimeout(async () => {
+      setSavingPrefs(true);
+      try {
+        const res = await fetch('/api/sites/bulk-generate', {
+          method: 'PUT',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            siteId,
+            fields: prefs.fields,
+            imageAngles: prefs.imageAngles
+          })
+        });
+        if (res.ok) {
+          const data = (await res.json()) as { prefs?: BulkPrefs };
+          if (data.prefs) setPrefs(data.prefs);
+          await refresh();
+        }
+      } catch {
+        /* keep local state; user can retoggle */
+      } finally {
+        setSavingPrefs(false);
+      }
+    }, 600);
+    return () => window.clearTimeout(id);
+  }, [prefs, siteId, refresh]);
 
   useEffect(() => {
     if (!active || active.status === 'completed' || active.status === 'failed') {
@@ -381,6 +439,17 @@ export function BulkGenerateSection({
   // ---------------------------------------------------------------------
   const noProducts = productCount === 0;
   const noCandidates = candidates.length === 0;
+  const noFieldsSelected =
+    !prefs.fields.title &&
+    !prefs.fields.description &&
+    !prefs.fields.tags &&
+    !prefs.fields.images;
+  const fieldKeys: Array<{ key: FieldKey; label: string }> = [
+    { key: 'title', label: t('fieldTitle') },
+    { key: 'description', label: t('fieldDescription') },
+    { key: 'tags', label: t('fieldTags') },
+    { key: 'images', label: t('fieldImages') }
+  ];
 
   return (
     <>
@@ -388,44 +457,121 @@ export function BulkGenerateSection({
           CTA below) so the action isn't squeezed against the title on
           narrow screens. Above sm: switches back to the original
           side-by-side layout. */}
-      <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
-          <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
-            <p className="text-xs text-[var(--muted)] leading-relaxed">
-              {!canBulk
-                ? t('upgradeHint')
-                : noCandidates
-                  ? t('subtitleNoCandidates')
-                  : t('subtitle', { count: candidates.length })}
-            </p>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
+            <div className="flex flex-col gap-1 min-w-0">
+              <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">
+                {!canBulk
+                  ? t('upgradeHint')
+                  : noCandidates
+                    ? t('subtitleNoCandidates')
+                    : t('subtitle', { count: candidates.length })}
+              </p>
+            </div>
           </div>
+          {canBulk ? (
+            <button
+              type="button"
+              disabled={noProducts || noCandidates || noFieldsSelected}
+              onClick={() => setModalOpen(true)}
+              className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              title={
+                noFieldsSelected
+                  ? t('errorNoFields')
+                  : noProducts
+                    ? t('errorNoProducts')
+                    : noCandidates
+                      ? t('subtitleNoCandidates')
+                      : undefined
+              }
+            >
+              {t('cta')}
+            </button>
+          ) : (
+            <Link
+              href="/pricing"
+              className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
+            >
+              {t('upgradeCta')}
+            </Link>
+          )}
         </div>
+
+        {/* Per-site generation config — what the bulk produces. Saved
+            automatically (debounced) and reflected in the cost above. */}
         {canBulk ? (
-          <button
-            type="button"
-            disabled={noProducts || noCandidates}
-            onClick={() => setModalOpen(true)}
-            className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-            title={
-              noProducts
-                ? t('errorNoProducts')
-                : noCandidates
-                  ? t('subtitleNoCandidates')
-                  : undefined
-            }
-          >
-            {t('cta')}
-          </button>
-        ) : (
-          <Link
-            href="/pricing"
-            className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
-          >
-            {t('upgradeCta')}
-          </Link>
-        )}
+          <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/20">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                {t('configTitle')}
+              </span>
+              {savingPrefs ? (
+                <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
+                  <Spinner className="size-3" /> {t('prefsSaving')}
+                </span>
+              ) : null}
+            </div>
+            <p className="text-xs text-[var(--muted)] leading-relaxed">
+              {t('configHint')}
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {fieldKeys.map(({ key, label }) => (
+                <Checkbox
+                  key={key}
+                  isSelected={prefs.fields[key]}
+                  onChange={(isSelected: boolean) =>
+                    updatePrefs({
+                      ...prefs,
+                      fields: { ...prefs.fields, [key]: isSelected }
+                    })
+                  }
+                  className="text-sm"
+                >
+                  {label}
+                </Checkbox>
+              ))}
+            </div>
+            {prefs.fields.images ? (
+              <div className="flex flex-col gap-2 pl-1 border-l-2 border-[var(--border)] ml-1">
+                <span className="text-[11px] font-medium text-[var(--muted)] pl-2">
+                  {t('imageTypesLabel')}
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-2">
+                  {ALL_ANGLES.map((angle) => {
+                    const checked = prefs.imageAngles.includes(angle);
+                    // Don't let the last angle be unticked while Images
+                    // is on (server would re-expand to all 3 anyway).
+                    const isLast = checked && prefs.imageAngles.length === 1;
+                    return (
+                      <Checkbox
+                        key={angle}
+                        isSelected={checked}
+                        isDisabled={isLast}
+                        onChange={(isSelected: boolean) =>
+                          updatePrefs({
+                            ...prefs,
+                            imageAngles: isSelected
+                              ? [...prefs.imageAngles, angle]
+                              : prefs.imageAngles.filter((a) => a !== angle)
+                          })
+                        }
+                        className="text-sm"
+                      >
+                        {tAngle(`aiAngle.${angle}`)}
+                      </Checkbox>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+            {noFieldsSelected ? (
+              <p className="text-xs text-[var(--danger)]">{t('errorNoFields')}</p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       {modalOpen ? (

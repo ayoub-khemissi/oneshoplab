@@ -152,6 +152,19 @@ export const projects = mysqlTable(
      *  the latest audit summary, ultimately falling back to 'en'. Survives
      *  re-audits (audit refresh never overwrites this column). */
     languageOverride: varchar('language_override', { length: 8 }),
+    /** Per-site bulk-generation preferences. NULL = legacy default
+     *  (every field on, all 3 image angles) so existing sites are
+     *  unchanged. Snapshotted into the bulk job payload at launch so a
+     *  running job is unaffected by later edits. */
+    bulkPrefs: json('bulk_prefs').$type<{
+      fields: {
+        title: boolean;
+        description: boolean;
+        tags: boolean;
+        images: boolean;
+      };
+      imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+    } | null>(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },

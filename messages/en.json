@@ -828,7 +828,12 @@
     "retryFailed": "Retry failed",
     "errorInvalidSelection": "One of the selected products is no longer available.",
     "errorSourceNotFound": "The original bulk run could not be found.",
-    "errorNoFailures": "No failed products to retry in the last bulk."
+    "errorNoFailures": "No failed products to retry in the last bulk.",
+    "configTitle": "What to generate",
+    "configHint": "Saved per site. Bulk generates only the checked elements — and only for products missing them.",
+    "imageTypesLabel": "Image types (one image per type)",
+    "errorNoFields": "Select at least one element to generate.",
+    "prefsSaving": "Saving…"
   },
   "Share": {
     "title": "Share for prospects",

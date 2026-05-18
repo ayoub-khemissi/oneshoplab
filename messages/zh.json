@@ -827,7 +827,12 @@
     "retryFailed": "重试失败",
     "errorInvalidSelection": "所选其中一项产品已不可用。",
     "errorSourceNotFound": "未找到上一次生成。",
-    "errorNoFailures": "上次批量没有失败的产品可重试。"
+    "errorNoFailures": "上次批量没有失败的产品可重试。",
+    "configTitle": "生成内容",
+    "configHint": "按站点保存。批量生成仅生成已勾选的元素——且仅针对缺少这些元素的产品。",
+    "imageTypesLabel": "图片类型（每种类型一张图）",
+    "errorNoFields": "请至少选择一个要生成的元素。",
+    "prefsSaving": "保存中…"
   },
   "Share": {
     "title": "分享给潜在客户",

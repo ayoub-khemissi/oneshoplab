@@ -827,7 +827,12 @@
     "retryFailed": "실패 재시도",
     "errorInvalidSelection": "선택된 상품 중 하나가 더 이상 사용할 수 없습니다.",
     "errorSourceNotFound": "이전 실행을 찾을 수 없습니다.",
-    "errorNoFailures": "재시도할 실패 상품이 없습니다."
+    "errorNoFailures": "재시도할 실패 상품이 없습니다.",
+    "configTitle": "생성할 항목",
+    "configHint": "사이트별로 저장됩니다. 대량 생성은 체크한 항목만, 그리고 해당 항목이 없는 상품에 대해서만 생성합니다.",
+    "imageTypesLabel": "이미지 유형(유형당 1장)",
+    "errorNoFields": "생성할 항목을 하나 이상 선택하세요.",
+    "prefsSaving": "저장 중…"
   },
   "Share": {
     "title": "잠재 고객에게 공유",

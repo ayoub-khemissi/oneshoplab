@@ -828,7 +828,12 @@
     "retryFailed": "Riprova falliti",
     "errorInvalidSelection": "Uno dei prodotti selezionati non è più disponibile.",
     "errorSourceNotFound": "Generazione precedente non trovata.",
-    "errorNoFailures": "Nessun prodotto fallito da riprovare."
+    "errorNoFailures": "Nessun prodotto fallito da riprovare.",
+    "configTitle": "Cosa generare",
+    "configHint": "Salvato per sito. Il bulk genera solo gli elementi selezionati, e solo per i prodotti che ne sono privi.",
+    "imageTypesLabel": "Tipi di immagine (un'immagine per tipo)",
+    "errorNoFields": "Seleziona almeno un elemento da generare.",
+    "prefsSaving": "Salvataggio…"
   },
   "Share": {
     "title": "Condividi con i prospect",

@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `bulk_prefs` json;

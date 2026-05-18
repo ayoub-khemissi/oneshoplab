@@ -828,7 +828,12 @@
     "retryFailed": "Powtórz nieudane",
     "errorInvalidSelection": "Jeden z wybranych produktów nie jest już dostępny.",
     "errorSourceNotFound": "Nie znaleziono poprzedniej generacji.",
-    "errorNoFailures": "Brak nieudanych produktów do powtórzenia."
+    "errorNoFailures": "Brak nieudanych produktów do powtórzenia.",
+    "configTitle": "Co generować",
+    "configHint": "Zapisywane dla każdej witryny. Bulk generuje tylko zaznaczone elementy — i tylko dla produktów, którym ich brakuje.",
+    "imageTypesLabel": "Typy obrazów (jeden obraz na typ)",
+    "errorNoFields": "Zaznacz co najmniej jeden element do wygenerowania.",
+    "prefsSaving": "Zapisywanie…"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

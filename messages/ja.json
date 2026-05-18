@@ -827,7 +827,12 @@
     "retryFailed": "失敗を再試行",
     "errorInvalidSelection": "選択された商品の1つが利用できなくなりました。",
     "errorSourceNotFound": "前回の実行が見つかりませんでした。",
-    "errorNoFailures": "前回の一括に失敗商品はありません。"
+    "errorNoFailures": "前回の一括に失敗商品はありません。",
+    "configTitle": "生成する項目",
+    "configHint": "サイトごとに保存。一括生成はチェックした項目のみ、かつ未生成の商品に対してのみ生成します。",
+    "imageTypesLabel": "画像タイプ（タイプごとに1枚）",
+    "errorNoFields": "生成する項目を1つ以上選択してください。",
+    "prefsSaving": "保存中…"
   },
   "Share": {
     "title": "見込み客に共有",

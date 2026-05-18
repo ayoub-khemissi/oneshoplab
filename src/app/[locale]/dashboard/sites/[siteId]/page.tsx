@@ -31,7 +31,8 @@ import {
   getActiveBulkJob,
   getLatestBulkJobDetail,
   listBulkCandidates,
-  listBulkCandidatesWithStatus
+  listBulkCandidatesWithStatus,
+  resolveBulkPrefs
 } from '@/lib/bulk/site-generate';
 import {
   axesValueTiers,
@@ -727,6 +728,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             initialDetail={bulkDetail}
             creditsBalance={session.user.creditsBalance ?? 0}
             productTitleById={productTitleById}
+            initialPrefs={resolveBulkPrefs(project.bulkPrefs ?? null)}
           />
           <PaginatedProductsList
             siteId={siteId}

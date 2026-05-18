@@ -8,7 +8,6 @@ import {
   estimateChatCredits,
   IMAGE_MODEL_REGISTRY,
   buildImagePrompt,
-  IMAGE_ANGLES,
   runChatOptim,
   startImageOptim,
   type ChatModelId,
@@ -79,6 +78,11 @@ export interface BulkInputPayload {
   chatModelId: ChatModelId;
   imageQualityId: ImageQualityId;
   customInstructions: string;
+  /** Snapshot of the site's bulk prefs at launch. Absent on jobs
+   *  queued before this feature → resolveBulkPrefs() treats it as the
+   *  legacy "everything on, 3 angles" default. */
+  fields?: Record<BulkFieldKey, boolean>;
+  imageAngles?: BulkImageAngle[];
 }
 
 export interface BulkResult {
@@ -92,6 +96,49 @@ export interface BulkResult {
 }
 
 const ALL_FIELDS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
+
+export type BulkImageAngle = 'lifestyle' | 'studio' | 'inuse';
+const ALL_ANGLES: BulkImageAngle[] = ['lifestyle', 'studio', 'inuse'];
+
+export interface ResolvedBulkPrefs {
+  fields: Record<BulkFieldKey, boolean>;
+  imageAngles: BulkImageAngle[];
+}
+
+/**
+ * Normalize a stored projects.bulkPrefs (or null / a job-payload
+ * snapshot) into a complete, sanitized prefs object. NULL / legacy =
+ * everything on, all 3 image angles — so sites without saved prefs and
+ * bulk jobs queued before this feature behave exactly as before.
+ */
+export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
+  const r = (raw ?? null) as {
+    fields?: Partial<Record<BulkFieldKey, unknown>>;
+    imageAngles?: unknown;
+  } | null;
+  const f = r?.fields ?? {};
+  const fields: Record<BulkFieldKey, boolean> = {
+    title: f.title !== false,
+    description: f.description !== false,
+    tags: f.tags !== false,
+    images: f.images !== false
+  };
+  const rawAngles = Array.isArray(r?.imageAngles) ? r.imageAngles : null;
+  let imageAngles = rawAngles
+    ? ALL_ANGLES.filter((a) => rawAngles.includes(a))
+    : ALL_ANGLES.slice();
+  // Images on but no angle picked would mean "images, zero images" —
+  // nonsensical; fall back to all 3 (the UI also prevents this).
+  if (fields.images && imageAngles.length === 0) {
+    imageAngles = ALL_ANGLES.slice();
+  }
+  return { fields, imageAngles };
+}
+
+/** Fields the bulk will actually touch given prefs (order preserved). */
+function effectiveFields(prefs: ResolvedBulkPrefs): BulkFieldKey[] {
+  return ALL_FIELDS.filter((f) => prefs.fields[f]);
+}
 
 interface ProductImage {
   src: string;
@@ -197,13 +244,17 @@ export interface BulkCostBreakdown {
 export function estimateBulkCostBreakdown(
   productCount: number,
   chatModelId: ChatModelId,
-  imageQualityId: ImageQualityId
+  imageQualityId: ImageQualityId,
+  prefs?: ResolvedBulkPrefs
 ): BulkCostBreakdown {
+  const p = prefs ?? resolveBulkPrefs(null);
   const chatPerProduct =
-    estimateChatCredits(chatModelId, 'title') +
-    estimateChatCredits(chatModelId, 'description') +
-    estimateChatCredits(chatModelId, 'tags');
-  const imagesPerProduct = costForImage(imageQualityId) * IMAGE_ANGLES.length;
+    (p.fields.title ? estimateChatCredits(chatModelId, 'title') : 0) +
+    (p.fields.description ? estimateChatCredits(chatModelId, 'description') : 0) +
+    (p.fields.tags ? estimateChatCredits(chatModelId, 'tags') : 0);
+  const imagesPerProduct = p.fields.images
+    ? costForImage(imageQualityId) * p.imageAngles.length
+    : 0;
   const perProductTotal = chatPerProduct + imagesPerProduct;
   return {
     productCount,
@@ -373,6 +424,16 @@ export async function listBulkCandidatesWithStatus(
         or(eq(products.status, 'active'), isNull(products.status))
       )
     );
+  // Site bulk prefs gate which fields count as "pending" and how many
+  // image angles are billed. Loaded here so every caller (API + the
+  // dashboard SSR cost estimate) is automatically prefs-aware.
+  const proj = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+    columns: { bulkPrefs: true }
+  });
+  const prefs = resolveBulkPrefs(proj?.bulkPrefs ?? null);
+  const wanted = effectiveFields(prefs);
+
   const completed = await getCompletedFieldsByProduct(projectId);
   const out: BulkCandidate[] = [];
 
@@ -380,13 +441,14 @@ export async function listBulkCandidatesWithStatus(
     const sourceId = p.sourceId ?? p.handle ?? '';
     if (!sourceId) continue;
     const done = completed.get(sourceId) ?? new Set<BulkFieldKey>();
-    const pending = ALL_FIELDS.filter((f) => !done.has(f));
+    // Only fields the merchant asked for AND that aren't already done.
+    const pending = wanted.filter((f) => !done.has(f));
     if (pending.length === 0) continue;
     let cost = 0;
     for (const f of pending) {
       cost +=
         f === 'images'
-          ? costForImage(imageQualityId) * IMAGE_ANGLES.length
+          ? costForImage(imageQualityId) * prefs.imageAngles.length
           : estimateChatCredits(chatModelId, f);
     }
     out.push({
@@ -418,6 +480,9 @@ export async function startBulkSiteGenerate(opts: {
   imageQualityId?: ImageQualityId;
   customInstructions?: string;
   totalCreditsBudget: number;
+  /** Resolved site prefs, snapshotted into the payload so the worker
+   *  is deterministic even if the site prefs change mid-run. */
+  prefs?: ResolvedBulkPrefs;
 }): Promise<{ ok: true; jobId: string } | { ok: false; reason: 'already_running' }> {
   const id = randomUUID();
   const chatModelId =
@@ -429,12 +494,15 @@ export async function startBulkSiteGenerate(opts: {
       ? opts.imageQualityId
       : DEFAULT_IMAGE_QUALITY;
 
+  const prefs = opts.prefs ?? resolveBulkPrefs(null);
   const input: BulkInputPayload = {
     siteId: opts.projectId,
     productIds: opts.productIds,
     chatModelId,
     imageQualityId,
-    customInstructions: opts.customInstructions ?? ''
+    customInstructions: opts.customInstructions ?? '',
+    fields: prefs.fields,
+    imageAngles: prefs.imageAngles
   };
   const result: BulkResult = {
     total: opts.productIds.length,
@@ -508,13 +576,22 @@ export async function retryFailedFromBulk(opts: {
     return { ok: false, reason: 'no_failures' };
   }
 
+  // Reuse the ORIGINAL bulk's field/angle selection (snapshot), not the
+  // site's current prefs — a retry must re-attempt exactly what the
+  // first run targeted.
+  const srcInput = source.inputPayload as unknown as BulkInputPayload | null;
   const out = await startBulkSiteGenerate({
     projectId: opts.projectId,
     productIds: failedProductIds,
     chatModelId: opts.chatModelId,
     imageQualityId: opts.imageQualityId,
     customInstructions: opts.customInstructions,
-    totalCreditsBudget: opts.totalCreditsBudget
+    totalCreditsBudget: opts.totalCreditsBudget,
+    prefs: resolveBulkPrefs(
+      srcInput
+        ? { fields: srcInput.fields, imageAngles: srcInput.imageAngles }
+        : null
+    )
   });
   if (!out.ok) return { ok: false, reason: 'already_running' };
   return { ok: true, jobId: out.jobId, productCount: failedProductIds.length };
@@ -576,6 +653,14 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
+  // Effective selection for THIS job — from the payload snapshot taken
+  // at launch (legacy jobs with no snapshot → all fields, 3 angles).
+  const prefs = resolveBulkPrefs({
+    fields: input.fields,
+    imageAngles: input.imageAngles
+  });
+  const wanted = effectiveFields(prefs);
+
   // Flip pending → running on first touch and stamp progressAt so the
   // stall watchdog has a reference.
   if (job.status === 'pending') {
@@ -595,7 +680,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
   const nextProductId = input.productIds.find((pid) => {
     const state = result.perProduct[pid];
     if (!state) return true;
-    return ALL_FIELDS.some((f) => !(f in state.fields));
+    return wanted.some((f) => !(f in state.fields));
   });
 
   if (!nextProductId) {
@@ -633,7 +718,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
       job.id,
       result,
       nextProductId,
-      'Product row not found'
+      'Product row not found',
+      wanted
     );
     return true;
   }
@@ -649,14 +735,15 @@ export async function processNextBulkProduct(): Promise<boolean> {
       job.id,
       result,
       nextProductId,
-      'Product missing from latest audit summary — relaunch the audit before bulking'
+      'Product missing from latest audit summary — relaunch the audit before bulking',
+      wanted
     );
     return true;
   }
   const sourceId = matched.sourceId ?? matched.handle ?? '';
   const sourceImage = matched.images[0]?.src ?? null;
   if (!sourceId) {
-    await markFieldsErrored(job.id, result, nextProductId, 'Product has no source id');
+    await markFieldsErrored(job.id, result, nextProductId, 'Product has no source id', wanted);
     return true;
   }
 
@@ -674,7 +761,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
   // After each field, persist + re-check parent status so a cancel
   // request lands quickly. If credits run out, mark the remaining
   // fields as errored with a clear message and stop the bulk.
-  for (const field of ALL_FIELDS) {
+  for (const field of wanted) {
     if (field in state.fields) continue;
 
     // Cancellation re-check between fields. The status was loaded at
@@ -712,7 +799,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
           state.fields.images = { error: 'No source image on this product' };
         } else {
           const settled = await Promise.allSettled(
-            IMAGE_ANGLES.map((angle) =>
+            prefs.imageAngles.map((angle) =>
               startImageOptim({
                 userId: project.userId,
                 projectId: project.id,
@@ -840,10 +927,11 @@ async function markFieldsErrored(
   jobId: string,
   result: BulkResult,
   productId: string,
-  error: string
+  error: string,
+  fields: BulkFieldKey[]
 ): Promise<void> {
   const state: BulkProductState = result.perProduct[productId] ?? { fields: {} };
-  for (const f of ALL_FIELDS) {
+  for (const f of fields) {
     if (!(f in state.fields)) state.fields[f] = { error };
   }
   result.perProduct[productId] = state;
@@ -906,7 +994,11 @@ export interface BulkJobStatusForUi {
   perProduct: Record<string, BulkProductState>;
 }
 
-function aggregate(result: BulkResult, total: number): {
+function aggregate(
+  result: BulkResult,
+  total: number,
+  fields: BulkFieldKey[]
+): {
   fullySucceeded: number;
   partiallySucceeded: number;
   fullyFailed: number;
@@ -915,11 +1007,12 @@ function aggregate(result: BulkResult, total: number): {
   let fullySucceeded = 0;
   let partiallySucceeded = 0;
   let fullyFailed = 0;
+  const want = fields.length > 0 ? fields : ALL_FIELDS;
   for (const state of Object.values(result.perProduct)) {
-    const present = ALL_FIELDS.filter((f) => f in state.fields);
-    if (present.length < ALL_FIELDS.length) continue;
+    const present = want.filter((f) => f in state.fields);
+    if (present.length < want.length) continue;
     const doneCount = present.filter((f) => state.fields[f] === 'done').length;
-    if (doneCount === ALL_FIELDS.length) fullySucceeded++;
+    if (doneCount === want.length) fullySucceeded++;
     else if (doneCount === 0) fullyFailed++;
     else partiallySucceeded++;
   }
@@ -950,7 +1043,16 @@ export async function getActiveBulkJob(projectId: string): Promise<{
   });
   if (!job) return null;
   const result = readResult(job.result);
-  const agg = aggregate(result, result.total);
+  const snap = job.inputPayload as unknown as BulkInputPayload | null;
+  const agg = aggregate(
+    result,
+    result.total,
+    effectiveFields(
+      resolveBulkPrefs(
+        snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null
+      )
+    )
+  );
   // For the simple progress bar we count attempts of any kind.
   const processed = agg.fullySucceeded + agg.partiallySucceeded + agg.fullyFailed;
   const errors = agg.partiallySucceeded + agg.fullyFailed;
@@ -977,7 +1079,16 @@ export async function getLatestBulkJobDetail(
   });
   if (!job) return null;
   const result = readResult(job.result);
-  const agg = aggregate(result, result.total);
+  const snap = job.inputPayload as unknown as BulkInputPayload | null;
+  const agg = aggregate(
+    result,
+    result.total,
+    effectiveFields(
+      resolveBulkPrefs(
+        snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null
+      )
+    )
+  );
   return {
     id: job.id,
     status: job.status,

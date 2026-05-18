@@ -828,7 +828,12 @@
     "retryFailed": "Relancer les échecs",
     "errorInvalidSelection": "Un des produits sélectionnés n'est plus disponible.",
     "errorSourceNotFound": "La génération précédente est introuvable.",
-    "errorNoFailures": "Aucun produit en échec à relancer dans le dernier bulk."
+    "errorNoFailures": "Aucun produit en échec à relancer dans le dernier bulk.",
+    "configTitle": "Ce qui est généré",
+    "configHint": "Sauvegardé par site. Le bulk ne génère que les éléments cochés — et seulement pour les produits qui en manquent.",
+    "imageTypesLabel": "Types d'image (une image par type)",
+    "errorNoFields": "Sélectionnez au moins un élément à générer.",
+    "prefsSaving": "Enregistrement…"
   },
   "Share": {
     "title": "Partage prospect",

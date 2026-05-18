@@ -8,12 +8,14 @@ import {
   type ChatModelId,
   type ImageQualityId
 } from '@/lib/ai';
+import { z } from 'zod';
 import {
   cancelBulkJob,
   estimateBulkCostBreakdown,
   getActiveBulkJob,
   getLatestBulkJobDetail,
   listBulkCandidatesWithStatus,
+  resolveBulkPrefs,
   retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/lib/bulk/site-generate';
@@ -97,6 +99,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   });
   if (!project) {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
+  }
+
+  // Per-site generation prefs (which fields / image angles). Snapshotted
+  // into the bulk job so a running job is deterministic.
+  const prefs = resolveBulkPrefs(project.bulkPrefs ?? null);
+  if (
+    !prefs.fields.title &&
+    !prefs.fields.description &&
+    !prefs.fields.tags &&
+    !prefs.fields.images
+  ) {
+    return NextResponse.json({ error: 'no_fields' }, { status: 400 });
   }
 
   const { chatModelId, imageQualityId } = resolveModels(session);
@@ -202,7 +216,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     chatModelId,
     imageQualityId,
     customInstructions,
-    totalCreditsBudget: totalCost
+    totalCreditsBudget: totalCost,
+    prefs
   });
 
   if (!result.ok) {
@@ -239,6 +254,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const { chatModelId, imageQualityId } = resolveModels(session);
+  const prefs = resolveBulkPrefs(project.bulkPrefs ?? null);
   const candidates = await listBulkCandidatesWithStatus(
     project.id,
     chatModelId,
@@ -247,7 +263,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const breakdown = estimateBulkCostBreakdown(
     candidates.length,
     chatModelId,
-    imageQualityId
+    imageQualityId,
+    prefs
   );
 
   const active = await getActiveBulkJob(project.id);
@@ -258,9 +275,64 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     detail,
     estimate: breakdown,
     candidates,
+    prefs,
     creditsBalance: session.user.creditsBalance ?? 0,
     plan: (session.user.plan ?? 'free') as string
   });
+}
+
+const PrefsSchema = z.object({
+  siteId: z.string().min(1),
+  fields: z.object({
+    title: z.boolean(),
+    description: z.boolean(),
+    tags: z.boolean(),
+    images: z.boolean()
+  }),
+  imageAngles: z
+    .array(z.enum(['lifestyle', 'studio', 'inuse']))
+    .max(3)
+});
+
+/**
+ * Save the site's bulk-generation preferences. Owner-checked, validated.
+ * Returns the resolved prefs so the client can re-hydrate from the
+ * canonical (sanitized) shape.
+ */
+export async function PUT(req: NextRequest): Promise<NextResponse> {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  let raw: unknown;
+  try {
+    raw = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'invalid_json' }, { status: 400 });
+  }
+  const parsed = PrefsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+  }
+  const { siteId, fields, imageAngles } = parsed.data;
+
+  const project = await db.query.projects.findFirst({
+    where: and(eq(projects.id, siteId), eq(projects.userId, session.user.id)),
+    columns: { id: true }
+  });
+  if (!project) {
+    return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
+  }
+
+  // resolveBulkPrefs sanitizes (e.g. images on + zero angles → all 3),
+  // so we persist the canonical shape and echo it back.
+  const resolved = resolveBulkPrefs({ fields, imageAngles });
+  await db
+    .update(projects)
+    .set({ bulkPrefs: resolved })
+    .where(eq(projects.id, project.id));
+
+  return NextResponse.json({ ok: true, prefs: resolved });
 }
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {

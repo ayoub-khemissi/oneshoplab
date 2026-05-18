@@ -828,7 +828,12 @@
     "retryFailed": "Başarısızları tekrarla",
     "errorInvalidSelection": "Seçili ürünlerden biri artık mevcut değil.",
     "errorSourceNotFound": "Önceki çalışma bulunamadı.",
-    "errorNoFailures": "Tekrarlanacak başarısız ürün yok."
+    "errorNoFailures": "Tekrarlanacak başarısız ürün yok.",
+    "configTitle": "Ne üretilecek",
+    "configHint": "Site başına kaydedilir. Toplu üretim yalnızca işaretli ögeleri üretir — ve yalnızca bunlara sahip olmayan ürünler için.",
+    "imageTypesLabel": "Görsel türleri (tür başına bir görsel)",
+    "errorNoFields": "Üretmek için en az bir öge seç.",
+    "prefsSaving": "Kaydediliyor…"
   },
   "Share": {
     "title": "Potansiyel müşteriyle paylaş",

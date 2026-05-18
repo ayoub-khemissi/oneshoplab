@@ -828,7 +828,12 @@
     "retryFailed": "Fehlgeschlagene wiederholen",
     "errorInvalidSelection": "Ein ausgewähltes Produkt ist nicht mehr verfügbar.",
     "errorSourceNotFound": "Der vorherige Bulk-Lauf wurde nicht gefunden.",
-    "errorNoFailures": "Keine fehlgeschlagenen Produkte zum Wiederholen."
+    "errorNoFailures": "Keine fehlgeschlagenen Produkte zum Wiederholen.",
+    "configTitle": "Was generiert wird",
+    "configHint": "Pro Website gespeichert. Bulk generiert nur die angehakten Elemente – und nur für Produkte, denen sie fehlen.",
+    "imageTypesLabel": "Bildtypen (ein Bild pro Typ)",
+    "errorNoFields": "Wähle mindestens ein Element zum Generieren.",
+    "prefsSaving": "Speichern…"
   },
   "Share": {
     "title": "Mit Interessenten teilen",
