@@ -71,15 +71,12 @@ function PrefCheckbox({
       isSelected={selected}
       isDisabled={disabled}
       onChange={onToggle}
-      className="flex items-center gap-2"
     >
       <Checkbox.Control>
         <Checkbox.Indicator />
       </Checkbox.Control>
       <Checkbox.Content>
-        <Label htmlFor={id} className="text-sm cursor-pointer">
-          {label}
-        </Label>
+        <Label htmlFor={id}>{label}</Label>
       </Checkbox.Content>
     </Checkbox>
   );

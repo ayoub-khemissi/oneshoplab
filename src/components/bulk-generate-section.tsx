@@ -203,7 +203,8 @@ export function BulkGenerateSection({
 
   // Drop the site override → inherit the account default again.
   const resetToAccountDefault = useCallback(async () => {
-    setSavingPrefs(true);
+    // No "saving" indicator here — the reset is an instant revert, not
+    // an edit being persisted.
     try {
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'PUT',
@@ -225,8 +226,6 @@ export function BulkGenerateSection({
       }
     } catch {
       /* no-op; user can retry */
-    } finally {
-      setSavingPrefs(false);
     }
   }, [siteId, refresh]);
 

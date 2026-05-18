@@ -67,7 +67,7 @@ export function SiteBulkPrefsEditor({
   }, [prefs, siteId, canBulk]);
 
   const resetToAccountDefault = useCallback(async () => {
-    setSaving(true);
+    // Instant revert, not an edit being persisted → no saving indicator.
     try {
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'PUT',
@@ -88,8 +88,6 @@ export function SiteBulkPrefsEditor({
       }
     } catch {
       /* no-op */
-    } finally {
-      setSaving(false);
     }
   }, [siteId]);
 

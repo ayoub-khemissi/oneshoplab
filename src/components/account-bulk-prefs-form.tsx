@@ -57,7 +57,15 @@ export function AccountBulkPrefsForm({
   }, [prefs, save]);
 
   const resetToDefault = useCallback(async () => {
-    await save({ reset: true });
+    // Instant revert, not an edit being persisted → no saving
+    // indicator (call the action directly, bypassing save()).
+    try {
+      const fd = new FormData();
+      fd.set('prefs', JSON.stringify({ reset: true }));
+      await updateUserDefaultBulkPrefsAction(fd);
+    } catch {
+      /* no-op; user can retry */
+    }
     const legacy = canonicalizePrefs({
       fields: { title: true, description: true, tags: true, images: true },
       imageAngles: ['lifestyle', 'studio', 'inuse']
@@ -65,7 +73,7 @@ export function AccountBulkPrefsForm({
     lastSavedKey.current = prefsKey(legacy);
     setPrefs(legacy);
     setHasDefault(false);
-  }, [save]);
+  }, []);
 
   return (
     <Card variant="secondary" className="p-5 flex flex-col gap-3">
