@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "블로그",
+    "indexTitle": "OneShopLab 블로그",
+    "indexSubtitle": "제품 페이지 최적화, 카탈로그 감사, AI 재작성 — 에이전시와 판매자를 위해.",
+    "empty": "이 언어로 된 기사가 아직 없습니다.",
+    "emptyCta": "스토어 무료 감사하기",
+    "readMore": "기사 읽기",
+    "backToBlog": "모든 기사",
+    "publishedOn": "{date} 게시",
+    "ctaTitle": "스토어 무료 감사",
+    "ctaButton": "스토어 무료 감사하기",
+    "ctaNote": "무료 가입 · 카드 불필요 · 시작 크레딧 포함",
+    "metaIndexTitle": "블로그 — OneShopLab",
+    "metaIndexDescription": "Shopify, WooCommerce, Wix를 위한 제품 페이지 최적화, 카탈로그 감사, AI 재작성에 관한 기사."
+  },
+  "FreeAudit": {
+    "captchaError": "로봇이 아님을 확인한 후 다시 시도하세요.",
+    "eyebrow": "무료 감사 · 가입 불필요",
+    "headline": "어떤 스토어의 제품 페이지도 무료로 감사하세요.",
+    "lead": "스토어 URL을 붙여넣으세요. 약 1분 만에 카피, 비주얼, 카탈로그, 태그에 대한 제품별 점수를 받아보세요. 계정이 필요 없습니다.",
+    "urlLabel": "스토어 URL",
+    "submit": "무료로 감사하기",
+    "invalidUrl": "유효한 스토어 URL을 입력하세요.",
+    "trust": "가입 불필요 · 카드 불필요 · 약 1분 내 결과",
+    "runningTitle": "{domain} 감사 중…",
+    "runningBody": "플랫폼을 감지하고 각 제품을 채점하고 있습니다. 보통 약 1분 정도 걸립니다 — 이 페이지를 열어 두세요.",
+    "failedTitle": "이 스토어를 감사할 수 없습니다",
+    "failedBody": "스토어에 접근할 수 없거나, 비밀번호로 보호되어 있거나, 지원되지 않는 플랫폼일 수 있습니다. URL을 확인하고 다시 시도하세요.",
+    "retry": "다른 스토어 시도",
+    "resultEyebrow": "무료 감사 · 결과",
+    "resultSubtitle": "{domain}에 대해 계산된 점수입니다. AI 전/후 재작성은 가입 한 번이면 됩니다.",
+    "noScores": "감사가 완료되었지만 이 스토어의 점수를 계산할 수 없습니다.",
+    "ctaTitle": "이 카탈로그의 AI 재작성을 원하시나요?",
+    "ctaBody": "무료 계정을 만드세요 — 시작 크레딧 포함, 카드 불필요 — 이 스토어를 위한 새 제목, 설명, 태그, 라이프스타일 사진을 생성하세요.",
+    "ctaPrimary": "무료 계정 만들기",
+    "ctaSecondary": "가격 보기",
+    "metaTitle": "무료 제품 페이지 감사 — 가입 불필요",
+    "metaDescription": "Shopify, WooCommerce 또는 Wix 스토어 URL을 붙여넣고 약 1분 만에 제품별 감사 점수를 무료로 받아보세요. 계정 불필요, 카드 불필요."
+  },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix용",
     "headline": "제품 페이지를,<br></br><gradient>전환에 맞게 다시 씁니다.</gradient>",
@@ -568,6 +607,9 @@
     "errorPaymentFailed": "결제 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요."
   },
   "CookieBanner": {
+    "accept": "수락",
+    "refuse": "거부",
+    "bodyAnalytics": "서비스 운영에 반드시 필요한 쿠키(인증, 언어, 테마)와 사용량 측정을 위한 선택적 분석 쿠키를 사용합니다. 선택은 당신의 몫입니다.",
     "ariaLabel": "쿠키 알림",
     "body": "서비스 운영에 엄격히 필요한 쿠키만 사용합니다 (인증, 언어, 테마). 광고 또는 제3자 추적 쿠키 없음.",
     "learnMore": "자세히",

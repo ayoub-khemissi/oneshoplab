@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "OneShopLab blogu",
+    "indexSubtitle": "Ürün sayfası optimizasyonu, katalog denetimleri ve yapay zekâ ile yeniden yazma — ajanslar ve satıcılar için.",
+    "empty": "Bu dilde henüz makale yok.",
+    "emptyCta": "Bir mağazayı ücretsiz denetle",
+    "readMore": "Makaleyi oku",
+    "backToBlog": "Tüm makaleler",
+    "publishedOn": "{date} tarihinde yayınlandı",
+    "ctaTitle": "Bir mağazayı ücretsiz denetleyin",
+    "ctaButton": "Bir mağazayı ücretsiz denetle",
+    "ctaNote": "Ücretsiz kayıt · kart yok · başlangıç kredileri dahil",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Shopify, WooCommerce ve Wix için ürün sayfası optimizasyonu, katalog denetimleri ve yapay zekâ ile yeniden yazma üzerine makaleler."
+  },
+  "FreeAudit": {
+    "captchaError": "Robot olmadığınızı doğrulayın ve tekrar deneyin.",
+    "eyebrow": "Ücretsiz denetim · kayıt yok",
+    "headline": "Herhangi bir mağazanın ürün sayfalarını denetleyin — ücretsiz.",
+    "lead": "Bir mağaza URL'si yapıştırın. Yaklaşık bir dakikada metin, görsel, katalog ve etiketler için ürün başına puan alın. Hesap gerekmez.",
+    "urlLabel": "Mağaza URL'si",
+    "submit": "Ücretsiz denetle",
+    "invalidUrl": "Lütfen geçerli bir mağaza URL'si girin.",
+    "trust": "Kayıt yok · kart yok · ~1 dakikada sonuç",
+    "runningTitle": "{domain} denetleniyor…",
+    "runningBody": "Platform algılanıyor ve her ürün puanlanıyor. Genellikle yaklaşık bir dakika sürer — bu sayfayı açık tutun.",
+    "failedTitle": "Bu mağazayı denetleyemedik",
+    "failedBody": "Mağaza erişilemez, parola korumalı veya desteklenmeyen bir platformda olabilir. URL'yi kontrol edip tekrar deneyin.",
+    "retry": "Başka bir mağaza deneyin",
+    "resultEyebrow": "Ücretsiz denetim · sonuç",
+    "resultSubtitle": "{domain} için hesaplanan puan. Yapay zekâ öncesi/sonrası metinleri tek bir kayıt uzaklıkta.",
+    "noScores": "Denetim tamamlandı ancak bu mağaza için puan hesaplanamadı.",
+    "ctaTitle": "Bu katalog için yapay zekâ metinlerini ister misiniz?",
+    "ctaBody": "Ücretsiz bir hesap oluşturun — başlangıç kredileri dahil, kart yok — ve bu mağaza için yeni başlıklar, açıklamalar, etiketler ve yaşam tarzı fotoğrafları üretin.",
+    "ctaPrimary": "Ücretsiz hesabımı oluştur",
+    "ctaSecondary": "Fiyatları gör",
+    "metaTitle": "Ücretsiz ürün sayfası denetimi — kayıt yok",
+    "metaDescription": "Bir Shopify, WooCommerce veya Wix mağaza URL'si yapıştırın ve yaklaşık bir dakikada ürün başına ücretsiz denetim puanı alın. Hesap yok, kart yok."
+  },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix için",
     "headline": "Ürün sayfalarınız,<br></br><gradient>dönüşüm için yeniden yazıldı.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Ödeme servisine ulaşılamadı. Birkaç saniye sonra tekrar deneyin."
   },
   "CookieBanner": {
+    "accept": "Kabul et",
+    "refuse": "Reddet",
+    "bodyAnalytics": "Hizmetin çalışması için kesinlikle gerekli çerezleri (kimlik doğrulama, dil, tema) ve kullanımı ölçmek için isteğe bağlı analiz çerezlerini kullanıyoruz. Karar sizin.",
     "ariaLabel": "Çerez bildirimi",
     "body": "Yalnızca hizmetin çalışması için kesinlikle gerekli çerezleri (kimlik doğrulama, dil, tema) kullanırız. Reklam veya üçüncü taraf takip çerezi yok.",
     "learnMore": "Daha fazla",

@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "Blog OneShopLab",
+    "indexSubtitle": "Optymalizacja kart produktów, audyty katalogu i przepisywanie AI — dla agencji i sprzedawców.",
+    "empty": "Brak artykułów w tym języku.",
+    "emptyCta": "Zaudytuj sklep za darmo",
+    "readMore": "Przeczytaj artykuł",
+    "backToBlog": "Wszystkie artykuły",
+    "publishedOn": "Opublikowano {date}",
+    "ctaTitle": "Zaudytuj sklep za darmo",
+    "ctaButton": "Zaudytuj sklep za darmo",
+    "ctaNote": "Bezpłatna rejestracja · bez karty · kredyty startowe w zestawie",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Artykuły o optymalizacji kart produktów, audytach katalogu i przepisywaniu AI dla Shopify, WooCommerce i Wix."
+  },
+  "FreeAudit": {
+    "captchaError": "Potwierdź, że nie jesteś robotem, i spróbuj ponownie.",
+    "eyebrow": "Bezpłatny audyt · bez rejestracji",
+    "headline": "Zaudytuj karty produktów dowolnego sklepu — za darmo.",
+    "lead": "Wklej adres URL sklepu. Otrzymaj ocenę każdego produktu pod kątem treści, wizualizacji, katalogu i tagów w około minutę. Bez konta.",
+    "urlLabel": "URL sklepu",
+    "submit": "Audytuj za darmo",
+    "invalidUrl": "Podaj prawidłowy adres URL sklepu.",
+    "trust": "Bez rejestracji · bez karty · wynik w ~1 min",
+    "runningTitle": "Audyt {domain}…",
+    "runningBody": "Wykrywanie platformy i ocena każdego produktu. Zwykle trwa to około minuty — nie zamykaj tej strony.",
+    "failedTitle": "Nie udało się zaudytować tego sklepu",
+    "failedBody": "Sklep może być niedostępny, chroniony hasłem lub na nieobsługiwanej platformie. Sprawdź adres URL i spróbuj ponownie.",
+    "retry": "Spróbuj inny sklep",
+    "resultEyebrow": "Bezpłatny audyt · wynik",
+    "resultSubtitle": "Obliczona ocena dla {domain}. Tekst przed/po od AI dzieli od Ciebie jedna rejestracja.",
+    "noScores": "Audyt zakończył się, ale nie udało się obliczyć oceny dla tego sklepu.",
+    "ctaTitle": "Chcesz teksty AI dla tego katalogu?",
+    "ctaBody": "Załóż bezpłatne konto — kredyty startowe w zestawie, bez karty — i wygeneruj nowe tytuły, opisy, tagi i zdjęcia lifestyle dla tego sklepu.",
+    "ctaPrimary": "Załóż bezpłatne konto",
+    "ctaSecondary": "Zobacz cennik",
+    "metaTitle": "Bezpłatny audyt kart produktów — bez rejestracji",
+    "metaDescription": "Wklej adres URL sklepu Shopify, WooCommerce lub Wix i otrzymaj bezpłatną ocenę audytu każdego produktu w około minutę. Bez konta, bez karty."
+  },
   "Home": {
     "eyebrow": "Dla Shopify · WooCommerce · Wix",
     "headline": "Twoje strony produktów,<br></br><gradient>napisane na konwersję.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Nie udało się połączyć z systemem płatności. Spróbuj ponownie za chwilę."
   },
   "CookieBanner": {
+    "accept": "Akceptuj",
+    "refuse": "Odrzuć",
+    "bodyAnalytics": "Używamy plików cookie ściśle niezbędnych do działania Serwisu (uwierzytelnianie, język, motyw) oraz opcjonalnych plików cookie analitycznych do pomiaru użycia. Ty decydujesz.",
     "ariaLabel": "Powiadomienie o ciasteczkach",
     "body": "Używamy tylko ciasteczek niezbędnych do działania serwisu (uwierzytelnianie, język, motyw). Bez ciasteczek reklamowych ani trackingowych.",
     "learnMore": "Dowiedz się więcej",

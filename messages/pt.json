@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "O blog da OneShopLab",
+    "indexSubtitle": "Otimização de páginas de produto, auditorias de catálogo e reescrita com IA — para agências e comerciantes.",
+    "empty": "Ainda não há artigos neste idioma.",
+    "emptyCta": "Auditar uma loja grátis",
+    "readMore": "Ler o artigo",
+    "backToBlog": "Todos os artigos",
+    "publishedOn": "Publicado em {date}",
+    "ctaTitle": "Audite uma loja grátis",
+    "ctaButton": "Auditar uma loja grátis",
+    "ctaNote": "Cadastro gratuito · sem cartão · créditos iniciais incluídos",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Artigos sobre otimização de páginas de produto, auditorias de catálogo e reescrita com IA para Shopify, WooCommerce e Wix."
+  },
+  "FreeAudit": {
+    "captchaError": "Confirme que não é um robô e tente novamente.",
+    "eyebrow": "Auditoria gratuita · sem cadastro",
+    "headline": "Audite as páginas de produto de qualquer loja — grátis.",
+    "lead": "Cole o URL de uma loja. Receba uma pontuação por produto em copy, visuais, catálogo e tags em cerca de um minuto. Sem conta.",
+    "urlLabel": "URL da loja",
+    "submit": "Auditar grátis",
+    "invalidUrl": "Insira um URL de loja válido.",
+    "trust": "Sem cadastro · sem cartão · resultado em ~1 min",
+    "runningTitle": "Auditando {domain}…",
+    "runningBody": "Detectando a plataforma e pontuando cada produto. Costuma levar cerca de um minuto — mantenha esta página aberta.",
+    "failedTitle": "Não conseguimos auditar esta loja",
+    "failedBody": "A loja pode estar inacessível, protegida por senha ou em uma plataforma não suportada. Verifique o URL e tente novamente.",
+    "retry": "Tentar outra loja",
+    "resultEyebrow": "Auditoria gratuita · resultado",
+    "resultSubtitle": "Pontuação calculada para {domain}. As reescritas de IA antes/depois estão a um cadastro de distância.",
+    "noScores": "A auditoria terminou, mas não foi possível calcular uma pontuação para esta loja.",
+    "ctaTitle": "Quer as reescritas de IA deste catálogo?",
+    "ctaBody": "Crie uma conta gratuita — créditos iniciais incluídos, sem cartão — e gere novos títulos, descrições, tags e fotos lifestyle para esta loja.",
+    "ctaPrimary": "Criar minha conta gratuita",
+    "ctaSecondary": "Ver preços",
+    "metaTitle": "Auditoria gratuita de páginas de produto — sem cadastro",
+    "metaDescription": "Cole o URL de uma loja Shopify, WooCommerce ou Wix e receba gratuitamente uma pontuação de auditoria por produto em cerca de um minuto. Sem conta, sem cartão."
+  },
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",
     "headline": "As suas páginas de produto,<br></br><gradient>reescritas para converter.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Não foi possível contatar o serviço de pagamento. Tente novamente em instantes."
   },
   "CookieBanner": {
+    "accept": "Aceitar",
+    "refuse": "Recusar",
+    "bodyAnalytics": "Usamos cookies estritamente necessários ao funcionamento do Serviço (autenticação, idioma, tema) e cookies de análise opcionais para medir o uso. Você decide.",
     "ariaLabel": "Aviso de cookies",
     "body": "Apenas usamos cookies estritamente necessários ao funcionamento (autenticação, idioma, tema). Sem cookies publicitários ou de tracking.",
     "learnMore": "Saber mais",

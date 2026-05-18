@@ -44,7 +44,14 @@ export async function processAudit(auditId: string): Promise<void> {
     // We await the chat calls so the audit isn't marked completed until
     // the AI text suggestions are persisted. Image jobs fire asynchronously
     // and resolve later via the kie webhook.
-    if (result.report && result.report.latestProducts.length > 0) {
+    //
+    // Anonymous audits (public /audit, no user, no project) skip
+    // this entirely: the dynamic sub-audit spends real money (Claude chat
+    // + kie image gen) and there's no account to debit credits against.
+    // Free audits are scrape + rule-based score only — the AI rewrites are
+    // the "sign up to go further" gate. Inferring from `anonToken` (not a
+    // param) keeps the audit-watchdog recovery path correct for free.
+    if (!row.anonToken && result.report && result.report.latestProducts.length > 0) {
       // Effective language for the dynamic audit text generation:
       // override → detection. We resolve inline (vs getEffectiveLanguage)
       // because detectedLanguage is already in memory and the audit row

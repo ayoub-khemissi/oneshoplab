@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "ブログ",
+    "indexTitle": "OneShopLab ブログ",
+    "indexSubtitle": "商品ページ最適化、カタログ監査、AIによる書き換え — 代理店と事業者向け。",
+    "empty": "この言語の記事はまだありません。",
+    "emptyCta": "ストアを無料で監査する",
+    "readMore": "記事を読む",
+    "backToBlog": "すべての記事",
+    "publishedOn": "{date} に公開",
+    "ctaTitle": "ストアを無料で監査",
+    "ctaButton": "ストアを無料で監査する",
+    "ctaNote": "無料登録 · カード不要 · スタータークレジット付き",
+    "metaIndexTitle": "ブログ — OneShopLab",
+    "metaIndexDescription": "Shopify・WooCommerce・Wix向けの商品ページ最適化、カタログ監査、AI書き換えに関する記事。"
+  },
+  "FreeAudit": {
+    "captchaError": "ロボットでないことを確認してから、もう一度お試しください。",
+    "eyebrow": "無料監査 · 登録不要",
+    "headline": "どんなストアの商品ページも無料で監査。",
+    "lead": "ストアのURLを貼り付けてください。約1分でコピー・ビジュアル・カタログ・タグについて商品ごとのスコアを取得できます。アカウント不要。",
+    "urlLabel": "ストアURL",
+    "submit": "無料で監査する",
+    "invalidUrl": "有効なストアURLを入力してください。",
+    "trust": "登録不要 · カード不要 · 約1分で結果",
+    "runningTitle": "{domain} を監査中…",
+    "runningBody": "プラットフォームを検出し、各商品をスコアリングしています。通常約1分かかります — このページを開いたままにしてください。",
+    "failedTitle": "このストアを監査できませんでした",
+    "failedBody": "ストアにアクセスできない、パスワード保護されている、または非対応プラットフォームの可能性があります。URLを確認して再試行してください。",
+    "retry": "別のストアを試す",
+    "resultEyebrow": "無料監査 · 結果",
+    "resultSubtitle": "{domain} の算出スコアです。AIによるビフォー/アフターの書き換えは登録すればすぐに利用できます。",
+    "noScores": "監査は完了しましたが、このストアのスコアを算出できませんでした。",
+    "ctaTitle": "このカタログのAI書き換えが必要ですか？",
+    "ctaBody": "無料アカウントを作成 — スタータークレジット付き、カード不要 — このストア向けに新しいタイトル・説明・タグ・ライフスタイル写真を生成しましょう。",
+    "ctaPrimary": "無料アカウントを作成",
+    "ctaSecondary": "料金を見る",
+    "metaTitle": "無料の商品ページ監査 — 登録不要",
+    "metaDescription": "Shopify・WooCommerce・WixのストアURLを貼り付けるだけで、約1分で商品ごとの監査スコアを無料で取得。アカウント不要、カード不要。"
+  },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix 向け",
     "headline": "商品ページを、<br></br><gradient>コンバージョンのために書き直します。</gradient>",
@@ -568,6 +607,9 @@
     "errorPaymentFailed": "決済サービスに接続できませんでした。しばらくしてから再度お試しください。"
   },
   "CookieBanner": {
+    "accept": "同意する",
+    "refuse": "拒否する",
+    "bodyAnalytics": "本サービスの運用に必須のCookie（認証・言語・テーマ）と、利用状況を測定するための任意の分析Cookieを使用します。選択はあなた次第です。",
     "ariaLabel": "クッキー通知",
     "body": "サービス運用に厳密に必要なクッキーのみ使用(認証・言語・テーマ)。広告や第三者の追跡用クッキーはありません。",
     "learnMore": "詳しくはこちら",

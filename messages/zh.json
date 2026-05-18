@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "博客",
+    "indexTitle": "OneShopLab 博客",
+    "indexSubtitle": "产品页面优化、目录审计与 AI 改写——面向代理商和商家。",
+    "empty": "该语言暂无文章。",
+    "emptyCta": "免费审计一家商店",
+    "readMore": "阅读文章",
+    "backToBlog": "全部文章",
+    "publishedOn": "发布于 {date}",
+    "ctaTitle": "免费审计一家商店",
+    "ctaButton": "免费审计一家商店",
+    "ctaNote": "免费注册 · 无需银行卡 · 含起始额度",
+    "metaIndexTitle": "博客 — OneShopLab",
+    "metaIndexDescription": "关于 Shopify、WooCommerce 和 Wix 的产品页面优化、目录审计与 AI 改写的文章。"
+  },
+  "FreeAudit": {
+    "captchaError": "请确认您不是机器人，然后重试。",
+    "eyebrow": "免费审计 · 无需注册",
+    "headline": "免费审计任意商店的产品页面。",
+    "lead": "粘贴商店网址。约一分钟内获得每个产品在文案、视觉、目录和标签方面的评分。无需账户。",
+    "urlLabel": "商店网址",
+    "submit": "免费审计",
+    "invalidUrl": "请输入有效的商店网址。",
+    "trust": "无需注册 · 无需银行卡 · 约1分钟出结果",
+    "runningTitle": "正在审计 {domain}…",
+    "runningBody": "正在检测平台并对每个产品评分。通常约需一分钟——请保持此页面打开。",
+    "failedTitle": "无法审计此商店",
+    "failedBody": "该商店可能无法访问、受密码保护或使用了不受支持的平台。请检查网址后重试。",
+    "retry": "试试其他商店",
+    "resultEyebrow": "免费审计 · 结果",
+    "resultSubtitle": "{domain} 的计算评分。AI 前后改写只差一次注册。",
+    "noScores": "审计已完成，但无法为此商店计算评分。",
+    "ctaTitle": "想要此目录的 AI 改写吗？",
+    "ctaBody": "创建免费账户——含起始额度，无需银行卡——为此商店生成全新的标题、描述、标签和场景照片。",
+    "ctaPrimary": "创建我的免费账户",
+    "ctaSecondary": "查看价格",
+    "metaTitle": "免费产品页面审计 — 无需注册",
+    "metaDescription": "粘贴 Shopify、WooCommerce 或 Wix 商店网址，约一分钟内免费获得每个产品的审计评分。无需账户，无需银行卡。"
+  },
   "Home": {
     "eyebrow": "适用于 Shopify · WooCommerce · Wix",
     "headline": "你的产品页，<br></br><gradient>为转化而重写。</gradient>",
@@ -568,6 +607,9 @@
     "errorPaymentFailed": "无法连接到支付服务。请稍后重试。"
   },
   "CookieBanner": {
+    "accept": "接受",
+    "refuse": "拒绝",
+    "bodyAnalytics": "我们使用运行本服务所必需的 Cookie（认证、语言、主题），以及用于衡量使用情况的可选分析 Cookie。由您决定。",
     "ariaLabel": "Cookie 提示",
     "body": "我们仅使用运行服务严格必需的 cookie(身份验证、语言、主题)。不使用广告或第三方追踪 cookie。",
     "learnMore": "了解更多",

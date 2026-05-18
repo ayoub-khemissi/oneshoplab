@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "Der OneShopLab-Blog",
+    "indexSubtitle": "Optimierung von Produktseiten, Katalog-Audits und KI-Umschreibung — für Agenturen und Händler.",
+    "empty": "Noch keine Artikel in dieser Sprache.",
+    "emptyCta": "Einen Shop kostenlos auditieren",
+    "readMore": "Artikel lesen",
+    "backToBlog": "Alle Artikel",
+    "publishedOn": "Veröffentlicht am {date}",
+    "ctaTitle": "Einen Shop kostenlos auditieren",
+    "ctaButton": "Einen Shop kostenlos auditieren",
+    "ctaNote": "Kostenlose Anmeldung · ohne Kreditkarte · Startguthaben inklusive",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Artikel über Produktseiten-Optimierung, Katalog-Audits und KI-Umschreibung für Shopify, WooCommerce und Wix."
+  },
+  "FreeAudit": {
+    "captchaError": "Bitte bestätige, dass du kein Roboter bist, und versuche es erneut.",
+    "eyebrow": "Kostenloses Audit · ohne Anmeldung",
+    "headline": "Auditiere die Produktseiten jedes Shops — kostenlos.",
+    "lead": "Füge eine Shop-URL ein. Erhalte in etwa einer Minute eine Bewertung pro Produkt für Text, Bilder, Katalog und Tags. Ohne Konto.",
+    "urlLabel": "Shop-URL",
+    "submit": "Kostenlos auditieren",
+    "invalidUrl": "Bitte gib eine gültige Shop-URL ein.",
+    "trust": "Ohne Anmeldung · ohne Karte · Ergebnis in ~1 Min.",
+    "runningTitle": "{domain} wird auditiert…",
+    "runningBody": "Plattform wird erkannt und jedes Produkt bewertet. Das dauert in der Regel etwa eine Minute — lass diese Seite geöffnet.",
+    "failedTitle": "Wir konnten diesen Shop nicht auditieren",
+    "failedBody": "Der Shop ist möglicherweise nicht erreichbar, passwortgeschützt oder auf einer nicht unterstützten Plattform. Prüfe die URL und versuche es erneut.",
+    "retry": "Anderen Shop versuchen",
+    "resultEyebrow": "Kostenloses Audit · Ergebnis",
+    "resultSubtitle": "Berechnete Bewertung für {domain}. Die KI-Vorher/Nachher-Texte sind nur eine Anmeldung entfernt.",
+    "noScores": "Das Audit wurde abgeschlossen, konnte aber keine Bewertung für diesen Shop berechnen.",
+    "ctaTitle": "Möchtest du die KI-Texte für diesen Katalog?",
+    "ctaBody": "Erstelle ein kostenloses Konto — Startguthaben inklusive, ohne Karte — und generiere neue Titel, Beschreibungen, Tags und Lifestyle-Fotos für diesen Shop.",
+    "ctaPrimary": "Kostenloses Konto erstellen",
+    "ctaSecondary": "Preise ansehen",
+    "metaTitle": "Kostenloses Produktseiten-Audit — ohne Anmeldung",
+    "metaDescription": "Füge die URL eines Shopify-, WooCommerce- oder Wix-Shops ein und erhalte in etwa einer Minute kostenlos eine Audit-Bewertung pro Produkt. Ohne Konto, ohne Karte."
+  },
   "Home": {
     "eyebrow": "Für Shopify · WooCommerce · Wix",
     "headline": "Deine Produktseiten,<br></br><gradient>auf Conversion umgeschrieben.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Zahlungsdienst nicht erreichbar. Versuche es gleich noch einmal."
   },
   "CookieBanner": {
+    "accept": "Akzeptieren",
+    "refuse": "Ablehnen",
+    "bodyAnalytics": "Wir verwenden unbedingt erforderliche Cookies für den Betrieb (Anmeldung, Sprache, Theme) sowie optionale Analyse-Cookies zur Nutzungsmessung. Sie entscheiden.",
     "ariaLabel": "Cookie-Hinweis",
     "body": "Wir verwenden nur Cookies, die für den Betrieb des Dienstes zwingend nötig sind (Authentifizierung, Sprache, Theme). Keine Werbe- oder Tracking-Cookies.",
     "learnMore": "Mehr erfahren",

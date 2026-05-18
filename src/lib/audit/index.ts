@@ -1,7 +1,12 @@
 export { audit } from './score';
 export { runAudit } from './run';
 export { processAudit } from './process';
-export { launchAuditForUser, normalizeUrl, MIN_AUDIT_CREDITS } from './launch';
+export {
+  launchAuditForUser,
+  launchAnonymousAudit,
+  normalizeUrl,
+  MIN_AUDIT_CREDITS
+} from './launch';
 export {
   AUDIT_FRESH_FOR_MS,
   refreshAuditProducts,

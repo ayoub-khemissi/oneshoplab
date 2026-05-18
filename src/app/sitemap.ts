@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
+import { BLOG_POSTS, postLanguageAlternates } from '@/lib/blog/posts';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
@@ -18,7 +19,9 @@ const PUBLIC_PATHS: Array<{
   priority: number;
 }> = [
   { path: '', changeFrequency: 'weekly', priority: 1 },
+  { path: '/audit', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/blog', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/faq', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/terms', changeFrequency: 'monthly', priority: 0.3 },
   { path: '/privacy', changeFrequency: 'monthly', priority: 0.3 }
@@ -47,6 +50,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency,
         priority,
         alternates: { languages }
+      });
+    }
+  }
+
+  // Blog articles: slugs differ per locale, so the alternates map is
+  // per-article and lists ONLY the locales that have a translation —
+  // never a link to a 404 variant (unlike the same-slug pages above).
+  for (const post of BLOG_POSTS) {
+    const { languages, xDefault } = postLanguageAlternates(post, SITE_URL);
+    const alternates = { languages: { ...languages, 'x-default': xDefault } };
+    for (const [loc, tr] of Object.entries(post.translations)) {
+      if (!tr) continue;
+      entries.push({
+        url: `${SITE_URL}/${loc}/blog/${tr.slug}`,
+        lastModified: new Date(post.date),
+        changeFrequency: 'monthly',
+        priority: 0.8,
+        alternates
       });
     }
   }

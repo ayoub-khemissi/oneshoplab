@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "Le blog OneShopLab",
+    "indexSubtitle": "Optimisation des fiches produits, audits de catalogue et réécriture IA — pour les agences et les marchands.",
+    "empty": "Aucun article dans cette langue pour le moment.",
+    "emptyCta": "Auditer une boutique gratuitement",
+    "readMore": "Lire l'article",
+    "backToBlog": "Tous les articles",
+    "publishedOn": "Publié le {date}",
+    "ctaTitle": "Auditez une boutique gratuitement",
+    "ctaButton": "Auditer une boutique gratuitement",
+    "ctaNote": "Inscription gratuite · sans carte bancaire · crédits offerts pour démarrer",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Articles sur l'optimisation des fiches produits, les audits de catalogue et la réécriture IA pour Shopify, WooCommerce et Wix."
+  },
+  "FreeAudit": {
+    "captchaError": "Merci de confirmer que vous n'êtes pas un robot, puis réessayez.",
+    "eyebrow": "Audit gratuit · sans inscription",
+    "headline": "Auditez les fiches produits de n'importe quelle boutique — gratuitement.",
+    "lead": "Collez l'URL d'une boutique. Obtenez un score par produit sur le copy, les visuels, le catalogue et les tags en environ une minute. Sans compte.",
+    "urlLabel": "URL de la boutique",
+    "submit": "Auditer gratuitement",
+    "invalidUrl": "Merci de saisir une URL de boutique valide.",
+    "trust": "Sans inscription · sans carte · résultat en ~1 min",
+    "runningTitle": "Audit de {domain}…",
+    "runningBody": "Détection de la plateforme et notation de chaque produit. Cela prend généralement une minute — gardez cette page ouverte.",
+    "failedTitle": "Nous n'avons pas pu auditer cette boutique",
+    "failedBody": "La boutique est peut-être inaccessible, protégée par mot de passe, ou sur une plateforme non prise en charge. Vérifiez l'URL et réessayez.",
+    "retry": "Essayer une autre boutique",
+    "resultEyebrow": "Audit gratuit · résultat",
+    "resultSubtitle": "Score calculé pour {domain}. Les réécritures IA avant/après sont à une inscription près.",
+    "noScores": "L'audit s'est terminé mais n'a pas pu calculer de score pour cette boutique.",
+    "ctaTitle": "Vous voulez les réécritures IA de ce catalogue ?",
+    "ctaBody": "Créez un compte gratuit — crédits offerts pour démarrer, sans carte — et générez de nouveaux titres, descriptions, tags et photos lifestyle pour cette boutique.",
+    "ctaPrimary": "Créer mon compte gratuit",
+    "ctaSecondary": "Voir les tarifs",
+    "metaTitle": "Audit gratuit de fiches produits — sans inscription",
+    "metaDescription": "Collez l'URL d'une boutique Shopify, WooCommerce ou Wix et obtenez un score d'audit par produit gratuitement en environ une minute. Sans compte, sans carte."
+  },
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",
     "headline": "Vos fiches produits,<br></br><gradient>réécrites pour convertir.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Impossible de joindre le service de paiement. Réessayez dans un instant."
   },
   "CookieBanner": {
+    "accept": "Accepter",
+    "refuse": "Refuser",
+    "bodyAnalytics": "Nous utilisons des cookies strictement nécessaires au fonctionnement du Service (authentification, langue, thème), et des cookies de mesure d'audience optionnels. Vous choisissez.",
     "ariaLabel": "Avis cookies",
     "body": "Nous n'utilisons que des cookies strictement nécessaires au fonctionnement du Service (authentification, langue, thème). Pas de pub, pas de tracking tiers.",
     "learnMore": "En savoir plus",

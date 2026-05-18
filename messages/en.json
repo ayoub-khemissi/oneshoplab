@@ -1,4 +1,43 @@
 {
+  "Blog": {
+    "indexEyebrow": "Blog",
+    "indexTitle": "OneShopLab blog",
+    "indexSubtitle": "Product page optimization, catalog audits and AI rewriting — for agencies and merchants.",
+    "empty": "No articles in this language yet.",
+    "emptyCta": "Audit a store for free",
+    "readMore": "Read the article",
+    "backToBlog": "All articles",
+    "publishedOn": "Published {date}",
+    "ctaTitle": "Audit a store for free",
+    "ctaButton": "Audit a store for free",
+    "ctaNote": "Free sign-up · no credit card · starter credits included",
+    "metaIndexTitle": "Blog — OneShopLab",
+    "metaIndexDescription": "Articles on product page optimization, catalog audits and AI rewriting for Shopify, WooCommerce and Wix."
+  },
+  "FreeAudit": {
+    "captchaError": "Please confirm you're not a robot, then try again.",
+    "eyebrow": "Free audit · no signup",
+    "headline": "Audit any store's product pages — free.",
+    "lead": "Paste a store URL. Get a per-product score on copy, visuals, catalog and tags in about a minute. No account needed.",
+    "urlLabel": "Store URL",
+    "submit": "Audit for free",
+    "invalidUrl": "Please enter a valid store URL.",
+    "trust": "No signup · no card · results in ~1 min",
+    "runningTitle": "Auditing {domain}…",
+    "runningBody": "Detecting the platform and scoring every product. This usually takes about a minute — keep this page open.",
+    "failedTitle": "We couldn't audit this store",
+    "failedBody": "The store may be unreachable, password-protected, or on an unsupported platform. Check the URL and try again.",
+    "retry": "Try another store",
+    "resultEyebrow": "Free audit · result",
+    "resultSubtitle": "Rule-based score for {domain}. The AI before/after rewrites are one signup away.",
+    "noScores": "The audit finished but couldn't compute a score for this store.",
+    "ctaTitle": "Want the AI rewrites for this catalog?",
+    "ctaBody": "Create a free account — starter credits included, no card — and generate new titles, descriptions, tags and lifestyle photos for this store.",
+    "ctaPrimary": "Create my free account",
+    "ctaSecondary": "See pricing",
+    "metaTitle": "Free product page audit — no signup",
+    "metaDescription": "Paste a Shopify, WooCommerce or Wix store URL and get a free per-product audit score in about a minute. No account, no card."
+  },
   "Home": {
     "eyebrow": "For Shopify · WooCommerce · Wix",
     "headline": "Your product pages,<br></br><gradient>rewritten to convert.</gradient>",
@@ -569,6 +608,9 @@
     "errorPaymentFailed": "Couldn't reach the payment processor. Try again in a moment."
   },
   "CookieBanner": {
+    "accept": "Accept",
+    "refuse": "Refuse",
+    "bodyAnalytics": "We use cookies that are strictly necessary to run the Service (authentication, locale, theme), plus optional analytics cookies to measure usage. You choose.",
     "ariaLabel": "Cookie notice",
     "body": "We only use cookies that are strictly necessary to run the Service (authentication, locale, theme). We don't use advertising or third-party tracking cookies.",
     "learnMore": "Learn more",
