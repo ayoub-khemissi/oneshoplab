@@ -113,6 +113,27 @@
       "when": 1778377894307,
       "tag": "0015_military_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1778670878463,
+      "tag": "0016_calm_gamora",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1778771498668,
+      "tag": "0017_black_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1778966495692,
+      "tag": "0018_charming_ultragirl",
+      "breakpoints": true
     }
   ]
 }

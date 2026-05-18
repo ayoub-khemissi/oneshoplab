@@ -243,6 +243,12 @@ export const products = mysqlTable(
     /** Set when status flips to 'archived'; cleared when the product
      *  re-appears in a scrape. */
     archivedAt: timestamp('archived_at'),
+    /** True when a merchant explicitly archived this product from the
+     *  dashboard (vs. auto-archived because it fell out of a scrape).
+     *  syncProjectProducts must NOT un-archive a manually-archived row
+     *  even if it reappears upstream — the merchant's choice is sticky
+     *  until they restore it. */
+    manuallyArchived: boolean('manually_archived').notNull().default(false),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },
@@ -286,7 +292,14 @@ export const jobs = mysqlTable(
      *  grid. Set on user-driven delete and on regenerate (the slot's old
      *  job is hidden when the new one starts). The row stays for audit /
      *  history purposes. */
-    hiddenAt: timestamp('hidden_at')
+    hiddenAt: timestamp('hidden_at'),
+    /** Set by the r2-cleanup worker when an image job crosses its plan's
+     *  retention window. The R2 objects are deleted and the result's
+     *  URLs are cleared, but the row itself stays so the merchant's
+     *  past-generations history keeps a tombstone showing when each
+     *  image expired. Worker filters on `isNull(expiredAt)` so already-
+     *  processed rows aren't re-walked every hour. */
+    expiredAt: timestamp('expired_at')
   },
   (t) => ({
     idxStatus: index('idx_jobs_status').on(t.status),
@@ -389,6 +402,103 @@ export const passwordResetTokens = mysqlTable(
   })
 );
 
+// ============================================================================
+// LEADS — sales prospection. Independent of users/projects: a lead is a
+// candidate merchant we *discovered* (search query, manual paste), then
+// qualified (platform detected + at least one product fetched). Status
+// tracks the manual outreach funnel; an attempt row is appended each
+// time the operator contacts them.
+// ============================================================================
+
+export const LEAD_STATUSES = [
+  'new',
+  'contacted',
+  'replied',
+  'won',
+  'lost',
+  'dead'
+] as const;
+export type LeadStatus = (typeof LEAD_STATUSES)[number];
+
+export const LEAD_ATTEMPT_CHANNELS = [
+  'email',
+  'instagram',
+  'facebook',
+  'x',
+  'linkedin',
+  'manual'
+] as const;
+export type LeadAttemptChannel = (typeof LEAD_ATTEMPT_CHANNELS)[number];
+
+export const leads = mysqlTable(
+  'leads',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    /** Canonical host (e.g. "example.myshopify.com" or "shop.example.com").
+     *  Unique so two discovery passes never insert the same merchant twice. */
+    domain: varchar('domain', { length: 255 }).notNull(),
+    /** Full URL we qualified against (carries scheme + path). */
+    url: varchar('url', { length: 1024 }).notNull(),
+    platform: mysqlEnum('platform', PLATFORMS).notNull().default('unknown'),
+    /** Number of products the adapter fetched during qualification. */
+    productsSampled: int('products_sampled').notNull().default(0),
+    /** ISO 639-1 detected from the storefront's html lang attr / Accept-Language. */
+    language: varchar('language', { length: 8 }),
+    /** ISO 3166-1 alpha-2 inferred when the storefront exposes it (Shopify
+     *  shop.countryCode, WC store locale, …). Otherwise NULL. */
+    country: varchar('country', { length: 4 }),
+    /** Quick overall score 0..100 from a one-shot static audit run.
+     *  Drives the operator's "high-potential first" sort in the admin
+     *  list. NULL when the audit hasn't been scored yet. */
+    score: int('score'),
+    /** Best-guess primary email. Pulled from mailto: links, contact pages,
+     *  and the page footer. NULL when nothing parseable was found. */
+    contactEmail: varchar('contact_email', { length: 255 }),
+    /** Free-form list of social URLs (Instagram, Facebook, X, …). Limited
+     *  to 8 to bound the column. */
+    contactSocials: json('contact_socials'),
+    status: mysqlEnum('status', LEAD_STATUSES).notNull().default('new'),
+    /** Operator notes — visible only in the admin UI. Plain text. */
+    notes: text('notes'),
+    /** Provenance: the query string or seed-file path that surfaced this
+     *  lead. Useful for measuring which queries produce winners. */
+    discoveredVia: text('discovered_via'),
+    discoveredAt: timestamp('discovered_at').notNull().defaultNow(),
+    /** Set the first time qualification succeeded. */
+    qualifiedAt: timestamp('qualified_at'),
+    /** Most recent outreach attempt (mirrors the latest lead_attempts row). */
+    lastAttemptedAt: timestamp('last_attempted_at'),
+    updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
+  },
+  (t) => ({
+    uniqDomain: uniqueIndex('uniq_leads_domain').on(t.domain),
+    idxStatus: index('idx_leads_status').on(t.status),
+    idxPlatform: index('idx_leads_platform').on(t.platform),
+    idxLanguage: index('idx_leads_language').on(t.language),
+    idxDiscoveredAt: index('idx_leads_discovered_at').on(t.discoveredAt)
+  })
+);
+
+export const leadAttempts = mysqlTable(
+  'lead_attempts',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    leadId: varchar('lead_id', { length: 36 })
+      .notNull()
+      .references(() => leads.id, { onDelete: 'cascade' }),
+    channel: mysqlEnum('channel', LEAD_ATTEMPT_CHANNELS).notNull(),
+    /** What we sent (email body, DM, etc.). */
+    payload: text('payload'),
+    /** What came back, if anything. NULL = no reply yet. */
+    response: text('response'),
+    attemptedAt: timestamp('attempted_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxLeadId: index('idx_lead_attempts_lead_id').on(t.leadId),
+    idxAttemptedAt: index('idx_lead_attempts_attempted_at').on(t.attemptedAt)
+  })
+);
+
 export const subscriptions = mysqlTable('subscriptions', {
   id: varchar('id', { length: 36 }).primaryKey(),
   userId: varchar('user_id', { length: 36 })
@@ -450,4 +560,12 @@ export const creditTransactionsRelations = relations(creditTransactions, ({ one 
 
 export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   user: one(users, { fields: [subscriptions.userId], references: [users.id] })
+}));
+
+export const leadsRelations = relations(leads, ({ many }) => ({
+  attempts: many(leadAttempts)
+}));
+
+export const leadAttemptsRelations = relations(leadAttempts, ({ one }) => ({
+  lead: one(leads, { fields: [leadAttempts.leadId], references: [leads.id] })
 }));

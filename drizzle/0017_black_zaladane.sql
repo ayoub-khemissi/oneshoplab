@@ -1,0 +1,1 @@
+ALTER TABLE `jobs` ADD `expired_at` timestamp;

@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `manually_archived` boolean DEFAULT false NOT NULL;
