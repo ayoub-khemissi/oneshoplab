@@ -225,6 +225,8 @@ but it loops behind a reverse proxy: `/` rewrites to `/en` internally, and
 | `STRIPE_PRICE_<PLAN>_<CYCLE>` | yes (six total) | One Stripe Price ID per plan/cycle |
 | `CREDIT_MARKUP_FACTOR` | no | Default 2.5×; clamped to [1, 10] |
 | `SHOWCASE_PROJECT_IDS` | no | Comma-separated project IDs to feature on the landing page |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | no | GA4 id (`G-XXXX`). Unset = no analytics, cookie banner stays informational. Set = opt-in consent banner + consent-gated GA (anonymized IP, no ad signals) |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` / `RECAPTCHA_SECRET_KEY` | no | reCAPTCHA v2 pair. Both set = captcha on signup + the public free-audit form; unset = skipped (dev-safe) |
 
 ## Plans & billing
 

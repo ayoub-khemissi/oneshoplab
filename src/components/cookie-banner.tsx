@@ -5,35 +5,45 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from '@/i18n/navigation';
+import { getAnalyticsConsent, setAnalyticsConsent } from '@/lib/consent';
 
 const STORAGE_KEY = 'oneshoplab.cookies-acknowledged.v1';
 
 /**
- * Bottom-of-screen cookie banner. We only set strictly-necessary cookies
- * today (auth, locale, theme, anon-audit token) so the banner is purely
- * informational — a single "Got it" button dismisses it. If/when we add
- * non-essential cookies (analytics, ads), this component should grow into
- * a proper consent flow with granular toggles + persisted preferences;
- * keeping the storage key versioned makes that migration easy.
+ * Bottom-of-screen cookie banner with two modes:
+ *
+ *  - **No analytics configured** (`NEXT_PUBLIC_GA_MEASUREMENT_ID` unset):
+ *    purely informational, a single "Got it" dismiss — exactly the
+ *    original behaviour. Nothing changes for visitors until GA is wired,
+ *    so this is safe to ship inert.
+ *  - **Analytics configured**: a minimal opt-in consent — Accept / Refuse.
+ *    GA only loads on Accept (see <Analytics>). Default = no analytics.
+ *
+ * Branching on the public env keeps the two storage keys independent and
+ * versioned so the consent migration the original comment foresaw is
+ * exactly this commit.
  */
 export function CookieBanner() {
   const t = useTranslations('CookieBanner');
   const [visible, setVisible] = useState(false);
+  const gaEnabled = Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID);
 
   useEffect(() => {
     try {
-      const ack = window.localStorage.getItem(STORAGE_KEY);
-      if (!ack) setVisible(true);
+      if (gaEnabled) {
+        if (getAnalyticsConsent() === 'unset') setVisible(true);
+      } else {
+        if (!window.localStorage.getItem(STORAGE_KEY)) setVisible(true);
+      }
     } catch {
-      // localStorage may throw under privacy-mode quota errors. If it does,
-      // stay quiet — re-prompting on every page is worse than missing the
-      // banner once.
+      // localStorage may throw under privacy-mode quota errors. Stay
+      // quiet — re-prompting on every page is worse than missing it once.
     }
-  }, []);
+  }, [gaEnabled]);
 
   if (!visible || typeof document === 'undefined') return null;
 
-  function dismiss() {
+  function acknowledgeOnly() {
     try {
       window.localStorage.setItem(STORAGE_KEY, '1');
     } catch {
@@ -42,11 +52,11 @@ export function CookieBanner() {
     setVisible(false);
   }
 
-  // Portal to document.body so no ancestor's transform / filter / contain
-  // rules can scope our `position: fixed` and dump the banner into the
-  // document flow under the footer. The redundant inline `position: fixed`
-  // is a belt-and-braces defence against any utility-class collision or
-  // unexpected reset.
+  function decide(value: 'granted' | 'denied') {
+    setAnalyticsConsent(value);
+    setVisible(false);
+  }
+
   return createPortal(
     <div
       role="dialog"
@@ -58,28 +68,44 @@ export function CookieBanner() {
       <Cookie className="size-4 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
       <div className="flex-1 flex flex-col gap-2 text-xs leading-relaxed">
         <p className="text-[var(--foreground)]">
-          {t('body')}{' '}
-          <Link
-            href="/privacy"
-            className="underline hover:text-[var(--accent)]"
-          >
+          {gaEnabled ? t('bodyAnalytics') : t('body')}{' '}
+          <Link href="/privacy" className="underline hover:text-[var(--accent)]">
             {t('learnMore')}
           </Link>
           .
         </p>
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={dismiss}
-            className="px-3 py-1.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-xs font-medium hover:opacity-90 transition-opacity"
-          >
-            {t('acknowledge')}
-          </button>
+        <div className="flex justify-end gap-2">
+          {gaEnabled ? (
+            <>
+              <button
+                type="button"
+                onClick={() => decide('denied')}
+                className="px-3 py-1.5 rounded-md border border-[var(--border)] text-xs font-medium hover:border-[var(--accent)] transition-colors"
+              >
+                {t('refuse')}
+              </button>
+              <button
+                type="button"
+                onClick={() => decide('granted')}
+                className="px-3 py-1.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-xs font-medium hover:opacity-90 transition-opacity"
+              >
+                {t('accept')}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={acknowledgeOnly}
+              className="px-3 py-1.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-xs font-medium hover:opacity-90 transition-opacity"
+            >
+              {t('acknowledge')}
+            </button>
+          )}
         </div>
       </div>
       <button
         type="button"
-        onClick={dismiss}
+        onClick={() => (gaEnabled ? decide('denied') : acknowledgeOnly())}
         aria-label={t('close')}
         className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors -mr-1 -mt-1"
       >

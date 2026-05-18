@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Analytics } from '@/components/analytics';
 import { AuditToastWatcher } from '@/components/audit-toast-watcher';
 import { CookieBanner } from '@/components/cookie-banner';
 import { SiteFooter } from '@/components/site-footer';
@@ -186,6 +187,7 @@ export default async function LocaleLayout({
             <Toast.Provider placement="bottom end" className="bottom-8 right-8" />
             <AuditToastWatcher />
             <CookieBanner />
+            <Analytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

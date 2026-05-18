@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { SUPPORTED_LOCALES } from '@/i18n/routing';
+
+const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
 export async function generateMetadata({
   params
@@ -8,14 +11,26 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Legal' });
+  // Self-referential canonical + reciprocal hreflang — without this the
+  // page inherited the root layout's home canonical (the addendum §2
+  // anti-pattern). Exists in all 13 locales like the other static pages.
+  const languages: Record<string, string> = {};
+  for (const loc of SUPPORTED_LOCALES) {
+    languages[loc] = `${SITE_URL}/${loc}/privacy`;
+  }
+  languages['x-default'] = `${SITE_URL}/en/privacy`;
   return {
     title: t('privacyTitle'),
     description: t('privacyDescription'),
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/privacy`,
+      languages
+    },
     robots: { index: true, follow: true }
   };
 }
 
-const LAST_UPDATED = 'May 10, 2026';
+const LAST_UPDATED = 'May 18, 2026';
 const CONTACT_EMAIL = 'contact@oneshoplab.com';
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
@@ -129,16 +144,43 @@ export default function PrivacyPolicyPage() {
           public audit without creating an account.
         </p>
         <p>
-          We do <strong>not</strong> currently use third-party advertising
-          cookies or third-party analytics that track you across other
-          websites. Stripe sets its own cookies on payment pages, governed
-          by Stripe&apos;s own policy. Google reCAPTCHA sets its own
-          cookies on the signup page (see Section 1.8 below).
+          We do <strong>not</strong> use third-party advertising cookies or
+          analytics that track you across other websites. With your prior
+          consent only, we use a privacy-configured analytics cookie for
+          aggregate audience measurement (see Section 1.8); you can refuse
+          it from the cookie banner with no impact on the Service. Stripe
+          sets its own cookies on payment pages, governed by Stripe&apos;s
+          own policy. Google reCAPTCHA sets its own cookies where enabled
+          (see Section 1.9 below).
         </p>
 
-        <h3>1.8 Anti-bot verification (reCAPTCHA)</h3>
+        <h3>1.8 Analytics (consent-based)</h3>
         <p>
-          Our signup page is protected by{' '}
+          With your <strong>prior consent</strong>, we use{' '}
+          <strong>Google Analytics 4</strong> (provided by Google LLC) to
+          measure aggregate usage of the Service — for example which pages
+          and languages attract visitors and how many of them create an
+          account. The analytics cookie is <strong>not</strong> set unless
+          you accept it in the cookie banner; you can refuse it, or change
+          your mind later by clearing the consent stored in your browser,
+          with no impact on the Service. We configure Google Analytics with
+          IP anonymisation enabled and Google advertising and cross-site
+          signals disabled, so the data serves aggregate audience
+          measurement only and is not used for advertising. This processing
+          is governed by the{' '}
+          <a
+            href="https://policies.google.com/privacy"
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            Google Privacy Policy
+          </a>
+          .
+        </p>
+
+        <h3>1.9 Anti-bot verification (reCAPTCHA)</h3>
+        <p>
+          Our signup page and the public free-audit page are protected by{' '}
           <strong>Google reCAPTCHA v2</strong> (&quot;I&apos;m not a
           robot&quot; checkbox). When you interact with the checkbox,
           your browser sends environmental and behavioural data to
@@ -192,6 +234,10 @@ export default function PrivacyPolicyPage() {
             metrics;
           </li>
           <li>
+            Measure aggregate audience with privacy-configured analytics,
+            only where you have given your consent;
+          </li>
+          <li>
             Comply with legal obligations and respond to lawful requests
             from public authorities.
           </li>
@@ -218,10 +264,11 @@ export default function PrivacyPolicyPage() {
             accounting, anti-fraud, and other applicable laws.
           </li>
           <li>
-            <strong>Consent</strong> — for any optional processing that
-            requires it (e.g. if we later add marketing emails or
-            non-essential cookies). You may withdraw consent at any time;
-            this does not affect the lawfulness of prior processing.
+            <strong>Consent</strong> — for optional processing that
+            requires it, namely analytics cookies (Section 1.8), and
+            marketing emails if we add them. You may withdraw consent at
+            any time; this does not affect the lawfulness of prior
+            processing.
           </li>
         </ul>
 
@@ -272,7 +319,9 @@ export default function PrivacyPolicyPage() {
               <td>
                 Gemini (text generation, via kie.ai); Google Sign-In
                 (OAuth, optional sign-in method); Google reCAPTCHA
-                (anti-bot verification on signup)
+                (anti-bot verification on signup and the free-audit
+                page); Google Analytics 4 (aggregate audience
+                measurement, only with your consent)
               </td>
               <td>USA / EU</td>
             </tr>
@@ -342,6 +391,12 @@ export default function PrivacyPolicyPage() {
             <strong>Anonymous audit data</strong>: associated with an
             anonymous cookie token; retained until expiry of that token
             (currently 90 days).
+          </li>
+          <li>
+            <strong>Analytics data</strong>: collected only with your
+            consent and retained for the period configured in our Google
+            Analytics 4 property (by default up to 14 months for
+            user-level records), then automatically deleted by Google.
           </li>
         </ul>
         <p>

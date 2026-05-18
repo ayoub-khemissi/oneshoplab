@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { SUPPORTED_LOCALES } from '@/i18n/routing';
+
+const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
 export async function generateMetadata({
   params
@@ -8,9 +11,21 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Legal' });
+  // Self-referential canonical + reciprocal hreflang — without this the
+  // page inherited the root layout's home canonical (the addendum §2
+  // anti-pattern). Exists in all 13 locales like the other static pages.
+  const languages: Record<string, string> = {};
+  for (const loc of SUPPORTED_LOCALES) {
+    languages[loc] = `${SITE_URL}/${loc}/terms`;
+  }
+  languages['x-default'] = `${SITE_URL}/en/terms`;
   return {
     title: t('termsTitle'),
     description: t('termsDescription'),
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/terms`,
+      languages
+    },
     // Indexable but low-priority — search engines occasionally surface these
     // as part of the brand SERP, which is fine. Not a primary SEO target.
     robots: { index: true, follow: true }
