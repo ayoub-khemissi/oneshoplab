@@ -163,6 +163,11 @@ export function BulkGenerateSection({
   // client shape matches exactly what the server will persist.
   const updatePrefs = useCallback((next: BulkPrefs) => {
     setPrefs(canonicalizePrefs(next));
+    // Engage the "prefs syncing" gate immediately (covers the debounce
+    // window too) so Generate can't fire on stale candidates/cost.
+    // No spinner is rendered — this only disables the launch button
+    // until the candidate chips + cost have been refreshed.
+    setSavingPrefs(true);
   }, []);
 
   // Debounced per-site save. Fires only when prefs actually differ
@@ -660,7 +665,7 @@ function SelectionModal({
   }
 
   async function handleConfirm() {
-    if (selected.size === 0 || overBudget || noFields) return;
+    if (selected.size === 0 || overBudget || noFields || savingPrefs) return;
     await onConfirm(Array.from(selected));
   }
 
@@ -705,19 +710,14 @@ function SelectionModal({
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
                 {t('configTitle')}
               </span>
-              <div className="flex items-center gap-2 shrink-0">
-                {savingPrefs ? (
-                  <Spinner className="size-3" aria-label={t('prefsSaving')} />
-                ) : null}
-                <button
-                  type="button"
-                  onClick={onResetPrefs}
-                  disabled={!siteOverride}
-                  className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)]"
-                >
-                  {t('resetToAccountDefault')}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onResetPrefs}
+                disabled={!siteOverride}
+                className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)] shrink-0"
+              >
+                {t('resetToAccountDefault')}
+              </button>
             </div>
             <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
           </div>
@@ -829,7 +829,11 @@ function SelectionModal({
               type="button"
               onClick={handleConfirm}
               disabled={
-                submitting || selected.size === 0 || overBudget || noFields
+                submitting ||
+                selected.size === 0 ||
+                overBudget ||
+                noFields ||
+                savingPrefs
               }
               title={noFields ? t('errorNoFields') : undefined}
               className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"

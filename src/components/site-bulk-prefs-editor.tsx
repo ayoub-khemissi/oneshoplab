@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Spinner } from '@heroui/react';
+import { Card } from '@heroui/react';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -34,15 +34,16 @@ export function SiteBulkPrefsEditor({
     canonicalizePrefs(initialPrefs)
   );
   const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
-  const [saving, setSaving] = useState(false);
   const [siteOverride, setSiteOverride] = useState(initialSiteOverride);
 
+  // Silent debounced save — no visual feedback by design; the only
+  // observable effect is the persisted prefs (and the product chips on
+  // the products tab on next load).
   useEffect(() => {
     if (!canBulk) return;
     const key = prefsKey(prefs);
     if (key === lastSavedKey.current) return;
     const id = window.setTimeout(async () => {
-      setSaving(true);
       try {
         const res = await fetch('/api/sites/bulk-generate', {
           method: 'PUT',
@@ -59,8 +60,6 @@ export function SiteBulkPrefsEditor({
         }
       } catch {
         /* next toggle retriggers */
-      } finally {
-        setSaving(false);
       }
     }, 600);
     return () => window.clearTimeout(id);
@@ -99,19 +98,14 @@ export function SiteBulkPrefsEditor({
           <p className="text-xs text-[var(--muted)]">{t('configSiteHint')}</p>
         </div>
         {canBulk ? (
-          <div className="flex items-center gap-2 shrink-0">
-            {saving ? (
-              <Spinner className="size-3" aria-label={t('prefsSaving')} />
-            ) : null}
-            <button
-              type="button"
-              onClick={resetToAccountDefault}
-              disabled={!siteOverride}
-              className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)]"
-            >
-              {t('resetToAccountDefault')}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={resetToAccountDefault}
+            disabled={!siteOverride}
+            className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)] shrink-0"
+          >
+            {t('resetToAccountDefault')}
+          </button>
         ) : null}
       </div>
 

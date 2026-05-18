@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Spinner } from '@heroui/react';
+import { Card } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -29,19 +29,16 @@ export function AccountBulkPrefsForm({
     canonicalizePrefs(initialPrefs)
   );
   const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
-  const [saving, setSaving] = useState(false);
   const [hasDefault, setHasDefault] = useState(initialHasDefault);
 
+  // Silent save — no visual feedback by design.
   const save = useCallback(async (body: Record<string, unknown>) => {
-    setSaving(true);
     try {
       const fd = new FormData();
       fd.set('prefs', JSON.stringify(body));
       await updateUserDefaultBulkPrefsAction(fd);
     } catch {
       /* next change retriggers */
-    } finally {
-      setSaving(false);
     }
   }, []);
 
@@ -84,19 +81,14 @@ export function AccountBulkPrefsForm({
             {t('configAccountHint')}
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {saving ? (
-            <Spinner className="size-3" aria-label={t('prefsSaving')} />
-          ) : null}
-          <button
-            type="button"
-            onClick={resetToDefault}
-            disabled={!hasDefault}
-            className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)]"
-          >
-            {t('resetToLegacyDefault')}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={resetToDefault}
+          disabled={!hasDefault}
+          className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)] shrink-0"
+        >
+          {t('resetToLegacyDefault')}
+        </button>
       </div>
       <BulkPrefsEditor value={prefs} onChange={setPrefs} />
     </Card>
