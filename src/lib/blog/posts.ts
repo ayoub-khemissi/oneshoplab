@@ -5,6 +5,8 @@ import catalogAuditFr from './content/catalog-audit.fr';
 import catalogAuditEn from './content/catalog-audit.en';
 import shopifyFr from './content/shopify-product-pages.fr';
 import shopifyEn from './content/shopify-product-pages.en';
+import aiDescFr from './content/ai-description-generator.fr';
+import aiDescEn from './content/ai-description-generator.en';
 
 export interface BlogTranslation {
   /** Per-locale, language-specific slug (different across locales by
@@ -45,6 +47,32 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    key: 'ai-product-description-generator',
+    date: '2026-05-18',
+    cover: null,
+    translations: {
+      fr: {
+        slug: 'generateur-description-produit-ia-ca-marche',
+        title:
+          'Générateur de description produit IA : est-ce que ça marche vraiment ?',
+        seoTitle:
+          'Générateur de description produit IA : ça marche ?',
+        description:
+          "Pourquoi la plupart des générateurs IA produisent du texte inutilisable, et ce qui distingue un outil qui marche : ancrage produit, voix de marque, validation humaine, audit d'abord.",
+        body: aiDescFr
+      },
+      en: {
+        slug: 'ai-product-description-generator-does-it-work',
+        title:
+          'AI product description generator: does it actually work?',
+        seoTitle: 'AI Product Description Generator: Does It Work?',
+        description:
+          'Why most AI generators produce unusable text, and what sets apart one that works: grounded in the product, brand voice, human validation, audit first.',
+        body: aiDescEn
+      }
+    }
+  },
   {
     key: 'shopify-product-page-optimization',
     date: '2026-05-18',
