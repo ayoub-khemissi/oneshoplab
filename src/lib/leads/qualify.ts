@@ -187,6 +187,52 @@ export async function upsertQualifiedLead(
   return { id, created: true };
 }
 
+/**
+ * Upsert a NON-store lead (agency, freelancer, anyone we only want for
+ * the contact). No store qualification — platform stays 'unknown',
+ * productsSampled 0, qualifiedAt null. Same `leads` table + admin CRM
+ * as merchant leads, so outreach/status tracking is unified. Refreshes
+ * contact info on re-runs without resetting an operator's status.
+ */
+export async function upsertContactLead(input: {
+  domain: string;
+  url: string;
+  email: string | null;
+  socials: string[];
+  discoveredVia: string | null;
+}): Promise<{ id: string; created: boolean; hasEmail: boolean }> {
+  const existing = await db.query.leads.findFirst({
+    where: eq(leads.domain, input.domain),
+    columns: { id: true }
+  });
+  if (existing) {
+    await db
+      .update(leads)
+      .set({
+        url: input.url,
+        contactEmail: input.email,
+        contactSocials: input.socials
+      })
+      .where(eq(leads.id, existing.id));
+    return { id: existing.id, created: false, hasEmail: !!input.email };
+  }
+  const id = randomUUID();
+  await db.insert(leads).values({
+    id,
+    domain: input.domain,
+    url: input.url,
+    platform: 'unknown',
+    productsSampled: 0,
+    language: null,
+    country: null,
+    contactEmail: input.email,
+    contactSocials: input.socials,
+    status: 'new' satisfies LeadStatus,
+    discoveredVia: input.discoveredVia
+  });
+  return { id, created: true, hasEmail: !!input.email };
+}
+
 export interface BatchSummary {
   total: number;
   qualified: number;

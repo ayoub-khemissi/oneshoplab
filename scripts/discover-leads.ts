@@ -52,6 +52,9 @@ interface CliArgs {
   limit: number;
   concurrency: number;
   skipKnown: boolean;
+  /** Skip store qualification — just scrape contact info and upsert
+   *  (agencies, freelancers…). Pair with --file <agencies.txt>. */
+  contactsOnly: boolean;
 }
 
 function parseArgs(argv: string[]): CliArgs {
@@ -60,6 +63,7 @@ function parseArgs(argv: string[]): CliArgs {
   let limit = 100;
   let concurrency = 5;
   let skipKnown = false;
+  let contactsOnly = false;
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -115,6 +119,8 @@ function parseArgs(argv: string[]): CliArgs {
       i++;
     } else if (a === '--skip-known') {
       skipKnown = true;
+    } else if (a === '--contacts-only') {
+      contactsOnly = true;
     }
   }
 
@@ -131,11 +137,14 @@ function parseArgs(argv: string[]): CliArgs {
         '\n' +
         'Options:\n' +
         '  --concurrency <n>   Parallel qualifier workers (default 5, max 20).\n' +
-        '  --skip-known        Skip candidate domains already in the leads table.\n'
+        '  --skip-known        Skip candidate domains already in the leads table.\n' +
+        '  --contacts-only     No store qualification — just scrape contact\n' +
+        '                      info + upsert. For agencies/freelancers:\n' +
+        '                      pnpm tsx scripts/discover-leads.ts --contacts-only --file agencies.txt\n'
     );
     process.exit(1);
   }
-  return { mode, country, limit, concurrency, skipKnown };
+  return { mode, country, limit, concurrency, skipKnown, contactsOnly };
 }
 
 async function main(): Promise<void> {
@@ -302,6 +311,51 @@ async function main(): Promise<void> {
     console.log(
       `[discover-leads] skip-known: filtered ${before - toQualify.length} known domain(s), qualifying ${toQualify.length}`
     );
+  }
+
+  // Contacts-only: skip store qualification, just scrape the contact
+  // and upsert (agencies, freelancers, anyone without a catalog).
+  if (args.contactsOnly) {
+    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
+    const { upsertContactLead } = await import('@/lib/leads/qualify');
+    let created = 0;
+    let refreshed = 0;
+    let withEmail = 0;
+    let errored = 0;
+    for (const url of toQualify) {
+      let host: string;
+      try {
+        host = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        errored += 1;
+        continue;
+      }
+      try {
+        const c = await extractContactInfo(url);
+        const r = await upsertContactLead({
+          domain: host,
+          url,
+          email: c.email,
+          socials: c.socials.slice(0, 8),
+          discoveredVia: sourceLabel
+        });
+        if (r.created) created += 1;
+        else refreshed += 1;
+        if (r.hasEmail) withEmail += 1;
+        console.log(
+          `  ${r.created ? '+' : '~'} ${host.padEnd(40)} ${c.email ?? '(no email)'}`
+        );
+      } catch {
+        errored += 1;
+        console.log(`  ! ${host.padEnd(40)} extract failed`);
+      }
+    }
+    console.log('\n── Summary (contacts-only) ─────────────────────');
+    console.log(`  processed:   ${toQualify.length}`);
+    console.log(`  upserted:    ${created} new, ${refreshed} refreshed`);
+    console.log(`  with email:  ${withEmail}`);
+    console.log(`  errored:     ${errored}`);
+    process.exit(0);
   }
 
   const summary = await qualifyBatch(toQualify, sourceLabel, args.concurrency);
