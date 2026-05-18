@@ -813,7 +813,7 @@
     "costPerProductImages": "Ürün başına · 3 görsel",
     "costModels": "{chat} + {image} ile",
     "balanceLine": "Bakiyeniz",
-    "selectionTitle": "Toplu üretim için ürün seçin",
+    "selectionTitle": "Birden fazla ürün oluştur",
     "selectionBody": "Toplu üretim yalnızca eksik alanları doldurur — tamamen üretilmiş ürünler hariç tutulur. Maliyeti kontrol altında tutmak için bütçe çubuğunu kullanın.",
     "selectionEmpty": "Bu sitedeki tüm ürünler zaten üretilmiş.",
     "subtitleNoCandidates": "Tüm ürünler zaten üretilmiş. Şimdilik toplu için bir şey yok.",

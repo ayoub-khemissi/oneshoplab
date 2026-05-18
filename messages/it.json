@@ -813,7 +813,7 @@
     "costPerProductImages": "Per prodotto · 3 immagini",
     "costModels": "Con {chat} + {image}",
     "balanceLine": "Il tuo saldo",
-    "selectionTitle": "Seleziona i prodotti da generare in blocco",
+    "selectionTitle": "Genera più prodotti",
     "selectionBody": "Il blocco riempie solo i campi mancanti — i prodotti già completi sono esclusi. Usa la barra del budget per tenere i costi sotto controllo.",
     "selectionEmpty": "Tutti i prodotti di questo sito sono già generati.",
     "subtitleNoCandidates": "Tutti i prodotti sono già generati. Niente da fare in blocco per ora.",

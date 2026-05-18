@@ -813,7 +813,7 @@
     "costPerProductImages": "Por produto · 3 imagens",
     "costModels": "Com {chat} + {image}",
     "balanceLine": "Seu saldo",
-    "selectionTitle": "Selecionar produtos para geração em massa",
+    "selectionTitle": "Gerar vários produtos",
     "selectionBody": "O massivo só preenche campos em falta — produtos já totalmente gerados são excluídos. Usa a barra de orçamento para controlar o custo.",
     "selectionEmpty": "Todos os produtos deste site já estão gerados.",
     "subtitleNoCandidates": "Todos os produtos já estão gerados. Nada para gerar em massa.",

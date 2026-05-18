@@ -812,7 +812,7 @@
     "costPerProductImages": "商品ごと · 画像3枚",
     "costModels": "{chat} + {image} 使用",
     "balanceLine": "あなたの残高",
-    "selectionTitle": "一括生成する商品を選択",
+    "selectionTitle": "複数の商品を生成",
     "selectionBody": "一括は欠落フィールドのみを埋めます — 完全生成済みの商品は除外されます。予算バーでコストを管理してください。",
     "selectionEmpty": "このサイトの全商品はすでに生成済みです。",
     "subtitleNoCandidates": "すべての商品が生成済み。今は一括対象がありません。",

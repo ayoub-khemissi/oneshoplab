@@ -813,7 +813,7 @@
     "costPerProductImages": "Pro Produkt · 3 Bilder",
     "costModels": "Mit {chat} + {image}",
     "balanceLine": "Dein Guthaben",
-    "selectionTitle": "Produkte für die Massengenerierung auswählen",
+    "selectionTitle": "Mehrere Produkte generieren",
     "selectionBody": "Der Bulk füllt nur fehlende Felder — bereits vollständig generierte Produkte werden ausgeschlossen. Verwende die Budgetleiste, um die Kosten im Griff zu halten.",
     "selectionEmpty": "Alle Produkte dieser Seite sind bereits generiert.",
     "subtitleNoCandidates": "Alle Produkte sind bereits generiert. Aktuell nichts zu bulken.",

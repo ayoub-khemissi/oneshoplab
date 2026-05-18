@@ -813,7 +813,7 @@
     "costPerProductImages": "Per product · 3 images",
     "costModels": "Using {chat} + {image}",
     "balanceLine": "Your balance",
-    "selectionTitle": "Select products to bulk generate",
+    "selectionTitle": "Generate multiple products",
     "selectionBody": "Bulk only fills missing fields — products already fully generated are excluded. Use the budget bar to keep costs under control.",
     "selectionEmpty": "All products on this site are already generated.",
     "subtitleNoCandidates": "All products are already generated. Nothing to bulk for now.",

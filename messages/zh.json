@@ -812,7 +812,7 @@
     "costPerProductImages": "每个产品 · 3 张图",
     "costModels": "使用 {chat} + {image}",
     "balanceLine": "您的余额",
-    "selectionTitle": "选择要批量生成的产品",
+    "selectionTitle": "批量生成多个产品",
     "selectionBody": "批量生成只补齐缺失字段——已完整生成的产品被排除。使用预算条控制成本。",
     "selectionEmpty": "本站所有产品已生成。",
     "subtitleNoCandidates": "所有产品已生成,目前无可批量项。",

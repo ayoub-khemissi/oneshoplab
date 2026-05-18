@@ -813,7 +813,7 @@
     "costPerProductImages": "Par produit · 3 images",
     "costModels": "Avec {chat} + {image}",
     "balanceLine": "Votre solde",
-    "selectionTitle": "Sélectionner les produits à générer",
+    "selectionTitle": "Générer plusieurs produits",
     "selectionBody": "Le bulk ne remplit que les champs manquants — les produits entièrement générés sont exclus. Utilise la barre de budget pour rester dans tes crédits.",
     "selectionEmpty": "Tous les produits du site sont déjà générés.",
     "subtitleNoCandidates": "Tous les produits sont déjà générés. Rien à bulker pour le moment.",

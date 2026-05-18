@@ -813,7 +813,7 @@
     "costPerProductImages": "Na produkt · 3 obrazy",
     "costModels": "Z {chat} + {image}",
     "balanceLine": "Twoje saldo",
-    "selectionTitle": "Wybierz produkty do masowej generacji",
+    "selectionTitle": "Generuj wiele produktów",
     "selectionBody": "Masowa generacja wypełnia tylko brakujące pola — produkty już w pełni wygenerowane są wykluczone. Użyj paska budżetu, aby kontrolować koszty.",
     "selectionEmpty": "Wszystkie produkty z tej strony są już wygenerowane.",
     "subtitleNoCandidates": "Wszystkie produkty są już wygenerowane. Nic do masowej generacji.",
