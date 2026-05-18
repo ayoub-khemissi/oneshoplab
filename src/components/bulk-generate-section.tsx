@@ -127,11 +127,18 @@ export function BulkGenerateSection({
   const [prefs, setPrefs] = useState<BulkPrefs>(() =>
     canonicalizePrefs(initialPrefs)
   );
-  // Serialized prefs known to be persisted. The save effect skips when
-  // the current prefs match it — covers the initial mount AND avoids
-  // any post-save re-trigger loop / clobber.
-  const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
-  const [savingPrefs, setSavingPrefs] = useState(false);
+  // Serialized prefs known to be persisted, in STATE so the launch
+  // gate recomputes. The save effect skips when current prefs match it
+  // (covers mount + no echo loop). `prefsBusy` covers the debounce +
+  // PUT + candidate refresh window. The Generate button is gated on
+  // `prefsBusy || prefsKey(prefs) !== savedKey` so it can never get
+  // stuck (toggling back to the saved value clears it) and never opens
+  // early while a newer change is still settling (key mismatch holds
+  // it until savedKey catches up).
+  const [savedKey, setSavedKey] = useState(
+    prefsKey(canonicalizePrefs(initialPrefs))
+  );
+  const [prefsBusy, setPrefsBusy] = useState(false);
   // Whether the site has its OWN prefs vs. inheriting the account
   // default. Drives the "reset to account default" link.
   const [siteOverride, setSiteOverride] = useState(initialSiteOverride);
@@ -171,25 +178,25 @@ export function BulkGenerateSection({
   // Apply a user-driven change, immediately canonicalized so the
   // client shape matches exactly what the server will persist.
   const updatePrefs = useCallback((next: BulkPrefs) => {
+    // No gate flag set here — the launch gate is derived from
+    // (prefsBusy || prefsKey(prefs) !== savedKey), so it engages on
+    // this render and clears correctly even if the user toggles back
+    // to the saved value (which would skip the save path entirely).
     setPrefs(canonicalizePrefs(next));
-    // Engage the "prefs syncing" gate immediately (covers the debounce
-    // window too) so Generate can't fire on stale candidates/cost.
-    // No spinner is rendered — this only disables the launch button
-    // until the candidate chips + cost have been refreshed.
-    setSavingPrefs(true);
   }, []);
 
-  // Debounced per-site save. Fires only when prefs actually differ
-  // from the last persisted value (key compare) → no save on mount,
-  // no echo loop, and a concurrent change still saves (its key differs
-  // until its own save lands). We don't setPrefs() from the response:
-  // the client already holds the canonical shape, so re-hydrating
-  // would be a no-op that risks clobbering a newer in-flight edit.
+  // Debounced per-site save. Skips when prefs match the persisted key
+  // (mount, or a no-op toggle-and-back) — and in that case clears the
+  // busy flag so Generate can't get stuck disabled. We don't setPrefs
+  // from the response (client already holds the canonical shape).
   useEffect(() => {
     const key = prefsKey(prefs);
-    if (key === lastSavedKey.current) return;
+    if (key === savedKey) {
+      setPrefsBusy(false);
+      return;
+    }
+    setPrefsBusy(true);
     const id = window.setTimeout(async () => {
-      setSavingPrefs(true);
       try {
         const res = await fetch('/api/sites/bulk-generate', {
           method: 'PUT',
@@ -201,7 +208,7 @@ export function BulkGenerateSection({
           })
         });
         if (res.ok) {
-          lastSavedKey.current = key;
+          setSavedKey(key);
           // Saving site-specific prefs creates a site override.
           setSiteOverride(true);
           await refresh();
@@ -209,16 +216,17 @@ export function BulkGenerateSection({
       } catch {
         /* keep local state; the next toggle re-triggers the save */
       } finally {
-        setSavingPrefs(false);
+        setPrefsBusy(false);
       }
     }, 600);
     return () => window.clearTimeout(id);
-  }, [prefs, siteId, refresh]);
+  }, [prefs, savedKey, siteId, refresh]);
 
   // Drop the site override → inherit the account default again.
   const resetToAccountDefault = useCallback(async () => {
-    // No "saving" indicator here — the reset is an instant revert, not
-    // an edit being persisted.
+    // No spinner — but still gate Generate while the candidates/cost
+    // are refreshed to the inherited account default.
+    setPrefsBusy(true);
     try {
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'PUT',
@@ -232,7 +240,7 @@ export function BulkGenerateSection({
         };
         if (data.prefs) {
           const next = canonicalizePrefs(data.prefs);
-          lastSavedKey.current = prefsKey(next);
+          setSavedKey(prefsKey(next));
           setPrefs(next);
         }
         setSiteOverride(data.siteOverride ?? false);
@@ -240,6 +248,8 @@ export function BulkGenerateSection({
       }
     } catch {
       /* no-op; user can retry */
+    } finally {
+      setPrefsBusy(false);
     }
   }, [siteId, refresh]);
 
@@ -490,7 +500,7 @@ export function BulkGenerateSection({
             errorMsg={errorMsg}
             prefs={prefs}
             onChangePrefs={updatePrefs}
-            savingPrefs={savingPrefs}
+            launchBlocked={prefsBusy || prefsKey(prefs) !== savedKey}
             siteOverride={siteOverride}
             onResetPrefs={resetToAccountDefault}
             noFields={prefsHasNoFields(prefs)}
@@ -565,7 +575,7 @@ export function BulkGenerateSection({
           errorMsg={errorMsg}
           prefs={prefs}
           onChangePrefs={updatePrefs}
-          savingPrefs={savingPrefs}
+          launchBlocked={prefsBusy || prefsKey(prefs) !== savedKey}
           siteOverride={siteOverride}
           onResetPrefs={resetToAccountDefault}
           noFields={noFields}
@@ -603,7 +613,7 @@ function SelectionModal({
   errorMsg,
   prefs,
   onChangePrefs,
-  savingPrefs,
+  launchBlocked,
   siteOverride,
   onResetPrefs,
   noFields,
@@ -618,7 +628,9 @@ function SelectionModal({
   errorMsg: string | null;
   prefs: BulkPrefs;
   onChangePrefs: (next: BulkPrefs) => void;
-  savingPrefs: boolean;
+  /** True while a prefs change is still being persisted/refreshed —
+   *  blocks launch so a bulk can't start on stale candidates/cost. */
+  launchBlocked: boolean;
   siteOverride: boolean;
   onResetPrefs: () => void;
   noFields: boolean;
@@ -630,6 +642,16 @@ function SelectionModal({
   const t = useTranslations('BulkGenerate');
   const locale = useLocale();
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+
+  // Reset the selection whenever the (debounced) search changes: the
+  // candidate list is a server-filtered view, so a selection made
+  // under a different query would have items not in `candidates` —
+  // their cost wouldn't be in the budget bar / over-budget check
+  // (the server still re-validates on submit, but the UI would lie).
+  // Selection is therefore scoped to the current search view.
+  useEffect(() => {
+    setSelected(new Set());
+  }, [searchValue]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -692,7 +714,7 @@ function SelectionModal({
   }
 
   async function handleConfirm() {
-    if (selected.size === 0 || overBudget || noFields || savingPrefs) return;
+    if (selected.size === 0 || overBudget || noFields || launchBlocked) return;
     await onConfirm(Array.from(selected));
   }
 
@@ -869,7 +891,7 @@ function SelectionModal({
                 selected.size === 0 ||
                 overBudget ||
                 noFields ||
-                savingPrefs
+                launchBlocked
               }
               title={noFields ? t('errorNoFields') : undefined}
               className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"

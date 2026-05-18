@@ -38,7 +38,9 @@ export function DebouncedSearchInput({
   }, [value]);
 
   useEffect(() => {
-    if (input === value) return;
+    // Compare trimmed: the parent stores the trimmed query, so typing
+    // only trailing spaces shouldn't re-fire an identical search.
+    if (input.trim() === value) return;
     const id = window.setTimeout(() => onDebouncedChange(input.trim()), delay);
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
