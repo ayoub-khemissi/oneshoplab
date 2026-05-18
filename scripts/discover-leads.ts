@@ -1,0 +1,338 @@
+/**
+ * Lead discovery CLI. Pulls candidate URLs from a discovery provider
+ * (seed file or Brave Search), runs each through the qualification
+ * pipeline (platform detect + product fetch + contact extraction),
+ * and upserts the qualified ones into the `leads` table.
+ *
+ * Usage:
+ *
+ *   # Seed file (one URL per line, # = comment):
+ *   pnpm tsx scripts/discover-leads.ts --file seeds.txt
+ *
+ *   # Brave Search query (needs BRAVE_API_KEY in .env):
+ *   pnpm tsx scripts/discover-leads.ts \
+ *     --query '"powered by shopify" inurl:/products' \
+ *     --country fr --limit 50
+ *
+ * Idempotent: re-running with the same query / file refreshes existing
+ * leads (platform / contact info / qualifiedAt) without overwriting
+ * statuses the operator has moved past "new".
+ */
+import { existsSync, readFileSync } from 'node:fs';
+
+// Load .env synchronously, BEFORE importing modules that read process.env
+// at module init time (db, kie client, etc.). Same pattern as
+// reconcile-kie-jobs.ts.
+if (existsSync('.env')) {
+  for (const line of readFileSync('.env', 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eq = trimmed.indexOf('=');
+    if (eq < 0) continue;
+    const k = trimmed.slice(0, eq).trim();
+    let v = trimmed.slice(eq + 1).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+      v = v.slice(1, -1);
+    }
+    if (k && !(k in process.env)) process.env[k] = v;
+  }
+}
+
+type CliMode =
+  | { kind: 'seed'; input: string }
+  | { kind: 'query'; input: string }
+  | { kind: 'platform'; platform: 'shopify' | 'woocommerce' | 'wix' }
+  | { kind: 'cc'; pattern: 'shopify' | 'wix' }
+  | { kind: 'niche' }
+  | { kind: 'tranco'; startRank: number; endRank: number };
+
+interface CliArgs {
+  mode: CliMode;
+  country?: string;
+  limit: number;
+  concurrency: number;
+  skipKnown: boolean;
+}
+
+function parseArgs(argv: string[]): CliArgs {
+  let mode: CliMode | null = null;
+  let country: string | undefined;
+  let limit = 100;
+  let concurrency = 5;
+  let skipKnown = false;
+
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    const next = argv[i + 1];
+    if (a === '--file' && next) {
+      mode = { kind: 'seed', input: next };
+      i++;
+    } else if (a === '--query' && next) {
+      mode = { kind: 'query', input: next };
+      i++;
+    } else if (a === '--platform' && next) {
+      if (next !== 'shopify' && next !== 'woocommerce' && next !== 'wix') {
+        console.error(`--platform must be shopify | woocommerce | wix`);
+        process.exit(1);
+      }
+      mode = { kind: 'platform', platform: next };
+      i++;
+    } else if (a === '--cc' && next) {
+      if (next !== 'shopify' && next !== 'wix') {
+        console.error(`--cc must be shopify | wix (Common Crawl pattern)`);
+        process.exit(1);
+      }
+      mode = { kind: 'cc', pattern: next };
+      i++;
+    } else if (a === '--niche') {
+      mode = { kind: 'niche' };
+    } else if (a === '--tranco') {
+      // `--tranco` alone defaults to range 5000-50000.
+      // `--tranco 5000-50000` or two numbers also accepted.
+      let startRank = 5_000;
+      let endRank = 50_000;
+      if (next && /^\d+(-\d+)?$/.test(next)) {
+        if (next.includes('-')) {
+          const [a1, b1] = next.split('-').map((n) => Number(n));
+          startRank = Math.max(1, a1);
+          endRank = Math.max(startRank + 1, b1);
+        } else {
+          startRank = 5_000;
+          endRank = Math.max(startRank + 1, Number(next));
+        }
+        i++;
+      }
+      endRank = Math.min(1_000_000, endRank);
+      mode = { kind: 'tranco', startRank, endRank };
+    } else if (a === '--country' && next) {
+      country = next.toLowerCase();
+      i++;
+    } else if (a === '--limit' && next) {
+      limit = Math.max(1, Math.min(2000, Number(next)));
+      i++;
+    } else if (a === '--concurrency' && next) {
+      concurrency = Math.max(1, Math.min(20, Number(next)));
+      i++;
+    } else if (a === '--skip-known') {
+      skipKnown = true;
+    }
+  }
+
+  if (!mode) {
+    console.error(
+      'Usage:\n' +
+        '  pnpm tsx scripts/discover-leads.ts --file <path>\n' +
+        '  pnpm tsx scripts/discover-leads.ts --query <text> [--country fr] [--limit 100]\n' +
+        '  pnpm tsx scripts/discover-leads.ts --platform shopify --country fr [--limit 500]\n' +
+        '  pnpm tsx scripts/discover-leads.ts --cc shopify [--limit 500]    # Common Crawl, free, recommended for Shopify/Wix bulk\n' +
+        '  pnpm tsx scripts/discover-leads.ts --cc wix [--limit 500]\n' +
+        '  pnpm tsx scripts/discover-leads.ts --niche --country fr           # Brave + 15 niche queries (mode, cosmétique, déco…) — platform-agnostic\n' +
+        '  pnpm tsx scripts/discover-leads.ts --tranco 50000 [--limit N]     # Probe top-50k domains from Tranco list (free, ~1h, ~500-2000 shops)\n' +
+        '\n' +
+        'Options:\n' +
+        '  --concurrency <n>   Parallel qualifier workers (default 5, max 20).\n' +
+        '  --skip-known        Skip candidate domains already in the leads table.\n'
+    );
+    process.exit(1);
+  }
+  return { mode, country, limit, concurrency, skipKnown };
+}
+
+async function main(): Promise<void> {
+  const args = parseArgs(process.argv.slice(2));
+
+  const {
+    buildProvider,
+    getQueryTemplates,
+    getNicheQueries,
+    multiBraveDiscovery,
+    isBlockedDomain,
+    CommonCrawlProvider,
+    TrancoProvider
+  } = await import('@/lib/leads/discovery');
+  const { qualifyBatch } = await import('@/lib/leads/qualify');
+
+  // Materialise the candidate stream upfront so we know what we're
+  // working with before hitting any merchant servers. The provider's
+  // own dedupe + limit bound the size.
+  const candidates: string[] = [];
+  let sourceLabel: string | null = null;
+
+  if (args.mode.kind === 'tranco') {
+    const span = args.mode.endRank - args.mode.startRank;
+    console.log(
+      `[discover-leads] tranco rank ${args.mode.startRank}-${args.mode.endRank} (${span} domains) qualify-limit=${args.limit}`
+    );
+    const provider = new TrancoProvider(args.mode.startRank, args.mode.endRank);
+    for await (const c of provider.discover({ limit: span })) {
+      if (candidates.length >= args.limit) break;
+      let host: string;
+      try {
+        host = new URL(c.url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        continue;
+      }
+      if (isBlockedDomain(host)) continue;
+      candidates.push(c.url);
+      sourceLabel = c.source;
+    }
+  } else if (args.mode.kind === 'cc') {
+    const pattern =
+      args.mode.pattern === 'shopify' ? '*.myshopify.com' : '*.wixsite.com';
+    console.log(
+      `[discover-leads] common-crawl pattern=${pattern} limit=${args.limit}`
+    );
+    const provider = new CommonCrawlProvider(pattern);
+    for await (const c of provider.discover({ limit: args.limit })) {
+      let host: string;
+      try {
+        host = new URL(c.url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        continue;
+      }
+      if (isBlockedDomain(host)) continue;
+      candidates.push(c.url);
+      sourceLabel = c.source;
+    }
+  } else if (args.mode.kind === 'niche') {
+    const queries = getNicheQueries(args.country);
+    const apiKey = process.env.BRAVE_API_KEY;
+    if (!apiKey) {
+      console.error(
+        'BRAVE_API_KEY missing. Niche discovery uses Brave Search.'
+      );
+      process.exit(1);
+    }
+    const perQueryLimit = Math.max(10, Math.ceil(args.limit / queries.length));
+    console.log(
+      `[discover-leads] niche country=${args.country ?? 'en'} queries=${queries.length} perQueryLimit=${perQueryLimit}`
+    );
+    for (const q of queries) console.log(`  - ${q}`);
+    for await (const c of multiBraveDiscovery(
+      queries,
+      apiKey,
+      args.country,
+      perQueryLimit
+    )) {
+      if (candidates.length >= args.limit) break;
+      candidates.push(c.url);
+      sourceLabel = `niche:${args.country ?? 'en'}`;
+    }
+  } else if (args.mode.kind === 'platform') {
+    const queries = getQueryTemplates(args.mode.platform, args.country);
+    if (queries.length === 0) {
+      console.error(
+        `No query templates for platform=${args.mode.platform} country=${args.country ?? 'en'}`
+      );
+      process.exit(1);
+    }
+    const apiKey = process.env.BRAVE_API_KEY;
+    if (!apiKey) {
+      console.error(
+        'BRAVE_API_KEY missing. Register at https://api-dashboard.search.brave.com/ ' +
+          'and add the key to .env, or use --file <seed.txt> instead.'
+      );
+      process.exit(1);
+    }
+    const perQueryLimit = Math.max(20, Math.ceil(args.limit / queries.length));
+    console.log(
+      `[discover-leads] platform=${args.mode.platform} country=${args.country ?? 'en'} ` +
+        `queries=${queries.length} perQueryLimit=${perQueryLimit}`
+    );
+    for (const q of queries) console.log(`  - ${q}`);
+    for await (const c of multiBraveDiscovery(
+      queries,
+      apiKey,
+      args.country,
+      perQueryLimit
+    )) {
+      if (candidates.length >= args.limit) break;
+      candidates.push(c.url);
+      sourceLabel = `brave-multi:${args.mode.platform}-${args.country ?? 'en'}`;
+    }
+  } else {
+    const provider = buildProvider({
+      kind: args.mode.kind === 'seed' ? 'seed' : 'brave',
+      input: args.mode.input,
+      country: args.country
+    });
+    console.log(
+      `[discover-leads] provider=${args.mode.kind} input=${JSON.stringify(args.mode.input)} limit=${args.limit}` +
+        (args.country ? ` country=${args.country}` : '')
+    );
+    for await (const c of provider.discover({ limit: args.limit })) {
+      // Apply the blocklist even on raw query mode so manual queries
+      // also benefit from the noise filter.
+      let host: string;
+      try {
+        host = new URL(c.url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        continue;
+      }
+      if (isBlockedDomain(host)) continue;
+      candidates.push(c.url);
+      sourceLabel = c.source;
+    }
+  }
+
+  console.log(`[discover-leads] collected ${candidates.length} candidate URL(s)`);
+
+  // Pre-filter against already-qualified domains. Re-running the same
+  // CC pattern would otherwise burn time re-fetching shops we already
+  // have. Refreshing them is still useful occasionally — that's the
+  // default; --skip-known turns the filter on.
+  let toQualify = candidates;
+  if (args.skipKnown) {
+    const { db } = await import('@/lib/db');
+    const { leads } = await import('@/lib/db/schema');
+    const known = new Set(
+      (await db.select({ domain: leads.domain }).from(leads)).map((r) =>
+        r.domain.toLowerCase()
+      )
+    );
+    const before = candidates.length;
+    toQualify = candidates.filter((u) => {
+      try {
+        const h = new URL(u).hostname.toLowerCase().replace(/^www\./, '');
+        return !known.has(h);
+      } catch {
+        return true;
+      }
+    });
+    console.log(
+      `[discover-leads] skip-known: filtered ${before - toQualify.length} known domain(s), qualifying ${toQualify.length}`
+    );
+  }
+
+  const summary = await qualifyBatch(toQualify, sourceLabel, args.concurrency);
+
+  console.log('\n── Summary ─────────────────────────────────────');
+  console.log(`  candidates:  ${summary.total}`);
+  console.log(`  qualified:   ${summary.qualified}  (${summary.created} new, ${summary.qualified - summary.created} refreshed)`);
+  console.log(`  skipped:     ${summary.skipped}`);
+  console.log(`  errored:     ${summary.errored}`);
+  if (Object.keys(summary.byPlatform).length > 0) {
+    console.log('  by platform:');
+    for (const [p, n] of Object.entries(summary.byPlatform)) {
+      console.log(`    ${p.padEnd(13)} ${n}`);
+    }
+  }
+  if (summary.failures.length > 0 && summary.failures.length <= 20) {
+    console.log('\n  Failures:');
+    for (const f of summary.failures) {
+      console.log(`    ${f.domain.padEnd(40)} ${f.reason}`);
+    }
+  } else if (summary.failures.length > 20) {
+    console.log(`\n  ${summary.failures.length} failures total — first 10:`);
+    for (const f of summary.failures.slice(0, 10)) {
+      console.log(`    ${f.domain.padEnd(40)} ${f.reason}`);
+    }
+  }
+
+  process.exit(0);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
