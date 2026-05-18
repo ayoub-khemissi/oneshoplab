@@ -3,6 +3,8 @@ import productPagesFr from './content/product-pages.fr';
 import productPagesEn from './content/product-pages.en';
 import catalogAuditFr from './content/catalog-audit.fr';
 import catalogAuditEn from './content/catalog-audit.en';
+import shopifyFr from './content/shopify-product-pages.fr';
+import shopifyEn from './content/shopify-product-pages.en';
 
 export interface BlogTranslation {
   /** Per-locale, language-specific slug (different across locales by
@@ -43,6 +45,32 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    key: 'shopify-product-page-optimization',
+    date: '2026-05-18',
+    cover: null,
+    translations: {
+      fr: {
+        slug: 'optimiser-fiche-produit-shopify',
+        title:
+          'Optimiser une fiche produit Shopify : le guide concret (titre, description, images, tags)',
+        seoTitle:
+          'Optimiser une fiche produit Shopify : guide & checklist',
+        description:
+          "Titre, description, images, tags, bloc SEO, variantes : les 6 éléments à corriger sur une fiche produit Shopify pour qu'elle référence et convertisse — checklist incluse.",
+        body: shopifyFr
+      },
+      en: {
+        slug: 'shopify-product-page-optimization',
+        title:
+          'How to optimize a Shopify product page (titles, descriptions, images, tags)',
+        seoTitle: 'Shopify Product Page Optimization: The Practical Guide',
+        description:
+          'Title, description, images, tags, SEO block, variants: the 6 elements to fix on a Shopify product page so it ranks and converts — checklist included.',
+        body: shopifyEn
+      }
+    }
+  },
   {
     key: 'ecommerce-catalog-audit',
     date: '2026-05-18',
