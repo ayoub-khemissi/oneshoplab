@@ -1,6 +1,8 @@
 import type { Locale } from '@/i18n/routing';
 import productPagesFr from './content/product-pages.fr';
 import productPagesEn from './content/product-pages.en';
+import catalogAuditFr from './content/catalog-audit.fr';
+import catalogAuditEn from './content/catalog-audit.en';
 
 export interface BlogTranslation {
   /** Per-locale, language-specific slug (different across locales by
@@ -41,6 +43,32 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    key: 'ecommerce-catalog-audit',
+    date: '2026-05-18',
+    cover: null,
+    translations: {
+      fr: {
+        slug: 'audit-catalogue-ecommerce-quoi-verifier',
+        title:
+          'Audit de catalogue e-commerce : quoi vérifier (et comment le scorer)',
+        seoTitle:
+          'Audit de catalogue e-commerce : la checklist complète',
+        description:
+          "Quels signaux vérifier produit par produit pour auditer un catalogue e-commerce — copy, visuels, complétude, tags — et comment transformer ça en score actionnable.",
+        body: catalogAuditFr
+      },
+      en: {
+        slug: 'ecommerce-catalog-audit-what-to-check',
+        title:
+          'Ecommerce catalog audit: what to check (and how to score it)',
+        seoTitle: 'Ecommerce Catalog Audit: The Complete Checklist',
+        description:
+          "Which signals to check, product by product, to audit an ecommerce catalog — copy, visuals, completeness, tags — and how to turn it into an actionable score.",
+        body: catalogAuditEn
+      }
+    }
+  },
   {
     key: 'product-pages-not-converting',
     date: '2026-05-18',
