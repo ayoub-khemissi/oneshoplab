@@ -26,7 +26,19 @@ function htmlToText(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
 }
 
-function scoreProduct(p: NormalizedProduct): ProductInsight {
+export interface ScoreOptions {
+  /** From-scratch (manual) projects don't carry alt text from a CMS;
+   *  the user uploaded the images themselves and we never asked for an
+   *  alt at upload time. Skipping this drops the `missing_alt_text`
+   *  issue, the alt distribution counters, and the 10% per-product
+   *  weight (redistributed evenly across the remaining axes). */
+  skipAltText?: boolean;
+}
+
+function scoreProduct(
+  p: NormalizedProduct,
+  opts: ScoreOptions = {}
+): ProductInsight {
   const text = htmlToText(p.descriptionHtml);
   const titleLen = p.title.length;
   const descLen = text.length;
@@ -46,7 +58,7 @@ function scoreProduct(p: NormalizedProduct): ProductInsight {
   else if (!structured && descLen < 300) issues.push({ code: 'unstructured_description' });
   if (titleLen > 0 && titleLen < 20) issues.push({ code: 'short_title' });
   if (tagCount === 0) issues.push({ code: 'no_tags' });
-  if (imageCount > 0 && imagesWithAlt < imageCount) {
+  if (!opts.skipAltText && imageCount > 0 && imagesWithAlt < imageCount) {
     issues.push({
       code: 'missing_alt_text',
       data: { missing: imageCount - imagesWithAlt, total: imageCount }
@@ -66,13 +78,21 @@ function scoreProduct(p: NormalizedProduct): ProductInsight {
     titleLen >= 30 && titleLen <= 70 ? 100 : titleLen >= 20 ? 70 : titleLen > 0 ? 40 : 0;
   const altScore = imageCount === 0 ? 0 : (imagesWithAlt / imageCount) * 100;
 
+  // Weights sum to 1.0 in both modes. When alt is skipped, its 0.10
+  // gets redistributed pro-rata across the remaining four axes
+  // (img/desc/tag/title) so a from-scratch product can still hit 100.
   const score = Math.round(
     clamp(
-      0.30 * imgScore +
-        0.30 * descScore * structureBonus +
-        0.15 * tagScore +
-        0.15 * titleScore +
-        0.10 * altScore
+      opts.skipAltText
+        ? (0.30 / 0.9) * imgScore +
+            (0.30 / 0.9) * descScore * structureBonus +
+            (0.15 / 0.9) * tagScore +
+            (0.15 / 0.9) * titleScore
+        : 0.30 * imgScore +
+            0.30 * descScore * structureBonus +
+            0.15 * tagScore +
+            0.15 * titleScore +
+            0.10 * altScore
     )
   );
 
@@ -212,10 +232,13 @@ function detectLanguage(insights: ProductInsight[]): string | null {
  * Compute an audit report from a normalized product catalog.
  * Pure function — no I/O, no side effects.
  */
-export function audit(products: NormalizedProduct[]): AuditReport {
+export function audit(
+  products: NormalizedProduct[],
+  opts: ScoreOptions = {}
+): AuditReport {
   if (products.length === 0) return emptyReport();
 
-  const insights = products.map(scoreProduct);
+  const insights = products.map((p) => scoreProduct(p, opts));
   const sorted = [...insights].sort((a, b) => a.score - b.score);
 
   const dist = emptyDistribution();
@@ -249,9 +272,11 @@ export function audit(products: NormalizedProduct[]): AuditReport {
     else if (s.tagCount <= 10) dist.tagsFourToTen++;
     else dist.tagsElevenPlus++;
 
-    if (s.imageCount === 0 || s.imagesWithAlt === 0) dist.altNone++;
-    else if (s.imagesWithAlt < s.imageCount) dist.altPartial++;
-    else dist.altFull++;
+    if (!opts.skipAltText) {
+      if (s.imageCount === 0 || s.imagesWithAlt === 0) dist.altNone++;
+      else if (s.imagesWithAlt < s.imageCount) dist.altPartial++;
+      else dist.altFull++;
+    }
 
     if (s.smallestImageWidth !== null && s.smallestImageWidth < 800) lowRes++;
 

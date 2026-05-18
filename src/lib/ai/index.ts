@@ -42,7 +42,7 @@ export type {
 } from './models';
 export { findCachedSuggestions, getOrGenerateSuggestions } from './suggestions';
 export type { PromptSuggestion, SuggestionsResult } from './suggestions';
-export { listOptimHistory, runChatOptim } from './optims';
+export { listOptimHistory, listOptimHistoryPaginated, runChatOptim } from './optims';
 export type { ChatOptimField, ChatOptimRequest, ChatOptimResult, OptimHistoryItem } from './optims';
 export { IMAGE_COST_CREDITS, startImageOptim } from './image-optim';
 export type { StartImageOptimOptions, StartImageOptimResult } from './image-optim';

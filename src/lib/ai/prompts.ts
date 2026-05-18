@@ -77,8 +77,22 @@ export function buildDescriptionRewritePrompt(
   // can push real input to 25K+ tokens, blowing through the kie cost
   // we quote and shrinking margin to ~1.5×. Keep this slice in sync
   // with the cap or update pricing.json in parallel.
+  //
+  // Length budget is enforced by the prompt (~180-220 words / ~1300
+  // chars total) AND backed by pricing.json's description outputTokens
+  // cap (600), which leaves a 1.5x safety margin so the model never
+  // gets cut mid-sentence. Keep both in sync if you change one.
   return {
-    system: `You are an expert e-commerce copywriter. Output ONLY the rewritten description, in clean HTML. MUST split into 2-4 short <p> paragraphs (no wall-of-text). MUST include one <ul> with 3-5 <li> bullet points covering key benefits or specs. Use <strong> on the key value props. Use <em> sparingly. The output must paste cleanly into Shopify / WooCommerce / Wix rich-text editors. No preamble, no commentary, no markdown fences. Write the output in ${languageName}.`,
+    system: `You are an expert e-commerce copywriter. Output ONLY the rewritten description, in clean HTML.
+
+LENGTH IS A HARD CONSTRAINT. The description MUST be between 150 and 220 words total across the entire HTML output (count words, not characters). That's the SEO sweet spot for product pages. Every output must be a COMPLETE piece of copy — never cut mid-sentence, never leave a paragraph half-written. If you're approaching the budget, finish the current sentence cleanly and stop. If you have more to say, tighten earlier paragraphs to make room.
+
+Structure (mandatory):
+- 2-3 short <p> paragraphs (a wall-of-text is rejected).
+- One <ul> with 3-5 <li> bullet points covering key benefits, materials or specs.
+- Use <strong> on the 2-3 strongest value props. Use <em> sparingly.
+
+Output must paste cleanly into Shopify / WooCommerce / Wix rich-text editors. No preamble, no commentary, no markdown fences, no trailing whitespace. Write the output in ${languageName}.`,
     user: `Rewrite the following product description per this instruction: "${userPrompt}"
 
 Product context:
@@ -116,8 +130,16 @@ export function buildTitleRewritePrompt(
   userPrompt: string,
   languageName: string
 ): { system: string; user: string } {
+  // Length is enforced both in the prompt (so the model self-limits at
+  // a clean word boundary) AND by pricing.json's title outputTokens
+  // cap (100) which gives a ~25% safety margin for languages with
+  // higher token density (FR/DE/PT). Keep both in sync.
   return {
-    system: `You output strictly the rewritten product title — a single line, no quotes, no preamble, no commentary, no trailing punctuation. Write the output in ${languageName}.`,
+    system: `You output strictly the rewritten product title — a single line, no quotes, no preamble, no commentary, no trailing punctuation, no period.
+
+LENGTH IS A HARD CONSTRAINT. The title MUST be between 40 and 65 characters total (count spaces and accents). 6 to 10 words. If your draft is longer, REWRITE it shorter before outputting — never submit a long title hoping it gets accepted. A complete short title beats a clever long one every time.
+
+Write the output in ${languageName}.`,
     user: `Rewrite this product title per this instruction: "${userPrompt}"
 
 Current title: ${p.title}

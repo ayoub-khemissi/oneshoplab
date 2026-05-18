@@ -252,13 +252,24 @@ export class KieClient {
    * Synchronous chat completion via Claude (or other supported chat models).
    * Returns the full response including credits_consumed so the caller can
    * debit the user's balance with the exact amount.
+   *
+   * Extended thinking is explicitly disabled. Claude 4.x models (especially
+   * Opus 4.6) default to "thinking enabled", which burns 40-75% of the
+   * max_tokens budget on invisible reasoning tokens BEFORE producing the
+   * visible output — so a 600-token cap leaves only ~150 tokens for the
+   * actual description and the output gets cut mid-sentence. The product
+   * copy tasks (title / description / tags) don't benefit from chain-of-
+   * thought reasoning, so we trade off thinking for full output budget
+   * and deterministic pricing. If a future task genuinely needs thinking,
+   * make this configurable per-call rather than flipping the default.
    */
   async chat(opts: ChatOptions): Promise<ChatResponse> {
     const body: Record<string, unknown> = {
       model: opts.model,
       messages: opts.messages,
       max_tokens: opts.max_tokens ?? 2048,
-      stream: false
+      stream: false,
+      thinking: { type: 'disabled' }
     };
     if (opts.system) body.system = opts.system;
 

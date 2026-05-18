@@ -7,11 +7,17 @@
  *   - displayName / provider / tier / tagline (UI copy)
  *   - the merge function that combines static metadata with JSON numbers
  *
- * Pricing math is deterministic: every chat field has a hard input/output
- * token cap (see fieldCaps in pricing.json), the cost shown to the user is
- * cap × kie-rate × markup, and runChatOptim sends max_tokens = outputCap
- * to kie so we can never exceed the quoted cost. The user is debited
- * exactly the quoted amount — no surprise tail debits.
+ * Pricing math: every chat field has an "expected" input/output token
+ * budget in pricing.json's fieldCaps. The cost shown to the user is
+ * cap × kie-rate × markup, debited atomically — the user is never
+ * surprise-billed.
+ *
+ * runChatOptim sends max_tokens = outputCap × SAFETY_MULTIPLIER to kie
+ * (currently 2.5×) so the model has room to honor the prompt's length
+ * instruction without getting cut mid-sentence. The pricing cap stays
+ * the budgeting basis; the safety cap is just a fallback to bound
+ * runaway generations. Margins hold (~35% Opus, ~50% Sonnet) even
+ * when a verbose run hits the safety cap.
  */
 
 import {

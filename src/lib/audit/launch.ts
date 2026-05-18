@@ -51,6 +51,17 @@ export async function launchAuditForUser(
     project = await db.query.projects.findFirst({ where: eq(projects.id, projectId) });
   }
 
+  // (userId, domain) is the identity. If the user already has a
+  // manual project for this domain, never run a scrape on it — a
+  // failing scrape audit would supersede the recomputed manual
+  // overview when the dashboard picks the latest audit by
+  // createdAt. Just hand the user back to their existing manual
+  // project page. (The UI hides the Relaunch button on manual sites
+  // so this is mostly defensive against direct URL flows.)
+  if (project?.source === 'manual') {
+    return { projectId: project.id };
+  }
+
   const id = randomUUID();
   await db.insert(audits).values({
     id,

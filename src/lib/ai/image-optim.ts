@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { jobs, users } from '@/lib/db/schema';
+import { jobs, products, users } from '@/lib/db/schema';
 import { buildKieCallbackUrl, getKieClient } from './kie';
 import { costForImage, getImageModel, type ImageQualityId } from './models';
 
@@ -52,9 +52,20 @@ export async function startImageOptim(
   const jobId = randomUUID();
   const callBackUrl = buildKieCallbackUrl(opts.appUrl);
 
+  // Resolve product FK so the Activity tab can render a product
+  // link instead of "—" (same rationale as runChatOptim).
+  const productRow = await db.query.products.findFirst({
+    where: and(
+      eq(products.projectId, opts.projectId),
+      eq(products.sourceId, opts.productSourceId)
+    ),
+    columns: { id: true }
+  });
+
   await db.insert(jobs).values({
     id: jobId,
     projectId: opts.projectId,
+    productId: productRow?.id ?? null,
     kind: 'kie_image_edit',
     status: 'pending',
     inputPayload: {

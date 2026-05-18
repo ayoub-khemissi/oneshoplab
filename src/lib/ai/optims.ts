@@ -1,8 +1,8 @@
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { jobs, type JobKind } from '@/lib/db/schema';
+import { jobs, products, type JobKind } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { KieClient, getKieClient, type ChatMessage } from './kie';
 import {
@@ -71,11 +71,24 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
 
   const model = getChatModel(opts.chatModelId);
 
+  // Decouple the kie max_tokens from the pricing cap. pricing.json's
+  // outputTokens drives what we CHARGE the user (deterministic), but
+  // we send a much larger ceiling to kie so the prompt's length
+  // instruction is the real constraint and the output never gets cut
+  // mid-word / mid-sentence. The 2.5x multiplier leaves a generous
+  // headroom (e.g. a description priced for 600 tokens has a 1500
+  // safety cap — a hard upper bound the model never reaches when it
+  // follows the "180-220 words" prompt instruction). Worst-case
+  // margin is still ~35% on Opus, ~50% on Sonnet, so a verbose
+  // generation doesn't push us into the red.
+  const SAFETY_MULTIPLIER = 2.5;
+  const safetyMaxTokens = Math.ceil(outputTokenCapFor(opts.field) * SAFETY_MULTIPLIER);
+
   const response = await kie.chat({
     model: model.kieModelId,
     system: built.system,
     messages,
-    max_tokens: outputTokenCapFor(opts.field)
+    max_tokens: safetyMaxTokens
   });
 
   const text = KieClient.extractText(response);
@@ -88,9 +101,24 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
   const jobId = randomUUID();
   const now = new Date();
 
+  // Resolve the product UUID from (projectId, sourceId) so we can
+  // populate the FK column — the past-generations strip and the
+  // site Activity tab both pull the product link via the `product`
+  // relation on jobs, which joins on jobs.product_id. Without this
+  // backfill the column would render "—" instead of the title for
+  // every chat generation.
+  const productRow = await db.query.products.findFirst({
+    where: and(
+      eq(products.projectId, opts.projectId),
+      eq(products.sourceId, opts.productSourceId)
+    ),
+    columns: { id: true }
+  });
+
   await db.insert(jobs).values({
     id: jobId,
     projectId: opts.projectId,
+    productId: productRow?.id ?? null,
     kind: KIND_BY_FIELD[opts.field],
     status: 'completed',
     inputPayload: {
@@ -129,6 +157,14 @@ export interface OptimHistoryItem {
   userPrompt: string;
   output: string | string[];
   createdAt: Date;
+  /** Credits debited for this generation. Mirrors `jobs.credits_cost`.
+   *  Surfaced on the past-generations row so the merchant can see how
+   *  much each historical run cost without leaving the page. */
+  creditsCost: number;
+  /** When the R2 cleanup worker tombstoned this image job. Null for
+   *  fresh entries and for non-image fields. Drives the "Image
+   *  expirée le …" caption on the past-generations row. */
+  expiredAt: Date | null;
 }
 
 /**
@@ -189,9 +225,99 @@ export async function listOptimHistory(
         field,
         userPrompt: input?.userPrompt ?? '',
         output,
-        createdAt: j.createdAt
+        createdAt: j.createdAt,
+        creditsCost: j.creditsCost ?? 0,
+        expiredAt: j.expiredAt ?? null
       };
     });
+}
+
+/** Job kinds that surface in the "Past generations" history strip. */
+const HISTORY_KINDS: JobKind[] = [
+  'kie_title',
+  'kie_description',
+  'kie_tags',
+  'kie_image_edit'
+];
+
+/** Field for a given kie_* kind. Inverse of KIND_BY_FIELD plus
+ *  the image entry which the chat map doesn't carry. */
+function fieldFromKind(kind: JobKind): ChatOptimField | 'images' | null {
+  if (kind === 'kie_title') return 'title';
+  if (kind === 'kie_description') return 'description';
+  if (kind === 'kie_tags') return 'tags';
+  if (kind === 'kie_image_edit') return 'images';
+  return null;
+}
+
+/**
+ * Server-paginated past-generations feed. Replaces the 4×
+ * `listOptimHistory` merge that loaded ~80 rows just to render
+ * the first 15 — this hits the DB twice (count + slice) and
+ * lets the page state live in the URL.
+ *
+ * Filtering by `productSourceId` happens at the DB level via
+ * MySQL's `JSON_EXTRACT` on `inputPayload.productSourceId`,
+ * so a product with hundreds of historical gens doesn't pull
+ * them all into memory just to discard the irrelevant rows.
+ */
+export async function listOptimHistoryPaginated(
+  projectId: string,
+  productSourceId: string,
+  options: { page: number; perPage: number }
+): Promise<{ items: OptimHistoryItem[]; totalItems: number; totalPages: number }> {
+  const page = Math.max(1, options.page);
+  const perPage = Math.max(1, options.perPage);
+
+  const sourceFilter = sql`JSON_UNQUOTE(JSON_EXTRACT(${jobs.inputPayload}, '$.productSourceId')) = ${productSourceId}`;
+  const whereExpr = and(
+    eq(jobs.projectId, projectId),
+    inArray(jobs.kind, HISTORY_KINDS),
+    eq(jobs.status, 'completed'),
+    isNull(jobs.hiddenAt),
+    sourceFilter
+  );
+
+  const [totalRow, rows] = await Promise.all([
+    db.select({ value: count() }).from(jobs).where(whereExpr),
+    db
+      .select()
+      .from(jobs)
+      .where(whereExpr)
+      .orderBy(desc(jobs.createdAt))
+      .limit(perPage)
+      .offset((page - 1) * perPage)
+  ]);
+
+  const totalItems = totalRow[0]?.value ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+
+  const items: OptimHistoryItem[] = rows
+    .map((j) => {
+      const field = fieldFromKind(j.kind);
+      if (!field) return null;
+      const input = j.inputPayload as { userPrompt?: string } | null;
+      let output: string | string[] = '';
+      if (field === 'images') {
+        const r = j.result as { persistedUrls?: string[]; resultUrls?: string[] } | null;
+        output = r?.persistedUrls ?? r?.resultUrls ?? [];
+      } else {
+        const r = j.result as { output?: string | string[] } | null;
+        output = r?.output ?? '';
+      }
+      return {
+        jobId: j.id,
+        field,
+        userPrompt: input?.userPrompt ?? '',
+        output,
+        createdAt: j.createdAt,
+        creditsCost: j.creditsCost ?? 0,
+        expiredAt: j.expiredAt ?? null
+      } satisfies OptimHistoryItem;
+    })
+    .filter((it): it is OptimHistoryItem => it !== null);
+
+  return { items, totalItems, totalPages };
 }
 
 function parseTags(text: string): string[] {
