@@ -12,7 +12,9 @@
     "ctaButton": "Zaudytuj sklep za darmo",
     "ctaNote": "Bezpłatna rejestracja · bez karty · kredyty startowe w zestawie",
     "metaIndexTitle": "Blog — OneShopLab",
-    "metaIndexDescription": "Artykuły o optymalizacji kart produktów, audytach katalogu i przepisywaniu AI dla Shopify, WooCommerce i Wix."
+    "metaIndexDescription": "Artykuły o optymalizacji kart produktów, audytach katalogu i przepisywaniu AI dla Shopify, WooCommerce i Wix.",
+    "updatedOn": "Zaktualizowano {date}",
+    "relatedTitle": "Czytaj dalej"
   },
   "FreeAudit": {
     "captchaError": "Potwierdź, że nie jesteś robotem, i spróbuj ponownie.",

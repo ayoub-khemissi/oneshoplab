@@ -25,6 +25,12 @@ export interface BlogPost {
   key: string;
   /** ISO publication date. */
   date: string;
+  /** ISO last-modified date. Optional — falls back to `date`. Drives
+   *  `dateModified` in BlogPosting JSON-LD + the OG modifiedTime, both
+   *  of which Google uses for freshness. Bump it when you edit a post. */
+  updated?: string;
+  /** Byline / schema author. Optional — defaults to the org name. */
+  author?: string;
   /** Cover image under /public, or null until the export is added —
    *  the article renders fine without one meanwhile. */
   cover: string | null;
@@ -62,6 +68,9 @@ export const BLOG_POSTS: BlogPost[] = [
   }
 ];
 
+/** Default byline when a post doesn't override `author`. */
+export const BLOG_AUTHOR = 'OneShopLab';
+
 /** Posts that have a translation for `locale`, newest first. */
 export function listPosts(
   locale: string
@@ -69,6 +78,18 @@ export function listPosts(
   return BLOG_POSTS.filter((p) => p.translations[locale as Locale])
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((post) => ({ post, tr: post.translations[locale as Locale]! }));
+}
+
+/** Other posts available in `locale`, newest first, excluding `excludeKey`.
+ *  Used for the in-article "keep reading" block (internal linking). */
+export function relatedPosts(
+  locale: string,
+  excludeKey: string,
+  limit = 3
+): Array<{ post: BlogPost; tr: BlogTranslation }> {
+  return listPosts(locale)
+    .filter(({ post }) => post.key !== excludeKey)
+    .slice(0, limit);
 }
 
 /** Resolve a (locale, slug) pair to its post + translation, or null. */

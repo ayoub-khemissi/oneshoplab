@@ -12,7 +12,9 @@
     "ctaButton": "Bir mağazayı ücretsiz denetle",
     "ctaNote": "Ücretsiz kayıt · kart yok · başlangıç kredileri dahil",
     "metaIndexTitle": "Blog — OneShopLab",
-    "metaIndexDescription": "Shopify, WooCommerce ve Wix için ürün sayfası optimizasyonu, katalog denetimleri ve yapay zekâ ile yeniden yazma üzerine makaleler."
+    "metaIndexDescription": "Shopify, WooCommerce ve Wix için ürün sayfası optimizasyonu, katalog denetimleri ve yapay zekâ ile yeniden yazma üzerine makaleler.",
+    "updatedOn": "{date} tarihinde güncellendi",
+    "relatedTitle": "Okumaya devam et"
   },
   "FreeAudit": {
     "captchaError": "Robot olmadığınızı doğrulayın ve tekrar deneyin.",

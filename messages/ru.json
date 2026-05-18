@@ -12,7 +12,9 @@
     "ctaButton": "Проверить магазин бесплатно",
     "ctaNote": "Бесплатная регистрация · без карты · стартовые кредиты включены",
     "metaIndexTitle": "Блог — OneShopLab",
-    "metaIndexDescription": "Статьи об оптимизации карточек товаров, аудитах каталога и переписывании с ИИ для Shopify, WooCommerce и Wix."
+    "metaIndexDescription": "Статьи об оптимизации карточек товаров, аудитах каталога и переписывании с ИИ для Shopify, WooCommerce и Wix.",
+    "updatedOn": "Обновлено {date}",
+    "relatedTitle": "Читайте также"
   },
   "FreeAudit": {
     "captchaError": "Подтвердите, что вы не робот, и повторите попытку.",

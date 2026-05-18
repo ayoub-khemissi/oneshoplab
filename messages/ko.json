@@ -12,7 +12,9 @@
     "ctaButton": "스토어 무료 감사하기",
     "ctaNote": "무료 가입 · 카드 불필요 · 시작 크레딧 포함",
     "metaIndexTitle": "블로그 — OneShopLab",
-    "metaIndexDescription": "Shopify, WooCommerce, Wix를 위한 제품 페이지 최적화, 카탈로그 감사, AI 재작성에 관한 기사."
+    "metaIndexDescription": "Shopify, WooCommerce, Wix를 위한 제품 페이지 최적화, 카탈로그 감사, AI 재작성에 관한 기사.",
+    "updatedOn": "{date} 업데이트",
+    "relatedTitle": "이어서 읽기"
   },
   "FreeAudit": {
     "captchaError": "로봇이 아님을 확인한 후 다시 시도하세요.",

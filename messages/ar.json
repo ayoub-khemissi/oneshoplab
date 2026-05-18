@@ -12,7 +12,9 @@
     "ctaButton": "دقّق متجرًا مجانًا",
     "ctaNote": "تسجيل مجاني · بدون بطاقة · أرصدة بداية مضمّنة",
     "metaIndexTitle": "المدونة — OneShopLab",
-    "metaIndexDescription": "مقالات حول تحسين صفحات المنتجات وتدقيق الكتالوج وإعادة الصياغة بالذكاء الاصطناعي لـ Shopify وWooCommerce وWix."
+    "metaIndexDescription": "مقالات حول تحسين صفحات المنتجات وتدقيق الكتالوج وإعادة الصياغة بالذكاء الاصطناعي لـ Shopify وWooCommerce وWix.",
+    "updatedOn": "حُدّث في {date}",
+    "relatedTitle": "اقرأ أيضًا"
   },
   "FreeAudit": {
     "captchaError": "يرجى تأكيد أنك لست روبوتًا ثم المحاولة مرة أخرى.",

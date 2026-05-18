@@ -27,12 +27,32 @@ export async function generateMetadata({
   return {
     title: t('metaIndexTitle'),
     description: t('metaIndexDescription'),
-    alternates: { canonical: `${SITE_URL}/${locale}/blog`, languages },
+    alternates: {
+      canonical: `${SITE_URL}/${locale}/blog`,
+      languages,
+      types: {
+        'application/rss+xml': `${SITE_URL}/${locale}/blog/rss.xml`
+      }
+    },
     openGraph: {
       title: `${t('metaIndexTitle')} · OneShopLab`,
       description: t('metaIndexDescription'),
       url: `${SITE_URL}/${locale}/blog`,
-      type: 'website'
+      type: 'website',
+      images: [
+        {
+          url: '/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: t('metaIndexTitle')
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('metaIndexTitle'),
+      description: t('metaIndexDescription'),
+      images: ['/opengraph-image']
     }
   };
 }

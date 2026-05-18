@@ -12,7 +12,9 @@
     "ctaButton": "Analizza un negozio gratis",
     "ctaNote": "Registrazione gratuita · senza carta · crediti iniziali inclusi",
     "metaIndexTitle": "Blog — OneShopLab",
-    "metaIndexDescription": "Articoli su ottimizzazione delle schede prodotto, audit di catalogo e riscrittura IA per Shopify, WooCommerce e Wix."
+    "metaIndexDescription": "Articoli su ottimizzazione delle schede prodotto, audit di catalogo e riscrittura IA per Shopify, WooCommerce e Wix.",
+    "updatedOn": "Aggiornato il {date}",
+    "relatedTitle": "Continua a leggere"
   },
   "FreeAudit": {
     "captchaError": "Conferma di non essere un robot e riprova.",

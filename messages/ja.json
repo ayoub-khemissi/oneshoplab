@@ -12,7 +12,9 @@
     "ctaButton": "ストアを無料で監査する",
     "ctaNote": "無料登録 · カード不要 · スタータークレジット付き",
     "metaIndexTitle": "ブログ — OneShopLab",
-    "metaIndexDescription": "Shopify・WooCommerce・Wix向けの商品ページ最適化、カタログ監査、AI書き換えに関する記事。"
+    "metaIndexDescription": "Shopify・WooCommerce・Wix向けの商品ページ最適化、カタログ監査、AI書き換えに関する記事。",
+    "updatedOn": "{date} 更新",
+    "relatedTitle": "あわせて読む"
   },
   "FreeAudit": {
     "captchaError": "ロボットでないことを確認してから、もう一度お試しください。",

@@ -12,7 +12,9 @@
     "ctaButton": "免费审计一家商店",
     "ctaNote": "免费注册 · 无需银行卡 · 含起始额度",
     "metaIndexTitle": "博客 — OneShopLab",
-    "metaIndexDescription": "关于 Shopify、WooCommerce 和 Wix 的产品页面优化、目录审计与 AI 改写的文章。"
+    "metaIndexDescription": "关于 Shopify、WooCommerce 和 Wix 的产品页面优化、目录审计与 AI 改写的文章。",
+    "updatedOn": "更新于 {date}",
+    "relatedTitle": "继续阅读"
   },
   "FreeAudit": {
     "captchaError": "请确认您不是机器人，然后重试。",

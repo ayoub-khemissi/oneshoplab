@@ -89,6 +89,9 @@ export async function generateMetadata({
         'max-video-preview': -1
       }
     },
+    ...(process.env.GSC_VERIFICATION
+      ? { verification: { google: process.env.GSC_VERIFICATION } }
+      : {}),
     alternates: {
       canonical: `${SITE_URL}/${locale}`,
       languages: buildLanguageAlternates('/')
