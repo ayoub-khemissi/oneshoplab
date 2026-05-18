@@ -839,7 +839,14 @@
     "configAccountHint": "ينطبق على كل موقع ليس له إعداد خاص. يمكن لكل موقع تجاوزه في إعداداته.",
     "resetToLegacyDefault": "إعادة التعيين (تشغيل الكل)",
     "searchPlaceholder": "ابحث في المنتجات بالعنوان…",
-    "modelsTitle": "النماذج"
+    "modelsTitle": "النماذج",
+    "next": "التالي",
+    "back": "رجوع",
+    "editConfig": "تعديل",
+    "stepConfig": "الإعداد",
+    "stepSelect": "المنتجات",
+    "eligibleCount": "{count} منتج مؤهل",
+    "estimatedTotal": "≈ {cost} إجمالاً"
   },
   "Share": {
     "title": "مشاركة مع العملاء المحتملين",

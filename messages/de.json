@@ -840,7 +840,14 @@
     "configAccountHint": "Gilt für jede Website ohne eigene Einstellung. Jede Website kann sie in ihren Einstellungen überschreiben.",
     "resetToLegacyDefault": "Zurücksetzen (alles an)",
     "searchPlaceholder": "Produkte nach Titel suchen…",
-    "modelsTitle": "Modelle"
+    "modelsTitle": "Modelle",
+    "next": "Weiter",
+    "back": "Zurück",
+    "editConfig": "Bearbeiten",
+    "stepConfig": "Konfiguration",
+    "stepSelect": "Produkte",
+    "eligibleCount": "{count} infrage kommende Produkte",
+    "estimatedTotal": "≈ {cost} gesamt"
   },
   "Share": {
     "title": "Mit Interessenten teilen",

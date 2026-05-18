@@ -25,7 +25,12 @@ import {
 import { DebouncedSearchInput } from '@/components/debounced-search-input';
 import { ModelPickerChips } from '@/components/model-picker-chips';
 import { updateUserPreferencesAction } from '@/lib/auth-actions';
-import type { ChatModelId, ImageQualityId } from '@/lib/ai/models';
+import {
+  CHAT_MODEL_REGISTRY,
+  IMAGE_MODEL_REGISTRY,
+  type ChatModelId,
+  type ImageQualityId
+} from '@/lib/ai/models';
 
 // ---------------------------------------------------------------------
 // Shared types (mirror the server module)
@@ -574,6 +579,7 @@ export function BulkGenerateSection({
             imageQualityId={imageQualityId}
             onPickChat={onPickChat}
             onPickImage={onPickImage}
+            estimateTotal={estimate.total}
             onCancel={() => setModalOpen(false)}
             onConfirm={(ids) => startBulk(ids)}
           />
@@ -653,6 +659,7 @@ export function BulkGenerateSection({
           imageQualityId={imageQualityId}
           onPickChat={onPickChat}
           onPickImage={onPickImage}
+          estimateTotal={estimate.total}
           onCancel={() => setModalOpen(false)}
           onConfirm={(ids) => startBulk(ids)}
         />
@@ -695,6 +702,7 @@ function SelectionModal({
   imageQualityId,
   onPickChat,
   onPickImage,
+  estimateTotal,
   onCancel,
   onConfirm
 }: {
@@ -716,12 +724,24 @@ function SelectionModal({
   imageQualityId: ImageQualityId;
   onPickChat: (id: ChatModelId) => void;
   onPickImage: (id: ImageQualityId) => void;
+  /** Catalog-wide estimated total (full set, current config) shown on
+   *  the step-1 preview. */
+  estimateTotal: number;
   onCancel: () => void;
   onConfirm: (productIds: string[]) => Promise<boolean>;
 }) {
   const t = useTranslations('BulkGenerate');
   const locale = useLocale();
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  // 2-step wizard: 1 = config (what + models), 2 = product selection.
+  const [step, setStep] = useState<1 | 2>(1);
+
+  // Selection is scoped to a FIXED config snapshot: clear it whenever
+  // we're on step 1 (incl. after "Edit" from step 2), so step 2 always
+  // selects against the current config / candidate set.
+  useEffect(() => {
+    if (step === 1) setSelected(new Set());
+  }, [step]);
 
   // Reset the selection whenever the (debounced) search changes: the
   // candidate list is a server-filtered view, so a selection made
@@ -803,200 +823,291 @@ function SelectionModal({
   const budgetPct =
     balance > 0 ? Math.min(100, Math.round((selectedCost / balance) * 100)) : 0;
 
+  const activeFieldLabels = (
+    ['title', 'description', 'tags', 'images'] as const
+  )
+    .filter((f) => prefs.fields[f])
+    .map((f) =>
+      f === 'title'
+        ? t('fieldTitle')
+        : f === 'description'
+          ? t('fieldDescription')
+          : f === 'tags'
+            ? t('fieldTags')
+            : t('fieldImages')
+    );
+  const chatName =
+    CHAT_MODEL_REGISTRY[chatModelId]?.displayName ?? chatModelId;
+  const imgName =
+    IMAGE_MODEL_REGISTRY[imageQualityId]?.displayName ?? imageQualityId;
+  const recap = [...activeFieldLabels, chatName, imgName].join(' · ');
+
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
       onClick={onCancel}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col"
+        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col"
       >
-        {/* Header --------------------------------------------------- */}
-        <div className="p-5 border-b border-[var(--border)] flex flex-col gap-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex flex-col gap-1">
-              <h3 className="text-base font-semibold">{t('selectionTitle')}</h3>
-              <p className="text-xs text-[var(--muted)] leading-relaxed">
-                {t('selectionBody')}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={onCancel}
-              aria-label={t('cancel')}
-              className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-
-          {/* What the bulk generates — per-site config, auto-saved. */}
-          <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-                {t('configTitle')}
-              </span>
-              <button
-                type="button"
-                onClick={onResetPrefs}
-                disabled={!siteOverride}
-                className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)] shrink-0"
-              >
-                {t('resetToAccountDefault')}
-              </button>
-            </div>
-            <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
-          </div>
-
-          {/* Models — account-scoped (no site config), like the
-              product page. Picking persists to the account and
-              refreshes the cost below. */}
-          <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
-            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-              {t('modelsTitle')}
+        {/* Header + stepper ---------------------------------------- */}
+        <div className="p-4 sm:p-5 border-b border-[var(--border)] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <h3 className="text-base font-semibold shrink-0">
+              {t('selectionTitle')}
+            </h3>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] truncate">
+              · {step}/2 ·{' '}
+              {step === 1 ? t('stepConfig') : t('stepSelect')}
             </span>
-            <ModelPickerChips
-              chatModelId={chatModelId}
-              imageQualityId={imageQualityId}
-              onPickChat={onPickChat}
-              onPickImage={onPickImage}
-            />
           </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label={t('cancel')}
+            className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center shrink-0"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
 
-          {/* Virtual budget bar */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-[var(--muted)]">{t('budgetLabel')}</span>
-              <span className="font-mono tabular-nums inline-flex items-center gap-1">
-                <Coins className="size-3" aria-hidden />
-                <span className={overBudget ? 'text-[var(--danger)]' : ''}>
-                  {selectedCost.toLocaleString(locale)}
+        {step === 1 ? (
+          /* ===== Step 1 — Configuration ===== */
+          <div className="overflow-y-auto flex-1 p-4 sm:p-5 flex flex-col gap-4">
+            <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                  {t('configTitle')}
                 </span>
-                <span className="text-[var(--muted)]">/ {balance.toLocaleString(locale)}</span>
-              </span>
+                <button
+                  type="button"
+                  onClick={onResetPrefs}
+                  disabled={!siteOverride}
+                  className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)] shrink-0"
+                >
+                  {t('resetToAccountDefault')}
+                </button>
+              </div>
+              <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
             </div>
-            <div className="h-1.5 rounded-full bg-[var(--default)] overflow-hidden">
-              <div
-                className={`h-full transition-all ${
-                  overBudget
-                    ? 'bg-[var(--danger)]'
-                    : budgetPct >= 90
-                      ? 'bg-[var(--warning)]'
-                      : 'bg-[var(--accent)]'
-                }`}
-                style={{ width: `${budgetPct}%` }}
+
+            <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                {t('modelsTitle')}
+              </span>
+              <ModelPickerChips
+                chatModelId={chatModelId}
+                imageQualityId={imageQualityId}
+                onPickChat={onPickChat}
+                onPickImage={onPickImage}
               />
             </div>
-          </div>
 
-          {/* Server-side debounced search (same input as the products
-              tab) — narrows the candidate list below. */}
-          <DebouncedSearchInput
-            value={searchValue}
-            onDebouncedChange={onSearch}
-            placeholder={t('searchPlaceholder')}
-            ariaLabel={t('searchPlaceholder')}
-          />
-
-          {/* Toolbar */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-              {t('selectionCount', {
-                selected: selected.size,
-                total: candidates.length
-              })}
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={selectAllWithinBudget}
-                disabled={candidates.length === 0 || allSelected}
-                className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
-              >
-                {t('selectAllWithinBudget')}
-              </button>
-              <button
-                type="button"
-                onClick={clearSelection}
-                disabled={noneSelected}
-                className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
-              >
-                {t('clearSelection')}
-              </button>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--muted)] px-1">
+              <span>
+                {t('eligibleCount', { count: candidates.length })}
+              </span>
+              <span className="font-mono tabular-nums inline-flex items-center gap-1">
+                <Coins className="size-3" aria-hidden />
+                {t('estimatedTotal', {
+                  cost: estimateTotal.toLocaleString(locale)
+                })}
+              </span>
             </div>
           </div>
-        </div>
+        ) : (
+          /* ===== Step 2 — Product selection ===== */
+          <>
+            <div className="p-4 sm:p-5 border-b border-[var(--border)] flex flex-col gap-3">
+              {/* Config recap (read-only) + edit back to step 1 */}
+              <div className="flex items-center justify-between gap-3 rounded-md bg-[var(--default)]/30 px-3 py-2">
+                <span className="text-[11px] text-[var(--muted)] truncate min-w-0">
+                  {recap}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="text-[10px] font-medium text-[var(--accent)] hover:underline shrink-0"
+                >
+                  {t('editConfig')}
+                </button>
+              </div>
 
-        {/* Product list ------------------------------------------- */}
-        <div className="overflow-y-auto flex-1 divide-y divide-[var(--border)]">
-          {candidates.length === 0 ? (
-            <div className="p-5 text-sm text-[var(--muted)] text-center">
-              {t('selectionEmpty')}
+              {/* Budget bar */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--muted)]">
+                    {t('budgetLabel')}
+                  </span>
+                  <span className="font-mono tabular-nums inline-flex items-center gap-1">
+                    <Coins className="size-3" aria-hidden />
+                    <span
+                      className={overBudget ? 'text-[var(--danger)]' : ''}
+                    >
+                      {selectedCost.toLocaleString(locale)}
+                    </span>
+                    <span className="text-[var(--muted)]">
+                      / {balance.toLocaleString(locale)}
+                    </span>
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full bg-[var(--default)] overflow-hidden">
+                  <div
+                    className={`h-full transition-all ${
+                      overBudget
+                        ? 'bg-[var(--danger)]'
+                        : budgetPct >= 90
+                          ? 'bg-[var(--warning)]'
+                          : 'bg-[var(--accent)]'
+                    }`}
+                    style={{ width: `${budgetPct}%` }}
+                  />
+                </div>
+              </div>
+
+              <DebouncedSearchInput
+                value={searchValue}
+                onDebouncedChange={onSearch}
+                placeholder={t('searchPlaceholder')}
+                ariaLabel={t('searchPlaceholder')}
+              />
+
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
+                  {t('selectionCount', {
+                    selected: selected.size,
+                    total: candidates.length
+                  })}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={selectAllWithinBudget}
+                    disabled={candidates.length === 0 || allSelected}
+                    className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
+                  >
+                    {t('selectAllWithinBudget')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    disabled={noneSelected}
+                    className="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)] hover:border-[var(--accent)] disabled:opacity-50"
+                  >
+                    {t('clearSelection')}
+                  </button>
+                </div>
+              </div>
             </div>
-          ) : (
-            candidates.map((c) => {
-              const isSelected = selected.has(c.id);
-              const fits = c.pendingCost <= remaining;
-              const enabled = isSelected || fits;
-              return (
-                <CandidateRow
-                  key={c.id}
-                  candidate={c}
-                  selected={isSelected}
-                  enabled={enabled}
-                  onToggle={() => toggle(c.id, c.pendingCost)}
-                />
-              );
-            })
-          )}
-        </div>
 
-        {/* Footer ------------------------------------------------ */}
-        <div className="p-5 border-t border-[var(--border)] flex items-center justify-between gap-3 flex-wrap">
+            <div className="overflow-y-auto flex-1 divide-y divide-[var(--border)]">
+              {candidates.length === 0 ? (
+                <div className="p-5 text-sm text-[var(--muted)] text-center">
+                  {t('selectionEmpty')}
+                </div>
+              ) : (
+                candidates.map((c) => {
+                  const isSelected = selected.has(c.id);
+                  const fits = c.pendingCost <= remaining;
+                  const enabled = isSelected || fits;
+                  return (
+                    <CandidateRow
+                      key={c.id}
+                      candidate={c}
+                      selected={isSelected}
+                      enabled={enabled}
+                      onToggle={() => toggle(c.id, c.pendingCost)}
+                    />
+                  );
+                })
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Footer — step-specific. Buttons full-width on mobile. */}
+        <div className="p-4 sm:p-5 border-t border-[var(--border)] flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex flex-col gap-0.5 text-xs">
-            <span className="text-[var(--muted)]">
-              {t.rich('summarySelected', {
-                count: selected.size,
-                cost: selectedCost,
-                coins: () => (
-                  <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
-                )
-              })}
-            </span>
+            {step === 2 ? (
+              <span className="text-[var(--muted)]">
+                {t.rich('summarySelected', {
+                  count: selected.size,
+                  cost: selectedCost,
+                  coins: () => (
+                    <Coins
+                      className="size-3 inline-block align-text-bottom"
+                      aria-hidden
+                    />
+                  )
+                })}
+              </span>
+            ) : null}
             {errorMsg ? (
               <span className="text-[var(--danger)]">{errorMsg}</span>
             ) : null}
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={
-                submitting ||
-                selected.size === 0 ||
-                overBudget ||
-                noFields ||
-                launchBlocked
-              }
-              title={noFields ? t('errorNoFields') : undefined}
-              className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
-            >
-              {submitting ? <Spinner size="sm" /> : null}
-              {t('confirmSelection', {
-                count: selected.size,
-                cost: selectedCost
-              })}
-            </button>
+          <div className="flex items-center gap-2 sm:shrink-0">
+            {step === 1 ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  disabled={
+                    noFields || launchBlocked || candidates.length === 0
+                  }
+                  title={
+                    noFields
+                      ? t('errorNoFields')
+                      : candidates.length === 0
+                        ? t('selectionEmpty')
+                        : undefined
+                  }
+                  className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                >
+                  {launchBlocked ? <Spinner size="sm" /> : null}
+                  {t('next')}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
+                >
+                  {t('back')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirm}
+                  disabled={
+                    submitting ||
+                    selected.size === 0 ||
+                    overBudget ||
+                    noFields ||
+                    launchBlocked
+                  }
+                  title={noFields ? t('errorNoFields') : undefined}
+                  className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                >
+                  {submitting ? <Spinner size="sm" /> : null}
+                  {t('confirmSelection', {
+                    count: selected.size,
+                    cost: selectedCost
+                  })}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

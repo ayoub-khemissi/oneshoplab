@@ -840,7 +840,14 @@
     "configAccountHint": "Применяется к каждому сайту без собственной настройки. Любой сайт может переопределить её в своих настройках.",
     "resetToLegacyDefault": "Сбросить (всё включено)",
     "searchPlaceholder": "Поиск товаров по названию…",
-    "modelsTitle": "Модели"
+    "modelsTitle": "Модели",
+    "next": "Далее",
+    "back": "Назад",
+    "editConfig": "Изменить",
+    "stepConfig": "Настройка",
+    "stepSelect": "Товары",
+    "eligibleCount": "{count} подходящих товаров",
+    "estimatedTotal": "≈ {cost} всего"
   },
   "Share": {
     "title": "Поделиться с потенциальным клиентом",

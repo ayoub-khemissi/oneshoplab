@@ -840,7 +840,14 @@
     "configAccountHint": "Dotyczy każdej witryny bez własnego ustawienia. Każda witryna może je nadpisać w swoich ustawieniach.",
     "resetToLegacyDefault": "Przywróć (wszystko włączone)",
     "searchPlaceholder": "Szukaj produktów po tytule…",
-    "modelsTitle": "Modele"
+    "modelsTitle": "Modele",
+    "next": "Dalej",
+    "back": "Wstecz",
+    "editConfig": "Edytuj",
+    "stepConfig": "Konfiguracja",
+    "stepSelect": "Produkty",
+    "eligibleCount": "{count} kwalifikujących się produktów",
+    "estimatedTotal": "≈ {cost} łącznie"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

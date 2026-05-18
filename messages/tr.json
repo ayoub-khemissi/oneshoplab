@@ -840,7 +840,14 @@
     "configAccountHint": "Kendi ayarı olmayan her siteye uygulanır. Her site bunu kendi ayarlarında geçersiz kılabilir.",
     "resetToLegacyDefault": "Sıfırla (hepsi açık)",
     "searchPlaceholder": "Ürünleri başlığa göre ara…",
-    "modelsTitle": "Modeller"
+    "modelsTitle": "Modeller",
+    "next": "İleri",
+    "back": "Geri",
+    "editConfig": "Düzenle",
+    "stepConfig": "Yapılandırma",
+    "stepSelect": "Ürünler",
+    "eligibleCount": "{count} uygun ürün",
+    "estimatedTotal": "≈ {cost} toplam"
   },
   "Share": {
     "title": "Potansiyel müşteriyle paylaş",

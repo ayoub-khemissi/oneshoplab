@@ -840,7 +840,14 @@
     "configAccountHint": "Se aplica a cada sitio que no tenga su propia configuración. Cada sitio puede anularla en sus ajustes.",
     "resetToLegacyDefault": "Restablecer (todo activado)",
     "searchPlaceholder": "Buscar productos por título…",
-    "modelsTitle": "Modelos"
+    "modelsTitle": "Modelos",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "editConfig": "Editar",
+    "stepConfig": "Configuración",
+    "stepSelect": "Productos",
+    "eligibleCount": "{count} productos elegibles",
+    "estimatedTotal": "≈ {cost} en total"
   },
   "Share": {
     "title": "Compartir con prospectos",

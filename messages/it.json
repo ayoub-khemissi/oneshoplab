@@ -840,7 +840,14 @@
     "configAccountHint": "Si applica a ogni sito senza una propria impostazione. Ogni sito può sovrascriverla nelle sue impostazioni.",
     "resetToLegacyDefault": "Ripristina (tutto attivo)",
     "searchPlaceholder": "Cerca prodotti per titolo…",
-    "modelsTitle": "Modelli"
+    "modelsTitle": "Modelli",
+    "next": "Avanti",
+    "back": "Indietro",
+    "editConfig": "Modifica",
+    "stepConfig": "Configurazione",
+    "stepSelect": "Prodotti",
+    "eligibleCount": "{count} prodotti idonei",
+    "estimatedTotal": "≈ {cost} totale"
   },
   "Share": {
     "title": "Condividi con i prospect",

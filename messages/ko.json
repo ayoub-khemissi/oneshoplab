@@ -839,7 +839,14 @@
     "configAccountHint": "자체 설정이 없는 모든 사이트에 적용됩니다. 각 사이트는 설정에서 재정의할 수 있습니다.",
     "resetToLegacyDefault": "재설정(모두 켜기)",
     "searchPlaceholder": "제목으로 제품 검색…",
-    "modelsTitle": "모델"
+    "modelsTitle": "모델",
+    "next": "다음",
+    "back": "뒤로",
+    "editConfig": "수정",
+    "stepConfig": "구성",
+    "stepSelect": "상품",
+    "eligibleCount": "대상 상품 {count}개",
+    "estimatedTotal": "≈ 총 {cost}"
   },
   "Share": {
     "title": "잠재 고객에게 공유",

@@ -839,7 +839,14 @@
     "configAccountHint": "独自設定のない各サイトに適用されます。各サイトは設定で上書きできます。",
     "resetToLegacyDefault": "リセット（すべて有効）",
     "searchPlaceholder": "タイトルで商品を検索…",
-    "modelsTitle": "モデル"
+    "modelsTitle": "モデル",
+    "next": "次へ",
+    "back": "戻る",
+    "editConfig": "編集",
+    "stepConfig": "設定",
+    "stepSelect": "商品",
+    "eligibleCount": "対象商品 {count} 件",
+    "estimatedTotal": "≈ 合計 {cost}"
   },
   "Share": {
     "title": "見込み客に共有",
