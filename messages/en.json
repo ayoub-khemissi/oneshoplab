@@ -838,7 +838,8 @@
     "configSiteHint": "Overrides the account default for this site only. Bulk generates only the checked elements, and only for products missing them.",
     "configAccountTitle": "Default mass generation",
     "configAccountHint": "Applies to every site that hasn't set its own. Each site can still override it in its settings.",
-    "resetToLegacyDefault": "Reset (everything on)"
+    "resetToLegacyDefault": "Reset (everything on)",
+    "searchPlaceholder": "Search products by title…"
   },
   "Share": {
     "title": "Share for prospects",

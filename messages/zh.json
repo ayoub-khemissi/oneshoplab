@@ -837,7 +837,8 @@
     "configSiteHint": "仅为该站点覆盖账户默认设置。批量生成仅生成已勾选的元素，且仅针对缺少这些元素的产品。",
     "configAccountTitle": "默认批量生成",
     "configAccountHint": "适用于没有自身设置的每个站点。每个站点仍可在其设置中覆盖。",
-    "resetToLegacyDefault": "重置（全部开启）"
+    "resetToLegacyDefault": "重置（全部开启）",
+    "searchPlaceholder": "按标题搜索产品…"
   },
   "Share": {
     "title": "分享给潜在客户",

@@ -838,7 +838,8 @@
     "configSiteHint": "Anula el valor por defecto de la cuenta solo para este sitio. El bulk genera solo los elementos marcados, y solo para los productos que los necesitan.",
     "configAccountTitle": "Generación masiva por defecto",
     "configAccountHint": "Se aplica a cada sitio que no tenga su propia configuración. Cada sitio puede anularla en sus ajustes.",
-    "resetToLegacyDefault": "Restablecer (todo activado)"
+    "resetToLegacyDefault": "Restablecer (todo activado)",
+    "searchPlaceholder": "Buscar productos por título…"
   },
   "Share": {
     "title": "Compartir con prospectos",

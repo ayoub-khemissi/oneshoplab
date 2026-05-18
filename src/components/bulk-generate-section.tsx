@@ -22,6 +22,7 @@ import {
   prefsKey,
   type BulkPrefs
 } from '@/components/bulk-prefs-editor';
+import { DebouncedSearchInput } from '@/components/debounced-search-input';
 
 // ---------------------------------------------------------------------
 // Shared types (mirror the server module)
@@ -134,11 +135,19 @@ export function BulkGenerateSection({
   // Whether the site has its OWN prefs vs. inheriting the account
   // default. Drives the "reset to account default" link.
   const [siteOverride, setSiteOverride] = useState(initialSiteOverride);
+  // Debounced server search for the modal's candidate list. The ref
+  // lets the stable `refresh` callback read the latest query without
+  // being re-created on every keystroke.
+  const [searchQuery, setSearchQuery] = useState('');
+  const queryRef = useRef('');
 
   const refresh = useCallback(async () => {
     try {
+      const q = queryRef.current.trim();
       const res = await fetch(
-        `/api/sites/bulk-generate?siteId=${encodeURIComponent(siteId)}`,
+        `/api/sites/bulk-generate?siteId=${encodeURIComponent(siteId)}${
+          q ? `&q=${encodeURIComponent(q)}` : ''
+        }`,
         { cache: 'no-store' }
       );
       if (!res.ok) return;
@@ -233,6 +242,16 @@ export function BulkGenerateSection({
       /* no-op; user can retry */
     }
   }, [siteId, refresh]);
+
+  // Debounced search settle → server-filtered candidate list.
+  const onSearch = useCallback(
+    (q: string) => {
+      queryRef.current = q;
+      setSearchQuery(q);
+      refresh();
+    },
+    [refresh]
+  );
 
   useEffect(() => {
     if (!active || active.status === 'completed' || active.status === 'failed') {
@@ -475,6 +494,8 @@ export function BulkGenerateSection({
             siteOverride={siteOverride}
             onResetPrefs={resetToAccountDefault}
             noFields={prefsHasNoFields(prefs)}
+            searchValue={searchQuery}
+            onSearch={onSearch}
             onCancel={() => setModalOpen(false)}
             onConfirm={(ids) => startBulk(ids)}
           />
@@ -548,6 +569,8 @@ export function BulkGenerateSection({
           siteOverride={siteOverride}
           onResetPrefs={resetToAccountDefault}
           noFields={noFields}
+          searchValue={searchQuery}
+          onSearch={onSearch}
           onCancel={() => setModalOpen(false)}
           onConfirm={(ids) => startBulk(ids)}
         />
@@ -584,6 +607,8 @@ function SelectionModal({
   siteOverride,
   onResetPrefs,
   noFields,
+  searchValue,
+  onSearch,
   onCancel,
   onConfirm
 }: {
@@ -597,6 +622,8 @@ function SelectionModal({
   siteOverride: boolean;
   onResetPrefs: () => void;
   noFields: boolean;
+  searchValue: string;
+  onSearch: (q: string) => void;
   onCancel: () => void;
   onConfirm: (productIds: string[]) => Promise<boolean>;
 }) {
@@ -747,6 +774,15 @@ function SelectionModal({
               />
             </div>
           </div>
+
+          {/* Server-side debounced search (same input as the products
+              tab) — narrows the candidate list below. */}
+          <DebouncedSearchInput
+            value={searchValue}
+            onDebouncedChange={onSearch}
+            placeholder={t('searchPlaceholder')}
+            ariaLabel={t('searchPlaceholder')}
+          />
 
           {/* Toolbar */}
           <div className="flex items-center justify-between gap-3 flex-wrap">

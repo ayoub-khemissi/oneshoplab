@@ -256,13 +256,20 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const { chatModelId, imageQualityId } = resolveModels(session);
   const { prefs, siteOverride } = await getEffectiveBulkPrefs(project.id);
-  const candidates = await listBulkCandidatesWithStatus(
+  const allCandidates = await listBulkCandidatesWithStatus(
     project.id,
     chatModelId,
     imageQualityId
   );
+  // Server-side title search (debounced from the modal). The cost
+  // estimate stays on the FULL set — it represents the whole catalog,
+  // not the current search view.
+  const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
+  const candidates = q
+    ? allCandidates.filter((c) => c.title.toLowerCase().includes(q))
+    : allCandidates;
   const breakdown = estimateBulkCostBreakdown(
-    candidates.length,
+    allCandidates.length,
     chatModelId,
     imageQualityId,
     prefs

@@ -1,18 +1,18 @@
 'use client';
 
-import { Card, InputGroup, ListBox, Select, TextField } from '@heroui/react';
+import { Card, ListBox, Select } from '@heroui/react';
 import {
   Archive,
   ArchiveRestore,
   ArrowRight,
   CheckCircle2,
-  Search,
   Sparkles
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Link, useRouter } from '@/i18n/navigation';
+import { DebouncedSearchInput } from '@/components/debounced-search-input';
 import { ServerPagination } from '@/components/server-pagination';
 import { setProductArchivedAction } from '@/lib/product-actions';
 
@@ -92,32 +92,22 @@ export function PaginatedProductsList({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Local input state for smooth typing; the URL is updated 350ms
-  // after the last keystroke. We re-sync from the URL prop whenever
-  // it changes externally (e.g. browser back/forward).
-  const [inputValue, setInputValue] = useState(query);
-  useEffect(() => {
-    setInputValue(query);
-  }, [query]);
-
-  useEffect(() => {
-    if (inputValue === query) return;
-    const id = window.setTimeout(() => {
-      startTransition(() => {
-        router.push(
-          buildHref({
-            tab: 'products',
-            q: inputValue.trim() || null,
-            sort,
-            showArchived,
-            productsPage: 1
-          })
-        );
-      });
-    }, 350);
-    return () => window.clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
+  // Debounced search lives in the shared <DebouncedSearchInput>; on
+  // settle it pushes the URL (server-side filter + pagination reset).
+  const onSearch = (q: string) => {
+    if (q === query) return;
+    startTransition(() => {
+      router.push(
+        buildHref({
+          tab: 'products',
+          q: q || null,
+          sort,
+          showArchived,
+          productsPage: 1
+        })
+      );
+    });
+  };
 
   function navigate(next: Partial<{
     q: string | null;
@@ -165,29 +155,13 @@ export function PaginatedProductsList({
       </header>
 
       <div className="flex flex-col sm:flex-row gap-2">
-        {/* `name` on the TextField (not a static `id` on the input):
-            HeroUI v3 mirrors the value into a hidden input, so a
-            static id landed on two elements → DevTools "duplicate
-            form field id". A duplicated `name` is not flagged (it's
-            normal, cf. radio groups) and still satisfies the
-            "field should have id or name" hint. */}
-        <TextField
-          name="q"
-          aria-label={t('searchPlaceholder')}
-          value={inputValue}
-          onChange={setInputValue}
+        <DebouncedSearchInput
+          value={query}
+          onDebouncedChange={onSearch}
+          placeholder={t('searchPlaceholder')}
+          ariaLabel={t('searchPlaceholder')}
           className="flex-1"
-        >
-          <InputGroup>
-            <InputGroup.Prefix>
-              <Search className="size-4" />
-            </InputGroup.Prefix>
-            <InputGroup.Input
-              type="search"
-              placeholder={t('searchPlaceholder')}
-            />
-          </InputGroup>
-        </TextField>
+        />
         <SortPicker
           value={sort}
           onChange={(v) => navigate({ sort: v, productsPage: 1 })}

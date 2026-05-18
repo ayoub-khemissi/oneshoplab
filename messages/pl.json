@@ -838,7 +838,8 @@
     "configSiteHint": "Nadpisuje domyślne konta tylko dla tej witryny. Bulk generuje tylko zaznaczone elementy i tylko dla produktów, którym ich brakuje.",
     "configAccountTitle": "Domyślna generacja masowa",
     "configAccountHint": "Dotyczy każdej witryny bez własnego ustawienia. Każda witryna może je nadpisać w swoich ustawieniach.",
-    "resetToLegacyDefault": "Przywróć (wszystko włączone)"
+    "resetToLegacyDefault": "Przywróć (wszystko włączone)",
+    "searchPlaceholder": "Szukaj produktów po tytule…"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

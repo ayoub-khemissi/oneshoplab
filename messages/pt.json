@@ -838,7 +838,8 @@
     "configSiteHint": "Substitui o padrão da conta apenas para este site. O bulk gera apenas os elementos marcados, e só para os produtos que não os têm.",
     "configAccountTitle": "Geração em massa padrão",
     "configAccountHint": "Aplica-se a cada site sem configuração própria. Cada site pode substituí-la nas suas definições.",
-    "resetToLegacyDefault": "Repor (tudo ativado)"
+    "resetToLegacyDefault": "Repor (tudo ativado)",
+    "searchPlaceholder": "Procurar produtos por título…"
   },
   "Share": {
     "title": "Partilha com prospects",
