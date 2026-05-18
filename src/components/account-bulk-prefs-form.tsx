@@ -84,19 +84,19 @@ export function AccountBulkPrefsForm({
             {t('configAccountHint')}
           </p>
         </div>
-        {saving ? (
-          <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)] shrink-0">
-            <Spinner className="size-3" /> {t('prefsSaving')}
-          </span>
-        ) : hasDefault ? (
+        <div className="flex items-center gap-2 shrink-0">
+          {saving ? (
+            <Spinner className="size-3" aria-label={t('prefsSaving')} />
+          ) : null}
           <button
             type="button"
             onClick={resetToDefault}
-            className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 shrink-0"
+            disabled={!hasDefault}
+            className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)]"
           >
             {t('resetToLegacyDefault')}
           </button>
-        ) : null}
+        </div>
       </div>
       <BulkPrefsEditor value={prefs} onChange={setPrefs} />
     </Card>

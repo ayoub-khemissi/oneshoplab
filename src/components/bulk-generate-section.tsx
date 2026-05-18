@@ -705,19 +705,19 @@ function SelectionModal({
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
                 {t('configTitle')}
               </span>
-              {savingPrefs ? (
-                <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
-                  <Spinner className="size-3" /> {t('prefsSaving')}
-                </span>
-              ) : siteOverride ? (
+              <div className="flex items-center gap-2 shrink-0">
+                {savingPrefs ? (
+                  <Spinner className="size-3" aria-label={t('prefsSaving')} />
+                ) : null}
                 <button
                   type="button"
                   onClick={onResetPrefs}
-                  className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2"
+                  disabled={!siteOverride}
+                  className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 disabled:opacity-40 disabled:no-underline disabled:cursor-default disabled:hover:text-[var(--muted)]"
                 >
                   {t('resetToAccountDefault')}
                 </button>
-              ) : null}
+              </div>
             </div>
             <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
           </div>

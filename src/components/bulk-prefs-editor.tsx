@@ -72,7 +72,12 @@ function PrefCheckbox({
       isDisabled={disabled}
       onChange={onToggle}
     >
-      <Checkbox.Control>
+      {/* HeroUI's default control has no `border` — it relies on
+          --field-shadow to outline the square, but this app's token is
+          ~transparent (and fully transparent in dark mode), making the
+          box invisible. Add an explicit border using the same field
+          token the text inputs use so the square always shows. */}
+      <Checkbox.Control className="border border-solid border-[var(--field-border)]">
         <Checkbox.Indicator />
       </Checkbox.Control>
       <Checkbox.Content>
