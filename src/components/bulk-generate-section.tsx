@@ -6,12 +6,13 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  Coins,
   Layers,
   RotateCcw,
   Sparkles,
   X
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 
@@ -383,24 +384,30 @@ export function BulkGenerateSection({
 
   return (
     <>
-      <div className="flex items-start gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30">
-        <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
-        <div className="flex-1 flex flex-col gap-1">
-          <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            {!canBulk
-              ? t('upgradeHint')
-              : noCandidates
-                ? t('subtitleNoCandidates')
-                : t('subtitle', { count: candidates.length })}
-          </p>
+      {/* Stacks vertically on mobile (icon+text row on top, full-width
+          CTA below) so the action isn't squeezed against the title on
+          narrow screens. Above sm: switches back to the original
+          side-by-side layout. */}
+      <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
+          <div className="flex flex-col gap-1 min-w-0">
+            <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
+            <p className="text-xs text-[var(--muted)] leading-relaxed">
+              {!canBulk
+                ? t('upgradeHint')
+                : noCandidates
+                  ? t('subtitleNoCandidates')
+                  : t('subtitle', { count: candidates.length })}
+            </p>
+          </div>
         </div>
         {canBulk ? (
           <button
             type="button"
             disabled={noProducts || noCandidates}
             onClick={() => setModalOpen(true)}
-            className="px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
             title={
               noProducts
                 ? t('errorNoProducts')
@@ -414,7 +421,7 @@ export function BulkGenerateSection({
         ) : (
           <Link
             href="/pricing"
-            className="px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10"
+            className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
           >
             {t('upgradeCta')}
           </Link>
@@ -435,9 +442,12 @@ export function BulkGenerateSection({
       {/* surface "fresh start, no bulk yet" cost estimate too */}
       {!noCandidates && estimate.breakdown ? (
         <p className="text-xs text-[var(--muted)] -mt-2 ml-1">
-          {t('hintFullCost', {
+          {t.rich('hintFullCost', {
             count: candidates.length,
-            cost: estimate.total
+            cost: estimate.total,
+            coins: () => (
+              <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
+            )
           })}
         </p>
       ) : null}
@@ -465,6 +475,7 @@ function SelectionModal({
   onConfirm: (productIds: string[]) => Promise<boolean>;
 }) {
   const t = useTranslations('BulkGenerate');
+  const locale = useLocale();
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
@@ -571,11 +582,12 @@ function SelectionModal({
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="text-[var(--muted)]">{t('budgetLabel')}</span>
-              <span className="font-mono tabular-nums">
+              <span className="font-mono tabular-nums inline-flex items-center gap-1">
+                <Coins className="size-3" aria-hidden />
                 <span className={overBudget ? 'text-[var(--danger)]' : ''}>
-                  {selectedCost.toLocaleString()}
+                  {selectedCost.toLocaleString(locale)}
                 </span>
-                <span className="text-[var(--muted)]"> / {balance.toLocaleString()} cr.</span>
+                <span className="text-[var(--muted)]">/ {balance.toLocaleString(locale)}</span>
               </span>
             </div>
             <div className="h-1.5 rounded-full bg-[var(--default)] overflow-hidden">
@@ -649,9 +661,12 @@ function SelectionModal({
         <div className="p-5 border-t border-[var(--border)] flex items-center justify-between gap-3 flex-wrap">
           <div className="flex flex-col gap-0.5 text-xs">
             <span className="text-[var(--muted)]">
-              {t('summarySelected', {
+              {t.rich('summarySelected', {
                 count: selected.size,
-                cost: selectedCost
+                cost: selectedCost,
+                coins: () => (
+                  <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
+                )
               })}
             </span>
             {errorMsg ? (
@@ -697,6 +712,7 @@ function CandidateRow({
   onToggle: () => void;
 }) {
   const t = useTranslations('BulkGenerate');
+  const locale = useLocale();
   const fieldLabel: Record<FieldKey, string> = {
     title: t('fieldTitle'),
     description: t('fieldDescription'),
@@ -711,6 +727,7 @@ function CandidateRow({
       title={!enabled ? t('rowDisabledHint') : undefined}
     >
       <input
+        id={`bulk-candidate-${candidate.id}`}
         type="checkbox"
         checked={selected}
         disabled={!enabled}
@@ -732,8 +749,9 @@ function CandidateRow({
           ))}
         </div>
       </div>
-      <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
-        {candidate.pendingCost.toLocaleString()} cr.
+      <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0 inline-flex items-center gap-1">
+        <Coins className="size-3" aria-hidden />
+        {candidate.pendingCost.toLocaleString(locale)}
       </span>
     </label>
   );

@@ -41,7 +41,14 @@ export function RelaunchAuditButton({
   const t = useTranslations('Relaunch');
   const readyAt = nextSlotAtIso ? new Date(nextSlotAtIso).getTime() : 0;
 
-  const [now, setNow] = useState(() => Date.now());
+  // `now` must not be read from Date.now() during render: SSR and the
+  // client first render would disagree → React #418. Start at 0 and
+  // only consider the cooldown "live" once mounted, so SSR + the
+  // first client render both produce the (deterministic) unlocked
+  // form. The server action re-checks the rate limit, so the ~1-frame
+  // window before the cooldown paints is safe.
+  const [now, setNow] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
   // Holds the FormData that will be posted on confirm. We capture it
@@ -50,12 +57,15 @@ export function RelaunchAuditButton({
   const pendingFormDataRef = useRef<FormData | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     if (!nextSlotAtIso) return;
+    setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, [nextSlotAtIso]);
 
-  const remainingMs = nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
+  const remainingMs =
+    mounted && nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
   const locked = remainingMs > 0;
 
   function requestConfirm(formData: FormData) {

@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { desc, eq, inArray } from 'drizzle-orm';
-import { ArrowRight, Plus, Sparkles } from 'lucide-react';
+import { ArrowRight, Coins, Plus, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
@@ -112,7 +112,12 @@ export default async function DashboardPage() {
         </div>
         <div className="flex gap-3 text-sm">
           <PillStat label={t('plan')} value={session.user.plan} />
-          <PillStat label={t('credits')} value={String(session.user.creditsBalance)} highlight />
+          <PillStat
+            label={t('credits')}
+            value={String(session.user.creditsBalance)}
+            highlight
+            icon={<Coins className="size-3.5" aria-hidden />}
+          />
         </div>
       </header>
 
@@ -141,11 +146,13 @@ export default async function DashboardPage() {
 function PillStat({
   label,
   value,
-  highlight
+  highlight,
+  icon
 }: {
   label: string;
   value: string;
   highlight?: boolean;
+  icon?: React.ReactNode;
 }) {
   const colors = highlight
     ? 'bg-[var(--accent)]/10 text-[var(--accent)]'
@@ -153,7 +160,10 @@ function PillStat({
   return (
     <span className={`px-3 py-1.5 rounded-full ${colors} flex items-center gap-2`}>
       <span className="opacity-70 text-xs uppercase tracking-wide">{label}</span>
-      <span className="font-semibold">{value}</span>
+      <span className="font-semibold inline-flex items-center gap-1">
+        {icon}
+        {value}
+      </span>
     </span>
   );
 }
@@ -187,16 +197,13 @@ function SiteCard({ site }: { site: SiteCardData }) {
       href={href}
       className="group rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4"
     >
-      <div className="flex items-start gap-3 min-w-0">
+      <div className="flex items-center gap-3 min-w-0">
         <SiteFavicon
           domain={site.domain}
           size={28}
-          className="rounded shrink-0 mt-0.5"
+          className="rounded shrink-0"
         />
-        <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-          <span className="text-xs uppercase tracking-wide text-[var(--muted)] font-mono">
-            {site.name !== site.domain ? site.name : ' '}
-          </span>
+        <div className="flex flex-col min-w-0 flex-1">
           <h3 className="font-semibold truncate">{site.domain}</h3>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">

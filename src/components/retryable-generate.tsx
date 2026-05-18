@@ -1,10 +1,11 @@
 'use client';
 
 import { Spinner, toast } from '@heroui/react';
-import { Sparkles, X } from 'lucide-react';
+import { Coins, Sparkles, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { useFieldSwapGroup, useFieldView } from '@/components/field-swap';
 import {
   createContext,
   useCallback,
@@ -257,13 +258,40 @@ export function RetryableGenerateProvider({
             return;
           }
 
-          // 5xx → retryable.
+          // 5xx — normally retryable, but 'all' and 'images' kick off
+          // kie image jobs via Promise.allSettled BEFORE the response
+          // is returned. A 5xx after the queue (e.g. nginx timeout on
+          // a long chat phase) means the image jobs already exist; a
+          // retry would create another 3 image jobs and burn credits
+          // a second time. So for those fields we treat 5xx as
+          // terminal — the user can re-click manually after checking
+          // what's already running. Per-field chat generations
+          // (title / description / tags) are safe to auto-retry
+          // because they only persist on success.
+          if (field === 'all' || field === 'images') {
+            const message = payload.message ?? payload.error ?? `HTTP ${res.status}`;
+            toast.danger(t('errorGenerationFailed'), { description: message });
+            setFieldState(field, { kind: 'error', message });
+            return;
+          }
+
           lastError = payload.message ?? payload.error ?? `HTTP ${res.status}`;
         } catch (e) {
           if (cancelledRefs.current[field]) return;
           // AbortError lands here too — but cancelledRef is set when the user
           // cancels, so we'd have returned above. Reach this branch only on
           // genuine network failure.
+          // Same safety as the 5xx branch above: if the request reached the
+          // server before the connection dropped, image jobs were already
+          // queued and a retry would duplicate them. We can't tell from a
+          // network error whether the server processed it or not, so we
+          // play it safe for 'all' / 'images'.
+          if (field === 'all' || field === 'images') {
+            const message = e instanceof Error ? e.message : String(e);
+            toast.danger(t('errorGenerationFailed'), { description: message });
+            setFieldState(field, { kind: 'error', message });
+            return;
+          }
           lastError = e instanceof Error ? e.message : String(e);
         }
       }
@@ -363,10 +391,32 @@ export function RetryableGenerateButton({
 }: ButtonProps) {
   const t = useTranslations('Product');
   const { states, submit, cancel, costFor, canAfford, productArchived } = useGenerateContext();
+  // Per-field view scope (FieldRow) and panel-level view scope
+  // (FieldSwapGroup) — both optional. We use them to auto-flip the
+  // view to "AI" when a generation is launched, so the merchant
+  // lands directly on the freshly-running output instead of
+  // staring at the source side while their click does nothing
+  // visible.
+  const fieldView = useFieldView();
+  const groupView = useFieldSwapGroup();
   const state = states[field];
   const allState = states.all;
   const cost = costFor(field);
   const enabled = available && canAfford(field) && !productArchived;
+
+  const launchSubmit = useCallback(() => {
+    if (field === 'all') {
+      // Flip every section to the AI view in a single shot via the
+      // group context — bumps syncCount, every FieldSwap / per-field
+      // provider rehydrates from the new group view.
+      groupView?.setView('ai');
+    } else {
+      // Per-section: flip just this section. The FieldViewProvider
+      // wrapping this row carries the state, no leak to siblings.
+      fieldView?.setView('ai');
+    }
+    submit(field);
+  }, [field, fieldView, groupView, submit]);
   // Confirmation dialog only on the "Generate / Regenerate everything"
   // button. Per-field actions go through directly — they're cheap
   // single-shot calls and their cost is already on the button label.
@@ -446,7 +496,7 @@ export function RetryableGenerateButton({
     <>
       <button
         type="button"
-        onClick={() => (isAll ? setConfirmOpen(true) : submit(field))}
+        onClick={() => (isAll ? setConfirmOpen(true) : launchSubmit())}
         disabled={!enabled || blockedByGlobal}
         className={`${baseClasses} ${classes}`}
         title={!enabled ? t('insufficientCredits') : undefined}
@@ -459,8 +509,8 @@ export function RetryableGenerateButton({
         ) : (
           <span>{hasHistory ? t('regenerateField') : t('generateField')}</span>
         )}
-        <span className={`text-xs font-mono ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
-          · {t('creditsCost', { cost })}
+        <span className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+          · <Coins className="size-3" aria-hidden /> {cost}
         </span>
       </button>
       {isAll ? (
@@ -480,7 +530,7 @@ export function RetryableGenerateButton({
           confirmLabel={hasHistory ? t('regenerateAll') : t('generateAll')}
           cancelLabel={t('cancelGeneration')}
           destructive={hasHistory}
-          onConfirm={() => submit(field)}
+          onConfirm={launchSubmit}
         />
       ) : null}
     </>

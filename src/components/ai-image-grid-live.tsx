@@ -1,7 +1,7 @@
 'use client';
 
 import { Skeleton, Spinner } from '@heroui/react';
-import { Plus, RefreshCw, Trash2, X, AlertTriangle } from 'lucide-react';
+import { Coins, Plus, RefreshCw, Trash2, X, AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -54,7 +54,11 @@ export function AiImageGridLive({
   const [rawJobs, setJobs] = useState<ImageJobRow[]>(() =>
     initial.map(rehydrateDates)
   );
-  const [now, setNow] = useState<number>(() => Date.now());
+  // Starts at 0 (not Date.now()) so the SSR render and the client's
+  // first render agree — Date.now() at render time differs between
+  // the two and trips React #418. The effect below sets the real
+  // clock on mount; until then elapsedSec computes to 0 everywhere.
+  const [now, setNow] = useState<number>(0);
   const [busy, setBusy] = useState<Record<string, 'delete' | 'regenerate'>>({});
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -65,7 +69,10 @@ export function AiImageGridLive({
   const [modalReplaceId, setModalReplaceId] = useState<string | null>(null);
 
   // 1-Hz tick: drives the elapsed-time captions on skeletons.
+  // setNow immediately on mount so the caption doesn't sit at 0 for
+  // a full second after hydration.
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -344,7 +351,8 @@ function ImageTile({
         <span className="text-xs font-medium text-[var(--danger)]">
           {t('failedLabel')}
         </span>
-        <span className="text-[10px] text-[var(--success)] font-medium">
+        <span className="text-[10px] text-[var(--success)] font-medium inline-flex items-center gap-1">
+          <Coins className="size-3" aria-hidden />
           {t('refundedNote', { cost: job.creditsCost })}
         </span>
         <button
@@ -466,8 +474,9 @@ function AddTile({
     >
       <Plus className="size-6" aria-hidden />
       <span className="text-xs font-medium">{t('addImage')}</span>
-      <span className="text-[10px] font-mono uppercase tracking-wider">
-        {t('credits', { cost: costPerImage })}
+      <span className="text-[10px] font-mono uppercase tracking-wider inline-flex items-center gap-1">
+        <Coins className="size-3" aria-hidden />
+        {costPerImage}
       </span>
     </button>
   );
@@ -608,8 +617,9 @@ function NewImageModal({
           />
         ) : null}
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider">
-            {t('credits', { cost: costPerImage })}
+          <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider inline-flex items-center gap-1">
+            <Coins className="size-3" aria-hidden />
+            {costPerImage}
           </span>
           <div className="flex items-center gap-2">
             <button

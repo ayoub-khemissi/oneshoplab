@@ -1,6 +1,7 @@
 'use client';
 
 import { Spinner } from '@heroui/react';
+import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
@@ -62,8 +63,8 @@ export function GenerateButton({ field, cost, enabled }: GenerateButtonProps) {
       ) : (
         <>
           <span>{isAll ? t('generateAll') : t('generateField')}</span>
-          <span className={`text-xs font-mono ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
-            · {t('creditsCost', { cost })}
+          <span className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+            · <Coins className="size-3" aria-hidden /> {cost}
           </span>
         </>
       )}

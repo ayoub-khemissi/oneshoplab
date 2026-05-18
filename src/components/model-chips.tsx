@@ -1,5 +1,6 @@
 'use client';
 
+import { Coins } from 'lucide-react';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import {
@@ -176,10 +177,11 @@ function Chip({
         ) : null}
       </span>
       <span
-        className={`text-[10px] font-mono px-1 rounded ${
+        className={`text-[10px] font-mono px-1 rounded inline-flex items-center gap-0.5 ${
           active ? 'bg-white/20 text-current' : TIER_COLORS[tier]
         }`}
       >
+        <Coins className="size-2.5" aria-hidden />
         {cost}
       </span>
     </button>

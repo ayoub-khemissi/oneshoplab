@@ -1,6 +1,6 @@
 import { InputGroup, Label, TextField } from '@heroui/react';
 import { eq } from 'drizzle-orm';
-import { ArrowLeft, Globe, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Globe, PenLine, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -111,6 +111,39 @@ export default async function AddSitePage({ searchParams }: PageProps) {
           {t('addSiteSubmit')}
         </button>
       </form>
+
+      {/* "or" divider — two horizontal rules flanking the word so the
+          two entry points read as equal-weight options, not URL-first
+          with a fallback link. */}
+      <div className="flex items-center gap-3" aria-hidden>
+        <span className="flex-1 h-px bg-[var(--border)]" />
+        <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium">
+          {t('addSiteOrDivider')}
+        </span>
+        <span className="flex-1 h-px bg-[var(--border)]" />
+      </div>
+
+      {/* Manual-entry CTA. Visually a parallel of the URL form above —
+          same vertical block size, same heading style, button-level
+          prominence — so the user sees "two ways to start", not "the
+          fallback escape hatch". */}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold tracking-tight inline-flex items-center gap-2">
+          <PenLine className="size-4 text-[var(--accent)]" aria-hidden />
+          {t('addSiteScratchTitle')}
+        </h2>
+        <p className="text-sm text-[var(--muted)] leading-relaxed">
+          {t('addSiteScratchSubtitle')}
+        </p>
+        <Link
+          href="/dashboard/sites/new/scratch"
+          className="self-start px-5 py-2.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium inline-flex items-center gap-2"
+        >
+          <PenLine className="size-4" />
+          {t('addSiteScratchSubmit')}
+          <ArrowRight className="size-3.5 opacity-80" aria-hidden />
+        </Link>
+      </section>
     </main>
   );
 }

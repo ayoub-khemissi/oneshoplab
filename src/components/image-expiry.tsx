@@ -1,7 +1,8 @@
 'use client';
 
-import { Clock } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { CalendarX, Clock } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
 interface ImageExpiryProps {
   /** When the source generation was recorded. */
@@ -9,26 +10,63 @@ interface ImageExpiryProps {
   /** Plan-specific retention window in days. Free/Starter pass 30,
    *  Pro 60, Scale 90 — derived server-side from the merchant's plan. */
   retentionDays: number;
+  /** Tombstone date stamped by the r2-cleanup worker. When set the
+   *  caption switches from a live countdown to a "Image expirée le
+   *  {date}" past-tense label. Pass null/undefined for fresh entries
+   *  that haven't crossed retention yet — the component will fall
+   *  back to the computed expiresAt date if the row has already
+   *  crossed the retention math but the worker hasn't run. */
+  expiredAt?: Date | null;
   className?: string;
 }
 
 /**
- * Subtle one-line caption rendered next to a generated-image grid:
- * "Auto-deleted in 23 days · 28/05/2026". Computed live from the
- * generation timestamp + the merchant's plan retention so the same
- * rule the cleanup worker enforces is what they see.
+ * Subtle one-line caption rendered next to a generated-image grid.
+ * Three states:
+ *   - Fresh: "Suppr. auto dans 23 jours" (live countdown)
+ *   - Expired and tombstoned: "Image expirée le 28/05/2026"
+ *   - Expired but worker hasn't run: "Image expirée" (no date)
+ *
+ * The expiry math (createdAt + retentionDays) is identical to what
+ * the cleanup worker enforces, so the UI is never out of sync.
  */
-export function ImageExpiry({ createdAt, retentionDays, className }: ImageExpiryProps) {
+export function ImageExpiry({
+  createdAt,
+  retentionDays,
+  expiredAt,
+  className
+}: ImageExpiryProps) {
   const t = useTranslations('ImageExpiry');
+  const locale = useLocale();
+
+  // The "days left" / expired branch depends on Date.now(), which is
+  // never identical between the SSR render and client hydration →
+  // React #418 text mismatch. Gate the whole caption behind a mount
+  // flag: SSR and the first client render both return null (so they
+  // match), then the real value is rendered post-hydration. The
+  // caption is a tiny muted hint on a noindex page, so the ~0ms
+  // appearance is imperceptible and SEO-irrelevant.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
+
   const expiresAt = new Date(createdAt.getTime() + retentionDays * 24 * 60 * 60 * 1000);
   const msLeft = expiresAt.getTime() - Date.now();
-  if (msLeft <= 0) {
+  const isExpired = expiredAt != null || msLeft <= 0;
+
+  if (isExpired) {
+    // Prefer the tombstone date when present, otherwise the computed
+    // expiry date — the merchant cares "when did this disappear",
+    // not "when did the worker happen to run".
+    const expiryDate = expiredAt ?? expiresAt;
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[10px] text-[var(--danger)] ${className ?? ''}`}
+        className={`inline-flex items-center gap-1 text-[10px] text-[var(--muted)] ${className ?? ''}`}
       >
-        <Clock className="size-3" aria-hidden />
-        <span>{t('expired')}</span>
+        <CalendarX className="size-3" aria-hidden />
+        <span>{t('expiredOn', { date: expiryDate.toLocaleDateString(locale) })}</span>
       </span>
     );
   }
@@ -37,7 +75,7 @@ export function ImageExpiry({ createdAt, retentionDays, className }: ImageExpiry
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] ${tone} ${className ?? ''}`}
-      title={t('tooltip', { date: expiresAt.toLocaleDateString() })}
+      title={t('tooltip', { date: expiresAt.toLocaleDateString(locale) })}
     >
       <Clock className="size-3" aria-hidden />
       <span>{t('inDays', { days: daysLeft })}</span>

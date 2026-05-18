@@ -83,6 +83,54 @@ export function HideOnSource({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/**
+ * Per-field view scope. Wraps both the FieldSwap and the per-field
+ * action buttons that sit beside it so a click on "Regenerate" can
+ * flip just this field to the AI view without leaking to other
+ * sections. Inherits its initial view from the surrounding group
+ * (if any) and re-syncs whenever the group toggle is flipped, so
+ * the "Tout régénérer" path still propagates as before.
+ */
+interface FieldViewState {
+  view: View;
+  setView: (v: View) => void;
+}
+const FieldViewContext = createContext<FieldViewState | null>(null);
+
+export function FieldViewProvider({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  const groupCtx = useContext(FieldSwapGroupContext);
+  const [view, setView] = useState<View>(groupCtx?.view ?? 'ai');
+  const groupSyncCount = groupCtx?.syncCount ?? 0;
+  const groupView = groupCtx?.view ?? 'ai';
+  useEffect(() => {
+    if (groupCtx) setView(groupView);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupSyncCount]);
+  return (
+    <FieldViewContext.Provider value={{ view, setView }}>
+      {children}
+    </FieldViewContext.Provider>
+  );
+}
+
+/** Read the per-field view state, if inside a FieldViewProvider.
+ *  Used by RetryableGenerateButton to switch its own section to AI
+ *  on click before triggering the generation. */
+export function useFieldView(): FieldViewState | null {
+  return useContext(FieldViewContext);
+}
+
+/** Read the panel-level (group) view state, if inside a
+ *  FieldSwapGroup. Used by the top-level "Generate all" button to
+ *  flip every section at once. */
+export function useFieldSwapGroup() {
+  return useContext(FieldSwapGroupContext);
+}
+
 export function FieldSwapGroupToggle({
   sourceLabel,
   aiLabel,
@@ -139,12 +187,21 @@ export function FieldSwap({
   sourceAction
 }: FieldSwapProps) {
   const ctx = useContext(FieldSwapGroupContext);
-  const [view, setView] = useState<View>(ctx?.view ?? 'ai');
+  const fieldCtx = useContext(FieldViewContext);
+  // Prefer the per-field provider's view when present — that way a
+  // sibling "Regenerate" button can flip just this section. Otherwise
+  // fall back to local state (and sync to the group as before).
+  const [localView, setLocalView] = useState<View>(ctx?.view ?? 'ai');
+  const view = fieldCtx?.view ?? localView;
+  const setView = fieldCtx?.setView ?? setLocalView;
 
   const groupSyncCount = ctx?.syncCount ?? 0;
   const groupView = ctx?.view ?? 'ai';
   useEffect(() => {
-    if (ctx) setView(groupView);
+    // Only sync the local fallback. FieldViewProvider handles its
+    // own group-sync, so we skip when a per-field context is in
+    // scope to avoid a redundant setState.
+    if (ctx && !fieldCtx) setLocalView(groupView);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupSyncCount]);
 
