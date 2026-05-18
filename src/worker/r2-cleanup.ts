@@ -1,4 +1,4 @@
-import { and, eq, inArray, lt } from 'drizzle-orm';
+import { and, eq, inArray, isNull, lt } from 'drizzle-orm';
 import {
   imageRetentionDaysForPlan,
   MAX_IMAGE_RETENTION_DAYS
@@ -10,18 +10,27 @@ import { deleteByKey, keyFromPublicUrl } from '@/lib/storage';
 /**
  * Generated AI images live in R2 for a per-plan retention window
  * (Free/Starter 30d, Pro 60d, Scale 90d — see imageRetentionDaysForPlan).
- * After the merchant's window expires, the worker drops the R2 objects
- * AND the jobs row so the UI behaves as if no generation ever happened
- * (the live grid keys off the presence of non-hidden image jobs).
  *
- * The cron is hourly: it walks any image job older than the *longest*
- * retention window (i.e. Scale's 90d), then per-row checks the actual
- * owning plan to decide whether the job has crossed the merchant's
- * personal cutoff. That keeps the candidate set small while still
- * applying tighter Free/Starter expiry correctly.
+ * When the merchant's window crosses, the worker:
+ *   1. Deletes the R2 objects (frees storage).
+ *   2. Clears `persistedUrls` / `resultUrls` on the jobs row so the
+ *      UI knows there's nothing to render anymore.
+ *   3. Stamps `expiredAt` on the row — the row STAYS so the merchant's
+ *      past-generations history keeps a tombstone explaining when each
+ *      image expired (live grid already filters on hiddenAt to hide
+ *      these from the active workspace).
  *
- * R2 DeleteObject is idempotent so re-running on a job that's already
- * been cleaned is a no-op (just a 404 we swallow).
+ * The cron is hourly: it walks any non-yet-expired image job older
+ * than the *longest* retention window (i.e. Scale's 90d), then
+ * per-row checks the actual owning plan to decide whether the job
+ * has crossed the merchant's personal cutoff. The `isNull(expiredAt)`
+ * filter is what keeps the candidate set bounded once we stopped
+ * deleting rows — otherwise every hourly tick would re-walk every
+ * historical image job forever.
+ *
+ * R2 DeleteObject is idempotent so a stale candidate that was
+ * partially processed last tick is fine: we re-delete the (already
+ * gone) objects and stamp expiredAt.
  */
 const MAX_RETENTION_MS = MAX_IMAGE_RETENTION_DAYS * 24 * 60 * 60 * 1000;
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];
@@ -46,7 +55,11 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
   const candidates = await db.query.jobs.findMany({
     where: and(
       inArray(jobs.kind, IMAGE_KINDS),
-      lt(jobs.createdAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
+      lt(jobs.createdAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)),
+      // Skip rows already expired by a previous tick — we don't delete
+      // rows anymore, we tombstone them, and without this filter the
+      // worker would re-process them every hour forever.
+      isNull(jobs.expiredAt)
     ),
     orderBy: (j, { asc }) => [asc(j.createdAt)],
     limit: 200
@@ -96,7 +109,20 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
       if (ok) r2Objects += 1;
     }
 
-    await db.delete(jobs).where(eq(jobs.id, job.id));
+    // Tombstone the row: keep it (for the past-generations history
+    // tombstone), but clear the URLs so the UI knows the image is
+    // gone, and stamp expiredAt so future cron ticks skip it.
+    await db
+      .update(jobs)
+      .set({
+        result: {
+          ...(result ?? {}),
+          persistedUrls: [],
+          resultUrls: []
+        },
+        expiredAt: new Date()
+      })
+      .where(eq(jobs.id, job.id));
     deletedRows += 1;
   }
 

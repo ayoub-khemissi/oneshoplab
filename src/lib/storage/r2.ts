@@ -5,7 +5,14 @@ interface R2Config {
   accessKeyId: string;
   secretAccessKey: string;
   bucket: string;
+  /** Canonical base URL new uploads are stamped with. After the
+   *  cdn.oneshoplab.com cut-over this is the nginx-fronted domain. */
   publicUrl: string;
+  /** Extra bases that point at the SAME bucket and must still resolve
+   *  back to a key — chiefly the legacy `pub-xxx.r2.dev` origin so the
+   *  cleanup worker can keep reclaiming objects whose stored URL
+   *  predates the migration. Comma-separated in R2_PUBLIC_URL_ALIASES. */
+  publicUrlAliases: string[];
 }
 
 function getConfig(): R2Config | null {
@@ -17,7 +24,18 @@ function getConfig(): R2Config | null {
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket || !publicUrl) {
     return null;
   }
-  return { accountId, accessKeyId, secretAccessKey, bucket, publicUrl };
+  const publicUrlAliases = (process.env.R2_PUBLIC_URL_ALIASES ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return {
+    accountId,
+    accessKeyId,
+    secretAccessKey,
+    bucket,
+    publicUrl,
+    publicUrlAliases
+  };
 }
 
 let cached: S3Client | null = null;
@@ -88,16 +106,27 @@ export async function uploadFromUrl(sourceUrl: string, key: string): Promise<Upl
 /**
  * Resolve a public R2 URL back to its bucket key. We persist URLs (not keys)
  * in jobs.result, so the cleanup worker needs this round-trip to call
- * DeleteObject. Returns null when the URL doesn't belong to our configured
- * R2_PUBLIC_URL — that includes legacy temp kie URLs that were never
+ * DeleteObject. Returns null when the URL doesn't belong to any base that
+ * maps to our bucket — that includes legacy temp kie URLs that were never
  * uploaded to R2.
+ *
+ * Matches against the canonical base AND every alias so a URL stored
+ * before the cdn.oneshoplab.com migration (pub-xxx.r2.dev) still
+ * resolves — otherwise the cleanup worker would orphan every
+ * pre-migration object in R2 forever.
  */
 export function keyFromPublicUrl(publicUrl: string): string | null {
   const cfg = getConfig();
   if (!cfg) return null;
-  const base = cfg.publicUrl.replace(/\/$/, '');
-  if (!publicUrl.startsWith(base + '/')) return null;
-  return decodeURIComponent(publicUrl.slice(base.length + 1));
+  const bases = [cfg.publicUrl, ...cfg.publicUrlAliases].map((b) =>
+    b.replace(/\/$/, '')
+  );
+  for (const base of bases) {
+    if (publicUrl.startsWith(base + '/')) {
+      return decodeURIComponent(publicUrl.slice(base.length + 1));
+    }
+  }
+  return null;
 }
 
 /**
