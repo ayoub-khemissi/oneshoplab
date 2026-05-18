@@ -1,6 +1,7 @@
 'use client';
 
-import { Checkbox } from '@heroui/react';
+import { Checkbox, Label } from '@heroui/react';
+import { useId } from 'react';
 import { useTranslations } from 'next-intl';
 
 /**
@@ -46,6 +47,44 @@ export const noFieldsSelected = (p: BulkPrefs): boolean =>
   !p.fields.tags &&
   !p.fields.images;
 
+const FIELD_KEYS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
+
+/** HeroUI v3 Checkbox is a compound component — without Control /
+ *  Indicator / Content it renders only the label (no visible box, no
+ *  state). This wrapper composes it correctly once. */
+function PrefCheckbox({
+  id,
+  label,
+  selected,
+  disabled,
+  onToggle
+}: {
+  id: string;
+  label: string;
+  selected: boolean;
+  disabled: boolean;
+  onToggle: (next: boolean) => void;
+}) {
+  return (
+    <Checkbox
+      id={id}
+      isSelected={selected}
+      isDisabled={disabled}
+      onChange={onToggle}
+      className="flex items-center gap-2"
+    >
+      <Checkbox.Control>
+        <Checkbox.Indicator />
+      </Checkbox.Control>
+      <Checkbox.Content>
+        <Label htmlFor={id} className="text-sm cursor-pointer">
+          {label}
+        </Label>
+      </Checkbox.Content>
+    </Checkbox>
+  );
+}
+
 export function BulkPrefsEditor({
   value,
   onChange,
@@ -58,13 +97,15 @@ export function BulkPrefsEditor({
   const t = useTranslations('BulkGenerate');
   // Image-angle labels are already translated under Report.aiAngle.
   const tAngle = useTranslations('Report');
+  const uid = useId();
 
-  const fieldKeys: Array<{ key: BulkFieldKey; label: string }> = [
-    { key: 'title', label: t('fieldTitle') },
-    { key: 'description', label: t('fieldDescription') },
-    { key: 'tags', label: t('fieldTags') },
-    { key: 'images', label: t('fieldImages') }
-  ];
+  const fieldLabels: Record<BulkFieldKey, string> = {
+    title: t('fieldTitle'),
+    description: t('fieldDescription'),
+    tags: t('fieldTags'),
+    images: t('fieldImages')
+  };
+  const selectedFieldCount = FIELD_KEYS.filter((k) => value.fields[k]).length;
 
   return (
     <div className="flex flex-col gap-3">
@@ -72,24 +113,29 @@ export function BulkPrefsEditor({
         {t('configHint')}
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {fieldKeys.map(({ key, label }) => (
-          <Checkbox
-            key={key}
-            isSelected={value.fields[key]}
-            isDisabled={disabled}
-            onChange={(isSelected: boolean) =>
-              onChange(
-                canonicalizePrefs({
-                  ...value,
-                  fields: { ...value.fields, [key]: isSelected }
-                })
-              )
-            }
-            className="text-sm"
-          >
-            {label}
-          </Checkbox>
-        ))}
+        {FIELD_KEYS.map((key) => {
+          // Never let the last selected field be unticked — at least
+          // one element must always be generated.
+          const isOnlySelected =
+            value.fields[key] && selectedFieldCount === 1;
+          return (
+            <PrefCheckbox
+              key={key}
+              id={`${uid}-f-${key}`}
+              label={fieldLabels[key]}
+              selected={value.fields[key]}
+              disabled={disabled || isOnlySelected}
+              onToggle={(next) =>
+                onChange(
+                  canonicalizePrefs({
+                    ...value,
+                    fields: { ...value.fields, [key]: next }
+                  })
+                )
+              }
+            />
+          );
+        })}
       </div>
       {value.fields.images ? (
         <div className="flex flex-col gap-2 border-l-2 border-[var(--border)] ml-1">
@@ -99,28 +145,26 @@ export function BulkPrefsEditor({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-3">
             {ALL_ANGLES.map((angle) => {
               const checked = value.imageAngles.includes(angle);
-              // Can't untick the last angle while Images is on (the
-              // server would re-expand to all 3 anyway).
+              // Can't untick the last angle while Images is on.
               const isLast = checked && value.imageAngles.length === 1;
               return (
-                <Checkbox
+                <PrefCheckbox
                   key={angle}
-                  isSelected={checked}
-                  isDisabled={disabled || isLast}
-                  onChange={(isSelected: boolean) =>
+                  id={`${uid}-a-${angle}`}
+                  label={tAngle(`aiAngle.${angle}`)}
+                  selected={checked}
+                  disabled={disabled || isLast}
+                  onToggle={(next) =>
                     onChange(
                       canonicalizePrefs({
                         ...value,
-                        imageAngles: isSelected
+                        imageAngles: next
                           ? [...value.imageAngles, angle]
                           : value.imageAngles.filter((a) => a !== angle)
                       })
                     )
                   }
-                  className="text-sm"
-                >
-                  {tAngle(`aiAngle.${angle}`)}
-                </Checkbox>
+                />
               );
             })}
           </div>
