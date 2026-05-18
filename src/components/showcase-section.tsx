@@ -111,15 +111,19 @@ function ShowcaseCard({
   // hides when the visitor collapses the card. The shell owns the
   // expand state and lays the toggle button top-right of the row.
   const header = (
-    <div className="inline-flex items-center gap-2 flex-wrap">
+    // `min-w-0` on this and on the inner <a> is the magic that lets the
+    // <span class="truncate"> actually shrink — without it, flex items
+    // default to their intrinsic content width and an overly long
+    // domain pushes the expand/collapse button off the row.
+    <div className="flex items-center gap-2 flex-wrap min-w-0">
       <a
         href={card.siteUrl}
         target="_blank"
         rel="noreferrer noopener"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
+        className="inline-flex items-center gap-2 min-w-0 max-w-full text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors group/domain"
       >
         <SiteFavicon domain={card.domain} size={18} className="rounded-sm shrink-0" />
-        <span className="font-mono truncate">{card.domain}</span>
+        <span className="font-mono truncate min-w-0">{card.domain}</span>
         <ExternalLink
           className="size-3.5 opacity-50 group-hover/domain:opacity-100 transition-opacity shrink-0"
           aria-hidden
@@ -127,7 +131,7 @@ function ShowcaseCard({
       </a>
       {card.platform ? (
         <span
-          className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-[var(--default)]/60 border border-[var(--border)] text-[var(--muted)]"
+          className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-[var(--default)]/60 border border-[var(--border)] text-[var(--muted)] shrink-0"
           title={platformDisplayName(card.platform)}
         >
           <PlatformLogo platform={card.platform} className="size-3.5" />

@@ -1,6 +1,6 @@
-import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNotNull, isNull, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { audits, jobs, projects, shareLinks } from '@/lib/db/schema';
+import { audits, jobs, products, projects, shareLinks } from '@/lib/db/schema';
 import { listOptimHistory, listProductImageJobs } from '@/lib/ai';
 
 /**
@@ -282,8 +282,10 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
 
   const products: SharedProduct[] = [];
   for (const sourceId of productSourceIds) {
-    const matched = allProducts.find(
-      (p) => (p.sourceId ?? p.handle ?? '') === sourceId
+    const matched = await resolveFeaturedProduct(
+      project.id,
+      sourceId,
+      allProducts
     );
     if (!matched) continue;
 
@@ -315,7 +317,10 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
       source: {
         descriptionHtml: matched.descriptionHtml ?? '',
         tags: matched.signals?.tags ?? [],
-        images: matched.images ?? []
+        images: (matched.images ?? []).map((img) => ({
+          src: img.src,
+          alt: img.alt ?? null
+        }))
       },
       ai: {
         title: aiTitle,
@@ -376,6 +381,89 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
 // ---------------------------------------------------------------------------
 // Home-page showcase data
 // ---------------------------------------------------------------------------
+
+/** Minimal "source" product snapshot the showcase + shared-audit
+ *  pages render. Either pulled from the audit summary or, when the
+ *  upstream store rotated its product id and the summary no longer
+ *  carries that sourceId, recovered from the persistent `products`
+ *  table (whose sourceId stays stable across re-scrapes — see
+ *  sync-products.ts). The AI side keys off the stored sourceId via
+ *  the jobs table, which never rotates, so it keeps resolving even
+ *  when the catalog id changed. */
+interface FeaturedProductSnapshot {
+  title: string;
+  url?: string | null;
+  descriptionHtml?: string;
+  images?: Array<{ src: string; alt?: string | null }>;
+  signals?: { tags?: string[] };
+}
+
+async function resolveFeaturedProduct(
+  projectId: string,
+  sourceId: string,
+  allProducts: Array<{
+    sourceId?: string | null;
+    handle?: string | null;
+    title: string;
+    url?: string | null;
+    descriptionHtml?: string;
+    images?: Array<{ src: string; alt?: string | null }>;
+    signals?: { tags?: string[] };
+  }>
+): Promise<FeaturedProductSnapshot | null> {
+  const fromSummary = allProducts.find(
+    (p) => (p.sourceId ?? p.handle ?? '') === sourceId
+  );
+  if (fromSummary) return fromSummary;
+
+  // Summary lost it (catalog id rotation / duplicate-handle churn).
+  // Three fallbacks, increasingly resilient:
+  //   1. products row by current sourceId
+  //   2. products row by handle (if the stored id IS a handle)
+  //   3. via the jobs table — the AI jobs immutably record the
+  //      productSourceId used at generation time and are FK'd
+  //      (jobs.product_id, backfilled) to the canonical products
+  //      row. This is the ONLY link that survives unbounded
+  //      upstream id rotation (WooCommerce re-issuing the catalog
+  //      id on every scrape), which is exactly the moycor case.
+  let row =
+    (await db.query.products.findFirst({
+      where: and(
+        eq(products.projectId, projectId),
+        eq(products.sourceId, sourceId)
+      )
+    })) ??
+    (await db.query.products.findFirst({
+      where: and(
+        eq(products.projectId, projectId),
+        eq(products.handle, sourceId)
+      )
+    })) ??
+    null;
+  if (!row) {
+    const job = await db.query.jobs.findFirst({
+      where: and(
+        eq(jobs.projectId, projectId),
+        isNotNull(jobs.productId),
+        sql`JSON_UNQUOTE(JSON_EXTRACT(${jobs.inputPayload}, '$.productSourceId')) = ${sourceId}`
+      )
+    });
+    if (job?.productId) {
+      row =
+        (await db.query.products.findFirst({
+          where: eq(products.id, job.productId)
+        })) ?? null;
+    }
+  }
+  if (!row) return null;
+  return {
+    title: row.title,
+    url: row.sourceUrl,
+    descriptionHtml: row.descriptionHtml ?? '',
+    images: (row.images ?? []) as Array<{ src: string; alt?: string | null }>,
+    signals: { tags: (row.tags ?? []) as string[] }
+  };
+}
 
 export interface HomeShowcaseCard {
   /** Token used in the /share/[token] URL the prospect clicks. */
@@ -489,8 +577,10 @@ export async function loadHomeShowcaseCards(
 
     const products: HomeShowcaseCard['products'] = [];
     for (const sourceId of ids) {
-      const matched = allProducts.find(
-        (p) => (p.sourceId ?? p.handle ?? '') === sourceId
+      const matched = await resolveFeaturedProduct(
+        project.id,
+        sourceId,
+        allProducts
       );
       if (!matched) continue;
       const [titleHist, descHist, tagsHist, imageJobs] = await Promise.all([

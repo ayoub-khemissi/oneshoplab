@@ -57,7 +57,29 @@ export const wixAdapter: PlatformAdapter = {
       }
     }
 
-    // Wix Stores requires the products sitemap to exist.
+    // Many Wix shops render as a JS shell — the initial HTML body
+    // doesn't carry the Wix.com / parastorage / wixstatic markers,
+    // so the body-only check above misses them. Wix's CDN (Pepyaka)
+    // and request-id header are present on every response regardless
+    // of render path, so a HEAD-style probe of the root is the most
+    // reliable detect for SPA shops.
+    if (confidence < 0.7) {
+      const root = rootOf(ctx.url);
+      const probe = await fetchText(root, { method: 'HEAD' as never });
+      const server = (probe.headers?.get('server') ?? '').toLowerCase();
+      const hasWixHeaders =
+        server.includes('pepyaka') ||
+        probe.headers?.has('x-wix-request-id') ||
+        probe.headers?.has('x-wix-cache-control');
+      if (hasWixHeaders) {
+        signals.push(`Wix HTTP headers (server=${server || 'n/a'})`);
+        confidence = Math.max(confidence, 0.85);
+      }
+    }
+
+    // Wix Stores requires the products sitemap to exist — only check
+    // it for sites we already think are Wix, and use it to lift
+    // confidence above the threshold.
     if (confidence > 0.4) {
       const root = rootOf(ctx.url);
       const probe = await fetchText(`${root}/store-products-sitemap.xml`);
