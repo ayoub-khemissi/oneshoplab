@@ -91,7 +91,8 @@
     "closeMenu": "Menü schließen",
     "menuTitle": "Menü",
     "joinDiscord": "Tritt unserem Discord bei",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "KI-Optimierung von Produktseiten",
@@ -100,7 +101,8 @@
     "pricing": "Preise",
     "terms": "AGB",
     "privacy": "Datenschutz",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Echte Shops, echte Ergebnisse",

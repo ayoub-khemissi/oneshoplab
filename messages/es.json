@@ -91,7 +91,8 @@
     "closeMenu": "Cerrar menú",
     "menuTitle": "Menú",
     "joinDiscord": "Únete a nuestro Discord",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "Optimización IA de fichas de producto",
@@ -100,7 +101,8 @@
     "pricing": "Precios",
     "terms": "Condiciones",
     "privacy": "Privacidad",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Tiendas reales, resultados reales",

@@ -91,7 +91,8 @@
     "closeMenu": "Fechar menu",
     "menuTitle": "Menu",
     "joinDiscord": "Junta-te ao nosso Discord",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "Otimização IA de páginas de produto",
@@ -100,7 +101,8 @@
     "pricing": "Preços",
     "terms": "Termos",
     "privacy": "Privacidade",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Lojas reais, resultados reais",

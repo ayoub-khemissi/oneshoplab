@@ -91,7 +91,8 @@
     "closeMenu": "Menüyü kapat",
     "menuTitle": "Menü",
     "joinDiscord": "Discord sunucumuza katıl",
-    "faq": "SSS"
+    "faq": "SSS",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "Yapay zekâ tabanlı ürün sayfası optimizasyonu",
@@ -100,7 +101,8 @@
     "pricing": "Fiyatlandırma",
     "terms": "Şartlar",
     "privacy": "Gizlilik",
-    "faq": "SSS"
+    "faq": "SSS",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Gerçek mağazalar, gerçek sonuçlar",

@@ -91,7 +91,8 @@
     "closeMenu": "Zamknij menu",
     "menuTitle": "Menu",
     "joinDiscord": "Dołącz do naszego Discorda",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "Optymalizacja AI stron produktów",
@@ -100,7 +101,8 @@
     "pricing": "Cennik",
     "terms": "Regulamin",
     "privacy": "Prywatność",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Prawdziwe sklepy, prawdziwe wyniki",

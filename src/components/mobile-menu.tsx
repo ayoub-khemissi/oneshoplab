@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Newspaper,
   Repeat,
   Settings,
   Tag,
@@ -31,6 +32,7 @@ interface MobileMenuProps {
     signUp: string;
     pricing: string;
     faq: string;
+    blog: string;
     dashboard: string;
     credits: string;
     signedInAs: string;
@@ -157,6 +159,18 @@ export function MobileMenu({
                     aria-hidden
                   />
                   {labels.faq}
+                </ListBox.Item>
+                <ListBox.Item
+                  id="blog"
+                  href="/blog"
+                  textValue={labels.blog}
+                  onAction={() => setIsOpen(false)}
+                >
+                  <Newspaper
+                    className="size-4 mr-2 text-[var(--muted)]"
+                    aria-hidden
+                  />
+                  {labels.blog}
                 </ListBox.Item>
                 {discordUrl ? (
                   <ListBox.Item

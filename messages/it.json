@@ -91,7 +91,8 @@
     "closeMenu": "Chiudi menu",
     "menuTitle": "Menu",
     "joinDiscord": "Unisciti al nostro Discord",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Footer": {
     "tagline": "Ottimizzazione AI delle schede prodotto",
@@ -100,7 +101,8 @@
     "pricing": "Prezzi",
     "terms": "Termini",
     "privacy": "Privacy",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "blog": "Blog"
   },
   "Showcase": {
     "eyebrow": "Negozi reali, risultati reali",

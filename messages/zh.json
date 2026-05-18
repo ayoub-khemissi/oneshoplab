@@ -91,7 +91,8 @@
     "closeMenu": "关闭菜单",
     "menuTitle": "菜单",
     "joinDiscord": "加入我们的 Discord",
-    "faq": "常见问题"
+    "faq": "常见问题",
+    "blog": "博客"
   },
   "Footer": {
     "tagline": "AI 产品页优化",
@@ -100,7 +101,8 @@
     "pricing": "价格",
     "terms": "条款",
     "privacy": "隐私",
-    "faq": "常见问题"
+    "faq": "常见问题",
+    "blog": "博客"
   },
   "Showcase": {
     "eyebrow": "真实店铺,真实结果",

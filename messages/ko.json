@@ -91,7 +91,8 @@
     "closeMenu": "메뉴 닫기",
     "menuTitle": "메뉴",
     "joinDiscord": "Discord 참여하기",
-    "faq": "자주 묻는 질문"
+    "faq": "자주 묻는 질문",
+    "blog": "블로그"
   },
   "Footer": {
     "tagline": "AI 기반 제품 페이지 최적화",
@@ -100,7 +101,8 @@
     "pricing": "요금",
     "terms": "약관",
     "privacy": "개인정보처리방침",
-    "faq": "자주 묻는 질문"
+    "faq": "자주 묻는 질문",
+    "blog": "블로그"
   },
   "Showcase": {
     "eyebrow": "실제 스토어, 실제 결과",

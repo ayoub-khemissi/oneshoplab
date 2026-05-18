@@ -63,6 +63,12 @@ export async function SiteHeader() {
           >
             {t('faq')}
           </Link>
+          <Link
+            href="/blog"
+            className="hidden md:inline text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          >
+            {t('blog')}
+          </Link>
           {user ? (
             <Link
               href="/dashboard"
@@ -167,6 +173,7 @@ export async function SiteHeader() {
               signUp: t('signUp'),
               pricing: t('pricing'),
               faq: t('faq'),
+              blog: t('blog'),
               dashboard: t('dashboard'),
               credits: t('credits'),
               signedInAs: t('signedInAs'),

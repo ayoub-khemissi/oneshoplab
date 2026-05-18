@@ -91,7 +91,8 @@
     "closeMenu": "メニューを閉じる",
     "menuTitle": "メニュー",
     "joinDiscord": "Discord に参加",
-    "faq": "よくあるご質問"
+    "faq": "よくあるご質問",
+    "blog": "ブログ"
   },
   "Footer": {
     "tagline": "AIによる商品ページ最適化",
@@ -100,7 +101,8 @@
     "pricing": "料金",
     "terms": "利用規約",
     "privacy": "プライバシー",
-    "faq": "よくあるご質問"
+    "faq": "よくあるご質問",
+    "blog": "ブログ"
   },
   "Showcase": {
     "eyebrow": "実際のストア、実際の結果",
