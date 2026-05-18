@@ -36,7 +36,13 @@
     "ctaPrimary": "Ücretsiz hesabımı oluştur",
     "ctaSecondary": "Fiyatları gör",
     "metaTitle": "Ücretsiz ürün sayfası denetimi — kayıt yok",
-    "metaDescription": "Bir Shopify, WooCommerce veya Wix mağaza URL'si yapıştırın ve yaklaşık bir dakikada ürün başına ücretsiz denetim puanı alın. Hesap yok, kart yok."
+    "metaDescription": "Bir Shopify, WooCommerce veya Wix mağaza URL'si yapıştırın ve yaklaşık bir dakikada ürün başına ücretsiz denetim puanı alın. Hesap yok, kart yok.",
+    "explainTitle": "Bu denetim nasıl çalışır",
+    "explainBody": "Herkese açık {platform} kataloğunuzu taradık ve her ürünü dört eksende — katalog bütünlüğü, metin kalitesi, görsel kalite ve etiketleme — kurallarla, yaklaşık bir dakikada puanladık. Bu puan için yapay zekâ veya hesap gerekmez. Bu sorunları gidermek için başlıkları, açıklamaları, etiketleri ve fotoğrafları yeniden yazan yapay zekâ, ücretsiz bir kayıt kadar uzakta.",
+    "productsTitle": "Optimize edilecek ürünler",
+    "productsHint": "En düşük puanlı ürünler ve her birinde bulunan tam sorunlar. Ücretsiz bir hesapla yapay zekâ bunları otomatik düzeltir.",
+    "viewProduct": "Görüntüle",
+    "moreProducts": "+{count} ürün daha puanlandı — ücretsiz hesapla ürün ürün tüm dökümü görün"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix için",

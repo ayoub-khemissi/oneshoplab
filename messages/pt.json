@@ -36,7 +36,13 @@
     "ctaPrimary": "Criar minha conta gratuita",
     "ctaSecondary": "Ver preços",
     "metaTitle": "Auditoria gratuita de páginas de produto — sem cadastro",
-    "metaDescription": "Cole o URL de uma loja Shopify, WooCommerce ou Wix e receba gratuitamente uma pontuação de auditoria por produto em cerca de um minuto. Sem conta, sem cartão."
+    "metaDescription": "Cole o URL de uma loja Shopify, WooCommerce ou Wix e receba gratuitamente uma pontuação de auditoria por produto em cerca de um minuto. Sem conta, sem cartão.",
+    "explainTitle": "Como funciona esta auditoria",
+    "explainBody": "Analisámos o seu catálogo público {platform} e pontuámos cada produto em quatro eixos — integridade do catálogo, qualidade do texto, qualidade visual e etiquetagem — por regras, em cerca de um minuto. Sem IA nem conta para esta pontuação. A IA que reescreve títulos, descrições, etiquetas e fotos para corrigir estes pontos está a um registo gratuito de distância.",
+    "productsTitle": "Produtos a otimizar",
+    "productsHint": "Os produtos com pior pontuação e os problemas exatos detetados em cada um. Com uma conta gratuita, a IA corrige-os automaticamente.",
+    "viewProduct": "Ver",
+    "moreProducts": "+{count} outros produtos pontuados — veja o detalhe produto a produto com uma conta gratuita"
   },
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",

@@ -36,7 +36,13 @@
     "ctaPrimary": "무료 계정 만들기",
     "ctaSecondary": "가격 보기",
     "metaTitle": "무료 제품 페이지 감사 — 가입 불필요",
-    "metaDescription": "Shopify, WooCommerce 또는 Wix 스토어 URL을 붙여넣고 약 1분 만에 제품별 감사 점수를 무료로 받아보세요. 계정 불필요, 카드 불필요."
+    "metaDescription": "Shopify, WooCommerce 또는 Wix 스토어 URL을 붙여넣고 약 1분 만에 제품별 감사 점수를 무료로 받아보세요. 계정 불필요, 카드 불필요.",
+    "explainTitle": "이 감사의 작동 방식",
+    "explainBody": "공개된 {platform} 카탈로그를 수집해 규칙 기반으로 약 1분 만에 모든 상품을 네 가지 축(카탈로그 완성도, 텍스트 품질, 시각 품질, 태깅)으로 점수화했습니다. 이 점수에는 AI도 계정도 필요 없습니다. 이러한 문제를 해결하기 위해 제목·설명·태그·상품 사진을 다시 작성하는 AI는 무료 가입만 하면 바로 사용할 수 있습니다.",
+    "productsTitle": "최적화할 상품",
+    "productsHint": "점수가 가장 낮은 상품과 각 상품에서 발견된 정확한 문제입니다. 무료 계정이면 AI가 자동으로 수정합니다.",
+    "viewProduct": "보기",
+    "moreProducts": "+{count}개 상품 추가 점수화 — 무료 계정으로 상품별 전체 상세 보기"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix용",

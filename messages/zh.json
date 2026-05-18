@@ -36,7 +36,13 @@
     "ctaPrimary": "创建我的免费账户",
     "ctaSecondary": "查看价格",
     "metaTitle": "免费产品页面审计 — 无需注册",
-    "metaDescription": "粘贴 Shopify、WooCommerce 或 Wix 商店网址，约一分钟内免费获得每个产品的审计评分。无需账户，无需银行卡。"
+    "metaDescription": "粘贴 Shopify、WooCommerce 或 Wix 商店网址，约一分钟内免费获得每个产品的审计评分。无需账户，无需银行卡。",
+    "explainTitle": "本次审计如何运作",
+    "explainBody": "我们抓取了你的公开 {platform} 商品目录，并通过规则在约一分钟内从四个维度为每个产品评分——目录完整度、文案质量、视觉质量和标签。此评分无需 AI，也无需账号。能够重写标题、描述、标签和产品图片以修复这些问题的 AI，只需免费注册即可使用。",
+    "productsTitle": "待优化产品",
+    "productsHint": "评分最低的产品及每个产品上发现的具体问题。注册免费账号后，AI 会自动修复它们。",
+    "viewProduct": "查看",
+    "moreProducts": "另有 +{count} 个已评分产品——免费注册账号查看逐个产品的完整明细"
   },
   "Home": {
     "eyebrow": "适用于 Shopify · WooCommerce · Wix",

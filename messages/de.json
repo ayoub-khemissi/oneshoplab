@@ -36,7 +36,13 @@
     "ctaPrimary": "Kostenloses Konto erstellen",
     "ctaSecondary": "Preise ansehen",
     "metaTitle": "Kostenloses Produktseiten-Audit — ohne Anmeldung",
-    "metaDescription": "Füge die URL eines Shopify-, WooCommerce- oder Wix-Shops ein und erhalte in etwa einer Minute kostenlos eine Audit-Bewertung pro Produkt. Ohne Konto, ohne Karte."
+    "metaDescription": "Füge die URL eines Shopify-, WooCommerce- oder Wix-Shops ein und erhalte in etwa einer Minute kostenlos eine Audit-Bewertung pro Produkt. Ohne Konto, ohne Karte.",
+    "explainTitle": "So funktioniert dieser Audit",
+    "explainBody": "Wir haben deinen öffentlichen {platform}-Katalog gescannt und jedes Produkt anhand von Regeln auf vier Achsen bewertet – Katalogvollständigkeit, Textqualität, visuelle Qualität und Tagging – in etwa einer Minute. Keine KI und kein Konto für diese Bewertung nötig. Die KI, die Titel, Beschreibungen, Tags und Produktfotos umschreibt, um diese Punkte zu beheben, ist nur eine kostenlose Anmeldung entfernt.",
+    "productsTitle": "Zu optimierende Produkte",
+    "productsHint": "Die am schlechtesten bewerteten Produkte und die genau gefundenen Probleme. Mit einem kostenlosen Konto behebt die KI sie automatisch.",
+    "viewProduct": "Ansehen",
+    "moreProducts": "+{count} weitere bewertete Produkte – sieh dir die vollständige Aufschlüsselung pro Produkt mit einem kostenlosen Konto an"
   },
   "Home": {
     "eyebrow": "Für Shopify · WooCommerce · Wix",

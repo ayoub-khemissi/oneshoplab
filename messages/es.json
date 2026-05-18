@@ -36,7 +36,13 @@
     "ctaPrimary": "Crear mi cuenta gratuita",
     "ctaSecondary": "Ver precios",
     "metaTitle": "Auditoría gratuita de fichas de producto — sin registro",
-    "metaDescription": "Pega la URL de una tienda Shopify, WooCommerce o Wix y obtén una puntuación de auditoría por producto gratis en aproximadamente un minuto. Sin cuenta, sin tarjeta."
+    "metaDescription": "Pega la URL de una tienda Shopify, WooCommerce o Wix y obtén una puntuación de auditoría por producto gratis en aproximadamente un minuto. Sin cuenta, sin tarjeta.",
+    "explainTitle": "Cómo funciona esta auditoría",
+    "explainBody": "Analizamos tu catálogo público de {platform} y puntuamos cada producto en cuatro ejes —integridad del catálogo, calidad del texto, calidad visual y etiquetado— mediante reglas, en aproximadamente un minuto. Sin IA ni cuenta para esta puntuación. La IA que reescribe títulos, descripciones, etiquetas y fotos para corregir estos puntos está a un registro gratuito de distancia.",
+    "productsTitle": "Productos para optimizar",
+    "productsHint": "Los productos con peor puntuación y los problemas exactos detectados en cada uno. Con una cuenta gratuita, la IA los corrige automáticamente.",
+    "viewProduct": "Ver",
+    "moreProducts": "+{count} productos más puntuados: consulta el desglose por producto con una cuenta gratuita"
   },
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",

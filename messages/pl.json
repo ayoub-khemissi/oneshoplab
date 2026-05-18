@@ -36,7 +36,13 @@
     "ctaPrimary": "Załóż bezpłatne konto",
     "ctaSecondary": "Zobacz cennik",
     "metaTitle": "Bezpłatny audyt kart produktów — bez rejestracji",
-    "metaDescription": "Wklej adres URL sklepu Shopify, WooCommerce lub Wix i otrzymaj bezpłatną ocenę audytu każdego produktu w około minutę. Bez konta, bez karty."
+    "metaDescription": "Wklej adres URL sklepu Shopify, WooCommerce lub Wix i otrzymaj bezpłatną ocenę audytu każdego produktu w około minutę. Bez konta, bez karty.",
+    "explainTitle": "Jak działa ten audyt",
+    "explainBody": "Przeskanowaliśmy Twój publiczny katalog {platform} i oceniliśmy każdy produkt na czterech osiach — kompletność katalogu, jakość tekstu, jakość wizualna i tagowanie — za pomocą reguł, w około minutę. Do tej oceny nie potrzeba AI ani konta. AI, które przepisze tytuły, opisy, tagi i zdjęcia, by naprawić te problemy, jest o jedną darmową rejestrację dalej.",
+    "productsTitle": "Produkty do optymalizacji",
+    "productsHint": "Produkty z najniższym wynikiem i dokładne wykryte problemy dla każdego. Z darmowym kontem AI naprawi je automatycznie.",
+    "viewProduct": "Zobacz",
+    "moreProducts": "+{count} kolejnych ocenionych produktów — zobacz pełny rozkład produkt po produkcie z darmowym kontem"
   },
   "Home": {
     "eyebrow": "Dla Shopify · WooCommerce · Wix",

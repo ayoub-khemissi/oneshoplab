@@ -36,7 +36,13 @@
     "ctaPrimary": "Créer mon compte gratuit",
     "ctaSecondary": "Voir les tarifs",
     "metaTitle": "Audit gratuit de fiches produits — sans inscription",
-    "metaDescription": "Collez l'URL d'une boutique Shopify, WooCommerce ou Wix et obtenez un score d'audit par produit gratuitement en environ une minute. Sans compte, sans carte."
+    "metaDescription": "Collez l'URL d'une boutique Shopify, WooCommerce ou Wix et obtenez un score d'audit par produit gratuitement en environ une minute. Sans compte, sans carte.",
+    "explainTitle": "Comment fonctionne cet audit",
+    "explainBody": "Nous avons analysé votre catalogue {platform} public et noté chaque produit sur quatre axes — complétude du catalogue, qualité des textes, qualité visuelle et tagging — via des règles, en une minute environ. Aucune IA ni compte requis pour ce score. L'IA qui réécrit titres, descriptions, tags et photos pour corriger ces points est à une inscription gratuite près.",
+    "productsTitle": "Produits à optimiser",
+    "productsHint": "Les produits les moins bien notés et les problèmes exacts détectés sur chacun. Avec un compte gratuit, l'IA les corrige automatiquement.",
+    "viewProduct": "Voir",
+    "moreProducts": "+{count} autres produits notés — accédez au détail produit par produit avec un compte gratuit"
   },
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",

@@ -36,7 +36,13 @@
     "ctaPrimary": "Create my free account",
     "ctaSecondary": "See pricing",
     "metaTitle": "Free product page audit — no signup",
-    "metaDescription": "Paste a Shopify, WooCommerce or Wix store URL and get a free per-product audit score in about a minute. No account, no card."
+    "metaDescription": "Paste a Shopify, WooCommerce or Wix store URL and get a free per-product audit score in about a minute. No account, no card.",
+    "explainTitle": "How this audit works",
+    "explainBody": "We scraped your public {platform} catalog and scored every product on four axes — catalog completeness, copy quality, visual quality and tagging — using rule-based checks, in about a minute. No AI and no account needed for this score. The AI that rewrites titles, descriptions, tags and product photos to fix these issues is one free signup away.",
+    "productsTitle": "Products to optimize",
+    "productsHint": "The lowest-scoring products and the exact issues found on each. With a free account, AI fixes them automatically.",
+    "viewProduct": "View",
+    "moreProducts": "+{count} more products scored — see the full per-product breakdown with a free account"
   },
   "Home": {
     "eyebrow": "For Shopify · WooCommerce · Wix",

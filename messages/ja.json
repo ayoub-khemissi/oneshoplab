@@ -36,7 +36,13 @@
     "ctaPrimary": "無料アカウントを作成",
     "ctaSecondary": "料金を見る",
     "metaTitle": "無料の商品ページ監査 — 登録不要",
-    "metaDescription": "Shopify・WooCommerce・WixのストアURLを貼り付けるだけで、約1分で商品ごとの監査スコアを無料で取得。アカウント不要、カード不要。"
+    "metaDescription": "Shopify・WooCommerce・WixのストアURLを貼り付けるだけで、約1分で商品ごとの監査スコアを無料で取得。アカウント不要、カード不要。",
+    "explainTitle": "この監査の仕組み",
+    "explainBody": "公開された {platform} カタログを取得し、ルールベースで各商品を4つの軸（カタログの充実度、テキスト品質、ビジュアル品質、タグ付け）で約1分でスコア化しました。このスコアにAIもアカウントも不要です。これらの問題を修正するためにタイトル・説明・タグ・商品画像を書き換えるAIは、無料登録ですぐに使えます。",
+    "productsTitle": "最適化すべき商品",
+    "productsHint": "スコアが最も低い商品と、それぞれで見つかった具体的な問題です。無料アカウントなら、AIが自動で修正します。",
+    "viewProduct": "表示",
+    "moreProducts": "他にも +{count} 件の商品をスコア化済み — 無料アカウントで商品ごとの詳細をすべて確認"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix 向け",
