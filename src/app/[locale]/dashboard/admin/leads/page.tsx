@@ -18,6 +18,7 @@ import {
   type Platform
 } from '@/lib/db/schema';
 import { deleteLeadAction } from '@/lib/leads/actions';
+import { formatDate } from '@/lib/format-date';
 
 export const dynamic = 'force-dynamic';
 
@@ -190,7 +191,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                         />
                       </a>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">
-                        {new Date(l.discoveredAt).toLocaleDateString()}
+                        {formatDate(l.discoveredAt)}
                         {l.discoveredVia ? ` · ${l.discoveredVia}` : ''}
                       </div>
                     </Td>

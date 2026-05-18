@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { getPost, postLanguageAlternates } from '@/lib/blog/posts';
 import { renderMarkdown } from '@/lib/blog/render';
+import { formatDate } from '@/lib/format-date';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
@@ -67,7 +68,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]"
         >
           {t('publishedOn', {
-            date: new Date(post.date).toLocaleDateString(locale)
+            date: formatDate(post.date)
           })}
         </time>
         <h1 className="text-3xl md:text-[2.5rem] font-bold tracking-tight leading-[1.12]">

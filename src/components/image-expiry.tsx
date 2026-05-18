@@ -1,8 +1,9 @@
 'use client';
 
 import { CalendarX, Clock } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { formatDate } from '@/lib/format-date';
 
 interface ImageExpiryProps {
   /** When the source generation was recorded. */
@@ -37,7 +38,6 @@ export function ImageExpiry({
   className
 }: ImageExpiryProps) {
   const t = useTranslations('ImageExpiry');
-  const locale = useLocale();
 
   // The "days left" / expired branch depends on Date.now(), which is
   // never identical between the SSR render and client hydration →
@@ -66,7 +66,7 @@ export function ImageExpiry({
         className={`inline-flex items-center gap-1 text-[10px] text-[var(--muted)] ${className ?? ''}`}
       >
         <CalendarX className="size-3" aria-hidden />
-        <span>{t('expiredOn', { date: expiryDate.toLocaleDateString(locale) })}</span>
+        <span>{t('expiredOn', { date: formatDate(expiryDate) })}</span>
       </span>
     );
   }
@@ -75,7 +75,7 @@ export function ImageExpiry({
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] ${tone} ${className ?? ''}`}
-      title={t('tooltip', { date: expiresAt.toLocaleDateString(locale) })}
+      title={t('tooltip', { date: formatDate(expiresAt) })}
     >
       <Clock className="size-3" aria-hidden />
       <span>{t('inDays', { days: daysLeft })}</span>

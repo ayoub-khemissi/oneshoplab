@@ -19,6 +19,7 @@ import { getCreditBuckets } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';
 import { createPortalSessionAction } from '@/lib/stripe-actions';
+import { formatDate } from '@/lib/format-date';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,11 +60,7 @@ export default async function SubscriptionPage() {
   const statusLabel = t(statusInfo.key);
 
   const periodEnd = sub?.currentPeriodEnd
-    ? new Date(sub.currentPeriodEnd).toLocaleDateString(locale, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
+    ? formatDate(sub.currentPeriodEnd)
     : null;
 
   const cycleLabel =

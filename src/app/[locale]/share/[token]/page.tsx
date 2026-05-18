@@ -17,6 +17,7 @@ import {
   type SharedProduct
 } from '@/lib/share/queries';
 import { translateIssueText } from '@/lib/share/issue-text';
+import { formatDate } from '@/lib/format-date';
 
 export const dynamic = 'force-dynamic';
 
@@ -193,7 +194,7 @@ export default async function SharePage({ params }: PageProps) {
       </Card>
 
       <p className="text-xs text-[var(--muted)] text-center">
-        {t('footerNote', { date: data.generatedAt.toLocaleDateString(locale) })}
+        {t('footerNote', { date: formatDate(data.generatedAt) })}
       </p>
     </main>
   );

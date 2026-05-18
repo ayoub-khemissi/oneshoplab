@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 import { listPosts } from '@/lib/blog/posts';
+import { formatDate } from '@/lib/format-date';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
@@ -81,7 +82,7 @@ export default async function BlogIndexPage({
                   dateTime={post.date}
                   className="text-xs font-mono uppercase tracking-wider text-[var(--muted)]"
                 >
-                  {new Date(post.date).toLocaleDateString(locale)}
+                  {formatDate(post.date)}
                 </time>
                 <h2 className="text-xl font-bold tracking-tight mt-1.5 group-hover:text-[var(--accent)] transition-colors">
                   {tr.title}

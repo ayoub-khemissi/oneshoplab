@@ -19,6 +19,7 @@ import {
   setShareLinkHomeOrderAction,
   setShareLinkShowOnHomeAction
 } from '@/lib/share/actions';
+import { formatDate } from '@/lib/format-date';
 
 interface ShareLinkRow {
   id: string;
@@ -161,7 +162,7 @@ export function ShareLinksCard({
                 </a>
                 <span className="text-[10px] text-[var(--muted)]">
                   {t('createdOn', {
-                    date: new Date(link.createdAt).toLocaleDateString()
+                    date: formatDate(link.createdAt)
                   })}
                   {' · '}
                   {t('productCount', { count: link.productSourceIds.length })}

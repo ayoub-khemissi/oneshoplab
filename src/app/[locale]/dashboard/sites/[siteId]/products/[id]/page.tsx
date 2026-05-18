@@ -48,6 +48,7 @@ import { auth } from '@/lib/auth';
 import { touchProjectLastView } from '@/lib/auth-actions';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
+import { formatDate } from '@/lib/format-date';
 import { audits, products, projects } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
@@ -804,7 +805,7 @@ function PastGenerationsSection({
                     </span>
                   ) : null}
                   <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0">
-                    {h.createdAt.toLocaleDateString()}
+                    {formatDate(h.createdAt)}
                   </span>
                   <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
                 </Accordion.Trigger>
