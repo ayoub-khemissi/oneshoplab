@@ -833,7 +833,12 @@
     "configHint": "Guardado por site. O bulk gera apenas os elementos marcados — e só para os produtos que não os têm.",
     "imageTypesLabel": "Tipos de imagem (uma imagem por tipo)",
     "errorNoFields": "Seleciona pelo menos um elemento para gerar.",
-    "prefsSaving": "A guardar…"
+    "prefsSaving": "A guardar…",
+    "resetToAccountDefault": "Repor para o padrão da conta",
+    "configSiteHint": "Substitui o padrão da conta apenas para este site. O bulk gera apenas os elementos marcados, e só para os produtos que não os têm.",
+    "configAccountTitle": "Geração em massa padrão",
+    "configAccountHint": "Aplica-se a cada site sem configuração própria. Cada site pode substituí-la nas suas definições.",
+    "resetToLegacyDefault": "Repor (tudo ativado)"
   },
   "Share": {
     "title": "Partilha com prospects",

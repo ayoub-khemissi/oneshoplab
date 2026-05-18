@@ -833,7 +833,12 @@
     "configHint": "Site başına kaydedilir. Toplu üretim yalnızca işaretli ögeleri üretir — ve yalnızca bunlara sahip olmayan ürünler için.",
     "imageTypesLabel": "Görsel türleri (tür başına bir görsel)",
     "errorNoFields": "Üretmek için en az bir öge seç.",
-    "prefsSaving": "Kaydediliyor…"
+    "prefsSaving": "Kaydediliyor…",
+    "resetToAccountDefault": "Hesap varsayılanına sıfırla",
+    "configSiteHint": "Hesap varsayılanını yalnızca bu site için geçersiz kılar. Toplu üretim yalnızca işaretli ögeleri ve yalnızca bunlara sahip olmayan ürünler için üretir.",
+    "configAccountTitle": "Varsayılan toplu üretim",
+    "configAccountHint": "Kendi ayarı olmayan her siteye uygulanır. Her site bunu kendi ayarlarında geçersiz kılabilir.",
+    "resetToLegacyDefault": "Sıfırla (hepsi açık)"
   },
   "Share": {
     "title": "Potansiyel müşteriyle paylaş",

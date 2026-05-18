@@ -833,7 +833,12 @@
     "configHint": "Zapisywane dla każdej witryny. Bulk generuje tylko zaznaczone elementy — i tylko dla produktów, którym ich brakuje.",
     "imageTypesLabel": "Typy obrazów (jeden obraz na typ)",
     "errorNoFields": "Zaznacz co najmniej jeden element do wygenerowania.",
-    "prefsSaving": "Zapisywanie…"
+    "prefsSaving": "Zapisywanie…",
+    "resetToAccountDefault": "Przywróć domyślne konta",
+    "configSiteHint": "Nadpisuje domyślne konta tylko dla tej witryny. Bulk generuje tylko zaznaczone elementy i tylko dla produktów, którym ich brakuje.",
+    "configAccountTitle": "Domyślna generacja masowa",
+    "configAccountHint": "Dotyczy każdej witryny bez własnego ustawienia. Każda witryna może je nadpisać w swoich ustawieniach.",
+    "resetToLegacyDefault": "Przywróć (wszystko włączone)"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

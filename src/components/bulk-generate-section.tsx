@@ -1,6 +1,6 @@
 'use client';
 
-import { Checkbox, Spinner } from '@heroui/react';
+import { Spinner } from '@heroui/react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -15,6 +15,13 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
+import {
+  BulkPrefsEditor,
+  canonicalizePrefs,
+  noFieldsSelected as prefsHasNoFields,
+  prefsKey,
+  type BulkPrefs
+} from '@/components/bulk-prefs-editor';
 
 // ---------------------------------------------------------------------
 // Shared types (mirror the server module)
@@ -63,38 +70,6 @@ interface BulkCandidate {
   pendingCost: number;
 }
 
-type ImageAngle = 'lifestyle' | 'studio' | 'inuse';
-const ALL_ANGLES: ImageAngle[] = ['lifestyle', 'studio', 'inuse'];
-
-interface BulkPrefs {
-  fields: Record<FieldKey, boolean>;
-  imageAngles: ImageAngle[];
-}
-
-/**
- * Client mirror of the server's resolveBulkPrefs: stable field order,
- * angles filtered to the canonical ALL_ANGLES order, and images-on with
- * zero angles → all 3. Keeping the client shape identical to what the
- * server persists means the saved-state key is stable — no echo-driven
- * re-render loop, no last-write race.
- */
-function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
-  const fields: Record<FieldKey, boolean> = {
-    title: p.fields.title !== false,
-    description: p.fields.description !== false,
-    tags: p.fields.tags !== false,
-    images: p.fields.images !== false
-  };
-  let imageAngles = ALL_ANGLES.filter((a) => p.imageAngles.includes(a));
-  if (fields.images && imageAngles.length === 0) {
-    imageAngles = [...ALL_ANGLES];
-  }
-  return { fields, imageAngles };
-}
-
-const prefsKey = (p: BulkPrefs): string =>
-  JSON.stringify({ fields: p.fields, imageAngles: p.imageAngles });
-
 interface BulkGenerateSectionProps {
   siteId: string;
   plan: string;
@@ -110,9 +85,12 @@ interface BulkGenerateSectionProps {
   initialDetail: BulkJobStatusForUi | null;
   creditsBalance: number;
   productTitleById: Record<string, string>;
-  /** Site bulk prefs (resolved server-side) — seeds the config
-   *  checkboxes with no first-paint flash. */
+  /** Effective bulk prefs (site → account → legacy, resolved
+   *  server-side) — seeds the modal config with no first-paint flash. */
   initialPrefs: BulkPrefs;
+  /** Whether the site has its OWN prefs (vs. inheriting the account
+   *  default) — drives the "reset to account default" affordance. */
+  initialSiteOverride: boolean;
 }
 
 export function BulkGenerateSection({
@@ -125,12 +103,10 @@ export function BulkGenerateSection({
   initialDetail,
   creditsBalance,
   productTitleById,
-  initialPrefs
+  initialPrefs,
+  initialSiteOverride
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
-  // Image-angle labels are already translated under Report.aiAngle in
-  // all 13 locales — reuse them rather than duplicating strings.
-  const tAngle = useTranslations('Report');
   // Bulk catalog generation is unlocked from the Pro plan upwards. Free
   // and Starter see the upgrade hint instead of the CTA.
   const canBulk = plan === 'pro' || plan === 'scale';
@@ -155,6 +131,9 @@ export function BulkGenerateSection({
   // any post-save re-trigger loop / clobber.
   const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
   const [savingPrefs, setSavingPrefs] = useState(false);
+  // Whether the site has its OWN prefs vs. inheriting the account
+  // default. Drives the "reset to account default" link.
+  const [siteOverride, setSiteOverride] = useState(initialSiteOverride);
 
   const refresh = useCallback(async () => {
     try {
@@ -209,6 +188,8 @@ export function BulkGenerateSection({
         });
         if (res.ok) {
           lastSavedKey.current = key;
+          // Saving site-specific prefs creates a site override.
+          setSiteOverride(true);
           await refresh();
         }
       } catch {
@@ -219,6 +200,35 @@ export function BulkGenerateSection({
     }, 600);
     return () => window.clearTimeout(id);
   }, [prefs, siteId, refresh]);
+
+  // Drop the site override → inherit the account default again.
+  const resetToAccountDefault = useCallback(async () => {
+    setSavingPrefs(true);
+    try {
+      const res = await fetch('/api/sites/bulk-generate', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ siteId, reset: true })
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          prefs?: BulkPrefs;
+          siteOverride?: boolean;
+        };
+        if (data.prefs) {
+          const next = canonicalizePrefs(data.prefs);
+          lastSavedKey.current = prefsKey(next);
+          setPrefs(next);
+        }
+        setSiteOverride(data.siteOverride ?? false);
+        await refresh();
+      }
+    } catch {
+      /* no-op; user can retry */
+    } finally {
+      setSavingPrefs(false);
+    }
+  }, [siteId, refresh]);
 
   useEffect(() => {
     if (!active || active.status === 'completed' || active.status === 'failed') {
@@ -455,6 +465,12 @@ export function BulkGenerateSection({
             balance={balance}
             submitting={submitting}
             errorMsg={errorMsg}
+            prefs={prefs}
+            onChangePrefs={updatePrefs}
+            savingPrefs={savingPrefs}
+            siteOverride={siteOverride}
+            onResetPrefs={resetToAccountDefault}
+            noFields={prefsHasNoFields(prefs)}
             onCancel={() => setModalOpen(false)}
             onConfirm={(ids) => startBulk(ids)}
           />
@@ -468,17 +484,7 @@ export function BulkGenerateSection({
   // ---------------------------------------------------------------------
   const noProducts = productCount === 0;
   const noCandidates = candidates.length === 0;
-  const noFieldsSelected =
-    !prefs.fields.title &&
-    !prefs.fields.description &&
-    !prefs.fields.tags &&
-    !prefs.fields.images;
-  const fieldKeys: Array<{ key: FieldKey; label: string }> = [
-    { key: 'title', label: t('fieldTitle') },
-    { key: 'description', label: t('fieldDescription') },
-    { key: 'tags', label: t('fieldTags') },
-    { key: 'images', label: t('fieldImages') }
-  ];
+  const noFields = prefsHasNoFields(prefs);
 
   return (
     <>
@@ -486,121 +492,44 @@ export function BulkGenerateSection({
           CTA below) so the action isn't squeezed against the title on
           narrow screens. Above sm: switches back to the original
           side-by-side layout. */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
-            <div className="flex flex-col gap-1 min-w-0">
-              <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
-              <p className="text-xs text-[var(--muted)] leading-relaxed">
-                {!canBulk
-                  ? t('upgradeHint')
-                  : noCandidates
-                    ? t('subtitleNoCandidates')
-                    : t('subtitle', { count: candidates.length })}
-              </p>
-            </div>
-          </div>
-          {canBulk ? (
-            <button
-              type="button"
-              disabled={noProducts || noCandidates || noFieldsSelected}
-              onClick={() => setModalOpen(true)}
-              className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-              title={
-                noFieldsSelected
-                  ? t('errorNoFields')
-                  : noProducts
-                    ? t('errorNoProducts')
-                    : noCandidates
-                      ? t('subtitleNoCandidates')
-                      : undefined
-              }
-            >
-              {t('cta')}
-            </button>
-          ) : (
-            <Link
-              href="/pricing"
-              className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
-            >
-              {t('upgradeCta')}
-            </Link>
-          )}
-        </div>
-
-        {/* Per-site generation config — what the bulk produces. Saved
-            automatically (debounced) and reflected in the cost above. */}
-        {canBulk ? (
-          <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/20">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-                {t('configTitle')}
-              </span>
-              {savingPrefs ? (
-                <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
-                  <Spinner className="size-3" /> {t('prefsSaving')}
-                </span>
-              ) : null}
-            </div>
+      <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
+          <div className="flex flex-col gap-1 min-w-0">
+            <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
             <p className="text-xs text-[var(--muted)] leading-relaxed">
-              {t('configHint')}
+              {!canBulk
+                ? t('upgradeHint')
+                : noCandidates
+                  ? t('subtitleNoCandidates')
+                  : t('subtitle', { count: candidates.length })}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {fieldKeys.map(({ key, label }) => (
-                <Checkbox
-                  key={key}
-                  isSelected={prefs.fields[key]}
-                  onChange={(isSelected: boolean) =>
-                    updatePrefs({
-                      ...prefs,
-                      fields: { ...prefs.fields, [key]: isSelected }
-                    })
-                  }
-                  className="text-sm"
-                >
-                  {label}
-                </Checkbox>
-              ))}
-            </div>
-            {prefs.fields.images ? (
-              <div className="flex flex-col gap-2 pl-1 border-l-2 border-[var(--border)] ml-1">
-                <span className="text-[11px] font-medium text-[var(--muted)] pl-2">
-                  {t('imageTypesLabel')}
-                </span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-2">
-                  {ALL_ANGLES.map((angle) => {
-                    const checked = prefs.imageAngles.includes(angle);
-                    // Don't let the last angle be unticked while Images
-                    // is on (server would re-expand to all 3 anyway).
-                    const isLast = checked && prefs.imageAngles.length === 1;
-                    return (
-                      <Checkbox
-                        key={angle}
-                        isSelected={checked}
-                        isDisabled={isLast}
-                        onChange={(isSelected: boolean) =>
-                          updatePrefs({
-                            ...prefs,
-                            imageAngles: isSelected
-                              ? [...prefs.imageAngles, angle]
-                              : prefs.imageAngles.filter((a) => a !== angle)
-                          })
-                        }
-                        className="text-sm"
-                      >
-                        {tAngle(`aiAngle.${angle}`)}
-                      </Checkbox>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null}
-            {noFieldsSelected ? (
-              <p className="text-xs text-[var(--danger)]">{t('errorNoFields')}</p>
-            ) : null}
           </div>
-        ) : null}
+        </div>
+        {canBulk ? (
+          <button
+            type="button"
+            disabled={noProducts || noCandidates}
+            onClick={() => setModalOpen(true)}
+            className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            title={
+              noProducts
+                ? t('errorNoProducts')
+                : noCandidates
+                  ? t('subtitleNoCandidates')
+                  : undefined
+            }
+          >
+            {t('cta')}
+          </button>
+        ) : (
+          <Link
+            href="/pricing"
+            className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
+          >
+            {t('upgradeCta')}
+          </Link>
+        )}
       </div>
 
       {modalOpen ? (
@@ -609,6 +538,12 @@ export function BulkGenerateSection({
           balance={balance}
           submitting={submitting}
           errorMsg={errorMsg}
+          prefs={prefs}
+          onChangePrefs={updatePrefs}
+          savingPrefs={savingPrefs}
+          siteOverride={siteOverride}
+          onResetPrefs={resetToAccountDefault}
+          noFields={noFields}
           onCancel={() => setModalOpen(false)}
           onConfirm={(ids) => startBulk(ids)}
         />
@@ -639,6 +574,12 @@ function SelectionModal({
   balance,
   submitting,
   errorMsg,
+  prefs,
+  onChangePrefs,
+  savingPrefs,
+  siteOverride,
+  onResetPrefs,
+  noFields,
   onCancel,
   onConfirm
 }: {
@@ -646,6 +587,12 @@ function SelectionModal({
   balance: number;
   submitting: boolean;
   errorMsg: string | null;
+  prefs: BulkPrefs;
+  onChangePrefs: (next: BulkPrefs) => void;
+  savingPrefs: boolean;
+  siteOverride: boolean;
+  onResetPrefs: () => void;
+  noFields: boolean;
   onCancel: () => void;
   onConfirm: (productIds: string[]) => Promise<boolean>;
 }) {
@@ -714,7 +661,7 @@ function SelectionModal({
   }
 
   async function handleConfirm() {
-    if (selected.size === 0 || overBudget) return;
+    if (selected.size === 0 || overBudget || noFields) return;
     await onConfirm(Array.from(selected));
   }
 
@@ -751,6 +698,29 @@ function SelectionModal({
             >
               <X className="size-4" />
             </button>
+          </div>
+
+          {/* What the bulk generates — per-site config, auto-saved. */}
+          <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+                {t('configTitle')}
+              </span>
+              {savingPrefs ? (
+                <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--muted)]">
+                  <Spinner className="size-3" /> {t('prefsSaving')}
+                </span>
+              ) : siteOverride ? (
+                <button
+                  type="button"
+                  onClick={onResetPrefs}
+                  className="text-[10px] text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2"
+                >
+                  {t('resetToAccountDefault')}
+                </button>
+              ) : null}
+            </div>
+            <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
           </div>
 
           {/* Virtual budget bar */}
@@ -859,7 +829,10 @@ function SelectionModal({
             <button
               type="button"
               onClick={handleConfirm}
-              disabled={submitting || selected.size === 0 || overBudget}
+              disabled={
+                submitting || selected.size === 0 || overBudget || noFields
+              }
+              title={noFields ? t('errorNoFields') : undefined}
               className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
             >
               {submitting ? <Spinner size="sm" /> : null}

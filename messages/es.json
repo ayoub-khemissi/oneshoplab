@@ -833,7 +833,12 @@
     "configHint": "Guardado por sitio. El bulk solo genera los elementos marcados, y solo para los productos que los necesitan.",
     "imageTypesLabel": "Tipos de imagen (una imagen por tipo)",
     "errorNoFields": "Selecciona al menos un elemento para generar.",
-    "prefsSaving": "Guardando…"
+    "prefsSaving": "Guardando…",
+    "resetToAccountDefault": "Restablecer al valor por defecto de la cuenta",
+    "configSiteHint": "Anula el valor por defecto de la cuenta solo para este sitio. El bulk genera solo los elementos marcados, y solo para los productos que los necesitan.",
+    "configAccountTitle": "Generación masiva por defecto",
+    "configAccountHint": "Se aplica a cada sitio que no tenga su propia configuración. Cada sitio puede anularla en sus ajustes.",
+    "resetToLegacyDefault": "Restablecer (todo activado)"
   },
   "Share": {
     "title": "Compartir con prospectos",

@@ -20,6 +20,7 @@ import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { ServerPagination } from '@/components/server-pagination';
 import { ShareLinksCard } from '@/components/share-links-card';
 import { SiteFavicon } from '@/components/site-favicon';
+import { SiteBulkPrefsEditor } from '@/components/site-bulk-prefs-editor';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
 import { isAdminEmail } from '@/lib/admin';
@@ -29,6 +30,7 @@ import {
 } from '@/lib/share/queries';
 import {
   getActiveBulkJob,
+  getEffectiveBulkPrefs,
   getLatestBulkJobDetail,
   listBulkCandidates,
   listBulkCandidatesWithStatus,
@@ -655,6 +657,15 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     (sum, c) => sum + c.pendingCost,
     0
   );
+  // Effective bulk prefs (site → account → legacy) for the products
+  // tab modal AND the settings-tab editor. Cheap single join; only
+  // loaded for plans that can bulk + the tabs that surface it.
+  const needsBulkPrefs =
+    (userPlan === 'pro' || userPlan === 'scale') &&
+    (activeTab === 'products' || activeTab === 'settings');
+  const bulkEffective = needsBulkPrefs
+    ? await getEffectiveBulkPrefs(project.id)
+    : null;
 
   // Admin-only: pre-load share links + candidate products for the
   // sales-prospection card on Settings. Gated by tab too because
@@ -728,7 +739,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             initialDetail={bulkDetail}
             creditsBalance={session.user.creditsBalance ?? 0}
             productTitleById={productTitleById}
-            initialPrefs={resolveBulkPrefs(project.bulkPrefs ?? null)}
+            initialPrefs={bulkEffective?.prefs ?? resolveBulkPrefs(null)}
+            initialSiteOverride={bulkEffective?.siteOverride ?? false}
           />
           <PaginatedProductsList
             siteId={siteId}
@@ -761,6 +773,12 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           <SiteInstructionsEditor
             projectId={project.id}
             initialValue={project.customInstructions ?? ''}
+          />
+          <SiteBulkPrefsEditor
+            siteId={project.id}
+            canBulk={userPlan === 'pro' || userPlan === 'scale'}
+            initialPrefs={bulkEffective?.prefs ?? resolveBulkPrefs(null)}
+            initialSiteOverride={bulkEffective?.siteOverride ?? false}
           />
           {isAdmin ? (
             <ShareLinksCard

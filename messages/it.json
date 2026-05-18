@@ -833,7 +833,12 @@
     "configHint": "Salvato per sito. Il bulk genera solo gli elementi selezionati, e solo per i prodotti che ne sono privi.",
     "imageTypesLabel": "Tipi di immagine (un'immagine per tipo)",
     "errorNoFields": "Seleziona almeno un elemento da generare.",
-    "prefsSaving": "Salvataggio…"
+    "prefsSaving": "Salvataggio…",
+    "resetToAccountDefault": "Ripristina il predefinito dell'account",
+    "configSiteHint": "Sovrascrive il predefinito dell'account solo per questo sito. Il bulk genera solo gli elementi selezionati, e solo per i prodotti che ne sono privi.",
+    "configAccountTitle": "Generazione di massa predefinita",
+    "configAccountHint": "Si applica a ogni sito senza una propria impostazione. Ogni sito può sovrascriverla nelle sue impostazioni.",
+    "resetToLegacyDefault": "Ripristina (tutto attivo)"
   },
   "Share": {
     "title": "Condividi con i prospect",

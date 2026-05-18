@@ -22,6 +22,7 @@ import {
   jobs,
   projects,
   products,
+  users,
   type JobKind,
   type JobStatus
 } from '@/lib/db/schema';
@@ -138,6 +139,46 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
 /** Fields the bulk will actually touch given prefs (order preserved). */
 function effectiveFields(prefs: ResolvedBulkPrefs): BulkFieldKey[] {
   return ALL_FIELDS.filter((f) => prefs.fields[f]);
+}
+
+/**
+ * Resolution chain: a site's own prefs win; otherwise the owner's
+ * account-wide default; otherwise the legacy "everything on" default.
+ * `null` means "not set" at that level (inherit downward).
+ */
+export function pickBulkPrefs(
+  siteRaw: unknown,
+  userDefaultRaw: unknown
+): ResolvedBulkPrefs {
+  if (siteRaw != null) return resolveBulkPrefs(siteRaw);
+  if (userDefaultRaw != null) return resolveBulkPrefs(userDefaultRaw);
+  return resolveBulkPrefs(null);
+}
+
+/**
+ * Single source of truth for "what should this site's bulk produce".
+ * One join (project → owner) so callers (cost estimate, candidates,
+ * API, the dashboard SSR seed) never disagree. `siteOverride` tells the
+ * UI whether the site has its own prefs (vs. inheriting the account
+ * default) so it can offer a "reset to account default" affordance.
+ */
+export async function getEffectiveBulkPrefs(
+  projectId: string
+): Promise<{ prefs: ResolvedBulkPrefs; siteOverride: boolean }> {
+  const row = await db
+    .select({
+      sitePrefs: projects.bulkPrefs,
+      userDefault: users.defaultBulkPrefs
+    })
+    .from(projects)
+    .innerJoin(users, eq(projects.userId, users.id))
+    .where(eq(projects.id, projectId))
+    .limit(1);
+  const r = row[0];
+  return {
+    prefs: pickBulkPrefs(r?.sitePrefs ?? null, r?.userDefault ?? null),
+    siteOverride: r?.sitePrefs != null
+  };
 }
 
 interface ProductImage {
@@ -427,11 +468,7 @@ export async function listBulkCandidatesWithStatus(
   // Site bulk prefs gate which fields count as "pending" and how many
   // image angles are billed. Loaded here so every caller (API + the
   // dashboard SSR cost estimate) is automatically prefs-aware.
-  const proj = await db.query.projects.findFirst({
-    where: eq(projects.id, projectId),
-    columns: { bulkPrefs: true }
-  });
-  const prefs = resolveBulkPrefs(proj?.bulkPrefs ?? null);
+  const { prefs } = await getEffectiveBulkPrefs(projectId);
   const wanted = effectiveFields(prefs);
 
   const completed = await getCompletedFieldsByProduct(projectId);

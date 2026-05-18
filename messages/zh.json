@@ -832,7 +832,12 @@
     "configHint": "按站点保存。批量生成仅生成已勾选的元素——且仅针对缺少这些元素的产品。",
     "imageTypesLabel": "图片类型（每种类型一张图）",
     "errorNoFields": "请至少选择一个要生成的元素。",
-    "prefsSaving": "保存中…"
+    "prefsSaving": "保存中…",
+    "resetToAccountDefault": "重置为账户默认",
+    "configSiteHint": "仅为该站点覆盖账户默认设置。批量生成仅生成已勾选的元素，且仅针对缺少这些元素的产品。",
+    "configAccountTitle": "默认批量生成",
+    "configAccountHint": "适用于没有自身设置的每个站点。每个站点仍可在其设置中覆盖。",
+    "resetToLegacyDefault": "重置（全部开启）"
   },
   "Share": {
     "title": "分享给潜在客户",

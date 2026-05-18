@@ -1,7 +1,14 @@
+import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { ArrowRight } from 'lucide-react';
+import { AccountBulkPrefsForm } from '@/components/account-bulk-prefs-form';
 import { ModelPreferencesForm } from '@/components/model-preferences-form';
+import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
+import { resolveBulkPrefs } from '@/lib/bulk/site-generate';
+import { db } from '@/lib/db';
+import { users } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +17,15 @@ export default async function AccountPreferencesPage() {
   if (!session?.user) redirect('/login');
 
   const t = await getTranslations('Preferences');
+  const tb = await getTranslations('BulkGenerate');
+  const plan = (session.user.plan ?? 'free') as string;
+  const canBulk = plan === 'pro' || plan === 'scale';
+
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, session.user.id),
+    columns: { defaultBulkPrefs: true }
+  });
+  const hasDefault = userRow?.defaultBulkPrefs != null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -34,6 +50,29 @@ export default async function AccountPreferencesPage() {
           perImage: t('perImage')
         }}
       />
+
+      {canBulk ? (
+        <AccountBulkPrefsForm
+          initialPrefs={resolveBulkPrefs(userRow?.defaultBulkPrefs ?? null)}
+          initialHasDefault={hasDefault}
+        />
+      ) : (
+        <div className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-5 flex flex-col gap-2">
+          <h2 className="text-base font-semibold">
+            {tb('configAccountTitle')}
+          </h2>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">
+            {tb('upgradeHint')}
+          </p>
+          <Link
+            href="/pricing"
+            className="self-start mt-1 px-3 py-1.5 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 inline-flex items-center gap-1.5"
+          >
+            {tb('upgradeCta')}
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

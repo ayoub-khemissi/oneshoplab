@@ -78,6 +78,19 @@ export const users = mysqlTable('users', {
   preferredImageQuality: mysqlEnum('preferred_image_quality', IMAGE_QUALITY_IDS)
     .notNull()
     .default('image-1k'),
+  /** Account-wide DEFAULT bulk-generation prefs. A site with its own
+   *  projects.bulkPrefs overrides this; if both are NULL the legacy
+   *  "everything on, 3 angles" default applies. Same shape as
+   *  projects.bulkPrefs. */
+  defaultBulkPrefs: json('default_bulk_prefs').$type<{
+    fields: {
+      title: boolean;
+      description: boolean;
+      tags: boolean;
+      images: boolean;
+    };
+    imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+  } | null>(),
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()

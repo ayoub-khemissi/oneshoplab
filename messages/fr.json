@@ -833,7 +833,12 @@
     "configHint": "Sauvegardé par site. Le bulk ne génère que les éléments cochés — et seulement pour les produits qui en manquent.",
     "imageTypesLabel": "Types d'image (une image par type)",
     "errorNoFields": "Sélectionnez au moins un élément à générer.",
-    "prefsSaving": "Enregistrement…"
+    "prefsSaving": "Enregistrement…",
+    "resetToAccountDefault": "Réinitialiser au défaut du compte",
+    "configSiteHint": "Remplace le défaut du compte pour ce site uniquement. Le bulk ne génère que les éléments cochés, et seulement pour les produits qui en manquent.",
+    "configAccountTitle": "Génération de masse par défaut",
+    "configAccountHint": "S'applique à chaque site sans réglage propre. Chaque site peut toujours le surcharger dans ses paramètres.",
+    "resetToLegacyDefault": "Réinitialiser (tout activé)"
   },
   "Share": {
     "title": "Partage prospect",

@@ -833,7 +833,12 @@
     "configHint": "Pro Website gespeichert. Bulk generiert nur die angehakten Elemente – und nur für Produkte, denen sie fehlen.",
     "imageTypesLabel": "Bildtypen (ein Bild pro Typ)",
     "errorNoFields": "Wähle mindestens ein Element zum Generieren.",
-    "prefsSaving": "Speichern…"
+    "prefsSaving": "Speichern…",
+    "resetToAccountDefault": "Auf Konto-Standard zurücksetzen",
+    "configSiteHint": "Überschreibt den Konto-Standard nur für diese Website. Bulk generiert nur die angehakten Elemente, und nur für Produkte, denen sie fehlen.",
+    "configAccountTitle": "Standard-Massengenerierung",
+    "configAccountHint": "Gilt für jede Website ohne eigene Einstellung. Jede Website kann sie in ihren Einstellungen überschreiben.",
+    "resetToLegacyDefault": "Zurücksetzen (alles an)"
   },
   "Share": {
     "title": "Mit Interessenten teilen",

@@ -832,7 +832,12 @@
     "configHint": "サイトごとに保存。一括生成はチェックした項目のみ、かつ未生成の商品に対してのみ生成します。",
     "imageTypesLabel": "画像タイプ（タイプごとに1枚）",
     "errorNoFields": "生成する項目を1つ以上選択してください。",
-    "prefsSaving": "保存中…"
+    "prefsSaving": "保存中…",
+    "resetToAccountDefault": "アカウント既定に戻す",
+    "configSiteHint": "このサイトのみアカウント既定を上書きします。一括生成はチェックした項目のみ、かつ未生成の商品にのみ生成します。",
+    "configAccountTitle": "既定の一括生成",
+    "configAccountHint": "独自設定のない各サイトに適用されます。各サイトは設定で上書きできます。",
+    "resetToLegacyDefault": "リセット（すべて有効）"
   },
   "Share": {
     "title": "見込み客に共有",

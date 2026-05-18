@@ -13,6 +13,7 @@ import {
   cancelBulkJob,
   estimateBulkCostBreakdown,
   getActiveBulkJob,
+  getEffectiveBulkPrefs,
   getLatestBulkJobDetail,
   listBulkCandidatesWithStatus,
   resolveBulkPrefs,
@@ -101,9 +102,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  // Per-site generation prefs (which fields / image angles). Snapshotted
-  // into the bulk job so a running job is deterministic.
-  const prefs = resolveBulkPrefs(project.bulkPrefs ?? null);
+  // Effective prefs (site override → account default → legacy).
+  // Snapshotted into the bulk job so a running job is deterministic.
+  const { prefs } = await getEffectiveBulkPrefs(project.id);
   if (
     !prefs.fields.title &&
     !prefs.fields.description &&
@@ -254,7 +255,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const { chatModelId, imageQualityId } = resolveModels(session);
-  const prefs = resolveBulkPrefs(project.bulkPrefs ?? null);
+  const { prefs, siteOverride } = await getEffectiveBulkPrefs(project.id);
   const candidates = await listBulkCandidatesWithStatus(
     project.id,
     chatModelId,
@@ -276,23 +277,25 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     estimate: breakdown,
     candidates,
     prefs,
+    siteOverride,
     creditsBalance: session.user.creditsBalance ?? 0,
     plan: (session.user.plan ?? 'free') as string
   });
 }
 
-const PrefsSchema = z.object({
-  siteId: z.string().min(1),
-  fields: z.object({
-    title: z.boolean(),
-    description: z.boolean(),
-    tags: z.boolean(),
-    images: z.boolean()
-  }),
-  imageAngles: z
-    .array(z.enum(['lifestyle', 'studio', 'inuse']))
-    .max(3)
-});
+const PrefsSchema = z.union([
+  z.object({ siteId: z.string().min(1), reset: z.literal(true) }),
+  z.object({
+    siteId: z.string().min(1),
+    fields: z.object({
+      title: z.boolean(),
+      description: z.boolean(),
+      tags: z.boolean(),
+      images: z.boolean()
+    }),
+    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3)
+  })
+]);
 
 /**
  * Save the site's bulk-generation preferences. Owner-checked, validated.
@@ -320,25 +323,39 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
   if (!parsed.success) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
   }
-  const { siteId, fields, imageAngles } = parsed.data;
+  const data = parsed.data;
 
   const project = await db.query.projects.findFirst({
-    where: and(eq(projects.id, siteId), eq(projects.userId, session.user.id)),
+    where: and(eq(projects.id, data.siteId), eq(projects.userId, session.user.id)),
     columns: { id: true }
   });
   if (!project) {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  // resolveBulkPrefs sanitizes (e.g. images on + zero angles → all 3),
-  // so we persist the canonical shape and echo it back.
-  const resolved = resolveBulkPrefs({ fields, imageAngles });
-  await db
-    .update(projects)
-    .set({ bulkPrefs: resolved })
-    .where(eq(projects.id, project.id));
+  if ('reset' in data) {
+    // Clear the site override → the site inherits the account default.
+    await db
+      .update(projects)
+      .set({ bulkPrefs: null })
+      .where(eq(projects.id, project.id));
+  } else {
+    // resolveBulkPrefs sanitizes (e.g. images on + zero angles → all 3),
+    // so we persist the canonical shape.
+    const resolved = resolveBulkPrefs({
+      fields: data.fields,
+      imageAngles: data.imageAngles
+    });
+    await db
+      .update(projects)
+      .set({ bulkPrefs: resolved })
+      .where(eq(projects.id, project.id));
+  }
 
-  return NextResponse.json({ ok: true, prefs: resolved });
+  // Echo the now-effective prefs (post-reset this is the account
+  // default / legacy) + override state so the client re-syncs.
+  const { prefs, siteOverride } = await getEffectiveBulkPrefs(project.id);
+  return NextResponse.json({ ok: true, prefs, siteOverride });
 }
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
