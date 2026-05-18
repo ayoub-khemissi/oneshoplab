@@ -12,6 +12,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AutoRefresh } from '@/components/auto-refresh';
+import { TrackEvent } from '@/components/track-event';
 import { Link } from '@/i18n/navigation';
 import {
   axesValueTiers,
@@ -198,6 +199,11 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
     return (
       <main className="flex-1 px-4 md:px-10 py-16 max-w-2xl w-full mx-auto flex flex-col items-center gap-6 text-center">
         <AutoRefresh />
+        <TrackEvent
+          event="free_audit_started"
+          params={{ domain }}
+          onceKey={`free_audit_started-${token}`}
+        />
         <Loader2 className="size-10 text-[var(--accent)] animate-spin" aria-hidden />
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
           {t('runningTitle', { domain })}
@@ -237,6 +243,11 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
 
   return (
     <main className="flex-1 px-4 md:px-10 py-6 md:py-10 max-w-4xl w-full mx-auto flex flex-col gap-8">
+      <TrackEvent
+        event="free_audit_completed"
+        params={{ domain, score: scores?.overall ?? null }}
+        onceKey={`free_audit_completed-${token}`}
+      />
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('resultEyebrow')}</span>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere]">

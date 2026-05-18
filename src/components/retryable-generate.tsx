@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { useFieldSwapGroup, useFieldView } from '@/components/field-swap';
+import { trackEvent } from '@/lib/analytics-event';
 import {
   createContext,
   useCallback,
@@ -405,6 +406,8 @@ export function RetryableGenerateButton({
   const enabled = available && canAfford(field) && !productArchived;
 
   const launchSubmit = useCallback(() => {
+    // Activation metric — a user-initiated AI generation launch.
+    trackEvent('generate', { field });
     if (field === 'all') {
       // Flip every section to the AI view in a single shot via the
       // group context — bumps syncCount, every FieldSwap / per-field

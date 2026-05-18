@@ -111,6 +111,8 @@ async function signupAction(formData: FormData) {
   } else if (audit) {
     redirectTo = `/?audit=${encodeURIComponent(audit)}`;
   }
+  // GA4 conversion marker — GaRedirectEvents fires `sign_up` then strips it.
+  redirectTo += `${redirectTo.includes('?') ? '&' : '?'}ga=signup`;
 
   try {
     await signIn('credentials', { email, password, redirectTo });

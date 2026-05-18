@@ -83,7 +83,9 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
     mode: 'subscription',
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/dashboard?checkout=success`,
+    // sid = Stripe-substituted Checkout Session id → GA4 transaction_id
+    // (natural purchase dedupe). plan/cycle drive the GA4 item label.
+    success_url: `${appUrl}/dashboard?checkout=success&sid={CHECKOUT_SESSION_ID}&plan=${plan}&cycle=${cycle}`,
     cancel_url: `${appUrl}/pricing?checkout=cancelled`,
     metadata: {
       oneshoplabUserId: userId,
@@ -159,7 +161,8 @@ export async function buyCreditPackAction(formData: FormData): Promise<void> {
     mode: 'payment',
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/account/credits?purchase=success`,
+    // sid → GA4 transaction_id (purchase dedupe); pack → GA4 item label.
+    success_url: `${appUrl}/account/credits?purchase=success&sid={CHECKOUT_SESSION_ID}&pack=${pack.id}`,
     cancel_url: `${appUrl}/account/credits?purchase=cancelled`,
     metadata: {
       oneshoplabUserId: userId,
