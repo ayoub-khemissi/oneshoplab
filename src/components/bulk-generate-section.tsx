@@ -71,6 +71,30 @@ interface BulkPrefs {
   imageAngles: ImageAngle[];
 }
 
+/**
+ * Client mirror of the server's resolveBulkPrefs: stable field order,
+ * angles filtered to the canonical ALL_ANGLES order, and images-on with
+ * zero angles → all 3. Keeping the client shape identical to what the
+ * server persists means the saved-state key is stable — no echo-driven
+ * re-render loop, no last-write race.
+ */
+function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
+  const fields: Record<FieldKey, boolean> = {
+    title: p.fields.title !== false,
+    description: p.fields.description !== false,
+    tags: p.fields.tags !== false,
+    images: p.fields.images !== false
+  };
+  let imageAngles = ALL_ANGLES.filter((a) => p.imageAngles.includes(a));
+  if (fields.images && imageAngles.length === 0) {
+    imageAngles = [...ALL_ANGLES];
+  }
+  return { fields, imageAngles };
+}
+
+const prefsKey = (p: BulkPrefs): string =>
+  JSON.stringify({ fields: p.fields, imageAngles: p.imageAngles });
+
 interface BulkGenerateSectionProps {
   siteId: string;
   plan: string;
@@ -123,10 +147,13 @@ export function BulkGenerateSection({
   const [retrying, setRetrying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [detailExpanded, setDetailExpanded] = useState(false);
-  const [prefs, setPrefs] = useState<BulkPrefs>(initialPrefs);
-  // Skip the save effect on first render (no point PUT-ing the value we
-  // just received). Flipped true after the first user-driven change.
-  const prefsDirty = useRef(false);
+  const [prefs, setPrefs] = useState<BulkPrefs>(() =>
+    canonicalizePrefs(initialPrefs)
+  );
+  // Serialized prefs known to be persisted. The save effect skips when
+  // the current prefs match it — covers the initial mount AND avoids
+  // any post-save re-trigger loop / clobber.
+  const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
   const [savingPrefs, setSavingPrefs] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -153,18 +180,21 @@ export function BulkGenerateSection({
     }
   }, [siteId]);
 
-  // Mark a user-driven prefs change; the debounced effect persists it.
+  // Apply a user-driven change, immediately canonicalized so the
+  // client shape matches exactly what the server will persist.
   const updatePrefs = useCallback((next: BulkPrefs) => {
-    prefsDirty.current = true;
-    setPrefs(next);
+    setPrefs(canonicalizePrefs(next));
   }, []);
 
-  // Debounced per-site save. Persists prefs ~600ms after the last
-  // toggle, then refreshes so the cost estimate / candidate list
-  // reflect the new selection. The server canonicalizes (e.g. images
-  // on + 0 angles → all 3) and we re-hydrate from its response.
+  // Debounced per-site save. Fires only when prefs actually differ
+  // from the last persisted value (key compare) → no save on mount,
+  // no echo loop, and a concurrent change still saves (its key differs
+  // until its own save lands). We don't setPrefs() from the response:
+  // the client already holds the canonical shape, so re-hydrating
+  // would be a no-op that risks clobbering a newer in-flight edit.
   useEffect(() => {
-    if (!prefsDirty.current) return;
+    const key = prefsKey(prefs);
+    if (key === lastSavedKey.current) return;
     const id = window.setTimeout(async () => {
       setSavingPrefs(true);
       try {
@@ -178,12 +208,11 @@ export function BulkGenerateSection({
           })
         });
         if (res.ok) {
-          const data = (await res.json()) as { prefs?: BulkPrefs };
-          if (data.prefs) setPrefs(data.prefs);
+          lastSavedKey.current = key;
           await refresh();
         }
       } catch {
-        /* keep local state; user can retoggle */
+        /* keep local state; the next toggle re-triggers the save */
       } finally {
         setSavingPrefs(false);
       }
@@ -977,6 +1006,8 @@ function errorKey(code: string | undefined): string {
       return 'errorAlreadyRunning';
     case 'no_products':
       return 'errorNoProducts';
+    case 'no_fields':
+      return 'errorNoFields';
     case 'insufficient_credits':
       return 'errorInsufficientCredits';
     case 'invalid_selection':

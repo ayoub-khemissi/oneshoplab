@@ -304,6 +304,12 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
   if (!session?.user) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+  // Bulk config only matters for plans that can run a bulk. Defense in
+  // depth — the UI already hides the panel for free/starter.
+  const plan = (session.user.plan ?? 'free') as string;
+  if (plan !== 'pro' && plan !== 'scale') {
+    return NextResponse.json({ error: 'plan_not_eligible' }, { status: 403 });
+  }
   let raw: unknown;
   try {
     raw = await req.json();
