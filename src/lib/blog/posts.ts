@@ -164,6 +164,26 @@ export function listPosts(
     .map((post) => ({ post, tr: post.translations[locale as Locale]! }));
 }
 
+/** Locale we fall back to when the requested one has no content yet. */
+export const BLOG_FALLBACK_LOCALE = 'en';
+
+/**
+ * Posts to show on the index/feed for `locale`. If that locale has none
+ * (content is FR+EN first), fall back to English so the blog is never
+ * empty for the other 11 locales. Returns the EFFECTIVE locale so the
+ * caller links to the real article URL (e.g. /en/blog/...) — we never
+ * render English under /de/... which would be duplicate content and a
+ * 404 on the article route.
+ */
+export function listPostsWithFallback(locale: string): {
+  posts: Array<{ post: BlogPost; tr: BlogTranslation }>;
+  locale: string;
+} {
+  const own = listPosts(locale);
+  if (own.length > 0) return { posts: own, locale };
+  return { posts: listPosts(BLOG_FALLBACK_LOCALE), locale: BLOG_FALLBACK_LOCALE };
+}
+
 /** Other posts available in `locale`, newest first, excluding `excludeKey`.
  *  Used for the in-article "keep reading" block (internal linking). */
 export function relatedPosts(

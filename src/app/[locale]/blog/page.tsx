@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { listPosts } from '@/lib/blog/posts';
+import { listPostsWithFallback } from '@/lib/blog/posts';
 import { formatDate } from '@/lib/format-date';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
@@ -65,7 +65,9 @@ export default async function BlogIndexPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('Blog');
-  const posts = listPosts(locale);
+  // Fall back to English when this locale has no articles yet, linking
+  // to the real /<postsLocale>/blog URLs (no duplicate content).
+  const { posts, locale: postsLocale } = listPostsWithFallback(locale);
 
   return (
     <main className="flex-1 px-4 md:px-10 py-10 md:py-14 max-w-3xl w-full mx-auto flex flex-col gap-8">
@@ -96,6 +98,7 @@ export default async function BlogIndexPage({
             <li key={post.key}>
               <Link
                 href={`/blog/${tr.slug}`}
+                locale={postsLocale}
                 className="block rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 hover:border-[var(--accent)] transition-colors group"
               >
                 <time

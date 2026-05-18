@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { listPosts } from '@/lib/blog/posts';
+import { listPostsWithFallback } from '@/lib/blog/posts';
 
 /**
  * Per-locale RSS 2.0 feed for the blog. Locale-specific because article
@@ -33,10 +33,13 @@ export async function GET(
   const t = await getTranslations({ locale, namespace: 'Blog' });
   const feedUrl = `${SITE_URL}/${locale}/blog/rss.xml`;
   const channelLink = `${SITE_URL}/${locale}/blog`;
+  // Same EN fallback as the index — items point to the real article
+  // locale so feed links never 404 / duplicate content.
+  const { posts, locale: postsLocale } = listPostsWithFallback(locale);
 
-  const items = listPosts(locale)
+  const items = posts
     .map(({ post, tr }) => {
-      const link = `${SITE_URL}/${locale}/blog/${tr.slug}`;
+      const link = `${SITE_URL}/${postsLocale}/blog/${tr.slug}`;
       return (
         `<item>` +
         `<title>${xml(tr.title)}</title>` +
