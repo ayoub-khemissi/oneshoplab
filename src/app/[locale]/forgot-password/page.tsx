@@ -12,10 +12,18 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { requestPasswordResetAction } from '@/lib/password-reset-actions';
 
-export const metadata: Metadata = {
-  title: 'Forgot password',
-  robots: { index: false, follow: false }
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Auth' });
+  return {
+    title: t('forgotTitle'),
+    robots: { index: false, follow: false }
+  };
+}
 
 interface PageProps {
   searchParams: Promise<{ error?: string; sent?: string }>;

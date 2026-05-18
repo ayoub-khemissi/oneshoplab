@@ -60,13 +60,19 @@ export default async function SharePage({ params }: PageProps) {
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('publicEyebrow')}</span>
         {data.siteUrl ? (
+          // `min-w-0 max-w-full` on the link + `[overflow-wrap:anywhere]`
+          // on the heading lets a really long domain wrap onto two
+          // lines at any character (hostnames are typically one
+          // "word", so break-words alone wouldn't help). Prevents
+          // the heading from forcing horizontal scroll on narrow
+          // viewports.
           <a
             href={data.siteUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex items-center justify-center gap-2 self-center hover:text-[var(--accent)] transition-colors group"
+            className="inline-flex items-center justify-center gap-2 self-center min-w-0 max-w-full hover:text-[var(--accent)] transition-colors group"
           >
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere] min-w-0">
               {data.domain}
             </h1>
             <ExternalLink
@@ -75,7 +81,7 @@ export default async function SharePage({ params }: PageProps) {
             />
           </a>
         ) : (
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere] self-center max-w-full">
             {data.domain}
           </h1>
         )}

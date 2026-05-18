@@ -1,8 +1,8 @@
 'use client';
 
 import { Card } from '@heroui/react';
-import { Check } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Check, Coins } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 // Import from the leaf module (no server-only deps) so this client bundle
@@ -166,6 +166,11 @@ function PlanCard({
   current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
 }) {
+  // Format numbers with the next-intl locale (same value SSR + client,
+  // sourced from the URL/provider) instead of the runtime default,
+  // which differs between Node (server) and the browser → React #418
+  // hydration text mismatch.
+  const locale = useLocale();
   const isFree = tier.priceEur === 0;
   const isFeatured = tier.id === 'pro';
 
@@ -213,11 +218,12 @@ function PlanCard({
         <span className="font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
           {tier.recurring ? copy.monthlyCredits : copy.signupCredits}
         </span>
-        <span className="text-2xl font-bold tabular-nums">
-          {tier.credits.toLocaleString()}
+        <span className="text-2xl font-bold tabular-nums inline-flex items-center gap-1.5">
+          <Coins className="size-5 text-[var(--accent)]" aria-hidden />
+          {tier.credits.toLocaleString(locale)}
         </span>
         <span className="text-xs text-[var(--muted)]">
-          ≈ {tier.approxFullGenerations.toLocaleString()} {copy.fullGenerations}
+          ≈ {tier.approxFullGenerations.toLocaleString(locale)} {copy.fullGenerations}
         </span>
       </div>
 

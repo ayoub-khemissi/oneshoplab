@@ -15,10 +15,18 @@ import { Link } from '@/i18n/navigation';
 import { GoogleSignInButton } from '@/components/google-signin-button';
 import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
 
-export const metadata: Metadata = {
-  title: 'Sign in',
-  robots: { index: false, follow: false }
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Auth' });
+  return {
+    title: t('loginTitle'),
+    robots: { index: false, follow: false }
+  };
+}
 
 interface PageProps {
   searchParams: Promise<{ error?: string; audit?: string; next?: string; reset?: string }>;

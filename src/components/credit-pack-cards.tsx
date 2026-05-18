@@ -1,5 +1,5 @@
 import { Card } from '@heroui/react';
-import { Sparkles } from 'lucide-react';
+import { Coins, Sparkles } from 'lucide-react';
 import { CREDIT_PACKS } from '@/lib/ai/models';
 import { buyCreditPackAction } from '@/lib/stripe-actions';
 import { getStripePackPriceId } from '@/lib/stripe';
@@ -46,7 +46,8 @@ export function CreditPackCards({ copy }: CreditPackCardsProps) {
               <p className="text-xs text-[var(--muted)]">{packCopy.tagline}</p>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-3xl font-bold tabular-nums">
+              <span className="text-3xl font-bold tabular-nums inline-flex items-center gap-1.5">
+                <Coins className="size-6 text-[var(--accent)]" aria-hidden />
                 {pack.credits.toLocaleString()}
               </span>
               <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider">

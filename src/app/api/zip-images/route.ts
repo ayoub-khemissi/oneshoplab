@@ -33,12 +33,19 @@ const URL_CAP = 10;
 function buildAllowedHostMatchers(): Array<(host: string) => boolean> {
   const matchers: Array<(host: string) => boolean> = [];
 
-  // Our R2 bucket's public URL — exact host match.
-  const r2 = process.env.R2_PUBLIC_URL;
-  if (r2) {
+  // Our R2 bucket's public base(s): the canonical R2_PUBLIC_URL
+  // (cdn.oneshoplab.com after the migration) plus any alias bases
+  // that point at the same bucket (legacy pub-xxx.r2.dev). Exact
+  // host match on each.
+  for (const raw of [
+    process.env.R2_PUBLIC_URL,
+    ...(process.env.R2_PUBLIC_URL_ALIASES ?? '').split(',')
+  ]) {
+    const v = raw?.trim();
+    if (!v) continue;
     try {
-      const r2Host = new URL(r2).host.toLowerCase();
-      matchers.push((h) => h === r2Host);
+      const host = new URL(v).host.toLowerCase();
+      matchers.push((h) => h === host);
     } catch {
       /* ignore malformed env */
     }

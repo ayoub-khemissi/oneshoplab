@@ -1,5 +1,5 @@
 import { Card } from '@heroui/react';
-import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { CreditPackCards } from '@/components/credit-pack-cards';
@@ -68,7 +68,8 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
               {t('balanceLabel')}
             </span>
-            <span className="text-3xl font-bold tabular-nums">
+            <span className="text-3xl font-bold tabular-nums inline-flex items-center gap-2">
+              <Coins className="size-7 text-[var(--accent)]" aria-hidden />
               {buckets.total.toLocaleString()}
             </span>
           </div>
@@ -128,7 +129,8 @@ function BucketChip({
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--default)]">
       <span className={`size-2 rounded-full ${dot}`} aria-hidden />
       <span className="text-[var(--muted)]">{label}</span>
-      <span className="font-mono font-semibold tabular-nums">
+      <span className="font-mono font-semibold tabular-nums inline-flex items-center gap-1">
+        <Coins className="size-3.5 text-[var(--accent)]" aria-hidden />
         {value.toLocaleString()}
       </span>
       <span className="text-[var(--muted)] hidden sm:inline">·</span>

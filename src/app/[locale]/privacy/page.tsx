@@ -1,13 +1,22 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'How OneShopLab collects, uses, and protects your data.',
-  robots: { index: true, follow: true }
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Legal' });
+  return {
+    title: t('privacyTitle'),
+    description: t('privacyDescription'),
+    robots: { index: true, follow: true }
+  };
+}
 
 const LAST_UPDATED = 'May 10, 2026';
-const CONTACT_EMAIL = 'privacy@oneshoplab.com';
+const CONTACT_EMAIL = 'contact@oneshoplab.com';
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
 

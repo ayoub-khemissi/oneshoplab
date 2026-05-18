@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
-import { ArrowRight, Check, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, PenLine, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
@@ -10,12 +10,18 @@ import {
   WixLogo,
   WoocommerceLogo
 } from '@/components/brand-logos';
+import { PricingCards } from '@/components/pricing-cards';
 import { ShowcaseSection } from '@/components/showcase-section';
-import { siteLimitForPlan } from '@/lib/ai/models';
+import {
+  siteLimitForPlan,
+  type BillingCycle,
+  type PlanId
+} from '@/lib/ai/models';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/lib/audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
+import { projects, subscriptions } from '@/lib/db/schema';
+import { getStripePriceId } from '@/lib/stripe';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
@@ -91,6 +97,8 @@ interface PageProps {
 export default async function HomePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const t = await getTranslations('Home');
+  const tPricing = await getTranslations('Pricing');
+  const tFaq = await getTranslations('Faq');
   const errorMessage = params.error === 'invalid_url' ? t('errorInvalidUrl') : null;
 
   // Resume an audit after the user signed in. Login redirects them back to
@@ -108,6 +116,43 @@ export default async function HomePage({ searchParams }: PageProps) {
       }
     }
   }
+
+  // Pricing block data prep — mirrors the /pricing page so the embedded
+  // <PricingCards> can render the same CTAs (Start free / Subscribe /
+  // Current plan / Upgrade …) without forcing the visitor through a
+  // round-trip. Cheap calls: one auth() and one subscription lookup.
+  const sessionForPricing = await auth();
+  const signedIn = Boolean(sessionForPricing?.user?.id);
+  const availablePlans: Record<string, boolean> = {
+    starter_monthly: Boolean(getStripePriceId('starter', 'monthly')),
+    starter_yearly: Boolean(getStripePriceId('starter', 'yearly')),
+    pro_monthly: Boolean(getStripePriceId('pro', 'monthly')),
+    pro_yearly: Boolean(getStripePriceId('pro', 'yearly')),
+    scale_monthly: Boolean(getStripePriceId('scale', 'monthly')),
+    scale_yearly: Boolean(getStripePriceId('scale', 'yearly'))
+  };
+  let currentSub: {
+    plan: PlanId;
+    cycle: BillingCycle | null;
+    status: string;
+  } | null = null;
+  if (sessionForPricing?.user?.id) {
+    const sub = await db.query.subscriptions.findFirst({
+      where: eq(subscriptions.userId, sessionForPricing.user.id)
+    });
+    if (sub) {
+      currentSub = {
+        plan: (sub.plan ?? 'free') as PlanId,
+        cycle: (sub.billingCycle ?? null) as BillingCycle | null,
+        status: sub.status ?? 'active'
+      };
+    }
+  }
+
+  // Home FAQ shows a curated subset (first 6 questions) — keeps the
+  // section scrollable without overwhelming the homepage. Full list
+  // lives at /faq and is linked at the bottom of the section.
+  const HOME_FAQ_IDS = ['q01', 'q02', 'q03', 'q04', 'q05', 'q06'] as const;
 
   return (
     <main className="flex-1 relative isolate overflow-hidden">
@@ -134,6 +179,14 @@ export default async function HomePage({ searchParams }: PageProps) {
               <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--default)] text-[var(--default-foreground)] font-medium inline-flex items-center gap-2 border border-[var(--border)]">
                 <WixLogo className="size-4" />
                 Wix
+              </span>
+              {/* 4th chip — signals that OneShopLab also accepts
+                  manually-entered stores, so the chips row reads as
+                  "works with these 3 platforms or yours" rather than
+                  "only these 3". */}
+              <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-medium inline-flex items-center gap-2 border border-[var(--accent)]/30">
+                <PenLine className="size-3.5" />
+                {t('heroCompatManualChip')}
               </span>
             </div>
           </div>
@@ -179,6 +232,30 @@ export default async function HomePage({ searchParams }: PageProps) {
             </p>
           </form>
 
+          {/* Equal-weight alternative entry point. Centered "or" with
+              flanking rules so the two CTAs read as parallel options;
+              the manual CTA matches the URL button's size + shape so
+              users without an existing storefront aren't pushed into
+              a fallback link, they pick the path that fits them. */}
+          <div className="w-full max-w-xl flex items-center gap-3" aria-hidden>
+            <span className="flex-1 h-px bg-[var(--border)]" />
+            <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)] font-mono">
+              {t('heroOrSeparator')}
+            </span>
+            <span className="flex-1 h-px bg-[var(--border)]" />
+          </div>
+          <Link
+            // Direct hand-off — the auth middleware bounces logged-out
+            // visitors through /login?next=… and back, so the link
+            // works regardless of session state.
+            href="/dashboard/sites/new/scratch"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[var(--surface)] border border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors font-medium text-base shadow-[0_2px_24px_-12px_oklch(0.20_0.02_250/0.18)]"
+          >
+            <PenLine className="size-4" />
+            {t('heroScratchCta')}
+            <ArrowRight className="size-4 opacity-80" aria-hidden />
+          </Link>
+
           <p className="text-base md:text-lg text-[var(--muted)] max-w-xl leading-relaxed">
             {t('lead')}
           </p>
@@ -213,6 +290,98 @@ export default async function HomePage({ searchParams }: PageProps) {
               title={t('step3Title')}
               description={t('step3Description')}
             />
+          </div>
+        </section>
+
+        <section className="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-24 flex flex-col gap-10 w-full">
+          <div className="flex flex-col items-center text-center gap-2 max-w-2xl mx-auto">
+            <span className="eyebrow">{tPricing('eyebrow')}</span>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              {tPricing('title')}
+            </h2>
+            <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">
+              {tPricing('subtitle')}
+            </p>
+          </div>
+          <PricingCards
+            signedIn={signedIn}
+            available={availablePlans}
+            current={currentSub}
+            copy={{
+              perMonth: tPricing('perMonth'),
+              perMonthBilledYearly: tPricing('perMonthBilledYearly'),
+              signupOnce: tPricing('signupOnce'),
+              monthlyCredits: tPricing('monthlyCredits'),
+              signupCredits: tPricing('signupCredits'),
+              fullGenerations: tPricing('fullGenerations'),
+              mostPopular: tPricing('mostPopular'),
+              saveYearly: tPricing('saveYearly'),
+              cycleMonthly: tPricing('cycleMonthly'),
+              cycleYearly: tPricing('cycleYearly'),
+              ctaStartFree: tPricing('ctaStartFree'),
+              ctaSubscribe: tPricing('ctaSubscribe'),
+              ctaGoToDashboard: tPricing('ctaGoToDashboard'),
+              ctaUnavailable: tPricing('ctaUnavailable'),
+              ctaCurrentPlan: tPricing('ctaCurrentPlan'),
+              ctaSwitchToMonthly: tPricing('ctaSwitchToMonthly'),
+              ctaSwitchToYearly: tPricing('ctaSwitchToYearly'),
+              ctaUpgrade: tPricing('ctaUpgrade'),
+              ctaDowngrade: tPricing('ctaDowngrade')
+            }}
+          />
+          <div className="flex justify-center">
+            <Link
+              href="/pricing#credits"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline"
+            >
+              {tPricing('whatIsCreditTitle')}
+              <ArrowRight className="size-3.5" aria-hidden />
+            </Link>
+          </div>
+        </section>
+
+        <section className="relative z-10 max-w-3xl mx-auto px-6 py-16 md:py-24 flex flex-col gap-10 w-full">
+          <div className="flex flex-col items-center text-center gap-2 max-w-2xl mx-auto">
+            <span className="eyebrow">FAQ</span>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              {tFaq('title')}
+            </h2>
+            <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">
+              {tFaq('subtitle')}
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+            {HOME_FAQ_IDS.map((id, idx) => (
+              <details
+                key={id}
+                className="group rounded-lg border border-[var(--border)] bg-[var(--default)]/30 open:bg-[var(--default)]/50 transition-colors"
+                // First item opens by default — gives the section
+                // immediate visible content for both UX and SEO
+                // (Google still indexes closed <details> content
+                // for FAQ rich results, but visible body helps LCP).
+                {...(idx === 0 ? { open: true } : {})}
+              >
+                <summary className="flex items-center justify-between gap-3 cursor-pointer list-none px-4 md:px-5 py-4 text-left font-medium text-[var(--foreground)] hover:text-[var(--accent)] transition-colors [&::-webkit-details-marker]:hidden">
+                  <span className="flex-1">{tFaq(`${id}q`)}</span>
+                  <ChevronDown
+                    className="size-4 shrink-0 text-[var(--muted)] transition-transform duration-200 group-open:rotate-180"
+                    aria-hidden
+                  />
+                </summary>
+                <div className="px-4 md:px-5 pb-4 -mt-1 text-sm leading-relaxed text-[var(--muted)]">
+                  {tFaq(`${id}a`)}
+                </div>
+              </details>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href="/faq"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline"
+            >
+              {tFaq('seeAll')}
+              <ArrowRight className="size-3.5" aria-hidden />
+            </Link>
           </div>
         </section>
 

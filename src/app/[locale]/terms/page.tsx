@@ -1,15 +1,24 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service',
-  description: 'The legal terms governing your use of OneShopLab.',
-  // Indexable but low-priority — search engines occasionally surface these
-  // as part of the brand SERP, which is fine. Not a primary SEO target.
-  robots: { index: true, follow: true }
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Legal' });
+  return {
+    title: t('termsTitle'),
+    description: t('termsDescription'),
+    // Indexable but low-priority — search engines occasionally surface these
+    // as part of the brand SERP, which is fine. Not a primary SEO target.
+    robots: { index: true, follow: true }
+  };
+}
 
 const LAST_UPDATED = 'May 10, 2026';
-const CONTACT_EMAIL = 'legal@oneshoplab.com';
+const CONTACT_EMAIL = 'contact@oneshoplab.com';
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
 const GOVERNING_LAW = 'French law';

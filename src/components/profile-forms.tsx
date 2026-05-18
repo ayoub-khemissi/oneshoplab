@@ -55,6 +55,7 @@ export function ProfileNameForm({
       <form action={handleSubmit} className="flex flex-col gap-3">
         <Field label={copy.emailLabel}>
           <input
+            id="profile-email-readonly"
             type="email"
             value={email}
             readOnly

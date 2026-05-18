@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Coins } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { CreditPackCards } from '@/components/credit-pack-cards';
@@ -203,8 +203,13 @@ export default async function PricingPage() {
 
       {/* "What is a credit worth?" sits below the packs because the
           packs are the primary purchase CTA on this page; the cost
-          breakdown below is reference / educational copy. */}
-      <section className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
+          breakdown below is reference / educational copy. The id
+          anchor is targeted by the home page CTA so a click there
+          scrolls straight to this section. */}
+      <section
+        id="credits"
+        className="flex flex-col gap-6 max-w-3xl mx-auto w-full scroll-mt-24"
+      >
         <h2 className="text-2xl font-bold tracking-tight text-center">{t('whatIsCreditTitle')}</h2>
         <Card variant="secondary" className="p-6 flex flex-col gap-4">
           <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody')}</p>
@@ -235,7 +240,10 @@ function Stat({ label, value }: { label: string; value: string }) {
       <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-mono leading-snug">
         {label}
       </span>
-      <span className="text-lg font-semibold tabular-nums">{value}</span>
+      <span className="text-lg font-semibold tabular-nums inline-flex items-center gap-1.5">
+        <Coins className="size-4 text-[var(--accent)]" aria-hidden />
+        {value}
+      </span>
     </div>
   );
 }

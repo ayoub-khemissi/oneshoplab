@@ -343,6 +343,7 @@ function HomeOrderInput({
 
   return (
     <input
+      id="share-home-order"
       type="number"
       inputMode="numeric"
       min={1}
@@ -525,6 +526,7 @@ function CreateModal({
               {t('labelField')}
             </span>
             <input
+              id="share-link-label"
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
@@ -536,6 +538,7 @@ function CreateModal({
 
           <label className="flex items-start gap-2.5 cursor-pointer">
             <input
+              id="share-show-on-home"
               type="checkbox"
               checked={showOnHome}
               onChange={(e) => setShowOnHome(e.target.checked)}
@@ -575,6 +578,7 @@ function CreateModal({
                       } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <input
+                        id={`share-candidate-${c.sourceId}`}
                         type="checkbox"
                         checked={isSelected}
                         disabled={disabled}

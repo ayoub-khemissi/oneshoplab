@@ -16,10 +16,18 @@ import { redirect } from 'next/navigation';
 import { randomUUID } from 'node:crypto';
 import { Link } from '@/i18n/navigation';
 
-export const metadata: Metadata = {
-  title: 'Sign up',
-  robots: { index: false, follow: false }
-};
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Auth' });
+  return {
+    title: t('signupTitle'),
+    robots: { index: false, follow: false }
+  };
+}
 import { GoogleSignInButton } from '@/components/google-signin-button';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';

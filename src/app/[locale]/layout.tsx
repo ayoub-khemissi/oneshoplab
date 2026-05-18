@@ -2,7 +2,7 @@ import { Toast } from '@heroui/react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { AuditToastWatcher } from '@/components/audit-toast-watcher';
 import { CookieBanner } from '@/components/cookie-banner';
@@ -39,79 +39,92 @@ const geistMono = Geist_Mono({
   display: 'swap'
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: 'OneShopLab — AI product page optimization for Shopify, WooCommerce, Wix',
-    template: '%s · OneShopLab'
-  },
-  description:
-    'Audit your storefront in 30 seconds. Score every product on copy, visuals, catalog and tags. AI rewrites, regenerates and redesigns — with prompts you control.',
-  applicationName: 'OneShopLab',
-  authors: [{ name: 'OneShopLab' }],
-  generator: 'Next.js',
-  keywords: [
-    'Shopify SEO',
-    'WooCommerce SEO',
-    'Wix SEO',
-    'product page optimization',
-    'AI product description',
-    'ecommerce audit',
-    'product page rewrite',
-    'AI image generation',
-    'ecommerce conversion'
-  ],
-  referrer: 'strict-origin-when-cross-origin',
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+/**
+ * Locale-aware root metadata. Per-page generateMetadata wins via the
+ * `%s · OneShopLab` template, but pages without their own metadata
+ * (dashboard root, /account/*) now inherit a localized title + Home
+ * SEO description instead of the hardcoded English fallback. The
+ * Open Graph + Twitter blocks reuse Home.seoTitle / Home.seoDescription
+ * which already exist in 13 locales.
+ */
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Home' });
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: t('seoTitle'),
+      template: '%s · OneShopLab'
+    },
+    description: t('seoDescription'),
+    applicationName: 'OneShopLab',
+    authors: [{ name: 'OneShopLab' }],
+    generator: 'Next.js',
+    keywords: [
+      'Shopify SEO',
+      'WooCommerce SEO',
+      'Wix SEO',
+      'product page optimization',
+      'AI product description',
+      'ecommerce audit',
+      'product page rewrite',
+      'AI image generation',
+      'ecommerce conversion'
+    ],
+    referrer: 'strict-origin-when-cross-origin',
+    robots: {
       index: true,
       follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
-      'max-video-preview': -1
-    }
-  },
-  alternates: {
-    canonical: SITE_URL,
-    languages: buildLanguageAlternates('/')
-  },
-  openGraph: {
-    type: 'website',
-    siteName: 'OneShopLab',
-    title: 'OneShopLab — AI product page optimization',
-    description:
-      'Audit your storefront in 30 seconds. AI rewrites, regenerates and redesigns — with prompts you control.',
-    url: SITE_URL,
-    locale: 'en_US',
-    images: [
-      {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'OneShopLab — AI product page optimization'
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1
       }
-    ]
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'OneShopLab — AI product page optimization',
-    description:
-      'Audit your storefront in 30 seconds. AI rewrites, regenerates and redesigns.',
-    images: ['/opengraph-image']
-  },
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '32x32' },
-      { url: '/osl-dark.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
-      { url: '/osl-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' }
-    ],
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico'
-  },
-  category: 'technology'
-};
+    },
+    alternates: {
+      canonical: `${SITE_URL}/${locale}`,
+      languages: buildLanguageAlternates('/')
+    },
+    openGraph: {
+      type: 'website',
+      siteName: 'OneShopLab',
+      title: t('seoTitle'),
+      description: t('seoDescription'),
+      url: `${SITE_URL}/${locale}`,
+      locale,
+      images: [
+        {
+          url: '/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: t('seoTitle')
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('seoTitle'),
+      description: t('seoDescription'),
+      images: ['/opengraph-image']
+    },
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '32x32' },
+        { url: '/osl-dark.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: light)' },
+        { url: '/osl-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' }
+      ],
+      shortcut: '/favicon.ico',
+      apple: '/favicon.ico'
+    },
+    category: 'technology'
+  } satisfies Metadata;
+}
 
 // All our pages depend on request-scoped data (auth cookie, DB lookups,
 // search params) so we keep them dynamic.
@@ -157,7 +170,7 @@ export default async function LocaleLayout({
               contactPoint: [
                 {
                   '@type': 'ContactPoint',
-                  email: 'support@oneshoplab.com',
+                  email: 'contact@oneshoplab.com',
                   contactType: 'customer support',
                   availableLanguage: ['English', 'French']
                 }

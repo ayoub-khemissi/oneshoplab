@@ -12,8 +12,8 @@
   },
 
   "fieldCaps": {
-    "title":       { "inputTokens": 1500, "outputTokens": 80   },
-    "description": { "inputTokens": 1500, "outputTokens": 1100 },
+    "title":       { "inputTokens": 1500, "outputTokens": 100  },
+    "description": { "inputTokens": 1500, "outputTokens": 600  },
     "tags":        { "inputTokens": 1500, "outputTokens": 120  },
     "social":      { "inputTokens": 1500, "outputTokens": 800  },
     "fullAudit":   { "inputTokens": 2500, "outputTokens": 1900 }
