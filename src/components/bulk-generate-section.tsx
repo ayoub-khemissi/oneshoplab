@@ -23,6 +23,9 @@ import {
   type BulkPrefs
 } from '@/components/bulk-prefs-editor';
 import { DebouncedSearchInput } from '@/components/debounced-search-input';
+import { ModelPickerChips } from '@/components/model-picker-chips';
+import { updateUserPreferencesAction } from '@/lib/auth-actions';
+import type { ChatModelId, ImageQualityId } from '@/lib/ai/models';
 
 // ---------------------------------------------------------------------
 // Shared types (mirror the server module)
@@ -92,6 +95,11 @@ interface BulkGenerateSectionProps {
   /** Whether the site has its OWN prefs (vs. inheriting the account
    *  default) — drives the "reset to account default" affordance. */
   initialSiteOverride: boolean;
+  /** Account-resolved models (session pref → default), seeding the
+   *  modal's model picker. Picking a different one persists to the
+   *  account (no site-level config) — same as the product page. */
+  initialChatModel: ChatModelId;
+  initialImageQuality: ImageQualityId;
 }
 
 export function BulkGenerateSection({
@@ -105,7 +113,9 @@ export function BulkGenerateSection({
   creditsBalance,
   productTitleById,
   initialPrefs,
-  initialSiteOverride
+  initialSiteOverride,
+  initialChatModel,
+  initialImageQuality
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
   // Bulk catalog generation is unlocked from the Pro plan upwards. Free
@@ -147,12 +157,21 @@ export function BulkGenerateSection({
   // being re-created on every keystroke.
   const [searchQuery, setSearchQuery] = useState('');
   const queryRef = useRef('');
+  // Model picker (account-scoped, like the product page). Refs so the
+  // stable `refresh` reads the latest without being re-created.
+  const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModel);
+  const [imageQualityId, setImageQualityId] =
+    useState<ImageQualityId>(initialImageQuality);
+  const chatRef = useRef<ChatModelId>(initialChatModel);
+  const imgRef = useRef<ImageQualityId>(initialImageQuality);
 
   const refresh = useCallback(async () => {
     try {
       const q = queryRef.current.trim();
       const res = await fetch(
-        `/api/sites/bulk-generate?siteId=${encodeURIComponent(siteId)}${
+        `/api/sites/bulk-generate?siteId=${encodeURIComponent(siteId)}&chat=${encodeURIComponent(
+          chatRef.current
+        )}&img=${encodeURIComponent(imgRef.current)}${
           q ? `&q=${encodeURIComponent(q)}` : ''
         }`,
         { cache: 'no-store' }
@@ -263,6 +282,41 @@ export function BulkGenerateSection({
     [refresh]
   );
 
+  // Persist the model choice account-wide (same server action as the
+  // product page — NO site-level config) and refresh the candidate
+  // cost which depends on the chosen model + image quality.
+  const persistModels = useCallback(
+    (chat: ChatModelId, img: ImageQualityId) => {
+      const fd = new FormData();
+      fd.set('chatModel', chat);
+      fd.set('imageQuality', img);
+      // Non-blocking: the ids also travel with the bulk request, so a
+      // stale account write never affects the run in flight.
+      void updateUserPreferencesAction(fd).catch(() => {});
+    },
+    []
+  );
+
+  const onPickChat = useCallback(
+    (id: ChatModelId) => {
+      chatRef.current = id;
+      setChatModelId(id);
+      persistModels(id, imgRef.current);
+      refresh();
+    },
+    [persistModels, refresh]
+  );
+
+  const onPickImage = useCallback(
+    (id: ImageQualityId) => {
+      imgRef.current = id;
+      setImageQualityId(id);
+      persistModels(chatRef.current, id);
+      refresh();
+    },
+    [persistModels, refresh]
+  );
+
   useEffect(() => {
     if (!active || active.status === 'completed' || active.status === 'failed') {
       return;
@@ -289,7 +343,12 @@ export function BulkGenerateSection({
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ siteId, productIds })
+        body: JSON.stringify({
+          siteId,
+          productIds,
+          chatModelId: chatRef.current,
+          imageQualityId: imgRef.current
+        })
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -328,7 +387,12 @@ export function BulkGenerateSection({
       const res = await fetch('/api/sites/bulk-generate', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ siteId, retryFromBulkId: detail.id })
+        body: JSON.stringify({
+          siteId,
+          retryFromBulkId: detail.id,
+          chatModelId: chatRef.current,
+          imageQualityId: imgRef.current
+        })
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
@@ -506,6 +570,10 @@ export function BulkGenerateSection({
             noFields={prefsHasNoFields(prefs)}
             searchValue={searchQuery}
             onSearch={onSearch}
+            chatModelId={chatModelId}
+            imageQualityId={imageQualityId}
+            onPickChat={onPickChat}
+            onPickImage={onPickImage}
             onCancel={() => setModalOpen(false)}
             onConfirm={(ids) => startBulk(ids)}
           />
@@ -581,6 +649,10 @@ export function BulkGenerateSection({
           noFields={noFields}
           searchValue={searchQuery}
           onSearch={onSearch}
+          chatModelId={chatModelId}
+          imageQualityId={imageQualityId}
+          onPickChat={onPickChat}
+          onPickImage={onPickImage}
           onCancel={() => setModalOpen(false)}
           onConfirm={(ids) => startBulk(ids)}
         />
@@ -619,6 +691,10 @@ function SelectionModal({
   noFields,
   searchValue,
   onSearch,
+  chatModelId,
+  imageQualityId,
+  onPickChat,
+  onPickImage,
   onCancel,
   onConfirm
 }: {
@@ -636,6 +712,10 @@ function SelectionModal({
   noFields: boolean;
   searchValue: string;
   onSearch: (q: string) => void;
+  chatModelId: ChatModelId;
+  imageQualityId: ImageQualityId;
+  onPickChat: (id: ChatModelId) => void;
+  onPickImage: (id: ImageQualityId) => void;
   onCancel: () => void;
   onConfirm: (productIds: string[]) => Promise<boolean>;
 }) {
@@ -769,6 +849,21 @@ function SelectionModal({
               </button>
             </div>
             <BulkPrefsEditor value={prefs} onChange={onChangePrefs} />
+          </div>
+
+          {/* Models — account-scoped (no site config), like the
+              product page. Picking persists to the account and
+              refreshes the cost below. */}
+          <div className="flex flex-col gap-2 rounded-md border border-[var(--border)] bg-[var(--default)]/20 p-3">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
+              {t('modelsTitle')}
+            </span>
+            <ModelPickerChips
+              chatModelId={chatModelId}
+              imageQualityId={imageQualityId}
+              onPickChat={onPickChat}
+              onPickImage={onPickImage}
+            />
           </div>
 
           {/* Virtual budget bar */}

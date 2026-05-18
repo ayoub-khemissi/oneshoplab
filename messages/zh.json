@@ -838,7 +838,8 @@
     "configAccountTitle": "默认批量生成",
     "configAccountHint": "适用于没有自身设置的每个站点。每个站点仍可在其设置中覆盖。",
     "resetToLegacyDefault": "重置（全部开启）",
-    "searchPlaceholder": "按标题搜索产品…"
+    "searchPlaceholder": "按标题搜索产品…",
+    "modelsTitle": "模型"
   },
   "Share": {
     "title": "分享给潜在客户",

@@ -838,7 +838,8 @@
     "configAccountTitle": "既定の一括生成",
     "configAccountHint": "独自設定のない各サイトに適用されます。各サイトは設定で上書きできます。",
     "resetToLegacyDefault": "リセット（すべて有効）",
-    "searchPlaceholder": "タイトルで商品を検索…"
+    "searchPlaceholder": "タイトルで商品を検索…",
+    "modelsTitle": "モデル"
   },
   "Share": {
     "title": "見込み客に共有",

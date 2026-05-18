@@ -839,7 +839,8 @@
     "configAccountTitle": "Domyślna generacja masowa",
     "configAccountHint": "Dotyczy każdej witryny bez własnego ustawienia. Każda witryna może je nadpisać w swoich ustawieniach.",
     "resetToLegacyDefault": "Przywróć (wszystko włączone)",
-    "searchPlaceholder": "Szukaj produktów po tytule…"
+    "searchPlaceholder": "Szukaj produktów po tytule…",
+    "modelsTitle": "Modele"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

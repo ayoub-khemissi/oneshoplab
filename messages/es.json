@@ -839,7 +839,8 @@
     "configAccountTitle": "Generación masiva por defecto",
     "configAccountHint": "Se aplica a cada sitio que no tenga su propia configuración. Cada sitio puede anularla en sus ajustes.",
     "resetToLegacyDefault": "Restablecer (todo activado)",
-    "searchPlaceholder": "Buscar productos por título…"
+    "searchPlaceholder": "Buscar productos por título…",
+    "modelsTitle": "Modelos"
   },
   "Share": {
     "title": "Compartir con prospectos",

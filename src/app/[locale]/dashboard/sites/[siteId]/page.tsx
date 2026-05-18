@@ -741,6 +741,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             productTitleById={productTitleById}
             initialPrefs={bulkEffective?.prefs ?? resolveBulkPrefs(null)}
             initialSiteOverride={bulkEffective?.siteOverride ?? false}
+            initialChatModel={bulkChatModel}
+            initialImageQuality={bulkImageQuality}
           />
           <PaginatedProductsList
             siteId={siteId}

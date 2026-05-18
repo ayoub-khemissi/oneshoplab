@@ -839,7 +839,8 @@
     "configAccountTitle": "Varsayılan toplu üretim",
     "configAccountHint": "Kendi ayarı olmayan her siteye uygulanır. Her site bunu kendi ayarlarında geçersiz kılabilir.",
     "resetToLegacyDefault": "Sıfırla (hepsi açık)",
-    "searchPlaceholder": "Ürünleri başlığa göre ara…"
+    "searchPlaceholder": "Ürünleri başlığa göre ara…",
+    "modelsTitle": "Modeller"
   },
   "Share": {
     "title": "Potansiyel müşteriyle paylaş",

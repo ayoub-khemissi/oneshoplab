@@ -839,7 +839,8 @@
     "configAccountTitle": "Generazione di massa predefinita",
     "configAccountHint": "Si applica a ogni sito senza una propria impostazione. Ogni sito può sovrascriverla nelle sue impostazioni.",
     "resetToLegacyDefault": "Ripristina (tutto attivo)",
-    "searchPlaceholder": "Cerca prodotti per titolo…"
+    "searchPlaceholder": "Cerca prodotti per titolo…",
+    "modelsTitle": "Modelli"
   },
   "Share": {
     "title": "Condividi con i prospect",

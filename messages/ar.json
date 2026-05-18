@@ -838,7 +838,8 @@
     "configAccountTitle": "التوليد المجمّع الافتراضي",
     "configAccountHint": "ينطبق على كل موقع ليس له إعداد خاص. يمكن لكل موقع تجاوزه في إعداداته.",
     "resetToLegacyDefault": "إعادة التعيين (تشغيل الكل)",
-    "searchPlaceholder": "ابحث في المنتجات بالعنوان…"
+    "searchPlaceholder": "ابحث في المنتجات بالعنوان…",
+    "modelsTitle": "النماذج"
   },
   "Share": {
     "title": "مشاركة مع العملاء المحتملين",

@@ -839,7 +839,8 @@
     "configAccountTitle": "Geração em massa padrão",
     "configAccountHint": "Aplica-se a cada site sem configuração própria. Cada site pode substituí-la nas suas definições.",
     "resetToLegacyDefault": "Repor (tudo ativado)",
-    "searchPlaceholder": "Procurar produtos por título…"
+    "searchPlaceholder": "Procurar produtos por título…",
+    "modelsTitle": "Modelos"
   },
   "Share": {
     "title": "Partilha com prospects",

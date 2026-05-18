@@ -41,25 +41,40 @@ import { projects } from '@/lib/db/schema';
  *            triggers retryFailedFromBulk against the latest bulk.
  */
 
-function resolveModels(session: {
-  user?: {
-    preferredChatModel?: string | null;
-    preferredImageQuality?: string | null;
-  } | null;
-}): {
+/**
+ * Resolve the models to use: an explicit, validated client override
+ * (the modal's picker, mirroring the product page) wins; otherwise the
+ * account preference; otherwise the default. The modal also persists
+ * its pick to the account, but we never depend on session freshness —
+ * the chosen ids travel with the request like the product flow.
+ */
+function resolveModels(
+  session: {
+    user?: {
+      preferredChatModel?: string | null;
+      preferredImageQuality?: string | null;
+    } | null;
+  },
+  overrideChat?: string | null,
+  overrideImage?: string | null
+): {
   chatModelId: ChatModelId;
   imageQualityId: ImageQualityId;
 } {
   const chatModelId: ChatModelId =
-    session.user?.preferredChatModel &&
-    session.user.preferredChatModel in CHAT_MODEL_REGISTRY
-      ? (session.user.preferredChatModel as ChatModelId)
-      : DEFAULT_CHAT_MODEL;
+    overrideChat && overrideChat in CHAT_MODEL_REGISTRY
+      ? (overrideChat as ChatModelId)
+      : session.user?.preferredChatModel &&
+          session.user.preferredChatModel in CHAT_MODEL_REGISTRY
+        ? (session.user.preferredChatModel as ChatModelId)
+        : DEFAULT_CHAT_MODEL;
   const imageQualityId: ImageQualityId =
-    session.user?.preferredImageQuality &&
-    session.user.preferredImageQuality in IMAGE_MODEL_REGISTRY
-      ? (session.user.preferredImageQuality as ImageQualityId)
-      : DEFAULT_IMAGE_QUALITY;
+    overrideImage && overrideImage in IMAGE_MODEL_REGISTRY
+      ? (overrideImage as ImageQualityId)
+      : session.user?.preferredImageQuality &&
+          session.user.preferredImageQuality in IMAGE_MODEL_REGISTRY
+        ? (session.user.preferredImageQuality as ImageQualityId)
+        : DEFAULT_IMAGE_QUALITY;
   return { chatModelId, imageQualityId };
 }
 
@@ -80,6 +95,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     siteId?: unknown;
     productIds?: unknown;
     customInstructions?: unknown;
+    /** Model picker overrides (validated server-side). */
+    chatModelId?: unknown;
+    imageQualityId?: unknown;
     /** When provided, the server clones the prior bulk's failed-product
      *  set instead of taking productIds from the body. Mutually
      *  exclusive with productIds (retryFromBulkId wins). */
@@ -114,7 +132,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'no_fields' }, { status: 400 });
   }
 
-  const { chatModelId, imageQualityId } = resolveModels(session);
+  const { chatModelId, imageQualityId } = resolveModels(
+    session,
+    typeof body.chatModelId === 'string' ? body.chatModelId : null,
+    typeof body.imageQualityId === 'string' ? body.imageQualityId : null
+  );
   const customInstructions =
     typeof body.customInstructions === 'string'
       ? body.customInstructions.slice(0, 750)
@@ -254,7 +276,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
-  const { chatModelId, imageQualityId } = resolveModels(session);
+  const { chatModelId, imageQualityId } = resolveModels(
+    session,
+    url.searchParams.get('chat'),
+    url.searchParams.get('img')
+  );
   const { prefs, siteOverride } = await getEffectiveBulkPrefs(project.id);
   const allCandidates = await listBulkCandidatesWithStatus(
     project.id,

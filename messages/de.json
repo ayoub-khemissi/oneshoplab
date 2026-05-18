@@ -839,7 +839,8 @@
     "configAccountTitle": "Standard-Massengenerierung",
     "configAccountHint": "Gilt für jede Website ohne eigene Einstellung. Jede Website kann sie in ihren Einstellungen überschreiben.",
     "resetToLegacyDefault": "Zurücksetzen (alles an)",
-    "searchPlaceholder": "Produkte nach Titel suchen…"
+    "searchPlaceholder": "Produkte nach Titel suchen…",
+    "modelsTitle": "Modelle"
   },
   "Share": {
     "title": "Mit Interessenten teilen",

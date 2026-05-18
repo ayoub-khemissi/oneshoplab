@@ -839,7 +839,8 @@
     "configAccountTitle": "Default mass generation",
     "configAccountHint": "Applies to every site that hasn't set its own. Each site can still override it in its settings.",
     "resetToLegacyDefault": "Reset (everything on)",
-    "searchPlaceholder": "Search products by title…"
+    "searchPlaceholder": "Search products by title…",
+    "modelsTitle": "Models"
   },
   "Share": {
     "title": "Share for prospects",
