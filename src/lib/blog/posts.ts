@@ -75,7 +75,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     key: 'shopify-product-page-optimization',
-    date: '2026-05-18',
+    date: '2026-05-11',
     cover: null,
     translations: {
       fr: {
@@ -101,7 +101,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     key: 'ecommerce-catalog-audit',
-    date: '2026-05-18',
+    date: '2026-05-04',
     cover: null,
     translations: {
       fr: {
@@ -127,7 +127,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     key: 'product-pages-not-converting',
-    date: '2026-05-18',
+    date: '2026-04-27',
     cover: null,
     translations: {
       fr: {
