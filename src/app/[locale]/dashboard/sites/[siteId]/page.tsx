@@ -1,6 +1,6 @@
 import { Accordion, Card, Skeleton } from '@heroui/react';
-import { and, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
-import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
+import { and, count, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
+import { ArrowLeft, Coins, ExternalLink, PenLine, Plus } from 'lucide-react';
 import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
   auditRateLimitForPlan,
@@ -17,6 +17,7 @@ import { BulkGenerateSection } from '@/components/bulk-generate-section';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
+import { ServerPagination } from '@/components/server-pagination';
 import { ShareLinksCard } from '@/components/share-links-card';
 import { SiteFavicon } from '@/components/site-favicon';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
@@ -49,8 +50,33 @@ type Tab = 'overview' | 'products' | 'jobs' | 'settings';
 
 interface PageProps {
   params: Promise<{ siteId: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{
+    tab?: string;
+    /** Server-rendered pagination for the activity tab — 15 jobs per
+     *  page, sorted by createdAt desc. Falls back to page 1 if the
+     *  value is missing or invalid. */
+    activityPage?: string;
+    /** Products tab: page number, search query, sort key, and the
+     *  archived-visibility toggle — all server-controlled so the
+     *  current view is shareable via URL and the merchant doesn't
+     *  have to scroll-then-paginate after a navigation. */
+    productsPage?: string;
+    q?: string;
+    sort?: string;
+    showArchived?: string;
+  }>;
 }
+
+const ACTIVITY_PAGE_SIZE = 15;
+const PRODUCTS_PAGE_SIZE = 15;
+const PRODUCTS_SORT_KEYS = [
+  'recently-optimized',
+  'score-asc',
+  'score-desc',
+  'title-asc',
+  'title-desc'
+] as const;
+type ProductsSortKey = (typeof PRODUCTS_SORT_KEYS)[number];
 
 interface Scores {
   catalogCompleteness: number;
@@ -75,7 +101,7 @@ interface ProductInsightLite {
   descriptionHtml: string;
   images: ProductImage[];
   score: number;
-  signals?: { tags?: string[] };
+  signals?: { tags?: string[]; productType?: string | null };
 }
 
 interface IssuePayload {
@@ -90,6 +116,13 @@ interface PaginatedProductPayload {
   url: string | null;
   score: number;
   issues: IssuePayload[];
+  /** Category chip in the list — Shopify product_type, first WC/Wix
+   *  category, or whatever the user entered for a manual product.
+   *  Required (nullable) at this layer so the type predicate below
+   *  narrows cleanly; the runtime value is filled from
+   *  `signals.productType` for summary entries and from the row for
+   *  archived entries. */
+  productType: string | null;
 }
 
 interface PaginatedProductWithId extends PaginatedProductPayload {
@@ -133,7 +166,14 @@ interface SummaryShape {
 
 export default async function ReportPage({ params, searchParams }: PageProps) {
   const { siteId } = await params;
-  const { tab: rawTab } = await searchParams;
+  const {
+    tab: rawTab,
+    activityPage: rawActivityPage,
+    productsPage: rawProductsPage,
+    q: rawQuery,
+    sort: rawSort,
+    showArchived: rawShowArchived
+  } = await searchParams;
   const activeTab: Tab =
     rawTab === 'products'
       ? 'products'
@@ -142,6 +182,21 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         : rawTab === 'settings'
           ? 'settings'
           : 'overview';
+  const activityPage = Math.max(
+    1,
+    Number.parseInt(rawActivityPage ?? '1', 10) || 1
+  );
+  const productsPage = Math.max(
+    1,
+    Number.parseInt(rawProductsPage ?? '1', 10) || 1
+  );
+  const productsQuery = (rawQuery ?? '').trim();
+  const productsSort: ProductsSortKey = (PRODUCTS_SORT_KEYS as readonly string[]).includes(
+    rawSort ?? ''
+  )
+    ? (rawSort as ProductsSortKey)
+    : 'recently-optimized';
+  const productsShowArchived = rawShowArchived === '1';
 
   // Reports are owner-only. Anonymous visitors get bounced to /login;
   // logged-in users who don't own this project get sent to their dashboard.
@@ -248,13 +303,15 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         handle: true,
         title: true,
         sourceUrl: true,
-        status: true
+        status: true,
+        productType: true
       }
     }),
     db.query.jobs.findMany({
       where: eq(jobs.projectId, project.id),
       orderBy: [desc(jobs.createdAt)],
-      limit: 30,
+      limit: ACTIVITY_PAGE_SIZE,
+      offset: (activityPage - 1) * ACTIVITY_PAGE_SIZE,
       with: {
         product: {
           columns: { id: true, sourceId: true, handle: true, title: true, status: true }
@@ -262,6 +319,31 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       }
     })
   ]);
+
+  // Total job count + unfinished probe — both are cheap SQL aggregates
+  // and live independently from the paginated `projectJobs` slice so
+  // we don't lose the "any pending/running?" signal when the user is
+  // on a later page.
+  const [activityTotalRow, unfinishedCountRow] = await Promise.all([
+    db
+      .select({ value: count() })
+      .from(jobs)
+      .where(eq(jobs.projectId, project.id)),
+    db
+      .select({ value: count() })
+      .from(jobs)
+      .where(
+        and(
+          eq(jobs.projectId, project.id),
+          inArray(jobs.status, ['pending', 'running'])
+        )
+      )
+  ]);
+  const activityTotal = activityTotalRow[0]?.value ?? 0;
+  const activityTotalPages = Math.max(
+    1,
+    Math.ceil(activityTotal / ACTIVITY_PAGE_SIZE)
+  );
 
   // Backfill: legacy audits never inserted into the products table (the
   // pipeline only wrote `audits.summary`). On first visit after the refactor,
@@ -293,7 +375,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         handle: r.handle,
         title: r.title,
         sourceUrl: r.sourceUrl,
-        status: 'active' as const
+        status: 'active' as const,
+        productType: null as string | null
       }));
     }
   }
@@ -376,6 +459,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // and the bulk-section's productTitleById map. Saves an O(n)
   // iteration over a 200+ entry array on every nav to overview /
   // jobs / settings on big catalogs.
+  // Rows the merchant (or an auto-scrape) has archived. The active
+  // list is built from the cached scrape (summary.allProducts), so we
+  // overlay the products-table status here to drop archived rows out
+  // of it — they resurface under the "Show archived" toggle below.
+  const archivedProductIds = new Set(
+    productRows.filter((r) => r.status === 'archived').map((r) => r.id)
+  );
+
   const allProductsWithIds: PaginatedProductWithId[] =
     activeTab === 'products'
       ? (summary.allProducts ?? [])
@@ -383,9 +474,18 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             const key = p.sourceId ?? p.handle ?? '';
             const productId = productIdByKey.get(key);
             if (!productId) return null;
+            if (archivedProductIds.has(productId)) return null;
             const opt = optimByProductId.get(productId);
+            // The summary stores the full ProductInsight, including
+            // `signals.productType` — the TS type narrows it away,
+            // but the runtime JSON still has it. Cast + extract so
+            // the list chip is populated.
+            const productType =
+              (p as { signals?: { productType?: string | null } })
+                .signals?.productType ?? null;
             return {
               ...p,
+              productType,
               productId,
               archived: false,
               optimCount: opt?.count ?? 0,
@@ -411,6 +511,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         url: r.sourceUrl,
         score: 0,
         issues: [],
+        productType: r.productType,
         productId: r.id,
         archived: true,
         optimCount: opt?.count ?? 0,
@@ -419,9 +520,61 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
       };
     });
 
-  const hasUnfinishedJobs = projectJobs.some(
-    (j) => j.status === 'pending' || j.status === 'running'
+  // Server-side filter + sort + paginate for the products tab. The
+  // full catalog lives in summary.allProducts (already loaded into
+  // memory), so we filter the in-memory array here instead of
+  // shipping all rows to the client and doing the work there. This
+  // keeps the URL the source of truth for current view and avoids
+  // hydrating a multi-MB array on every search keystroke.
+  const productsTotalActive = allProductsWithIds.length;
+  const productsTotalArchived = archivedProducts.length;
+  const productsCombined = productsShowArchived
+    ? [...allProductsWithIds, ...archivedProducts]
+    : allProductsWithIds;
+  const productsFiltered = productsQuery
+    ? productsCombined.filter((p) =>
+        p.title.toLowerCase().includes(productsQuery.toLowerCase())
+      )
+    : productsCombined;
+  const productsSorted = [...productsFiltered].sort((a, b) => {
+    // Archived sinks to the bottom regardless of the chosen sort —
+    // they're a "secondary" set the merchant rarely cares about.
+    if (a.archived !== b.archived) return a.archived ? 1 : -1;
+    switch (productsSort) {
+      case 'recently-optimized': {
+        const aT = a.lastOptimAtIso ? new Date(a.lastOptimAtIso).getTime() : null;
+        const bT = b.lastOptimAtIso ? new Date(b.lastOptimAtIso).getTime() : null;
+        if (aT !== null && bT !== null) return bT - aT;
+        if (aT !== null) return -1;
+        if (bT !== null) return 1;
+        return a.score - b.score;
+      }
+      case 'score-asc':
+        return a.score - b.score;
+      case 'score-desc':
+        return b.score - a.score;
+      case 'title-asc':
+        return a.title.localeCompare(b.title);
+      case 'title-desc':
+        return b.title.localeCompare(a.title);
+    }
+  });
+  const productsFilteredTotal = productsSorted.length;
+  const productsTotalPages = Math.max(
+    1,
+    Math.ceil(productsFilteredTotal / PRODUCTS_PAGE_SIZE)
   );
+  const safeProductsPage = Math.min(productsPage, productsTotalPages);
+  const productsSliceStart = (safeProductsPage - 1) * PRODUCTS_PAGE_SIZE;
+  const productsSlice = productsSorted.slice(
+    productsSliceStart,
+    productsSliceStart + PRODUCTS_PAGE_SIZE
+  );
+
+  // Driven by the dedicated count query above so pagination on the
+  // activity tab doesn't hide a running job that just rolled off
+  // page 1.
+  const hasUnfinishedJobs = (unfinishedCountRow[0]?.value ?? 0) > 0;
   // An audit that says "completed" but pulled 0 products is a soft
   // failure — the scraper either hit a closed platform endpoint or
   // picked the wrong adapter. The audit row itself stays
@@ -539,8 +692,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           auditsUsed={auditsUsed}
           auditsLimit={auditsLimit}
           nextSlotAtIso={nextSlotAtIso}
+          isManual={project.source === 'manual'}
         />
-        <StatusLine status={effectiveStatus} error={effectiveError} />
+        {/* StatusLine is scrape-flow specific (queued / running /
+            failed). Manual projects skip it entirely — they never go
+            through a fetch-products lifecycle. */}
+        {project.source === 'manual' ? null : (
+          <StatusLine status={effectiveStatus} error={effectiveError} />
+        )}
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
 
@@ -571,12 +730,24 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
           />
           <PaginatedProductsList
             siteId={siteId}
-            products={allProductsWithIds}
-            archivedProducts={archivedProducts}
+            products={productsSlice}
+            page={safeProductsPage}
+            totalPages={productsTotalPages}
+            totalActiveCount={productsTotalActive}
+            totalArchivedCount={productsTotalArchived}
+            filteredTotal={productsFilteredTotal}
+            query={productsQuery}
+            sort={productsSort}
+            showArchived={productsShowArchived}
           />
         </div>
       ) : activeTab === 'jobs' ? (
-        <ProjectJobsList items={projectJobs as ProjectJobRow[]} siteId={siteId} />
+        <ProjectJobsList
+          items={projectJobs as ProjectJobRow[]}
+          siteId={siteId}
+          page={activityPage}
+          totalPages={activityTotalPages}
+        />
       ) : (
         // settings tab
         <div className="flex flex-col gap-4">
@@ -615,7 +786,8 @@ function SiteHeaderBar({
   projectId,
   auditsUsed,
   auditsLimit,
-  nextSlotAtIso
+  nextSlotAtIso,
+  isManual
 }: {
   domain: string;
   url: string;
@@ -624,13 +796,15 @@ function SiteHeaderBar({
   auditsUsed: number;
   auditsLimit: number;
   nextSlotAtIso: string | null;
+  /** Project's source === 'manual': swap the external storefront link
+   *  for a plain title + "From scratch" badge, and replace the
+   *  Relaunch-audit CTA with "+ Add product" (manual sites have no
+   *  remote catalog to re-scrape). */
+  isManual: boolean;
 }) {
   const t = useTranslations('Dashboard');
   return (
     <header className="flex items-center justify-between gap-2 md:gap-3 flex-wrap">
-      {/* Left cluster — back arrow + domain. min-w-0 + flex-1 keeps the
-          truncate working when there's not enough room next to the
-          action buttons. */}
       <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
         <Link
           href="/dashboard"
@@ -641,31 +815,57 @@ function SiteHeaderBar({
           <ArrowLeft className="size-3.5" />
           <span className="hidden md:inline">{t('backToDashboard')}</span>
         </Link>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={domain}
-          className="inline-flex items-center gap-1 md:gap-2 text-sm md:text-base font-semibold hover:text-[var(--accent)] transition-colors min-w-0"
-        >
-          <SiteFavicon
-            domain={domain}
-            size={18}
-            className="rounded-sm shrink-0 !size-3.5 md:!size-[18px]"
-          />
-          <span className="truncate">{domain}</span>
-          <ExternalLink className="size-3 md:size-4 opacity-60 shrink-0" aria-hidden />
-        </a>
+        {isManual ? (
+          <div
+            title={domain}
+            className="inline-flex items-center gap-1.5 md:gap-2 text-sm md:text-base font-semibold min-w-0"
+          >
+            <PenLine
+              className="size-3.5 md:size-4 text-[var(--accent)] shrink-0"
+              aria-hidden
+            />
+            <span className="truncate">{domain}</span>
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-mono font-semibold shrink-0">
+              {t('siteHeaderManualBadge')}
+            </span>
+          </div>
+        ) : (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={domain}
+            className="inline-flex items-center gap-1 md:gap-2 text-sm md:text-base font-semibold hover:text-[var(--accent)] transition-colors min-w-0"
+          >
+            <SiteFavicon
+              domain={domain}
+              size={18}
+              className="rounded-sm shrink-0 !size-3.5 md:!size-[18px]"
+            />
+            <span className="truncate">{domain}</span>
+            <ExternalLink className="size-3 md:size-4 opacity-60 shrink-0" aria-hidden />
+          </a>
+        )}
       </div>
-      {/* Right cluster — action buttons. shrink-0 keeps them at full
-          width while the left cluster absorbs the squeeze. */}
       <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
-        <RelaunchAuditButton
-          projectId={projectId}
-          auditsUsed={auditsUsed}
-          auditsLimit={auditsLimit}
-          nextSlotAtIso={nextSlotAtIso}
-        />
+        {isManual ? (
+          <Link
+            href={`/dashboard/sites/${projectId}/products/new`}
+            title={t('siteHeaderAddProduct')}
+            aria-label={t('siteHeaderAddProduct')}
+            className="inline-flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity text-sm font-medium"
+          >
+            <Plus className="size-3.5" />
+            <span className="hidden md:inline">{t('siteHeaderAddProduct')}</span>
+          </Link>
+        ) : (
+          <RelaunchAuditButton
+            projectId={projectId}
+            auditsUsed={auditsUsed}
+            auditsLimit={auditsLimit}
+            nextSlotAtIso={nextSlotAtIso}
+          />
+        )}
         {canAdd ? (
           <Link
             href="/dashboard/sites/new"
@@ -944,6 +1144,7 @@ function WorstProductsQuickList({
             const href = productId
               ? `/dashboard/sites/${siteId}/products/${productId}`
               : null;
+            const category = p.signals?.productType?.trim() || null;
             return (
               <div
                 key={productId ?? p.sourceId ?? p.handle ?? p.title}
@@ -952,6 +1153,14 @@ function WorstProductsQuickList({
                 <div className="flex items-center gap-3 min-w-0">
                   <WorstScoreChip score={p.score} />
                   <span className="truncate">{p.title}</span>
+                  {category ? (
+                    <span
+                      className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] border border-[var(--border)] truncate max-w-[10rem] shrink-0"
+                      title={category}
+                    >
+                      {category}
+                    </span>
+                  ) : null}
                 </div>
                 {href ? (
                   <Link
@@ -1168,10 +1377,14 @@ type ProjectJobRow = typeof jobs.$inferSelect & {
 
 function ProjectJobsList({
   items,
-  siteId
+  siteId,
+  page,
+  totalPages
 }: {
   items: ProjectJobRow[];
   siteId: string;
+  page: number;
+  totalPages: number;
 }) {
   const t = useTranslations('Dashboard');
   if (items.length === 0) {
@@ -1195,53 +1408,69 @@ function ProjectJobsList({
                 id={j.id}
                 className="border-b border-[var(--border)] last:border-b-0"
               >
-                <div className="flex items-stretch w-full">
-                  <Accordion.Heading className="flex-1 min-w-0">
-                    <Accordion.Trigger className="w-full px-4 py-3 flex items-center gap-3 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
-                      <span className="flex-1 truncate text-[var(--foreground)]">
-                        {t(jobKindLabel(j.kind as never))}
+                {/* Mirrors the Past Generations accordion layout —
+                    type label (fixed) · product / scope (flex-1
+                    truncate) · credits · status · chevron, all
+                    inside a single Accordion.Trigger so a click
+                    anywhere on the row toggles the detail. */}
+                <Accordion.Heading>
+                  <Accordion.Trigger className="w-full px-4 py-3 flex items-center gap-3 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
+                    <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium shrink-0 min-w-[7rem]">
+                      {t(jobKindLabel(j.kind as never))}
+                    </span>
+                    <span className="flex-1 truncate text-[var(--muted)] inline-flex items-center gap-1.5 min-w-0">
+                      {j.product ? (
+                        <>
+                          {j.product.status === 'archived' ? (
+                            <span
+                              className="text-[10px] font-mono uppercase tracking-wider px-1 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] shrink-0"
+                              title={t('jobProductArchived')}
+                            >
+                              {t('archivedBadgeShort')}
+                            </span>
+                          ) : null}
+                          {productHref ? (
+                            // Nested in the trigger — the Link still
+                            // navigates on its own click thanks to
+                            // event bubbling; HeroUI's Accordion
+                            // treats descendant link clicks as
+                            // non-toggling.
+                            <Link
+                              href={productHref}
+                              className={`hover:text-[var(--accent)] hover:underline truncate min-w-0 ${
+                                j.product.status === 'archived'
+                                  ? 'italic'
+                                  : ''
+                              }`}
+                              title={j.product.title}
+                            >
+                              {j.product.title}
+                            </Link>
+                          ) : (
+                            <span className="truncate min-w-0">
+                              {j.product.title}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span
+                          className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] shrink-0"
+                          title={t('jobScopeSiteWide')}
+                        >
+                          {t('jobScopeSiteWide')}
+                        </span>
+                      )}
+                    </span>
+                    {j.creditsCost > 0 ? (
+                      <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0 inline-flex items-center gap-1">
+                        <Coins className="size-3" aria-hidden />
+                        {j.creditsCost}
                       </span>
-                      <span className="text-xs font-mono text-[var(--muted)] tabular-nums shrink-0">
-                        {j.creditsCost > 0 ? `${j.creditsCost} cr` : '—'}
-                      </span>
-                      <ProjectJobStatusBadge status={j.status as JobStatus} />
-                      <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
-                    </Accordion.Trigger>
-                  </Accordion.Heading>
-                  <div className="flex items-center gap-1.5 px-4 py-3 border-l border-[var(--border)] max-w-[40%] min-w-0">
-                    {j.product ? (
-                      <>
-                        {j.product.status === 'archived' ? (
-                          <span
-                            className="text-[10px] font-mono uppercase tracking-wider px-1 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] shrink-0"
-                            title={t('jobProductArchived')}
-                          >
-                            {t('archivedBadgeShort')}
-                          </span>
-                        ) : null}
-                        {productHref ? (
-                          <Link
-                            href={productHref}
-                            className={`text-xs hover:text-[var(--accent)] hover:underline truncate ${
-                              j.product.status === 'archived'
-                                ? 'text-[var(--muted)] italic'
-                                : 'text-[var(--muted)]'
-                            }`}
-                            title={j.product.title}
-                          >
-                            {j.product.title}
-                          </Link>
-                        ) : (
-                          <span className="text-xs text-[var(--muted)] truncate">
-                            {j.product.title}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-xs text-[var(--muted)] italic">—</span>
-                    )}
-                  </div>
-                </div>
+                    ) : null}
+                    <ProjectJobStatusBadge status={j.status as JobStatus} />
+                    <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
+                  </Accordion.Trigger>
+                </Accordion.Heading>
                 <Accordion.Panel>
                   <Accordion.Body className="px-4 py-3 bg-[var(--default)]/30 text-xs">
                     <JobDetail job={j} />
@@ -1252,6 +1481,12 @@ function ProjectJobsList({
           })}
         </Accordion>
       </Card.Content>
+      <ServerPagination
+        currentPage={page}
+        totalPages={totalPages}
+        ariaLabel="Activity pagination"
+        hrefForPage={(p) => `?tab=jobs&activityPage=${p}`}
+      />
     </Card>
   );
 }

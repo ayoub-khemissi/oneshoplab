@@ -1,6 +1,6 @@
 import { Accordion, Card } from '@heroui/react';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
-import { ChevronLeft, ExternalLink } from 'lucide-react';
+import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
@@ -18,13 +18,19 @@ import { ModelChips } from '@/components/model-chips';
 import {
   FieldSwap,
   FieldSwapGroup,
-  FieldSwapGroupToggle
+  FieldSwapGroupToggle,
+  FieldViewProvider
 } from '@/components/field-swap';
 import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { ProductImageGallery } from '@/components/product-image-gallery';
 import { TagPills } from '@/components/tag-pills';
 import { AiImageGridLive } from '@/components/ai-image-grid-live';
+import { AppliedToastOnMount } from '@/components/applied-toast-on-mount';
+import { ApplyAiButton } from '@/components/apply-ai-button';
+import { AutoOptimizeOnMount } from '@/components/auto-optimize-on-mount';
+import { HistoryImage } from '@/components/history-image';
+import { ServerPagination } from '@/components/server-pagination';
 import {
   costForImage,
   DEFAULT_CHAT_MODEL,
@@ -32,6 +38,7 @@ import {
   IMAGE_MODEL_REGISTRY,
   imageRetentionDaysForPlan,
   listOptimHistory,
+  listOptimHistoryPaginated,
   listProductImageJobs,
   type ChatModelId,
   type ImageQualityId,
@@ -45,8 +52,15 @@ import { audits, products, projects } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 
+const HISTORY_PAGE_SIZE = 15;
+
 interface PageProps {
   params: Promise<{ id: string; siteId: string }>;
+  searchParams: Promise<{
+    /** Server-rendered pagination for the past-generations strip —
+     *  15 entries per page, sorted by createdAt desc. */
+    historyPage?: string;
+  }>;
 }
 
 interface ProductImage {
@@ -106,6 +120,11 @@ interface LoadedProduct {
   /** Site-wide instructions configured on the project. Surfaced as a hint
    *  on the product page so the merchant knows extra guidance is in flight. */
   projectInstructions: string;
+  /** True when the parent project is a from-scratch / manual store
+   *  (no upstream Shopify/WooCommerce/Wix). Unlocks the "Apply AI
+   *  to my product" CTA, since for scraped sites the source of
+   *  truth lives upstream and overwriting locally would be lossy. */
+  isManual: boolean;
 }
 
 async function loadProductForUser(
@@ -136,12 +155,40 @@ async function loadProductForUser(
       ...(summary.latestProducts ?? []),
       ...(summary.bestProducts ?? [])
     ];
-    product =
-      all.find((p) => {
-        if (productRow.sourceId && p.sourceId === productRow.sourceId) return true;
-        if (productRow.handle && p.handle === productRow.handle) return true;
-        return false;
-      }) ?? null;
+    // Match strategy is sourceId-first ACROSS THE WHOLE ARRAY, then
+    // handle as a strict fallback. Some upstream platforms emit the
+    // same handle for many distinct products (WooCommerce slug
+    // collisions, recycled slugs after a delete-and-recreate, …),
+    // so a per-item `sourceId || handle` check would return the
+    // wrong row whenever a handle collision lives earlier in the
+    // array than the actual sourceId. Two passes is cheap (O(n))
+    // and unambiguous.
+    const byId =
+      productRow.sourceId
+        ? all.find((p) => p.sourceId === productRow.sourceId)
+        : undefined;
+    const byHandle =
+      !byId && productRow.handle
+        ? all.find((p) => p.handle === productRow.handle)
+        : undefined;
+    const match = byId ?? byHandle ?? null;
+    if (match) {
+      // productRow stays the canonical source for the join key the
+      // rest of the page uses (sourceId / handle drive history
+      // lookups against jobs.input_payload.productSourceId). The
+      // summary's sourceId can be re-issued by the upstream store
+      // for the same handle on a re-scrape — using it would
+      // silently invalidate every historical generation. So we
+      // overlay the summary's score / signals onto the productRow
+      // identifiers, never the other way around.
+      product = {
+        ...match,
+        sourceId: productRow.sourceId,
+        handle: productRow.handle,
+        url: match.url ?? productRow.sourceUrl,
+        title: match.title || productRow.title
+      };
+    }
   }
 
   // Archived path: product is missing from the latest summary OR explicitly
@@ -173,7 +220,8 @@ async function loadProductForUser(
     product,
     archived: productRow.status === 'archived',
     productInstructions: productRow.customInstructions ?? '',
-    projectInstructions: project.customInstructions ?? ''
+    projectInstructions: project.customInstructions ?? '',
+    isManual: project.source === 'manual'
   };
 }
 
@@ -181,15 +229,21 @@ async function loadProductForUser(
 // Page
 // ============================================================================
 
-export default async function ProductDetailPage({ params }: PageProps) {
+export default async function ProductDetailPage({ params, searchParams }: PageProps) {
   const { id: productId, siteId } = await params;
+  const { historyPage: rawHistoryPage } = await searchParams;
+  const historyPage = Math.max(
+    1,
+    Number.parseInt(rawHistoryPage ?? '1', 10) || 1
+  );
 
   const session = await auth();
   if (!session?.user) redirect('/login');
 
   const loaded = await loadProductForUser(session.user.id, siteId, productId);
   if (!loaded) notFound();
-  const { product, projectId, productInstructions, projectInstructions, archived } = loaded;
+  const { product, projectId, productInstructions, projectInstructions, archived, isManual } =
+    loaded;
   // sourceId is the audit-summary key for this product; needed for history
   // lookups and as the form payload key for AI generation jobs.
   const sourceId = product.sourceId ?? product.handle ?? '';
@@ -198,14 +252,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
   // dashboard auto-picks it on next visit.
   await touchProjectLastView(projectId);
 
-  const [titleHistory, descriptionHistory, tagsHistory, imagesHistory, liveImageJobs] =
-    await Promise.all([
-      listOptimHistory(projectId, sourceId, 'title'),
-      listOptimHistory(projectId, sourceId, 'description'),
-      listOptimHistory(projectId, sourceId, 'tags'),
-      listOptimHistory(projectId, sourceId, 'images'),
-      listProductImageJobs(projectId, sourceId)
-    ]);
+  // The four per-field history slices feed `hasHistory` flags on the
+  // AI panel — they still need their own queries (a slice of 1-2 rows
+  // each is cheap). The bottom "Past generations" strip uses the new
+  // unified + paginated query.
+  const [
+    titleHistory,
+    descriptionHistory,
+    tagsHistory,
+    imagesHistory,
+    liveImageJobs,
+    pastGenPage
+  ] = await Promise.all([
+    listOptimHistory(projectId, sourceId, 'title'),
+    listOptimHistory(projectId, sourceId, 'description'),
+    listOptimHistory(projectId, sourceId, 'tags'),
+    listOptimHistory(projectId, sourceId, 'images'),
+    listProductImageJobs(projectId, sourceId),
+    listOptimHistoryPaginated(projectId, sourceId, {
+      page: historyPage,
+      perPage: HISTORY_PAGE_SIZE
+    })
+  ]);
 
   // Resolve the user's effective image quality so we can show the
   // matching credit cost on the Add / Regenerate tiles. Body overrides
@@ -271,8 +339,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </Link>
         <div className="flex items-center gap-3">
           <ScoreBadge score={product.score} />
-          <span className="text-sm text-[var(--muted)] font-mono">
-            {t('creditsBalance', { balance })}
+          <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
+            <Coins className="size-3.5" aria-hidden />
+            {balance}
           </span>
         </div>
       </header>
@@ -310,6 +379,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
       ) : null}
 
+      <AppliedToastOnMount />
+
       <RetryableGenerateProvider
         siteId={siteId}
         productId={productId}
@@ -319,6 +390,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         creditsBalance={balance}
         productArchived={archived}
       >
+        <AutoOptimizeOnMount productId={productId} />
         <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
           <ModelChips />
@@ -330,14 +402,36 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <SourcePreview product={product} />
 
             <FieldSwapGroup>
-              <div className="px-5 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
-                <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:flex-wrap">
+              <div className="px-5 pt-5 pb-5 md:pt-0 md:pb-0 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
+                <div className="flex flex-col gap-2">
                   <span className="eyebrow text-center sm:text-left">AI suggestions</span>
-                  <div className="flex items-center gap-2 flex-wrap justify-center sm:justify-end">
-                    <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
+                  {/* Desktop: actions on the left, source/AI toggle on
+                      the right (matches the per-field rows below).
+                      Mobile: stacks vertically, centered, same order. */}
+                  <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:flex-wrap">
+                    <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-2">
+                      <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
+                      {isManual && !archived ? (
+                        <ApplyAiButton
+                          projectId={projectId}
+                          productId={productId}
+                          available={{
+                            title: hasHistory.title,
+                            description: hasHistory.description,
+                            tags: hasHistory.tags,
+                            images: hasCompletedImages
+                          }}
+                        />
+                      ) : null}
+                    </div>
                     <FieldSwapGroupToggle
                       sourceLabel={tReport('swapSource')}
                       aiLabel={tReport('swapAi')}
+                      // Toggle has `self-start` baked in, which on a
+                      // flex-col parent (mobile) anchors it left. Force
+                      // center on mobile, let desktop fall back to the
+                      // parent's items-center.
+                      className="!self-center sm:!self-auto"
                     />
                   </div>
                 </div>
@@ -528,10 +622,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
       <PastGenerationsSection
         title={t('generationsHistory')}
         emptyText={t('generationHistoryEmpty')}
-        items={[...titleHistory, ...descriptionHistory, ...tagsHistory, ...imagesHistory].sort(
-          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-        )}
+        items={pastGenPage.items}
         retentionDays={retentionDays}
+        page={historyPage}
+        totalPages={pastGenPage.totalPages}
       />
     </main>
   );
@@ -553,16 +647,22 @@ function FieldRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]">
-      {children}
-      <div className="flex justify-end">
-        <RetryableGenerateButton
-          field={field}
-          hasHistory={hasHistory}
-          available={available}
-        />
+    // Wrap both the FieldSwap (in `children`) and the Regenerate
+    // button in a shared per-field view context so clicking
+    // Regenerate can flip this section to AI without disturbing
+    // sibling sections.
+    <FieldViewProvider>
+      <div className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]">
+        {children}
+        <div className="flex justify-end">
+          <RetryableGenerateButton
+            field={field}
+            hasHistory={hasHistory}
+            available={available}
+          />
+        </div>
       </div>
-    </div>
+    </FieldViewProvider>
   );
 }
 
@@ -580,6 +680,7 @@ function SourcePreview({ product }: { product: ProductSnapshot }) {
     .trim();
   const descriptionExcerpt =
     description.length > 160 ? `${description.slice(0, 160)}…` : description;
+  const category = product.signals.productType?.trim() || null;
 
   return (
     <div className="bg-[var(--default)] flex flex-col">
@@ -607,6 +708,11 @@ function SourcePreview({ product }: { product: ProductSnapshot }) {
         ) : (
           <h3 className="font-semibold leading-tight line-clamp-2">{product.title}</h3>
         )}
+        {category ? (
+          <span className="self-start text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] inline-flex items-center gap-1">
+            {category}
+          </span>
+        ) : null}
         {descriptionExcerpt ? (
           <p className="text-xs text-[var(--muted)] line-clamp-3">{descriptionExcerpt}</p>
         ) : null}
@@ -642,7 +748,9 @@ function PastGenerationsSection({
   title,
   emptyText,
   items,
-  retentionDays
+  retentionDays,
+  page,
+  totalPages
 }: {
   title: string;
   emptyText: string;
@@ -650,6 +758,8 @@ function PastGenerationsSection({
   /** Plan-specific retention; surfaces on the per-image expiry caption
    *  so the past-generations panel matches the live grid. */
   retentionDays: number;
+  page: number;
+  totalPages: number;
 }) {
   const tDash = useTranslations('Dashboard');
   if (items.length === 0) {
@@ -665,7 +775,7 @@ function PastGenerationsSection({
       <h2 className="text-lg font-semibold">{title}</h2>
       <Card variant="secondary" className="p-0">
         <Accordion>
-          {items.slice(0, 30).map((h) => (
+          {items.map((h) => (
             <Accordion.Item
               key={h.jobId}
               id={h.jobId}
@@ -683,8 +793,15 @@ function PastGenerationsSection({
                     <ImageExpiry
                       createdAt={h.createdAt}
                       retentionDays={retentionDays}
+                      expiredAt={h.expiredAt}
                       className="shrink-0"
                     />
+                  ) : null}
+                  {h.creditsCost > 0 ? (
+                    <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0 inline-flex items-center gap-1">
+                      <Coins className="size-3" aria-hidden />
+                      {h.creditsCost}
+                    </span>
                   ) : null}
                   <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0">
                     {h.createdAt.toLocaleDateString()}
@@ -701,6 +818,12 @@ function PastGenerationsSection({
           ))}
         </Accordion>
       </Card>
+      <ServerPagination
+        currentPage={page}
+        totalPages={totalPages}
+        ariaLabel="Past generations pagination"
+        hrefForPage={(p) => `?historyPage=${p}`}
+      />
     </section>
   );
 }
@@ -735,26 +858,20 @@ function PastGenResult({ item }: { item: OptimHistoryItem }) {
   if (item.field === 'images' && Array.isArray(item.output)) {
     const urls = item.output.filter((u): u is string => typeof u === 'string' && u.length > 0);
     if (urls.length === 0) {
-      return <p className="text-[var(--muted)] italic">—</p>;
+      // Tombstoned by the cleanup worker (or legacy job whose URLs
+      // never landed). Render a single placeholder tile via
+      // HistoryImage with no URL — the component handles the
+      // "broken" state out of the box.
+      return (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          <HistoryImage url="" />
+        </div>
+      );
     }
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {urls.slice(0, 6).map((url) => (
-          <a
-            key={url}
-            href={url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="block aspect-square overflow-hidden rounded-md border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={url}
-              alt=""
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </a>
+          <HistoryImage key={url} url={url} />
         ))}
       </div>
     );

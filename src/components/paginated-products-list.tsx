@@ -1,10 +1,20 @@
 'use client';
 
-import { Card, InputGroup, ListBox, Pagination, Select, TextField } from '@heroui/react';
-import { Archive, ArrowRight, CheckCircle2, Search, Sparkles } from 'lucide-react';
+import { Card, InputGroup, ListBox, Select, TextField } from '@heroui/react';
+import {
+  Archive,
+  ArchiveRestore,
+  ArrowRight,
+  CheckCircle2,
+  Search,
+  Sparkles
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { useFormStatus } from 'react-dom';
+import { Link, useRouter } from '@/i18n/navigation';
+import { ServerPagination } from '@/components/server-pagination';
+import { setProductArchivedAction } from '@/lib/product-actions';
 
 export interface PaginatedProduct {
   /** Stable UUID from the products table. Used to build the URL — no slug
@@ -17,26 +27,13 @@ export interface PaginatedProduct {
   score: number;
   issues: Array<{ code: string; data?: Record<string, string | number> }>;
   archived?: boolean;
-  /** Number of completed AI generations for this product. Drives the
-   *  "AI started" badge. Defaults to 0 (legacy callers that pre-date the
-   *  feature simply see no badge — no behaviour regression). */
   optimCount?: number;
-  /** ISO timestamp of the most recent completed AI generation. Drives
-   *  the default "recently optimized" sort. Null = never optimized. */
   lastOptimAtIso?: string | null;
-  /** True when title + description + tags are all generated AND at least
-   *  one image has been generated. Drives the green "AI completed"
-   *  badge, which takes precedence over the "started" one. */
   aiCompleted?: boolean;
-}
-
-interface PaginatedProductsListProps {
-  products: PaginatedProduct[];
-  /** Soft-archived products — hidden by default, revealed via a toggle. */
-  archivedProducts?: PaginatedProduct[];
-  /** Project UUID — used to build the per-site product URL. */
-  siteId: string;
-  pageSize?: number;
+  /** Free-form category — Shopify product_type, first WC/Wix category,
+   *  or whatever the user typed for a manual product. Required (nullable)
+   *  to keep the type predicate clean at call sites. */
+  productType: string | null;
 }
 
 type SortKey =
@@ -46,81 +43,105 @@ type SortKey =
   | 'title-asc'
   | 'title-desc';
 
-const DEFAULT_SORT: SortKey = 'recently-optimized';
+interface PaginatedProductsListProps {
+  /** Server-paginated slice for the current page only. */
+  products: PaginatedProduct[];
+  /** Site UUID — used to build per-product URLs. */
+  siteId: string;
+  page: number;
+  totalPages: number;
+  /** Total active product count in the merchant's catalog. */
+  totalActiveCount: number;
+  /** Total archived count — drives the toggle visibility. */
+  totalArchivedCount: number;
+  /** Count of products matching the current query/archived filter. */
+  filteredTotal: number;
+  /** Search query reflected from the URL — seeds the input on mount. */
+  query: string;
+  /** Sort key reflected from the URL. */
+  sort: SortKey;
+  /** Whether archived rows are merged into the visible set. */
+  showArchived: boolean;
+}
 
 /**
- * Dashboard list of every product in the user's latest audit, with search +
- * sort + pagination. The default sort puts the most-recently optimized
- * products first (lastOptimAtIso DESC) so the merchant lands directly on
- * the work-in-progress; products with no AI activity sink to the bottom
- * but stay reachable via search and pagination. A "AI started" badge
- * marks every product that already has at least one finished generation.
+ * Dashboard list of products in the user's latest audit. Filter +
+ * sort + pagination + archived toggle are ALL URL-controlled so the
+ * current view is shareable / refresh-stable / back-button-friendly.
+ *
+ * The component is otherwise server-driven: each prop reflects a URL
+ * search param, and changes route through router.push instead of
+ * local state. Only the search input keeps a local controlled value
+ * so typing stays smooth — a debounce pushes the URL update once the
+ * user stops typing for 350ms.
  */
 export function PaginatedProductsList({
   products,
-  archivedProducts = [],
   siteId,
-  pageSize = 10
+  page,
+  totalPages,
+  totalActiveCount,
+  totalArchivedCount,
+  filteredTotal,
+  query,
+  sort,
+  showArchived
 }: PaginatedProductsListProps) {
   const t = useTranslations('Dashboard');
   const tIssues = useTranslations('Issues');
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
-  const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
-  const [showArchived, setShowArchived] = useState(false);
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  // Reset to page 1 whenever the visible set changes. Otherwise a search +
-  // current page = 7 lands the user on an empty page.
+  // Local input state for smooth typing; the URL is updated 350ms
+  // after the last keystroke. We re-sync from the URL prop whenever
+  // it changes externally (e.g. browser back/forward).
+  const [inputValue, setInputValue] = useState(query);
   useEffect(() => {
-    setPage(1);
-  }, [query, sort, showArchived]);
+    setInputValue(query);
+  }, [query]);
 
-  const visibleSource = useMemo(
-    () => (showArchived ? [...products, ...archivedProducts] : products),
-    [products, archivedProducts, showArchived]
-  );
+  useEffect(() => {
+    if (inputValue === query) return;
+    const id = window.setTimeout(() => {
+      startTransition(() => {
+        router.push(
+          buildHref({
+            tab: 'products',
+            q: inputValue.trim() || null,
+            sort,
+            showArchived,
+            productsPage: 1
+          })
+        );
+      });
+    }, 350);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const base = q
-      ? visibleSource.filter((p) => p.title.toLowerCase().includes(q))
-      : visibleSource;
-    const sorted = [...base];
-    sorted.sort((a, b) => {
-      // Archived products sink to the bottom regardless of the chosen sort —
-      // they're a "secondary" set the merchant rarely cares about.
-      if (a.archived !== b.archived) return a.archived ? 1 : -1;
-      switch (sort) {
-        case 'recently-optimized': {
-          // Optimized products first (most recent on top); the rest in
-          // worst-score-first order so the actionable items surface even
-          // among the never-optimized tail.
-          const aT = a.lastOptimAtIso ? new Date(a.lastOptimAtIso).getTime() : null;
-          const bT = b.lastOptimAtIso ? new Date(b.lastOptimAtIso).getTime() : null;
-          if (aT !== null && bT !== null) return bT - aT;
-          if (aT !== null) return -1;
-          if (bT !== null) return 1;
-          return a.score - b.score;
-        }
-        case 'score-asc':
-          return a.score - b.score;
-        case 'score-desc':
-          return b.score - a.score;
-        case 'title-asc':
-          return a.title.localeCompare(b.title);
-        case 'title-desc':
-          return b.title.localeCompare(a.title);
-      }
+  function navigate(next: Partial<{
+    q: string | null;
+    sort: SortKey;
+    showArchived: boolean;
+    productsPage: number;
+  }>): void {
+    startTransition(() => {
+      router.push(
+        buildHref({
+          tab: 'products',
+          q: next.q !== undefined ? next.q : query.trim() || null,
+          sort: next.sort ?? sort,
+          showArchived: next.showArchived ?? showArchived,
+          productsPage: next.productsPage ?? page
+        })
+      );
     });
-    return sorted;
-  }, [visibleSource, query, sort]);
+  }
 
-  if (products.length === 0 && archivedProducts.length === 0) return null;
+  if (totalActiveCount === 0 && totalArchivedCount === 0) return null;
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const safePage = Math.min(page, totalPages);
-  const start = (safePage - 1) * pageSize;
-  const slice = filtered.slice(start, start + pageSize);
+  const start = (page - 1) * 15;
+  const end = Math.min(start + products.length, filteredTotal);
 
   return (
     <section className="flex flex-col gap-3">
@@ -128,26 +149,33 @@ export function PaginatedProductsList({
         <h2 className="text-lg font-semibold">
           {t('allProductsSection')}
           <span className="ml-2 text-sm font-normal text-[var(--muted)] font-mono">
-            ({filtered.length}
-            {filtered.length !== products.length ? `/${products.length}` : ''})
+            ({filteredTotal}
+            {filteredTotal !== totalActiveCount ? `/${totalActiveCount}` : ''})
           </span>
         </h2>
         {totalPages > 1 ? (
           <span className="text-xs text-[var(--muted)] font-mono">
             {t('paginationRange', {
               from: start + 1,
-              to: Math.min(start + pageSize, filtered.length),
-              total: filtered.length
+              to: end,
+              total: filteredTotal
             })}
           </span>
         ) : null}
       </header>
 
       <div className="flex flex-col sm:flex-row gap-2">
+        {/* `name` on the TextField (not a static `id` on the input):
+            HeroUI v3 mirrors the value into a hidden input, so a
+            static id landed on two elements → DevTools "duplicate
+            form field id". A duplicated `name` is not flagged (it's
+            normal, cf. radio groups) and still satisfies the
+            "field should have id or name" hint. */}
         <TextField
+          name="q"
           aria-label={t('searchPlaceholder')}
-          value={query}
-          onChange={setQuery}
+          value={inputValue}
+          onChange={setInputValue}
           className="flex-1"
         >
           <InputGroup>
@@ -160,11 +188,17 @@ export function PaginatedProductsList({
             />
           </InputGroup>
         </TextField>
-        <SortPicker value={sort} onChange={setSort} t={t} />
-        {archivedProducts.length > 0 ? (
+        <SortPicker
+          value={sort}
+          onChange={(v) => navigate({ sort: v, productsPage: 1 })}
+          t={t}
+        />
+        {totalArchivedCount > 0 ? (
           <button
             type="button"
-            onClick={() => setShowArchived((v) => !v)}
+            onClick={() =>
+              navigate({ showArchived: !showArchived, productsPage: 1 })
+            }
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border whitespace-nowrap ${
               showArchived
                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]'
@@ -175,23 +209,23 @@ export function PaginatedProductsList({
             <Archive className="size-3.5" aria-hidden />
             {showArchived
               ? t('hideArchived')
-              : t('showArchived', { count: archivedProducts.length })}
+              : t('showArchived', { count: totalArchivedCount })}
           </button>
         ) : null}
       </div>
 
-      {filtered.length === 0 ? (
+      {products.length === 0 ? (
         <p className="text-sm text-[var(--muted)] italic py-6 text-center">
           {t('noProductsMatching')}
         </p>
       ) : null}
 
-      <ul className="flex flex-col gap-2">
-        {slice.map((p) => (
+      <ul className={`flex flex-col gap-2 ${isPending ? 'opacity-60 transition-opacity' : ''}`}>
+        {products.map((p) => (
           <li key={p.productId}>
             <Card
               variant="secondary"
-              className={`p-4 flex flex-row items-start gap-4 ${
+              className={`p-4 flex flex-row items-center gap-4 ${
                 p.archived ? 'opacity-60' : ''
               }`}
             >
@@ -232,6 +266,14 @@ export function PaginatedProductsList({
                       {p.title}
                     </Link>
                   )}
+                  {p.productType?.trim() ? (
+                    <span
+                      className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] border border-[var(--border)] truncate max-w-[12rem]"
+                      title={p.productType}
+                    >
+                      {p.productType}
+                    </span>
+                  ) : null}
                 </div>
                 {p.issues.length > 0 && (
                   <p className="text-xs text-[var(--muted)]">
@@ -244,61 +286,66 @@ export function PaginatedProductsList({
                   </p>
                 )}
               </div>
-              <Link
-                href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity ${
-                  p.archived
-                    ? 'border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]'
-                    : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'
-                }`}
-              >
-                {p.archived ? t('viewArchived') : t('optimizeButton')}
-                <ArrowRight className="size-3.5" />
-              </Link>
+              <div className="flex items-center gap-2 shrink-0">
+                <ArchiveToggle
+                  siteId={siteId}
+                  productId={p.productId}
+                  archived={!!p.archived}
+                  t={t}
+                />
+                <Link
+                  href={`/dashboard/sites/${siteId}/products/${p.productId}`}
+                  className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity ${
+                    p.archived
+                      ? 'border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]'
+                      : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'
+                  }`}
+                >
+                  {p.archived ? t('viewArchived') : t('optimizeButton')}
+                  <ArrowRight className="size-3.5" />
+                </Link>
+              </div>
             </Card>
           </li>
         ))}
       </ul>
-      {totalPages > 1 ? (
-        <div className="flex justify-center pt-2">
-          <Pagination size="sm" className="w-auto">
-            <Pagination.Content>
-              <Pagination.Item>
-                <Pagination.Previous
-                  onPress={() => setPage((p) => Math.max(1, p - 1))}
-                >
-                  ‹
-                </Pagination.Previous>
-              </Pagination.Item>
-              {pageRange(safePage, totalPages).map((entry, i) =>
-                entry === 'ellipsis' ? (
-                  <Pagination.Item key={`e-${i}`}>
-                    <Pagination.Ellipsis>…</Pagination.Ellipsis>
-                  </Pagination.Item>
-                ) : (
-                  <Pagination.Item key={entry}>
-                    <Pagination.Link
-                      isActive={entry === safePage}
-                      onPress={() => setPage(entry)}
-                    >
-                      {entry}
-                    </Pagination.Link>
-                  </Pagination.Item>
-                )
-              )}
-              <Pagination.Item>
-                <Pagination.Next
-                  onPress={() => setPage((p) => Math.min(totalPages, p + 1))}
-                >
-                  ›
-                </Pagination.Next>
-              </Pagination.Item>
-            </Pagination.Content>
-          </Pagination>
-        </div>
-      ) : null}
+
+      <ServerPagination
+        currentPage={page}
+        totalPages={totalPages}
+        ariaLabel="Products pagination"
+        hrefForPage={(p) =>
+          buildHref({
+            tab: 'products',
+            q: query.trim() || null,
+            sort,
+            showArchived,
+            productsPage: p
+          })
+        }
+      />
     </section>
   );
+}
+
+function buildHref(state: {
+  tab: string;
+  q: string | null;
+  sort: SortKey;
+  showArchived: boolean;
+  productsPage: number;
+}): string {
+  const params = new URLSearchParams();
+  params.set('tab', state.tab);
+  if (state.q) params.set('q', state.q);
+  if (state.sort && state.sort !== 'recently-optimized') {
+    params.set('sort', state.sort);
+  }
+  if (state.showArchived) params.set('showArchived', '1');
+  if (state.productsPage > 1) {
+    params.set('productsPage', String(state.productsPage));
+  }
+  return `?${params.toString()}`;
 }
 
 function SortPicker({
@@ -341,18 +388,59 @@ function SortPicker({
   );
 }
 
-function pageRange(current: number, total: number): Array<number | 'ellipsis'> {
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
-  const out: Array<number | 'ellipsis'> = [1];
-  if (current > 3) out.push('ellipsis');
-  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
-    out.push(i);
-  }
-  if (current < total - 2) out.push('ellipsis');
-  out.push(total);
-  return out;
+function ArchiveToggle({
+  siteId,
+  productId,
+  archived,
+  t
+}: {
+  siteId: string;
+  productId: string;
+  archived: boolean;
+  t: (key: string) => string;
+}) {
+  const label = archived ? t('unarchiveProduct') : t('archiveProduct');
+  return (
+    <form
+      action={setProductArchivedAction}
+      onSubmit={(e) => {
+        // Restore is harmless; only guard the archive direction.
+        if (!archived && !window.confirm(t('archiveConfirm'))) {
+          e.preventDefault();
+        }
+      }}
+    >
+      <input type="hidden" name="projectId" value={siteId} />
+      <input type="hidden" name="productId" value={productId} />
+      <input type="hidden" name="archived" value={archived ? '0' : '1'} />
+      <ArchiveSubmit archived={archived} label={label} />
+    </form>
+  );
+}
+
+function ArchiveSubmit({
+  archived,
+  label
+}: {
+  archived: boolean;
+  label: string;
+}) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      title={label}
+      aria-label={label}
+      className="p-1.5 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--default)] transition-colors disabled:opacity-50 disabled:pointer-events-none"
+    >
+      {archived ? (
+        <ArchiveRestore className="size-4" aria-hidden />
+      ) : (
+        <Archive className="size-4" aria-hidden />
+      )}
+    </button>
+  );
 }
 
 function ScoreChip({ score }: { score: number }) {
@@ -369,10 +457,6 @@ function ScoreChip({ score }: { score: number }) {
   );
 }
 
-/** Default placeholders for every Issues message — covers legacy audits whose
- *  `data` payload is missing the keys their translation expects (e.g. older
- *  rows without `{length}` on `short_description`). Without this fallback
- *  next-intl throws a FORMATTING_ERROR even inside a try/catch on SSR. */
 const ISSUE_DEFAULTS: Record<string, string | number> = {
   length: 0,
   missing: 0,

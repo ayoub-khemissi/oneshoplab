@@ -38,7 +38,9 @@ export async function syncProjectProducts(
   // resolve each scraped product in O(1) and detect orphans.
   const bySourceId = new Map<string, string>();
   const byHandle = new Map<string, string>();
+  const existingById = new Map<string, (typeof existing)[number]>();
   for (const e of existing) {
+    existingById.set(e.id, e);
     if (e.sourceId) bySourceId.set(e.sourceId, e.id);
     if (e.handle) byHandle.set(e.handle, e.id);
   }
@@ -48,17 +50,57 @@ export async function syncProjectProducts(
   let inserted = 0;
   let updated = 0;
 
+  // Two-pass match: sourceId-first across the whole scrape, then
+  // handle for whatever's left. Some platforms (WooCommerce sites
+  // with rich-snippet collisions, or shops that recycle slugs after
+  // a delete-and-recreate) emit the same handle for many distinct
+  // products in a single scrape. Without this two-pass approach we
+  // would update the same DB row N times — once per duplicate-handle
+  // scraped product — and the row's sourceId ends up at whichever
+  // duplicate was iterated last, silently breaking history lookups
+  // against jobs.input_payload.productSourceId.
+  const claimed = new Set<string>();
+  const reservations = new Map<NormalizedProduct, string | null>();
+
+  // Pass 1: every scrape entry that has a direct sourceId match.
+  for (const p of scraped) {
+    if (!p.sourceId) continue;
+    const id = bySourceId.get(p.sourceId);
+    if (id && !claimed.has(id)) {
+      claimed.add(id);
+      reservations.set(p, id);
+    }
+  }
+  // Pass 2: handle fallback for whatever didn't claim a sourceId
+  // match. We only let ONE scrape entry win each handle, breaking
+  // the duplicate-handle merge collision.
+  const claimedHandles = new Set<string>();
+  for (const p of scraped) {
+    if (reservations.has(p)) continue;
+    if (!p.handle) continue;
+    if (claimedHandles.has(p.handle)) continue;
+    const id = byHandle.get(p.handle);
+    if (id && !claimed.has(id)) {
+      claimed.add(id);
+      claimedHandles.add(p.handle);
+      reservations.set(p, id);
+    }
+  }
+
   await db.transaction(async (tx) => {
     for (const p of scraped) {
       if (!p.sourceId && !p.handle) continue;
 
-      const existingId =
-        (p.sourceId && bySourceId.get(p.sourceId)) ||
-        (p.handle && byHandle.get(p.handle)) ||
-        null;
+      const existingId = reservations.get(p) ?? null;
 
       if (existingId) {
         seenIds.add(existingId);
+        // A merchant-initiated archive is sticky: even though the
+        // product is back in the scrape, keep it archived (and keep
+        // its archivedAt) until they explicitly restore it. Auto-
+        // archived rows un-archive normally.
+        const prev = existingById.get(existingId);
+        const keepArchived = prev?.manuallyArchived === true;
         await tx
           .update(products)
           .set({
@@ -86,10 +128,11 @@ export async function syncProjectProducts(
             currency: p.currency,
             sku: p.sku,
             sourceUpdatedAt: p.sourceUpdatedAt,
-            // Confirm presence + un-archive in case it was archived before.
-            status: 'active',
+            // Confirm presence + un-archive in case it was archived before
+            // (unless the merchant manually archived it — that's sticky).
+            status: keepArchived ? 'archived' : 'active',
             lastSeenAt: now,
-            archivedAt: null
+            archivedAt: keepArchived ? (prev?.archivedAt ?? now) : null
           })
           .where(eq(products.id, existingId));
         updated += 1;
