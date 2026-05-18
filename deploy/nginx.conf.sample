@@ -31,7 +31,10 @@ server {
     add_header X-Frame-Options "DENY" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" always;
+    # script-src: Stripe (checkout), Google reCAPTCHA (audit/signup forms),
+    # googletagmanager.com (consent-gated GA4 — beacons go to
+    # google-analytics.com, already covered by connect-src/img-src https:).
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src https://js.stripe.com https://hooks.stripe.com https://www.google.com/recaptcha/; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" always;
 
     # Next.js (running on 127.0.0.1:3030) builds absolute URLs in middleware
     # redirects from its own listening address, so Location: headers leak
