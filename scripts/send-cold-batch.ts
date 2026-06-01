@@ -145,7 +145,16 @@ async function main(): Promise<void> {
   const { renderColdMail, firstNameFromEmail, agencyNameFromDomain } = await import(
     '@/lib/cold/render'
   );
+  type ScoreSnapshot = import('@/lib/cold/render').ScoreSnapshot;
   const { platformDisplayName } = await import('@/lib/cold/templates');
+
+  // Localised labels for the score grid + stats hook. Matches the
+  // labels we use on the dashboard / audit page so the cold mail
+  // reads consistently with the in-product UI.
+  const SCORE_LABELS: Record<'fr' | 'en', ScoreSnapshot['labels']> = {
+    fr: { overall: 'Score global', catalog: 'Catalogue', copy: 'Copy', visual: 'Visuel', tagging: 'Tags' },
+    en: { overall: 'Overall', catalog: 'Catalog', copy: 'Copy', visual: 'Visual', tagging: 'Tags' }
+  };
   const { makeOptOutToken } = await import('@/lib/cold/opt-out');
   const { db } = await import('@/lib/db');
   const { audits, leads, leadAttempts } = await import('@/lib/db/schema');
@@ -167,23 +176,71 @@ async function main(): Promise<void> {
     return null;
   };
 
-  /** Returns the latest completed anon audit token for a domain within
-   *  the freshness window, or null. Drives the merchant_audited vs
-   *  merchant_unaudited fork. */
-  async function freshAuditTokenForDomain(domain: string): Promise<string | null> {
+  interface AuditScoresJson {
+    overall: number;
+    catalogCompleteness: number;
+    copyQuality: number;
+    visualQuality: number;
+    taggingQuality: number;
+  }
+  interface AuditSummaryJson {
+    distribution?: {
+      imagesZero?: number;
+      descEmpty?: number;
+      tagsZero?: number;
+    };
+    allProducts?: unknown[];
+  }
+  interface FreshAudit {
+    token: string;
+    scores: AuditScoresJson | null;
+    summary: AuditSummaryJson | null;
+    productsSampled: number | null;
+  }
+
+  /** Returns the latest completed anon audit for a domain within the
+   *  freshness window, including scores + summary so the cold mail can
+   *  embed the score grid + stats hook.
+   *
+   *  Two-step (mirrors claimAnonAudits in src/lib/anon.ts): pull the
+   *  most-recent id with a tiny projection so the ORDER BY sort buffer
+   *  doesn't have to carry the multi-MB `summary` JSON. Then fetch the
+   *  payload columns on the resolved id. Without the split, MySQL
+   *  raises ER_OUT_OF_SORTMEMORY on audits with rich summaries. */
+  async function freshAuditForDomain(domain: string): Promise<FreshAudit | null> {
     const cutoff = new Date(Date.now() - FRESH_AUDIT_MS);
+    const idRow = await db
+      .select({ id: audits.id })
+      .from(audits)
+      .where(
+        and(
+          isNull(audits.projectId),
+          isNotNull(audits.anonToken),
+          eq(audits.domain, domain),
+          eq(audits.status, 'completed'),
+          gt(audits.createdAt, cutoff)
+        )
+      )
+      .orderBy(desc(audits.createdAt))
+      .limit(1);
+    if (idRow.length === 0) return null;
+
     const row = await db.query.audits.findFirst({
-      where: and(
-        isNull(audits.projectId),
-        isNotNull(audits.anonToken),
-        eq(audits.domain, domain),
-        eq(audits.status, 'completed'),
-        gt(audits.createdAt, cutoff)
-      ),
-      columns: { anonToken: true },
-      orderBy: [desc(audits.createdAt)]
+      where: eq(audits.id, idRow[0].id),
+      columns: {
+        anonToken: true,
+        scores: true,
+        summary: true,
+        productsSampled: true
+      }
     });
-    return row?.anonToken ?? null;
+    if (!row?.anonToken) return null;
+    return {
+      token: row.anonToken,
+      scores: (row.scores as AuditScoresJson | null) ?? null,
+      summary: (row.summary as AuditSummaryJson | null) ?? null,
+      productsSampled: row.productsSampled ?? null
+    };
   }
 
   // Discover the candidate leads. We want lead.language to match the
@@ -302,18 +359,39 @@ async function main(): Promise<void> {
     }
 
     // For merchants, look up a fresh pre-run audit. Found → audited
-    // variant with /audit/{token} URL. Not found → unaudited fallback
-    // pointing to the homepage (per operator decision).
+    // variant with /audit/{token} URL + score grid. Not found →
+    // unaudited fallback pointing to the homepage (per operator
+    // decision).
     let leadVariant: ColdVariant;
     let auditUrl: string;
+    let scoreSnapshot: ScoreSnapshot | undefined;
+    let stats = { audited: '0', noImage: '0', noDesc: '0', noTags: '0' };
+
     if (category === 'agency') {
       leadVariant = 'agency';
       auditUrl = `${auditBase}/?utm_source=cold&utm_medium=email&utm_campaign=agency_t1_${args.lang}&lead=${lead.id}`;
     } else {
-      const token = await freshAuditTokenForDomain(lead.domain);
-      if (token) {
+      const fresh = await freshAuditForDomain(lead.domain);
+      if (fresh && fresh.scores) {
         leadVariant = 'merchant_audited';
-        auditUrl = `${auditBase}/${args.lang}/audit/${token}?utm_source=cold&utm_medium=email&utm_campaign=merchant_audited_t1_${args.lang}&lead=${lead.id}`;
+        auditUrl = `${auditBase}/${args.lang}/audit/${fresh.token}?utm_source=cold&utm_medium=email&utm_campaign=merchant_audited_t1_${args.lang}&lead=${lead.id}`;
+        scoreSnapshot = {
+          overall: Math.round(fresh.scores.overall),
+          catalog: Math.round(fresh.scores.catalogCompleteness),
+          copy: Math.round(fresh.scores.copyQuality),
+          visual: Math.round(fresh.scores.visualQuality),
+          tagging: Math.round(fresh.scores.taggingQuality),
+          labels: SCORE_LABELS[args.lang]
+        };
+        const dist = fresh.summary?.distribution ?? {};
+        const total =
+          fresh.summary?.allProducts?.length ?? fresh.productsSampled ?? 0;
+        stats = {
+          audited: String(total),
+          noImage: String(dist.imagesZero ?? 0),
+          noDesc: String(dist.descEmpty ?? 0),
+          noTags: String(dist.tagsZero ?? 0)
+        };
       } else {
         leadVariant = 'merchant_unaudited';
         auditUrl = `${auditBase}/?utm_source=cold&utm_medium=email&utm_campaign=merchant_unaudited_t1_${args.lang}&lead=${lead.id}`;
@@ -335,15 +413,25 @@ async function main(): Promise<void> {
             optOutUrl,
             fromName
           })
-        : renderColdMail(leadVariant, args.lang, args.touch, {
-            firstName,
-            storeName: displayName,
-            platformDisplay: platformDisplayName(lead.platform),
-            auditUrl,
-            discordUrl,
-            optOutUrl,
-            fromName
-          });
+        : renderColdMail(
+            leadVariant,
+            args.lang,
+            args.touch,
+            {
+              firstName,
+              storeName: displayName,
+              platformDisplay: platformDisplayName(lead.platform),
+              auditUrl,
+              discordUrl,
+              optOutUrl,
+              fromName,
+              productsAudited: stats.audited,
+              productsNoImage: stats.noImage,
+              productsNoDesc: stats.noDesc,
+              productsNoTags: stats.noTags
+            },
+            scoreSnapshot
+          );
 
     const recipient = args.mode === 'test-email' ? args.testEmail! : lead.contactEmail;
 

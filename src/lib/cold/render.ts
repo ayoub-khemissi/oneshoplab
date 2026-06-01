@@ -25,31 +25,55 @@ export interface RenderedColdMail {
   html: string;
 }
 
+/**
+ * Optional payload for the [[SCORES]] block. Only set for the
+ * merchant_audited variant — the cold script reads it from the audit
+ * row's `scores` JSON. Labels are passed in by the caller so render.ts
+ * stays locale-agnostic.
+ */
+export interface ScoreSnapshot {
+  overall: number;
+  catalog: number;
+  copy: number;
+  visual: number;
+  tagging: number;
+  labels: {
+    overall: string;
+    catalog: string;
+    copy: string;
+    visual: string;
+    tagging: string;
+  };
+}
+
 export function renderColdMail(
   variant: ColdVariant,
   lang: ColdLang,
   touch: ColdTouch,
-  vars: ColdVars
+  vars: ColdVars,
+  scores?: ScoreSnapshot
 ): RenderedColdMail {
   const tpl = getTemplate(variant, lang, touch);
   const dict = vars as unknown as Record<string, string>;
   const subject = substitute(tpl.subject, dict);
-  // Substitute variables first; CTA/LINK markers are kept as-is so the
-  // text and HTML renderers can interpret them differently.
+  // Substitute variables first; CTA / LINK / DISCORD / SCORES markers
+  // are kept as-is so the text and HTML renderers can interpret them
+  // differently.
   const substituted = substitute(tpl.body, dict);
-  const text = markersToText(substituted);
-  const html = textToHtml(substituted);
+  const text = markersToText(substituted, scores);
+  const html = textToHtml(substituted, scores);
   return { subject, text, html };
 }
 
 /**
- * Strip the [[CTA …]] / [[LINK …]] / [[DISCORD …]] markers for the
- * plain-text part. In text/plain the URL must be visible because the
- * user has no hover/click target — we render it as "label: URL". This
- * is also the version SpamAssassin reads for link analysis, so keeping
- * URLs inline-canonical avoids "hidden link" red flags.
+ * Strip the [[CTA …]] / [[LINK …]] / [[DISCORD …]] / [[SCORES]]
+ * markers for the plain-text part. In text/plain the URL must be
+ * visible because the user has no hover/click target — we render it
+ * as "label: URL". This is also the version SpamAssassin reads for
+ * link analysis, so keeping URLs inline-canonical avoids "hidden
+ * link" red flags.
  */
-function markersToText(s: string): string {
+function markersToText(s: string, scores?: ScoreSnapshot): string {
   return s
     .replace(/\[\[CTA\s+([^|]+)\|\s*([^\]]+)\]\]/g, (_, label: string, url: string) =>
       `${label.trim()}: ${url.trim()}`
@@ -59,6 +83,17 @@ function markersToText(s: string): string {
     )
     .replace(/\[\[LINK\s+([^|]+)\|\s*([^\]]+)\]\]/g, (_, label: string, url: string) =>
       `${label.trim()} (${url.trim()})`
+    )
+    .replace(/\[\[SCORES\]\]/g, () =>
+      scores
+        ? [
+            `${scores.labels.overall}: ${scores.overall}/100`,
+            `  - ${scores.labels.catalog}: ${scores.catalog}/100`,
+            `  - ${scores.labels.copy}: ${scores.copy}/100`,
+            `  - ${scores.labels.visual}: ${scores.visual}/100`,
+            `  - ${scores.labels.tagging}: ${scores.tagging}/100`
+          ].join('\n')
+        : ''
     );
 }
 
@@ -154,7 +189,53 @@ function discordButton(label: string, url: string): string {
   );
 }
 
-function textToHtml(text: string): string {
+const TIER_GOOD = '#16a34a'; // ≥75 — green
+const TIER_MID = '#f59e0b'; // 50-74 — orange
+const TIER_POOR = '#ef4444'; // <50 — red
+function tierColor(n: number): string {
+  if (n >= 75) return TIER_GOOD;
+  if (n >= 50) return TIER_MID;
+  return TIER_POOR;
+}
+
+/**
+ * Render the [[SCORES]] marker as a styled table: overall score
+ * top-row (colspan 4), then a 4-cell row with catalog/copy/visual
+ * /tagging. Color-coded per tier to drive scan-and-hook attention.
+ * Uses <table> rather than CSS grid because grid is unreliable across
+ * Outlook + older Apple Mail.
+ */
+function scoresTable(s: ScoreSnapshot): string {
+  const cell = (label: string, value: number, last: boolean): string => {
+    const color = tierColor(value);
+    return (
+      `<td style="width:25%;padding:12px 6px;text-align:center;background:#ffffff;border:1px solid #e5e7eb;border-top:none${
+        last ? '' : ';border-right:none'
+      }">` +
+      `<div style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;font-weight:600">${escapeHtml(label)}</div>` +
+      `<div style="font-size:20px;font-weight:700;color:${color};margin-top:4px;line-height:1.1">${value}</div>` +
+      `</td>`
+    );
+  };
+  return (
+    `<table cellspacing="0" cellpadding="0" border="0" align="center" style="width:100%;max-width:420px;margin:20px auto;border-collapse:collapse">` +
+    `<tr>` +
+    `<td colspan="4" style="padding:18px;text-align:center;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px 8px 0 0">` +
+    `<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;font-weight:600">${escapeHtml(s.labels.overall)}</div>` +
+    `<div style="font-size:40px;font-weight:700;color:${tierColor(s.overall)};line-height:1.1;margin-top:4px">${s.overall}<span style="font-size:14px;color:#9ca3af;font-weight:500"> / 100</span></div>` +
+    `</td>` +
+    `</tr>` +
+    `<tr>` +
+    cell(s.labels.catalog, s.catalog, false) +
+    cell(s.labels.copy, s.copy, false) +
+    cell(s.labels.visual, s.visual, false) +
+    cell(s.labels.tagging, s.tagging, true) +
+    `</tr>` +
+    `</table>`
+  );
+}
+
+function textToHtml(text: string, scores?: ScoreSnapshot): string {
   const paragraphs = text.split(/\n{2,}/);
   const blocks: string[] = [];
   // The footer block is the last paragraph that starts with "—" — we
@@ -166,7 +247,7 @@ function textToHtml(text: string): string {
     const p = paragraphs[i];
     const isFooter = i === footerIdx;
 
-    // A whole paragraph that IS a single CTA / DISCORD marker → button block.
+    // A whole paragraph that IS a single CTA / DISCORD / SCORES marker → block.
     const ctaMatch = p.trim().match(/^\[\[CTA\s+([^|]+)\|\s*([^\]]+)\]\]$/);
     if (ctaMatch) {
       blocks.push(ctaButton(ctaMatch[1].trim(), ctaMatch[2].trim()));
@@ -175,6 +256,13 @@ function textToHtml(text: string): string {
     const discordMatch = p.trim().match(/^\[\[DISCORD\s+([^|]+)\|\s*([^\]]+)\]\]$/);
     if (discordMatch) {
       blocks.push(discordButton(discordMatch[1].trim(), discordMatch[2].trim()));
+      continue;
+    }
+    if (p.trim() === '[[SCORES]]') {
+      // Silently drop when no snapshot — the unaudited path doesn't
+      // reach this marker, but defending against a misconfigured
+      // caller beats a literal "[[SCORES]]" in the recipient's inbox.
+      if (scores) blocks.push(scoresTable(scores));
       continue;
     }
 

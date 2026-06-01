@@ -97,11 +97,15 @@ const FR_MERCHANT_AUDITED_T1: Template = {
   subject: 'Audit de {storeName} — votre rapport est prêt',
   body: `Bonjour {firstName},
 
-J'ai lancé un audit catalogue automatisé sur votre boutique {storeName} ({platformDisplay}). Le rapport est consultable directement, sans connexion :
+J'ai lancé un audit catalogue automatisé sur votre boutique {storeName} ({platformDisplay}). Voici le verdict :
+
+[[SCORES]]
+
+Sur {productsAudited} produits analysés : {productsNoImage} sans image, {productsNoDesc} sans description, {productsNoTags} sans tags.
+
+Le rapport détaillé liste les fiches les plus sous-optimisées avec leurs problèmes ciblés, la répartition complète des manques sur le catalogue, et les axes prioritaires à traiter en premier. Consultable directement, sans connexion :
 
 [[CTA Voir mon rapport d'audit | {auditUrl}]]
-
-Vous y trouverez le score global du catalogue (SEO produits, qualité visuelle, complétude des fiches), la répartition des problèmes (produits sans image, sans description, sans tags), et les fiches les plus sous-optimisées avec leurs problèmes détaillés.
 
 Ce que fait OneShopLab au-delà de l'audit :
 
@@ -124,11 +128,15 @@ const EN_MERCHANT_AUDITED_T1: Template = {
   subject: 'Audit of {storeName} — your report is ready',
   body: `Hi {firstName},
 
-I ran an automated catalog audit on your store {storeName} ({platformDisplay}). The report is available directly, no login required:
+I ran an automated catalog audit on your store {storeName} ({platformDisplay}). Here's the verdict:
+
+[[SCORES]]
+
+Across {productsAudited} products analyzed: {productsNoImage} without images, {productsNoDesc} without descriptions, {productsNoTags} without tags.
+
+The full report lists the top underperforming listings with targeted issues, the complete distribution of gaps across the catalog, and the priority axes to fix first. Available directly, no login:
 
 [[CTA See my audit report | {auditUrl}]]
-
-You'll find the overall catalog score (product SEO, visual quality, listing completeness), the distribution of issues (products without images, without descriptions, without tags), and the top underperforming listings with detailed issues.
 
 What OneShopLab does beyond the audit:
 
@@ -238,7 +246,12 @@ export interface AgencyColdVars {
   fromName: string;
 }
 
-/** Variables expected by both MERCHANT templates (audited + unaudited). */
+/** Variables expected by both MERCHANT templates (audited + unaudited).
+ *  The stat fields (productsAudited, productsNoImage, productsNoDesc,
+ *  productsNoTags) are only referenced by the merchant_audited body;
+ *  the unaudited body ignores them. The cold script always supplies
+ *  them anyway ("0" for unaudited) so the substitute() helper never
+ *  trips over a missing key. */
 export interface MerchantColdVars {
   firstName: string;
   storeName: string;
@@ -250,6 +263,11 @@ export interface MerchantColdVars {
   discordUrl: string;
   optOutUrl: string;
   fromName: string;
+  /** Pre-rendered stat strings for merchant_audited's hook line. */
+  productsAudited: string;
+  productsNoImage: string;
+  productsNoDesc: string;
+  productsNoTags: string;
 }
 
 export type ColdVars = AgencyColdVars | MerchantColdVars;
