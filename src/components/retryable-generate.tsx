@@ -244,6 +244,13 @@ export function RetryableGenerateProvider({
       // the user is on the product page, will retry, and the
       // attempted field is the one they last interacted with.
       toast.danger(t('errorGenerationFailed'));
+      // Mark the failure notification as read — user has now
+      // explicitly seen the failure (via toast). Best-effort.
+      void fetch('/api/notifications/mark-read', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jobId: job.jobId })
+      });
     }
     if (dirty) {
       try {
@@ -367,6 +374,24 @@ export function RetryableGenerateProvider({
           if (res.ok) {
             setFieldState(field, { kind: 'success' });
             toast.success(t('generationSuccessTitle'));
+            // Mark the just-fired notification as read — user saw the
+            // toast. Best-effort: don't block the UI on the call.
+            try {
+              const ok = (await res.clone().json()) as { chatJobIds?: string[] };
+              if (ok.chatJobIds?.length) {
+                void Promise.all(
+                  ok.chatJobIds.map((jobId) =>
+                    fetch('/api/notifications/mark-read', {
+                      method: 'POST',
+                      headers: { 'content-type': 'application/json' },
+                      body: JSON.stringify({ jobId })
+                    })
+                  )
+                );
+              }
+            } catch {
+              // Non-JSON / empty body — skip.
+            }
             router.refresh();
             return;
           }

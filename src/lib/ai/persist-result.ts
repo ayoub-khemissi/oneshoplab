@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, projects, type JobKind } from '@/lib/db/schema';
+import { notify } from '@/lib/notifications';
 import { isR2Configured, uploadFromUrl } from '@/lib/storage';
 
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];
@@ -86,6 +87,39 @@ export async function persistKieJobSuccess(
       finishedAt: new Date()
     })
     .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
+
+  if (isImageJob(jobKind)) {
+    await emitImageNotification(jobId, 'image_completed', null);
+  }
+}
+
+/** Walk job → project to get userId, then log the image outcome. The
+ *  user is most often NOT staring at the image grid when the kie
+ *  callback fires (image generation is async ~minutes), so we leave
+ *  isRead=false and let the bell badge tick up. */
+async function emitImageNotification(
+  jobId: string,
+  kind: 'image_completed' | 'image_failed',
+  errorMessage: string | null
+): Promise<void> {
+  const job = await db.query.jobs.findFirst({
+    where: eq(jobs.id, jobId),
+    columns: { projectId: true, productId: true }
+  });
+  if (!job?.projectId) return;
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, job.projectId),
+    columns: { userId: true }
+  });
+  if (!project?.userId) return;
+  await notify({
+    userId: project.userId,
+    kind,
+    jobId,
+    productId: job.productId ?? null,
+    projectId: job.projectId,
+    payload: errorMessage ? { errorMessage } : null
+  });
 }
 
 /**
@@ -133,4 +167,6 @@ export async function persistKieJobFailure(
     jobId,
     idempotencyKey: `job-${jobId}-refund`
   });
+
+  await emitImageNotification(jobId, 'image_failed', errorText);
 }

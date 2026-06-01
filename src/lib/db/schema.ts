@@ -38,6 +38,24 @@ export const JOB_KINDS = [
 export const PRODUCT_FIELDS = ['title', 'description', 'images', 'tags'] as const;
 export type ProductField = (typeof PRODUCT_FIELDS)[number];
 
+/**
+ * Notification kinds — surfaced by the header bell. Each maps to a
+ * server-side event in the generation pipeline. Chat events fire
+ * synchronously from a route handler; image / audit / bulk events
+ * fire from the worker after a callback or batched run.
+ */
+export const NOTIFICATION_KINDS = [
+  'chat_completed',
+  'chat_failed',
+  'image_completed',
+  'image_failed',
+  'audit_completed',
+  'audit_failed',
+  'bulk_completed',
+  'bulk_failed'
+] as const;
+export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
+
 export type Platform = (typeof PLATFORMS)[number];
 export type Plan = (typeof PLANS)[number];
 export type BillingCycle = (typeof BILLING_CYCLES)[number];
@@ -354,6 +372,76 @@ export const creditTransactions = mysqlTable(
   (t) => ({
     idxUserId: index('idx_credit_tx_user_id').on(t.userId),
     uniqIdempotency: uniqueIndex('uniq_credit_tx_idempotency').on(t.idempotencyKey)
+  })
+);
+
+/**
+ * Per-user notification log surfaced by the header bell. Every
+ * server-side generation outcome (chat / image / audit / bulk) ends
+ * up here so the merchant has a persistent history they can scroll.
+ *
+ * `isRead` is set to true at insert time IFF the originating event
+ * also produced a foreground toast the user was guaranteed to see
+ * (e.g. a successful chat returning to a focused product page). The
+ * background pipeline (image worker, audit completion) inserts with
+ * isRead=false so the badge counts them up until the merchant opens
+ * the bell. Clicking the bell flips every unread row for the user.
+ *
+ * `payload` carries kind-specific extras the dropdown renders without
+ * a join (field name on a chat notif, error code on a failure, …).
+ * Keeping it loose JSON beats a forest of nullable columns and the
+ * bell only ever cares about the few keys per kind it knows about.
+ */
+export const notifications = mysqlTable(
+  'notifications',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    kind: mysqlEnum('kind', NOTIFICATION_KINDS).notNull(),
+    /** Originating job (chat / image / dynamic-audit). Null for events
+     *  that don't go through the jobs queue (audit completion). */
+    jobId: varchar('job_id', { length: 36 }).references(() => jobs.id, {
+      onDelete: 'set null'
+    }),
+    /** Originating audit (audit_completed / audit_failed). */
+    auditId: varchar('audit_id', { length: 36 }).references(() => audits.id, {
+      onDelete: 'set null'
+    }),
+    /** Navigation hint — dropdown row links to the product page. */
+    productId: varchar('product_id', { length: 36 }).references(() => products.id, {
+      onDelete: 'set null'
+    }),
+    /** Navigation hint — dropdown row links to the site page. */
+    projectId: varchar('project_id', { length: 36 }).references(() => projects.id, {
+      onDelete: 'set null'
+    }),
+    /** Kind-specific extras. Shape:
+     *   chat_completed / chat_failed → { field: 'title'|'description'|'tags', errorMessage?: string }
+     *   image_completed / image_failed → { errorMessage?: string }
+     *   audit_completed → { score?: number, domain?: string }
+     *   audit_failed → { errorMessage?: string, domain?: string }
+     *   bulk_completed → { generated: number, total: number }
+     *   bulk_failed → { errorMessage?: string }
+     */
+    payload: json('payload'),
+    isRead: boolean('is_read').notNull().default(false),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    // Hottest read path: list recent notifs for the bell dropdown,
+    // count unread for the badge. Composite (userId, isRead, createdAt)
+    // covers both lookups without a sort filesort.
+    idxUserUnreadCreated: index('idx_notif_user_unread_created').on(
+      t.userId,
+      t.isRead,
+      t.createdAt
+    ),
+    /** Mark-as-read by jobId: client calls this after firing a toast,
+     *  so the notification doesn't double up. */
+    idxJobId: index('idx_notif_job_id').on(t.jobId),
+    idxAuditId: index('idx_notif_audit_id').on(t.auditId)
   })
 );
 

@@ -94,7 +94,26 @@
     "menuTitle": "القائمة",
     "joinDiscord": "انضم إلى Discord الخاص بنا",
     "faq": "الأسئلة الشائعة",
-    "blog": "المدونة"
+    "blog": "المدونة",
+    "notifications": {
+      "title": "الإشعارات",
+      "empty": "لا شيء جديد حتى الآن",
+      "markAllRead": "تحديد الكل كمقروء",
+      "relativeNow": "الآن",
+      "relativeMinutes": "منذ {n} د",
+      "relativeHours": "منذ {n} س",
+      "relativeDays": "منذ {n} ي",
+      "kinds": {
+        "chat_completed": "تم إنشاء النص",
+        "chat_failed": "فشل إنشاء النص",
+        "image_completed": "تم إنشاء الصورة",
+        "image_failed": "فشل إنشاء الصورة",
+        "audit_completed": "اكتمل التدقيق",
+        "audit_failed": "فشل التدقيق",
+        "bulk_completed": "اكتمل الإنشاء بالجملة",
+        "bulk_failed": "فشل الإنشاء بالجملة"
+      }
+    }
   },
   "Footer": {
     "tagline": "تحسين صفحات المنتجات بالذكاء الاصطناعي",

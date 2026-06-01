@@ -278,6 +278,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'aborted' }, { status: 499 });
   }
 
+  // Chat jobs return their jobId so the client can mark the
+  // corresponding notification as read once it shows the success
+  // toast (image jobs are async — the bell badge ticks until the
+  // merchant opens it).
+  const chatJobIds: string[] = [];
   for (const f of fieldsToRun) {
     if (req.signal.aborted) {
       return NextResponse.json({ error: 'aborted' }, { status: 499 });
@@ -299,7 +304,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           )
         );
       } else {
-        await runChatOptim({
+        const r = await runChatOptim({
           userId: session.user!.id,
           projectId,
           productSourceId: sourceId,
@@ -309,6 +314,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           chatModelId,
           languageCode
         });
+        chatJobIds.push(r.jobId);
       }
     } catch (e) {
       if (e instanceof InsufficientCreditsError) {
@@ -331,5 +337,5 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   revalidatePath(`/dashboard/sites/${siteId}/products/${productId}`);
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, chatJobIds });
 }

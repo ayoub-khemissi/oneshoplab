@@ -94,7 +94,26 @@
     "menuTitle": "Menü",
     "joinDiscord": "Discord sunucumuza katıl",
     "faq": "SSS",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Bildirimler",
+      "empty": "Şimdilik yeni bir şey yok",
+      "markAllRead": "Tümünü okundu olarak işaretle",
+      "relativeNow": "az önce",
+      "relativeMinutes": "{n} dk önce",
+      "relativeHours": "{n} sa önce",
+      "relativeDays": "{n} gün önce",
+      "kinds": {
+        "chat_completed": "Metin oluşturuldu",
+        "chat_failed": "Metin oluşturma başarısız",
+        "image_completed": "Görsel oluşturuldu",
+        "image_failed": "Görsel oluşturma başarısız",
+        "audit_completed": "Denetim tamamlandı",
+        "audit_failed": "Denetim başarısız",
+        "bulk_completed": "Toplu oluşturma tamamlandı",
+        "bulk_failed": "Toplu oluşturma başarısız"
+      }
+    }
   },
   "Footer": {
     "tagline": "Yapay zekâ tabanlı ürün sayfası optimizasyonu",

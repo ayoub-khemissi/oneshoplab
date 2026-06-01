@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { runDynamicAuditForProduct } from '@/lib/ai';
 import { db } from '@/lib/db';
 import { audits, projects } from '@/lib/db/schema';
+import { notify } from '@/lib/notifications';
 import { runAudit } from './run';
 import { syncProjectProducts } from './sync-products';
 
@@ -121,6 +122,15 @@ export async function processAudit(auditId: string): Promise<void> {
         completedAt: new Date()
       })
       .where(eq(audits.id, auditId));
+
+    await emitAuditNotification(
+      row.projectId,
+      auditId,
+      isFailure ? 'audit_failed' : 'audit_completed',
+      row.domain,
+      result.report?.scores?.overall ?? null,
+      isFailure ? result.error ?? null : null
+    );
   } catch (e) {
     await db
       .update(audits)
@@ -130,5 +140,47 @@ export async function processAudit(auditId: string): Promise<void> {
         completedAt: new Date()
       })
       .where(eq(audits.id, auditId));
+
+    await emitAuditNotification(
+      row.projectId,
+      auditId,
+      'audit_failed',
+      row.domain,
+      null,
+      (e as Error).message
+    );
   }
+}
+
+/** Resolve the user that owns the audit's project and log the outcome.
+ *  Anonymous audits (no project) emit no notification — there's no
+ *  owner to surface them to. The merchant typically isn't watching
+ *  the in-progress audit page when the run completes (audits take
+ *  ~30-90s and are usually fired-and-forgotten), so isRead=false
+ *  ticks the badge up; if they happen to be on the page, the
+ *  AutoRefresh poller flips it visible. */
+async function emitAuditNotification(
+  projectId: string | null,
+  auditId: string,
+  kind: 'audit_completed' | 'audit_failed',
+  domain: string,
+  scoreOverall: number | null,
+  errorMessage: string | null
+): Promise<void> {
+  if (!projectId) return;
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+    columns: { userId: true }
+  });
+  if (!project?.userId) return;
+  const payload: Record<string, unknown> = { domain };
+  if (kind === 'audit_completed' && scoreOverall != null) payload.score = scoreOverall;
+  if (kind === 'audit_failed' && errorMessage) payload.errorMessage = errorMessage;
+  await notify({
+    userId: project.userId,
+    kind,
+    auditId,
+    projectId,
+    payload
+  });
 }

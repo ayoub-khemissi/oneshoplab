@@ -17,6 +17,7 @@ import {
 import { getEffectiveLanguage } from '@/lib/audit/language';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
+import { notify } from '@/lib/notifications';
 import {
   audits,
   jobs,
@@ -993,6 +994,7 @@ async function stopBulkOnInsufficient(
       result: result as unknown as Record<string, unknown>
     })
     .where(eq(jobs.id, jobId));
+  await emitBulkNotification(jobId, 'bulk_failed', 'insufficient_credits', result);
 }
 
 async function markJobStatus(
@@ -1008,6 +1010,61 @@ async function markJobStatus(
       ...(errorText ? { error: errorText } : {})
     })
     .where(eq(jobs.id, jobId));
+  if (status === 'completed') {
+    await emitBulkNotification(jobId, 'bulk_completed', null, null);
+  } else if (status === 'failed') {
+    await emitBulkNotification(jobId, 'bulk_failed', errorText ?? null, null);
+  }
+}
+
+/** Resolve the bulk job's owner via project → user and emit one
+ *  notification per terminal flip. Bulk runs are long (~minutes per
+ *  product × N) and run in the worker, so the merchant is usually NOT
+ *  watching when it finishes — isRead=false ticks the badge up. The
+ *  payload carries a (generated, total) count derived from the
+ *  result perProduct map when available, so the bell dropdown can
+ *  render "23/30 produits générés" without re-reading the row. */
+async function emitBulkNotification(
+  jobId: string,
+  kind: 'bulk_completed' | 'bulk_failed',
+  errorMessage: string | null,
+  result: BulkResult | null
+): Promise<void> {
+  const job = await db.query.jobs.findFirst({
+    where: eq(jobs.id, jobId),
+    columns: { projectId: true, kind: true, inputPayload: true, result: true }
+  });
+  if (!job?.projectId || job.kind !== 'bulk_site_generate') return;
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, job.projectId),
+    columns: { userId: true }
+  });
+  if (!project?.userId) return;
+
+  const payload: Record<string, unknown> = {};
+  if (errorMessage) payload.errorMessage = errorMessage;
+  // Re-read result if we don't have it in scope (markJobStatus path).
+  const final = result ?? (job.result as BulkResult | null) ?? null;
+  if (final?.perProduct) {
+    const total = Object.keys(final.perProduct).length;
+    let generated = 0;
+    for (const state of Object.values(final.perProduct)) {
+      const fields = state?.fields ?? {};
+      const hasAnyDone = Object.values(fields).some(
+        (v) => v === 'done' || (typeof v === 'object' && v !== null && !('error' in v))
+      );
+      if (hasAnyDone) generated += 1;
+    }
+    payload.generated = generated;
+    payload.total = total;
+  }
+  await notify({
+    userId: project.userId,
+    kind,
+    jobId,
+    projectId: job.projectId,
+    payload
+  });
 }
 
 // ---------------------------------------------------------------------------

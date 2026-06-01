@@ -4,6 +4,7 @@ import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, products, type JobKind } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
+import { notify } from '@/lib/notifications';
 import { KieClient, getKieClient, type ChatMessage } from './kie';
 import {
   estimateChatCredits,
@@ -139,6 +140,19 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
         finishedAt: new Date()
       })
       .where(eq(jobs.id, jobId));
+    // Log the failure to the notification stream. isRead=false because
+    // we don't know yet whether the user sees a toast — if the route
+    // handler returns to a still-mounted client the toast WILL fire
+    // and the client will mark this read; if not (F5'd away), the
+    // bell badge ticks up so the merchant sees it on their next visit.
+    await notify({
+      userId: opts.userId,
+      kind: 'chat_failed',
+      jobId,
+      productId: productRow?.id ?? null,
+      projectId: opts.projectId,
+      payload: { field: opts.field, errorMessage: (e as Error).message }
+    });
     throw e;
   }
 
@@ -169,6 +183,18 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
       idempotencyKey: `job-${jobId}`
     });
   }
+
+  // Log the success to the notification stream. Same isRead=false
+  // default as the failure path — the client decides whether to flip
+  // it after firing the success toast.
+  await notify({
+    userId: opts.userId,
+    kind: 'chat_completed',
+    jobId,
+    productId: productRow?.id ?? null,
+    projectId: opts.projectId,
+    payload: { field: opts.field }
+  });
 
   return {
     jobId,

@@ -94,7 +94,26 @@
     "menuTitle": "Menu",
     "joinDiscord": "Junta-te ao nosso Discord",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Notificações",
+      "empty": "Nada de novo por agora",
+      "markAllRead": "Marcar tudo como lido",
+      "relativeNow": "agora mesmo",
+      "relativeMinutes": "há {n} min",
+      "relativeHours": "há {n} h",
+      "relativeDays": "há {n} d",
+      "kinds": {
+        "chat_completed": "Texto gerado",
+        "chat_failed": "Falha na geração de texto",
+        "image_completed": "Imagem gerada",
+        "image_failed": "Falha na geração de imagem",
+        "audit_completed": "Auditoria concluída",
+        "audit_failed": "Auditoria falhou",
+        "bulk_completed": "Geração em massa concluída",
+        "bulk_failed": "Geração em massa falhou"
+      }
+    }
   },
   "Footer": {
     "tagline": "Otimização IA de páginas de produto",

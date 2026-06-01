@@ -94,7 +94,26 @@
     "menuTitle": "Menü",
     "joinDiscord": "Tritt unserem Discord bei",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "empty": "Nichts Neues",
+      "markAllRead": "Alle als gelesen markieren",
+      "relativeNow": "gerade eben",
+      "relativeMinutes": "vor {n} Min",
+      "relativeHours": "vor {n} Std",
+      "relativeDays": "vor {n} T",
+      "kinds": {
+        "chat_completed": "Text generiert",
+        "chat_failed": "Textgenerierung fehlgeschlagen",
+        "image_completed": "Bild generiert",
+        "image_failed": "Bildgenerierung fehlgeschlagen",
+        "audit_completed": "Audit abgeschlossen",
+        "audit_failed": "Audit fehlgeschlagen",
+        "bulk_completed": "Massengenerierung abgeschlossen",
+        "bulk_failed": "Massengenerierung fehlgeschlagen"
+      }
+    }
   },
   "Footer": {
     "tagline": "KI-Optimierung von Produktseiten",

@@ -94,7 +94,26 @@
     "menuTitle": "Menu",
     "joinDiscord": "Dołącz do naszego Discorda",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Powiadomienia",
+      "empty": "Nic nowego na razie",
+      "markAllRead": "Oznacz wszystko jako przeczytane",
+      "relativeNow": "przed chwilą",
+      "relativeMinutes": "{n} min temu",
+      "relativeHours": "{n} godz. temu",
+      "relativeDays": "{n} dni temu",
+      "kinds": {
+        "chat_completed": "Tekst wygenerowany",
+        "chat_failed": "Błąd generowania tekstu",
+        "image_completed": "Obraz wygenerowany",
+        "image_failed": "Błąd generowania obrazu",
+        "audit_completed": "Audyt ukończony",
+        "audit_failed": "Audyt nie powiódł się",
+        "bulk_completed": "Generowanie masowe ukończone",
+        "bulk_failed": "Generowanie masowe nie powiodło się"
+      }
+    }
   },
   "Footer": {
     "tagline": "Optymalizacja AI stron produktów",

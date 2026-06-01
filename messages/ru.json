@@ -94,7 +94,26 @@
     "menuTitle": "Меню",
     "joinDiscord": "Присоединиться к Discord",
     "faq": "ЧАВО",
-    "blog": "Блог"
+    "blog": "Блог",
+    "notifications": {
+      "title": "Уведомления",
+      "empty": "Пока ничего нового",
+      "markAllRead": "Отметить все прочитанными",
+      "relativeNow": "только что",
+      "relativeMinutes": "{n} мин назад",
+      "relativeHours": "{n} ч назад",
+      "relativeDays": "{n} д назад",
+      "kinds": {
+        "chat_completed": "Текст создан",
+        "chat_failed": "Ошибка генерации текста",
+        "image_completed": "Изображение создано",
+        "image_failed": "Ошибка генерации изображения",
+        "audit_completed": "Аудит завершён",
+        "audit_failed": "Аудит не удался",
+        "bulk_completed": "Массовая генерация завершена",
+        "bulk_failed": "Массовая генерация не удалась"
+      }
+    }
   },
   "Footer": {
     "tagline": "ИИ-оптимизация товарных страниц",

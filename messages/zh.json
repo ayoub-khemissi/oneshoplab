@@ -94,7 +94,26 @@
     "menuTitle": "菜单",
     "joinDiscord": "加入我们的 Discord",
     "faq": "常见问题",
-    "blog": "博客"
+    "blog": "博客",
+    "notifications": {
+      "title": "通知",
+      "empty": "暂无新内容",
+      "markAllRead": "全部标记为已读",
+      "relativeNow": "刚刚",
+      "relativeMinutes": "{n} 分钟前",
+      "relativeHours": "{n} 小时前",
+      "relativeDays": "{n} 天前",
+      "kinds": {
+        "chat_completed": "文本已生成",
+        "chat_failed": "文本生成失败",
+        "image_completed": "图片已生成",
+        "image_failed": "图片生成失败",
+        "audit_completed": "审计已完成",
+        "audit_failed": "审计失败",
+        "bulk_completed": "批量生成已完成",
+        "bulk_failed": "批量生成失败"
+      }
+    }
   },
   "Footer": {
     "tagline": "AI 产品页优化",

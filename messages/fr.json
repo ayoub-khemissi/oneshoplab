@@ -94,7 +94,26 @@
     "menuTitle": "Menu",
     "joinDiscord": "Rejoindre notre Discord",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Notifications",
+      "empty": "Rien de nouveau pour l'instant",
+      "markAllRead": "Tout marquer comme lu",
+      "relativeNow": "à l'instant",
+      "relativeMinutes": "il y a {n} min",
+      "relativeHours": "il y a {n} h",
+      "relativeDays": "il y a {n} j",
+      "kinds": {
+        "chat_completed": "Texte généré",
+        "chat_failed": "Génération de texte échouée",
+        "image_completed": "Image générée",
+        "image_failed": "Génération d'image échouée",
+        "audit_completed": "Audit terminé",
+        "audit_failed": "Audit échoué",
+        "bulk_completed": "Génération en lot terminée",
+        "bulk_failed": "Génération en lot échouée"
+      }
+    }
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",

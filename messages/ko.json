@@ -94,7 +94,26 @@
     "menuTitle": "메뉴",
     "joinDiscord": "Discord 참여하기",
     "faq": "자주 묻는 질문",
-    "blog": "블로그"
+    "blog": "블로그",
+    "notifications": {
+      "title": "알림",
+      "empty": "새로운 항목이 없습니다",
+      "markAllRead": "모두 읽음으로 표시",
+      "relativeNow": "방금",
+      "relativeMinutes": "{n}분 전",
+      "relativeHours": "{n}시간 전",
+      "relativeDays": "{n}일 전",
+      "kinds": {
+        "chat_completed": "텍스트 생성 완료",
+        "chat_failed": "텍스트 생성 실패",
+        "image_completed": "이미지 생성 완료",
+        "image_failed": "이미지 생성 실패",
+        "audit_completed": "감사 완료",
+        "audit_failed": "감사 실패",
+        "bulk_completed": "일괄 생성 완료",
+        "bulk_failed": "일괄 생성 실패"
+      }
+    }
   },
   "Footer": {
     "tagline": "AI 기반 제품 페이지 최적화",

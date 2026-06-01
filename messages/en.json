@@ -94,7 +94,26 @@
     "menuTitle": "Menu",
     "joinDiscord": "Join our Discord",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Notifications",
+      "empty": "Nothing new for now",
+      "markAllRead": "Mark all read",
+      "relativeNow": "just now",
+      "relativeMinutes": "{n}m ago",
+      "relativeHours": "{n}h ago",
+      "relativeDays": "{n}d ago",
+      "kinds": {
+        "chat_completed": "Text generated",
+        "chat_failed": "Text generation failed",
+        "image_completed": "Image generated",
+        "image_failed": "Image generation failed",
+        "audit_completed": "Audit completed",
+        "audit_failed": "Audit failed",
+        "bulk_completed": "Bulk generation completed",
+        "bulk_failed": "Bulk generation failed"
+      }
+    }
   },
   "Footer": {
     "tagline": "AI product page optimization",

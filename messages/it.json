@@ -94,7 +94,26 @@
     "menuTitle": "Menu",
     "joinDiscord": "Unisciti al nostro Discord",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Notifiche",
+      "empty": "Niente di nuovo per ora",
+      "markAllRead": "Segna tutto come letto",
+      "relativeNow": "proprio ora",
+      "relativeMinutes": "{n} min fa",
+      "relativeHours": "{n} h fa",
+      "relativeDays": "{n} g fa",
+      "kinds": {
+        "chat_completed": "Testo generato",
+        "chat_failed": "Generazione testo fallita",
+        "image_completed": "Immagine generata",
+        "image_failed": "Generazione immagine fallita",
+        "audit_completed": "Audit completato",
+        "audit_failed": "Audit fallito",
+        "bulk_completed": "Generazione in blocco completata",
+        "bulk_failed": "Generazione in blocco fallita"
+      }
+    }
   },
   "Footer": {
     "tagline": "Ottimizzazione AI delle schede prodotto",

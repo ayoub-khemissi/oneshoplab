@@ -5,9 +5,11 @@ import { auth } from '@/lib/auth';
 import { DiscordGlyph } from './discord-glyph';
 import { LocaleSwitcher } from './locale-switcher';
 import { MobileMenu } from './mobile-menu';
+import { NotificationBell } from './notification-bell';
 import { ScrollHidingHeader } from './scroll-hiding-header';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu } from './user-menu';
+import type { NotificationKind } from '@/lib/db/schema';
 import type { Locale } from '@/i18n/routing';
 
 /**
@@ -22,6 +24,30 @@ export async function SiteHeader() {
   const locale = (await getLocale()) as Locale;
 
   const creditsDisplay = (user?.creditsBalance ?? 0).toLocaleString(locale);
+
+  // Bell labels are passed in by the server so the i18n boundary
+  // stays out of the client component. Resolving the per-kind labels
+  // upfront also lets the bell be a pure dumb renderer.
+  const notifKinds: Record<NotificationKind, string> = {
+    chat_completed: t('notifications.kinds.chat_completed'),
+    chat_failed: t('notifications.kinds.chat_failed'),
+    image_completed: t('notifications.kinds.image_completed'),
+    image_failed: t('notifications.kinds.image_failed'),
+    audit_completed: t('notifications.kinds.audit_completed'),
+    audit_failed: t('notifications.kinds.audit_failed'),
+    bulk_completed: t('notifications.kinds.bulk_completed'),
+    bulk_failed: t('notifications.kinds.bulk_failed')
+  };
+  const notifLabels = {
+    panelTitle: t('notifications.title'),
+    emptyState: t('notifications.empty'),
+    markAllRead: t('notifications.markAllRead'),
+    kinds: notifKinds,
+    relativeNow: t('notifications.relativeNow'),
+    relativeMinutes: t('notifications.relativeMinutes'),
+    relativeHours: t('notifications.relativeHours'),
+    relativeDays: t('notifications.relativeDays')
+  };
 
   return (
     <ScrollHidingHeader>
@@ -91,6 +117,9 @@ export async function SiteHeader() {
               <DiscordGlyph className="size-4" />
             </a>
           ) : null}
+          {user ? (
+            <NotificationBell ariaLabel={t('notifications.title')} labels={notifLabels} />
+          ) : null}
           <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
           <ThemeToggle ariaLabel={t('changeTheme')} />
           <span className="w-px h-6 bg-[var(--border)] mx-1.5" aria-hidden />
@@ -142,7 +171,7 @@ export async function SiteHeader() {
           )}
         </nav>
 
-        {/* Mobile-only: credits chip (when signed in) + burger drawer.
+        {/* Mobile-only: credits chip (when signed in) + bell + burger drawer.
             Hidden on md+ where the full nav above takes over. */}
         <div className="md:hidden flex items-center gap-2">
           {user ? (
@@ -155,6 +184,9 @@ export async function SiteHeader() {
               <Coins className="size-3.5" aria-hidden />
               {creditsDisplay}
             </Link>
+          ) : null}
+          {user ? (
+            <NotificationBell ariaLabel={t('notifications.title')} labels={notifLabels} />
           ) : null}
           <MobileMenu
             user={

@@ -94,7 +94,26 @@
     "menuTitle": "メニュー",
     "joinDiscord": "Discord に参加",
     "faq": "よくあるご質問",
-    "blog": "ブログ"
+    "blog": "ブログ",
+    "notifications": {
+      "title": "通知",
+      "empty": "新しいお知らせはありません",
+      "markAllRead": "すべて既読にする",
+      "relativeNow": "たった今",
+      "relativeMinutes": "{n}分前",
+      "relativeHours": "{n}時間前",
+      "relativeDays": "{n}日前",
+      "kinds": {
+        "chat_completed": "テキストを生成しました",
+        "chat_failed": "テキスト生成に失敗しました",
+        "image_completed": "画像を生成しました",
+        "image_failed": "画像生成に失敗しました",
+        "audit_completed": "監査が完了しました",
+        "audit_failed": "監査が失敗しました",
+        "bulk_completed": "一括生成が完了しました",
+        "bulk_failed": "一括生成が失敗しました"
+      }
+    }
   },
   "Footer": {
     "tagline": "AIによる商品ページ最適化",

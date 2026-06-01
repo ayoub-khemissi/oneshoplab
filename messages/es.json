@@ -94,7 +94,26 @@
     "menuTitle": "Menú",
     "joinDiscord": "Únete a nuestro Discord",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "notifications": {
+      "title": "Notificaciones",
+      "empty": "Nada nuevo por ahora",
+      "markAllRead": "Marcar todo como leído",
+      "relativeNow": "justo ahora",
+      "relativeMinutes": "hace {n} min",
+      "relativeHours": "hace {n} h",
+      "relativeDays": "hace {n} d",
+      "kinds": {
+        "chat_completed": "Texto generado",
+        "chat_failed": "Falló la generación de texto",
+        "image_completed": "Imagen generada",
+        "image_failed": "Falló la generación de imagen",
+        "audit_completed": "Auditoría completada",
+        "audit_failed": "Auditoría fallida",
+        "bulk_completed": "Generación masiva completada",
+        "bulk_failed": "Generación masiva fallida"
+      }
+    }
   },
   "Footer": {
     "tagline": "Optimización IA de fichas de producto",
