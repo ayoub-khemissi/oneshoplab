@@ -1,7 +1,15 @@
 import { randomUUID } from 'node:crypto';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
 import { db } from './db';
 import { notifications, type NotificationKind } from './db/schema';
+
+/** Per-user retention cap. We keep the 20 most recent notifications
+ *  and trim older rows on every insert — the bell isn't an archive,
+ *  it's a "what happened lately" surface, and unbounded growth would
+ *  bloat the read path indefinitely. 20 is enough for a day of
+ *  active generation work without forcing the merchant to mark-read
+ *  to clear visual clutter. */
+const KEEP_PER_USER = 20;
 
 /**
  * Server-side helper to log a generation outcome to the per-user
@@ -44,7 +52,37 @@ export async function notify(input: NotificationInput): Promise<string> {
     payload: input.payload ?? null,
     isRead: input.isRead ?? false
   });
+  await trimOldest(input.userId);
   return id;
+}
+
+/** Drop everything past the KEEP_PER_USER cap. Runs after every
+ *  insert, so the user's row count stays bounded over time without
+ *  needing a cron sweep. Two-step (select keep-ids → delete the
+ *  complement) because MySQL can't reference the same table in a
+ *  DELETE subquery directly. On the steady state (already ≤ cap),
+ *  the delete is a no-op against an empty `notInArray` set, which
+ *  drizzle short-circuits. */
+async function trimOldest(userId: string): Promise<void> {
+  const keep = await db
+    .select({ id: notifications.id })
+    .from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(KEEP_PER_USER);
+  // No work to do if we're under the cap.
+  if (keep.length < KEEP_PER_USER) return;
+  await db
+    .delete(notifications)
+    .where(
+      and(
+        eq(notifications.userId, userId),
+        notInArray(
+          notifications.id,
+          keep.map((r) => r.id)
+        )
+      )
+    );
 }
 
 /** Mark every unread notification for `userId` as read. Fires when the
@@ -108,14 +146,14 @@ export interface NotificationRow {
   createdAt: Date;
 }
 
-/** Read the N most recent notifications for the bell dropdown, plus
- *  the current unread count for the badge. Capped at 50 — the bell
- *  isn't an archive UI. */
+/** Read the most recent notifications for the bell dropdown, plus
+ *  the current unread count for the badge. Capped at KEEP_PER_USER
+ *  because the trim policy guarantees no user holds more than that. */
 export async function listForBell(
   userId: string,
-  limit = 30
+  limit = KEEP_PER_USER
 ): Promise<{ rows: NotificationRow[]; unreadCount: number }> {
-  const cap = Math.max(1, Math.min(50, limit));
+  const cap = Math.max(1, Math.min(KEEP_PER_USER, limit));
   const rows = await db
     .select({
       id: notifications.id,
@@ -132,8 +170,8 @@ export async function listForBell(
     .where(eq(notifications.userId, userId))
     .orderBy(desc(notifications.createdAt))
     .limit(cap);
-  // Cheaper to count unread off the same scan than to re-query; the
-  // bell only ever needs the page-1 unread count for the badge.
+  // Count unread off the same scan — the trim policy means there
+  // are never more notifs than `cap`, so we never miss any.
   let unreadCount = 0;
   const out: NotificationRow[] = [];
   for (const r of rows) {
@@ -142,16 +180,6 @@ export async function listForBell(
       payload: (r.payload as Record<string, unknown> | null) ?? null
     });
     if (!r.isRead) unreadCount += 1;
-  }
-  // If the limit is hit AND there could be more unread beyond the
-  // window, fall back to an explicit count so the badge stays
-  // accurate at high volumes.
-  if (rows.length >= cap) {
-    const all = await db
-      .select({ id: notifications.id })
-      .from(notifications)
-      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
-    unreadCount = all.length;
   }
   return { rows: out, unreadCount };
 }
