@@ -112,6 +112,11 @@
         "audit_failed": "Audit failed",
         "bulk_completed": "Bulk generation completed",
         "bulk_failed": "Bulk generation failed"
+      },
+      "fieldLabels": {
+        "title": "Title",
+        "description": "Description",
+        "tags": "Tags"
       }
     }
   },

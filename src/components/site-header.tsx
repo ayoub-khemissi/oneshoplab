@@ -43,6 +43,11 @@ export async function SiteHeader() {
     emptyState: t('notifications.empty'),
     markAllRead: t('notifications.markAllRead'),
     kinds: notifKinds,
+    fieldLabels: {
+      title: t('notifications.fieldLabels.title'),
+      description: t('notifications.fieldLabels.description'),
+      tags: t('notifications.fieldLabels.tags')
+    },
     relativeNow: t('notifications.relativeNow'),
     relativeMinutes: t('notifications.relativeMinutes'),
     relativeHours: t('notifications.relativeHours'),

@@ -112,6 +112,11 @@
         "audit_failed": "Audit échoué",
         "bulk_completed": "Génération en lot terminée",
         "bulk_failed": "Génération en lot échouée"
+      },
+      "fieldLabels": {
+        "title": "Titre",
+        "description": "Description",
+        "tags": "Tags"
       }
     }
   },

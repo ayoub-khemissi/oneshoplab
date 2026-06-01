@@ -112,6 +112,11 @@
         "audit_failed": "Auditoria falhou",
         "bulk_completed": "Geração em massa concluída",
         "bulk_failed": "Geração em massa falhou"
+      },
+      "fieldLabels": {
+        "title": "Título",
+        "description": "Descrição",
+        "tags": "Tags"
       }
     }
   },

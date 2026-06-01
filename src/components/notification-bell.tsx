@@ -37,6 +37,9 @@ interface NotificationBellProps {
     markAllRead: string;
     /** Per-kind short label. Keys mirror NotificationKind values. */
     kinds: Record<NotificationKind, string>;
+    /** Localised product-field names — render the chat notif as
+     *  "Titre : Tee-Shirt Orange…" rather than "title …". */
+    fieldLabels: { title: string; description: string; tags: string };
     relativeNow: string;
     relativeMinutes: string; // "il y a {n} min"
     relativeHours: string; // "il y a {n} h"
@@ -302,24 +305,72 @@ function kindIcon(kind: NotificationKind) {
   return <AlertTriangle className="size-3.5" aria-hidden />;
 }
 
+const SUB_MAX_LEN = 60;
+function truncate(s: string, max: number): string {
+  if (s.length <= max) return s;
+  return `${s.slice(0, max).trimEnd()}…`;
+}
+
 function kindDetail(
   row: NotificationRow,
   labels: NotificationBellProps['labels']
 ): { title: string; sub: string | null } {
   const payload = row.payload ?? {};
-  const fieldRaw = typeof payload.field === 'string' ? payload.field : null;
-  const domain = typeof payload.domain === 'string' ? payload.domain : null;
-  const generated = typeof payload.generated === 'number' ? payload.generated : null;
-  const total = typeof payload.total === 'number' ? payload.total : null;
-  const score = typeof payload.score === 'number' ? payload.score : null;
-
-  let title = labels.kinds[row.kind] ?? row.kind;
+  const title = labels.kinds[row.kind] ?? row.kind;
   let sub: string | null = null;
 
-  if (fieldRaw) sub = fieldRaw;
-  if (domain) sub = domain;
-  if (generated != null && total != null) sub = `${generated}/${total}`;
-  if (score != null && row.kind === 'audit_completed') sub = `${score}/100`;
+  // Chat: "Titre : Tee-Shirt Orange et Blanc…" — composes the field
+  // label with the captured preview. Falls back to just the label
+  // when the preview is missing (legacy rows, parse-failed result).
+  if (row.kind === 'chat_completed' || row.kind === 'chat_failed') {
+    const field = typeof payload.field === 'string' ? payload.field : null;
+    const preview = typeof payload.preview === 'string' ? payload.preview : null;
+    const fieldLabel =
+      field === 'title'
+        ? labels.fieldLabels.title
+        : field === 'description'
+          ? labels.fieldLabels.description
+          : field === 'tags'
+            ? labels.fieldLabels.tags
+            : null;
+    if (fieldLabel && preview) {
+      sub = truncate(`${fieldLabel} : ${preview}`, SUB_MAX_LEN);
+    } else if (fieldLabel) {
+      sub = fieldLabel;
+    } else if (preview) {
+      sub = truncate(preview, SUB_MAX_LEN);
+    }
+    return { title, sub };
+  }
+
+  // Images: render the product title the gen was about.
+  if (row.kind === 'image_completed' || row.kind === 'image_failed') {
+    const productTitle =
+      typeof payload.productTitle === 'string' ? payload.productTitle : null;
+    if (productTitle) sub = truncate(productTitle, SUB_MAX_LEN);
+    return { title, sub };
+  }
+
+  // Audit: domain + (for the success case) the overall score.
+  if (row.kind === 'audit_completed' || row.kind === 'audit_failed') {
+    const domain = typeof payload.domain === 'string' ? payload.domain : null;
+    const score = typeof payload.score === 'number' ? payload.score : null;
+    if (domain && score != null && row.kind === 'audit_completed') {
+      sub = truncate(`${domain} · ${score}/100`, SUB_MAX_LEN);
+    } else if (domain) {
+      sub = truncate(domain, SUB_MAX_LEN);
+    }
+    return { title, sub };
+  }
+
+  // Bulk: progress ratio over the run.
+  if (row.kind === 'bulk_completed' || row.kind === 'bulk_failed') {
+    const generated = typeof payload.generated === 'number' ? payload.generated : null;
+    const total = typeof payload.total === 'number' ? payload.total : null;
+    if (generated != null && total != null) sub = `${generated}/${total}`;
+    return { title, sub };
+  }
+
   return { title, sub };
 }
 

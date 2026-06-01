@@ -112,6 +112,11 @@
         "audit_failed": "Audit fallito",
         "bulk_completed": "Generazione in blocco completata",
         "bulk_failed": "Generazione in blocco fallita"
+      },
+      "fieldLabels": {
+        "title": "Titolo",
+        "description": "Descrizione",
+        "tags": "Tag"
       }
     }
   },

@@ -112,6 +112,11 @@
         "audit_failed": "فشل التدقيق",
         "bulk_completed": "اكتمل الإنشاء بالجملة",
         "bulk_failed": "فشل الإنشاء بالجملة"
+      },
+      "fieldLabels": {
+        "title": "العنوان",
+        "description": "الوصف",
+        "tags": "الوسوم"
       }
     }
   },

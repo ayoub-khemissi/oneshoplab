@@ -112,6 +112,11 @@
         "audit_failed": "監査が失敗しました",
         "bulk_completed": "一括生成が完了しました",
         "bulk_failed": "一括生成が失敗しました"
+      },
+      "fieldLabels": {
+        "title": "タイトル",
+        "description": "説明",
+        "tags": "タグ"
       }
     }
   },

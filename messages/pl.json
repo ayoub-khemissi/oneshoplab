@@ -112,6 +112,11 @@
         "audit_failed": "Audyt nie powiódł się",
         "bulk_completed": "Generowanie masowe ukończone",
         "bulk_failed": "Generowanie masowe nie powiodło się"
+      },
+      "fieldLabels": {
+        "title": "Tytuł",
+        "description": "Opis",
+        "tags": "Tagi"
       }
     }
   },

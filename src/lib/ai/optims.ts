@@ -186,14 +186,17 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
 
   // Log the success to the notification stream. Same isRead=false
   // default as the failure path — the client decides whether to flip
-  // it after firing the success toast.
+  // it after firing the success toast. Preview = first ~80 chars of
+  // the generated output (HTML stripped on description, comma-joined
+  // top-5 on tags), so the bell dropdown renders "Titre : Tee-Shirt
+  // Orange et Blanc" rather than the bare field name.
   await notify({
     userId: opts.userId,
     kind: 'chat_completed',
     jobId,
     productId: productRow?.id ?? null,
     projectId: opts.projectId,
-    payload: { field: opts.field }
+    payload: { field: opts.field, preview: previewFor(opts.field, output) }
   });
 
   return {
@@ -371,6 +374,25 @@ export async function listOptimHistoryPaginated(
     .filter((it): it is OptimHistoryItem => it !== null);
 
   return { items, totalItems, totalPages };
+}
+
+/** Build the short preview string the notification dropdown shows
+ *  next to the field label. ~80-char cap; strips HTML on the
+ *  description field so a freshly-generated <p><strong>… doesn't end
+ *  up as literal markup in the bell. Tags get a comma-joined top-5
+ *  truncation. */
+function previewFor(field: ChatOptimField, output: string | string[]): string {
+  if (field === 'tags') {
+    const arr = Array.isArray(output) ? output : [];
+    return arr.slice(0, 5).join(', ');
+  }
+  if (typeof output !== 'string') return '';
+  const plain = output
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (plain.length <= 80) return plain;
+  return plain.slice(0, 80).trimEnd();
 }
 
 function parseTags(text: string): string[] {

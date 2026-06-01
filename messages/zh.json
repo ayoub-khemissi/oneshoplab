@@ -112,6 +112,11 @@
         "audit_failed": "审计失败",
         "bulk_completed": "批量生成已完成",
         "bulk_failed": "批量生成失败"
+      },
+      "fieldLabels": {
+        "title": "标题",
+        "description": "描述",
+        "tags": "标签"
       }
     }
   },

@@ -112,6 +112,11 @@
         "audit_failed": "Denetim başarısız",
         "bulk_completed": "Toplu oluşturma tamamlandı",
         "bulk_failed": "Toplu oluşturma başarısız"
+      },
+      "fieldLabels": {
+        "title": "Başlık",
+        "description": "Açıklama",
+        "tags": "Etiketler"
       }
     }
   },

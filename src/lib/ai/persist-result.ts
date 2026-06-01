@@ -2,7 +2,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { jobs, projects, type JobKind } from '@/lib/db/schema';
+import { jobs, products, projects, type JobKind } from '@/lib/db/schema';
 import { notify } from '@/lib/notifications';
 import { isR2Configured, uploadFromUrl } from '@/lib/storage';
 
@@ -96,7 +96,9 @@ export async function persistKieJobSuccess(
 /** Walk job → project to get userId, then log the image outcome. The
  *  user is most often NOT staring at the image grid when the kie
  *  callback fires (image generation is async ~minutes), so we leave
- *  isRead=false and let the bell badge tick up. */
+ *  isRead=false and let the bell badge tick up. The product title
+ *  goes into the payload so the bell renders "Image générée ·
+ *  Tee-shirt orange" rather than the bare job kind. */
 async function emitImageNotification(
   jobId: string,
   kind: 'image_completed' | 'image_failed',
@@ -112,13 +114,24 @@ async function emitImageNotification(
     columns: { userId: true }
   });
   if (!project?.userId) return;
+  let productTitle: string | null = null;
+  if (job.productId) {
+    const p = await db.query.products.findFirst({
+      where: eq(products.id, job.productId),
+      columns: { title: true }
+    });
+    if (p?.title) productTitle = p.title.slice(0, 80);
+  }
+  const payload: Record<string, unknown> = {};
+  if (productTitle) payload.productTitle = productTitle;
+  if (errorMessage) payload.errorMessage = errorMessage;
   await notify({
     userId: project.userId,
     kind,
     jobId,
     productId: job.productId ?? null,
     projectId: job.projectId,
-    payload: errorMessage ? { errorMessage } : null
+    payload: Object.keys(payload).length > 0 ? payload : null
   });
 }
 

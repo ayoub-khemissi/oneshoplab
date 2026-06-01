@@ -112,6 +112,11 @@
         "audit_failed": "Audit fehlgeschlagen",
         "bulk_completed": "Massengenerierung abgeschlossen",
         "bulk_failed": "Massengenerierung fehlgeschlagen"
+      },
+      "fieldLabels": {
+        "title": "Titel",
+        "description": "Beschreibung",
+        "tags": "Tags"
       }
     }
   },
