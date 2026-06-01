@@ -12,6 +12,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AutoRefresh } from '@/components/auto-refresh';
+import { SiteFavicon } from '@/components/site-favicon';
 import { TrackEvent } from '@/components/track-event';
 import { Link } from '@/i18n/navigation';
 import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
@@ -251,8 +252,9 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
       />
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('resultEyebrow')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere]">
-          {domain}
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere] inline-flex items-center gap-3 justify-center self-center">
+          <SiteFavicon domain={domain} size={28} className="rounded-sm shrink-0" />
+          <span>{domain}</span>
         </h1>
         <p className="text-sm text-[var(--muted)] max-w-xl mx-auto leading-relaxed">
           {t('resultSubtitle', { domain })}
@@ -554,7 +556,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
         </p>
         <div className="flex items-center gap-3 mt-2 flex-wrap justify-center">
           <Link
-            href="/signup"
+            href={`/signup?claim=${encodeURIComponent(token)}`}
             className="px-4 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 inline-flex items-center gap-1.5"
           >
             {t('ctaPrimary')}

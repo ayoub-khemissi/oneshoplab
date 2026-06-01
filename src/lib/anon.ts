@@ -35,6 +35,45 @@ export async function clearAnonToken(): Promise<void> {
 }
 
 /**
+ * On signup: convert a *specific* anonymous audit (looked up by its
+ * URL token) into the user's first project. Used by the cold-outreach
+ * flow — a prospect lands on /audit/<token> from a cold mail, signs
+ * up, and we want THAT exact audit (not whatever's tied to their
+ * browser cookie, which won't exist) to become their project.
+ *
+ * Idempotent: if the audit is already claimed by another user, returns
+ * null and doesn't touch the DB. The caller falls back to a normal
+ * post-signup redirect.
+ */
+export async function claimAuditByToken(
+  userId: string,
+  auditToken: string
+): Promise<{ projectId: string | null }> {
+  const audit = await db.query.audits.findFirst({
+    where: and(eq(audits.anonToken, auditToken), isNull(audits.projectId)),
+    columns: { id: true, domain: true, platform: true, url: true }
+  });
+  if (!audit) return { projectId: null };
+
+  const projectId = randomUUID();
+  await db.transaction(async (tx) => {
+    await tx.insert(projects).values({
+      id: projectId,
+      userId,
+      name: audit.domain,
+      source: audit.platform,
+      url: audit.url,
+      domain: audit.domain
+    });
+    await tx
+      .update(audits)
+      .set({ projectId, anonToken: null })
+      .where(eq(audits.id, audit.id));
+  });
+  return { projectId };
+}
+
+/**
  * On signup: convert the most recent anonymous audit attached to this token
  * into the user's first project (free-tier = 1 project max). Older anon
  * audits stay public but lose their token so they can't be re-claimed.

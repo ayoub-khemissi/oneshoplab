@@ -32,14 +32,27 @@ import { GoogleSignInButton } from '@/components/google-signin-button';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
-import { claimAnonAudits, clearAnonToken, getAnonToken } from '@/lib/anon';
+import {
+  claimAnonAudits,
+  claimAuditByToken,
+  clearAnonToken,
+  getAnonToken
+} from '@/lib/anon';
 import { hashPassword, isGoogleAuthEnabled, signIn } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 
 interface PageProps {
-  searchParams: Promise<{ error?: string; audit?: string; next?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    audit?: string;
+    next?: string;
+    /** Cold-outreach hand-off: a specific anon audit token to bind to
+     *  the new account on signup. Distinct from `audit` (which carries
+     *  a URL to re-audit on the homepage). */
+    claim?: string;
+  }>;
 }
 
 async function signupAction(formData: FormData) {
@@ -51,6 +64,7 @@ async function signupAction(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim() || null;
   const audit = String(formData.get('audit') ?? '').trim();
   const next = String(formData.get('next') ?? '').trim();
+  const claim = String(formData.get('claim') ?? '').trim();
   // reCAPTCHA v2 widget fills `g-recaptcha-response`; older v3 sites
   // used `recaptcha_token`. Read both so swapping the keys doesn't
   // require touching server code.
@@ -61,6 +75,7 @@ async function signupAction(formData: FormData) {
   const carry = new URLSearchParams();
   if (audit) carry.set('audit', audit);
   if (next) carry.set('next', next);
+  if (claim) carry.set('claim', claim);
   const carryQs = carry.toString() ? `&${carry.toString()}` : '';
 
   // reCAPTCHA v2 challenge. The user has to actively click the
@@ -104,10 +119,22 @@ async function signupAction(formData: FormData) {
     await clearAnonToken();
   }
 
-  // Priority: explicit `next` > resume audit > dashboard.
+  // Cold-outreach flow: prospect landed on /audit/<token> from an
+  // email, clicked signup, and we passed the audit token through as
+  // `claim`. Bind that specific audit to the new account as a project
+  // so they don't have to re-run it.
+  let claimedProjectId: string | null = null;
+  if (claim) {
+    const r = await claimAuditByToken(userId, claim);
+    claimedProjectId = r.projectId;
+  }
+
+  // Priority: explicit `next` > claimed project > resume audit > dashboard.
   let redirectTo = '/dashboard';
   if (next && next.startsWith('/')) {
     redirectTo = next;
+  } else if (claimedProjectId) {
+    redirectTo = `/dashboard/sites/${claimedProjectId}`;
   } else if (audit) {
     redirectTo = `/?audit=${encodeURIComponent(audit)}`;
   }
@@ -130,6 +157,7 @@ export default async function SignupPage({ searchParams }: PageProps) {
 
   const auditParam = params.audit ?? '';
   const nextParam = params.next ?? '';
+  const claimParam = params.claim ?? '';
   const emailError = params.error === 'email_taken' || params.error === 'invalid_email';
   const passwordError = params.error === 'short_password';
 
@@ -171,6 +199,7 @@ export default async function SignupPage({ searchParams }: PageProps) {
         <Form action={signupAction}>
           <input type="hidden" name="audit" value={auditParam} />
           <input type="hidden" name="next" value={nextParam} />
+          <input type="hidden" name="claim" value={claimParam} />
           <Card.Content className="flex flex-col gap-5">
             {errorMessage ? (
               <div
@@ -222,11 +251,13 @@ export default async function SignupPage({ searchParams }: PageProps) {
               {t('switchToLogin')}{' '}
               <Link
                 href={
-                  auditParam
-                    ? `/login?audit=${encodeURIComponent(auditParam)}`
-                    : nextParam
-                      ? `/login?next=${encodeURIComponent(nextParam)}`
-                      : '/login'
+                  claimParam
+                    ? `/login?claim=${encodeURIComponent(claimParam)}`
+                    : auditParam
+                      ? `/login?audit=${encodeURIComponent(auditParam)}`
+                      : nextParam
+                        ? `/login?next=${encodeURIComponent(nextParam)}`
+                        : '/login'
                 }
                 className="text-[var(--accent)] font-medium hover:underline"
               >
