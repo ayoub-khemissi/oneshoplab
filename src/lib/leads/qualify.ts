@@ -24,7 +24,16 @@ export type QualifyOutcome =
       contactEmail: string | null;
       contactSocials: string[];
     }
-  | { status: 'skip'; domain: string; reason: 'platform_not_detected' }
+  | {
+      status: 'skip';
+      domain: string;
+      reason: 'platform_not_detected';
+      /** Carries the fetched HTML + final URL forward so a caller can
+       *  run a second-pass detector (alt-platforms like Magento /
+       *  PrestaShop / …) without re-hitting the merchant's server. */
+      finalUrl?: string;
+      homeHtml?: string;
+    }
   | { status: 'skip'; domain: string; reason: 'no_products_fetched' }
   | { status: 'skip'; domain: string; reason: 'manual_or_unknown' }
   | { status: 'skip'; domain: string; reason: 'blocked_domain' }
@@ -32,7 +41,7 @@ export type QualifyOutcome =
 
 const HTML_LANG_RE = /<html[^>]*\blang=["']([a-z]{2})/i;
 
-function detectLanguage(html: string): string | null {
+export function detectLanguage(html: string): string | null {
   const m = html.match(HTML_LANG_RE);
   return m ? m[1].toLowerCase() : null;
 }
@@ -92,7 +101,13 @@ export async function qualifyUrl(rawUrl: string): Promise<QualifyOutcome> {
     detection.detection.platform === 'unknown' ||
     detection.detection.platform === 'manual'
   ) {
-    return { status: 'skip', domain, reason: 'platform_not_detected' };
+    return {
+      status: 'skip',
+      domain,
+      reason: 'platform_not_detected',
+      finalUrl,
+      homeHtml
+    };
   }
 
   // Pull a single product to confirm the catalog endpoint is open.

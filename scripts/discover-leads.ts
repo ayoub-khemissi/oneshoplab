@@ -59,6 +59,11 @@ interface CliArgs {
   /** Skip store qualification — just scrape contact info and upsert
    *  (agencies, freelancers…). Pair with --file <agencies.txt>. */
   contactsOnly: boolean;
+  /** Fall back to alt-platform fingerprint when the native S/W/W
+   *  qualifier returns platform_not_detected. Boosts yield on
+   *  --niche / --query runs by capturing Magento / PrestaShop /
+   *  BigCommerce / Squarespace shops we'd otherwise skip. */
+  withAlt: boolean;
 }
 
 function parseArgs(argv: string[]): CliArgs {
@@ -68,6 +73,7 @@ function parseArgs(argv: string[]): CliArgs {
   let concurrency = 5;
   let skipKnown = false;
   let contactsOnly = false;
+  let withAlt = false;
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -140,6 +146,8 @@ function parseArgs(argv: string[]): CliArgs {
       skipKnown = true;
     } else if (a === '--contacts-only') {
       contactsOnly = true;
+    } else if (a === '--with-alt') {
+      withAlt = true;
     }
   }
 
@@ -161,11 +169,16 @@ function parseArgs(argv: string[]): CliArgs {
         '  --skip-known        Skip candidate domains already in the leads table.\n' +
         '  --contacts-only     No store qualification — just scrape contact\n' +
         '                      info + upsert. For agencies/freelancers:\n' +
-        '                      pnpm tsx scripts/discover-leads.ts --contacts-only --file agencies.txt\n'
+        '                      pnpm tsx scripts/discover-leads.ts --contacts-only --file agencies.txt\n' +
+        '  --with-alt          When the S/W/W qualifier returns platform_not_detected,\n' +
+        '                      run alt-platform fingerprint (Magento/PrestaShop/\n' +
+        '                      BigCommerce/Squarespace) on the same HTML and upsert\n' +
+        '                      as platform=manual + notes=detected:<x>. Best paired\n' +
+        '                      with --niche to harvest non-S/W/W shops alongside.\n'
     );
     process.exit(1);
   }
-  return { mode, country, limit, concurrency, skipKnown, contactsOnly };
+  return { mode, country, limit, concurrency, skipKnown, contactsOnly, withAlt };
 }
 
 async function main(): Promise<void> {
@@ -499,6 +512,116 @@ async function main(): Promise<void> {
     if (Object.keys(upsertedBySig).length > 0) {
       console.log('  by detected platform:');
       for (const [p, n] of Object.entries(upsertedBySig)) {
+        console.log(`    ${p.padEnd(13)} ${n}`);
+      }
+    }
+    process.exit(0);
+  }
+
+  // --with-alt: replace the default qualifyBatch path with a unified
+  // loop that runs the native S/W/W qualifier first, then falls back
+  // to the alt-platform fingerprint on the SAME homeHtml when the
+  // first pass returns platform_not_detected. Single fetch per
+  // candidate, ~2x the yield on --niche runs because we capture
+  // Magento / PrestaShop / BigCommerce / Squarespace shops we'd
+  // otherwise skip.
+  if (args.withAlt) {
+    const { qualifyUrl, upsertQualifiedLead, upsertManualMerchantLead, detectLanguage } = await import(
+      '@/lib/leads/qualify'
+    );
+    const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
+    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
+
+    let sQualified = 0;
+    let sNew = 0;
+    let sRefreshed = 0;
+    const byPlatform: Record<string, number> = {};
+    let altUpserted = 0;
+    let altNew = 0;
+    let altRefreshed = 0;
+    let skippedNoSig = 0;
+    let skippedOther = 0;
+    let errored = 0;
+
+    let cursor = 0;
+    async function worker(): Promise<void> {
+      while (true) {
+        const idx = cursor++;
+        if (idx >= toQualify.length) return;
+        const url = toQualify[idx];
+        const outcome = await qualifyUrl(url);
+        if (outcome.status === 'qualified') {
+          const r = await upsertQualifiedLead(outcome, { discoveredVia: sourceLabel });
+          sQualified += 1;
+          if (r.created) sNew += 1;
+          else sRefreshed += 1;
+          byPlatform[outcome.platform] = (byPlatform[outcome.platform] ?? 0) + 1;
+          console.log(
+            `  ${r.created ? '+' : '~'} ${outcome.domain.padEnd(40)} ${outcome.platform.padEnd(11)} ${outcome.contactEmail ?? '(no email)'}`
+          );
+          continue;
+        }
+        if (
+          outcome.status === 'skip' &&
+          outcome.reason === 'platform_not_detected' &&
+          outcome.homeHtml &&
+          outcome.finalUrl
+        ) {
+          const detected = detectAltPlatform(outcome.homeHtml);
+          if (!detected) {
+            skippedNoSig += 1;
+            console.log(`  - ${outcome.domain.padEnd(40)} no signature (S/W/W or alt)`);
+            continue;
+          }
+          const contact = await extractContactInfo(outcome.finalUrl).catch(() => ({
+            email: null as string | null,
+            socials: [] as string[]
+          }));
+          const lang = detectLanguage(outcome.homeHtml);
+          const r = await upsertManualMerchantLead({
+            domain: outcome.domain,
+            url: outcome.finalUrl,
+            detectedPlatform: detected,
+            language: lang,
+            email: contact.email,
+            socials: contact.socials.slice(0, 8),
+            discoveredVia: sourceLabel
+          });
+          altUpserted += 1;
+          if (r.created) altNew += 1;
+          else altRefreshed += 1;
+          byPlatform[detected] = (byPlatform[detected] ?? 0) + 1;
+          console.log(
+            `  ${r.created ? '+' : '~'} ${outcome.domain.padEnd(40)} ${detected.padEnd(11)} ${contact.email ?? '(no email)'}`
+          );
+          continue;
+        }
+        if (outcome.status === 'skip') {
+          skippedOther += 1;
+          console.log(`  - ${outcome.domain.padEnd(40)} ${outcome.reason}`);
+        } else {
+          errored += 1;
+          console.log(`  ! ${outcome.domain.padEnd(40)} ${outcome.reason}`);
+        }
+      }
+    }
+    await Promise.all(
+      Array.from(
+        { length: Math.max(1, Math.min(args.concurrency, toQualify.length)) },
+        worker
+      )
+    );
+
+    console.log('\n── Summary (with --with-alt) ────────────────────');
+    console.log(`  candidates:       ${toQualify.length}`);
+    console.log(`  S/W/W qualified:  ${sQualified}  (${sNew} new, ${sRefreshed} refreshed)`);
+    console.log(`  alt upserted:     ${altUpserted}  (${altNew} new, ${altRefreshed} refreshed)`);
+    console.log(`  no signature:     ${skippedNoSig}`);
+    console.log(`  other skip:       ${skippedOther}`);
+    console.log(`  errored:          ${errored}`);
+    if (Object.keys(byPlatform).length > 0) {
+      console.log('  by platform:');
+      for (const [p, n] of Object.entries(byPlatform).sort()) {
         console.log(`    ${p.padEnd(13)} ${n}`);
       }
     }
