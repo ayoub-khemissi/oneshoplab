@@ -1,5 +1,5 @@
 import { Accordion, Card } from '@heroui/react';
-import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNull, or } from 'drizzle-orm';
 import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -329,31 +329,66 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
 
-  // In-flight chat generations — the user may have clicked "Generate
-  // title" then F5'd before kie returned. We surface a 'running' chat
-  // job per matching field so the provider restores the spinner on
-  // mount instead of looking idle. 5-min cutoff filters out orphaned
-  // rows: kie chat is hard-capped at 90s and our catch flips the row
-  // to 'failed' on any throw — anything older than 5 min means the
-  // server died mid-chat (very rare), and the safest behaviour is to
-  // not show a forever-spinner to the user.
-  const STALE_RUNNING_CUTOFF = new Date(Date.now() - 5 * 60 * 1000);
-  const runningChatJobs = await db
-    .select({ kind: jobs.kind, startedAt: jobs.startedAt })
+  // Chat-job recovery window for F5: pull the last 5 min of chat job
+  // activity in one round-trip, then partition into "still running"
+  // (provider seeds spinner with the REAL submit time so the elapsed
+  // counter doesn't restart from 0) and "last attempt failed"
+  // (provider fires a one-shot toast so the merchant sees the failure
+  // they missed). The 5-min cutoff matches kie's chat ceiling (~90s)
+  // with margin; older rows are either orphans (server died mid-chat,
+  // very rare) or stale enough that the user has moved on.
+  const RECENT_CUTOFF = new Date(Date.now() - 5 * 60 * 1000);
+  const recentChatJobs = await db
+    .select({
+      id: jobs.id,
+      kind: jobs.kind,
+      status: jobs.status,
+      startedAt: jobs.startedAt,
+      finishedAt: jobs.finishedAt,
+      error: jobs.error
+    })
     .from(jobs)
     .where(
       and(
         eq(jobs.productId, productId),
-        eq(jobs.status, 'running'),
+        gt(jobs.startedAt, RECENT_CUTOFF),
         inArray(jobs.kind, ['kie_title', 'kie_description', 'kie_tags'])
       )
-    );
-  const inFlightChatFields: ChatOptimField[] = [];
-  for (const row of runningChatJobs) {
-    if (row.startedAt && row.startedAt < STALE_RUNNING_CUTOFF) continue;
-    if (row.kind === 'kie_title') inFlightChatFields.push('title');
-    else if (row.kind === 'kie_description') inFlightChatFields.push('description');
-    else if (row.kind === 'kie_tags') inFlightChatFields.push('tags');
+    )
+    .orderBy(desc(jobs.startedAt));
+
+  const kindToField = (kind: string): ChatOptimField | null =>
+    kind === 'kie_title'
+      ? 'title'
+      : kind === 'kie_description'
+        ? 'description'
+        : kind === 'kie_tags'
+          ? 'tags'
+          : null;
+
+  // Per field, keep only the most recent attempt (the query already
+  // ordered desc by startedAt). That row tells us the current state:
+  // running → restore spinner; failed → surface a toast; completed →
+  // nothing to do (the new content is already in the product).
+  const seenFields = new Set<ChatOptimField>();
+  const inFlightChatJobs: Array<{ field: ChatOptimField; startedAtMs: number }> = [];
+  const recentFailedChatJobs: Array<{ jobId: string; field: ChatOptimField; error: string }> = [];
+  for (const row of recentChatJobs) {
+    const field = kindToField(row.kind);
+    if (!field || seenFields.has(field)) continue;
+    seenFields.add(field);
+    if (row.status === 'running' && row.startedAt) {
+      inFlightChatJobs.push({ field, startedAtMs: row.startedAt.getTime() });
+    } else if (row.status === 'failed') {
+      // Raw kie message stays in the DB; client sanitises before
+      // showing. We forward the raw form here so the sanitiser has
+      // the full input to scrub.
+      recentFailedChatJobs.push({
+        jobId: row.id,
+        field,
+        error: row.error ?? 'generation_failed'
+      });
+    }
   }
 
   return (
@@ -418,7 +453,8 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
         initialCustomInstructions={productInstructions}
         creditsBalance={balance}
         productArchived={archived}
-        inFlightChatFields={inFlightChatFields}
+        inFlightChatJobs={inFlightChatJobs}
+        recentFailedChatJobs={recentFailedChatJobs}
       >
         <AutoOptimizeOnMount productId={productId} />
         <div className="flex flex-col gap-6">

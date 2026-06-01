@@ -101,13 +101,27 @@ interface ProviderProps {
    *  regardless of credit balance because there's no point producing
    *  content for a product no longer present on the merchant's store. */
   productArchived?: boolean;
-  /** Chat fields with a 'running' job row at mount time. After an F5
-   *  the original client fetch is gone but the server is still
-   *  finishing the kie chat (~30s sync); restoring the spinner per
-   *  in-flight field — and polling /api/products/text-jobs until the
-   *  row flips to completed/failed — lets the merchant see what's
-   *  happening instead of an idle button. */
-  inFlightChatFields?: Array<'title' | 'description' | 'tags'>;
+  /** Chat fields with a 'running' job row at mount time, plus the real
+   *  startedAt of the submit. After an F5 the original client fetch is
+   *  gone but the server is still finishing the kie chat (~30s sync);
+   *  restoring the spinner per in-flight field — and using the real
+   *  startedAt so the elapsed counter doesn't reset to 0 — keeps the
+   *  merchant in the loop. The provider polls /api/products/text-jobs
+   *  until the row flips to completed/failed. */
+  inFlightChatJobs?: Array<{
+    field: 'title' | 'description' | 'tags';
+    startedAtMs: number;
+  }>;
+  /** Chat fields whose LAST attempt within the recent recovery window
+   *  ended in 'failed'. The provider fires a single sanitised toast
+   *  per failed job on mount (dedup'd via localStorage on jobId), so
+   *  the merchant sees the failure they missed during F5 instead of
+   *  silently looking at an idle Generate button. */
+  recentFailedChatJobs?: Array<{
+    jobId: string;
+    field: 'title' | 'description' | 'tags';
+    error: string;
+  }>;
   children: ReactNode;
 }
 
@@ -119,7 +133,8 @@ export function RetryableGenerateProvider({
   initialCustomInstructions = '',
   creditsBalance,
   productArchived = false,
-  inFlightChatFields = [],
+  inFlightChatJobs = [],
+  recentFailedChatJobs = [],
   children
 }: ProviderProps) {
   const router = useRouter();
@@ -131,14 +146,17 @@ export function RetryableGenerateProvider({
   // (see RetryableGenerateButton below).
   // F5-resume seed: any field with a server-side 'running' chat job
   // re-enters as 'pending' so the spinner is back on first paint.
-  // startedAt is faked to "now" because we don't have the original
-  // submit time without an extra query — the elapsed counter just
-  // restarts from 0 on the new tab.
+  // Uses the REAL startedAt from the job row, so the elapsed counter
+  // shows continuity across the reload (e.g. "Generating · 38s")
+  // instead of restarting from 0.
   const [states, setStates] = useState<Record<GenField, FieldState>>(() => {
     const seed = IDLE_STATES();
-    const now = Date.now();
-    for (const field of inFlightChatFields) {
-      seed[field] = { kind: 'pending', attempt: 1, startedAt: now };
+    for (const job of inFlightChatJobs) {
+      seed[job.field] = {
+        kind: 'pending',
+        attempt: 1,
+        startedAt: job.startedAtMs
+      };
     }
     return seed;
   });
@@ -151,11 +169,13 @@ export function RetryableGenerateProvider({
   // gone (the previous tab closed on reload), so the provider has no
   // way to know when the server finishes. Poll a lightweight endpoint
   // every 2.5s and router.refresh() once every resumed field has
-  // flipped off — the refresh re-fetches inFlightChatFields and
+  // flipped off — the refresh re-fetches inFlightChatJobs and
   // unsticks the spinner naturally. The poll only runs for fields
   // that came back pending from the server, never for ones the user
   // clicks in-tab.
-  const resumedRef = useRef<Set<GenField>>(new Set(inFlightChatFields));
+  const resumedRef = useRef<Set<GenField>>(
+    new Set(inFlightChatJobs.map((j) => j.field))
+  );
   useEffect(() => {
     if (resumedRef.current.size === 0) return;
     let cancelled = false;
@@ -194,6 +214,49 @@ export function RetryableGenerateProvider({
     // tracker is its own bag, fed only by the F5 seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, router]);
+
+  // Surface chat-gen failures the merchant may have missed while
+  // their tab was reloading. The server already filtered to "last
+  // attempt per field, failed" within the recovery window; we just
+  // need to fire one toast per jobId on mount and remember which IDs
+  // we've already shown so a second F5 inside the same window doesn't
+  // re-spam. localStorage keeps the dedup per-browser (sessionStorage
+  // would forget across tabs, which is too narrow — we want "stop
+  // showing this failure" to mean "across reloads", not "per tab").
+  useEffect(() => {
+    if (recentFailedChatJobs.length === 0) return;
+    const SEEN_KEY = 'oneshoplab.chat-fail-seen';
+    let seen: Set<string>;
+    try {
+      const raw = window.localStorage.getItem(SEEN_KEY);
+      seen = new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch {
+      seen = new Set();
+    }
+    let dirty = false;
+    for (const job of recentFailedChatJobs) {
+      if (seen.has(job.jobId)) continue;
+      seen.add(job.jobId);
+      dirty = true;
+      // Reuse the generic 'errorGenerationFailed' i18n key (already
+      // present in all 13 locales) — adding per-field variants would
+      // require 39 new translations and the UI doesn't gain much:
+      // the user is on the product page, will retry, and the
+      // attempted field is the one they last interacted with.
+      toast.danger(t('errorGenerationFailed'));
+    }
+    if (dirty) {
+      try {
+        // Bound the set so it doesn't grow unboundedly across months
+        // of failures. 200 entries is plenty for a single merchant.
+        const arr = Array.from(seen).slice(-200);
+        window.localStorage.setItem(SEEN_KEY, JSON.stringify(arr));
+      } catch {
+        // Quota / privacy mode — silently skip persistence.
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [customInstructions, setCustomInstructions] = useState(initialCustomInstructions);
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
