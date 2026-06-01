@@ -233,6 +233,63 @@ export async function upsertContactLead(input: {
   return { id, created: true, hasEmail: !!input.email };
 }
 
+/**
+ * Upsert a merchant lead running on a platform our auto-audit pipeline
+ * doesn't speak natively (Magento / PrestaShop / BigCommerce /
+ * Squarespace). We store the real detected platform in `notes` so the
+ * operator can grep / filter, while `platform` stays 'manual' — the
+ * enum doesn't carry the alt-platform values and we want to avoid a
+ * migration for a discovery surface that's still experimental.
+ *
+ * Idempotent on `domain`: re-runs refresh contact info + notes
+ * without overwriting operator-set status (e.g. don't reset 'replied'
+ * back to 'new').
+ */
+export async function upsertManualMerchantLead(input: {
+  domain: string;
+  url: string;
+  detectedPlatform: string;
+  language: string | null;
+  email: string | null;
+  socials: string[];
+  discoveredVia: string | null;
+}): Promise<{ id: string; created: boolean; hasEmail: boolean }> {
+  const notes = `detected:${input.detectedPlatform}`;
+  const existing = await db.query.leads.findFirst({
+    where: eq(leads.domain, input.domain),
+    columns: { id: true }
+  });
+  if (existing) {
+    await db
+      .update(leads)
+      .set({
+        url: input.url,
+        contactEmail: input.email,
+        contactSocials: input.socials,
+        notes,
+        language: input.language
+      })
+      .where(eq(leads.id, existing.id));
+    return { id: existing.id, created: false, hasEmail: !!input.email };
+  }
+  const id = randomUUID();
+  await db.insert(leads).values({
+    id,
+    domain: input.domain,
+    url: input.url,
+    platform: 'manual',
+    productsSampled: 0,
+    language: input.language,
+    country: null,
+    contactEmail: input.email,
+    contactSocials: input.socials,
+    notes,
+    status: 'new' satisfies LeadStatus,
+    discoveredVia: input.discoveredVia
+  });
+  return { id, created: true, hasEmail: !!input.email };
+}
+
 export interface BatchSummary {
   total: number;
   qualified: number;

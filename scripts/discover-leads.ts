@@ -42,6 +42,10 @@ type CliMode =
   | { kind: 'seed'; input: string }
   | { kind: 'query'; input: string }
   | { kind: 'platform'; platform: 'shopify' | 'woocommerce' | 'wix' }
+  | {
+      kind: 'alt-platform';
+      platform: 'magento' | 'prestashop' | 'bigcommerce' | 'squarespace' | 'all';
+    }
   | { kind: 'cc'; pattern: 'shopify' | 'wix' }
   | { kind: 'niche' }
   | { kind: 'tranco'; startRank: number; endRank: number };
@@ -80,6 +84,21 @@ function parseArgs(argv: string[]): CliArgs {
         process.exit(1);
       }
       mode = { kind: 'platform', platform: next };
+      i++;
+    } else if (a === '--alt-platform' && next) {
+      if (
+        next !== 'magento' &&
+        next !== 'prestashop' &&
+        next !== 'bigcommerce' &&
+        next !== 'squarespace' &&
+        next !== 'all'
+      ) {
+        console.error(
+          `--alt-platform must be magento | prestashop | bigcommerce | squarespace | all`
+        );
+        process.exit(1);
+      }
+      mode = { kind: 'alt-platform', platform: next };
       i++;
     } else if (a === '--cc' && next) {
       if (next !== 'shopify' && next !== 'wix') {
@@ -134,6 +153,8 @@ function parseArgs(argv: string[]): CliArgs {
         '  pnpm tsx scripts/discover-leads.ts --cc wix [--limit 500]\n' +
         '  pnpm tsx scripts/discover-leads.ts --niche --country fr           # Brave + 15 niche queries (mode, cosmétique, déco…) — platform-agnostic\n' +
         '  pnpm tsx scripts/discover-leads.ts --tranco 50000 [--limit N]     # Probe top-50k domains from Tranco list (free, ~1h, ~500-2000 shops)\n' +
+        '  pnpm tsx scripts/discover-leads.ts --alt-platform magento --country fr [--limit 100]   # Brave + signature fingerprint for non-S/W/W shops\n' +
+        '                                                                  Variants: magento | prestashop | bigcommerce | squarespace | all\n' +
         '\n' +
         'Options:\n' +
         '  --concurrency <n>   Parallel qualifier workers (default 5, max 20).\n' +
@@ -226,6 +247,49 @@ async function main(): Promise<void> {
       if (candidates.length >= args.limit) break;
       candidates.push(c.url);
       sourceLabel = `niche:${args.country ?? 'en'}`;
+    }
+
+  } else if (args.mode.kind === 'alt-platform') {
+    const { altPlatformQueries, ALT_PLATFORMS, isAltPlatformBlocked } = await import(
+      '@/lib/leads/alt-platforms'
+    );
+    const lang: 'fr' | 'en' = args.country === 'fr' ? 'fr' : 'en';
+    const platforms: ReadonlyArray<'magento' | 'prestashop' | 'bigcommerce' | 'squarespace'> =
+      args.mode.platform === 'all' ? ALT_PLATFORMS : [args.mode.platform];
+    const queries: string[] = [];
+    for (const p of platforms) {
+      for (const q of altPlatformQueries(p, lang)) queries.push(q);
+    }
+    if (queries.length === 0) {
+      console.error(
+        `No alt-platform queries for platform=${args.mode.platform} lang=${lang}`
+      );
+      process.exit(1);
+    }
+    const apiKey = process.env.BRAVE_API_KEY;
+    if (!apiKey) {
+      console.error('BRAVE_API_KEY missing. --alt-platform uses Brave Search.');
+      process.exit(1);
+    }
+    const perQueryLimit = Math.max(15, Math.ceil(args.limit / queries.length));
+    console.log(
+      `[discover-leads] alt-platform=${args.mode.platform} lang=${lang} queries=${queries.length} perQueryLimit=${perQueryLimit}`
+    );
+    for (const q of queries) console.log(`  - ${q}`);
+    for await (const c of multiBraveDiscovery(queries, apiKey, args.country, perQueryLimit)) {
+      if (candidates.length >= args.limit) break;
+      let host: string;
+      try {
+        host = new URL(c.url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        continue;
+      }
+      // Cheap pre-filter: the platforms' own docs / forums / app
+      // vendors are always in the Brave SERP for these queries and
+      // never the merchants we want.
+      if (isAltPlatformBlocked(host)) continue;
+      candidates.push(c.url);
+      sourceLabel = `alt-platform:${args.mode.platform}-${lang}`;
     }
   } else if (args.mode.kind === 'platform') {
     const queries = getQueryTemplates(args.mode.platform, args.country);
@@ -355,6 +419,89 @@ async function main(): Promise<void> {
     console.log(`  upserted:    ${created} new, ${refreshed} refreshed`);
     console.log(`  with email:  ${withEmail}`);
     console.log(`  errored:     ${errored}`);
+    process.exit(0);
+  }
+
+  // Alt-platform: fingerprint + has-products + contact scrape +
+  // upsert as platform='manual' with the detected platform stored in
+  // notes. Sequential by design — Brave gives us ~100s of candidates
+  // tops here, the bottleneck is the fingerprint fetch which is
+  // already polite (~5-10 req/s without concurrency).
+  if (args.mode.kind === 'alt-platform') {
+    const { fetchText } = await import('@/lib/adapters/fetch-utils');
+    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
+    const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
+    const { upsertManualMerchantLead } = await import('@/lib/leads/qualify');
+    const lang: 'fr' | 'en' = args.country === 'fr' ? 'fr' : 'en';
+    let created = 0;
+    let refreshed = 0;
+    let withEmail = 0;
+    const upsertedBySig: Record<string, number> = {};
+    let skippedNoSig = 0;
+    let errored = 0;
+    for (const url of toQualify) {
+      let host: string;
+      try {
+        host = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+      } catch {
+        errored += 1;
+        continue;
+      }
+      try {
+        const page = await fetchText(url);
+        if (!page.ok || !page.body) {
+          errored += 1;
+          console.log(`  ! ${host.padEnd(40)} fetch failed (status ${page.status})`);
+          continue;
+        }
+        const detected = detectAltPlatform(page.body);
+        if (!detected) {
+          skippedNoSig += 1;
+          console.log(`  - ${host.padEnd(40)} no platform signature`);
+          continue;
+        }
+        // Fingerprint already rejects blogs / docs / agencies that
+        // merely mention the platform name (strong rules require
+        // generator meta or platform-specific paths). Trusting the
+        // detector alone keeps yield acceptable on Brave's noisy
+        // SERP for these footprints.
+        const contact = await extractContactInfo(page.finalUrl).catch(() => ({
+          email: null as string | null,
+          socials: [] as string[]
+        }));
+        const r = await upsertManualMerchantLead({
+          domain: host,
+          url: page.finalUrl,
+          detectedPlatform: detected,
+          language: lang,
+          email: contact.email,
+          socials: contact.socials.slice(0, 8),
+          discoveredVia: sourceLabel
+        });
+        if (r.created) created += 1;
+        else refreshed += 1;
+        if (r.hasEmail) withEmail += 1;
+        upsertedBySig[detected] = (upsertedBySig[detected] ?? 0) + 1;
+        console.log(
+          `  ${r.created ? '+' : '~'} ${host.padEnd(40)} ${detected.padEnd(11)} ${contact.email ?? '(no email)'}`
+        );
+      } catch (e) {
+        errored += 1;
+        console.log(`  ! ${host.padEnd(40)} ${(e as Error).message}`);
+      }
+    }
+    console.log('\n── Summary (alt-platform) ─────────────────────');
+    console.log(`  processed:        ${toQualify.length}`);
+    console.log(`  upserted:         ${created} new, ${refreshed} refreshed`);
+    console.log(`  with email:       ${withEmail}`);
+    console.log(`  no platform sig:  ${skippedNoSig}`);
+    console.log(`  errored:          ${errored}`);
+    if (Object.keys(upsertedBySig).length > 0) {
+      console.log('  by detected platform:');
+      for (const [p, n] of Object.entries(upsertedBySig)) {
+        console.log(`    ${p.padEnd(13)} ${n}`);
+      }
+    }
     process.exit(0);
   }
 
