@@ -101,6 +101,13 @@ interface ProviderProps {
    *  regardless of credit balance because there's no point producing
    *  content for a product no longer present on the merchant's store. */
   productArchived?: boolean;
+  /** Chat fields with a 'running' job row at mount time. After an F5
+   *  the original client fetch is gone but the server is still
+   *  finishing the kie chat (~30s sync); restoring the spinner per
+   *  in-flight field — and polling /api/products/text-jobs until the
+   *  row flips to completed/failed — lets the merchant see what's
+   *  happening instead of an idle button. */
+  inFlightChatFields?: Array<'title' | 'description' | 'tags'>;
   children: ReactNode;
 }
 
@@ -112,6 +119,7 @@ export function RetryableGenerateProvider({
   initialCustomInstructions = '',
   creditsBalance,
   productArchived = false,
+  inFlightChatFields = [],
   children
 }: ProviderProps) {
   const router = useRouter();
@@ -121,10 +129,72 @@ export function RetryableGenerateProvider({
   // 'all' slot is special: a running 'all' grabs every field at
   // once, so it acts as a global lock at the button-disable layer
   // (see RetryableGenerateButton below).
-  const [states, setStates] = useState<Record<GenField, FieldState>>(IDLE_STATES);
+  // F5-resume seed: any field with a server-side 'running' chat job
+  // re-enters as 'pending' so the spinner is back on first paint.
+  // startedAt is faked to "now" because we don't have the original
+  // submit time without an extra query — the elapsed counter just
+  // restarts from 0 on the new tab.
+  const [states, setStates] = useState<Record<GenField, FieldState>>(() => {
+    const seed = IDLE_STATES();
+    const now = Date.now();
+    for (const field of inFlightChatFields) {
+      seed[field] = { kind: 'pending', attempt: 1, startedAt: now };
+    }
+    return seed;
+  });
   const setFieldState = useCallback((field: GenField, next: FieldState) => {
     setStates((prev) => ({ ...prev, [field]: next }));
   }, []);
+
+  // Resume-from-F5 poll: when the page mounts with one or more chat
+  // jobs still 'running' server-side, the original submit's fetch is
+  // gone (the previous tab closed on reload), so the provider has no
+  // way to know when the server finishes. Poll a lightweight endpoint
+  // every 2.5s and router.refresh() once every resumed field has
+  // flipped off — the refresh re-fetches inFlightChatFields and
+  // unsticks the spinner naturally. The poll only runs for fields
+  // that came back pending from the server, never for ones the user
+  // clicks in-tab.
+  const resumedRef = useRef<Set<GenField>>(new Set(inFlightChatFields));
+  useEffect(() => {
+    if (resumedRef.current.size === 0) return;
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const res = await fetch(`/api/products/text-jobs?productId=${encodeURIComponent(productId)}`, {
+          headers: { accept: 'application/json' }
+        });
+        if (cancelled) return;
+        if (!res.ok) return;
+        const body = (await res.json()) as { running?: string[] };
+        const stillRunning = new Set(body.running ?? []);
+        // Drop the resumed marker on any field the server no longer
+        // reports as running — that field's job has flipped to
+        // completed or failed. We refresh once to pick up the new
+        // product state (description text, etc.).
+        let cleared = 0;
+        for (const f of Array.from(resumedRef.current)) {
+          if (!stillRunning.has(f)) {
+            resumedRef.current.delete(f);
+            cleared += 1;
+          }
+        }
+        if (cleared > 0) router.refresh();
+      } catch {
+        // Network hiccup — keep polling; the poll loop is best-effort.
+      }
+    };
+    const id = window.setInterval(tick, 2500);
+    void tick();
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+    // We intentionally do NOT depend on `states` here — the resumed
+    // tracker is its own bag, fed only by the F5 seed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId, router]);
+
   const [customInstructions, setCustomInstructions] = useState(initialCustomInstructions);
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
   const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQualityId);

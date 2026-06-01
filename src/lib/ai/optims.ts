@@ -84,29 +84,10 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
   const SAFETY_MULTIPLIER = 2.5;
   const safetyMaxTokens = Math.ceil(outputTokenCapFor(opts.field) * SAFETY_MULTIPLIER);
 
-  const response = await kie.chat({
-    model: model.kieModelId,
-    system: built.system,
-    messages,
-    max_tokens: safetyMaxTokens
-  });
-
-  const text = KieClient.extractText(response);
-  const output: string | string[] = opts.field === 'tags' ? parseTags(text) : text;
-
-  // Quoted = debited. The user paid for the cap; whether kie's actual
-  // credits_consumed lands a bit under the cap is our buffer/upside.
-  const debit = estimateChatCredits(model.id, opts.field);
-
-  const jobId = randomUUID();
-  const now = new Date();
-
   // Resolve the product UUID from (projectId, sourceId) so we can
   // populate the FK column — the past-generations strip and the
   // site Activity tab both pull the product link via the `product`
-  // relation on jobs, which joins on jobs.product_id. Without this
-  // backfill the column would render "—" instead of the title for
-  // every chat generation.
+  // relation on jobs, which joins on jobs.product_id.
   const productRow = await db.query.products.findFirst({
     where: and(
       eq(products.projectId, opts.projectId),
@@ -115,23 +96,69 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     columns: { id: true }
   });
 
+  // Insert the job row in 'running' BEFORE calling kie so the product
+  // page can detect an in-flight chat after an F5 (chat is sync ~30s,
+  // and the original client fetch is aborted on reload). The row
+  // becomes the persistent "I'm generating X" marker the UI restores
+  // from on remount.
+  const jobId = randomUUID();
+  const startedAt = new Date();
   await db.insert(jobs).values({
     id: jobId,
     projectId: opts.projectId,
     productId: productRow?.id ?? null,
     kind: KIND_BY_FIELD[opts.field],
-    status: 'completed',
+    status: 'running',
     inputPayload: {
       productSourceId: opts.productSourceId,
       field: opts.field,
       userPrompt: opts.userPrompt,
       chatModelId: model.id
     },
-    result: { output, raw: text, kieCreditsConsumed: response.credits_consumed },
-    creditsCost: debit,
-    startedAt: now,
-    finishedAt: now
+    startedAt
   });
+
+  let response;
+  try {
+    response = await kie.chat({
+      model: model.kieModelId,
+      system: built.system,
+      messages,
+      max_tokens: safetyMaxTokens
+    });
+  } catch (e) {
+    // Flip the marker out of 'running' so the UI's poll loop stops
+    // spinning forever and the user sees the failure state on next
+    // refresh. Error message stays raw in the DB for ops debugging;
+    // the user-facing layer sanitises before display.
+    await db
+      .update(jobs)
+      .set({
+        status: 'failed',
+        error: (e as Error).message,
+        finishedAt: new Date()
+      })
+      .where(eq(jobs.id, jobId));
+    throw e;
+  }
+
+  const text = KieClient.extractText(response);
+  const output: string | string[] = opts.field === 'tags' ? parseTags(text) : text;
+
+  // Quoted = debited. The user paid for the cap; whether kie's actual
+  // credits_consumed lands a bit under the cap is our buffer/upside.
+  const debit = estimateChatCredits(model.id, opts.field);
+  const now = new Date();
+
+  await db
+    .update(jobs)
+    .set({
+      status: 'completed',
+      result: { output, raw: text, kieCreditsConsumed: response.credits_consumed },
+      creditsCost: debit,
+      finishedAt: now
+    })
+    .where(eq(jobs.id, jobId));
 
   if (debit > 0) {
     await applyCreditTransaction({

@@ -1,5 +1,5 @@
 import { Accordion, Card } from '@heroui/react';
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -41,6 +41,7 @@ import {
   listOptimHistoryPaginated,
   listProductImageJobs,
   type ChatModelId,
+  type ChatOptimField,
   type ImageQualityId,
   type OptimHistoryItem
 } from '@/lib/ai';
@@ -49,7 +50,7 @@ import { touchProjectLastView } from '@/lib/auth-actions';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { formatDate } from '@/lib/format-date';
-import { audits, products, projects } from '@/lib/db/schema';
+import { audits, jobs, products, projects } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 
@@ -328,6 +329,33 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
 
+  // In-flight chat generations — the user may have clicked "Generate
+  // title" then F5'd before kie returned. We surface a 'running' chat
+  // job per matching field so the provider restores the spinner on
+  // mount instead of looking idle. 5-min cutoff filters out orphaned
+  // rows: kie chat is hard-capped at 90s and our catch flips the row
+  // to 'failed' on any throw — anything older than 5 min means the
+  // server died mid-chat (very rare), and the safest behaviour is to
+  // not show a forever-spinner to the user.
+  const STALE_RUNNING_CUTOFF = new Date(Date.now() - 5 * 60 * 1000);
+  const runningChatJobs = await db
+    .select({ kind: jobs.kind, startedAt: jobs.startedAt })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.productId, productId),
+        eq(jobs.status, 'running'),
+        inArray(jobs.kind, ['kie_title', 'kie_description', 'kie_tags'])
+      )
+    );
+  const inFlightChatFields: ChatOptimField[] = [];
+  for (const row of runningChatJobs) {
+    if (row.startedAt && row.startedAt < STALE_RUNNING_CUTOFF) continue;
+    if (row.kind === 'kie_title') inFlightChatFields.push('title');
+    else if (row.kind === 'kie_description') inFlightChatFields.push('description');
+    else if (row.kind === 'kie_tags') inFlightChatFields.push('tags');
+  }
+
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
       <header className="flex items-center justify-between gap-4 flex-wrap">
@@ -390,6 +418,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
         initialCustomInstructions={productInstructions}
         creditsBalance={balance}
         productArchived={archived}
+        inFlightChatFields={inFlightChatFields}
       >
         <AutoOptimizeOnMount productId={productId} />
         <div className="flex flex-col gap-6">
