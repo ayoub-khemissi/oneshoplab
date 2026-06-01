@@ -7,6 +7,7 @@ import { useRouter } from '@/i18n/navigation';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { useFieldSwapGroup, useFieldView } from '@/components/field-swap';
 import { trackEvent } from '@/lib/analytics-event';
+import { sanitizeUserFacingError } from '@/lib/errors';
 import {
   createContext,
   useCallback,
@@ -270,9 +271,14 @@ export function RetryableGenerateProvider({
           // (title / description / tags) are safe to auto-retry
           // because they only persist on success.
           if (field === 'all' || field === 'images') {
-            const message = payload.message ?? payload.error ?? `HTTP ${res.status}`;
-            toast.danger(t('errorGenerationFailed'), { description: message });
-            setFieldState(field, { kind: 'error', message });
+            const raw = payload.message ?? payload.error ?? `HTTP ${res.status}`;
+            // Defence-in-depth: server already sanitises, but if a
+            // new error surface forgets to, the user still never sees
+            // "kie …" or our vendor names. Title is enough — drop the
+            // description on transient failures so we don't leak
+            // internal status detail either.
+            toast.danger(t('errorGenerationFailed'));
+            setFieldState(field, { kind: 'error', message: sanitizeUserFacingError(raw) });
             return;
           }
 
@@ -288,17 +294,21 @@ export function RetryableGenerateProvider({
           // network error whether the server processed it or not, so we
           // play it safe for 'all' / 'images'.
           if (field === 'all' || field === 'images') {
-            const message = e instanceof Error ? e.message : String(e);
-            toast.danger(t('errorGenerationFailed'), { description: message });
-            setFieldState(field, { kind: 'error', message });
+            const raw = e instanceof Error ? e.message : String(e);
+            toast.danger(t('errorGenerationFailed'));
+            setFieldState(field, { kind: 'error', message: sanitizeUserFacingError(raw) });
             return;
           }
           lastError = e instanceof Error ? e.message : String(e);
         }
       }
-      const message = lastError || 'generation_failed';
-      setFieldState(field, { kind: 'error', message });
-      toast.danger(t('errorGenerationFailed'), { description: message });
+      const safeMessage = sanitizeUserFacingError(lastError || 'generation_failed');
+      setFieldState(field, { kind: 'error', message: safeMessage });
+      // Title-only — at this point the user has lived through 3
+      // silent retries; a wall of vendor noise in the description
+      // doesn't help them. The internal state keeps the sanitised
+      // message for any UI that wants to display it inline.
+      toast.danger(t('errorGenerationFailed'));
     },
     [siteId, productId, customInstructions, router, t, setFieldState]
   );

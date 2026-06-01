@@ -18,6 +18,7 @@ import {
 } from '@/lib/ai';
 import { getEffectiveLanguage } from '@/lib/audit/language';
 import { auth } from '@/lib/auth';
+import { sanitizeUserFacingError } from '@/lib/errors';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { audits, products, projects } from '@/lib/db/schema';
@@ -314,10 +315,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: 'insufficient_credits' }, { status: 402 });
       }
       console.error('[POST /api/products/generate]', f, e);
-      // 5xx is the retry-eligible status code in the client hook. The
-      // message is shown verbatim to the user once retries are exhausted.
+      // 5xx is the retry-eligible status code in the client hook.
+      // Sanitize the message before crossing the wire — once retries
+      // are exhausted, the toast shows what we return here, and the
+      // upstream provider's name ("kie chat failed: …") must never
+      // leak into a user-facing surface.
       return NextResponse.json(
-        { error: 'generation_failed', message: (e as Error).message },
+        {
+          error: 'generation_failed',
+          message: sanitizeUserFacingError((e as Error).message)
+        },
         { status: 500 }
       );
     }

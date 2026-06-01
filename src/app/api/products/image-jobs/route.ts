@@ -16,6 +16,7 @@ import { auth } from '@/lib/auth';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { audits, jobs, products, projects } from '@/lib/db/schema';
+import { sanitizeUserFacingError } from '@/lib/errors';
 
 interface ProductImage {
   src: string;
@@ -297,7 +298,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
     console.error('[POST /api/products/image-jobs]', e);
     return NextResponse.json(
-      { error: 'generation_failed', message: (e as Error).message },
+      {
+        error: 'generation_failed',
+        message: sanitizeUserFacingError((e as Error).message)
+      },
       { status: 500 }
     );
   }
