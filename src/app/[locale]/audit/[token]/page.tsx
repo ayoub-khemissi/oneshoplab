@@ -14,6 +14,7 @@ import type { ReactNode } from 'react';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { TrackEvent } from '@/components/track-event';
 import { Link } from '@/i18n/navigation';
+import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
 import {
   axesValueTiers,
   commentaryTiers,
@@ -459,13 +460,23 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
                   <Card>
                     <Card.Content className="p-0 divide-y divide-[var(--border)]">
                       {worst.map((p, idx) => {
-                        const category = p.signals?.productType?.trim() || null;
+                        // Defence-in-depth: legacy audit summaries
+                        // (cached before the fetch-utils decoder
+                        // covered numeric refs) still hold &#8211;
+                        // and friends. Decode at render time so any
+                        // pre-fix audit displays cleanly without a
+                        // re-run.
+                        const title = decodeHtmlEntities(p.title ?? '');
+                        const rawCategory = p.signals?.productType?.trim() || null;
+                        const category = rawCategory
+                          ? decodeHtmlEntities(rawCategory)
+                          : null;
                         const issues = (p.issues ?? [])
                           .map((i) => translateIssueText(tIssues, i))
                           .join(' · ');
                         return (
                           <div
-                            key={p.sourceId ?? p.handle ?? `${idx}-${p.title}`}
+                            key={p.sourceId ?? p.handle ?? `${idx}-${title}`}
                             className="px-4 py-3 flex flex-col gap-1.5 text-sm"
                           >
                             <div className="flex items-center justify-between gap-3">
@@ -475,7 +486,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
                                 </span>
                                 <ScoreChip score={p.score} />
                                 <span className="truncate font-medium">
-                                  {p.title}
+                                  {title}
                                 </span>
                                 {category ? (
                                   <span

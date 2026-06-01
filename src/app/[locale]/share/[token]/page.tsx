@@ -11,6 +11,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ImageZoom } from '@/components/image-zoom';
+import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
 import {
   loadSharedAudit,
   type SharedAuditSnapshot,
@@ -335,13 +336,15 @@ function AuditDetailDisclosure({
               {labels.worstHint}
             </p>
             <ul className="flex flex-col gap-2">
-              {details.worstProducts.map((p, idx) => (
+              {details.worstProducts.map((p, idx) => {
+                const title = decodeHtmlEntities(p.title ?? '');
+                return (
                 <li
-                  key={`${idx}-${p.title}`}
+                  key={`${idx}-${title}`}
                   className="px-3 py-2 rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex flex-col gap-1"
                 >
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-medium text-sm truncate">{p.title}</span>
+                    <span className="font-medium text-sm truncate">{title}</span>
                     <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
                       {p.score}/100
                     </span>
@@ -355,7 +358,8 @@ function AuditDetailDisclosure({
                     </p>
                   ) : null}
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         ) : null}
@@ -406,12 +410,14 @@ function ProductCaseStudy({
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim() || labels.noDescription;
+  const sourceTitle = decodeHtmlEntities(product.title ?? '');
+  const aiTitle = product.ai.title ? decodeHtmlEntities(product.ai.title) : null;
   return (
     <Card variant="secondary" className="p-6 flex flex-col gap-5">
       <div className="flex items-baseline justify-between gap-3 flex-wrap">
         <h3 className="text-xl font-bold tracking-tight">
           <span className="text-[var(--muted)] mr-2">#{index}</span>
-          {product.title}
+          {sourceTitle}
         </h3>
       </div>
 
@@ -419,7 +425,7 @@ function ProductCaseStudy({
         {/* Source column ------------------------------------------- */}
         <div className="flex flex-col gap-3">
           <span className="eyebrow">{labels.source}</span>
-          <Field label={labels.title} value={product.title} muted={false} />
+          <Field label={labels.title} value={sourceTitle} muted={false} />
           <Field
             label={labels.description}
             value={sourceText}
@@ -450,8 +456,8 @@ function ProductCaseStudy({
           </span>
           <Field
             label={labels.title}
-            value={product.ai.title ?? labels.noTitle}
-            muted={!product.ai.title}
+            value={aiTitle ?? labels.noTitle}
+            muted={!aiTitle}
           />
           <AiHtmlField
             label={labels.description}

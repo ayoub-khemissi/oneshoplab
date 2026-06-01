@@ -69,16 +69,59 @@ export function normalizeTags(t: unknown): string[] {
   return [];
 }
 
+// A few named entities WordPress/WooCommerce emit on titles & taxonomies.
+// We don't ship the full HTML5 table (~2k entries) — these cover everything
+// the adapters surface in practice. Add to this map if a real product
+// title shows up undecoded.
+const NAMED_ENTITIES: Record<string, string> = {
+  nbsp: ' ',
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  laquo: '«',
+  raquo: '»',
+  ldquo: '“',
+  rdquo: '”',
+  lsquo: '‘',
+  rsquo: '’',
+  ndash: '–',
+  mdash: '—',
+  hellip: '…',
+  copy: '©',
+  reg: '®',
+  trade: '™',
+  euro: '€'
+};
+
+/**
+ * Decode the HTML entities WooCommerce / WordPress emit on product
+ * titles and taxonomy names. Handles:
+ *   - decimal numeric refs: `&#8211;`  → "–"
+ *   - hex numeric refs:     `&#x2013;` → "–"
+ *   - the named entities above (incl. typographic quotes + dashes,
+ *     which WordPress's `wptexturize` inserts into Latin-1 sources).
+ *
+ * Numeric refs are decoded first so a hand-crafted `&amp;#8211;`
+ * (entity inside an entity) resolves to `&#8211;` then "–" rather
+ * than `&` + `#8211;` — matches what browsers do.
+ */
 export function decodeHtmlEntities(input: string): string {
   return input
-    .replace(/&#0*9;/g, '\t')
-    .replace(/&#0*10;/g, '\n')
-    .replace(/&#0*13;/g, '\r')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#0*39;/g, "'")
-    .replace(/&apos;/g, "'");
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => {
+      try {
+        return String.fromCodePoint(parseInt(hex, 16));
+      } catch {
+        return _;
+      }
+    })
+    .replace(/&#(\d+);/g, (_, dec: string) => {
+      try {
+        return String.fromCodePoint(parseInt(dec, 10));
+      } catch {
+        return _;
+      }
+    })
+    .replace(/&([a-z]+);/gi, (raw, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? raw);
 }
