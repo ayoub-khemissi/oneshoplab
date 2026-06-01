@@ -181,7 +181,7 @@ export function NotificationBell({
         aria-label={ariaLabel}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="relative inline-flex items-center justify-center size-9 rounded-md hover:bg-[var(--default)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+        className="relative inline-flex items-center justify-center size-8 md:size-9 rounded-md hover:bg-[var(--default)] text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
       >
         <Bell className="size-4" aria-hidden />
         {unread > 0 ? (
@@ -197,7 +197,12 @@ export function NotificationBell({
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-[360px] max-w-[90vw] max-h-[420px] overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-lg z-50 flex flex-col"
+          // On mobile: pin to screen edges with small margins so the
+          // panel never overflows on the left (the bell sits ~16px
+          // from the right, so an absolute right-0 dropdown of 360px
+          // would bleed past the left edge of an iPhone SE). On md+:
+          // floating panel anchored to the bell's right edge.
+          className="fixed inset-x-2 top-16 max-h-[calc(100vh-5rem)] overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-lg z-50 flex flex-col md:absolute md:inset-auto md:top-auto md:right-0 md:mt-2 md:w-[360px] md:max-w-[90vw] md:max-h-[420px]"
         >
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
             <span className="text-sm font-semibold">{labels.panelTitle}</span>
