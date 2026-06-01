@@ -32,7 +32,7 @@ interface Template {
 }
 
 const FR_AGENCY_T1: Template = {
-  subject: 'OneShopLab — audit et génération assistée pour vos clients e-commerce',
+  subject: 'Pour {agencyName} : audits clients',
   body: `Bonjour {firstName},
 
 Je vous écris parce que vous accompagnez des clients e-commerce chez {agencyName}. Je viens de sortir OneShopLab, je pense que ça peut intéresser votre équipe.
@@ -63,7 +63,7 @@ Vous recevez ce message car votre activité (agence e-commerce) correspond à un
 };
 
 const EN_AGENCY_T1: Template = {
-  subject: 'OneShopLab — audit & assisted generation for your e-com clients',
+  subject: "For {agencyName}: client audits",
   body: `Hi {firstName},
 
 I'm reaching out because you support e-commerce clients at {agencyName}. I just shipped OneShopLab and I think it could be a fit for your team.
@@ -94,7 +94,7 @@ You're receiving this email because your activity (e-commerce agency) matches a 
 };
 
 const FR_MERCHANT_AUDITED_T1: Template = {
-  subject: 'Audit de {storeName} — votre rapport est prêt',
+  subject: '{storeName} — audit : {scoreOverall}/100',
   body: `Bonjour {firstName},
 
 J'ai lancé un audit catalogue automatisé sur votre boutique {storeName} ({platformDisplay}). Voici le verdict :
@@ -125,7 +125,7 @@ Vous recevez ce message car votre boutique e-commerce correspond à un usage pro
 };
 
 const EN_MERCHANT_AUDITED_T1: Template = {
-  subject: 'Audit of {storeName} — your report is ready',
+  subject: '{storeName} — catalog audit: {scoreOverall}/100',
   body: `Hi {firstName},
 
 I ran an automated catalog audit on your store {storeName} ({platformDisplay}). Here's the verdict:
@@ -156,7 +156,7 @@ You're receiving this email because your e-commerce store matches a professional
 };
 
 const FR_MERCHANT_UNAUDITED_T1: Template = {
-  subject: 'Audit catalogue gratuit pour {storeName}',
+  subject: 'notes rapides sur {storeName}',
   body: `Bonjour {firstName},
 
 Je suis tombé sur votre boutique {storeName} ({platformDisplay}) en explorant des catalogues e-commerce, et je voulais vous présenter OneShopLab.
@@ -184,7 +184,7 @@ Vous recevez ce message car votre boutique e-commerce correspond à un usage pro
 };
 
 const EN_MERCHANT_UNAUDITED_T1: Template = {
-  subject: 'Free catalog audit for {storeName}',
+  subject: 'quick notes on {storeName}',
   body: `Hi {firstName},
 
 I came across your store {storeName} ({platformDisplay}) while exploring e-commerce catalogs, and I wanted to share OneShopLab.
@@ -247,11 +247,11 @@ export interface AgencyColdVars {
 }
 
 /** Variables expected by both MERCHANT templates (audited + unaudited).
- *  The stat fields (productsAudited, productsNoImage, productsNoDesc,
- *  productsNoTags) are only referenced by the merchant_audited body;
- *  the unaudited body ignores them. The cold script always supplies
- *  them anyway ("0" for unaudited) so the substitute() helper never
- *  trips over a missing key. */
+ *  The audit-only fields (scoreOverall, productsAudited, productsNoImage,
+ *  productsNoDesc, productsNoTags) are only referenced by the
+ *  merchant_audited body / subject; the unaudited variant ignores them.
+ *  The cold script always supplies them anyway ("0" for unaudited) so
+ *  the substitute() helper never trips over a missing key. */
 export interface MerchantColdVars {
   firstName: string;
   storeName: string;
@@ -263,6 +263,10 @@ export interface MerchantColdVars {
   discordUrl: string;
   optOutUrl: string;
   fromName: string;
+  /** Overall audit score as a string ("67"). Used in the
+   *  merchant_audited subject for a numeric hook ("storeName — audit :
+   *  67/100"). "0" for unaudited (subject doesn't reference it). */
+  scoreOverall: string;
   /** Pre-rendered stat strings for merchant_audited's hook line. */
   productsAudited: string;
   productsNoImage: string;

@@ -365,6 +365,7 @@ async function main(): Promise<void> {
     let leadVariant: ColdVariant;
     let auditUrl: string;
     let scoreSnapshot: ScoreSnapshot | undefined;
+    let scoreOverall = '0';
     let stats = { audited: '0', noImage: '0', noDesc: '0', noTags: '0' };
 
     if (category === 'agency') {
@@ -375,6 +376,7 @@ async function main(): Promise<void> {
       if (fresh && fresh.scores) {
         leadVariant = 'merchant_audited';
         auditUrl = `${auditBase}/${args.lang}/audit/${fresh.token}?utm_source=cold&utm_medium=email&utm_campaign=merchant_audited_t1_${args.lang}&lead=${lead.id}`;
+        scoreOverall = String(Math.round(fresh.scores.overall));
         scoreSnapshot = {
           overall: Math.round(fresh.scores.overall),
           catalog: Math.round(fresh.scores.catalogCompleteness),
@@ -425,6 +427,7 @@ async function main(): Promise<void> {
               discordUrl,
               optOutUrl,
               fromName,
+              scoreOverall,
               productsAudited: stats.audited,
               productsNoImage: stats.noImage,
               productsNoDesc: stats.noDesc,
