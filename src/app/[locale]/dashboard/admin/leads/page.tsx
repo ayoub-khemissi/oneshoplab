@@ -281,6 +281,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                             copies={o.copies}
                             primaryLang={o.primaryLang}
                             variantLabel={o.variantLabel}
+                            domain={l.domain}
                           />
                         );
                       })()}
