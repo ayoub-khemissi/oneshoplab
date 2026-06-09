@@ -1,5 +1,5 @@
 import { Button, Card } from '@heroui/react';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull, like, sql } from 'drizzle-orm';
 import { ExternalLink, Trash2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -34,6 +34,8 @@ interface PageProps {
     status?: string;
     platform?: string;
     language?: string;
+    q?: string;
+    hasEmail?: string;
     page?: string;
   }>;
 }
@@ -68,12 +70,23 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
   const statusFilter = asStatusFilter(sp.status);
   const platformFilter = asPlatformFilter(sp.platform);
   const languageFilter = sp.language?.trim().slice(0, 8) ?? null;
+  const queryFilter = sp.q?.trim().slice(0, 120) ?? null;
+  // 'yes' → has a contact email, 'no' → none. Anything else = no filter.
+  const hasEmailFilter = sp.hasEmail === 'yes' || sp.hasEmail === 'no' ? sp.hasEmail : null;
   const page = Math.max(1, Number(sp.page ?? '1') || 1);
 
   const whereExpr = and(
     statusFilter ? eq(leads.status, statusFilter) : undefined,
     platformFilter ? eq(leads.platform, platformFilter) : undefined,
-    languageFilter ? eq(leads.language, languageFilter) : undefined
+    languageFilter ? eq(leads.language, languageFilter) : undefined,
+    // LIKE on the domain — the % wraps are escaped at the driver level
+    // by the parameter binding, so no injection surface here.
+    queryFilter ? like(leads.domain, `%${queryFilter}%`) : undefined,
+    hasEmailFilter === 'yes'
+      ? isNotNull(leads.contactEmail)
+      : hasEmailFilter === 'no'
+        ? isNull(leads.contactEmail)
+        : undefined
   );
 
   const [{ count }] = await db
@@ -158,6 +171,8 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
         <LeadFilters
           initialPlatform={platformFilter}
           initialLanguage={languageFilter}
+          initialQuery={queryFilter}
+          initialHasEmail={hasEmailFilter}
         />
       </Card>
 

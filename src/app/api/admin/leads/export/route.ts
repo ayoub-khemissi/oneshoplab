@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull, like } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import { isAdminEmail } from '@/lib/admin';
 import { auth } from '@/lib/auth';
@@ -29,6 +29,9 @@ export async function GET(req: NextRequest): Promise<Response> {
   const statusRaw = sp.get('status');
   const platformRaw = sp.get('platform');
   const languageRaw = sp.get('language')?.trim().slice(0, 8) || null;
+  const queryRaw = sp.get('q')?.trim().slice(0, 120) || null;
+  const hasEmailRaw = sp.get('hasEmail');
+  const hasEmail = hasEmailRaw === 'yes' || hasEmailRaw === 'no' ? hasEmailRaw : null;
 
   const status = (LEAD_STATUSES as readonly string[]).includes(statusRaw ?? '')
     ? (statusRaw as LeadStatus)
@@ -41,7 +44,13 @@ export async function GET(req: NextRequest): Promise<Response> {
     where: and(
       status ? eq(leads.status, status) : undefined,
       platform ? eq(leads.platform, platform) : undefined,
-      languageRaw ? eq(leads.language, languageRaw) : undefined
+      languageRaw ? eq(leads.language, languageRaw) : undefined,
+      queryRaw ? like(leads.domain, `%${queryRaw}%`) : undefined,
+      hasEmail === 'yes'
+        ? isNotNull(leads.contactEmail)
+        : hasEmail === 'no'
+          ? isNull(leads.contactEmail)
+          : undefined
     ),
     orderBy: [desc(leads.discoveredAt)]
   });
