@@ -6,8 +6,10 @@ import { redirect } from 'next/navigation';
 import { LeadBulkPaste } from '@/components/lead-bulk-paste';
 import { LeadFilters } from '@/components/lead-filters';
 import { LeadNotesEditor } from '@/components/lead-notes-editor';
+import { LeadOutreachCopy } from '@/components/lead-outreach-copy';
 import { LeadStatusSelect } from '@/components/lead-status-select';
 import { isAdminEmail } from '@/lib/admin';
+import { buildLeadOutreach, freshAuditsByDomain } from '@/lib/cold/lead-outreach';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import {
@@ -97,6 +99,25 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
 
   const totalPages = Math.max(1, Math.ceil(Number(count) / PAGE_SIZE));
 
+  // Pre-compute ready-to-paste contact-form copy for every lead on the
+  // page. One batched audit lookup across all domains, then a pure
+  // per-lead transform — no N+1.
+  const freshAudits = await freshAuditsByDomain(rows.map((r) => r.domain));
+  const appUrl = process.env.APP_URL ?? 'https://oneshoplab.com';
+  const discordUrl =
+    process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? 'https://discord.gg/oneshoplab';
+  const fromName = process.env.COLD_SMTP_FROM_NAME ?? 'Youbi';
+  const outreachByLead = new Map(
+    rows.map((l) => [
+      l.id,
+      buildLeadOutreach(
+        { domain: l.domain, platform: l.platform, language: l.language, notes: l.notes },
+        freshAudits.get(l.domain),
+        { appUrl, discordUrl, fromName }
+      )
+    ])
+  );
+
   return (
     <main className="flex-1 px-4 md:px-10 py-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -152,6 +173,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                 <Th>Products</Th>
                 <Th>Contact</Th>
                 <Th>Status</Th>
+                <Th>Message</Th>
                 <Th>Notes</Th>
                 <Th>{''}</Th>
               </tr>
@@ -160,7 +182,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
               {rows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={9}
                     className="px-4 py-8 text-center text-[var(--muted)]"
                   >
                     Aucun lead pour ce filtre. Colle des URLs en bas pour
@@ -249,6 +271,19 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                     </Td>
                     <Td>
                       <LeadStatusSelect leadId={l.id} current={l.status} />
+                    </Td>
+                    <Td>
+                      {(() => {
+                        const o = outreachByLead.get(l.id);
+                        if (!o) return <span className="text-xs text-[var(--muted)]">—</span>;
+                        return (
+                          <LeadOutreachCopy
+                            copies={o.copies}
+                            primaryLang={o.primaryLang}
+                            variantLabel={o.variantLabel}
+                          />
+                        );
+                      })()}
                     </Td>
                     <Td>
                       <LeadNotesEditor leadId={l.id} initial={l.notes ?? ''} />
