@@ -23,7 +23,14 @@ import {
  * entry in, so this stays a pure transform with no per-lead DB hit.
  */
 
-const FRESH_AUDIT_MS = 24 * 60 * 60 * 1000;
+// Much wider than the 24h window the live email send uses. For a
+// manual contact-form paste, a 2-week-old score is still a perfectly
+// good hook — staleness isn't a deliverability risk here like it is
+// for an automated email, and the operator works through leads over
+// days/weeks. The token stays valid as long as the audit is unclaimed
+// (projectId IS NULL), which we already filter on. 90 days caps it so
+// we don't resurrect a truly ancient score after a catalog overhaul.
+const FRESH_AUDIT_MS = 90 * 24 * 60 * 60 * 1000;
 
 export interface FreshAuditInfo {
   token: string;
