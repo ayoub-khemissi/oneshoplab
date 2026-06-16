@@ -1,0 +1,19 @@
+{
+  "model": "gpt-image-2-image-to-image",
+  "name": "sneaker-raw",
+  "size": "1:1",
+  "base": "sneaker-studio.png",
+  "raw": true,
+  "prompt": "Keep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — but re-photograph it as a bad amateur smartphone snapshot for a careless online marketplace listing: the sneaker sitting on a cluttered messy wooden desk surrounded by random clutter, harsh direct on-camera flash, ugly yellowish indoor lighting, dull flat washed-out colors, slightly blurry, crooked framing, low-quality unflattering product photo.",
+  "input": {
+    "input_urls": [
+      "https://tempfile.redpandaai.co/kieai/1165369/oneshoplab-ads/sneaker-studio.png"
+    ]
+  },
+  "taskId": "61cb2075ee007e0924ab99e3ef24f529",
+  "resolvedPrompt": "Keep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — but re-photograph it as a bad amateur smartphone snapshot for a careless online marketplace listing: the sneaker sitting on a cluttered messy wooden desk surrounded by random clutter, harsh direct on-camera flash, ugly yellowish indoor lighting, dull flat washed-out colors, slightly blurry, crooked framing, low-quality unflattering product photo.",
+  "resultUrls": [
+    "https://tempfile.aiquickdraw.com/images/chatgpt/file_00000000a36071f5943d53e5810ea172.png"
+  ],
+  "generatedAt": "2026-06-16T13:15:02.560Z"
+}

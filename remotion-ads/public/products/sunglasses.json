@@ -1,0 +1,13 @@
+{
+  "model": "gpt-image-2-text-to-image",
+  "name": "sunglasses",
+  "size": "1:1",
+  "white": true,
+  "prompt": "Designer polarized sunglasses with a sleek glossy tortoiseshell acetate frame and warm gradient brown lenses, shown in a clean three-quarter front view, premium eyewear aesthetic.",
+  "taskId": "84f164f63ef11393b292bafade8e8ff4",
+  "resolvedPrompt": "STYLE: premium photorealistic commercial product photography for a high-end e-commerce brand. Tack-sharp focus, soft diffused professional studio lighting, realistic materials, true-to-life color, subtle natural reflections, high dynamic range, clean and uncluttered, advertising quality, shot on a full-frame camera.\n\nDesigner polarized sunglasses with a sleek glossy tortoiseshell acetate frame and warm gradient brown lenses, shown in a clean three-quarter front view, premium eyewear aesthetic.\n\nThe product is centered on a pure seamless pure-white studio background (#FFFFFF) with a soft, realistic contact shadow directly beneath it — a clean e-commerce packshot.\n\nAvoid: cartoon, illustration, 3d render, cgi, plastic fake look, low resolution, blurry, out of focus, watermark, any text, letters, numbers, brand logos or label writing, distorted proportions, extra or deformed parts, oversaturated, harsh on-camera flash, cluttered busy background, amateurish, ugly.",
+  "resultUrls": [
+    "https://tempfile.aiquickdraw.com/r/84f164f63ef11393b292bafade8e8ff4_1781611070_rvo2ufb9.png"
+  ],
+  "generatedAt": "2026-06-16T11:57:54.875Z"
+}

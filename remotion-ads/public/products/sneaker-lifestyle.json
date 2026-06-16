@@ -1,0 +1,18 @@
+{
+  "model": "gpt-image-2-image-to-image",
+  "name": "sneaker-lifestyle",
+  "size": "1:1",
+  "base": "sneaker-studio.png",
+  "prompt": "Keep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — and place it outdoors as a single hero product with NO people and no feet: the sneaker resting on a weathered concrete ledge along a sun-lit city street, soft natural daylight, gently blurred urban background, shallow depth of field, premium street-style product photography. Only the one sneaker, posed on its own.",
+  "input": {
+    "input_urls": [
+      "https://tempfile.redpandaai.co/kieai/1165369/oneshoplab-ads/sneaker-studio.png"
+    ]
+  },
+  "taskId": "80189800fe42d070ad84ca40f1a984d3",
+  "resolvedPrompt": "STYLE: premium photorealistic commercial product photography for a high-end e-commerce brand. Tack-sharp focus, soft diffused professional studio lighting, realistic materials, true-to-life color, subtle natural reflections, high dynamic range, clean and uncluttered, advertising quality, shot on a full-frame camera.\n\nKeep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — and place it outdoors as a single hero product with NO people and no feet: the sneaker resting on a weathered concrete ledge along a sun-lit city street, soft natural daylight, gently blurred urban background, shallow depth of field, premium street-style product photography. Only the one sneaker, posed on its own.\n\nAvoid: cartoon, illustration, 3d render, cgi, plastic fake look, low resolution, blurry, out of focus, watermark, any text, letters, numbers, brand logos or label writing, distorted proportions, extra or deformed parts, oversaturated, harsh on-camera flash, cluttered busy background, amateurish, ugly.",
+  "resultUrls": [
+    "https://tempfile.aiquickdraw.com/images/chatgpt/file_000000008c3c71f5b2c8fdd96322b404.png"
+  ],
+  "generatedAt": "2026-06-16T12:27:34.654Z"
+}

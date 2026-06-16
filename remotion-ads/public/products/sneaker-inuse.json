@@ -1,0 +1,18 @@
+{
+  "model": "gpt-image-2-image-to-image",
+  "name": "sneaker-inuse",
+  "size": "1:1",
+  "base": "sneaker-studio.png",
+  "prompt": "Keep the EXACT same sneakers as in the reference image — identical design, shape, materials, stitching and colors — now worn by a person outdoors: a natural shot cropped from the knees down of someone wearing the sneakers while walking on a sun-lit city sidewalk, cuffed light-wash jeans, relaxed everyday stride, warm daylight, soft blurred street background, authentic street-style.",
+  "input": {
+    "input_urls": [
+      "https://tempfile.redpandaai.co/kieai/1165369/oneshoplab-ads/sneaker-studio.png"
+    ]
+  },
+  "taskId": "b201db4761898ef4b2c22aa89be80cda",
+  "resolvedPrompt": "STYLE: premium photorealistic commercial product photography for a high-end e-commerce brand. Tack-sharp focus, soft diffused professional studio lighting, realistic materials, true-to-life color, subtle natural reflections, high dynamic range, clean and uncluttered, advertising quality, shot on a full-frame camera.\n\nKeep the EXACT same sneakers as in the reference image — identical design, shape, materials, stitching and colors — now worn by a person outdoors: a natural shot cropped from the knees down of someone wearing the sneakers while walking on a sun-lit city sidewalk, cuffed light-wash jeans, relaxed everyday stride, warm daylight, soft blurred street background, authentic street-style.\n\nAvoid: cartoon, illustration, 3d render, cgi, plastic fake look, low resolution, blurry, out of focus, watermark, any text, letters, numbers, brand logos or label writing, distorted proportions, extra or deformed parts, oversaturated, harsh on-camera flash, cluttered busy background, amateurish, ugly.",
+  "resultUrls": [
+    "https://tempfile.aiquickdraw.com/images/chatgpt/file_000000006e98720c8179ede0d0d58565.png"
+  ],
+  "generatedAt": "2026-06-16T12:28:40.301Z"
+}

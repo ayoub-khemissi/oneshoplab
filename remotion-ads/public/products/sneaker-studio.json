@@ -1,0 +1,13 @@
+{
+  "model": "gpt-image-2-text-to-image",
+  "name": "sneaker-studio",
+  "size": "1:1",
+  "white": true,
+  "prompt": "A premium high-top streetwear sneaker in off-white nappa leather with subtle tonal grey accents, a chunky cream rubber sole, and neatly tied flat laces, shown in a clean three-quarter side view, slightly elevated angle.",
+  "taskId": "720f1106be4625c63d61db7028da3781",
+  "resolvedPrompt": "STYLE: premium photorealistic commercial product photography for a high-end e-commerce brand. Tack-sharp focus, soft diffused professional studio lighting, realistic materials, true-to-life color, subtle natural reflections, high dynamic range, clean and uncluttered, advertising quality, shot on a full-frame camera.\n\nA premium high-top streetwear sneaker in off-white nappa leather with subtle tonal grey accents, a chunky cream rubber sole, and neatly tied flat laces, shown in a clean three-quarter side view, slightly elevated angle.\n\nThe product is centered on a pure seamless pure-white studio background (#FFFFFF) with a soft, realistic contact shadow directly beneath it — a clean e-commerce packshot.\n\nAvoid: cartoon, illustration, 3d render, cgi, plastic fake look, low resolution, blurry, out of focus, watermark, any text, letters, numbers, brand logos or label writing, distorted proportions, extra or deformed parts, oversaturated, harsh on-camera flash, cluttered busy background, amateurish, ugly.",
+  "resultUrls": [
+    "https://tempfile.aiquickdraw.com/images/chatgpt/file_000000003ac871f58b5cea3bd48dce8c.png"
+  ],
+  "generatedAt": "2026-06-16T11:54:11.365Z"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "oneshoplab-remotion-ads",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Facebook Ads (1:1 + 9:16) for OneShopLab — built with Remotion. Isolated from the main Next.js app.",
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "gen:products": "node tools/generate-products.mjs",
+    "render:all": "node tools/render-all.mjs",
+    "render:carousel": "node tools/render-carousel.mjs",
+    "render:fr": "node tools/render-all.mjs fr",
+    "render:en": "node tools/render-all.mjs en",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/google-fonts": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.5.0"
+  }
+}

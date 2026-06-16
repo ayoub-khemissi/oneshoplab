@@ -1,0 +1,4 @@
+node_modules/
+out/
+.cache/
+tools/.carousel-props.json

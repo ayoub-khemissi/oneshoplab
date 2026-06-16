@@ -1,0 +1,52 @@
+{
+  "model": "gpt-image-2-text-to-image",
+  "_note": "Source of truth for the ad's product photos. Edit a prompt and re-run `node tools/generate-products.mjs --only <name> --force`. Hero = the sneaker. `sneaker-studio` is the white packshot ANCHOR; `sneaker-lifestyle` (product posed outdoors, no humans) and `sneaker-inuse` (worn by a person outdoors) are image-to-image off that anchor (`base` + model gpt-image-2-image-to-image) so the shoe stays identical across all three. The other three are independent catalog thumbnails. `white` jobs are clean white-background packshots.",
+  "jobs": [
+    {
+      "name": "sneaker-studio",
+      "size": "1:1",
+      "white": true,
+      "prompt": "A premium high-top streetwear sneaker in off-white nappa leather with subtle tonal grey accents, a chunky cream rubber sole, and neatly tied flat laces, shown in a clean three-quarter side view, slightly elevated angle."
+    },
+    {
+      "name": "sneaker-lifestyle",
+      "size": "1:1",
+      "base": "sneaker-studio.png",
+      "model": "gpt-image-2-image-to-image",
+      "prompt": "Keep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — and place it outdoors as a single hero product with NO people and no feet: the sneaker resting on a weathered concrete ledge along a sun-lit city street, soft natural daylight, gently blurred urban background, shallow depth of field, premium street-style product photography. Only the one sneaker, posed on its own."
+    },
+    {
+      "name": "sneaker-inuse",
+      "size": "1:1",
+      "base": "sneaker-studio.png",
+      "model": "gpt-image-2-image-to-image",
+      "prompt": "Keep the EXACT same sneakers as in the reference image — identical design, shape, materials, stitching and colors — now worn by a person outdoors: a natural shot cropped from the knees down of someone wearing the sneakers while walking on a sun-lit city sidewalk, cuffed light-wash jeans, relaxed everyday stride, warm daylight, soft blurred street background, authentic street-style."
+    },
+    {
+      "name": "sneaker-raw",
+      "size": "1:1",
+      "base": "sneaker-studio.png",
+      "model": "gpt-image-2-image-to-image",
+      "raw": true,
+      "prompt": "Keep the EXACT same sneaker as in the reference image — identical design, shape, materials, stitching and colors — but re-photograph it as a bad amateur smartphone snapshot for a careless online marketplace listing: the sneaker sitting on a cluttered messy wooden desk surrounded by random clutter, harsh direct on-camera flash, ugly yellowish indoor lighting, dull flat washed-out colors, slightly blurry, crooked framing, low-quality unflattering product photo."
+    },
+    {
+      "name": "watch",
+      "size": "1:1",
+      "white": true,
+      "prompt": "A luxury automatic skeleton wristwatch with an exposed mechanical movement, polished stainless-steel case, sapphire crystal and a rich cognac-brown leather strap, shown in an elegant three-quarter view with the strap gently curved."
+    },
+    {
+      "name": "headphones",
+      "size": "1:1",
+      "white": true,
+      "prompt": "Premium over-ear wireless headphones in matte charcoal with brushed-aluminium hinges and soft nappa-leather ear cushions, shown in a sleek three-quarter view, slightly angled, modern minimalist design."
+    },
+    {
+      "name": "sunglasses",
+      "size": "1:1",
+      "white": true,
+      "prompt": "Designer polarized sunglasses with a sleek glossy tortoiseshell acetate frame and warm gradient brown lenses, shown in a clean three-quarter front view, premium eyewear aesthetic."
+    }
+  ]
+}
