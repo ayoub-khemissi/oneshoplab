@@ -644,7 +644,7 @@
   "CookieBanner": {
     "accept": "Accept",
     "refuse": "Refuse",
-    "bodyAnalytics": "We use cookies that are strictly necessary to run the Service (authentication, locale, theme), plus optional analytics cookies to measure usage. You choose.",
+    "bodyAnalytics": "We use cookies that are strictly necessary to run the Service (authentication, locale, theme), plus optional analytics and advertising cookies to measure usage and the performance of our ads. You choose.",
     "ariaLabel": "Cookie notice",
     "body": "We only use cookies that are strictly necessary to run the Service (authentication, locale, theme). We don't use advertising or third-party tracking cookies.",
     "learnMore": "Learn more",

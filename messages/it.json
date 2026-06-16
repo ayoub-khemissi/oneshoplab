@@ -644,7 +644,7 @@
   "CookieBanner": {
     "accept": "Accetta",
     "refuse": "Rifiuta",
-    "bodyAnalytics": "Usiamo cookie strettamente necessari al funzionamento del Servizio (autenticazione, lingua, tema) e cookie di analisi opzionali per misurare l'uso. Decidi tu.",
+    "bodyAnalytics": "Usiamo cookie strettamente necessari al funzionamento del Servizio (autenticazione, lingua, tema) e cookie opzionali di analisi e pubblicità per misurare l'utilizzo e il rendimento delle nostre inserzioni. Scegli tu.",
     "ariaLabel": "Avviso cookie",
     "body": "Usiamo solo cookie strettamente necessari al funzionamento (autenticazione, lingua, tema). Niente cookie pubblicitari o di tracciamento.",
     "learnMore": "Scopri di più",

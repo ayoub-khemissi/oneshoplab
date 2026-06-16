@@ -644,7 +644,7 @@
   "CookieBanner": {
     "accept": "Akceptuj",
     "refuse": "Odrzuć",
-    "bodyAnalytics": "Używamy plików cookie ściśle niezbędnych do działania Serwisu (uwierzytelnianie, język, motyw) oraz opcjonalnych plików cookie analitycznych do pomiaru użycia. Ty decydujesz.",
+    "bodyAnalytics": "Używamy plików cookie ściśle niezbędnych do działania Serwisu (uwierzytelnianie, język, motyw) oraz opcjonalnych plików cookie analitycznych i reklamowych do pomiaru korzystania i skuteczności naszych reklam. Ty decydujesz.",
     "ariaLabel": "Powiadomienie o ciasteczkach",
     "body": "Używamy tylko ciasteczek niezbędnych do działania serwisu (uwierzytelnianie, język, motyw). Bez ciasteczek reklamowych ani trackingowych.",
     "learnMore": "Dowiedz się więcej",

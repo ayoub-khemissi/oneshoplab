@@ -644,7 +644,7 @@
   "CookieBanner": {
     "accept": "Kabul et",
     "refuse": "Reddet",
-    "bodyAnalytics": "Hizmetin çalışması için kesinlikle gerekli çerezleri (kimlik doğrulama, dil, tema) ve kullanımı ölçmek için isteğe bağlı analiz çerezlerini kullanıyoruz. Karar sizin.",
+    "bodyAnalytics": "Hizmeti çalıştırmak için kesinlikle gerekli çerezleri (kimlik doğrulama, dil, tema) ve kullanımı ile reklamlarımızın performansını ölçmek için isteğe bağlı analiz ve reklam çerezlerini kullanırız. Seçim sizin.",
     "ariaLabel": "Çerez bildirimi",
     "body": "Yalnızca hizmetin çalışması için kesinlikle gerekli çerezleri (kimlik doğrulama, dil, tema) kullanırız. Reklam veya üçüncü taraf takip çerezi yok.",
     "learnMore": "Daha fazla",

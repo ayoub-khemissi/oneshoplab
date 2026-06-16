@@ -643,7 +643,7 @@
   "CookieBanner": {
     "accept": "接受",
     "refuse": "拒绝",
-    "bodyAnalytics": "我们使用运行本服务所必需的 Cookie（认证、语言、主题），以及用于衡量使用情况的可选分析 Cookie。由您决定。",
+    "bodyAnalytics": "我们使用运行本服务所严格必需的 Cookie（身份验证、语言、主题），以及可选的分析和广告 Cookie，用于衡量使用情况和广告效果。由您选择。",
     "ariaLabel": "Cookie 提示",
     "body": "我们仅使用运行服务严格必需的 cookie(身份验证、语言、主题)。不使用广告或第三方追踪 cookie。",
     "learnMore": "了解更多",

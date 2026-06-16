@@ -644,7 +644,7 @@
   "CookieBanner": {
     "accept": "Akzeptieren",
     "refuse": "Ablehnen",
-    "bodyAnalytics": "Wir verwenden unbedingt erforderliche Cookies für den Betrieb (Anmeldung, Sprache, Theme) sowie optionale Analyse-Cookies zur Nutzungsmessung. Sie entscheiden.",
+    "bodyAnalytics": "Wir verwenden unbedingt erforderliche Cookies für den Betrieb des Dienstes (Authentifizierung, Sprache, Theme) sowie optionale Analyse- und Werbe-Cookies, um die Nutzung und die Leistung unserer Anzeigen zu messen. Sie entscheiden.",
     "ariaLabel": "Cookie-Hinweis",
     "body": "Wir verwenden nur Cookies, die für den Betrieb des Dienstes zwingend nötig sind (Authentifizierung, Sprache, Theme). Keine Werbe- oder Tracking-Cookies.",
     "learnMore": "Mehr erfahren",
