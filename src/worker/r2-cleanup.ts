@@ -1,10 +1,10 @@
-import { and, eq, inArray, isNull, lt } from 'drizzle-orm';
+import { and, eq, inArray, isNull, lt, notInArray } from 'drizzle-orm';
 import {
   imageRetentionDaysForPlan,
   MAX_IMAGE_RETENTION_DAYS
 } from '@/lib/ai/models';
 import { db } from '@/lib/db';
-import { jobs, projects, users, type JobKind } from '@/lib/db/schema';
+import { jobs, projects, shareLinks, users, type JobKind } from '@/lib/db/schema';
 import { deleteByKey, keyFromPublicUrl } from '@/lib/storage';
 
 /**
@@ -47,6 +47,22 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
   // below before actually deleting).
   const outerCutoff = new Date(Date.now() - MAX_RETENTION_MS);
 
+  // Projects featured on the home showcase (active, non-revoked share
+  // link with showOnHome) must NEVER have their images expire —
+  // otherwise the public before/after strip on the landing page (and
+  // the /share/[token] page) would render broken tiles. We exclude
+  // them at QUERY time rather than skipping in the loop so their
+  // never-tombstoned rows can't accumulate and starve the bounded
+  // candidate set. Admin curates a handful, so the extra retained
+  // storage is negligible vs. a broken homepage.
+  const showcaseRows = await db
+    .select({ projectId: shareLinks.projectId })
+    .from(shareLinks)
+    .where(and(eq(shareLinks.showOnHome, true), isNull(shareLinks.revokedAt)));
+  const showcaseProjectIds = Array.from(
+    new Set(showcaseRows.map((r) => r.projectId))
+  );
+
   // We can't filter by per-plan retention at query time without joining
   // through projects/users — Drizzle's MySQL driver wants a flat where.
   // Pull a small superset (oldest first) and narrow client-side. The
@@ -59,7 +75,12 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
       // Skip rows already expired by a previous tick — we don't delete
       // rows anymore, we tombstone them, and without this filter the
       // worker would re-process them every hour forever.
-      isNull(jobs.expiredAt)
+      isNull(jobs.expiredAt),
+      // Exclude showcase projects (guarded: notInArray on an empty set
+      // would be a no-op we'd rather not emit).
+      showcaseProjectIds.length
+        ? notInArray(jobs.projectId, showcaseProjectIds)
+        : undefined
     ),
     orderBy: (j, { asc }) => [asc(j.createdAt)],
     limit: 200
@@ -131,7 +152,7 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
   void outerCutoff;
 
   console.log(
-    `[r2-cleanup] candidates=${candidates.length} jobs_deleted=${deletedRows} r2_objects_deleted=${r2Objects}`
+    `[r2-cleanup] candidates=${candidates.length} jobs_deleted=${deletedRows} r2_objects_deleted=${r2Objects} showcase_excluded=${showcaseProjectIds.length}`
   );
 
   return { deleted: deletedRows, r2Objects };
