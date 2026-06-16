@@ -59,6 +59,20 @@ export function GaRedirectEvents() {
     let ev: typeof beacon = null;
     const consumed: string[] = [];
 
+    // Fresh OAuth (Google) signup: the auth events.createUser hook drops
+    // a one-shot `osl_new_signup` cookie because the Google round-trip
+    // lands on a bare /dashboard with no `?ga=signup` marker. Read +
+    // clear it here so a Google signup fires the same conversion events
+    // as a credentials one. URL markers take priority (a credentials
+    // signup will never have this cookie since it doesn't go through
+    // the adapter's createUser).
+    const hasOauthSignupCookie = /(?:^|;\s*)osl_new_signup=1(?:;|$)/.test(
+      document.cookie
+    );
+    const clearOauthSignupCookie = () => {
+      document.cookie = 'osl_new_signup=; max-age=0; path=/; samesite=lax';
+    };
+
     if (ga === 'signup') {
       ev = {
         event: 'sign_up',
@@ -66,6 +80,13 @@ export function GaRedirectEvents() {
         metaEvent: 'CompleteRegistration'
       };
       consumed.push('ga');
+    } else if (hasOauthSignupCookie) {
+      ev = {
+        event: 'sign_up',
+        params: { method: 'google' },
+        metaEvent: 'CompleteRegistration'
+      };
+      clearOauthSignupCookie();
     } else if (ga === 'login') {
       ev = { event: 'login', params: { method: 'credentials' } };
       consumed.push('ga');

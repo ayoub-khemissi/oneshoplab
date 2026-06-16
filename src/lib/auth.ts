@@ -1,6 +1,7 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
@@ -117,6 +118,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
       } catch (e) {
         console.error('[auth] failed to grant signup credits to', user.id, e);
+      }
+      // Mark a fresh OAuth (Google) signup so the browser can fire the
+      // sign_up / CompleteRegistration conversion events. The
+      // credentials path carries `?ga=signup` on its redirect, but the
+      // Google round-trip lands on a bare /dashboard — this one-shot,
+      // JS-readable cookie is the equivalent signal. GaRedirectEvents
+      // reads it on the next page, fires the events, and clears it.
+      // Short TTL + not httpOnly (the client must read + delete it).
+      try {
+        const jar = await cookies();
+        jar.set('osl_new_signup', '1', {
+          maxAge: 300,
+          sameSite: 'lax',
+          path: '/',
+          httpOnly: false
+        });
+      } catch {
+        // cookies() unavailable outside a request context — non-fatal;
+        // the credit grant above is the part that must not be skipped.
       }
     }
   },
