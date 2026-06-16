@@ -8,6 +8,7 @@ import { Analytics } from '@/components/analytics';
 import { AuditToastWatcher } from '@/components/audit-toast-watcher';
 import { CookieBanner } from '@/components/cookie-banner';
 import { GaRedirectEvents } from '@/components/ga-redirect-events';
+import { MetaPixel } from '@/components/meta-pixel';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -192,6 +193,7 @@ export default async function LocaleLayout({
             <AuditToastWatcher />
             <CookieBanner />
             <Analytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+            <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
             <GaRedirectEvents />
           </NextIntlClientProvider>
         </ThemeProvider>

@@ -12,12 +12,13 @@ const STORAGE_KEY = 'oneshoplab.cookies-acknowledged.v1';
 /**
  * Bottom-of-screen cookie banner with two modes:
  *
- *  - **No analytics configured** (`NEXT_PUBLIC_GA_MEASUREMENT_ID` unset):
- *    purely informational, a single "Got it" dismiss — exactly the
- *    original behaviour. Nothing changes for visitors until GA is wired,
- *    so this is safe to ship inert.
+ *  - **No analytics configured** (neither `NEXT_PUBLIC_GA_MEASUREMENT_ID` nor
+ *    `NEXT_PUBLIC_META_PIXEL_ID` set): purely informational, a single "Got it"
+ *    dismiss — exactly the original behaviour. Nothing changes for visitors
+ *    until a tracker is wired, so this is safe to ship inert.
  *  - **Analytics configured**: a minimal opt-in consent — Accept / Refuse.
- *    GA only loads on Accept (see <Analytics>). Default = no analytics.
+ *    GA4 / the Meta Pixel only load on Accept (see <Analytics> / <MetaPixel>).
+ *    Default = no analytics.
  *
  * Branching on the public env keeps the two storage keys independent and
  * versioned so the consent migration the original comment foresaw is
@@ -26,11 +27,15 @@ const STORAGE_KEY = 'oneshoplab.cookies-acknowledged.v1';
 export function CookieBanner() {
   const t = useTranslations('CookieBanner');
   const [visible, setVisible] = useState(false);
-  const gaEnabled = Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID);
+  // Consent (Accept/Refuse) mode kicks in as soon as ANY analytics tracker is
+  // configured — GA4 and/or the Meta Pixel. Both stay unloaded until Accept.
+  const analyticsEnabled =
+    Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) ||
+    Boolean(process.env.NEXT_PUBLIC_META_PIXEL_ID);
 
   useEffect(() => {
     try {
-      if (gaEnabled) {
+      if (analyticsEnabled) {
         if (getAnalyticsConsent() === 'unset') setVisible(true);
       } else {
         if (!window.localStorage.getItem(STORAGE_KEY)) setVisible(true);
@@ -39,7 +44,7 @@ export function CookieBanner() {
       // localStorage may throw under privacy-mode quota errors. Stay
       // quiet — re-prompting on every page is worse than missing it once.
     }
-  }, [gaEnabled]);
+  }, [analyticsEnabled]);
 
   if (!visible || typeof document === 'undefined') return null;
 
@@ -68,14 +73,14 @@ export function CookieBanner() {
       <Cookie className="size-4 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
       <div className="flex-1 flex flex-col gap-2 text-xs leading-relaxed">
         <p className="text-[var(--foreground)]">
-          {gaEnabled ? t('bodyAnalytics') : t('body')}{' '}
+          {analyticsEnabled ? t('bodyAnalytics') : t('body')}{' '}
           <Link href="/privacy" className="underline hover:text-[var(--accent)]">
             {t('learnMore')}
           </Link>
           .
         </p>
         <div className="flex justify-end gap-2">
-          {gaEnabled ? (
+          {analyticsEnabled ? (
             <>
               <button
                 type="button"
@@ -105,7 +110,7 @@ export function CookieBanner() {
       </div>
       <button
         type="button"
-        onClick={() => (gaEnabled ? decide('denied') : acknowledgeOnly())}
+        onClick={() => (analyticsEnabled ? decide('denied') : acknowledgeOnly())}
         aria-label={t('close')}
         className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors -mr-1 -mt-1"
       >

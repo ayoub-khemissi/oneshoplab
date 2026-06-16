@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { TrackEvent } from '@/components/track-event';
+import { MetaPixelEvent } from '@/components/meta-pixel-track';
 
 /**
- * Fires the GA4 conversion event encoded in the post-redirect URL, then
+ * Fires the conversion event(s) encoded in the post-redirect URL, then
  * strips the marker query params (history.replaceState — no navigation,
- * no RSC refetch) so a refresh / back never double-counts.
+ * no RSC refetch) so a refresh / back never double-counts. This is the one
+ * place that reads + strips the markers, so it also dispatches the Meta Pixel
+ * twin (e.g. signup → GA `sign_up` + Meta `CompleteRegistration`) to avoid a
+ * read/strip race between separate components.
  *
  * All our auth + payment flows finish with a full-document redirect
  * (NextAuth signIn redirectTo, Stripe success_url), so reading
@@ -27,6 +31,8 @@ export function GaRedirectEvents() {
     event: string;
     params?: Record<string, unknown>;
     onceKey?: string;
+    /** Optional Meta Pixel standard-event twin fired alongside the GA event. */
+    metaEvent?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -41,7 +47,11 @@ export function GaRedirectEvents() {
     const consumed: string[] = [];
 
     if (ga === 'signup') {
-      ev = { event: 'sign_up', params: { method: 'credentials' } };
+      ev = {
+        event: 'sign_up',
+        params: { method: 'credentials' },
+        metaEvent: 'CompleteRegistration'
+      };
       consumed.push('ga');
     } else if (ga === 'login') {
       ev = { event: 'login', params: { method: 'credentials' } };
@@ -107,11 +117,20 @@ export function GaRedirectEvents() {
     }
   }, []);
 
-  return beacon ? (
-    <TrackEvent
-      event={beacon.event}
-      params={beacon.params}
-      onceKey={beacon.onceKey}
-    />
-  ) : null;
+  if (!beacon) return null;
+  return (
+    <>
+      <TrackEvent
+        event={beacon.event}
+        params={beacon.params}
+        onceKey={beacon.onceKey}
+      />
+      {beacon.metaEvent ? (
+        <MetaPixelEvent
+          event={beacon.metaEvent}
+          onceKey={beacon.onceKey}
+        />
+      ) : null}
+    </>
+  );
 }
