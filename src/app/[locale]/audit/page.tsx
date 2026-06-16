@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
+import { Link } from '@/i18n/navigation';
 import { launchAnonymousAudit, normalizeUrl } from '@/lib/audit';
 import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
@@ -167,6 +168,17 @@ export default async function FreeAuditPage({ params, searchParams }: PageProps)
           </p>
           {recaptchaOn ? <RecaptchaLegalNotice /> : null}
         </form>
+
+        {/* Subtle secondary path for the already-convinced minority —
+            kept low-emphasis (small text link) so it never competes
+            with the free-audit hero, which is the page's primary hook
+            for cold ad traffic. */}
+        <Link
+          href="/signup"
+          className="mt-4 inline-block text-sm text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 transition-colors"
+        >
+          {t('alreadyConvinced')}
+        </Link>
       </section>
     </main>
   );

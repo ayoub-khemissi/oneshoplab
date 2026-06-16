@@ -44,7 +44,8 @@
     "productsTitle": "待优化产品",
     "productsHint": "评分最低的产品及每个产品上发现的具体问题。注册免费账号后，AI 会自动修复它们。",
     "viewProduct": "查看",
-    "moreProducts": "另有 +{count} 个已评分产品——免费注册账号查看逐个产品的完整明细"
+    "moreProducts": "另有 +{count} 个已评分产品——免费注册账号查看逐个产品的完整明细",
+    "alreadyConvinced": "已经心动了？免费创建账户"
   },
   "Home": {
     "eyebrow": "适用于 Shopify · WooCommerce · Wix",

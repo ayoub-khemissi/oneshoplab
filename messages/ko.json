@@ -44,7 +44,8 @@
     "productsTitle": "최적화할 상품",
     "productsHint": "점수가 가장 낮은 상품과 각 상품에서 발견된 정확한 문제입니다. 무료 계정이면 AI가 자동으로 수정합니다.",
     "viewProduct": "보기",
-    "moreProducts": "+{count}개 상품 추가 점수화 — 무료 계정으로 상품별 전체 상세 보기"
+    "moreProducts": "+{count}개 상품 추가 점수화 — 무료 계정으로 상품별 전체 상세 보기",
+    "alreadyConvinced": "이미 마음을 정하셨나요? 무료 계정을 만드세요"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix용",

@@ -44,7 +44,8 @@
     "productsTitle": "Produits à optimiser",
     "productsHint": "Les produits les moins bien notés et les problèmes exacts détectés sur chacun. Avec un compte gratuit, l'IA les corrige automatiquement.",
     "viewProduct": "Voir",
-    "moreProducts": "+{count} autres produits notés — accédez au détail produit par produit avec un compte gratuit"
+    "moreProducts": "+{count} autres produits notés — accédez au détail produit par produit avec un compte gratuit",
+    "alreadyConvinced": "Déjà convaincu ? Créez votre compte gratuit"
   },
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",

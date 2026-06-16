@@ -13,6 +13,7 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { SiteFavicon } from '@/components/site-favicon';
+import { MetaPixelEvent } from '@/components/meta-pixel-track';
 import { TrackEvent } from '@/components/track-event';
 import { Link } from '@/i18n/navigation';
 import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
@@ -250,6 +251,12 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
         params={{ domain, score: scores?.overall ?? null }}
         onceKey={`free_audit_completed-${token}`}
       />
+      {/* Meta `Lead`: a visitor who entered their store URL and is now
+          looking at their free score is a high-intent, pre-signup
+          mid-funnel signal — the cheap, frequent event a small ad
+          budget can optimize on before it has enough
+          CompleteRegistration volume. Fires once per audit token. */}
+      <MetaPixelEvent event="Lead" onceKey={`free_audit_completed-${token}`} />
       <header className="flex flex-col gap-3 text-center">
         <span className="eyebrow self-center">{t('resultEyebrow')}</span>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight [overflow-wrap:anywhere] inline-flex items-center gap-3 justify-center self-center">
@@ -544,32 +551,35 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
       )}
 
       {/* Sign-up gate: the score + detail are free, the AI before/after
-          (rewrites, generated images, social posts) is not. */}
-      <Card
-        variant="tertiary"
-        className="p-6 flex flex-col items-center gap-3 text-center"
-      >
-        <Sparkles className="size-6 text-[var(--accent)]" aria-hidden />
-        <h2 className="text-xl font-bold tracking-tight">{t('ctaTitle')}</h2>
-        <p className="text-sm text-[var(--muted)] max-w-xl leading-relaxed">
+          (rewrites, generated images, social posts) is not. This is the
+          page's conversion focal point — visually dominant (accent
+          surface, large focal button) so it doesn't blend into the
+          report above. The pricing link stays a subdued secondary so
+          there's one clear primary action. */}
+      <div className="rounded-xl border-2 border-[var(--accent)]/30 bg-[var(--accent)]/[0.06] p-8 flex flex-col items-center gap-4 text-center">
+        <span className="inline-flex items-center justify-center size-12 rounded-full bg-[var(--accent)]/15">
+          <Sparkles className="size-6 text-[var(--accent)]" aria-hidden />
+        </span>
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+          {t('ctaTitle')}
+        </h2>
+        <p className="text-sm md:text-base text-[var(--muted)] max-w-xl leading-relaxed">
           {t('ctaBody')}
         </p>
-        <div className="flex items-center gap-3 mt-2 flex-wrap justify-center">
-          <Link
-            href={`/signup?claim=${encodeURIComponent(token)}`}
-            className="px-4 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 inline-flex items-center gap-1.5"
-          >
-            {t('ctaPrimary')}
-            <ArrowRight className="size-3.5" />
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:border-[var(--accent)]"
-          >
-            {t('ctaSecondary')}
-          </Link>
-        </div>
-      </Card>
+        <Link
+          href={`/signup?claim=${encodeURIComponent(token)}`}
+          className="mt-2 px-7 py-3.5 rounded-lg text-base font-semibold bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 shadow-sm inline-flex items-center gap-2 transition-opacity"
+        >
+          {t('ctaPrimary')}
+          <ArrowRight className="size-4" />
+        </Link>
+        <Link
+          href="/pricing"
+          className="text-xs text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 transition-colors"
+        >
+          {t('ctaSecondary')}
+        </Link>
+      </div>
     </main>
   );
 }

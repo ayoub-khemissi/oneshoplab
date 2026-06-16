@@ -44,7 +44,8 @@
     "productsTitle": "最適化すべき商品",
     "productsHint": "スコアが最も低い商品と、それぞれで見つかった具体的な問題です。無料アカウントなら、AIが自動で修正します。",
     "viewProduct": "表示",
-    "moreProducts": "他にも +{count} 件の商品をスコア化済み — 無料アカウントで商品ごとの詳細をすべて確認"
+    "moreProducts": "他にも +{count} 件の商品をスコア化済み — 無料アカウントで商品ごとの詳細をすべて確認",
+    "alreadyConvinced": "もう決めましたか？無料アカウントを作成"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix 向け",

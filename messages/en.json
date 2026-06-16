@@ -44,7 +44,8 @@
     "productsTitle": "Products to optimize",
     "productsHint": "The lowest-scoring products and the exact issues found on each. With a free account, AI fixes them automatically.",
     "viewProduct": "View",
-    "moreProducts": "+{count} more products scored — see the full per-product breakdown with a free account"
+    "moreProducts": "+{count} more products scored — see the full per-product breakdown with a free account",
+    "alreadyConvinced": "Already convinced? Create your free account"
   },
   "Home": {
     "eyebrow": "For Shopify · WooCommerce · Wix",

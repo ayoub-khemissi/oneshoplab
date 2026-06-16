@@ -44,7 +44,8 @@
     "productsTitle": "Produkty do optymalizacji",
     "productsHint": "Produkty z najniższym wynikiem i dokładne wykryte problemy dla każdego. Z darmowym kontem AI naprawi je automatycznie.",
     "viewProduct": "Zobacz",
-    "moreProducts": "+{count} kolejnych ocenionych produktów — zobacz pełny rozkład produkt po produkcie z darmowym kontem"
+    "moreProducts": "+{count} kolejnych ocenionych produktów — zobacz pełny rozkład produkt po produkcie z darmowym kontem",
+    "alreadyConvinced": "Już przekonany? Załóż darmowe konto"
   },
   "Home": {
     "eyebrow": "Dla Shopify · WooCommerce · Wix",

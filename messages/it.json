@@ -44,7 +44,8 @@
     "productsTitle": "Prodotti da ottimizzare",
     "productsHint": "I prodotti con il punteggio più basso e i problemi esatti rilevati su ciascuno. Con un account gratuito, l'IA li corregge automaticamente.",
     "viewProduct": "Vedi",
-    "moreProducts": "+{count} altri prodotti valutati — consulta il dettaglio prodotto per prodotto con un account gratuito"
+    "moreProducts": "+{count} altri prodotti valutati — consulta il dettaglio prodotto per prodotto con un account gratuito",
+    "alreadyConvinced": "Già convinto? Crea il tuo account gratuito"
   },
   "Home": {
     "eyebrow": "Per Shopify · WooCommerce · Wix",
