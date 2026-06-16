@@ -14,3 +14,7 @@ next-env.d.ts
 !.env.example
 tsconfig.tsbuildinfo
 ruvector.db
+
+# local-only secrets / scratch notes (never commit) + Claude Code worktrees
+access.txt
+.claude/worktrees/
