@@ -18,6 +18,29 @@ import {
   type PlanId
 } from './ai/models';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
+import type Stripe from 'stripe';
+
+/**
+ * Build the `&value=…&currency=…` query suffix for a Checkout success
+ * URL from a Stripe Price id, so the success page's Meta Pixel
+ * `Purchase` event can report revenue (ROAS optimization). Best-effort:
+ * any failure (network, missing unit_amount on a metered price)
+ * returns an empty string and the event just fires without a value.
+ */
+async function stripePriceValueParam(
+  stripe: Stripe,
+  priceId: string
+): Promise<string> {
+  try {
+    const price = await stripe.prices.retrieve(priceId);
+    if (price.unit_amount == null) return '';
+    const value = (price.unit_amount / 100).toFixed(2);
+    const currency = (price.currency || 'eur').toLowerCase();
+    return `&value=${value}&currency=${currency}`;
+  } catch {
+    return '';
+  }
+}
 
 /**
  * Create (or reuse) a Stripe Checkout session for the requested plan/cycle
@@ -79,13 +102,21 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
     }
   }
 
+  // Resolve the price amount so the success-page Meta `Purchase` event
+  // can carry value+currency (needed for ROAS-based ad optimization).
+  // Best-effort: a failed retrieve just omits the value, the event
+  // still fires as a conversion count. Yearly ≠ monthly×12 (−20%), so
+  // we read Stripe's authoritative unit_amount rather than computing.
+  const valueParam = await stripePriceValueParam(stripe, priceId);
+
   const checkout = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
     // sid = Stripe-substituted Checkout Session id → GA4 transaction_id
-    // (natural purchase dedupe). plan/cycle drive the GA4 item label.
-    success_url: `${appUrl}/dashboard?checkout=success&sid={CHECKOUT_SESSION_ID}&plan=${plan}&cycle=${cycle}`,
+    // (natural purchase dedupe). plan/cycle drive the GA4 item label;
+    // value/currency feed the Meta Pixel Purchase event.
+    success_url: `${appUrl}/dashboard?checkout=success&sid={CHECKOUT_SESSION_ID}&plan=${plan}&cycle=${cycle}${valueParam}`,
     cancel_url: `${appUrl}/pricing?checkout=cancelled`,
     metadata: {
       oneshoplabUserId: userId,
@@ -157,12 +188,18 @@ export async function buyCreditPackAction(formData: FormData): Promise<void> {
     }
   }
 
+  // pack.priceEur is the exact list price (no yearly/proration nuance
+  // on a one-time pack), so feed the Meta Purchase value straight from
+  // pricing config — no Stripe round-trip needed.
+  const packValueParam = `&value=${pack.priceEur.toFixed(2)}&currency=eur`;
+
   const checkout = await stripe.checkout.sessions.create({
     mode: 'payment',
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    // sid → GA4 transaction_id (purchase dedupe); pack → GA4 item label.
-    success_url: `${appUrl}/account/credits?purchase=success&sid={CHECKOUT_SESSION_ID}&pack=${pack.id}`,
+    // sid → GA4 transaction_id (purchase dedupe); pack → GA4 item label;
+    // value/currency feed the Meta Pixel Purchase event.
+    success_url: `${appUrl}/account/credits?purchase=success&sid={CHECKOUT_SESSION_ID}&pack=${pack.id}${packValueParam}`,
     cancel_url: `${appUrl}/account/credits?purchase=cancelled`,
     metadata: {
       oneshoplabUserId: userId,

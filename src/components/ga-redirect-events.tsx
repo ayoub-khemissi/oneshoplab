@@ -17,14 +17,17 @@ import { MetaPixelEvent } from '@/components/meta-pixel-track';
  * window.location once on mount is sufficient and avoids the
  * useSearchParams() Suspense/CSR-bailout caveat.
  *
- *   ?ga=signup                                     -> sign_up
+ *   ?ga=signup                                     -> sign_up / CompleteRegistration
  *   ?ga=login                                      -> login
- *   ?checkout=success&sid&plan&cycle  (Stripe sub) -> purchase
- *   ?purchase=success&sid&pack       (Stripe pack) -> purchase
+ *   ?checkout=success&sid&plan&cycle&value&currency -> purchase / Purchase
+ *   ?purchase=success&sid&pack&value&currency       -> purchase / Purchase
  *
- * No `value` is sent client-side on purpose — accurate revenue belongs
- * to the Stripe webhook (Measurement Protocol) where the amount is the
- * source of truth; this only counts the conversion.
+ * GA `purchase` carries no client-side value on purpose — accurate
+ * revenue belongs to the Stripe webhook (Measurement Protocol). The
+ * Meta Pixel has no such server-side twin wired here, so the browser
+ * `Purchase` event DOES carry value+currency (from the success URL) —
+ * that's the only revenue signal Meta gets, and ROAS-based ad
+ * optimization needs it.
  */
 export function GaRedirectEvents() {
   const [beacon, setBeacon] = useState<{
@@ -33,6 +36,8 @@ export function GaRedirectEvents() {
     onceKey?: string;
     /** Optional Meta Pixel standard-event twin fired alongside the GA event. */
     metaEvent?: string;
+    /** Params for the Meta twin (e.g. value+currency on Purchase). */
+    metaParams?: Record<string, unknown>;
   } | null>(null);
 
   useEffect(() => {
@@ -42,6 +47,14 @@ export function GaRedirectEvents() {
     const checkout = q.get('checkout');
     const purchase = q.get('purchase');
     const sid = q.get('sid') ?? undefined;
+    // Value/currency for the Meta Purchase event (set by the Stripe
+    // success URLs). Parsed defensively — a malformed value just drops
+    // out of the event params.
+    const rawValue = q.get('value');
+    const value = rawValue && Number.isFinite(Number(rawValue)) ? Number(rawValue) : undefined;
+    const currency = (q.get('currency') ?? undefined)?.toLowerCase();
+    const metaPurchaseParams =
+      value != null ? { value, currency: currency ?? 'eur' } : undefined;
 
     let ev: typeof beacon = null;
     const consumed: string[] = [];
@@ -75,9 +88,11 @@ export function GaRedirectEvents() {
               }
             : {})
         },
+        metaEvent: 'Purchase',
+        metaParams: metaPurchaseParams,
         onceKey: sid ? `purchase-${sid}` : undefined
       };
-      consumed.push('checkout', 'sid', 'plan', 'cycle');
+      consumed.push('checkout', 'sid', 'plan', 'cycle', 'value', 'currency');
     } else if (purchase === 'success') {
       const pack = q.get('pack') ?? undefined;
       ev = {
@@ -96,9 +111,11 @@ export function GaRedirectEvents() {
               }
             : {})
         },
+        metaEvent: 'Purchase',
+        metaParams: metaPurchaseParams,
         onceKey: sid ? `purchase-${sid}` : undefined
       };
-      consumed.push('purchase', 'sid', 'pack');
+      consumed.push('purchase', 'sid', 'pack', 'value', 'currency');
     }
 
     if (!ev) return;
@@ -128,6 +145,7 @@ export function GaRedirectEvents() {
       {beacon.metaEvent ? (
         <MetaPixelEvent
           event={beacon.metaEvent}
+          params={beacon.metaParams}
           onceKey={beacon.onceKey}
         />
       ) : null}
