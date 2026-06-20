@@ -271,7 +271,7 @@ export async function listOptimHistory(
       let output: string | string[] = '';
       if (field === 'images') {
         const r = j.result as { persistedUrls?: string[]; resultUrls?: string[] } | null;
-        output = r?.persistedUrls ?? r?.resultUrls ?? [];
+        output = r?.persistedUrls ?? [];
       } else {
         const r = j.result as { output?: string | string[] } | null;
         output = r?.output ?? '';
@@ -356,7 +356,7 @@ export async function listOptimHistoryPaginated(
       let output: string | string[] = '';
       if (field === 'images') {
         const r = j.result as { persistedUrls?: string[]; resultUrls?: string[] } | null;
-        output = r?.persistedUrls ?? r?.resultUrls ?? [];
+        output = r?.persistedUrls ?? [];
       } else {
         const r = j.result as { output?: string | string[] } | null;
         output = r?.output ?? '';

@@ -46,10 +46,12 @@ function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
   const result = r.result as
     | { persistedUrls?: string[]; resultUrls?: string[] }
     | null;
-  const url =
-    result?.persistedUrls?.[0] ??
-    result?.resultUrls?.[0] ??
-    null;
+  // Only ever surface the persisted (R2) URL — never the raw kie
+  // resultUrls, which are temp (tempfile.aiquickdraw.com) and 404
+  // after a few days. A completed job always has persistedUrls
+  // (persist-result fails the job otherwise), so a missing one means
+  // legacy/broken data → show nothing rather than a dead temp link.
+  const url = result?.persistedUrls?.[0] ?? null;
   return {
     id: r.id,
     status: r.status,

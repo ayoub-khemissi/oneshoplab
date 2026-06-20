@@ -12,6 +12,37 @@ function isImageJob(kind: string): boolean {
   return (IMAGE_KINDS as string[]).includes(kind);
 }
 
+/**
+ * Upload a kie temp image to R2, retrying transient failures (the
+ * download from kie's temp host or the PutObject can flake). Returns
+ * the persisted public R2 URL, or null when every attempt failed —
+ * the caller MUST then fail the job rather than store a temp URL,
+ * because temp URLs (tempfile.aiquickdraw.com) 404 days later and
+ * silently break the image.
+ */
+async function persistToR2WithRetry(
+  sourceUrl: string,
+  key: string,
+  attempts = 4
+): Promise<string | null> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const r = await uploadFromUrl(sourceUrl, key);
+      return r.publicUrl;
+    } catch (e) {
+      const last = i === attempts - 1;
+      console.error(
+        `[persist-result] R2 upload attempt ${i + 1}/${attempts} failed for ${key}${last ? ' (giving up)' : ''}`,
+        (e as Error).message
+      );
+      if (last) return null;
+      // Linear backoff: 0.5s, 1s, 1.5s.
+      await new Promise((res) => setTimeout(res, 500 * (i + 1)));
+    }
+  }
+  return null;
+}
+
 export interface KieSuccessMeta {
   /** kie.data.costTime — seconds spent on kie's side generating. Authoritative
    *  for image jobs since wall-clock between our insert and our update can
@@ -51,26 +82,34 @@ export async function persistKieJobSuccess(
       ? (parsed.resultUrls as unknown[]).filter((u): u is string => typeof u === 'string')
       : [];
     if (tempUrls.length > 0) {
-      const persistedUrls: string[] = [];
       if (isR2Configured()) {
+        // INVARIANT: a stored image URL is ALWAYS an R2 URL — never a
+        // kie temp URL (tempfile.aiquickdraw.com), which 404s a few
+        // days later and silently breaks the image. So we retry the
+        // R2 persist, and if it STILL fails, we fail the whole job
+        // (refund + regeneratable) rather than store a dying temp URL.
+        const persistedUrls: string[] = [];
         for (const url of tempUrls) {
-          try {
-            const key = `kie/${jobId}/${randomUUID()}.png`;
-            const r = await uploadFromUrl(url, key);
-            persistedUrls.push(r.publicUrl);
-          } catch (e) {
+          const key = `kie/${jobId}/${randomUUID()}.png`;
+          const publicUrl = await persistToR2WithRetry(url, key);
+          if (!publicUrl) {
             console.error(
-              `[persist-result] R2 upload failed for job ${jobId}, keeping temp URL`,
-              e
+              `[persist-result] R2 persist failed after retries for job ${jobId} — failing it (no temp URL kept)`
             );
-            persistedUrls.push(url);
+            // Job is still pending/running here (success update below
+            // hasn't run), so persistKieJobFailure can flip + refund.
+            await persistKieJobFailure(jobId, jobKind, 'r2_persist_failed', null);
+            return;
           }
+          persistedUrls.push(publicUrl);
         }
+        parsed.persistedUrls = persistedUrls;
       } else {
-        // Dev / no R2 — keep temp URLs. They expire but are usable until they do.
-        persistedUrls.push(...tempUrls);
+        // Dev only — R2 is always configured in production, so this
+        // branch never runs there. Keep temp URLs so local dev can
+        // still preview the image until it expires.
+        parsed.persistedUrls = tempUrls;
       }
-      parsed.persistedUrls = persistedUrls;
     }
   }
 
