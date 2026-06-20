@@ -45,7 +45,8 @@
     "productsHint": "Os produtos com pior pontuação e os problemas exatos detetados em cada um. Com uma conta gratuita, a IA corrige-os automaticamente.",
     "viewProduct": "Ver",
     "moreProducts": "+{count} outros produtos pontuados — veja o detalhe produto a produto com uma conta gratuita",
-    "alreadyConvinced": "Já convencido? Crie a sua conta gratuita"
+    "alreadyConvinced": "Já convencido? Crie a sua conta gratuita",
+    "urlPlaceholder": "sualoja.com"
   },
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Audite a sua loja em cerca de um minuto. Pontuação por produto em copy, visuais, catálogo e tags. A IA reescreve, regenera e redesenha — com prompts que você controla.",
     "heroScratchCta": "Configuro a minha loja",
     "heroOrSeparator": "ou",
-    "heroCompatManualChip": "Ou a tua"
+    "heroCompatManualChip": "Ou a tua",
+    "heroUrlPlaceholder": "sualoja.com"
   },
   "Nav": {
     "signIn": "Entrar",

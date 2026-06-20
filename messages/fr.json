@@ -45,7 +45,8 @@
     "productsHint": "Les produits les moins bien notés et les problèmes exacts détectés sur chacun. Avec un compte gratuit, l'IA les corrige automatiquement.",
     "viewProduct": "Voir",
     "moreProducts": "+{count} autres produits notés — accédez au détail produit par produit avec un compte gratuit",
-    "alreadyConvinced": "Déjà convaincu ? Créez votre compte gratuit"
+    "alreadyConvinced": "Déjà convaincu ? Créez votre compte gratuit",
+    "urlPlaceholder": "votreboutique.com"
   },
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Auditez votre boutique en environ une minute. Notez chaque produit sur le copy, les visuels, le catalogue et les tags. L'IA réécrit, régénère et redesigne — avec vos propres prompts.",
     "heroScratchCta": "Je renseigne ma boutique",
     "heroOrSeparator": "ou",
-    "heroCompatManualChip": "Ou la mienne"
+    "heroCompatManualChip": "Ou la mienne",
+    "heroUrlPlaceholder": "votreboutique.com"
   },
   "Nav": {
     "signIn": "Se connecter",

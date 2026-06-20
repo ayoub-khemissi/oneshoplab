@@ -45,7 +45,8 @@
     "productsHint": "Los productos con peor puntuación y los problemas exactos detectados en cada uno. Con una cuenta gratuita, la IA los corrige automáticamente.",
     "viewProduct": "Ver",
     "moreProducts": "+{count} productos más puntuados: consulta el desglose por producto con una cuenta gratuita",
-    "alreadyConvinced": "¿Ya convencido? Crea tu cuenta gratis"
+    "alreadyConvinced": "¿Ya convencido? Crea tu cuenta gratis",
+    "urlPlaceholder": "tutienda.com"
   },
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Audita tu tienda en aproximadamente un minuto. Puntúa cada producto en copy, visuales, catálogo y etiquetas. La IA reescribe, regenera y rediseña — con prompts que tú controlas.",
     "heroScratchCta": "Configuro mi tienda",
     "heroOrSeparator": "o",
-    "heroCompatManualChip": "O la mía"
+    "heroCompatManualChip": "O la mía",
+    "heroUrlPlaceholder": "tutienda.com"
   },
   "Nav": {
     "signIn": "Iniciar sesión",

@@ -45,7 +45,8 @@
     "productsHint": "I prodotti con il punteggio più basso e i problemi esatti rilevati su ciascuno. Con un account gratuito, l'IA li corregge automaticamente.",
     "viewProduct": "Vedi",
     "moreProducts": "+{count} altri prodotti valutati — consulta il dettaglio prodotto per prodotto con un account gratuito",
-    "alreadyConvinced": "Già convinto? Crea il tuo account gratuito"
+    "alreadyConvinced": "Già convinto? Crea il tuo account gratuito",
+    "urlPlaceholder": "tuonegozio.com"
   },
   "Home": {
     "eyebrow": "Per Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Analizza il tuo store in circa un minuto. Punteggio per prodotto su copy, visivi, catalogo e tag. La AI riscrive, rigenera e ridisegna — con prompt che controlli tu.",
     "heroScratchCta": "Inserisco il mio negozio",
     "heroOrSeparator": "oppure",
-    "heroCompatManualChip": "Oppure il tuo"
+    "heroCompatManualChip": "Oppure il tuo",
+    "heroUrlPlaceholder": "tuonegozio.com"
   },
   "Nav": {
     "signIn": "Accedi",

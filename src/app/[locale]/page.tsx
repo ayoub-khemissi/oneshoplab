@@ -207,12 +207,19 @@ export default async function HomePage({ searchParams }: PageProps) {
               <label htmlFor="hero-url" className="sr-only">
                 {t('urlLabel')}
               </label>
+              {/* type="text" not "url": native url validation rejects a
+                  bare domain (no scheme) and silently blocks mobile users.
+                  normalizeUrl() prepends the scheme + validates server-side. */}
               <input
                 id="hero-url"
                 name="url"
-                type="url"
+                type="text"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 required
-                placeholder="https://yourstore.com"
+                placeholder={t('heroUrlPlaceholder')}
                 aria-invalid={Boolean(errorMessage)}
                 className="flex-1 min-w-0 px-5 sm:px-6 py-4 bg-transparent text-base outline-none rounded-full placeholder:text-[var(--field-placeholder)]"
               />

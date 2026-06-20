@@ -45,7 +45,8 @@
     "productsHint": "المنتجات الأقل تقييمًا والمشكلات الدقيقة المكتشفة في كل منها. مع حساب مجاني، يصلحها الذكاء الاصطناعي تلقائيًا.",
     "viewProduct": "عرض",
     "moreProducts": "‏+{count} منتجات أخرى تم تقييمها — اطّلع على التفصيل لكل منتج مع حساب مجاني",
-    "alreadyConvinced": "مقتنع بالفعل؟ أنشئ حسابك المجاني"
+    "alreadyConvinced": "مقتنع بالفعل؟ أنشئ حسابك المجاني",
+    "urlPlaceholder": "متجرك.com"
   },
   "Home": {
     "eyebrow": "لـ Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "دقّق متجرك في حوالي دقيقة. قيِّم كل منتج عبر النصوص والمرئيات والكتالوج والوسوم. الذكاء الاصطناعي يعيد الكتابة والتوليد والتصميم — بمحفّزات تتحكم بها أنت.",
     "heroScratchCta": "سأُعدّ متجري",
     "heroOrSeparator": "أو",
-    "heroCompatManualChip": "أو متجرك"
+    "heroCompatManualChip": "أو متجرك",
+    "heroUrlPlaceholder": "متجرك.com"
   },
   "Nav": {
     "signIn": "تسجيل الدخول",

@@ -45,7 +45,8 @@
     "productsHint": "评分最低的产品及每个产品上发现的具体问题。注册免费账号后，AI 会自动修复它们。",
     "viewProduct": "查看",
     "moreProducts": "另有 +{count} 个已评分产品——免费注册账号查看逐个产品的完整明细",
-    "alreadyConvinced": "已经心动了？免费创建账户"
+    "alreadyConvinced": "已经心动了？免费创建账户",
+    "urlPlaceholder": "你的店铺.com"
   },
   "Home": {
     "eyebrow": "适用于 Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "大约一分钟审计你的店铺。按文案、视觉、目录与标签为每个产品打分。AI 重写、再生成与重新设计——由你掌控的 prompt。",
     "heroScratchCta": "我创建店铺",
     "heroOrSeparator": "或",
-    "heroCompatManualChip": "或自己的"
+    "heroCompatManualChip": "或自己的",
+    "heroUrlPlaceholder": "你的店铺.com"
   },
   "Nav": {
     "signIn": "登录",

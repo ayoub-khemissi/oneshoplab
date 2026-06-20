@@ -45,7 +45,8 @@
     "productsHint": "スコアが最も低い商品と、それぞれで見つかった具体的な問題です。無料アカウントなら、AIが自動で修正します。",
     "viewProduct": "表示",
     "moreProducts": "他にも +{count} 件の商品をスコア化済み — 無料アカウントで商品ごとの詳細をすべて確認",
-    "alreadyConvinced": "もう決めましたか？無料アカウントを作成"
+    "alreadyConvinced": "もう決めましたか？無料アカウントを作成",
+    "urlPlaceholder": "あなたの店.com"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix 向け",
@@ -71,7 +72,8 @@
     "seoDescription": "約1分でストアを監査。各商品をコピー・ビジュアル・カタログ・タグで採点。AIが書き換え・再生成・再デザイン——プロンプトはあなたが管理。",
     "heroScratchCta": "ストアを登録する",
     "heroOrSeparator": "または",
-    "heroCompatManualChip": "あるいは自分のストア"
+    "heroCompatManualChip": "あるいは自分のストア",
+    "heroUrlPlaceholder": "あなたの店.com"
   },
   "Nav": {
     "signIn": "ログイン",

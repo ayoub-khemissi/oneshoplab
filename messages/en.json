@@ -45,7 +45,8 @@
     "productsHint": "The lowest-scoring products and the exact issues found on each. With a free account, AI fixes them automatically.",
     "viewProduct": "View",
     "moreProducts": "+{count} more products scored — see the full per-product breakdown with a free account",
-    "alreadyConvinced": "Already convinced? Create your free account"
+    "alreadyConvinced": "Already convinced? Create your free account",
+    "urlPlaceholder": "yourstore.com"
   },
   "Home": {
     "eyebrow": "For Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Audit your storefront in about a minute. Score every product on copy, visuals, catalog and tags. AI rewrites, regenerates and redesigns — with prompts you control.",
     "heroScratchCta": "I'll set up my store",
     "heroOrSeparator": "or",
-    "heroCompatManualChip": "Or your own"
+    "heroCompatManualChip": "Or your own",
+    "heroUrlPlaceholder": "yourstore.com"
   },
   "Nav": {
     "signIn": "Sign in",

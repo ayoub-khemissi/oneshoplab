@@ -45,7 +45,8 @@
     "productsHint": "Produkty z najniższym wynikiem i dokładne wykryte problemy dla każdego. Z darmowym kontem AI naprawi je automatycznie.",
     "viewProduct": "Zobacz",
     "moreProducts": "+{count} kolejnych ocenionych produktów — zobacz pełny rozkład produkt po produkcie z darmowym kontem",
-    "alreadyConvinced": "Już przekonany? Załóż darmowe konto"
+    "alreadyConvinced": "Już przekonany? Załóż darmowe konto",
+    "urlPlaceholder": "twojsklep.com"
   },
   "Home": {
     "eyebrow": "Dla Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Audytuj swój sklep w mniej więcej minutę. Ocena każdego produktu pod copy, wizualami, katalogiem i tagami. AI przepisuje, regeneruje i przeprojektowuje — z promptami, które kontrolujesz.",
     "heroScratchCta": "Uzupełnię swój sklep",
     "heroOrSeparator": "lub",
-    "heroCompatManualChip": "Lub Twój"
+    "heroCompatManualChip": "Lub Twój",
+    "heroUrlPlaceholder": "twojsklep.com"
   },
   "Nav": {
     "signIn": "Zaloguj",

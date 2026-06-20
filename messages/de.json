@@ -45,7 +45,8 @@
     "productsHint": "Die am schlechtesten bewerteten Produkte und die genau gefundenen Probleme. Mit einem kostenlosen Konto behebt die KI sie automatisch.",
     "viewProduct": "Ansehen",
     "moreProducts": "+{count} weitere bewertete Produkte – sieh dir die vollständige Aufschlüsselung pro Produkt mit einem kostenlosen Konto an",
-    "alreadyConvinced": "Schon überzeugt? Kostenloses Konto erstellen"
+    "alreadyConvinced": "Schon überzeugt? Kostenloses Konto erstellen",
+    "urlPlaceholder": "ihrshop.com"
   },
   "Home": {
     "eyebrow": "Für Shopify · WooCommerce · Wix",
@@ -71,7 +72,8 @@
     "seoDescription": "Auditieren Sie Ihren Shop in etwa einer Minute. Bewertung jedes Produkts nach Texten, Visuals, Katalog und Tags. KI schreibt um, generiert neu und gestaltet neu — mit Prompts, die Sie steuern.",
     "heroScratchCta": "Ich pflege meinen Shop ein",
     "heroOrSeparator": "oder",
-    "heroCompatManualChip": "Oder dein eigener"
+    "heroCompatManualChip": "Oder dein eigener",
+    "heroUrlPlaceholder": "ihrshop.com"
   },
   "Nav": {
     "signIn": "Anmelden",

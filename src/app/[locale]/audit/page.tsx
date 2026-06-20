@@ -140,12 +140,24 @@ export default async function FreeAuditPage({ params, searchParams }: PageProps)
             <label htmlFor="free-audit-url" className="sr-only">
               {t('urlLabel')}
             </label>
+            {/* type="text" (not "url") on purpose: the browser's native
+                url validation rejects a bare domain like "votreboutique.com"
+                — it demands a scheme — which silently blocks mobile users
+                who type their store without "https://". normalizeUrl()
+                server-side already prepends the scheme + validates, so we
+                accept the friendly bare form here. inputMode=url gives the
+                URL-optimized mobile keyboard; autoCapitalize/spellCheck off
+                avoid mangling the domain. */}
             <input
               id="free-audit-url"
               name="url"
-              type="url"
+              type="text"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               required
-              placeholder="https://yourstore.com"
+              placeholder={t('urlPlaceholder')}
               aria-invalid={Boolean(errorMessage)}
               className="flex-1 min-w-0 px-5 sm:px-6 py-4 bg-transparent text-base outline-none rounded-full placeholder:text-[var(--field-placeholder)]"
             />

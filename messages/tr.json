@@ -45,7 +45,8 @@
     "productsHint": "En düşük puanlı ürünler ve her birinde bulunan tam sorunlar. Ücretsiz bir hesapla yapay zekâ bunları otomatik düzeltir.",
     "viewProduct": "Görüntüle",
     "moreProducts": "+{count} ürün daha puanlandı — ücretsiz hesapla ürün ürün tüm dökümü görün",
-    "alreadyConvinced": "İkna oldunuz mu? Ücretsiz hesabınızı oluşturun"
+    "alreadyConvinced": "İkna oldunuz mu? Ücretsiz hesabınızı oluşturun",
+    "urlPlaceholder": "magazaniz.com"
   },
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix için",
@@ -71,7 +72,8 @@
     "seoDescription": "Mağazanızı yaklaşık bir dakikada denetleyin. Her ürünü metin, görsel, katalog ve etiketlerle puanlayın. Yapay zekâ yeniden yazar, üretir ve yeniden tasarlar — sizin kontrolünüzdeki istemlerle.",
     "heroScratchCta": "Mağazamı oluşturuyorum",
     "heroOrSeparator": "veya",
-    "heroCompatManualChip": "Veya seninki"
+    "heroCompatManualChip": "Veya seninki",
+    "heroUrlPlaceholder": "magazaniz.com"
   },
   "Nav": {
     "signIn": "Giriş yap",
