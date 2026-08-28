@@ -87,7 +87,18 @@ export async function applyCreditTransaction(opts: CreditTxOptions): Promise<Cre
       }
     }
 
-    const u = await tx.query.users.findFirst({ where: eq(users.id, opts.userId) });
+    // SELECT ... FOR UPDATE: serialize concurrent transactions on the same
+    // user. Without the row lock, N parallel debits (e.g. "Generate all"
+    // firing 3 image jobs at once) all read the same starting balance and
+    // each write `balance - cost`, so only one debit survives (lost update)
+    // — observed in prod: 9 images charged as 3, ledger out of sync with
+    // the balance. The lock makes each tx wait for the previous commit and
+    // re-read the fresh balance, so every debit lands exactly once.
+    const [u] = await tx
+      .select()
+      .from(users)
+      .where(eq(users.id, opts.userId))
+      .for('update');
     if (!u) throw new Error(`User ${opts.userId} not found`);
 
     let nextSub = u.creditsBalanceSubscription;

@@ -80,13 +80,23 @@ export async function startImageOptim(
   });
 
   // Hold the credits up-front. Refunded if createTask fails synchronously.
-  await applyCreditTransaction({
-    userId: opts.userId,
-    delta: -cost,
-    reason: 'kie_image_edit',
-    jobId,
-    idempotencyKey: `job-${jobId}`
-  });
+  // The job row must exist first (the ledger row references it), so if
+  // the hold itself fails — insufficient balance once the row lock
+  // serializes concurrent holds, or a DB error — remove the orphan job
+  // rather than leave a pending, never-charged row that a late kie
+  // callback could still complete for free.
+  try {
+    await applyCreditTransaction({
+      userId: opts.userId,
+      delta: -cost,
+      reason: 'kie_image_edit',
+      jobId,
+      idempotencyKey: `job-${jobId}`
+    });
+  } catch (e) {
+    await db.delete(jobs).where(eq(jobs.id, jobId));
+    throw e;
+  }
 
   const kie = getKieClient();
   try {
