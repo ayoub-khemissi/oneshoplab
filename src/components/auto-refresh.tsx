@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { refreshKeepingScroll } from '@/lib/preserve-scroll';
 
 /**
  * Triggers a server-side route refresh on a fixed interval as long as this
@@ -17,7 +18,7 @@ export function AutoRefresh({ intervalMs = 2500 }: { intervalMs?: number }) {
 
   useEffect(() => {
     const id = setInterval(() => {
-      router.refresh();
+      refreshKeepingScroll(() => router.refresh());
     }, intervalMs);
     return () => clearInterval(id);
   }, [router, intervalMs]);

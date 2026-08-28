@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { useFieldSwapGroup, useFieldView } from '@/components/field-swap';
 import { trackEvent } from '@/lib/analytics-event';
 import { sanitizeUserFacingError } from '@/lib/errors';
+import { refreshKeepingScroll } from '@/lib/preserve-scroll';
 import {
   createContext,
   useCallback,
@@ -199,7 +200,7 @@ export function RetryableGenerateProvider({
             cleared += 1;
           }
         }
-        if (cleared > 0) router.refresh();
+        if (cleared > 0) refreshKeepingScroll(() => router.refresh());
       } catch {
         // Network hiccup — keep polling; the poll loop is best-effort.
       }
@@ -392,7 +393,7 @@ export function RetryableGenerateProvider({
             } catch {
               // Non-JSON / empty body — skip.
             }
-            router.refresh();
+            refreshKeepingScroll(() => router.refresh());
             return;
           }
 

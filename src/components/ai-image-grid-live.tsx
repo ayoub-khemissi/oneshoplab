@@ -9,6 +9,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ImageExpiry } from '@/components/image-expiry';
 import { ImageZoom } from '@/components/image-zoom';
 import { MAX_IMAGES_PER_PRODUCT, type ImageJobRow } from '@/lib/ai/image-jobs-types';
+import { refreshKeepingScroll } from '@/lib/preserve-scroll';
 
 interface AiImageGridLiveProps {
   siteId: string;
@@ -174,7 +175,7 @@ export function AiImageGridLive({
       // router.refresh() re-runs the layout's auth() so the header
       // credit chip + the per-page balance pick up the new total
       // without a manual reload.
-      router.refresh();
+      refreshKeepingScroll(() => router.refresh());
     } finally {
       setBusy((b) => {
         const { [jobId]: _, ...rest } = b;
@@ -222,7 +223,7 @@ export function AiImageGridLive({
     // Adding or regenerating an image debits credits — refresh the
     // page so the header chip + the per-page balance reflect the new
     // total. Same reason as the deleteJob path.
-    router.refresh();
+    refreshKeepingScroll(() => router.refresh());
     return true;
   }
 
