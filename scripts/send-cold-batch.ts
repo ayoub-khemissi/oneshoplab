@@ -44,6 +44,77 @@ if (existsSync('.env')) {
 type Mode = 'dry-run' | 'test-email' | 'live';
 type VariantFilter = 'agency' | 'merchant' | 'auto';
 
+// Role / privacy / abuse mailboxes we must NEVER cold-mail. These reach a
+// company's data-protection, legal or abuse desk — not the buyer — so a
+// cold pitch landing there is the fastest route to a CNIL complaint or a
+// spam report (which torches sender reputation). Generic business inboxes
+// (info@, contact@, hello@, sales@) are fine and intentionally NOT listed.
+const SENSITIVE_LOCALPARTS = [
+  'rgpd', 'dpo', 'privacy', 'datenschutz', 'abuse', 'postmaster',
+  'hostmaster', 'webmaster', 'legal', 'compliance', 'security',
+  'noc', 'no-reply', 'noreply', 'donotreply', 'mailer-daemon'
+];
+
+/** True when an email's local part is (or begins with) a sensitive role
+ *  mailbox — matches `rgpd@`, `dpo.xx@`, `legal-team@`, `privacy_…@`, etc. */
+function isSensitiveAddress(email: string): boolean {
+  const local = (email.trim().toLowerCase().split('@')[0] ?? '');
+  return SENSITIVE_LOCALPARTS.some(
+    (lp) =>
+      local === lp ||
+      local.startsWith(`${lp}.`) ||
+      local.startsWith(`${lp}-`) ||
+      local.startsWith(`${lp}_`) ||
+      local.startsWith(`${lp}+`)
+  );
+}
+
+// Obvious scraper placeholders — a scrape that couldn't find a real
+// contact sometimes drops a "Mr Smith" stand-in. Mailing these hits an
+// uninvolved stranger (spam complaint) or nobody at all.
+const PLACEHOLDER_LOCALPARTS = [
+  'jean.dupont', 'jean.dupond', 'john.doe', 'johndoe', 'jane.doe',
+  'nom.prenom', 'prenom.nom', 'votre.email', 'your.email', 'user',
+  'test', 'example', 'demo'
+];
+
+function isPlaceholderAddress(email: string): boolean {
+  const local = (email.trim().toLowerCase().split('@')[0] ?? '');
+  return PLACEHOLDER_LOCALPARTS.includes(local);
+}
+
+/** Digit-bearing *.myshopify.com subdomains (02e96b, 0ymzia-df, …) are
+ *  dev/test/staging stores, not brands: the derived store name renders
+ *  as gibberish in the subject ("quick notes on 02e96b Myshopify"),
+ *  which reads as spam, and their scraped contacts are unreliable
+ *  (one resolved to a UK university address). Brand-named myshopify
+ *  canonical domains (burlebo.myshopify.com) carry no digit and pass. */
+function isGibberishMyshopify(domain: string): boolean {
+  const m = domain.toLowerCase().match(/^([a-z0-9-]+)\.myshopify\.com$/);
+  return m !== null && /\d/.test(m[1]);
+}
+
+/** Basic structural validity — rejects malformed scrapes like `/@dom.fr`
+ *  (local part with no alphanumeric), missing TLD, double dots, multi-@.
+ *  A hard bounce on a young sending domain hurts reputation badly, so we
+ *  drop anything that doesn't look deliverable rather than risk it. */
+function isValidContactEmail(email: string): boolean {
+  const e = email.trim().toLowerCase();
+  const at = e.indexOf('@');
+  if (at < 1) return false;
+  if (e.indexOf('@', at + 1) !== -1) return false; // more than one @
+  const local = e.slice(0, at);
+  const domain = e.slice(at + 1);
+  // Practical local-part charset only — rejects scraped URLs (slashes,
+  // spaces) like `//www.tiktok.com/` that are technically RFC-valid but
+  // never a real mailbox.
+  if (!/^[a-z0-9._%+'-]+$/.test(local)) return false;
+  if (!/[a-z0-9]/.test(local)) return false; // local must hold an alnum
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) return false; // dotted domain + TLD
+  if (e.includes('..')) return false;
+  return true;
+}
+
 interface CliArgs {
   mode: Mode;
   lang: 'fr' | 'en';
@@ -158,15 +229,18 @@ async function main(): Promise<void> {
   const { makeOptOutToken } = await import('@/lib/cold/opt-out');
   const { db } = await import('@/lib/db');
   const { audits, leads, leadAttempts } = await import('@/lib/db/schema');
-  const { and, desc, eq, gt, isNotNull, isNull, inArray, sql, or } = await import('drizzle-orm');
+  const { and, desc, eq, isNotNull, isNull, inArray, sql, or } = await import('drizzle-orm');
   const { randomUUID } = await import('node:crypto');
 
   // Two-step classification:
   //   1) is this a merchant (auditable) or an agency (unknown)?
-  //   2) for merchants, do we have a fresh audit (24h) for the domain?
-  // The "is this even worth mailing" check uses platform only — audit
-  // freshness only decides which merchant template wins.
-  const FRESH_AUDIT_MS = 24 * 60 * 60 * 1000;
+  //   2) for merchants, do we have ANY completed audit for the domain?
+  // The "is this even worth mailing" check uses platform only — the
+  // audit's mere existence decides which merchant template wins.
+  //
+  // No freshness window: product catalogs barely change, so we reuse the
+  // most recent completed audit regardless of age rather than re-auditing
+  // before every campaign. (Was a 24h cutoff — dropped per operator.)
 
   const platformCategory = (platform: string): 'merchant' | 'agency' | null => {
     if (platform === 'shopify' || platform === 'woocommerce' || platform === 'wix') {
@@ -198,17 +272,18 @@ async function main(): Promise<void> {
     productsSampled: number | null;
   }
 
-  /** Returns the latest completed anon audit for a domain within the
-   *  freshness window, including scores + summary so the cold mail can
-   *  embed the score grid + stats hook.
+  /** Returns the latest completed anon audit for a domain (any age),
+   *  including scores + summary so the cold mail can embed the score grid
+   *  + stats hook. No freshness window — catalogs barely change, so a
+   *  weeks-old audit is still a valid hook and avoids re-auditing before
+   *  every campaign.
    *
    *  Two-step (mirrors claimAnonAudits in src/lib/anon.ts): pull the
    *  most-recent id with a tiny projection so the ORDER BY sort buffer
    *  doesn't have to carry the multi-MB `summary` JSON. Then fetch the
    *  payload columns on the resolved id. Without the split, MySQL
    *  raises ER_OUT_OF_SORTMEMORY on audits with rich summaries. */
-  async function freshAuditForDomain(domain: string): Promise<FreshAudit | null> {
-    const cutoff = new Date(Date.now() - FRESH_AUDIT_MS);
+  async function latestAuditForDomain(domain: string): Promise<FreshAudit | null> {
     const idRow = await db
       .select({ id: audits.id })
       .from(audits)
@@ -217,8 +292,7 @@ async function main(): Promise<void> {
           isNull(audits.projectId),
           isNotNull(audits.anonToken),
           eq(audits.domain, domain),
-          eq(audits.status, 'completed'),
-          gt(audits.createdAt, cutoff)
+          eq(audits.status, 'completed')
         )
       )
       .orderBy(desc(audits.createdAt))
@@ -293,6 +367,13 @@ async function main(): Promise<void> {
     ];
     if (variantPredicate) whereClauses.push(variantPredicate);
 
+    // Exclude role/privacy/abuse mailboxes at the SQL level so we never
+    // even pull them as candidates. The send loop hard-skips them too,
+    // as a backstop for local-part variants and the --lead-id override.
+    for (const lp of SENSITIVE_LOCALPARTS) {
+      whereClauses.push(sql`LOWER(${leads.contactEmail}) NOT LIKE ${`${lp}@%`}`);
+    }
+
     const rows = await db
       .select({
         id: leads.id,
@@ -305,19 +386,37 @@ async function main(): Promise<void> {
       .where(and(...whereClauses))
       .limit(args.limit * 4);
 
+    // Quality-filter BEFORE slicing to --limit so junk leads don't eat
+    // send slots (they used to be skipped inside the loop, shrinking a
+    // 20-mail batch to 15). The loop keeps the same checks as a
+    // backstop for the --lead-id path.
+    const clean = rows.filter(
+      (r) =>
+        r.contactEmail &&
+        !isSensitiveAddress(r.contactEmail) &&
+        isValidContactEmail(r.contactEmail) &&
+        !isPlaceholderAddress(r.contactEmail) &&
+        !isGibberishMyshopify(r.domain)
+    );
+    if (clean.length < rows.length) {
+      console.log(
+        `[send-cold-batch] pre-filtered ${rows.length - clean.length} junk lead(s) (role/malformed/placeholder/gibberish-myshopify)`
+      );
+    }
+
     // In live mode, drop anything that already has a recorded attempt.
     // In dry-run / test-email modes, leave them in so the operator can
     // preview the same lead repeatedly.
-    if (args.mode === 'live' && rows.length > 0) {
-      const ids = rows.map((r) => r.id);
+    if (args.mode === 'live' && clean.length > 0) {
+      const ids = clean.map((r) => r.id);
       const attempted = await db
         .select({ leadId: leadAttempts.leadId })
         .from(leadAttempts)
         .where(and(inArray(leadAttempts.leadId, ids), eq(leadAttempts.channel, 'email')));
       const attemptedSet = new Set(attempted.map((a) => a.leadId));
-      candidates = rows.filter((r) => !attemptedSet.has(r.id)).slice(0, args.limit);
+      candidates = clean.filter((r) => !attemptedSet.has(r.id)).slice(0, args.limit);
     } else {
-      candidates = rows.slice(0, args.limit);
+      candidates = clean.slice(0, args.limit);
     }
   }
 
@@ -350,6 +449,21 @@ async function main(): Promise<void> {
     const lead = candidates[i];
     if (!lead.contactEmail) continue;
 
+    // Hard backstop (covers --lead-id + local-part variants the SQL
+    // NOT LIKE wouldn't catch). Never mail a role/privacy/abuse mailbox,
+    // a malformed address (bounce risk), or a scraper placeholder.
+    let skipReason: string | null = null;
+    if (isSensitiveAddress(lead.contactEmail)) skipReason = 'role/privacy mailbox';
+    else if (!isValidContactEmail(lead.contactEmail)) skipReason = 'malformed email';
+    else if (isPlaceholderAddress(lead.contactEmail)) skipReason = 'placeholder email';
+    else if (isGibberishMyshopify(lead.domain)) skipReason = 'gibberish myshopify domain';
+    if (skipReason) {
+      console.log(
+        `\n[${i + 1}/${candidates.length}] ${lead.domain}  (skipped: ${skipReason} ${lead.contactEmail})`
+      );
+      continue;
+    }
+
     const category = platformCategory(lead.platform);
     if (!category) {
       console.log(
@@ -372,7 +486,7 @@ async function main(): Promise<void> {
       leadVariant = 'agency';
       auditUrl = `${auditBase}/?utm_source=cold&utm_medium=email&utm_campaign=agency_t1_${args.lang}&lead=${lead.id}`;
     } else {
-      const fresh = await freshAuditForDomain(lead.domain);
+      const fresh = await latestAuditForDomain(lead.domain);
       if (fresh && fresh.scores) {
         leadVariant = 'merchant_audited';
         auditUrl = `${auditBase}/${args.lang}/audit/${fresh.token}?utm_source=cold&utm_medium=email&utm_campaign=merchant_audited_t1_${args.lang}&lead=${lead.id}`;
@@ -498,7 +612,14 @@ async function main(): Promise<void> {
   console.log(`\n[send-cold-batch] done. sent=${sent} failed=${failed}`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Force a clean exit: nodemailer's SMTP transport keeps an idle socket
+// open after the last send, which keeps Node's event loop alive so the
+// process would otherwise hang indefinitely once all mails are sent (and,
+// in live mode, all DB writes committed). main() awaits every send before
+// resolving, so exiting here can't truncate an in-flight message.
+main()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

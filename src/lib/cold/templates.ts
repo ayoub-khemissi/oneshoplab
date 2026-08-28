@@ -59,7 +59,7 @@ Le Discord est ouvert si vous voulez échanger avec moi (je développe l'outil s
 OneShopLab
 
 —
-Vous recevez ce message car votre activité (agence e-commerce) correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement en répondant "stop" à ce mail ou via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (votre site agence et portfolio).`
+Vous recevez ce message car votre activité (agence e-commerce) correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (votre site agence et portfolio).`
 };
 
 const EN_AGENCY_T1: Template = {
@@ -90,7 +90,7 @@ The Discord is open if you want to chat with me (I'm building this solo), join t
 OneShopLab
 
 —
-You're receiving this email because your activity (e-commerce agency) matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing by replying "stop" or via [[LINK this link | {optOutUrl}]]. Source: public research (your agency site and portfolio).`
+You're receiving this email because your activity (e-commerce agency) matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing via [[LINK this link | {optOutUrl}]]. Source: public research (your agency site and portfolio).`
 };
 
 const FR_MERCHANT_AUDITED_T1: Template = {
@@ -121,7 +121,7 @@ Le Discord est ouvert si vous voulez échanger avec moi (je développe l'outil s
 OneShopLab
 
 —
-Vous recevez ce message car votre boutique e-commerce correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement en répondant "stop" à ce mail ou via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (annuaires e-commerce + Google).`
+Vous recevez ce message car votre boutique e-commerce correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (annuaires e-commerce + Google).`
 };
 
 const EN_MERCHANT_AUDITED_T1: Template = {
@@ -152,7 +152,7 @@ The Discord is open if you want to chat with me (I'm building this solo), follow
 OneShopLab
 
 —
-You're receiving this email because your e-commerce store matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing by replying "stop" or via [[LINK this link | {optOutUrl}]]. Source: public research (e-commerce directories + Google).`
+You're receiving this email because your e-commerce store matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing via [[LINK this link | {optOutUrl}]]. Source: public research (e-commerce directories + Google).`
 };
 
 const FR_MERCHANT_UNAUDITED_T1: Template = {
@@ -180,7 +180,7 @@ Le Discord est ouvert si vous voulez échanger avec moi (je développe l'outil s
 OneShopLab
 
 —
-Vous recevez ce message car votre boutique e-commerce correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement en répondant "stop" à ce mail ou via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (annuaires e-commerce + Google).`
+Vous recevez ce message car votre boutique e-commerce correspond à un usage professionnel de notre outil. Conformément au RGPD (intérêt légitime — art. 6.1.f), vous pouvez vous opposer à ce traitement via [[LINK ce lien | {optOutUrl}]]. Source : recherche publique (annuaires e-commerce + Google).`
 };
 
 const EN_MERCHANT_UNAUDITED_T1: Template = {
@@ -208,7 +208,7 @@ The Discord is open if you want to chat with me (I'm building this solo), follow
 OneShopLab
 
 —
-You're receiving this email because your e-commerce store matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing by replying "stop" or via [[LINK this link | {optOutUrl}]]. Source: public research (e-commerce directories + Google).`
+You're receiving this email because your e-commerce store matches a professional use of our tool. Under GDPR (legitimate interest — art. 6.1.f), you can object to this processing via [[LINK this link | {optOutUrl}]]. Source: public research (e-commerce directories + Google).`
 };
 
 const TEMPLATES: Record<ColdVariant, Record<ColdLang, Record<ColdTouch, Template>>> = {
