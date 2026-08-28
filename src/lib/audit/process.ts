@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { runDynamicAuditForProduct } from '@/lib/ai';
 import { db } from '@/lib/db';
 import { audits, projects } from '@/lib/db/schema';
@@ -39,6 +39,21 @@ export async function processAudit(auditId: string): Promise<void> {
     // the merchant's prior work.
     if (row.projectId && result.products.length > 0) {
       await syncProjectProducts(row.projectId, result.platform, result.products);
+    }
+
+    // Backfill the project's platform + URL from the audit. A project
+    // created from the dashboard "add site" flow (launchAuditForUser) is
+    // inserted before anything is known about the store, so it starts as
+    // source='unknown' with no url — and nothing used to promote it once
+    // detection ran, leaving real Shopify/Woo/Wix stores labelled
+    // "unknown" forever (breaks platform-specific UI and sync). Only
+    // promote from 'unknown' so a manual project or a prior detection is
+    // never overwritten.
+    if (row.projectId && result.platform !== 'unknown') {
+      await db
+        .update(projects)
+        .set({ source: result.platform, url: sql`COALESCE(${projects.url}, ${row.url})` })
+        .where(and(eq(projects.id, row.projectId), eq(projects.source, 'unknown')));
     }
 
     // ---- AI dynamic audit on the 3 latest products ------------------------
