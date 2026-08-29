@@ -38,3 +38,12 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
 - **In-place build on the production box** — during `pnpm build` (~60 s) the running server can 500 on routes whose manifest is being rewritten. Accepted for now; mitigation = build into a separate directory / blue-green when traffic justifies it (2026-08-29).
 - **`nodemailer` 9 with next-auth's peer range `^7 || ^8`** — the email provider of next-auth is not used; the peer warning is cosmetic (2026-08-29).
 - **Legal pages are English-only** and hand-written; the AI sub-processor rows are generated from `pricing.json`.
+
+## 2026-08-29 — Phase 2 (tests)
+
+- vitest introduced: 31 tests / 4 files (~11 s). Coverage targets: credit
+  ledger, pricing snapshot, provider fallback, Stripe webhook idempotency.
+- Not yet covered: job state machine — transitions are spread over 8 files
+  (`persist-result`, `retry-job`, `optims`, `dynamic-audit`, watchdogs…); to
+  test it, first extract a single `transitionJob(from → to)` helper (Phase 3).
+- Also: encrypted MySQL backups + weekly restore drill (see GUIDELINES → Backups).

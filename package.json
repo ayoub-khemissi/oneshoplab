@@ -21,12 +21,16 @@
     "i18n:check": "node scripts/check-i18n.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm audit:prod",
+    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm test && pnpm audit:prod",
     "prepare": "husky",
     "deploy": "bash scripts/deploy.sh",
     "backup": "bash scripts/backup/backup-mysql.sh",
     "backup:restore-test": "bash scripts/backup/restore-test.sh",
-    "backup:usage": "tsx scripts/backup/r2-backup.ts usage"
+    "backup:usage": "tsx scripts/backup/r2-backup.ts usage",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:db": "vitest run tests/db",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
@@ -68,7 +72,8 @@
     "prettier": "^3.9.6",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=20"

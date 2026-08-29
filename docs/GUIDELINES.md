@@ -76,3 +76,20 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
   (stop the worker first; `pnpm db:migrate` afterwards if the schema moved).
 - **CDN:** nginx returns 404 for `cdn.oneshoplab.com/backups/*` — the CDN
   fronts the whole bucket, so this block must stay.
+
+## Tests
+
+- Runner: vitest (`pnpm test`, `test:unit`, `test:db`, `test:watch`). Config in
+  `vitest.config.mts`; `tests/setup-env.ts` forces placeholder secrets and a
+  `<db>_test` DATABASE_URL (derived from `.env`, or `TEST_DATABASE_URL`);
+  `tests/global-setup.ts` applies `drizzle/` migrations to it. The runner
+  refuses any database whose name does not end in `_test`.
+- Suites: `tests/unit` (no I/O: pricing snapshot + catalog invariants,
+  provider routing with stubbed fetch/kie) and `tests/db` (real MySQL: credit
+  ledger under concurrency, Stripe webhook replay). Each DB test truncates
+  the tables it uses; seed helpers write ledger rows so `balance == SUM(ledger)`
+  holds from the first assertion.
+- Rule: any change on the money path (`src/lib/credits.ts`, webhook, pricing)
+  ships with a test; a credit-cost change must update
+  `tests/unit/__snapshots__/pricing.test.ts.snap` in the same commit.
+- Gates: pre-push and CI run the full suite (CI uses a `mysql:8.0` service).

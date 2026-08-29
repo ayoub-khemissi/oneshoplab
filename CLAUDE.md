@@ -25,7 +25,8 @@ pnpm db:migrate       # apply pending migrations
 ```
 
 ```bash
-pnpm check            # lint + typecheck + i18n:check + audit:prod — run before pushing
+pnpm check            # lint + typecheck + i18n:check + test + audit:prod — run before pushing
+pnpm test             # vitest (unit + DB suites on <db>_test)
 pnpm i18n:check       # parity across 13 locales + every static t('key') resolves
 pnpm lint:strict      # 0-warning target (ratchet; see docs/ADOPTION.md)
 pnpm backup           # encrypted MySQL dump → local + R2 (cron 03:30; see docs/GUIDELINES.md → Backups)
@@ -38,9 +39,13 @@ Quality rules live in `docs/GUIDELINES.md`; the dated state of adoption in
 staged files + typecheck; pre-push runs the i18n check + audit. CI
 (`.github/workflows/ci.yml`) runs the same gates plus a build on every push.
 
-There is no automated test suite yet (planned: vitest on the credit ledger,
-pricing snapshot, job state machine, webhook idempotency). Verification =
-`pnpm check` + manual QA. If you can't reproduce a UI change in the browser,
+Tests: `pnpm test` (vitest; `tests/unit` = pure, `tests/db` = real MySQL
+`<db>_test`, migrated automatically, never prod — the runner refuses any DB
+whose name doesn't end in `_test`). Covered: credit ledger (concurrency,
+idempotency, buckets), pricing snapshot (`tests/unit/__snapshots__` — a
+credit-cost change must update it deliberately), provider fallback, Stripe
+webhook idempotency. Money-path changes need a test. Verification for UI =
+`pnpm check` + manual QA; if you can't reproduce a UI change in the browser,
 say so explicitly rather than declaring it done.
 
 ## Path alias

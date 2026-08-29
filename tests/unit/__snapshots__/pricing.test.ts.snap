@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`credit costs (snapshot — update deliberately) > image generation per quality 1`] = `
+{
+  "image-1k": 21,
+  "image-2k": 35,
+  "image-4k": 56,
+}
+`;
+
+exports[`credit costs (snapshot — update deliberately) > plans and packs 1`] = `
+[
+  {
+    "credits": 150,
+    "id": "free",
+    "monthlyEur": 0,
+  },
+  {
+    "credits": 5500,
+    "id": "starter",
+    "monthlyEur": 39.99,
+  },
+  {
+    "credits": 15000,
+    "id": "pro",
+    "monthlyEur": 89.99,
+  },
+  {
+    "credits": 38000,
+    "id": "scale",
+    "monthlyEur": 199.99,
+  },
+]
+`;
+
+exports[`credit costs (snapshot — update deliberately) > plans and packs 2`] = `
+[
+  {
+    "credits": 500,
+    "id": "boost",
+    "price": 4.99,
+  },
+  {
+    "credits": 2000,
+    "id": "power",
+    "price": 17.99,
+  },
+  {
+    "credits": 8000,
+    "id": "mega",
+    "price": 59.99,
+  },
+]
+`;
+
+exports[`credit costs (snapshot — update deliberately) > text generation per model × field 1`] = `
+{
+  "haiku-4-5": {
+    "description": 2,
+    "fullAudit": 5,
+    "social": 3,
+    "tags": 1,
+    "title": 1,
+  },
+  "opus-5": {
+    "description": 9,
+    "fullAudit": 24,
+    "social": 11,
+    "tags": 5,
+    "title": 4,
+  },
+  "sonnet-5": {
+    "description": 4,
+    "fullAudit": 10,
+    "social": 5,
+    "tags": 2,
+    "title": 2,
+  },
+}
+`;
