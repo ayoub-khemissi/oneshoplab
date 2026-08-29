@@ -75,7 +75,8 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ['@/lib/db', '@/lib/db/*'],
+              // schema.ts (types + enum constants) is fine; the pool (index) is not.
+              group: ['@/lib/db', '@/lib/db/index'],
               message:
                 'Components never touch the database — load in the page/server action, pass props.'
             },
