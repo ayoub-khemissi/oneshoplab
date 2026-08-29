@@ -713,7 +713,8 @@
     "refundedNote": "تم استرداد {cost} رصيدًا",
     "retryWithCost": "إعادة المحاولة · {cost} رصيدًا",
     "confirmDeleteTitle": "حذف هذه الصورة؟",
-    "confirmDeleteBody": "ستتم إزالتها من الشبكة. يُحفظ سجل التوليد."
+    "confirmDeleteBody": "ستتم إزالتها من الشبكة. يُحفظ سجل التوليد.",
+    "expiredLabel": "انتهت صلاحية الصورة"
   },
   "Relaunch": {
     "relaunch": "إعادة إطلاق التحليل",

@@ -714,7 +714,8 @@
     "refundedNote": "{cost} credits refunded",
     "retryWithCost": "Retry · {cost} credits",
     "confirmDeleteTitle": "Delete this image?",
-    "confirmDeleteBody": "It will be removed from the grid. The generation history is preserved."
+    "confirmDeleteBody": "It will be removed from the grid. The generation history is preserved.",
+    "expiredLabel": "Image expired"
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",

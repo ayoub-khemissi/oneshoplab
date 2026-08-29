@@ -714,7 +714,8 @@
     "refundedNote": "{cost} crédits remboursés",
     "retryWithCost": "Réessayer · {cost} crédits",
     "confirmDeleteTitle": "Supprimer cette image ?",
-    "confirmDeleteBody": "Elle sera retirée de la grille. L'historique de génération est conservé."
+    "confirmDeleteBody": "Elle sera retirée de la grille. L'historique de génération est conservé.",
+    "expiredLabel": "Image expirée"
   },
   "Relaunch": {
     "relaunch": "Relancer l'analyse",

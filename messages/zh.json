@@ -713,7 +713,8 @@
     "refundedNote": "已退还 {cost} 积分",
     "retryWithCost": "重试 · {cost} 积分",
     "confirmDeleteTitle": "删除此图片？",
-    "confirmDeleteBody": "将从网格中移除。生成历史会被保留。"
+    "confirmDeleteBody": "将从网格中移除。生成历史会被保留。",
+    "expiredLabel": "图片已过期"
   },
   "Relaunch": {
     "relaunch": "重新分析",

@@ -714,7 +714,8 @@
     "refundedNote": "{cost} Credits erstattet",
     "retryWithCost": "Erneut · {cost} Credits",
     "confirmDeleteTitle": "Dieses Bild löschen?",
-    "confirmDeleteBody": "Es wird aus dem Raster entfernt. Der Generierungsverlauf bleibt erhalten."
+    "confirmDeleteBody": "Es wird aus dem Raster entfernt. Der Generierungsverlauf bleibt erhalten.",
+    "expiredLabel": "Bild abgelaufen"
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",

@@ -714,7 +714,8 @@
     "refundedNote": "{cost} kredi iade edildi",
     "retryWithCost": "Yeniden dene · {cost} kredi",
     "confirmDeleteTitle": "Bu görsel silinsin mi?",
-    "confirmDeleteBody": "Izgaradan kaldırılır. Üretim geçmişi korunur."
+    "confirmDeleteBody": "Izgaradan kaldırılır. Üretim geçmişi korunur.",
+    "expiredLabel": "Görsel süresi doldu"
   },
   "Relaunch": {
     "relaunch": "Analizi yeniden başlat",

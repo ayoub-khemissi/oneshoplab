@@ -713,7 +713,8 @@
     "refundedNote": "{cost} クレジットを返金",
     "retryWithCost": "再試行 · {cost} クレジット",
     "confirmDeleteTitle": "この画像を削除しますか？",
-    "confirmDeleteBody": "グリッドから削除されます。生成履歴は保持されます。"
+    "confirmDeleteBody": "グリッドから削除されます。生成履歴は保持されます。",
+    "expiredLabel": "画像の保存期限切れ"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",

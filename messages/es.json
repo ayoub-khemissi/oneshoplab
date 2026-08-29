@@ -714,7 +714,8 @@
     "refundedNote": "{cost} créditos reembolsados",
     "retryWithCost": "Reintentar · {cost} créditos",
     "confirmDeleteTitle": "¿Eliminar esta imagen?",
-    "confirmDeleteBody": "Se eliminará de la cuadrícula. El historial de generación se conserva."
+    "confirmDeleteBody": "Se eliminará de la cuadrícula. El historial de generación se conserva.",
+    "expiredLabel": "Imagen caducada"
   },
   "Relaunch": {
     "relaunch": "Relanzar análisis",

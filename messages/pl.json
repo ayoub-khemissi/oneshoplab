@@ -714,7 +714,8 @@
     "refundedNote": "Zwrócono: {cost} kredytów",
     "retryWithCost": "Ponów · {cost} kredytów",
     "confirmDeleteTitle": "Usunąć ten obraz?",
-    "confirmDeleteBody": "Zostanie usunięty z siatki. Historia generowania pozostaje zachowana."
+    "confirmDeleteBody": "Zostanie usunięty z siatki. Historia generowania pozostaje zachowana.",
+    "expiredLabel": "Obraz wygasł"
   },
   "Relaunch": {
     "relaunch": "Wznów analizę",

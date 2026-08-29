@@ -15,7 +15,8 @@ import { deleteByKey, keyFromPublicUrl } from '@/lib/storage';
  *   1. Deletes the R2 objects (frees storage).
  *   2. Clears `persistedUrls` / `resultUrls` on the jobs row so the
  *      UI knows there's nothing to render anymore.
- *   3. Stamps `expiredAt` on the row — the row STAYS so the merchant's
+ *   3. Stamps `expiredAt` on the row — the row STAYS (history, showcase,
+ *      ledger) but listProductImageJobs excludes expired rows so the
  *      past-generations history keeps a tombstone explaining when each
  *      image expired (live grid already filters on hiddenAt to hide
  *      these from the active workspace).

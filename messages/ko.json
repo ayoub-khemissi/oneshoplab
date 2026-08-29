@@ -713,7 +713,8 @@
     "refundedNote": "{cost} 크레딧 환불됨",
     "retryWithCost": "재시도 · {cost} 크레딧",
     "confirmDeleteTitle": "이 이미지를 삭제하시겠습니까?",
-    "confirmDeleteBody": "그리드에서 제거됩니다. 생성 기록은 유지됩니다."
+    "confirmDeleteBody": "그리드에서 제거됩니다. 생성 기록은 유지됩니다.",
+    "expiredLabel": "이미지 보관 기간 만료"
   },
   "Relaunch": {
     "relaunch": "분석 다시 실행",

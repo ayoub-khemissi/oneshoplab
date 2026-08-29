@@ -714,7 +714,8 @@
     "refundedNote": "{cost} crediti rimborsati",
     "retryWithCost": "Riprova · {cost} crediti",
     "confirmDeleteTitle": "Eliminare questa immagine?",
-    "confirmDeleteBody": "Sarà rimossa dalla griglia. La cronologia di generazione viene preservata."
+    "confirmDeleteBody": "Sarà rimossa dalla griglia. La cronologia di generazione viene preservata.",
+    "expiredLabel": "Immagine scaduta"
   },
   "Relaunch": {
     "relaunch": "Rilancia analisi",

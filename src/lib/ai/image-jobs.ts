@@ -22,7 +22,13 @@ export async function listProductImageJobs(
     where: and(
       eq(jobs.projectId, projectId),
       eq(jobs.kind, 'kie_image_edit'),
-      isNull(jobs.hiddenAt)
+      isNull(jobs.hiddenAt),
+      // Retention-expired generations (r2-cleanup stamped expiredAt and
+      // dropped the R2 object) have nothing to show and no action to
+      // offer — the merchant already applied them to the product if they
+      // wanted them. Showing them rendered as red "failed" tiles with no
+      // buttons (bug reported 2026-08-29).
+      isNull(jobs.expiredAt)
     ),
     orderBy: [desc(jobs.createdAt)],
     limit: 50
@@ -33,7 +39,15 @@ export async function listProductImageJobs(
   return rows
     .filter((r) => {
       const input = r.inputPayload as { productSourceId?: string } | null;
-      return input?.productSourceId === productSourceId;
+      if (input?.productSourceId !== productSourceId) return false;
+      // Legacy rows completed before R2 persistence existed (or whose
+      // image was purged without an expiredAt stamp) carry no URL — same
+      // treatment as expired: nothing to render, nothing to act on.
+      if (r.status === 'completed') {
+        const result = r.result as { persistedUrls?: string[] } | null;
+        return Boolean(result?.persistedUrls?.[0]);
+      }
+      return true;
     })
     .map(toImageJobRow)
     .reverse();
