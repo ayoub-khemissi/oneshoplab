@@ -65,6 +65,53 @@ const eslintConfig = [
       'max-lines': ['warn', { max: 600, skipBlankLines: true, skipComments: true }]
     }
   },
+  // Import boundaries (all already respected on 2026-08-29; these rules only
+  // keep it that way). Direction: app → components → lib; worker → lib.
+  {
+    files: ['src/components/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/db', '@/lib/db/*'],
+              message:
+                'Components never touch the database — load in the page/server action, pass props.'
+            },
+            { group: ['@/worker/*'], message: 'Worker code is not importable from the UI.' },
+            { group: ['@/app/*'], message: 'Components must not depend on routes.' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/lib/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/components/*', '@/app/*'],
+              message: 'lib/ is the bottom layer — it must not import UI or routes.'
+            },
+            { group: ['@/worker/*'], message: 'lib/ must not depend on the worker entry.' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/worker/**/*.{ts,mts}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['@/components/*', '@/app/*'], message: 'The worker has no UI.' }] }
+      ]
+    }
+  },
   {
     // Worker + server-only libs log operational lines with console.log on
     // purpose (PM2 captures stdout); they are not UI code.

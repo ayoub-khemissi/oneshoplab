@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { persistKieJobFailure, persistKieJobSuccess } from '@/lib/ai';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 
 interface CallbackBody {
   code?: number;
@@ -84,10 +85,16 @@ export async function POST(req: Request) {
 
   // Intermediate states (waiting / queuing / generating) — promote pending → running.
   if (job.status === 'pending') {
-    await db
-      .update(jobs)
-      .set({ status: 'running', startedAt: new Date() })
-      .where(eq(jobs.id, job.id));
+    const r = await transitionJob(
+      db,
+      job.id,
+      'running',
+      { startedAt: new Date() },
+      { tolerate: true }
+    );
+    if (r === 'refused') {
+      console.warn(`[kie-callback] job ${job.id}: pending → running refused (already moved)`);
+    }
   }
 
   return NextResponse.json({ ok: true, status: 'running' });

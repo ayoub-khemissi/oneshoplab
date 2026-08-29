@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import {
   buildKieCallbackUrl,
@@ -346,13 +347,10 @@ async function startProductImageJob(opts: StartImageJobOptions): Promise<void> {
       ...(callBackUrl ? { callBackUrl } : {})
     });
 
-    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, jobId));
+    await transitionJob(db, jobId, 'running', { kieTaskId: taskId });
   } catch (e) {
     const message = (e as Error).message;
-    await db
-      .update(jobs)
-      .set({ status: 'failed', error: message, finishedAt: new Date() })
-      .where(eq(jobs.id, jobId));
+    await transitionJob(db, jobId, 'failed', { error: message });
   }
 }
 
@@ -437,16 +435,19 @@ export async function regenerateProductSection(opts: {
       ''
   };
 
-  await db
-    .update(jobs)
-    .set({
-      result: merged,
-      status: 'completed',
-      error: null,
-      finishedAt: new Date(),
-      creditsCost: (existingJob.creditsCost ?? 0) + creditsConsumed
-    })
-    .where(eq(jobs.id, existingJob.id));
+  const patch = {
+    result: merged,
+    error: null,
+    finishedAt: new Date(),
+    creditsCost: (existingJob.creditsCost ?? 0) + creditsConsumed
+  };
+  if (existingJob.status === 'completed') {
+    // Section regen on an already-completed base job: the status doesn't
+    // change, only the merged result — no transition to guard.
+    await db.update(jobs).set(patch).where(eq(jobs.id, existingJob.id));
+  } else {
+    await transitionJob(db, existingJob.id, 'completed', patch);
+  }
 
   return { ok: true };
 }

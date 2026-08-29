@@ -4,6 +4,7 @@ import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits'
 import { persistKieJobFailure } from './persist-result';
 import { db } from '@/lib/db';
 import { jobs, products, users } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 import { buildKieCallbackUrl, getKieClient } from './kie';
 import { costForImage, getImageModel, type ImageQualityId } from './models';
 
@@ -111,7 +112,7 @@ export async function startImageOptim(
       ...(callBackUrl ? { callBackUrl } : {})
     });
 
-    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, jobId));
+    await transitionJob(db, jobId, 'running', { kieTaskId: taskId });
 
     return { jobId, kieTaskId: taskId, creditsHeld: cost };
   } catch (e) {

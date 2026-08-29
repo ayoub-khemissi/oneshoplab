@@ -12,6 +12,7 @@ import {
 } from './ai/models';
 import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from './ai/pricing';
 import { launchAuditForUser } from './audit/launch';
+import { touchProjectLastView as touchLastView } from './projects/touch-last-view';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, hashPassword, signOut } from './auth';
 import { db } from './db';
@@ -80,12 +81,7 @@ export async function updateUserPreferencesAction(formData: FormData): Promise<v
  * page render shouldn't blow up on an auth glitch).
  */
 export async function touchProjectLastView(projectId: string): Promise<void> {
-  const session = await auth();
-  if (!session?.user?.id) return;
-  await db
-    .update(projects)
-    .set({ lastViewedAt: new Date() })
-    .where(and(eq(projects.id, projectId), eq(projects.userId, session.user.id)));
+  return touchLastView(projectId);
 }
 
 /**

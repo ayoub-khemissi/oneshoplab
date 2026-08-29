@@ -93,3 +93,22 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
   ships with a test; a credit-cost change must update
   `tests/unit/__snapshots__/pricing.test.ts.snap` in the same commit.
 - Gates: pre-push and CI run the full suite (CI uses a `mysql:8.0` service).
+
+## Job status transitions
+
+`jobs.status` is written in ONE place: `transitionJob()` in
+`src/lib/jobs/transitions.ts` — a guarded `UPDATE … WHERE status IN (allowed
+sources)`. Never `db.update(jobs).set({ status })` directly. Options:
+`{ tolerate: true }` for best-effort callers (watchdogs, late kie callbacks —
+log the `'refused'` result), `{ force }` for a user-driven retry of a
+completed job. Inserts may still set an initial `pending`/`running`/`completed`
+status. Allowed moves are unit-tested (`tests/unit/job-transitions.test.ts`)
+and the guard is DB-tested (`tests/db/job-transitions.test.ts`).
+
+## Import boundaries
+
+Enforced by ESLint `no-restricted-imports` (see `eslint.config.mjs`):
+app → components → lib; worker → lib. `src/components` never imports
+`@/lib/db`, `@/worker`, `@/app`; `src/lib` never imports `@/components`,
+`@/app`, `@/worker`; the worker never imports UI. `pnpm deps:circular` (madge)
+fails on any import cycle — it is part of `pnpm check` and CI.

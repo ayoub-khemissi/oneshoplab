@@ -1,8 +1,9 @@
-import { and, eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, products, projects, type JobKind } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 import { notify } from '@/lib/notifications';
 import { isR2Configured, uploadFromUrl } from '@/lib/storage';
 import { generateFallbackImage, isImageFallbackConfigured } from './image-fallback';
@@ -119,14 +120,11 @@ export async function persistKieJobSuccess(
   // and any future caller could miss the check — and a late kie webhook
   // arriving after a user-cancelled job (already failed + refunded) must
   // NOT silently re-enable a job whose credits have already been refunded.
-  await db
-    .update(jobs)
-    .set({
-      status: 'completed',
-      result: parsed,
-      finishedAt: new Date()
-    })
-    .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
+  const r = await transitionJob(db, jobId, 'completed', { result: parsed }, { tolerate: true });
+  if (r === 'refused') {
+    console.warn(`[persist-result] job ${jobId}: → completed refused (already terminal)`);
+    return;
+  }
 
   if (isImageJob(jobKind)) {
     await emitImageNotification(jobId, 'image_completed', null);
@@ -216,10 +214,10 @@ export async function persistKieJobFailure(
   if (!job) return;
   if (job.status !== 'pending' && job.status !== 'running') return;
 
-  await db
-    .update(jobs)
-    .set({ status: 'failed', error: errorText, finishedAt: new Date() })
-    .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
+  const r = await transitionJob(db, jobId, 'failed', { error: errorText }, { tolerate: true });
+  if (r === 'refused') {
+    console.warn(`[persist-result] job ${jobId}: → failed refused (already terminal)`);
+  }
 
   if (!isImageJob(jobKind)) return;
 
@@ -266,12 +264,12 @@ async function tryImageFallback(
       string,
       unknown
     >;
-    await db
-      .update(jobs)
-      .set({
-        status: 'completed',
+    const res = await transitionJob(
+      db,
+      jobId,
+      'completed',
+      {
         error: null,
-        finishedAt: new Date(),
         result: {
           ...prev,
           resultUrls: [],
@@ -281,8 +279,14 @@ async function tryImageFallback(
           providerUnitsConsumed: r.providerUnits,
           fallbackFrom: originalError.slice(0, 200)
         }
-      })
-      .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
+      },
+      { tolerate: true }
+    );
+    if (res === 'refused') {
+      console.warn(
+        `[persist-result] job ${jobId}: fallback → completed refused (already terminal)`
+      );
+    }
     console.warn(
       `[persist-result] image job ${jobId} rescued by fallback ${r.model} (kie: ${originalError.slice(0, 80)})`
     );

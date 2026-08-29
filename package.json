@@ -21,7 +21,7 @@
     "i18n:check": "node scripts/check-i18n.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm test && pnpm audit:prod",
+    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm deps:circular && pnpm test && pnpm audit:prod",
     "prepare": "husky",
     "deploy": "bash scripts/deploy.sh",
     "backup": "bash scripts/backup/backup-mysql.sh",
@@ -30,7 +30,8 @@
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:db": "vitest run tests/db",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deps:circular": "madge --extensions ts,tsx --ts-config tsconfig.json --circular src"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
@@ -68,6 +69,7 @@
     "eslint-plugin-unused-imports": "^4.4.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
+    "madge": "^8.0.0",
     "postcss": "^8.5.26",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.0.0",

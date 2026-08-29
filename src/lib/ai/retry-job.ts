@@ -2,6 +2,7 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { getEffectiveLanguage } from '@/lib/audit/language';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { chatCompletion } from './chat-provider';
 import { buildKieCallbackUrl, getKieClient } from './kie';
@@ -65,8 +66,8 @@ export async function retryJob(
     return { ok: false, reason: 'in_flight', message: `Currently ${job.status}` };
   }
 
-  if (job.kind === 'kie_image_edit') return retryImageEditJob(job);
-  if (job.kind === 'kie_dynamic_audit') return retryDynamicAuditJob(job);
+  if (job.kind === 'kie_image_edit') return retryImageEditJob(job, options);
+  if (job.kind === 'kie_dynamic_audit') return retryDynamicAuditJob(job, options);
 
   return { ok: false, reason: 'unsupported_kind', message: job.kind };
 }
@@ -102,7 +103,7 @@ export async function regenerateProductJobs(
   return { regenerated, skipped };
 }
 
-async function retryImageEditJob(job: JobRow): Promise<RetryResult> {
+async function retryImageEditJob(job: JobRow, options: { force?: boolean }): Promise<RetryResult> {
   const input = (job.inputPayload ?? null) as {
     sourceImageUrl?: string;
     userPrompt?: string;
@@ -111,17 +112,20 @@ async function retryImageEditJob(job: JobRow): Promise<RetryResult> {
     return { ok: false, reason: 'missing_input' };
   }
 
-  await db
-    .update(jobs)
-    .set({
-      status: 'pending',
+  await transitionJob(
+    db,
+    job.id,
+    'pending',
+    {
       error: null,
       kieTaskId: null,
       finishedAt: null,
       startedAt: new Date(),
-      attempts: sql`${jobs.attempts} + 1`
-    })
-    .where(eq(jobs.id, job.id));
+      // Atomic increment; the patch type is the insert shape, hence the cast.
+      attempts: sql`${jobs.attempts} + 1` as unknown as number
+    },
+    { force: options.force }
+  );
 
   try {
     const kie = getKieClient();
@@ -136,19 +140,19 @@ async function retryImageEditJob(job: JobRow): Promise<RetryResult> {
       },
       ...(callBackUrl ? { callBackUrl } : {})
     });
-    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, job.id));
+    await transitionJob(db, job.id, 'running', { kieTaskId: taskId });
     return { ok: true, status: 'running' };
   } catch (e) {
     const message = (e as Error).message;
-    await db
-      .update(jobs)
-      .set({ status: 'failed', error: message, finishedAt: new Date() })
-      .where(eq(jobs.id, job.id));
+    await transitionJob(db, job.id, 'failed', { error: message });
     return { ok: false, reason: 'kie_failed', message };
   }
 }
 
-async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
+async function retryDynamicAuditJob(
+  job: JobRow,
+  options: { force?: boolean }
+): Promise<RetryResult> {
   if (!job.auditId) return { ok: false, reason: 'no_audit_link' };
 
   const audit = await db.query.audits.findFirst({ where: eq(audits.id, job.auditId) });
@@ -165,17 +169,20 @@ async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
   const product = summary.latestProducts?.find((p) => p.sourceId === input.productSourceId);
   if (!product) return { ok: false, reason: 'product_not_in_summary' };
 
-  await db
-    .update(jobs)
-    .set({
-      status: 'pending',
+  await transitionJob(
+    db,
+    job.id,
+    'pending',
+    {
       error: null,
       result: null,
       finishedAt: null,
       startedAt: new Date(),
-      attempts: sql`${jobs.attempts} + 1`
-    })
-    .where(eq(jobs.id, job.id));
+      // Atomic increment; the patch type is the insert shape, hence the cast.
+      attempts: sql`${jobs.attempts} + 1` as unknown as number
+    },
+    { force: options.force }
+  );
 
   // Re-resolve language from the project override (or audit detection) at
   // retry time, not from the stored payload. An override set after the
@@ -227,24 +234,16 @@ Output the JSON object only, no other text.`;
     const text = response.text;
     const parsed = parseStructuredJson(text);
 
-    await db
-      .update(jobs)
-      .set({
-        status: parsed ? 'completed' : 'failed',
-        result: parsed ? { ...parsed, productSourceId: input.productSourceId } : null,
-        error: parsed ? null : 'Could not parse Claude response as expected JSON.',
-        creditsCost: response.creditsConsumed,
-        finishedAt: new Date()
-      })
-      .where(eq(jobs.id, job.id));
+    await transitionJob(db, job.id, parsed ? 'completed' : 'failed', {
+      result: parsed ? { ...parsed, productSourceId: input.productSourceId } : null,
+      error: parsed ? null : 'Could not parse Claude response as expected JSON.',
+      creditsCost: response.creditsConsumed
+    });
 
     return parsed ? { ok: true, status: 'completed' } : { ok: false, reason: 'parse_failed' };
   } catch (e) {
     const message = (e as Error).message;
-    await db
-      .update(jobs)
-      .set({ status: 'failed', error: message, finishedAt: new Date() })
-      .where(eq(jobs.id, job.id));
+    await transitionJob(db, job.id, 'failed', { error: message });
     return { ok: false, reason: 'kie_failed', message };
   }
 }

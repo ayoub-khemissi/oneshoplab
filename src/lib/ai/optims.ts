@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, products, type JobKind } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { notify } from '@/lib/notifications';
 import { chatCompletion } from './chat-provider';
@@ -123,14 +124,7 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     // spinning forever and the user sees the failure state on next
     // refresh. Error message stays raw in the DB for ops debugging;
     // the user-facing layer sanitises before display.
-    await db
-      .update(jobs)
-      .set({
-        status: 'failed',
-        error: (e as Error).message,
-        finishedAt: new Date()
-      })
-      .where(eq(jobs.id, jobId));
+    await transitionJob(db, jobId, 'failed', { error: (e as Error).message });
     // Log the failure to the notification stream. isRead=false because
     // we don't know yet whether the user sees a toast — if the route
     // handler returns to a still-mounted client the toast WILL fire
@@ -155,21 +149,17 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
   const debit = estimateChatCredits(model.id, opts.field);
   const now = new Date();
 
-  await db
-    .update(jobs)
-    .set({
-      status: 'completed',
-      result: {
-        output,
-        raw: text,
-        providerUnitsConsumed: response.creditsConsumed,
-        provider: response.provider,
-        providerModel: response.model
-      },
-      creditsCost: debit,
-      finishedAt: now
-    })
-    .where(eq(jobs.id, jobId));
+  await transitionJob(db, jobId, 'completed', {
+    result: {
+      output,
+      raw: text,
+      providerUnitsConsumed: response.creditsConsumed,
+      provider: response.provider,
+      providerModel: response.model
+    },
+    creditsCost: debit,
+    finishedAt: now
+  });
 
   if (debit > 0) {
     await applyCreditTransaction({

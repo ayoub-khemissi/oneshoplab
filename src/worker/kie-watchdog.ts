@@ -9,6 +9,7 @@ import {
 import { buildKieCallbackUrl, type KieClient } from '@/lib/ai/kie';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
+import { transitionJob } from '@/lib/jobs/transitions';
 
 // Time before we start polling kie directly when no webhook came in.
 // 30s gives the webhook a brief head start; in dev (localhost callback
@@ -181,11 +182,18 @@ async function retryCreateImagePending(
       },
       ...(callBackUrl ? { callBackUrl } : {})
     });
-    await db
-      .update(jobs)
-      .set({ kieTaskId: taskId, status: 'running', startedAt: new Date() })
-      .where(eq(jobs.id, job.id));
-    console.log(`[kie-watchdog] orphan ${job.id} recovered → kie task ${taskId}`);
+    const r = await transitionJob(
+      db,
+      job.id,
+      'running',
+      { kieTaskId: taskId, startedAt: new Date() },
+      { tolerate: true }
+    );
+    if (r === 'refused') {
+      console.warn(`[kie-watchdog] orphan ${job.id}: pending → running refused (already moved)`);
+    } else {
+      console.log(`[kie-watchdog] orphan ${job.id} recovered → kie task ${taskId}`);
+    }
   } catch (e) {
     // Couldn't reach kie — leave the row pending. The giveup branch
     // will refund the user once the 5-min cutoff lapses. We don't fail

@@ -47,3 +47,18 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   (`persist-result`, `retry-job`, `optims`, `dynamic-audit`, watchdogs…); to
   test it, first extract a single `transitionJob(from → to)` helper (Phase 3).
 - Also: encrypted MySQL backups + weekly restore drill (see GUIDELINES → Backups).
+
+## 2026-08-29 — Phase 3 (structure)
+
+- `transitionJob()` is the single writer of `jobs.status` (17 call sites
+  migrated in 8 files); +10 tests.
+- Split: `dashboard/sites/[siteId]/page.tsx` 1582 → 7 files (max 482),
+  `products/[id]/page.tsx` 989 → 8 files (max 269),
+  `components/bulk-generate-section.tsx` 1206 → 6 files (max 420),
+  `lib/bulk/site-generate.ts` 1152 → see `src/lib/bulk/`.
+- Import boundaries enforced (no-restricted-imports) + `pnpm deps:circular`
+  (1 cycle found and broken: auth-actions ↔ audit/launch).
+- Still > 600 lines (next candidates): `retryable-generate.tsx` 780,
+  `db/schema.ts` 751 (leave — one schema file is deliberate), `leads/discovery.ts`
+  717, `ai-image-grid-live.tsx` 675, `share/queries.ts` 636, `share-links-card.tsx` 626.
+  `max-lines` stays a warning until those are done.

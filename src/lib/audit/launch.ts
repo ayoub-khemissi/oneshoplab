@@ -1,6 +1,6 @@
 import { and, desc, eq, gt, isNotNull, isNull } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { touchProjectLastView } from '@/lib/auth-actions';
+import { touchProjectLastView } from '@/lib/projects/touch-last-view';
 import { db } from '@/lib/db';
 import { audits, projects } from '@/lib/db/schema';
 import { processAudit } from './process';
