@@ -983,7 +983,7 @@
     "q09q": "¿En qué idiomas puedo generar contenido?",
     "q09a": "La interfaz se ofrece en 13 idiomas, y puedes fijar el idioma de salida por sitio: útil para tiendas multilingües donde el sitio en francés necesita textos en francés y el sitio en alemán los necesita en alemán.",
     "q10q": "¿Mis datos están a salvo? ¿Los usan para entrenar modelos?",
-    "q10a": "Nuestra base de datos y aplicación web se ejecutan en OVH en Francia (UE); las imágenes se almacenan en Cloudflare R2. Los prompts se enrutan a través de kie.ai hacia Anthropic / Google / OpenAI bajo acuerdos de no entrenamiento (los proveedores pueden retener los prompts hasta 30 días, solo para prevención de abusos). Lista completa de sub-procesadores en nuestra página de Privacidad.",
+    "q10a": "Nuestra base de datos y aplicación web se ejecutan en OVH en Francia (UE); las imágenes se almacenan en Cloudflare R2. Los prompts se enrutan a través de {aiGateways} hacia {aiProviders} bajo acuerdos de no entrenamiento (los proveedores pueden retener los prompts hasta 30 días, solo para prevención de abusos). Lista completa de sub-procesadores en nuestra página de Privacidad.",
     "q11q": "¿Necesito saber prompt engineering?",
     "q11a": "No. Los prompts por defecto están ajustados por modelo y por campo (título, descripción, tags, imágenes). El campo opcional de voz de marca son instrucciones en lenguaje natural: escritas como si dieras un briefing a un redactor.",
     "q12q": "¿Cuánto tarda una auditoría?",

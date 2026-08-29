@@ -1,3 +1,5 @@
+import { aiSubProcessors } from '@/lib/ai/models';
+import { getAppContactEmail } from '@/lib/app-contact';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
@@ -32,8 +34,8 @@ export async function generateMetadata({
   };
 }
 
-const LAST_UPDATED = 'May 10, 2026';
-const CONTACT_EMAIL = 'contact@oneshoplab.com';
+const LAST_UPDATED = 'August 29, 2026';
+const CONTACT_EMAIL = getAppContactEmail();
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
 const GOVERNING_LAW = 'French law';
@@ -147,6 +149,32 @@ export default function TermsOfServicePage() {
           Free plan and your subscription bucket will not be replenished.
         </p>
 
+        <p>
+          <strong>Right of withdrawal (consumers).</strong> If you subscribe
+          as a consumer within the European Union, you acknowledge that the
+          Service starts immediately after purchase and that, by requesting
+          immediate access, you expressly waive your 14-day right of
+          withdrawal for the digital content and services already provided,
+          in accordance with applicable consumer law. Business customers
+          are not covered by the right of withdrawal.
+        </p>
+        <p>
+          <strong>Generated files retention.</strong> AI-generated images are
+          stored for a period that depends on your plan (as displayed in the
+          Service next to each image and on the pricing page) and are then
+          deleted automatically; the credits spent on them are not refunded
+          on expiry. Content you have applied to a product is copied to that
+          product and remains available as long as the product exists.
+        </p>
+        <p>
+          <strong>Failed generations.</strong> When a generation fails for a
+          reason attributable to us or to our providers, the credits
+          reserved for it are refunded automatically. We may fulfil a
+          generation through an alternative AI provider when our primary
+          provider is unavailable; the price in credits shown before the
+          generation applies regardless of the provider used.
+        </p>
+
         <h2>4. Free Tier</h2>
         <p>
           The Free plan grants a one-time welcome allowance of credits to
@@ -247,18 +275,21 @@ export default function TermsOfServicePage() {
         <h2>8. Third-Party AI Providers and Services</h2>
         <p>
           The Service relies on third-party providers, including but not
-          limited to: kie.ai (AI generation gateway), Anthropic (Claude),
-          Google (Gemini for text generation, Google Sign-In, and
-          reCAPTCHA anti-bot verification), OpenAI (image generation),
-          Stripe (payments), Cloudflare (object storage and DNS), Brevo
-          (transactional email), and OVH (hosting). Their availability,
+          limited to: {aiSubProcessors()
+            .map((s) => `${s.entity} (${s.role})`)
+            .join('; ')}; Google (Google Sign-In and reCAPTCHA anti-bot
+          verification), Stripe (payments), Cloudflare (object storage and
+          DNS), Brevo (transactional email), and OVH (hosting). Their availability,
           pricing, and policies may change. Where their terms flow down
           to you (for example, Stripe&apos;s acceptable-use policy or
           Google&apos;s reCAPTCHA terms when you complete the signup
           challenge), you agree to comply with them. We are not
           responsible for outages or actions of these providers, but we
           will use commercially reasonable efforts to mitigate their
-          impact on the Service.
+          impact on the Service. The list of AI gateways and model providers
+          in use at any time, and their roles, is published in our Privacy
+          Policy; we may add, replace or use providers as fallbacks without
+          notice when this does not reduce the protection of your data.
         </p>
 
         <h2>9. Intellectual Property</h2>

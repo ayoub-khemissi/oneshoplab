@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { getAppContactEmail } from '@/lib/app-contact';
 
 /**
  * Cold-outreach mailer. Separate from `src/lib/mailer.ts` (transactional
@@ -65,7 +66,7 @@ export async function sendColdMail(
     return { ok: false, reason: 'unconfigured' };
   }
 
-  const fromEmail = process.env.COLD_SMTP_FROM_EMAIL ?? 'contact@get-oneshoplab.com';
+  const fromEmail = process.env.COLD_SMTP_FROM_EMAIL ?? getAppContactEmail();
   const fromName = process.env.COLD_SMTP_FROM_NAME ?? 'Youbi';
 
   const headers: Record<string, string> = {};

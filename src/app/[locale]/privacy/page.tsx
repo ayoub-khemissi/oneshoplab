@@ -1,3 +1,5 @@
+import { aiProviderNamesForCopy, aiSubProcessors } from '@/lib/ai/models';
+import { getAppContactEmail } from '@/lib/app-contact';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
@@ -30,8 +32,8 @@ export async function generateMetadata({
   };
 }
 
-const LAST_UPDATED = 'June 16, 2026';
-const CONTACT_EMAIL = 'contact@oneshoplab.com';
+const LAST_UPDATED = 'August 29, 2026';
+const CONTACT_EMAIL = getAppContactEmail();
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
 
@@ -242,6 +244,19 @@ export default function PrivacyPolicyPage() {
           .
         </p>
 
+        <h3>1.10 Contact form</h3>
+        <p>
+          When you write to us through the contact form, we collect your
+          name, email address, optional subject, message, preferred
+          language, IP address and browser signature (the last two solely
+          to prevent abuse), and, if you are signed in, your account
+          identifier. Messages are stored on our servers and forwarded to
+          our support mailbox and to a <strong>private, staff-only channel
+          on our Discord server</strong> through our own bot, so that we can
+          answer quickly. Discord Inc. therefore processes the content of
+          your message as described in Section 4.
+        </p>
+
         <h2>2. How We Use Your Data</h2>
         <p>We use the categories above to:</p>
         <ul>
@@ -298,6 +313,17 @@ export default function PrivacyPolicyPage() {
             business. We balance these against your rights and interests.
           </li>
           <li>
+            <strong>Pre-contractual steps and legitimate interest</strong>{' '}
+            — to answer messages you send us through the contact form and
+            to keep a record of that correspondence.
+          </li>
+          <li>
+            <strong>Legitimate interest (B2B prospecting)</strong> — to
+            contact professionals whose online store we have identified
+            from public sources about a service relevant to their business,
+            with an opposition mechanism in every message (see Section 10).
+          </li>
+          <li>
             <strong>Legal obligation</strong> — to comply with tax,
             accounting, anti-fraud, and other applicable laws.
           </li>
@@ -342,26 +368,26 @@ export default function PrivacyPolicyPage() {
               <td>Object storage (R2) and DNS</td>
               <td>Global (EU edge available)</td>
             </tr>
+            {aiSubProcessors().map((sp) => (
+              <tr key={sp.entity}>
+                <td>{sp.entity}</td>
+                <td>
+                  {sp.role}
+                  {sp.entity === 'Google LLC'
+                    ? '; Google Sign-In (OAuth, optional sign-in method); Google reCAPTCHA (anti-bot verification on signup and the free-audit page); Google Analytics 4 (aggregate audience measurement, only with your consent)'
+                    : null}
+                </td>
+                <td>{sp.location}</td>
+              </tr>
+            ))}
             <tr>
-              <td>kie.ai</td>
-              <td>AI gateway, routing prompts to model providers</td>
-              <td>USA</td>
-            </tr>
-            <tr>
-              <td>Anthropic, PBC</td>
-              <td>Claude (text generation), via kie.ai</td>
-              <td>USA</td>
-            </tr>
-            <tr>
-              <td>Google LLC</td>
+              <td>Discord Inc.</td>
               <td>
-                Gemini (text generation, via kie.ai); Google Sign-In
-                (OAuth, optional sign-in method); Google reCAPTCHA
-                (anti-bot verification on signup and the free-audit
-                page); Google Analytics 4 (aggregate audience
-                measurement, only with your consent)
+                Delivery of contact-form messages to a private, staff-only
+                channel of our Discord server (via our own bot), so support
+                requests are seen immediately
               </td>
-              <td>USA / EU</td>
+              <td>USA</td>
             </tr>
             <tr>
               <td>Meta Platforms Ireland Limited</td>
@@ -371,11 +397,6 @@ export default function PrivacyPolicyPage() {
                 joint/independent controller for the events it receives.
               </td>
               <td>Ireland (EU) / USA</td>
-            </tr>
-            <tr>
-              <td>OpenAI, L.L.C.</td>
-              <td>gpt-image (image generation), via kie.ai</td>
-              <td>USA</td>
             </tr>
             <tr>
               <td>Sendinblue SAS (Brevo)</td>
@@ -444,6 +465,23 @@ export default function PrivacyPolicyPage() {
             consent and retained for the period configured in our Google
             Analytics 4 property (by default up to 14 months for
             user-level records), then automatically deleted by Google.
+          </li>
+          <li>
+            <strong>AI-generated images</strong>: kept in our storage for
+            a period that depends on your plan (currently 30 days on Free
+            and Starter, 60 days on Pro, 90 days on Scale), then deleted
+            automatically. Images you have applied to a product are copied
+            to that product and kept as long as the product exists.
+          </li>
+          <li>
+            <strong>Contact-form messages</strong>: 24 months after the
+            last exchange, then deleted.
+          </li>
+          <li>
+            <strong>Prospecting data (non-users)</strong>: until you
+            object, or 12 months after our last message if there was no
+            interaction; opposition requests are kept as a suppression
+            record so we do not contact you again.
           </li>
           <li>
             <strong>Advertising / conversion data (Meta Pixel)</strong>:
@@ -523,8 +561,9 @@ export default function PrivacyPolicyPage() {
         <h2>9. AI-Specific Disclosures</h2>
         <p>
           The Service routes your prompts and selected Input Content to
-          third-party AI providers (currently kie.ai, which proxies to
-          Anthropic, Google, and OpenAI). Those providers process your
+          third-party AI providers (currently through the gateways{' '}
+          {aiProviderNamesForCopy().aiGateways}, which forward them to{' '}
+          {aiProviderNamesForCopy().aiProviders}). Those providers process your
           input to generate the requested output. Per our agreements with
           these providers and their public policies:
         </p>
@@ -549,7 +588,28 @@ export default function PrivacyPolicyPage() {
           have a valid legal basis to do so.
         </p>
 
-        <h2>10. Children</h2>
+        <h2>10. Business Prospecting (Non-Users)</h2>
+        <p>
+          We may contact <strong>professionals</strong> who operate an online
+          store, in their professional capacity, to present the Service. For
+          this purpose we process: the store&apos;s domain and public product
+          catalogue, the platform it runs on, a generic or professional
+          contact email published on the store or in public business
+          directories, the preferred language of the store, and an
+          automated quality score computed from the public storefront. This
+          data comes from <strong>public sources</strong> (the storefront
+          itself, e-commerce directories, search engines) — never from your
+          account with us. The legal basis is our legitimate interest in
+          promoting a service relevant to your business (Article 6(1)(f)
+          GDPR). Every message identifies us, states where the address was
+          found and contains a one-click <strong>opposition link</strong>;
+          opposing is immediate and permanent. We do not contact data
+          protection, legal or abuse mailboxes, and we do not sell or share
+          these lists. Prospecting emails are sent from a dedicated sending
+          domain distinct from the Service.
+        </p>
+
+        <h2>11. Children</h2>
         <p>
           The Service is not directed to individuals under 16 years of
           age, and we do not knowingly collect personal data from
@@ -558,7 +618,7 @@ export default function PrivacyPolicyPage() {
           it.
         </p>
 
-        <h2>11. Changes to This Policy</h2>
+        <h2>12. Changes to This Policy</h2>
         <p>
           We may update this Privacy Policy from time to time. When we
           make material changes, we will notify you by email or through a
@@ -567,7 +627,7 @@ export default function PrivacyPolicyPage() {
           the latest revision.
         </p>
 
-        <h2>12. Contact</h2>
+        <h2>13. Contact</h2>
         <p>
           For any privacy-related question or to exercise your rights,
           contact us at{' '}

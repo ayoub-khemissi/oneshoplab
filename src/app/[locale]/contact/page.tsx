@@ -60,24 +60,30 @@ export default async function ContactPage({
           form, which is why it isn't rendered from ContactForm itself. */}
       {recaptchaSiteKey ? <RecaptchaLegalNotice /> : null}
 
-      {discordUrl ? (
-        <p className="text-sm text-[var(--muted)]">
-          {t('altDiscord')}{' '}
-          <a
-            href={discordUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[var(--accent)] hover:underline underline-offset-2"
-          >
-            {t('altDiscordLink')}
-          </a>
+      {/* Desktop: Discord prompt left, privacy link right on one row.
+          Mobile: both centred, privacy on its own second line. */}
+      <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:items-baseline sm:justify-between sm:text-left">
+        {discordUrl ? (
+          <p className="text-sm text-[var(--muted)] m-0">
+            {t('altDiscord')}{' '}
+            <a
+              href={discordUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--accent)] hover:underline underline-offset-2"
+            >
+              {t('altDiscordLink')}
+            </a>
+          </p>
+        ) : (
+          <span />
+        )}
+        <p className="text-xs text-[var(--muted)] m-0">
+          <Link href="/privacy" className="hover:underline underline-offset-2">
+            {t('privacyLink')}
+          </Link>
         </p>
-      ) : null}
-      <p className="text-xs text-[var(--muted)]">
-        <Link href="/privacy" className="hover:underline underline-offset-2">
-          {t('privacyLink')}
-        </Link>
-      </p>
+      </div>
     </main>
   );
 }

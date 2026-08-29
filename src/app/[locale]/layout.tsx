@@ -10,6 +10,7 @@ import { CookieBanner } from '@/components/cookie-banner';
 import { GaRedirectEvents } from '@/components/ga-redirect-events';
 import { MetaPixel } from '@/components/meta-pixel';
 import { SiteFooter } from '@/components/site-footer';
+import { getAppContactEmail } from '@/lib/app-contact';
 import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
@@ -176,7 +177,7 @@ export default async function LocaleLayout({
               contactPoint: [
                 {
                   '@type': 'ContactPoint',
-                  email: 'contact@oneshoplab.com',
+                  email: getAppContactEmail(),
                   contactType: 'customer support',
                   availableLanguage: ['English', 'French']
                 }

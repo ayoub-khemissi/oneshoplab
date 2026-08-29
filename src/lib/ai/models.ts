@@ -422,7 +422,9 @@ export function modelNamesForCopy(): Record<
   | 'budgetProvider'
   | 'balancedProvider'
   | 'premiumProvider'
-  | 'imageProvider',
+  | 'imageProvider'
+  | 'aiGateways'
+  | 'aiProviders',
   string
 > {
   const fallback = CHAT_MODEL_REGISTRY[DEFAULT_CHAT_MODEL];
@@ -432,6 +434,7 @@ export function modelNamesForCopy(): Record<
   const balanced = byTier('balanced');
   const premium = byTier('premium');
   return {
+    ...aiProviderNamesForCopy(),
     budgetModel: budget.displayName,
     balancedModel: balanced.displayName,
     premiumModel: premium.displayName,
@@ -445,4 +448,75 @@ export function modelNamesForCopy(): Record<
     premiumProvider: premium.provider,
     imageProvider: IMAGE_MODEL.provider
   };
+}
+
+// ---------------------------------------------------------------------------
+// AI sub-processors (legal pages + FAQ), derived from the catalog
+// ---------------------------------------------------------------------------
+
+export interface AiSubProcessor {
+  /** Legal entity name as it should appear in the privacy policy. */
+  entity: string;
+  /** What it does for us, in plain English (legal pages are English-only). */
+  role: string;
+  location: string;
+}
+
+/** Static legal facts per model provider; the ROLE is derived from how the
+ *  catalog actually uses them, so the legal pages follow provider swaps. */
+const PROVIDER_LEGAL: Record<ChatModelInfo['provider'], { entity: string; location: string }> = {
+  Anthropic: { entity: 'Anthropic, PBC', location: 'USA' },
+  OpenAI: { entity: 'OpenAI, L.L.C.', location: 'USA' },
+  Google: { entity: 'Google LLC', location: 'USA / EU' }
+};
+
+const GATEWAY_OPENROUTER = { entity: 'OpenRouter, Inc.', location: 'USA' };
+const GATEWAY_KIE = { entity: 'kie.ai', location: 'USA' };
+
+/**
+ * The AI gateways and model providers currently in use, with their roles.
+ * OpenRouter is the primary text gateway (and hosts the image fallback);
+ * kie.ai is the primary image gateway (and the text fallback). Model
+ * providers are read from pricing.json so a catalog change updates the
+ * Terms, the Privacy sub-processor table and the FAQ in one move.
+ */
+export function aiSubProcessors(): AiSubProcessor[] {
+  const chatProviders = [...new Set(Object.values(CHAT_MODEL_REGISTRY).map((m) => m.provider))];
+  const imageProvider = IMAGE_MODEL.provider;
+  const fallbackProvider = IMAGE_FALLBACK_MODEL.provider;
+  const rows: AiSubProcessor[] = [
+    {
+      ...GATEWAY_OPENROUTER,
+      role: 'AI gateway routing text-generation prompts to model providers (primary), and hosting the image-generation fallback model'
+    },
+    {
+      ...GATEWAY_KIE,
+      role: 'AI gateway for image generation (primary), and text-generation fallback'
+    }
+  ];
+  const providerRoles = new Map<ChatModelInfo['provider'], string[]>();
+  const add = (p: ChatModelInfo['provider'], role: string) =>
+    providerRoles.set(p, [...(providerRoles.get(p) ?? []), role]);
+  for (const p of chatProviders) {
+    const names = [...new Set(Object.values(CHAT_MODEL_REGISTRY).filter((m) => m.provider === p).map((m) => m.displayName))];
+    add(p, `${names.join(', ')} (text generation), via OpenRouter / kie.ai`);
+  }
+  add(imageProvider, `${IMAGE_MODEL.modelName} (image generation), via kie.ai`);
+  add(fallbackProvider, `${IMAGE_FALLBACK_MODEL.displayName} (image generation fallback), via OpenRouter`);
+  for (const [p, roles] of providerRoles) {
+    rows.push({ ...PROVIDER_LEGAL[p], role: roles.join('; ') });
+  }
+  return rows;
+}
+
+/** Short strings for i18n placeholders: "{aiGateways}" / "{aiProviders}". */
+export function aiProviderNamesForCopy(): { aiGateways: string; aiProviders: string } {
+  const providers = [
+    ...new Set([
+      ...Object.values(CHAT_MODEL_REGISTRY).map((m) => m.provider),
+      IMAGE_MODEL.provider,
+      IMAGE_FALLBACK_MODEL.provider
+    ])
+  ];
+  return { aiGateways: 'OpenRouter / kie.ai', aiProviders: providers.join(' / ') };
 }

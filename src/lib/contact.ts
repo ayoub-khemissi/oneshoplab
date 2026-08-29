@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { contactMessages } from '@/lib/db/schema';
 import { postDiscordMessage, type DiscordChannel } from '@/lib/discord';
 import { sendMail } from '@/lib/mailer';
+import { getAppContactEmail } from '@/lib/app-contact';
 
 /**
  * Contact-form core, independent of Next request plumbing so it can be
@@ -54,7 +55,7 @@ export async function isContactRateLimited(email: string, ip: string | null | un
 }
 
 function inboxAddress(): string {
-  return process.env.CONTACT_INBOX_EMAIL ?? 'contact@get-oneshoplab.com';
+  return process.env.CONTACT_INBOX_EMAIL ?? getAppContactEmail();
 }
 
 function escapeHtml(s: string): string {

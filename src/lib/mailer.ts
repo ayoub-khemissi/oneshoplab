@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { getAppContactEmail } from '@/lib/app-contact';
 
 /**
  * Transactional mail entry point. Reads SMTP credentials from env
@@ -67,7 +68,9 @@ export async function sendMail(opts: SendMailOptions): Promise<SendMailResult> {
     return { ok: false, reason: 'unconfigured' };
   }
 
-  const fromEmail = process.env.SMTP_FROM_EMAIL ?? 'contact@oneshoplab.com';
+  // Envelope sender must stay on a domain the relay is authenticated for
+  // (SPF/DKIM); humans reply to the app's public address instead.
+  const fromEmail = process.env.SMTP_FROM_EMAIL ?? getAppContactEmail();
   const fromName = process.env.SMTP_FROM_NAME ?? 'OneShopLab';
 
   try {
@@ -77,7 +80,7 @@ export async function sendMail(opts: SendMailOptions): Promise<SendMailResult> {
       subject: opts.subject,
       html: opts.html,
       text: opts.text,
-      ...(opts.replyTo ? { replyTo: opts.replyTo } : {})
+      replyTo: opts.replyTo ?? getAppContactEmail()
     });
     return { ok: true };
   } catch (e) {

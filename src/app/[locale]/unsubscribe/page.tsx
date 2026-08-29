@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { eq } from 'drizzle-orm';
+import { getAppContactEmail } from '@/lib/app-contact';
 import { verifyOptOutToken } from '@/lib/cold/opt-out';
 import { db } from '@/lib/db';
 import { leadAttempts, leads } from '@/lib/db/schema';
@@ -28,32 +29,32 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
 
-const COPY = {
+const copyFor = (email: string) => ({
   fr: {
     successTitle: 'Désinscription confirmée',
     successLead: 'Vous ne recevrez plus de message de notre part.',
     successBody:
-      "Si c'était une erreur ou si vous avez une question, écrivez-nous à contact@oneshoplab.com — un humain vous répondra.",
+      `Si c'était une erreur ou si vous avez une question, écrivez-nous à ${email} — un humain vous répondra.`,
     backHome: 'Retour à oneshoplab.com',
     alreadyTitle: 'Déjà désinscrit',
     alreadyBody: 'Cette adresse était déjà retirée de notre liste. Rien à faire.',
     errorTitle: 'Lien invalide ou expiré',
     errorBody:
-      "Ce lien de désinscription n'est pas reconnu. Si vous souhaitez ne plus recevoir nos messages, répondez \"stop\" à notre dernier email — nous traiterons la demande manuellement."
+      `Ce lien de désinscription n'est pas reconnu. Si vous souhaitez ne plus recevoir nos messages, écrivez-nous à ${email} — nous traiterons la demande manuellement.`
   },
   en: {
     successTitle: 'Unsubscribe confirmed',
     successLead: "You won't receive any further messages from us.",
     successBody:
-      "If this was a mistake or you have a question, drop us a line at contact@oneshoplab.com — a human will reply.",
+      `If this was a mistake or you have a question, drop us a line at ${email} — a human will reply.`,
     backHome: 'Back to oneshoplab.com',
     alreadyTitle: 'Already unsubscribed',
     alreadyBody: "This address was already off our list. Nothing to do.",
     errorTitle: 'Invalid or expired link',
     errorBody:
-      'This unsubscribe link is not recognised. If you want to stop receiving our messages, reply "stop" to our latest email — we will process it manually.'
+      `This unsubscribe link is not recognised. If you want to stop receiving our messages, write to ${email} — we will process it manually.`
   }
-} satisfies Record<string, Record<string, string>>;
+}) satisfies Record<string, Record<string, string>>;
 
 type Outcome = 'success' | 'already' | 'error';
 
@@ -98,7 +99,7 @@ export default async function UnsubscribePage({
   const { locale } = await params;
   const { t } = await searchParams;
   const lang: 'fr' | 'en' = locale === 'fr' ? 'fr' : 'en';
-  const copy = COPY[lang];
+  const copy = copyFor(getAppContactEmail())[lang];
 
   const outcome = await processOptOut(t);
 

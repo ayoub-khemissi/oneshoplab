@@ -14,12 +14,13 @@ export function sanitizeUserFacingError(raw: string | null | undefined): string 
   let msg = raw.trim();
 
   msg = msg.replace(
-    /^(kie\s+\S+\s+failed:\s*)/i,
+    /^((kie|openrouter)\s+\S+\s+failed:\s*)/i,
     ''
   );
 
   msg = msg.replace(/\bkie\.ai\b/gi, 'AI service');
   msg = msg.replace(/\bkie\b/gi, 'AI service');
+  msg = msg.replace(/\bopenrouter\b/gi, 'AI service');
 
   msg = msg.replace(/\s+/g, ' ').trim();
 

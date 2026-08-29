@@ -983,7 +983,7 @@
     "q09q": "In welchen Sprachen kann ich Inhalte erzeugen?",
     "q09a": "Die Oberfläche ist in 13 Sprachen verfügbar, und die Ausgabesprache lässt sich pro Site festlegen – praktisch für mehrsprachige Shops, bei denen die französische Seite französische Texte und die deutsche Seite deutsche Texte braucht.",
     "q10q": "Sind meine Daten sicher? Trainieren Sie damit Modelle?",
-    "q10a": "Unsere Datenbank und Web-App laufen bei OVH in Frankreich (EU); Bilder werden auf Cloudflare R2 gespeichert. Prompts werden über kie.ai an Anthropic / Google / OpenAI weitergeleitet – unter No-Training-Vereinbarungen (Anbieter dürfen Prompts bis zu 30 Tage ausschließlich zur Missbrauchsprävention aufbewahren). Vollständige Sub-Auftragsverarbeiterliste auf unserer Datenschutzseite.",
+    "q10a": "Unsere Datenbank und Web-App laufen bei OVH in Frankreich (EU); Bilder werden auf Cloudflare R2 gespeichert. Prompts werden über {aiGateways} an {aiProviders} weitergeleitet – unter No-Training-Vereinbarungen (Anbieter dürfen Prompts bis zu 30 Tage ausschließlich zur Missbrauchsprävention aufbewahren). Vollständige Sub-Auftragsverarbeiterliste auf unserer Datenschutzseite.",
     "q11q": "Muss ich mich mit Prompt Engineering auskennen?",
     "q11a": "Nein. Die Standard-Prompts sind pro Modell und pro Feld (Titel, Beschreibung, Tags, Bilder) abgestimmt. Das optionale Brand-Voice-Feld besteht aus normalen Anweisungen – formuliert wie ein Briefing an einen Texter.",
     "q12q": "Wie schnell läuft ein Audit?",

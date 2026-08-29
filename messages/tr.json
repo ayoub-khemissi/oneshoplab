@@ -983,7 +983,7 @@
     "q09q": "Hangi dillerde içerik üretebilirim?",
     "q09a": "Arayüz 13 dilde sunulur ve çıktı dilini site başına ayarlayabilirsiniz — Fransızca sitenin Fransızca metne, Almanca sitenin Almanca metne ihtiyaç duyduğu çok dilli mağazalar için kullanışlıdır.",
     "q10q": "Verilerim güvende mi? Onları modelleri eğitmek için mi kullanıyorsunuz?",
-    "q10a": "Veritabanımız ve web uygulamamız Fransa'daki (AB) OVH üzerinde çalışır; görseller Cloudflare R2'de saklanır. İstemler kie.ai üzerinden Anthropic / Google / OpenAI'ye eğitim için kullanılmama anlaşmaları altında yönlendirilir (sağlayıcılar istemleri yalnızca kötüye kullanım önlemi amacıyla 30 güne kadar saklayabilir). Tüm alt yüklenicilerin listesi Gizlilik sayfamızda.",
+    "q10a": "Veritabanımız ve web uygulamamız Fransa'daki (AB) OVH üzerinde çalışır; görseller Cloudflare R2'de saklanır. İstemler {aiGateways} üzerinden {aiProviders}'ye eğitim için kullanılmama anlaşmaları altında yönlendirilir (sağlayıcılar istemleri yalnızca kötüye kullanım önlemi amacıyla 30 güne kadar saklayabilir). Tüm alt yüklenicilerin listesi Gizlilik sayfamızda.",
     "q11q": "Prompt engineering bilmem gerekiyor mu?",
     "q11a": "Hayır. Varsayılan promptlar model ve alan başına (başlık, açıklama, etiketler, görseller) ayarlanmıştır. Opsiyonel marka sesi alanı düz talimatlardan oluşur — bir metin yazarına brief verir gibi yazılır.",
     "q12q": "Bir denetim ne kadar hızlıdır?",
