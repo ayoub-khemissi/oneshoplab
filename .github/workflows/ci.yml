@@ -39,6 +39,9 @@ jobs:
       - name: Build
         env:
           # Build-time public config only; no secrets are needed to compile.
+          # DATABASE_URL is read at import time (src/lib/db/index.ts) but mysql2
+          # only connects lazily, so a placeholder is enough to collect page data.
+          DATABASE_URL: mysql://ci:ci@127.0.0.1:3306/ci
           APP_URL: https://oneshoplab.com
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ci-placeholder
         run: pnpm build && test -s .next/BUILD_ID
