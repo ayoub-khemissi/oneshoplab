@@ -24,7 +24,8 @@ export type DiscordChannel =
   | 'suggestions'
   | 'bug-reports'
   | 'support'
-  | 'staff-logs';
+  | 'staff-logs'
+  | 'contact';
 
 export interface DiscordPostResult {
   ok: boolean;

@@ -95,11 +95,19 @@ function buildEmail(input: ContactInput, ctx: ContactContext, id: string) {
   return { subject: `[Contact] ${subject} — ${input.name}`, text, html };
 }
 
-/** Contact messages carry a visitor's email — they belong in a
- *  staff-only channel. `staff-logs` is the bot's private feed; override
- *  with DISCORD_CONTACT_CHANNEL if a dedicated channel is added later. */
+/** Contact messages carry a visitor's email — they belong in a private
+ *  channel. `contact` is the dedicated #📩-contact feed the bot exposes
+ *  (scripts/setup-contact-channel.mts); DISCORD_CONTACT_CHANNEL overrides. */
 function discordChannel(): DiscordChannel {
-  return (process.env.DISCORD_CONTACT_CHANNEL as DiscordChannel | undefined) ?? 'staff-logs';
+  return (process.env.DISCORD_CONTACT_CHANNEL as DiscordChannel | undefined) ?? 'contact';
+}
+
+/** `<@id>` pings the owner on every submission so a contact message is
+ *  never just another unread channel. Discord only renders/pings a
+ *  mention when it is in the message content, hence the prefix. */
+function discordMention(): string {
+  const id = process.env.DISCORD_CONTACT_MENTION_USER_ID?.trim();
+  return id && /^\d{5,25}$/.test(id) ? `<@${id}> ` : '';
 }
 
 /** Plain Discord markdown — the bot API takes `content` only (no embeds). */
@@ -112,7 +120,7 @@ function buildDiscordContent(input: ContactInput, ctx: ContactContext, id: strin
     .map((l) => `> ${l}`)
     .join('\n');
   const header =
-    `📩 **Nouveau message de contact**\n` +
+    `${discordMention()}📩 **Nouveau message de contact**\n` +
     `**De :** ${input.name} <${input.email}>\n` +
     `**Objet :** ${subject}\n` +
     `**Langue :** ${ctx.locale} · ${ctx.userId ? 'compte connecté' : 'visiteur'}\n`;
