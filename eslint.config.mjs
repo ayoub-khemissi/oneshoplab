@@ -62,7 +62,7 @@ const eslintConfig = [
       'react-hooks/set-state-in-effect': 'warn',
       'react-hooks/refs': 'warn',
       'react-hooks/purity': 'warn',
-      'max-lines': ['warn', { max: 600, skipBlankLines: true, skipComments: true }]
+      'max-lines': ['error', { max: 600, skipBlankLines: true, skipComments: true }]
     }
   },
   // Import boundaries (all already respected on 2026-08-29; these rules only
@@ -119,6 +119,12 @@ const eslintConfig = [
         { patterns: [{ group: ['@/components/*', '@/app/*'], message: 'The worker has no UI.' }] }
       ]
     }
+  },
+  {
+    // One schema file is deliberate (drizzle relations + single source of
+    // truth); it is the only file allowed past the max-lines ceiling.
+    files: ['src/lib/db/schema.ts'],
+    rules: { 'max-lines': 'off' }
   },
   {
     // Worker + server-only libs log operational lines with console.log on

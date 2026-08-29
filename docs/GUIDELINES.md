@@ -112,3 +112,20 @@ app → components → lib; worker → lib. `src/components` never imports
 `@/lib/db`, `@/worker`, `@/app`; `src/lib` never imports `@/components`,
 `@/app`, `@/worker`; the worker never imports UI. `pnpm deps:circular` (madge)
 fails on any import cycle — it is part of `pnpm check` and CI.
+
+## Monitoring (ops)
+
+- `GET /api/health` → 200 `{ ok, checks: { db, worker }, build }` or 503. The
+  worker writes `data/worker.heartbeat` every tick (`writeWorkerHeartbeat`);
+  older than 90 s = worker down.
+- `scripts/ops/healthcheck.sh` runs every 5 min from cron: `/api/health`,
+  `/fr`, pm2 web + worker, disk. One Discord `#staff-logs` alert per failing
+  check (deduped in `~/.oneshoplab-healthcheck-alerts`), one "rétabli" when
+  it clears. An external monitor (UptimeRobot/Better Stack, free) pointed at
+  `https://oneshoplab.com/api/health` covers the case where the box itself
+  is down — set it up from outside; nothing on the box can alert about the box.
+- CSP is **Report-Only** (`next.config.ts`, `CSP_REPORT_ONLY`), violations
+  logged as `[csp-report]` by the web process:
+  `pm2 logs oneshoplab-web --nostream --lines 2000 | grep csp-report`. Enforce
+  (rename the header) only after a quiet week; a nonce pipeline for Next's
+  inline scripts would be the next hardening step.

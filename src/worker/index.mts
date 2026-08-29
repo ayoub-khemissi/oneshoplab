@@ -10,6 +10,8 @@ const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/lib/bulk/site-generate');
 
+import { writeWorkerHeartbeat } from '@/lib/health/heartbeat';
+
 const TICK_MS = 5_000;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
 
@@ -28,6 +30,7 @@ async function main(): Promise<void> {
 
   while (!stopping) {
     const t0 = Date.now();
+    writeWorkerHeartbeat();
     try {
       const tasks: Array<Promise<unknown>> = [
         runAuditRunner(),
