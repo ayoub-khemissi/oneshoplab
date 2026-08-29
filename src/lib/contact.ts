@@ -102,12 +102,14 @@ function discordChannel(): DiscordChannel {
   return (process.env.DISCORD_CONTACT_CHANNEL as DiscordChannel | undefined) ?? 'contact';
 }
 
-/** `<@id>` pings the owner on every submission so a contact message is
- *  never just another unread channel. Discord only renders/pings a
- *  mention when it is in the message content, hence the prefix. */
+/** `<@&roleId>` pings the whole Admin role on every submission so a
+ *  contact message is never just another unread channel. Discord only
+ *  renders/pings a mention that sits in the message content, hence the
+ *  prefix. A non-mentionable role still pings when the bot holds the
+ *  MentionEveryone permission in the channel. */
 function discordMention(): string {
-  const id = process.env.DISCORD_CONTACT_MENTION_USER_ID?.trim();
-  return id && /^\d{5,25}$/.test(id) ? `<@${id}> ` : '';
+  const id = process.env.DISCORD_CONTACT_MENTION_ROLE_ID?.trim();
+  return id && /^\d{5,25}$/.test(id) ? `<@&${id}> ` : '';
 }
 
 /** Plain Discord markdown — the bot API takes `content` only (no embeds). */
