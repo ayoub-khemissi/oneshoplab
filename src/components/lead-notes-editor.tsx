@@ -11,13 +11,7 @@ import { updateLeadNotesAction } from '@/lib/leads/actions';
  * Tailwind styling (matches site-instructions-editor.tsx), and use
  * the HeroUI Button for save with built-in `isPending` + spinner.
  */
-export function LeadNotesEditor({
-  leadId,
-  initial
-}: {
-  leadId: string;
-  initial: string;
-}) {
+export function LeadNotesEditor({ leadId, initial }: { leadId: string; initial: string }) {
   const [value, setValue] = useState(initial);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -44,12 +38,7 @@ export function LeadNotesEditor({
         className="bg-[var(--background)] border border-[var(--border)] rounded px-2 py-1.5 text-xs w-60 resize-y focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition"
       />
       <div className="flex items-center gap-2">
-        <Button
-          type="submit"
-          variant="secondary"
-          size="sm"
-          isDisabled={!dirty || isPending}
-        >
+        <Button type="submit" variant="secondary" size="sm" isDisabled={!dirty || isPending}>
           {isPending ? <Spinner size="sm" /> : 'Save'}
         </Button>
         {savedAt ? (

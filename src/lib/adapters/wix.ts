@@ -92,7 +92,10 @@ export const wixAdapter: PlatformAdapter = {
     return { platform: 'wix', confidence: Math.min(confidence, 1), signals };
   },
 
-  async *fetchProducts(ctx: AdapterContext, options?: FetchOptions): AsyncIterable<NormalizedProduct> {
+  async *fetchProducts(
+    ctx: AdapterContext,
+    options?: FetchOptions
+  ): AsyncIterable<NormalizedProduct> {
     const root = rootOf(ctx.url);
     const max = options?.maxProducts ?? Infinity;
 

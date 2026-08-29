@@ -57,11 +57,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogIndexPage({
-  params
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+export default async function BlogIndexPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('Blog');
@@ -73,12 +69,8 @@ export default async function BlogIndexPage({
     <main className="flex-1 px-4 md:px-10 py-10 md:py-14 max-w-3xl w-full mx-auto flex flex-col gap-8">
       <header className="flex flex-col gap-2">
         <span className="eyebrow">{t('indexEyebrow')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-          {t('indexTitle')}
-        </h1>
-        <p className="text-sm text-[var(--muted)] max-w-xl leading-relaxed">
-          {t('indexSubtitle')}
-        </p>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t('indexTitle')}</h1>
+        <p className="text-sm text-[var(--muted)] max-w-xl leading-relaxed">{t('indexSubtitle')}</p>
       </header>
 
       {posts.length === 0 ? (

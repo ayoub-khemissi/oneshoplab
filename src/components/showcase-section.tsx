@@ -35,9 +35,7 @@ export async function ShowcaseSection() {
           {t('eyebrow')}
         </span>
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight">{t('title')}</h2>
-        <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">
-          {t('subtitle')}
-        </p>
+        <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">{t('subtitle')}</p>
       </header>
       <div className="flex flex-col gap-6">
         {cards.map((card, index) => (
@@ -242,11 +240,7 @@ function ProductCaseStudy({
           />
           <Field
             label={labels.tags}
-            value={
-              product.sourceTags.length > 0
-                ? product.sourceTags.join(', ')
-                : labels.noTags
-            }
+            value={product.sourceTags.length > 0 ? product.sourceTags.join(', ') : labels.noTags}
             muted={product.sourceTags.length === 0}
           />
           <ImageRow
@@ -276,9 +270,7 @@ function ProductCaseStudy({
           />
           <Field
             label={labels.tags}
-            value={
-              product.aiTags.length > 0 ? product.aiTags.join(', ') : labels.noTags
-            }
+            value={product.aiTags.length > 0 ? product.aiTags.join(', ') : labels.noTags}
             muted={product.aiTags.length === 0}
           />
           <ImageRow

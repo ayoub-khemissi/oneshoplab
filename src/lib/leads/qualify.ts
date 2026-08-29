@@ -50,7 +50,10 @@ function safeHost(url: string): string {
   try {
     return new URL(url.startsWith('http') ? url : `https://${url}`).hostname.toLowerCase();
   } catch {
-    return url.toLowerCase().replace(/^https?:\/\//, '').split('/')[0];
+    return url
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .split('/')[0];
   }
 }
 
@@ -115,10 +118,7 @@ export async function qualifyUrl(rawUrl: string): Promise<QualifyOutcome> {
   let products = 0;
   let firstProduct: { title: string } | null = null;
   try {
-    for await (const p of adapter.fetchProducts(
-      { url: finalUrl, homeHtml },
-      { maxProducts: 1 }
-    )) {
+    for await (const p of adapter.fetchProducts({ url: finalUrl, homeHtml }, { maxProducts: 1 })) {
       products += 1;
       firstProduct = { title: p.title };
       break;
@@ -361,8 +361,7 @@ export async function qualifyBatch(
         const r = await upsertQualifiedLead(outcome, { discoveredVia });
         summary.qualified += 1;
         if (r.created) summary.created += 1;
-        summary.byPlatform[outcome.platform] =
-          (summary.byPlatform[outcome.platform] ?? 0) + 1;
+        summary.byPlatform[outcome.platform] = (summary.byPlatform[outcome.platform] ?? 0) + 1;
       } else if (outcome.status === 'skip') {
         summary.skipped += 1;
         summary.failures.push({ domain: outcome.domain, reason: outcome.reason });

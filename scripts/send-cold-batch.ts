@@ -50,15 +50,28 @@ type VariantFilter = 'agency' | 'merchant' | 'auto';
 // spam report (which torches sender reputation). Generic business inboxes
 // (info@, contact@, hello@, sales@) are fine and intentionally NOT listed.
 const SENSITIVE_LOCALPARTS = [
-  'rgpd', 'dpo', 'privacy', 'datenschutz', 'abuse', 'postmaster',
-  'hostmaster', 'webmaster', 'legal', 'compliance', 'security',
-  'noc', 'no-reply', 'noreply', 'donotreply', 'mailer-daemon'
+  'rgpd',
+  'dpo',
+  'privacy',
+  'datenschutz',
+  'abuse',
+  'postmaster',
+  'hostmaster',
+  'webmaster',
+  'legal',
+  'compliance',
+  'security',
+  'noc',
+  'no-reply',
+  'noreply',
+  'donotreply',
+  'mailer-daemon'
 ];
 
 /** True when an email's local part is (or begins with) a sensitive role
  *  mailbox — matches `rgpd@`, `dpo.xx@`, `legal-team@`, `privacy_…@`, etc. */
 function isSensitiveAddress(email: string): boolean {
-  const local = (email.trim().toLowerCase().split('@')[0] ?? '');
+  const local = email.trim().toLowerCase().split('@')[0] ?? '';
   return SENSITIVE_LOCALPARTS.some(
     (lp) =>
       local === lp ||
@@ -73,13 +86,23 @@ function isSensitiveAddress(email: string): boolean {
 // contact sometimes drops a "Mr Smith" stand-in. Mailing these hits an
 // uninvolved stranger (spam complaint) or nobody at all.
 const PLACEHOLDER_LOCALPARTS = [
-  'jean.dupont', 'jean.dupond', 'john.doe', 'johndoe', 'jane.doe',
-  'nom.prenom', 'prenom.nom', 'votre.email', 'your.email', 'user',
-  'test', 'example', 'demo'
+  'jean.dupont',
+  'jean.dupond',
+  'john.doe',
+  'johndoe',
+  'jane.doe',
+  'nom.prenom',
+  'prenom.nom',
+  'votre.email',
+  'your.email',
+  'user',
+  'test',
+  'example',
+  'demo'
 ];
 
 function isPlaceholderAddress(email: string): boolean {
-  const local = (email.trim().toLowerCase().split('@')[0] ?? '');
+  const local = email.trim().toLowerCase().split('@')[0] ?? '';
   return PLACEHOLDER_LOCALPARTS.includes(local);
 }
 
@@ -213,9 +236,8 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
   const { sendColdMail } = await import('@/lib/cold/mailer');
-  const { renderColdMail, firstNameFromEmail, agencyNameFromDomain } = await import(
-    '@/lib/cold/render'
-  );
+  const { renderColdMail, firstNameFromEmail, agencyNameFromDomain } =
+    await import('@/lib/cold/render');
   type ScoreSnapshot = import('@/lib/cold/render').ScoreSnapshot;
   const { platformDisplayName } = await import('@/lib/cold/templates');
 
@@ -223,7 +245,13 @@ async function main(): Promise<void> {
   // labels we use on the dashboard / audit page so the cold mail
   // reads consistently with the in-product UI.
   const SCORE_LABELS: Record<'fr' | 'en', ScoreSnapshot['labels']> = {
-    fr: { overall: 'Score global', catalog: 'Catalogue', copy: 'Copy', visual: 'Visuel', tagging: 'Tags' },
+    fr: {
+      overall: 'Score global',
+      catalog: 'Catalogue',
+      copy: 'Copy',
+      visual: 'Visuel',
+      tagging: 'Tags'
+    },
     en: { overall: 'Overall', catalog: 'Catalog', copy: 'Copy', visual: 'Visual', tagging: 'Tags' }
   };
   const { makeOptOutToken } = await import('@/lib/cold/opt-out');
@@ -360,11 +388,7 @@ async function main(): Promise<void> {
             )
           : undefined;
 
-    const whereClauses = [
-      eq(leads.status, 'new'),
-      isNotNull(leads.contactEmail),
-      langPredicate
-    ];
+    const whereClauses = [eq(leads.status, 'new'), isNotNull(leads.contactEmail), langPredicate];
     if (variantPredicate) whereClauses.push(variantPredicate);
 
     // Exclude role/privacy/abuse mailboxes at the SQL level so we never
@@ -435,7 +459,10 @@ async function main(): Promise<void> {
   // `?t=` are appended below per-lead. Hosted on the main app
   // (oneshoplab.com) so the existing Next.js + nginx infra serves it
   // and the cold operator doesn't have to maintain a separate vhost.
-  const optOutBase = (process.env.COLD_OPTOUT_BASE_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
+  const optOutBase = (process.env.COLD_OPTOUT_BASE_URL ?? 'https://oneshoplab.com').replace(
+    /\/$/,
+    ''
+  );
   // Discord invite — reuses the site's NEXT_PUBLIC variable since the
   // cold sender lives in the same repo and the invite link is the same
   // surface (community / direct chat). Falls back to a placeholder so
@@ -500,8 +527,7 @@ async function main(): Promise<void> {
           labels: SCORE_LABELS[args.lang]
         };
         const dist = fresh.summary?.distribution ?? {};
-        const total =
-          fresh.summary?.allProducts?.length ?? fresh.productsSampled ?? 0;
+        const total = fresh.summary?.allProducts?.length ?? fresh.productsSampled ?? 0;
         stats = {
           audited: String(total),
           noImage: String(dist.imagesZero ?? 0),
@@ -557,7 +583,12 @@ async function main(): Promise<void> {
     console.log(`  subject: ${rendered.subject}`);
     if (args.mode === 'dry-run') {
       console.log('  --- text ---');
-      console.log(rendered.text.split('\n').map((l) => `  | ${l}`).join('\n'));
+      console.log(
+        rendered.text
+          .split('\n')
+          .map((l) => `  | ${l}`)
+          .join('\n')
+      );
       sent += 1;
       continue;
     }

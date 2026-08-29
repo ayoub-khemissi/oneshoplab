@@ -32,12 +32,8 @@ export default function ErrorPage({
           <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
             500
           </span>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {t('errorTitle')}
-          </h1>
-          <p className="text-sm text-[var(--muted)] leading-relaxed">
-            {t('errorBody')}
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('errorTitle')}</h1>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('errorBody')}</p>
           {error.digest ? (
             <p className="text-[10px] font-mono text-[var(--muted)]/70 mt-1 break-all">
               ref: {error.digest}

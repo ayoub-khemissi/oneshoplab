@@ -54,18 +54,15 @@ export const BLOG_POSTS: BlogPost[] = [
     translations: {
       fr: {
         slug: 'generateur-description-produit-ia-ca-marche',
-        title:
-          'Générateur de description produit IA : est-ce que ça marche vraiment ?',
-        seoTitle:
-          'Générateur de description produit IA : ça marche ?',
+        title: 'Générateur de description produit IA : est-ce que ça marche vraiment ?',
+        seoTitle: 'Générateur de description produit IA : ça marche ?',
         description:
           "Pourquoi la plupart des générateurs IA produisent du texte inutilisable, et ce qui distingue un outil qui marche : ancrage produit, voix de marque, validation humaine, audit d'abord.",
         body: aiDescFr
       },
       en: {
         slug: 'ai-product-description-generator-does-it-work',
-        title:
-          'AI product description generator: does it actually work?',
+        title: 'AI product description generator: does it actually work?',
         seoTitle: 'AI Product Description Generator: Does It Work?',
         description:
           'Why most AI generators produce unusable text, and what sets apart one that works: grounded in the product, brand voice, human validation, audit first.',
@@ -82,16 +79,14 @@ export const BLOG_POSTS: BlogPost[] = [
         slug: 'optimiser-fiche-produit-shopify',
         title:
           'Optimiser une fiche produit Shopify : le guide concret (titre, description, images, tags)',
-        seoTitle:
-          'Optimiser une fiche produit Shopify : guide & checklist',
+        seoTitle: 'Optimiser une fiche produit Shopify : guide & checklist',
         description:
           "Titre, description, images, tags, bloc SEO, variantes : les 6 éléments à corriger sur une fiche produit Shopify pour qu'elle référence et convertisse — checklist incluse.",
         body: shopifyFr
       },
       en: {
         slug: 'shopify-product-page-optimization',
-        title:
-          'How to optimize a Shopify product page (titles, descriptions, images, tags)',
+        title: 'How to optimize a Shopify product page (titles, descriptions, images, tags)',
         seoTitle: 'Shopify Product Page Optimization: The Practical Guide',
         description:
           'Title, description, images, tags, SEO block, variants: the 6 elements to fix on a Shopify product page so it ranks and converts — checklist included.',
@@ -106,21 +101,18 @@ export const BLOG_POSTS: BlogPost[] = [
     translations: {
       fr: {
         slug: 'audit-catalogue-ecommerce-quoi-verifier',
-        title:
-          'Audit de catalogue e-commerce : quoi vérifier (et comment le scorer)',
-        seoTitle:
-          'Audit de catalogue e-commerce : la checklist complète',
+        title: 'Audit de catalogue e-commerce : quoi vérifier (et comment le scorer)',
+        seoTitle: 'Audit de catalogue e-commerce : la checklist complète',
         description:
-          "Quels signaux vérifier produit par produit pour auditer un catalogue e-commerce — copy, visuels, complétude, tags — et comment transformer ça en score actionnable.",
+          'Quels signaux vérifier produit par produit pour auditer un catalogue e-commerce — copy, visuels, complétude, tags — et comment transformer ça en score actionnable.',
         body: catalogAuditFr
       },
       en: {
         slug: 'ecommerce-catalog-audit-what-to-check',
-        title:
-          'Ecommerce catalog audit: what to check (and how to score it)',
+        title: 'Ecommerce catalog audit: what to check (and how to score it)',
         seoTitle: 'Ecommerce Catalog Audit: The Complete Checklist',
         description:
-          "Which signals to check, product by product, to audit an ecommerce catalog — copy, visuals, completeness, tags — and how to turn it into an actionable score.",
+          'Which signals to check, product by product, to audit an ecommerce catalog — copy, visuals, completeness, tags — and how to turn it into an actionable score.',
         body: catalogAuditEn
       }
     }
@@ -133,10 +125,10 @@ export const BLOG_POSTS: BlogPost[] = [
       fr: {
         slug: 'fiches-produits-ne-convertissent-pas',
         title:
-          "Pourquoi les fiches produits de vos clients ne convertissent pas (et comment corriger tout un catalogue en une après-midi)",
+          'Pourquoi les fiches produits de vos clients ne convertissent pas (et comment corriger tout un catalogue en une après-midi)',
         seoTitle: 'Fiches produits qui ne convertissent pas : la solution agence',
         description:
-          "Vos clients perdent des ventes à cause de fiches produits faibles. Voici comment auditer et réécrire un catalogue entier sans tout refaire à la main.",
+          'Vos clients perdent des ventes à cause de fiches produits faibles. Voici comment auditer et réécrire un catalogue entier sans tout refaire à la main.',
         body: productPagesFr
       },
       en: {
@@ -156,9 +148,7 @@ export const BLOG_POSTS: BlogPost[] = [
 export const BLOG_AUTHOR = 'OneShopLab';
 
 /** Posts that have a translation for `locale`, newest first. */
-export function listPosts(
-  locale: string
-): Array<{ post: BlogPost; tr: BlogTranslation }> {
+export function listPosts(locale: string): Array<{ post: BlogPost; tr: BlogTranslation }> {
   return BLOG_POSTS.filter((p) => p.translations[locale as Locale])
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((post) => ({ post, tr: post.translations[locale as Locale]! }));
@@ -225,6 +215,10 @@ export function postLanguageAlternates(
   }
   // x-default → English when present (Google convention), else French,
   // else whatever the single available translation is.
-  const xLoc = post.translations.en ? 'en' : post.translations.fr ? 'fr' : Object.keys(post.translations)[0];
+  const xLoc = post.translations.en
+    ? 'en'
+    : post.translations.fr
+      ? 'fr'
+      : Object.keys(post.translations)[0];
   return { languages, xDefault: languages[xLoc] };
 }

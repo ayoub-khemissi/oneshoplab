@@ -24,8 +24,7 @@ export function buildImagePrompt(
   customPrompt: string,
   merchantInstructions: string
 ): string {
-  const base =
-    angle === 'custom' ? customPrompt.trim() : IMAGE_ANGLE_PROMPTS[angle];
+  const base = angle === 'custom' ? customPrompt.trim() : IMAGE_ANGLE_PROMPTS[angle];
   const extra = merchantInstructions.trim();
   return extra ? `${base} ${extra}` : base;
 }

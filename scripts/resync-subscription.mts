@@ -51,7 +51,8 @@ if (!resolved.plan || !resolved.cycle) {
 }
 
 const itemPeriodEnd = stripeSub.items.data[0]?.current_period_end;
-const legacyPeriodEnd = (stripeSub as unknown as { current_period_end?: number }).current_period_end;
+const legacyPeriodEnd = (stripeSub as unknown as { current_period_end?: number })
+  .current_period_end;
 const periodEndUnix =
   typeof itemPeriodEnd === 'number'
     ? itemPeriodEnd
@@ -63,14 +64,27 @@ const isCancellingNew = cancelAtUnix !== null && stripeSub.status !== 'canceled'
 const isCancellingLegacy = stripeSub.cancel_at_period_end === true;
 const isCancelling = isCancellingNew || isCancellingLegacy;
 const effectivePeriodEndUnix = isCancellingNew ? cancelAtUnix : periodEndUnix;
-const periodEnd =
-  effectivePeriodEndUnix != null ? new Date(effectivePeriodEndUnix * 1000) : null;
+const periodEnd = effectivePeriodEndUnix != null ? new Date(effectivePeriodEndUnix * 1000) : null;
 const status = isCancelling ? 'cancelling' : stripeSub.status;
 const planForDb: PlanId = stripeSub.status === 'canceled' ? 'free' : (resolved.plan as PlanId);
 
 console.log('user:', u.email);
-console.log('stripe.status:', stripeSub.status, '| cancel_at:', cancelAtUnix, '| cap_end:', stripeSub.cancel_at_period_end);
-console.log('→ writing status:', status, '| plan:', planForDb, '| period_end:', periodEnd?.toISOString());
+console.log(
+  'stripe.status:',
+  stripeSub.status,
+  '| cancel_at:',
+  cancelAtUnix,
+  '| cap_end:',
+  stripeSub.cancel_at_period_end
+);
+console.log(
+  '→ writing status:',
+  status,
+  '| plan:',
+  planForDb,
+  '| period_end:',
+  periodEnd?.toISOString()
+);
 
 await syncSubscriptionFromStripe({
   userId: u.id,

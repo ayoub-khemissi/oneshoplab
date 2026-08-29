@@ -49,18 +49,11 @@ export function ServerPagination({
       </PagerLink>
       {pages.map((entry, i) =>
         entry === 'ellipsis' ? (
-          <span
-            key={`e-${i}`}
-            className="px-2 text-xs text-[var(--muted)] select-none"
-          >
+          <span key={`e-${i}`} className="px-2 text-xs text-[var(--muted)] select-none">
             …
           </span>
         ) : (
-          <PagerLink
-            key={entry}
-            href={hrefForPage(entry)}
-            isActive={entry === safePage}
-          >
+          <PagerLink key={entry} href={hrefForPage(entry)} isActive={entry === safePage}>
             {entry}
           </PagerLink>
         )

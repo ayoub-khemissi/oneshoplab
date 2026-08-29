@@ -1,16 +1,7 @@
 'use client';
 
 import { Card, Spinner } from '@heroui/react';
-import {
-  Check,
-  Copy,
-  ExternalLink,
-  Home,
-  Info,
-  Link2,
-  Trash2,
-  X
-} from 'lucide-react';
+import { Check, Copy, ExternalLink, Home, Info, Link2, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 import {
@@ -97,9 +88,7 @@ export function ShareLinksCard({
           <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] inline-flex items-center gap-2">
             <Link2 className="size-3.5" aria-hidden /> {t('title')}
           </span>
-          <p className="text-xs text-[var(--muted)] max-w-xl leading-relaxed">
-            {t('hint')}
-          </p>
+          <p className="text-xs text-[var(--muted)] max-w-xl leading-relaxed">{t('hint')}</p>
         </div>
         <button
           type="button"
@@ -139,9 +128,7 @@ export function ShareLinksCard({
             >
               <div className="flex-1 min-w-0 flex flex-col gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {link.label ? (
-                    <span className="text-sm font-medium">{link.label}</span>
-                  ) : null}
+                  {link.label ? <span className="text-sm font-medium">{link.label}</span> : null}
                   {link.showOnHome ? (
                     <span
                       className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/15 text-[var(--accent)] font-mono"
@@ -178,9 +165,7 @@ export function ShareLinksCard({
                   value={link.showOnHome}
                   onChange={(next) =>
                     setLinks((prev) =>
-                      prev.map((l) =>
-                        l.id === link.id ? { ...l, showOnHome: next } : l
-                      )
+                      prev.map((l) => (l.id === link.id ? { ...l, showOnHome: next } : l))
                     )
                   }
                 />
@@ -191,9 +176,7 @@ export function ShareLinksCard({
                     value={link.homeOrder ?? null}
                     onChange={(next) =>
                       setLinks((prev) =>
-                        prev.map((l) =>
-                          l.id === link.id ? { ...l, homeOrder: next } : l
-                        )
+                        prev.map((l) => (l.id === link.id ? { ...l, homeOrder: next } : l))
                       )
                     }
                   />
@@ -516,9 +499,7 @@ function CreateModal({
       >
         <div className="p-5 border-b border-[var(--border)] flex flex-col gap-1">
           <h3 className="text-base font-semibold">{t('modalTitle')}</h3>
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            {t('modalBody')}
-          </p>
+          <p className="text-xs text-[var(--muted)] leading-relaxed">{t('modalBody')}</p>
         </div>
 
         <div className="p-5 flex flex-col gap-3 overflow-y-auto flex-1">
@@ -557,14 +538,10 @@ function CreateModal({
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
               {t('pickProducts', { selected: selected.size })}
             </span>
-            <p className="text-xs text-[var(--muted)] leading-relaxed">
-              {t('pickProductsHint')}
-            </p>
+            <p className="text-xs text-[var(--muted)] leading-relaxed">{t('pickProductsHint')}</p>
             <div className="flex flex-col gap-1.5 mt-1">
               {candidates.length === 0 ? (
-                <p className="text-sm text-[var(--muted)] italic">
-                  {t('errorNeedTwoProducts')}
-                </p>
+                <p className="text-sm text-[var(--muted)] italic">{t('errorNeedTwoProducts')}</p>
               ) : (
                 candidates.map((c) => {
                   const isSelected = selected.has(c.sourceId);
@@ -587,9 +564,7 @@ function CreateModal({
                         className="size-4 accent-[var(--accent)]"
                       />
                       <div className="flex-1 min-w-0 flex flex-col">
-                        <span className="text-sm font-medium truncate">
-                          {c.title}
-                        </span>
+                        <span className="text-sm font-medium truncate">{c.title}</span>
                         <div className="flex items-center gap-1 flex-wrap mt-0.5">
                           {c.hasTitle ? <Chip label={t('chipTitle')} /> : null}
                           {c.hasDescription ? <Chip label={t('chipDescription')} /> : null}
@@ -603,9 +578,7 @@ function CreateModal({
               )}
             </div>
           </div>
-          {errorMsg ? (
-            <p className="text-xs text-[var(--danger)]">{errorMsg}</p>
-          ) : null}
+          {errorMsg ? <p className="text-xs text-[var(--danger)]">{errorMsg}</p> : null}
         </div>
 
         <div className="p-5 border-t border-[var(--border)] flex justify-end gap-2">

@@ -65,10 +65,7 @@ export async function claimAuditByToken(
       url: audit.url,
       domain: audit.domain
     });
-    await tx
-      .update(audits)
-      .set({ projectId, anonToken: null })
-      .where(eq(audits.id, audit.id));
+    await tx.update(audits).set({ projectId, anonToken: null }).where(eq(audits.id, audit.id));
   });
   return { projectId };
 }
@@ -117,10 +114,7 @@ export async function claimAnonAudits(
       url: mostRecent.url,
       domain: mostRecent.domain
     });
-    await tx
-      .update(audits)
-      .set({ projectId, anonToken: null })
-      .where(eq(audits.id, mostRecent.id));
+    await tx.update(audits).set({ projectId, anonToken: null }).where(eq(audits.id, mostRecent.id));
     for (const older of candidates.slice(1)) {
       await tx.update(audits).set({ anonToken: null }).where(eq(audits.id, older.id));
     }

@@ -325,9 +325,7 @@ export class CommonCrawlProvider implements SearchProvider {
       }
       if (text === null || text === '') {
         if (lastErr) {
-          process.stderr.write(
-            `[CC] page ${page} failed: ${lastErr} — skipping\n`
-          );
+          process.stderr.write(`[CC] page ${page} failed: ${lastErr} — skipping\n`);
         }
         page += 1;
         await new Promise((r) => setTimeout(r, 500));
@@ -574,25 +572,13 @@ const QUERY_TEMPLATES: Record<Platform, Record<string, string[]>> = {
       'site:wixsite.com inurl:/product-page',
       '"made with wix" inurl:wixsite.com'
     ],
-    es: [
-      'site:wixsite.com "tienda" "carrito"',
-      'site:wixsite.com inurl:/shop'
-    ],
-    de: [
-      'site:wixsite.com "shop" "warenkorb"',
-      'site:wixsite.com inurl:/shop'
-    ],
-    it: [
-      'site:wixsite.com "negozio" "carrello"',
-      'site:wixsite.com inurl:/shop'
-    ]
+    es: ['site:wixsite.com "tienda" "carrito"', 'site:wixsite.com inurl:/shop'],
+    de: ['site:wixsite.com "shop" "warenkorb"', 'site:wixsite.com inurl:/shop'],
+    it: ['site:wixsite.com "negozio" "carrello"', 'site:wixsite.com inurl:/shop']
   }
 };
 
-export function getQueryTemplates(
-  platform: Platform,
-  country: string | undefined
-): string[] {
+export function getQueryTemplates(platform: Platform, country: string | undefined): string[] {
   const lang = (country ?? 'en').toLowerCase();
   const table = QUERY_TEMPLATES[platform];
   return table[lang] ?? table['en'] ?? [];

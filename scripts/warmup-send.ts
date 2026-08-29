@@ -129,7 +129,12 @@ async function main(): Promise<void> {
     console.log(`\n[${i + 1}/${recipients.length}] ${to}  →  "${tpl.subject}"`);
     if (dryRun) {
       console.log(`  --- text ---`);
-      console.log(text.split('\n').map((l) => `  | ${l}`).join('\n'));
+      console.log(
+        text
+          .split('\n')
+          .map((l) => `  | ${l}`)
+          .join('\n')
+      );
       sent += 1;
       continue;
     }

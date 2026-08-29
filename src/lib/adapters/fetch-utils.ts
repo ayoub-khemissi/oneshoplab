@@ -44,7 +44,8 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<Fet
     ...init,
     headers: { Accept: 'application/json', ...(init?.headers as Record<string, string>) }
   });
-  if (!r.ok) return { ok: false, status: r.status, data: null, finalUrl: r.finalUrl, headers: r.headers };
+  if (!r.ok)
+    return { ok: false, status: r.status, data: null, finalUrl: r.finalUrl, headers: r.headers };
   try {
     return {
       ok: true,
@@ -65,7 +66,11 @@ export function rootOf(input: string): string {
 
 export function normalizeTags(t: unknown): string[] {
   if (Array.isArray(t)) return t.map(String).filter(Boolean);
-  if (typeof t === 'string') return t.split(',').map((s) => s.trim()).filter(Boolean);
+  if (typeof t === 'string')
+    return t
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
   return [];
 }
 

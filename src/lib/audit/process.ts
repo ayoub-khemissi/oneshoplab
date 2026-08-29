@@ -144,7 +144,7 @@ export async function processAudit(auditId: string): Promise<void> {
       isFailure ? 'audit_failed' : 'audit_completed',
       row.domain,
       result.report?.scores?.overall ?? null,
-      isFailure ? result.error ?? null : null
+      isFailure ? (result.error ?? null) : null
     );
   } catch (e) {
     await db

@@ -6,11 +6,7 @@ import { z } from 'zod';
 import { isAdminEmail } from '@/lib/admin';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import {
-  leads,
-  LEAD_STATUSES,
-  type LeadStatus
-} from '@/lib/db/schema';
+import { leads, LEAD_STATUSES, type LeadStatus } from '@/lib/db/schema';
 import { qualifyBatch } from './qualify';
 
 /**
@@ -76,9 +72,7 @@ const PasteSchema = z.object({
  * us ~30 leads per call before we need to chunk; the UI hint says
  * "up to 25 URLs per paste".
  */
-export async function qualifyPastedUrlsAction(
-  formData: FormData
-): Promise<void> {
+export async function qualifyPastedUrlsAction(formData: FormData): Promise<void> {
   if (!(await requireAdmin())) return;
   const parsed = PasteSchema.safeParse({ urls: formData.get('urls') ?? '' });
   if (!parsed.success) return;

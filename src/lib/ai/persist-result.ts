@@ -247,7 +247,11 @@ export async function persistKieJobFailure(
  * fallback itself fails so the caller proceeds with the normal
  * fail + refund path. Terminal-state guard mirrors persistKieJobSuccess.
  */
-async function tryImageFallback(jobId: string, jobKind: string, originalError: string): Promise<boolean> {
+async function tryImageFallback(
+  jobId: string,
+  jobKind: string,
+  originalError: string
+): Promise<boolean> {
   const job = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId) });
   if (!job || (job.status !== 'pending' && job.status !== 'running')) return false;
   const input = job.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
@@ -258,7 +262,10 @@ async function tryImageFallback(jobId: string, jobKind: string, originalError: s
       prompt: input.userPrompt,
       sourceImageUrl: input.sourceImageUrl ?? null
     });
-    const prev = (job.result && typeof job.result === 'object' ? job.result : {}) as Record<string, unknown>;
+    const prev = (job.result && typeof job.result === 'object' ? job.result : {}) as Record<
+      string,
+      unknown
+    >;
     await db
       .update(jobs)
       .set({
@@ -276,7 +283,9 @@ async function tryImageFallback(jobId: string, jobKind: string, originalError: s
         }
       })
       .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
-    console.warn(`[persist-result] image job ${jobId} rescued by fallback ${r.model} (kie: ${originalError.slice(0, 80)})`);
+    console.warn(
+      `[persist-result] image job ${jobId} rescued by fallback ${r.model} (kie: ${originalError.slice(0, 80)})`
+    );
     await emitImageNotification(jobId, 'image_completed', null);
     return true;
   } catch (e) {

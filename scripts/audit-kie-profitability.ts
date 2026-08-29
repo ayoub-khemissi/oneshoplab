@@ -132,11 +132,7 @@ async function main(): Promise<void> {
     })
     .from(jobs)
     .where(
-      and(
-        eq(jobs.status, 'completed'),
-        gte(jobs.createdAt, since),
-        sql`${jobs.kind} LIKE 'kie_%'`
-      )
+      and(eq(jobs.status, 'completed'), gte(jobs.createdAt, since), sql`${jobs.kind} LIKE 'kie_%'`)
     );
 
   console.log(`Found ${rows.length} completed kie_* jobs in window.`);
@@ -170,9 +166,7 @@ async function main(): Promise<void> {
 
     a.userCreditsDebited += costCol;
 
-    const resultObj = (r.result ?? null) as
-      | { kieCreditsConsumed?: number }
-      | null;
+    const resultObj = (r.result ?? null) as { kieCreditsConsumed?: number } | null;
     const inlineCost =
       resultObj && typeof resultObj.kieCreditsConsumed === 'number'
         ? resultObj.kieCreditsConsumed
@@ -191,8 +185,7 @@ async function main(): Promise<void> {
         // The kie docs document this field as `creditsConsumed` on
         // task.data; some legacy records use `costTime` (seconds —
         // unrelated to credits). Guard with typeof === 'number'.
-        const cc = (info as unknown as { creditsConsumed?: number })
-          .creditsConsumed;
+        const cc = (info as unknown as { creditsConsumed?: number }).creditsConsumed;
         if (typeof cc === 'number') {
           a.countWithKieCost++;
           a.kieCreditsConsumed += cc;
@@ -210,9 +203,7 @@ async function main(): Promise<void> {
     a.kieCostUnknownCount++;
   }
   if (kie) {
-    console.log(
-      `Fetched ${fetched} kie task records (errors: ${fetchErrors}).\n`
-    );
+    console.log(`Fetched ${fetched} kie task records (errors: ${fetchErrors}).\n`);
   }
 
   // 3. Pretty-print the per-kind breakdown.
@@ -248,8 +239,7 @@ async function main(): Promise<void> {
     const cost = a.kieCreditsConsumed * PRICING.providerUnitUsd;
     const margin = fmtPct(cost, revenue);
 
-    const unknownSuffix =
-      a.kieCostUnknownCount > 0 ? `  (${a.kieCostUnknownCount} no-cost)` : '';
+    const unknownSuffix = a.kieCostUnknownCount > 0 ? `  (${a.kieCostUnknownCount} no-cost)` : '';
     console.log(
       `${kind.padEnd(colWidth.kind)}  ` +
         `${String(a.count).padStart(colWidth.count)}  ` +

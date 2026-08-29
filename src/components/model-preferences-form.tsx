@@ -48,8 +48,7 @@ export function ModelPreferencesForm({
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const dirty =
-    chatModel !== initialChatModel || imageQuality !== initialImageQuality;
+  const dirty = chatModel !== initialChatModel || imageQuality !== initialImageQuality;
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
@@ -69,9 +68,9 @@ export function ModelPreferencesForm({
           {copy.chatLabel}
         </label>
         <div className="grid gap-2">
-          {(Object.values(CHAT_MODEL_REGISTRY) as Array<
-            (typeof CHAT_MODEL_REGISTRY)[ChatModelId]
-          >).map((m) => {
+          {(
+            Object.values(CHAT_MODEL_REGISTRY) as Array<(typeof CHAT_MODEL_REGISTRY)[ChatModelId]>
+          ).map((m) => {
             const cost = estimateChatCredits(m.id, 'fullAudit');
             const active = chatModel === m.id;
             return (
@@ -101,9 +100,11 @@ export function ModelPreferencesForm({
           {copy.imageLabel}
         </label>
         <div className="grid gap-2">
-          {(Object.values(IMAGE_MODEL_REGISTRY) as Array<
-            (typeof IMAGE_MODEL_REGISTRY)[ImageQualityId]
-          >).map((m) => {
+          {(
+            Object.values(IMAGE_MODEL_REGISTRY) as Array<
+              (typeof IMAGE_MODEL_REGISTRY)[ImageQualityId]
+            >
+          ).map((m) => {
             const cost = costForImage(m.id);
             const active = imageQuality === m.id;
             return (
@@ -199,4 +200,3 @@ function ModelOptionCard({
     </button>
   );
 }
-

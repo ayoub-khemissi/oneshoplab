@@ -93,13 +93,16 @@ export const shopifyAdapter: PlatformAdapter = {
     return { platform: 'shopify', confidence: Math.min(confidence, 1), signals };
   },
 
-  async *fetchProducts(ctx: AdapterContext, options?: FetchOptions): AsyncIterable<NormalizedProduct> {
+  async *fetchProducts(
+    ctx: AdapterContext,
+    options?: FetchOptions
+  ): AsyncIterable<NormalizedProduct> {
     const root = rootOf(ctx.url);
     const max = options?.maxProducts ?? Infinity;
 
     // Currency is on /cart.js, not /products.json — fetch once.
     const cart = await fetchJson<ShopifyCart>(`${root}/cart.js`);
-    const currency = cart.ok ? cart.data?.currency ?? null : null;
+    const currency = cart.ok ? (cart.data?.currency ?? null) : null;
 
     let yielded = 0;
     let page = 1;
@@ -124,11 +127,7 @@ export const shopifyAdapter: PlatformAdapter = {
   }
 };
 
-function normalize(
-  p: ShopifyApiProduct,
-  root: string,
-  currency: string | null
-): NormalizedProduct {
+function normalize(p: ShopifyApiProduct, root: string, currency: string | null): NormalizedProduct {
   const variants: ProductVariant[] = (p.variants ?? []).map((v) => ({
     id: String(v.id),
     sourceVariantId: String(v.id),

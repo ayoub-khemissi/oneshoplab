@@ -125,10 +125,7 @@ const QUERIES: Record<AltPlatform, Record<'fr' | 'en', string[]>> = {
   }
 };
 
-export function altPlatformQueries(
-  platform: AltPlatform,
-  lang: 'fr' | 'en'
-): string[] {
+export function altPlatformQueries(platform: AltPlatform, lang: 'fr' | 'en'): string[] {
   return QUERIES[platform][lang] ?? [];
 }
 

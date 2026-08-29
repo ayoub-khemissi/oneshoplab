@@ -81,9 +81,7 @@ export function imageRetentionDaysForPlan(plan: PricingPlanId | string | null | 
 
 /** Highest retention period across all plans. Acts as a hard upper
  *  bound when the cleanup worker can't resolve the owning plan. */
-export const MAX_IMAGE_RETENTION_DAYS = Math.max(
-  ...Object.values(IMAGE_RETENTION_DAYS_BY_PLAN)
-);
+export const MAX_IMAGE_RETENTION_DAYS = Math.max(...Object.values(IMAGE_RETENTION_DAYS_BY_PLAN));
 
 /** @deprecated Use imageRetentionDaysForPlan() — kept as the free-tier
  *  default for any non-plan-aware callers we haven't migrated. */
@@ -135,10 +133,9 @@ export interface ChatModelInfo extends ChatModelRef {
   tagline: string;
 }
 
-export const CHAT_MODEL_REGISTRY: Record<ChatModelId, ChatModelInfo> =
-  Object.fromEntries(
-    CHAT_MODEL_IDS.map((id) => [id, { id, ...PRICING.chatModels[id] } satisfies ChatModelInfo])
-  ) as Record<ChatModelId, ChatModelInfo>;
+export const CHAT_MODEL_REGISTRY: Record<ChatModelId, ChatModelInfo> = Object.fromEntries(
+  CHAT_MODEL_IDS.map((id) => [id, { id, ...PRICING.chatModels[id] } satisfies ChatModelInfo])
+) as Record<ChatModelId, ChatModelInfo>;
 
 export const DEFAULT_CHAT_MODEL: ChatModelId = PRICING.defaultChatModel;
 
@@ -168,16 +165,15 @@ export interface ChatTokenEstimate {
   outputTokens: number;
 }
 
-export const FIELD_TOKEN_ESTIMATES: Record<PricingFieldId, ChatTokenEstimate> =
-  Object.fromEntries(
-    FIELD_IDS.map((id) => [
-      id,
-      {
-        inputTokens: PRICING.fieldCaps[id].inputTokens,
-        outputTokens: PRICING.fieldCaps[id].outputTokens
-      } satisfies ChatTokenEstimate
-    ])
-  ) as Record<PricingFieldId, ChatTokenEstimate>;
+export const FIELD_TOKEN_ESTIMATES: Record<PricingFieldId, ChatTokenEstimate> = Object.fromEntries(
+  FIELD_IDS.map((id) => [
+    id,
+    {
+      inputTokens: PRICING.fieldCaps[id].inputTokens,
+      outputTokens: PRICING.fieldCaps[id].outputTokens
+    } satisfies ChatTokenEstimate
+  ])
+) as Record<PricingFieldId, ChatTokenEstimate>;
 
 /**
  * Deterministic credit cost for a chat call. Computed from the per-field
@@ -186,10 +182,7 @@ export const FIELD_TOKEN_ESTIMATES: Record<PricingFieldId, ChatTokenEstimate> =
  * user is debited — there is no separate "actual usage" pass, because the
  * generation is hard-capped at outputTokens.
  */
-export function estimateChatCredits(
-  modelId: ChatModelId,
-  field: PricingFieldId
-): number {
+export function estimateChatCredits(modelId: ChatModelId, field: PricingFieldId): number {
   const m = CHAT_MODEL_REGISTRY[modelId];
   const t = FIELD_TOKEN_ESTIMATES[field];
   const inCost = (t.inputTokens * m.inputPerM) / 1_000_000;
@@ -230,26 +223,25 @@ export const IMAGE_MODEL = PRICING.imageModel;
 /** Used by the worker when kie fails mid-flight (OpenRouter). */
 export const IMAGE_FALLBACK_MODEL = PRICING.imageFallbackModel;
 
-export const IMAGE_MODEL_REGISTRY: Record<ImageQualityId, ImageModelInfo> =
-  Object.fromEntries(
-    IMAGE_QUALITY_IDS.map((id) => {
-      const q = PRICING.imageQualities[id];
-      return [
+export const IMAGE_MODEL_REGISTRY: Record<ImageQualityId, ImageModelInfo> = Object.fromEntries(
+  IMAGE_QUALITY_IDS.map((id) => {
+    const q = PRICING.imageQualities[id];
+    return [
+      id,
+      {
         id,
-        {
-          id,
-          kieModelId: IMAGE_MODEL.kieModelId,
-          modelName: IMAGE_MODEL.modelName,
-          provider: IMAGE_MODEL.provider,
-          displayName: q.displayName,
-          resolution: q.resolution,
-          tier: q.tier,
-          kieCost: q.cost,
-          tagline: q.tagline
-        } satisfies ImageModelInfo
-      ];
-    })
-  ) as Record<ImageQualityId, ImageModelInfo>;
+        kieModelId: IMAGE_MODEL.kieModelId,
+        modelName: IMAGE_MODEL.modelName,
+        provider: IMAGE_MODEL.provider,
+        displayName: q.displayName,
+        resolution: q.resolution,
+        tier: q.tier,
+        kieCost: q.cost,
+        tagline: q.tagline
+      } satisfies ImageModelInfo
+    ];
+  })
+) as Record<ImageQualityId, ImageModelInfo>;
 
 export const DEFAULT_IMAGE_QUALITY: ImageQualityId = PRICING.defaultImageQuality;
 
@@ -498,11 +490,20 @@ export function aiSubProcessors(): AiSubProcessor[] {
   const add = (p: ChatModelInfo['provider'], role: string) =>
     providerRoles.set(p, [...(providerRoles.get(p) ?? []), role]);
   for (const p of chatProviders) {
-    const names = [...new Set(Object.values(CHAT_MODEL_REGISTRY).filter((m) => m.provider === p).map((m) => m.displayName))];
+    const names = [
+      ...new Set(
+        Object.values(CHAT_MODEL_REGISTRY)
+          .filter((m) => m.provider === p)
+          .map((m) => m.displayName)
+      )
+    ];
     add(p, `${names.join(', ')} (text generation), via OpenRouter / kie.ai`);
   }
   add(imageProvider, `${IMAGE_MODEL.modelName} (image generation), via kie.ai`);
-  add(fallbackProvider, `${IMAGE_FALLBACK_MODEL.displayName} (image generation fallback), via OpenRouter`);
+  add(
+    fallbackProvider,
+    `${IMAGE_FALLBACK_MODEL.displayName} (image generation fallback), via OpenRouter`
+  );
   for (const [p, roles] of providerRoles) {
     rows.push({ ...PROVIDER_LEGAL[p], role: roles.join('; ') });
   }

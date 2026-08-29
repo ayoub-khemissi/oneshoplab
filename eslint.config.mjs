@@ -6,9 +6,7 @@ import unusedImports from 'eslint-plugin-unused-imports';
 // config objects; overriding one of its rules requires the plugin to be
 // declared in the SAME object, so we borrow the instance it already loaded
 // (pnpm's strict node_modules makes it non-importable from here).
-const reactHooksPlugin = nextVitals
-  .map((c) => c.plugins?.['react-hooks'])
-  .find(Boolean);
+const reactHooksPlugin = nextVitals.map((c) => c.plugins?.['react-hooks']).find(Boolean);
 
 /**
  * ESLint flat config (Next 16 removed `next lint`; this replaces it).
@@ -40,10 +38,16 @@ const eslintConfig = [
   ...nextVitals,
   ...nextTs,
   {
-    plugins: { 'unused-imports': unusedImports, ...(reactHooksPlugin ? { 'react-hooks': reactHooksPlugin } : {}) },
+    plugins: {
+      'unused-imports': unusedImports,
+      ...(reactHooksPlugin ? { 'react-hooks': reactHooksPlugin } : {})
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/ban-ts-comment': ['error', { 'ts-expect-error': 'allow-with-description' }],
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        { 'ts-expect-error': 'allow-with-description' }
+      ],
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [

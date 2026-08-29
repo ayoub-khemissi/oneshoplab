@@ -82,9 +82,7 @@ export function DownloadAllButton({
     >
       <Download className="size-3.5" />
       <span>
-        {busy && progress
-          ? `${progress.done}/${progress.total}`
-          : `${label} (${urls.length})`}
+        {busy && progress ? `${progress.done}/${progress.total}` : `${label} (${urls.length})`}
       </span>
     </button>
   );
@@ -115,11 +113,7 @@ function isServerSideHost(url: string): boolean {
   }
 }
 
-async function zipViaServer(
-  urls: string[],
-  prefix: string,
-  zipName: string
-): Promise<void> {
+async function zipViaServer(urls: string[], prefix: string, zipName: string): Promise<void> {
   const res = await fetch('/api/zip-images', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },

@@ -174,17 +174,18 @@ export function RetryableGenerateProvider({
   // unsticks the spinner naturally. The poll only runs for fields
   // that came back pending from the server, never for ones the user
   // clicks in-tab.
-  const resumedRef = useRef<Set<GenField>>(
-    new Set(inFlightChatJobs.map((j) => j.field))
-  );
+  const resumedRef = useRef<Set<GenField>>(new Set(inFlightChatJobs.map((j) => j.field)));
   useEffect(() => {
     if (resumedRef.current.size === 0) return;
     let cancelled = false;
     const tick = async () => {
       try {
-        const res = await fetch(`/api/products/text-jobs?productId=${encodeURIComponent(productId)}`, {
-          headers: { accept: 'application/json' }
-        });
+        const res = await fetch(
+          `/api/products/text-jobs?productId=${encodeURIComponent(productId)}`,
+          {
+            headers: { accept: 'application/json' }
+          }
+        );
         if (cancelled) return;
         if (!res.ok) return;
         const body = (await res.json()) as { running?: string[] };
@@ -213,7 +214,6 @@ export function RetryableGenerateProvider({
     };
     // We intentionally do NOT depend on `states` here — the resumed
     // tracker is its own bag, fed only by the F5 seed.
-     
   }, [productId, router]);
 
   // Surface chat-gen failures the merchant may have missed while
@@ -274,8 +274,12 @@ export function RetryableGenerateProvider({
   // the callback (which would also re-create every memoized child).
   const chatModelRef = useRef(chatModelId);
   const imageQualityRef = useRef(imageQualityId);
-  useEffect(() => { chatModelRef.current = chatModelId; }, [chatModelId]);
-  useEffect(() => { imageQualityRef.current = imageQualityId; }, [imageQualityId]);
+  useEffect(() => {
+    chatModelRef.current = chatModelId;
+  }, [chatModelId]);
+  useEffect(() => {
+    imageQualityRef.current = imageQualityId;
+  }, [imageQualityId]);
 
   const costFor = useCallback(
     (field: GenField): number => {
@@ -286,11 +290,16 @@ export function RetryableGenerateProvider({
       const tg = estimateChatCredits(cm, 'tags');
       const img = costForImage(iq) * IMAGE_ANGLES_PER_GEN;
       switch (field) {
-        case 'title': return t;
-        case 'description': return d;
-        case 'tags': return tg;
-        case 'images': return img;
-        case 'all': return t + d + tg + img;
+        case 'title':
+          return t;
+        case 'description':
+          return d;
+        case 'tags':
+          return tg;
+        case 'images':
+          return img;
+        case 'all':
+          return t + d + tg + img;
       }
     },
     [chatModelId, imageQualityId]
@@ -609,15 +618,10 @@ export function RetryableGenerateButton({
   const otherSingleInflight = isAll
     ? FIELDS.some((f) => f !== 'all' && isInflight(states[f]))
     : false;
-  const blockedByGlobal =
-    (!isAll && allInflight) || (isAll && otherSingleInflight);
+  const blockedByGlobal = (!isAll && allInflight) || (isAll && otherSingleInflight);
 
-  const elapsed = useElapsedSinceMs(
-    state.kind === 'pending' ? state.startedAt : null
-  );
-  const waitSeconds = useCountdownTo(
-    state.kind === 'waiting' ? state.resumeAt : null
-  );
+  const elapsed = useElapsedSinceMs(state.kind === 'pending' ? state.startedAt : null);
+  const waitSeconds = useCountdownTo(state.kind === 'waiting' ? state.resumeAt : null);
 
   const baseClasses =
     'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:cursor-not-allowed';
@@ -640,7 +644,9 @@ export function RetryableGenerateButton({
           <span>
             {t('generating', { seconds: elapsed })}
             {showAttemptBadge ? (
-              <span className="opacity-70 font-mono ml-1">· {state.attempt}/{MAX_ATTEMPTS}</span>
+              <span className="opacity-70 font-mono ml-1">
+                · {state.attempt}/{MAX_ATTEMPTS}
+              </span>
             ) : null}
           </span>
         </button>
@@ -656,7 +662,9 @@ export function RetryableGenerateButton({
           <Spinner size="sm" />
           <span>
             {t('retryingIn', { seconds: waitSeconds })}
-            <span className="opacity-70 font-mono ml-1">· {state.nextAttempt}/{MAX_ATTEMPTS}</span>
+            <span className="opacity-70 font-mono ml-1">
+              · {state.nextAttempt}/{MAX_ATTEMPTS}
+            </span>
           </span>
         </button>
         <CancelButton onCancel={() => cancel(field)} label={t('cancelGeneration')} />
@@ -681,7 +689,9 @@ export function RetryableGenerateButton({
         ) : (
           <span>{hasHistory ? t('regenerateField') : t('generateField')}</span>
         )}
-        <span className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+        <span
+          className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}
+        >
           · <Coins className="size-3" aria-hidden /> {cost}
         </span>
       </button>
@@ -689,11 +699,7 @@ export function RetryableGenerateButton({
         <ConfirmDialog
           isOpen={confirmOpen}
           onOpenChange={setConfirmOpen}
-          title={
-            hasHistory
-              ? t('confirmRegenerateAllTitle')
-              : t('confirmGenerateAllTitle')
-          }
+          title={hasHistory ? t('confirmRegenerateAllTitle') : t('confirmGenerateAllTitle')}
           description={
             hasHistory
               ? t('confirmRegenerateAllBody', { cost })
@@ -735,7 +741,9 @@ interface CustomInstructionsFieldProps {
   hasSiteInstructions?: boolean;
 }
 
-export function CustomInstructionsField({ hasSiteInstructions = false }: CustomInstructionsFieldProps) {
+export function CustomInstructionsField({
+  hasSiteInstructions = false
+}: CustomInstructionsFieldProps) {
   const t = useTranslations('Product');
   const { customInstructions, setCustomInstructions } = useGenerateContext();
   return (
@@ -752,7 +760,9 @@ export function CustomInstructionsField({ hasSiteInstructions = false }: CustomI
         rows={3}
         maxLength={MAX_CUSTOM_INSTRUCTIONS_CHARS}
         value={customInstructions}
-        onChange={(e) => setCustomInstructions(e.target.value.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS))}
+        onChange={(e) =>
+          setCustomInstructions(e.target.value.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS))
+        }
         placeholder={t('customInstructionsPlaceholder')}
         className="w-full px-3 py-2 rounded-md border border-[var(--border)] bg-[var(--background)] text-sm focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition resize-y min-h-[80px]"
       />

@@ -11,12 +11,7 @@ import {
   users,
   type BillingCycle as DbBillingCycle
 } from './db/schema';
-import {
-  PLAN_TIERS,
-  getCreditPack,
-  type BillingCycle,
-  type PlanId
-} from './ai/models';
+import { PLAN_TIERS, getCreditPack, type BillingCycle, type PlanId } from './ai/models';
 import { checkoutConsentParams } from './legal-consent';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
 import type Stripe from 'stripe';
@@ -28,10 +23,7 @@ import type Stripe from 'stripe';
  * any failure (network, missing unit_amount on a metered price)
  * returns an empty string and the event just fires without a value.
  */
-async function stripePriceValueParam(
-  stripe: Stripe,
-  priceId: string
-): Promise<string> {
+async function stripePriceValueParam(stripe: Stripe, priceId: string): Promise<string> {
   try {
     const price = await stripe.prices.retrieve(priceId);
     if (price.unit_amount == null) return '';

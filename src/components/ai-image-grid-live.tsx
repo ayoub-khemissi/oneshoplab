@@ -52,9 +52,7 @@ export function AiImageGridLive({
   const t = useTranslations('AiImageGrid');
   const router = useRouter();
 
-  const [rawJobs, setJobs] = useState<ImageJobRow[]>(() =>
-    initial.map(rehydrateDates)
-  );
+  const [rawJobs, setJobs] = useState<ImageJobRow[]>(() => initial.map(rehydrateDates));
   // Starts at 0 (not Date.now()) so the SSR render and the client's
   // first render agree — Date.now() at render time differs between
   // the two and trips React #418. The effect below sets the real
@@ -87,9 +85,7 @@ export function AiImageGridLive({
   //
   // The signature key keeps the dependency stable when the array
   // reference is new but content hasn't actually changed.
-  const initialSignature = initial
-    .map((j) => `${j.id}:${j.status}:${j.imageUrl ?? ''}`)
-    .join('|');
+  const initialSignature = initial.map((j) => `${j.id}:${j.status}:${j.imageUrl ?? ''}`).join('|');
   useEffect(() => {
     setJobs(initial.map(rehydrateDates));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,9 +108,7 @@ export function AiImageGridLive({
   // Poll while any job is non-terminal. We restart the timer whenever
   // the list shifts so a fresh kick (POST add) starts polling without
   // waiting for the next setInterval period to elapse.
-  const hasActive = rawJobs.some(
-    (j) => j.status === 'pending' || j.status === 'running'
-  );
+  const hasActive = rawJobs.some((j) => j.status === 'pending' || j.status === 'running');
   useEffect(() => {
     if (!hasActive) return;
     let cancelled = false;
@@ -137,10 +131,7 @@ export function AiImageGridLive({
   useEffect(() => {
     const handler = (ev: Event) => {
       const detail = (ev as CustomEvent<{ siteId?: string; productId?: string }>).detail;
-      if (
-        detail?.siteId !== siteId ||
-        detail?.productId !== productId
-      ) {
+      if (detail?.siteId !== siteId || detail?.productId !== productId) {
         return;
       }
       // Run several spaced refreshes — kie image jobs typically appear
@@ -249,17 +240,13 @@ export function AiImageGridLive({
       {rawJobs.length === 0 ? (
         <p className="text-sm text-[var(--muted)] italic">{t('emptyHint')}</p>
       ) : null}
-      {errorMsg ? (
-        <p className="text-xs text-[var(--danger)]">{errorMsg}</p>
-      ) : null}
+      {errorMsg ? <p className="text-xs text-[var(--danger)]">{errorMsg}</p> : null}
       {modalOpen ? (
         <NewImageModal
           costPerImage={costPerImage}
           isReplace={modalReplaceId !== null}
           onCancel={() => setModalOpen(false)}
-          onSubmit={(payload) =>
-            submitNewImage({ ...payload, replaceJobId: modalReplaceId })
-          }
+          onSubmit={(payload) => submitNewImage({ ...payload, replaceJobId: modalReplaceId })}
         />
       ) : null}
     </div>
@@ -349,9 +336,7 @@ function ImageTile({
     return (
       <div className="aspect-square rounded-md border border-[var(--danger)]/40 bg-[var(--danger)]/5 flex flex-col items-center justify-center gap-1.5 p-3 text-center relative">
         <AlertTriangle className="size-5 text-[var(--danger)]" aria-hidden />
-        <span className="text-xs font-medium text-[var(--danger)]">
-          {t('failedLabel')}
-        </span>
+        <span className="text-xs font-medium text-[var(--danger)]">{t('failedLabel')}</span>
         <span className="text-[10px] text-[var(--success)] font-medium inline-flex items-center gap-1">
           <Coins className="size-3" aria-hidden />
           {t('refundedNote', { cost: job.creditsCost })}
@@ -416,7 +401,11 @@ function ImageTile({
           title={t('delete')}
           className="absolute top-1.5 right-1.5 size-7 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm flex items-center justify-center text-white disabled:opacity-50"
         >
-          {isBusy === 'delete' ? <Spinner size="sm" className="text-white" /> : <X className="size-3.5" />}
+          {isBusy === 'delete' ? (
+            <Spinner size="sm" className="text-white" />
+          ) : (
+            <X className="size-3.5" />
+          )}
         </button>
       </div>
     );
@@ -478,13 +467,7 @@ function ImageTile({
 // Add tile — dashed border + "+" + cost label.
 // ---------------------------------------------------------------------------
 
-function AddTile({
-  costPerImage,
-  onClick
-}: {
-  costPerImage: number;
-  onClick: () => void;
-}) {
+function AddTile({ costPerImage, onClick }: { costPerImage: number; onClick: () => void }) {
   const t = useTranslations('AiImageGrid');
   return (
     <button
@@ -521,9 +504,7 @@ function NewImageModal({
   }) => Promise<boolean>;
 }) {
   const t = useTranslations('AiImageGrid');
-  const [angle, setAngle] = useState<'lifestyle' | 'studio' | 'inuse' | 'custom'>(
-    'lifestyle'
-  );
+  const [angle, setAngle] = useState<'lifestyle' | 'studio' | 'inuse' | 'custom'>('lifestyle');
   const [customPrompt, setCustomPrompt] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -618,9 +599,7 @@ function NewImageModal({
               />
               <div className="flex-1">
                 <div className="text-sm font-medium">{a.label}</div>
-                <div className="text-xs text-[var(--muted)] mt-0.5">
-                  {a.description}
-                </div>
+                <div className="text-xs text-[var(--muted)] mt-0.5">{a.description}</div>
               </div>
             </label>
           ))}
@@ -652,9 +631,7 @@ function NewImageModal({
             <button
               type="button"
               onClick={handleSubmit}
-              disabled={
-                submitting || (angle === 'custom' && !customPrompt.trim())
-              }
+              disabled={submitting || (angle === 'custom' && !customPrompt.trim())}
               className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
             >
               {submitting ? <Spinner size="sm" /> : null}

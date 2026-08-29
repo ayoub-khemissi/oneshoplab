@@ -45,14 +45,14 @@ async function createScratchSiteAction(formData: FormData): Promise<void> {
   // the URL constructor, so anything that resolves to a hostname with
   // a dot is accepted.
   const rawUrl = String(formData.get('url') ?? '');
-  const rawLanguage = String(formData.get('language') ?? '').trim().toLowerCase();
+  const rawLanguage = String(formData.get('language') ?? '')
+    .trim()
+    .toLowerCase();
   const norm = normalizeUrl(rawUrl);
   if (!norm) {
     redirect('/dashboard/sites/new/scratch?error=invalid_url');
   }
-  const languageOverride = (SUPPORTED_LOCALES as readonly string[]).includes(
-    rawLanguage
-  )
+  const languageOverride = (SUPPORTED_LOCALES as readonly string[]).includes(rawLanguage)
     ? rawLanguage
     : null;
 
@@ -61,10 +61,7 @@ async function createScratchSiteAction(formData: FormData): Promise<void> {
   // it instead of creating a second one. Mirrors the dedupe that
   // launchAuditForUser already does on the scraped path.
   const existing = await db.query.projects.findFirst({
-    where: and(
-      eq(projects.userId, session.user.id),
-      eq(projects.domain, norm.domain)
-    ),
+    where: and(eq(projects.userId, session.user.id), eq(projects.domain, norm.domain)),
     columns: { id: true }
   });
   if (existing) {
@@ -172,9 +169,7 @@ export default async function NewScratchSitePage({ searchParams }: PageProps) {
           defaultLocale={currentLocale}
           label={t('addSiteScratchLanguageLabel')}
         />
-        <span className="text-xs text-[var(--muted)] -mt-1">
-          {t('addSiteScratchLanguageHint')}
-        </span>
+        <span className="text-xs text-[var(--muted)] -mt-1">{t('addSiteScratchLanguageHint')}</span>
 
         <button
           type="submit"

@@ -14,10 +14,7 @@ type GtagWindow = Window & {
   gtag?: (command: string, ...args: unknown[]) => void;
 };
 
-export function trackEvent(
-  name: string,
-  params?: Record<string, unknown>
-): boolean {
+export function trackEvent(name: string, params?: Record<string, unknown>): boolean {
   if (typeof window === 'undefined') return false;
   if (getAnalyticsConsent() !== 'granted') return false;
   const w = window as GtagWindow;

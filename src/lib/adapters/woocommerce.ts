@@ -113,7 +113,10 @@ export const woocommerceAdapter: PlatformAdapter = {
     return { platform: 'woocommerce', confidence: Math.min(confidence, 1), signals };
   },
 
-  async *fetchProducts(ctx: AdapterContext, options?: FetchOptions): AsyncIterable<NormalizedProduct> {
+  async *fetchProducts(
+    ctx: AdapterContext,
+    options?: FetchOptions
+  ): AsyncIterable<NormalizedProduct> {
     const root = rootOf(ctx.url);
     const max = options?.maxProducts ?? Infinity;
 
@@ -134,9 +137,7 @@ export const woocommerceAdapter: PlatformAdapter = {
     // still exposed by core WP REST. Schema is leaner — no prices,
     // no variants — but we get title + description + images + tags
     // which is enough for the audit + AI rewrite pipeline.
-    const wpProbe = await fetchJson<WpRestProduct[]>(
-      `${root}/wp-json/wp/v2/product?per_page=1`
-    );
+    const wpProbe = await fetchJson<WpRestProduct[]>(`${root}/wp-json/wp/v2/product?per_page=1`);
     if (wpProbe.ok && Array.isArray(wpProbe.data)) {
       yield* fetchViaWpRest(root, max, options);
       return;

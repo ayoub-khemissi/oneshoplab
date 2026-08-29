@@ -70,9 +70,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
     setFormError(null);
     formData.set('intent', intentRef.current);
     startTransition(() => {
-      const action = isEdit
-        ? updateManualProductAction
-        : createManualProductAction;
+      const action = isEdit ? updateManualProductAction : createManualProductAction;
       void action(formData);
     });
   }
@@ -120,10 +118,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
           setUploadError(err?.error ?? `HTTP ${res.status}`);
         } else {
           const json = (await res.json()) as { url: string };
-          setImages((prev) => [
-            ...prev,
-            { src: json.url, alt: null, width: null, height: null }
-          ]);
+          setImages((prev) => [...prev, { src: json.url, alt: null, width: null, height: null }]);
         }
       } catch (e) {
         setUploadError((e as Error).message);
@@ -141,9 +136,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
   }
 
   function updateAltAt(idx: number, alt: string): void {
-    setImages((prev) =>
-      prev.map((img, i) => (i === idx ? { ...img, alt: alt || null } : img))
-    );
+    setImages((prev) => prev.map((img, i) => (i === idx ? { ...img, alt: alt || null } : img)));
   }
 
   return (
@@ -184,11 +177,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
         />
       </div>
 
-      <TextField
-        fullWidth
-        name="tags"
-        defaultValue={(initial.tags ?? []).join(', ')}
-      >
+      <TextField fullWidth name="tags" defaultValue={(initial.tags ?? []).join(', ')}>
         <Label>{t('addProductTagsLabel')}</Label>
         <InputGroup>
           <InputGroup.Input placeholder={t('addProductTagsPlaceholder')} />
@@ -206,21 +195,13 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
             <InputGroup.Input placeholder="29.90" step="0.01" min="0" />
           </InputGroup>
         </TextField>
-        <TextField
-          name="currency"
-          defaultValue={initial.currency ?? ''}
-          maxLength={8}
-        >
+        <TextField name="currency" defaultValue={initial.currency ?? ''} maxLength={8}>
           <Label>{t('addProductCurrencyLabel')}</Label>
           <InputGroup>
             <InputGroup.Input placeholder="EUR" />
           </InputGroup>
         </TextField>
-        <TextField
-          name="vendor"
-          defaultValue={initial.vendor ?? ''}
-          maxLength={255}
-        >
+        <TextField name="vendor" defaultValue={initial.vendor ?? ''} maxLength={255}>
           <Label>{t('addProductVendorLabel')}</Label>
           <InputGroup>
             <InputGroup.Input placeholder="My brand" />
@@ -228,11 +209,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
         </TextField>
       </div>
 
-      <TextField
-        name="productType"
-        defaultValue={initial.productType ?? ''}
-        maxLength={255}
-      >
+      <TextField name="productType" defaultValue={initial.productType ?? ''} maxLength={255}>
         <Label>{t('addProductTypeLabel')}</Label>
         <InputGroup>
           <InputGroup.Input placeholder="T-shirt, mug, …" />
@@ -243,11 +220,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
         <div className="flex items-center justify-between gap-3">
           <Label className="text-sm">
             {t('addProductImagesLabel')}{' '}
-            <span
-              className="text-[var(--danger)]"
-              aria-label="required"
-              title="required"
-            >
+            <span className="text-[var(--danger)]" aria-label="required" title="required">
               *
             </span>
           </Label>
@@ -331,12 +304,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
 
       <div className="flex items-center justify-between gap-3 flex-wrap pt-2 border-t border-[var(--border)]">
         {isEdit ? (
-          <Button
-            type="submit"
-            variant="primary"
-            isPending={isPending}
-            isDisabled={uploading > 0}
-          >
+          <Button type="submit" variant="primary" isPending={isPending} isDisabled={uploading > 0}>
             <Upload className="size-4" />
             {t('editProductSubmit')}
           </Button>
@@ -376,11 +344,7 @@ export function ManualProductForm({ initial }: { initial: ManualProductFormIniti
         {isEdit ? (
           <form action={handleDelete}>
             <input type="hidden" name="projectId" value={initial.projectId} />
-            <input
-              type="hidden"
-              name="productId"
-              value={initial.productId ?? ''}
-            />
+            <input type="hidden" name="productId" value={initial.productId ?? ''} />
             <Button
               type="submit"
               variant="ghost"

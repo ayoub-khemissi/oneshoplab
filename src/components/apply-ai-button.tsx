@@ -53,12 +53,7 @@ export function ApplyAiButton({ projectId, productId, available }: Props) {
 
   return (
     <>
-      <Button
-        type="button"
-        variant="primary"
-        size="sm"
-        onClick={() => setIsOpen(true)}
-      >
+      <Button type="button" variant="primary" size="sm" onClick={() => setIsOpen(true)}>
         <Wand2 className="size-4" />
         {t('applyAiCta')}
       </Button>

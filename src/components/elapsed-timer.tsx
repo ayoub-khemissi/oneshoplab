@@ -21,8 +21,7 @@ export function ElapsedTimer({
   avgSeconds?: number | null;
   prefix?: string;
 }) {
-  const startMs =
-    typeof startedAt === 'number' ? startedAt : new Date(startedAt).getTime();
+  const startMs = typeof startedAt === 'number' ? startedAt : new Date(startedAt).getTime();
 
   const [now, setNow] = useState<number | null>(null);
 
@@ -32,8 +31,7 @@ export function ElapsedTimer({
     return () => clearInterval(id);
   }, []);
 
-  const elapsedSeconds =
-    now === null ? 0 : Math.max(0, Math.floor((now - startMs) / 1000));
+  const elapsedSeconds = now === null ? 0 : Math.max(0, Math.floor((now - startMs) / 1000));
 
   return (
     <span className="font-mono inline-flex items-center gap-1">

@@ -91,10 +91,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 }
 
-async function handleCheckoutCompleted(
-  stripe: Stripe,
-  cs: Stripe.Checkout.Session
-): Promise<void> {
+async function handleCheckoutCompleted(stripe: Stripe, cs: Stripe.Checkout.Session): Promise<void> {
   const userId = (cs.metadata?.oneshoplabUserId ?? '') as string;
   if (!userId) return;
 
@@ -153,9 +150,7 @@ async function handleCreditPackPurchase(
   // this grant directly via creditTransactions.stripePaymentId. Falls
   // back to null on the legacy guest path (no PI on the session).
   const paymentIntentId =
-    typeof cs.payment_intent === 'string'
-      ? cs.payment_intent
-      : (cs.payment_intent?.id ?? null);
+    typeof cs.payment_intent === 'string' ? cs.payment_intent : (cs.payment_intent?.id ?? null);
 
   await applyCreditTransaction({
     userId,
@@ -337,10 +332,7 @@ function findOldPriceFromProrationLines(
  * subscription now and sync so the UI shows the warning banner without
  * waiting for the second event.
  */
-async function handleInvoicePaymentFailed(
-  stripe: Stripe,
-  invoice: Stripe.Invoice
-): Promise<void> {
+async function handleInvoicePaymentFailed(stripe: Stripe, invoice: Stripe.Invoice): Promise<void> {
   const subId = extractInvoiceSubscriptionId(invoice);
   if (!subId) return;
 
@@ -473,10 +465,7 @@ async function handleSubscriptionUpdated(sub: Stripe.Subscription): Promise<void
   await syncFromStripeSubscription(userId, sub);
 }
 
-async function syncFromStripeSubscription(
-  userId: string,
-  sub: Stripe.Subscription
-): Promise<void> {
+async function syncFromStripeSubscription(userId: string, sub: Stripe.Subscription): Promise<void> {
   const priceId = sub.items.data[0]?.price.id;
   if (!priceId) return;
 
@@ -517,11 +506,8 @@ async function syncFromStripeSubscription(
   const isCancellingNew = cancelAtUnix !== null && sub.status !== 'canceled';
   const isCancellingLegacy = sub.cancel_at_period_end === true;
   const isCancelling = isCancellingNew || isCancellingLegacy;
-  const effectivePeriodEndUnix = isCancellingNew
-    ? cancelAtUnix
-    : periodEndUnix;
-  const periodEnd =
-    effectivePeriodEndUnix != null ? new Date(effectivePeriodEndUnix * 1000) : null;
+  const effectivePeriodEndUnix = isCancellingNew ? cancelAtUnix : periodEndUnix;
+  const periodEnd = effectivePeriodEndUnix != null ? new Date(effectivePeriodEndUnix * 1000) : null;
   const status = isCancelling ? 'cancelling' : sub.status;
   const planForDb = sub.status === 'canceled' ? ('free' as PlanId) : resolved.plan;
 
@@ -553,6 +539,7 @@ async function recordCheckoutConsent(cs: Stripe.Checkout.Session, userId: string
     // Unique (kind, source) → a replayed event is a no-op; anything else
     // is logged but must not block the credit grant.
     const msg = (e as Error).message;
-    if (!/Duplicate entry|ER_DUP_ENTRY/.test(msg)) console.error('[stripe-webhook] consent record failed', msg);
+    if (!/Duplicate entry|ER_DUP_ENTRY/.test(msg))
+      console.error('[stripe-webhook] consent record failed', msg);
   }
 }

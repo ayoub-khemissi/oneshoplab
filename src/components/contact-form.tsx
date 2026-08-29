@@ -45,7 +45,12 @@ function InnerForm({
   t
 }: ContactFormProps & { onReset: () => void; t: ReturnType<typeof useTranslations> }) {
   const [state, action, pending] = useActionState(submitContactAction, INITIAL);
-  const v = state.values ?? { name: defaults.name, email: defaults.email, subject: '', message: '' };
+  const v = state.values ?? {
+    name: defaults.name,
+    email: defaults.email,
+    subject: '',
+    message: ''
+  };
 
   if (state.status === 'success') {
     return (

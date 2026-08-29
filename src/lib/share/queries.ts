@@ -46,9 +46,7 @@ export async function listShareLinksForSite(
  * letting the admin pick a product that has nothing to show on the
  * before/after view.
  */
-export async function listProductsWithGenerations(
-  projectId: string
-): Promise<
+export async function listProductsWithGenerations(projectId: string): Promise<
   {
     sourceId: string;
     title: string;
@@ -108,16 +106,20 @@ export async function listProductsWithGenerations(
   // Map sourceId → the set of kinds it has at least one valid result for.
   // For image jobs, "valid" means status=completed AND result.imageUrl is
   // populated (legacy pre-R2 rows that never got an imageUrl don't count).
-  const flagsBySourceId = new Map<string, {
-    title: boolean;
-    description: boolean;
-    tags: boolean;
-    images: boolean;
-  }>();
+  const flagsBySourceId = new Map<
+    string,
+    {
+      title: boolean;
+      description: boolean;
+      tags: boolean;
+      images: boolean;
+    }
+  >();
   for (const j of completedJobs) {
-    const sid = (j.inputPayload && typeof j.inputPayload === 'object'
-      ? ((j.inputPayload as { productSourceId?: string | null }).productSourceId ?? null)
-      : null);
+    const sid =
+      j.inputPayload && typeof j.inputPayload === 'object'
+        ? ((j.inputPayload as { productSourceId?: string | null }).productSourceId ?? null)
+        : null;
     if (!sid) continue;
     const slot = flagsBySourceId.get(sid) ?? {
       title: false,
@@ -134,7 +136,7 @@ export async function listProductsWithGenerations(
         typeof j.result === 'object' &&
         'imageUrl' in j.result &&
         typeof (j.result as { imageUrl?: unknown }).imageUrl === 'string' &&
-        ((j.result as { imageUrl: string }).imageUrl.length > 0);
+        (j.result as { imageUrl: string }).imageUrl.length > 0;
       if (hasUrl) slot.images = true;
     }
     flagsBySourceId.set(sid, slot);
@@ -282,11 +284,7 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
 
   const products: SharedProduct[] = [];
   for (const sourceId of productSourceIds) {
-    const matched = await resolveFeaturedProduct(
-      project.id,
-      sourceId,
-      allProducts
-    );
+    const matched = await resolveFeaturedProduct(project.id, sourceId, allProducts);
     if (!matched) continue;
 
     const [titleHist, descHist, tagsHist, images] = await Promise.all([
@@ -296,16 +294,10 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
       listProductImageJobs(project.id, sourceId)
     ]);
     const aiTitle =
-      titleHist[0] && typeof titleHist[0].output === 'string'
-        ? titleHist[0].output
-        : null;
+      titleHist[0] && typeof titleHist[0].output === 'string' ? titleHist[0].output : null;
     const aiDescription =
-      descHist[0] && typeof descHist[0].output === 'string'
-        ? descHist[0].output
-        : null;
-    const aiTags = Array.isArray(tagsHist[0]?.output)
-      ? (tagsHist[0]!.output as string[])
-      : [];
+      descHist[0] && typeof descHist[0].output === 'string' ? descHist[0].output : null;
+    const aiTags = Array.isArray(tagsHist[0]?.output) ? (tagsHist[0]!.output as string[]) : [];
     const aiImageUrls = images
       .filter((j) => j.status === 'completed' && j.imageUrl)
       .slice(0, 3)
@@ -333,16 +325,13 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
 
   const domain = project.domain ?? audit.url ?? '';
   const siteUrl =
-    project.url ??
-    audit.url ??
-    (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
+    project.url ?? audit.url ?? (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
   // Build the collapsible "audit detail" block from the persisted
   // summary. Legacy audits without these fields render the toggle but
   // with reduced content — that's fine, the consumer guards each row.
   const details: SharedAuditSnapshot['details'] = {
     sampled: typeof summary.sampled === 'number' ? summary.sampled : null,
-    avgProductScore:
-      typeof summary.avgProductScore === 'number' ? summary.avgProductScore : null,
+    avgProductScore: typeof summary.avgProductScore === 'number' ? summary.avgProductScore : null,
     averages: {
       imageCount: summary.averages?.imageCount ?? null,
       descriptionLength: summary.averages?.descriptionLength ?? null,
@@ -354,23 +343,18 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
       tagsZero: summary.distribution?.tagsZero ?? null,
       altNone: summary.distribution?.altNone ?? null
     },
-    worstProducts: (summary.worstProducts ?? [])
-      .slice(0, 6)
-      .map((p) => ({
-        title: p.title,
-        score: p.score,
-        issues: p.issues ?? []
-      }))
+    worstProducts: (summary.worstProducts ?? []).slice(0, 6).map((p) => ({
+      title: p.title,
+      score: p.score,
+      issues: p.issues ?? []
+    }))
   };
 
   return {
     domain,
     siteUrl,
     platform: audit.platform,
-    scores:
-      audit.scores != null
-        ? (audit.scores as SharedAuditSnapshot['scores'])
-        : null,
+    scores: audit.scores != null ? (audit.scores as SharedAuditSnapshot['scores']) : null,
     details,
     products,
     generatedAt: link.createdAt,
@@ -411,9 +395,7 @@ async function resolveFeaturedProduct(
     signals?: { tags?: string[] };
   }>
 ): Promise<FeaturedProductSnapshot | null> {
-  const fromSummary = allProducts.find(
-    (p) => (p.sourceId ?? p.handle ?? '') === sourceId
-  );
+  const fromSummary = allProducts.find((p) => (p.sourceId ?? p.handle ?? '') === sourceId);
   if (fromSummary) return fromSummary;
 
   // Summary lost it (catalog id rotation / duplicate-handle churn).
@@ -428,16 +410,10 @@ async function resolveFeaturedProduct(
   //      id on every scrape), which is exactly the moycor case.
   let row =
     (await db.query.products.findFirst({
-      where: and(
-        eq(products.projectId, projectId),
-        eq(products.sourceId, sourceId)
-      )
+      where: and(eq(products.projectId, projectId), eq(products.sourceId, sourceId))
     })) ??
     (await db.query.products.findFirst({
-      where: and(
-        eq(products.projectId, projectId),
-        eq(products.handle, sourceId)
-      )
+      where: and(eq(products.projectId, projectId), eq(products.handle, sourceId))
     })) ??
     null;
   if (!row) {
@@ -577,11 +553,7 @@ export async function loadHomeShowcaseCards(
 
     const products: HomeShowcaseCard['products'] = [];
     for (const sourceId of ids) {
-      const matched = await resolveFeaturedProduct(
-        project.id,
-        sourceId,
-        allProducts
-      );
+      const matched = await resolveFeaturedProduct(project.id, sourceId, allProducts);
       if (!matched) continue;
       const [titleHist, descHist, tagsHist, imageJobs] = await Promise.all([
         listOptimHistory(project.id, sourceId, 'title'),
@@ -590,16 +562,10 @@ export async function loadHomeShowcaseCards(
         listProductImageJobs(project.id, sourceId)
       ]);
       const aiTitle =
-        titleHist[0] && typeof titleHist[0].output === 'string'
-          ? titleHist[0].output
-          : null;
+        titleHist[0] && typeof titleHist[0].output === 'string' ? titleHist[0].output : null;
       const aiDescriptionHtml =
-        descHist[0] && typeof descHist[0].output === 'string'
-          ? descHist[0].output
-          : null;
-      const aiTags = Array.isArray(tagsHist[0]?.output)
-        ? (tagsHist[0]!.output as string[])
-        : [];
+        descHist[0] && typeof descHist[0].output === 'string' ? descHist[0].output : null;
+      const aiTags = Array.isArray(tagsHist[0]?.output) ? (tagsHist[0]!.output as string[]) : [];
       const aiImages = imageJobs
         .filter((j) => j.status === 'completed' && j.imageUrl)
         .slice(0, 3)
@@ -629,9 +595,7 @@ export async function loadHomeShowcaseCards(
 
     const domain = project.domain ?? audit.url ?? '';
     const siteUrl =
-      project.url ??
-      audit.url ??
-      (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
+      project.url ?? audit.url ?? (domain ? `https://${domain.replace(/^https?:\/\//, '')}` : '');
 
     // Audit platforms include 'manual' for hand-typed audits. We only
     // surface a brand badge for the three real e-commerce stacks the

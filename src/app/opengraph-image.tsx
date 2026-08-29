@@ -18,74 +18,71 @@ export const contentType = 'image/png';
  */
 export default async function OpengraphImage() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background:
-            'radial-gradient(circle at 30% 20%, #0a84ff 0%, #050b20 60%, #02050d 100%)',
-          color: '#ffffff',
-          fontFamily: 'sans-serif',
-          padding: '80px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '40px' }}>
-          <div
-            style={{
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: '#0a84ff',
-              boxShadow: '0 0 40px #0a84ff'
-            }}
-          />
-          <div style={{ fontSize: '52px', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            OneShopLab
-          </div>
-          <div
-            style={{
-              fontSize: '18px',
-              fontFamily: 'monospace',
-              letterSpacing: '0.2em',
-              padding: '6px 12px',
-              borderRadius: '6px',
-              background: 'rgba(10, 132, 255, 0.15)',
-              color: '#7ab8ff'
-            }}
-          >
-            BETA
-          </div>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'radial-gradient(circle at 30% 20%, #0a84ff 0%, #050b20 60%, #02050d 100%)',
+        color: '#ffffff',
+        fontFamily: 'sans-serif',
+        padding: '80px'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '40px' }}>
+        <div
+          style={{
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            background: '#0a84ff',
+            boxShadow: '0 0 40px #0a84ff'
+          }}
+        />
+        <div style={{ fontSize: '52px', fontWeight: 700, letterSpacing: '-0.02em' }}>
+          OneShopLab
         </div>
         <div
           style={{
-            fontSize: '64px',
-            fontWeight: 700,
-            letterSpacing: '-0.02em',
-            textAlign: 'center',
-            lineHeight: 1.1,
-            maxWidth: '900px'
+            fontSize: '18px',
+            fontFamily: 'monospace',
+            letterSpacing: '0.2em',
+            padding: '6px 12px',
+            borderRadius: '6px',
+            background: 'rgba(10, 132, 255, 0.15)',
+            color: '#7ab8ff'
           }}
         >
-          AI product page optimization for Shopify, WooCommerce, Wix
-        </div>
-        <div
-          style={{
-            fontSize: '28px',
-            color: 'rgba(255, 255, 255, 0.7)',
-            marginTop: '32px',
-            textAlign: 'center',
-            maxWidth: '800px'
-          }}
-        >
-          Audit · Score · Rewrite · Redesign
+          BETA
         </div>
       </div>
-    ),
+      <div
+        style={{
+          fontSize: '64px',
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          textAlign: 'center',
+          lineHeight: 1.1,
+          maxWidth: '900px'
+        }}
+      >
+        AI product page optimization for Shopify, WooCommerce, Wix
+      </div>
+      <div
+        style={{
+          fontSize: '28px',
+          color: 'rgba(255, 255, 255, 0.7)',
+          marginTop: '32px',
+          textAlign: 'center',
+          maxWidth: '800px'
+        }}
+      >
+        Audit · Score · Rewrite · Redesign
+      </div>
+    </div>,
     { ...size }
   );
 }

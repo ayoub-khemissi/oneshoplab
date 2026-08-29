@@ -94,11 +94,7 @@ export async function applyCreditTransaction(opts: CreditTxOptions): Promise<Cre
     // — observed in prod: 9 images charged as 3, ledger out of sync with
     // the balance. The lock makes each tx wait for the previous commit and
     // re-read the fresh balance, so every debit lands exactly once.
-    const [u] = await tx
-      .select()
-      .from(users)
-      .where(eq(users.id, opts.userId))
-      .for('update');
+    const [u] = await tx.select().from(users).where(eq(users.id, opts.userId)).for('update');
     if (!u) throw new Error(`User ${opts.userId} not found`);
 
     let nextSub = u.creditsBalanceSubscription;

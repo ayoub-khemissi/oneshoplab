@@ -118,9 +118,7 @@ export async function uploadFromUrl(sourceUrl: string, key: string): Promise<Upl
 export function keyFromPublicUrl(publicUrl: string): string | null {
   const cfg = getConfig();
   if (!cfg) return null;
-  const bases = [cfg.publicUrl, ...cfg.publicUrlAliases].map((b) =>
-    b.replace(/\/$/, '')
-  );
+  const bases = [cfg.publicUrl, ...cfg.publicUrlAliases].map((b) => b.replace(/\/$/, ''));
   for (const base of bases) {
     if (publicUrl.startsWith(base + '/')) {
       return decodeURIComponent(publicUrl.slice(base.length + 1));
@@ -138,9 +136,7 @@ export async function deleteByKey(key: string): Promise<boolean> {
   const conn = getClient();
   if (!conn) return false;
   try {
-    await conn.client.send(
-      new DeleteObjectCommand({ Bucket: conn.cfg.bucket, Key: key })
-    );
+    await conn.client.send(new DeleteObjectCommand({ Bucket: conn.cfg.bucket, Key: key }));
     return true;
   } catch (e) {
     console.error('[r2] DeleteObject failed', { key, error: (e as Error).message });

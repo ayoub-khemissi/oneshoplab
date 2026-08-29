@@ -13,65 +13,34 @@ export async function SiteFooter() {
         <span className="inline-flex items-center gap-1.5 justify-center md:justify-start text-center md:text-left">
           © {year}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/osl-dark.svg"
-            alt=""
-            aria-hidden
-            className="block dark:hidden h-4 w-auto"
-          />
+          <img src="/osl-dark.svg" alt="" aria-hidden className="block dark:hidden h-4 w-auto" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/osl-light.svg"
-            alt=""
-            aria-hidden
-            className="hidden dark:block h-4 w-auto"
-          />
+          <img src="/osl-light.svg" alt="" aria-hidden className="hidden dark:block h-4 w-auto" />
           <span className="truncate">OneShopLab — {t('tagline')}</span>
         </span>
         <nav className="flex items-center justify-center md:justify-end flex-wrap gap-x-4 gap-y-2 md:gap-x-5">
           <Link href="/" className="hover:text-[var(--foreground)] transition-colors">
             {t('home')}
           </Link>
-          <Link
-            href="/pricing"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/pricing" className="hover:text-[var(--foreground)] transition-colors">
             {t('pricing')}
           </Link>
-          <Link
-            href="/faq"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/faq" className="hover:text-[var(--foreground)] transition-colors">
             {t('faq')}
           </Link>
-          <Link
-            href="/blog"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
             {t('blog')}
           </Link>
-          <Link
-            href="/dashboard"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/dashboard" className="hover:text-[var(--foreground)] transition-colors">
             {t('dashboard')}
           </Link>
-          <Link
-            href="/contact"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/contact" className="hover:text-[var(--foreground)] transition-colors">
             {t('contact')}
           </Link>
-          <Link
-            href="/terms"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/terms" className="hover:text-[var(--foreground)] transition-colors">
             {t('terms')}
           </Link>
-          <Link
-            href="/privacy"
-            className="hover:text-[var(--foreground)] transition-colors"
-          >
+          <Link href="/privacy" className="hover:text-[var(--foreground)] transition-colors">
             {t('privacy')}
           </Link>
         </nav>

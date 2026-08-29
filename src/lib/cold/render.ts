@@ -75,14 +75,17 @@ export function renderColdMail(
  */
 function markersToText(s: string, scores?: ScoreSnapshot): string {
   return s
-    .replace(/\[\[CTA\s+([^|]+)\|\s*([^\]]+)\]\]/g, (_, label: string, url: string) =>
-      `${label.trim()}: ${url.trim()}`
+    .replace(
+      /\[\[CTA\s+([^|]+)\|\s*([^\]]+)\]\]/g,
+      (_, label: string, url: string) => `${label.trim()}: ${url.trim()}`
     )
-    .replace(/\[\[DISCORD\s+([^|]+)\|\s*([^\]]+)\]\]/g, (_, label: string, url: string) =>
-      `${label.trim()}: ${url.trim()}`
+    .replace(
+      /\[\[DISCORD\s+([^|]+)\|\s*([^\]]+)\]\]/g,
+      (_, label: string, url: string) => `${label.trim()}: ${url.trim()}`
     )
-    .replace(/\[\[LINK\s+([^|]+)\|\s*([^\]]+)\]\]/g, (_, label: string, url: string) =>
-      `${label.trim()} (${url.trim()})`
+    .replace(
+      /\[\[LINK\s+([^|]+)\|\s*([^\]]+)\]\]/g,
+      (_, label: string, url: string) => `${label.trim()} (${url.trim()})`
     )
     .replace(/\[\[SCORES\]\]/g, () =>
       scores
@@ -310,7 +313,9 @@ export function firstNameFromEmail(email: string | null): string | null {
   const local = email.split('@')[0].toLowerCase();
   if (!local) return null;
   if (
-    /^(info|infos|contact|contacts|hello|hi|bonjour|salut|sales|support|admin|office|team|talk|hey|rgpd|gdpr|dpo|privacy|noreply|no-reply|donotreply|press|media|careers|jobs|hr|recrutement|recruiting|billing|invoice|legal|webmaster|postmaster|abuse|service|services|client|clients|customer|customers|mail|email|enquiries|enquiry|inquiries|inquiry|ask|hola|holla)$/.test(local)
+    /^(info|infos|contact|contacts|hello|hi|bonjour|salut|sales|support|admin|office|team|talk|hey|rgpd|gdpr|dpo|privacy|noreply|no-reply|donotreply|press|media|careers|jobs|hr|recrutement|recruiting|billing|invoice|legal|webmaster|postmaster|abuse|service|services|client|clients|customer|customers|mail|email|enquiries|enquiry|inquiries|inquiry|ask|hola|holla)$/.test(
+      local
+    )
   ) {
     return null;
   }
@@ -326,7 +331,11 @@ export function firstNameFromEmail(email: string | null): string | null {
  *   "shop.brand.io"    → "Shop Brand"
  */
 export function agencyNameFromDomain(domain: string): string {
-  const stripped = domain.replace(/^www\./, '').split('.').slice(0, -1).join(' ');
+  const stripped = domain
+    .replace(/^www\./, '')
+    .split('.')
+    .slice(0, -1)
+    .join(' ');
   return stripped
     .split(/[\s-]+/)
     .filter(Boolean)

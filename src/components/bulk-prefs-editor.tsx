@@ -42,10 +42,7 @@ export const prefsKey = (p: BulkPrefs): string =>
   JSON.stringify({ fields: p.fields, imageAngles: p.imageAngles });
 
 export const noFieldsSelected = (p: BulkPrefs): boolean =>
-  !p.fields.title &&
-  !p.fields.description &&
-  !p.fields.tags &&
-  !p.fields.images;
+  !p.fields.title && !p.fields.description && !p.fields.tags && !p.fields.images;
 
 const FIELD_KEYS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
 
@@ -66,12 +63,7 @@ function PrefCheckbox({
   onToggle: (next: boolean) => void;
 }) {
   return (
-    <Checkbox
-      id={id}
-      isSelected={selected}
-      isDisabled={disabled}
-      onChange={onToggle}
-    >
+    <Checkbox id={id} isSelected={selected} isDisabled={disabled} onChange={onToggle}>
       {/* HeroUI's default control has no `border` — it relies on
           --field-shadow to outline the square, but this app's token is
           ~transparent (and fully transparent in dark mode), making the
@@ -111,15 +103,12 @@ export function BulkPrefsEditor({
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-[var(--muted)] leading-relaxed">
-        {t('configHint')}
-      </p>
+      <p className="text-xs text-[var(--muted)] leading-relaxed">{t('configHint')}</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {FIELD_KEYS.map((key) => {
           // Never let the last selected field be unticked — at least
           // one element must always be generated.
-          const isOnlySelected =
-            value.fields[key] && selectedFieldCount === 1;
+          const isOnlySelected = value.fields[key] && selectedFieldCount === 1;
           return (
             <PrefCheckbox
               key={key}

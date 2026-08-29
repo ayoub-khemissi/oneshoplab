@@ -54,9 +54,7 @@ async function startFreeAuditAction(formData: FormData) {
   // their language (localePrefix is 'always' — an unprefixed redirect would
   // bounce an /fr visitor to the default locale).
   const locale = String(formData.get('locale') ?? 'en');
-  const safeLocale = (SUPPORTED_LOCALES as readonly string[]).includes(locale)
-    ? locale
-    : 'en';
+  const safeLocale = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'en';
   const norm = normalizeUrl(String(formData.get('url') ?? ''));
   if (!norm) {
     redirect(`/${safeLocale}/audit?error=invalid_url`);
@@ -85,11 +83,7 @@ export default async function FreeAuditPage({ params, searchParams }: PageProps)
   const { error } = await searchParams;
   const t = await getTranslations('FreeAudit');
   const errorMessage =
-    error === 'invalid_url'
-      ? t('invalidUrl')
-      : error === 'captcha'
-        ? t('captchaError')
-        : null;
+    error === 'invalid_url' ? t('invalidUrl') : error === 'captcha' ? t('captchaError') : null;
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   const recaptchaOn = isRecaptchaEnabled() && Boolean(recaptchaSiteKey);
 
@@ -171,11 +165,7 @@ export default async function FreeAuditPage({ params, searchParams }: PageProps)
             </button>
           </div>
           {recaptchaOn ? <RecaptchaWrapper siteKey={recaptchaSiteKey!} /> : null}
-          <p
-            className={`text-xs ${
-              errorMessage ? 'text-[var(--danger)]' : 'text-[var(--muted)]'
-            }`}
-          >
+          <p className={`text-xs ${errorMessage ? 'text-[var(--danger)]' : 'text-[var(--muted)]'}`}>
             {errorMessage ?? t('trust')}
           </p>
           {recaptchaOn ? <RecaptchaLegalNotice /> : null}

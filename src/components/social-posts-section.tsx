@@ -71,11 +71,7 @@ export function SocialPostsSection({
             </Pagination>
           ) : null}
           {readOnly ? null : (
-            <CopyButton
-              value={current.content}
-              label={copyLabel}
-              copiedLabel={copiedLabel}
-            />
+            <CopyButton value={current.content} label={copyLabel} copiedLabel={copiedLabel} />
           )}
           {readOnly ? null : regenAction}
         </div>

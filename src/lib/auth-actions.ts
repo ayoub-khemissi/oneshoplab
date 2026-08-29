@@ -189,7 +189,9 @@ export async function updateProjectLanguageAction(formData: FormData): Promise<v
   if (!session?.user?.id) return;
 
   const projectId = String(formData.get('projectId') ?? '');
-  const rawCode = String(formData.get('languageCode') ?? '').trim().toLowerCase();
+  const rawCode = String(formData.get('languageCode') ?? '')
+    .trim()
+    .toLowerCase();
   if (!projectId) return;
 
   const project = await db.query.projects.findFirst({
@@ -346,7 +348,9 @@ export async function deleteAccountAction(formData: FormData): Promise<ActionRes
   const u = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
   if (!u) return { ok: false, errorCode: 'unauthorized' };
 
-  const typed = String(formData.get('email_confirmation') ?? '').toLowerCase().trim();
+  const typed = String(formData.get('email_confirmation') ?? '')
+    .toLowerCase()
+    .trim();
   if (!typed) return { ok: false, errorCode: 'missing_email' };
   if (typed !== (u.email ?? '').toLowerCase().trim()) {
     return { ok: false, errorCode: 'email_mismatch' };

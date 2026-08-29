@@ -34,15 +34,9 @@ export function CreditPackCards({ copy }: CreditPackCardsProps) {
           tagline: ''
         };
         return (
-          <Card
-            key={pack.id}
-            variant="secondary"
-            className="p-5 flex flex-col gap-4"
-          >
+          <Card key={pack.id} variant="secondary" className="p-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <h3 className="text-base font-bold tracking-tight">
-                {packCopy.name}
-              </h3>
+              <h3 className="text-base font-bold tracking-tight">{packCopy.name}</h3>
               <p className="text-xs text-[var(--muted)]">{packCopy.tagline}</p>
             </div>
             <div className="flex flex-col gap-1">

@@ -35,12 +35,15 @@ export function isImageFallbackConfigured(): boolean {
   return Boolean(process.env.OPENROUTER_API_KEY);
 }
 
-export async function generateFallbackImage(input: ImageFallbackInput): Promise<ImageFallbackResult> {
+export async function generateFallbackImage(
+  input: ImageFallbackInput
+): Promise<ImageFallbackResult> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error('OPENROUTER_API_KEY not set — image fallback unavailable');
 
   const parts: Array<Record<string, unknown>> = [{ type: 'text', text: input.prompt }];
-  if (input.sourceImageUrl) parts.push({ type: 'image_url', image_url: { url: input.sourceImageUrl } });
+  if (input.sourceImageUrl)
+    parts.push({ type: 'image_url', image_url: { url: input.sourceImageUrl } });
 
   const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
     method: 'POST',
@@ -61,7 +64,9 @@ export async function generateFallbackImage(input: ImageFallbackInput): Promise<
   });
   const json = (await res.json().catch(() => ({}))) as {
     error?: { message?: string };
-    choices?: Array<{ message?: { images?: Array<{ image_url?: { url?: string } }>; content?: string } }>;
+    choices?: Array<{
+      message?: { images?: Array<{ image_url?: { url?: string } }>; content?: string };
+    }>;
     usage?: { cost?: number };
     model?: string;
   };

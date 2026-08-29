@@ -44,7 +44,8 @@ export default async function ResetPasswordPage({ searchParams }: PageProps) {
   const t = await getTranslations('Auth');
 
   const token = (params.token ?? '').trim();
-  const tokenInvalid = params.error === 'invalid_token' || params.error === 'missing_token' || !token;
+  const tokenInvalid =
+    params.error === 'invalid_token' || params.error === 'missing_token' || !token;
 
   const errorMessage =
     params.error === 'short_password'
@@ -128,10 +129,7 @@ export default async function ResetPasswordPage({ searchParams }: PageProps) {
               {t('resetSubmit')}
             </Button>
             <p className="text-sm text-center text-[var(--muted)]">
-              <Link
-                href="/login"
-                className="text-[var(--accent)] font-medium hover:underline"
-              >
+              <Link href="/login" className="text-[var(--accent)] font-medium hover:underline">
                 {t('backToLogin')}
               </Link>
             </p>

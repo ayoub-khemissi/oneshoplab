@@ -54,12 +54,8 @@ export async function listProductImageJobs(
 }
 
 function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
-  const input = r.inputPayload as
-    | { userPrompt?: string; sourceImageUrl?: string }
-    | null;
-  const result = r.result as
-    | { persistedUrls?: string[]; resultUrls?: string[] }
-    | null;
+  const input = r.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
+  const result = r.result as { persistedUrls?: string[]; resultUrls?: string[] } | null;
   // Only ever surface the persisted (R2) URL — never the raw kie
   // resultUrls, which are temp (tempfile.aiquickdraw.com) and 404
   // after a few days. A completed job always has persistedUrls
@@ -80,4 +76,3 @@ function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
     creditsCost: r.creditsCost
   };
 }
-

@@ -35,7 +35,9 @@ function hashToken(plaintext: string): string {
  *     issuing a new one (still respond OK to the user).
  */
 export async function requestPasswordResetAction(formData: FormData): Promise<void> {
-  const emailRaw = String(formData.get('email') ?? '').toLowerCase().trim();
+  const emailRaw = String(formData.get('email') ?? '')
+    .toLowerCase()
+    .trim();
   if (!emailRaw.includes('@') || emailRaw.length < 3) {
     redirect(`/forgot-password?error=invalid_email`);
   }
@@ -143,10 +145,7 @@ export async function resetPasswordAction(formData: FormData): Promise<void> {
 
   const passwordHash = await hashPassword(password);
   await db.transaction(async (tx) => {
-    await tx
-      .update(users)
-      .set({ passwordHash })
-      .where(eq(users.id, row.userId));
+    await tx.update(users).set({ passwordHash }).where(eq(users.id, row.userId));
     await tx
       .update(passwordResetTokens)
       .set({ usedAt: new Date() })

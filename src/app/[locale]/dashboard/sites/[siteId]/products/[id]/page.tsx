@@ -162,14 +162,11 @@ async function loadProductForUser(
     // wrong row whenever a handle collision lives earlier in the
     // array than the actual sourceId. Two passes is cheap (O(n))
     // and unambiguous.
-    const byId =
-      productRow.sourceId
-        ? all.find((p) => p.sourceId === productRow.sourceId)
-        : undefined;
+    const byId = productRow.sourceId
+      ? all.find((p) => p.sourceId === productRow.sourceId)
+      : undefined;
     const byHandle =
-      !byId && productRow.handle
-        ? all.find((p) => p.handle === productRow.handle)
-        : undefined;
+      !byId && productRow.handle ? all.find((p) => p.handle === productRow.handle) : undefined;
     const match = byId ?? byHandle ?? null;
     if (match) {
       // productRow stays the canonical source for the join key the
@@ -231,10 +228,7 @@ async function loadProductForUser(
 export default async function ProductDetailPage({ params, searchParams }: PageProps) {
   const { id: productId, siteId } = await params;
   const { historyPage: rawHistoryPage } = await searchParams;
-  const historyPage = Math.max(
-    1,
-    Number.parseInt(rawHistoryPage ?? '1', 10) || 1
-  );
+  const historyPage = Math.max(1, Number.parseInt(rawHistoryPage ?? '1', 10) || 1);
 
   const session = await auth();
   if (!session?.user) redirect('/login');
@@ -255,24 +249,18 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   // AI panel — they still need their own queries (a slice of 1-2 rows
   // each is cheap). The bottom "Past generations" strip uses the new
   // unified + paginated query.
-  const [
-    titleHistory,
-    descriptionHistory,
-    tagsHistory,
-    imagesHistory,
-    liveImageJobs,
-    pastGenPage
-  ] = await Promise.all([
-    listOptimHistory(projectId, sourceId, 'title'),
-    listOptimHistory(projectId, sourceId, 'description'),
-    listOptimHistory(projectId, sourceId, 'tags'),
-    listOptimHistory(projectId, sourceId, 'images'),
-    listProductImageJobs(projectId, sourceId),
-    listOptimHistoryPaginated(projectId, sourceId, {
-      page: historyPage,
-      perPage: HISTORY_PAGE_SIZE
-    })
-  ]);
+  const [titleHistory, descriptionHistory, tagsHistory, imagesHistory, liveImageJobs, pastGenPage] =
+    await Promise.all([
+      listOptimHistory(projectId, sourceId, 'title'),
+      listOptimHistory(projectId, sourceId, 'description'),
+      listOptimHistory(projectId, sourceId, 'tags'),
+      listOptimHistory(projectId, sourceId, 'images'),
+      listProductImageJobs(projectId, sourceId),
+      listOptimHistoryPaginated(projectId, sourceId, {
+        page: historyPage,
+        perPage: HISTORY_PAGE_SIZE
+      })
+    ]);
 
   // Resolve the user's effective image quality so we can show the
   // matching credit cost on the Add / Regenerate tiles. Body overrides
@@ -308,10 +296,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   // landed across every field type — otherwise the click is effectively
   // a first-generation for whatever's still missing.
   const hasAnyHistory =
-    hasHistory.title &&
-    hasHistory.description &&
-    hasHistory.tags &&
-    hasCompletedImages;
+    hasHistory.title && hasHistory.description && hasHistory.tags && hasCompletedImages;
 
   const t = await getTranslations('Product');
   const tReport = await getTranslations('Report');
@@ -321,8 +306,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   // Initial model selection — the chips on the page can flip these client-side
   // (with persistence via the preferences server action). Costs and affordance
   // checks are recomputed live in RetryableGenerateProvider.
-  const userChatModel: ChatModelId =
-    resolveChatModelId(session.user.preferredChatModel);
+  const userChatModel: ChatModelId = resolveChatModelId(session.user.preferredChatModel);
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
 
@@ -432,7 +416,10 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
           role="alert"
           className="rounded-md border border-[var(--border)] bg-[var(--default)]/40 p-4 flex items-start gap-3 text-sm"
         >
-          <ChevronLeft className="size-4 mt-0.5 text-[var(--muted)] shrink-0 rotate-180" aria-hidden />
+          <ChevronLeft
+            className="size-4 mt-0.5 text-[var(--muted)] shrink-0 rotate-180"
+            aria-hidden
+          />
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-[var(--foreground)]">{t('archivedTitle')}</span>
             <span className="text-[var(--muted)] leading-relaxed">{t('archivedBody')}</span>
@@ -455,230 +442,228 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
       >
         <AutoOptimizeOnMount productId={productId} />
         <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <ModelChips />
-          <CustomInstructionsField hasSiteInstructions={projectInstructions.trim().length > 0} />
-        </div>
+          <div className="flex flex-col gap-3">
+            <ModelChips />
+            <CustomInstructionsField hasSiteInstructions={projectInstructions.trim().length > 0} />
+          </div>
 
-        <Card variant="secondary" className="overflow-hidden">
-          <div className="grid md:grid-cols-[260px_1fr]">
-            <SourcePreview product={product} />
+          <Card variant="secondary" className="overflow-hidden">
+            <div className="grid md:grid-cols-[260px_1fr]">
+              <SourcePreview product={product} />
 
-            <FieldSwapGroup>
-              <div className="px-5 pt-5 pb-5 md:pt-0 md:pb-0 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
-                <div className="flex flex-col gap-2">
-                  <span className="eyebrow text-center sm:text-left">AI suggestions</span>
-                  {/* Desktop: actions on the left, source/AI toggle on
+              <FieldSwapGroup>
+                <div className="px-5 pt-5 pb-5 md:pt-0 md:pb-0 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-[var(--border)]">
+                  <div className="flex flex-col gap-2">
+                    <span className="eyebrow text-center sm:text-left">AI suggestions</span>
+                    {/* Desktop: actions on the left, source/AI toggle on
                       the right (matches the per-field rows below).
                       Mobile: stacks vertically, centered, same order. */}
-                  <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:flex-wrap">
-                    <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-2">
-                      <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
-                      {isManual && !archived ? (
-                        <ApplyAiButton
-                          projectId={projectId}
-                          productId={productId}
-                          available={{
-                            title: hasHistory.title,
-                            description: hasHistory.description,
-                            tags: hasHistory.tags,
-                            images: hasCompletedImages
-                          }}
-                        />
-                      ) : null}
+                    <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:flex-wrap">
+                      <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-2">
+                        <RetryableGenerateButton field="all" hasHistory={hasAnyHistory} />
+                        {isManual && !archived ? (
+                          <ApplyAiButton
+                            projectId={projectId}
+                            productId={productId}
+                            available={{
+                              title: hasHistory.title,
+                              description: hasHistory.description,
+                              tags: hasHistory.tags,
+                              images: hasCompletedImages
+                            }}
+                          />
+                        ) : null}
+                      </div>
+                      <FieldSwapGroupToggle
+                        sourceLabel={tReport('swapSource')}
+                        aiLabel={tReport('swapAi')}
+                        // Toggle has `self-start` baked in, which on a
+                        // flex-col parent (mobile) anchors it left. Force
+                        // center on mobile, let desktop fall back to the
+                        // parent's items-center.
+                        className="!self-center sm:!self-auto"
+                      />
                     </div>
-                    <FieldSwapGroupToggle
+                  </div>
+
+                  <FieldRow field="title" hasHistory={hasHistory.title}>
+                    <FieldSwap
+                      label={{
+                        source: tReport('sourceTitleLabel'),
+                        ai: tReport('aiTitle')
+                      }}
                       sourceLabel={tReport('swapSource')}
                       aiLabel={tReport('swapAi')}
-                      // Toggle has `self-start` baked in, which on a
-                      // flex-col parent (mobile) anchors it left. Force
-                      // center on mobile, let desktop fall back to the
-                      // parent's items-center.
-                      className="!self-center sm:!self-auto"
+                      aiAction={
+                        titleHistory[0] && typeof titleHistory[0].output === 'string' ? (
+                          <CopyButton
+                            value={titleHistory[0].output}
+                            label={tReport('copyText')}
+                            copiedLabel={tReport('copied')}
+                          />
+                        ) : null
+                      }
+                      source={<p className="text-sm text-[var(--muted)]">{product.title || '—'}</p>}
+                      ai={
+                        titleHistory[0] && typeof titleHistory[0].output === 'string' ? (
+                          <p className="font-semibold">{titleHistory[0].output}</p>
+                        ) : (
+                          <NoLatestGen />
+                        )
+                      }
                     />
-                  </div>
-                </div>
+                  </FieldRow>
 
-                <FieldRow field="title" hasHistory={hasHistory.title}>
-                  <FieldSwap
-                    label={{
-                      source: tReport('sourceTitleLabel'),
-                      ai: tReport('aiTitle')
-                    }}
-                    sourceLabel={tReport('swapSource')}
-                    aiLabel={tReport('swapAi')}
-                    aiAction={
-                      titleHistory[0] && typeof titleHistory[0].output === 'string' ? (
-                        <CopyButton
-                          value={titleHistory[0].output}
-                          label={tReport('copyText')}
-                          copiedLabel={tReport('copied')}
-                        />
-                      ) : null
-                    }
-                    source={
-                      <p className="text-sm text-[var(--muted)]">{product.title || '—'}</p>
-                    }
-                    ai={
-                      titleHistory[0] && typeof titleHistory[0].output === 'string' ? (
-                        <p className="font-semibold">{titleHistory[0].output}</p>
-                      ) : (
-                        <NoLatestGen />
-                      )
-                    }
-                  />
-                </FieldRow>
-
-                <FieldRow field="description" hasHistory={hasHistory.description}>
-                  <FieldSwap
-                    label={{
-                      source: tReport('sourceDescriptionLabel'),
-                      ai: tReport('aiDescription')
-                    }}
-                    sourceLabel={tReport('swapSource')}
-                    aiLabel={tReport('swapAi')}
-                    aiAction={
-                      descriptionHistory[0] &&
-                      typeof descriptionHistory[0].output === 'string' ? (
-                        // Two adjacent copy buttons: one preserves the HTML
-                        // formatting (paste into Shopify / WooCommerce rich
-                        // editors keeps <p>, <ul>, <strong>), the other
-                        // strips tags so a paste into a plain-text field or
-                        // an email reads cleanly.
-                        <div className="inline-flex items-center gap-1.5">
-                          <CopyButton
-                            value={descriptionHistory[0].output as string}
-                            asHtml
-                            label={tReport('copyHtml')}
-                            copiedLabel={tReport('copied')}
+                  <FieldRow field="description" hasHistory={hasHistory.description}>
+                    <FieldSwap
+                      label={{
+                        source: tReport('sourceDescriptionLabel'),
+                        ai: tReport('aiDescription')
+                      }}
+                      sourceLabel={tReport('swapSource')}
+                      aiLabel={tReport('swapAi')}
+                      aiAction={
+                        descriptionHistory[0] &&
+                        typeof descriptionHistory[0].output === 'string' ? (
+                          // Two adjacent copy buttons: one preserves the HTML
+                          // formatting (paste into Shopify / WooCommerce rich
+                          // editors keeps <p>, <ul>, <strong>), the other
+                          // strips tags so a paste into a plain-text field or
+                          // an email reads cleanly.
+                          <div className="inline-flex items-center gap-1.5">
+                            <CopyButton
+                              value={descriptionHistory[0].output as string}
+                              asHtml
+                              label={tReport('copyHtml')}
+                              copiedLabel={tReport('copied')}
+                            />
+                            <CopyButton
+                              value={(descriptionHistory[0].output as string)
+                                .replace(/<[^>]+>/g, ' ')
+                                .replace(/\s+/g, ' ')
+                                .trim()}
+                              label={tReport('copyPlain')}
+                              copiedLabel={tReport('copied')}
+                            />
+                          </div>
+                        ) : null
+                      }
+                      source={
+                        product.descriptionHtml ? (
+                          <div
+                            className="prose prose-sm dark:prose-invert max-w-none text-sm opacity-80"
+                            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
                           />
-                          <CopyButton
-                            value={(descriptionHistory[0].output as string)
-                              .replace(/<[^>]+>/g, ' ')
-                              .replace(/\s+/g, ' ')
-                              .trim()}
-                            label={tReport('copyPlain')}
-                            copiedLabel={tReport('copied')}
+                        ) : (
+                          <p className="text-sm text-[var(--muted)] italic">—</p>
+                        )
+                      }
+                      ai={
+                        descriptionHistory[0] &&
+                        typeof descriptionHistory[0].output === 'string' ? (
+                          <div
+                            className="prose prose-sm dark:prose-invert max-w-none text-sm"
+                            dangerouslySetInnerHTML={{
+                              __html: descriptionHistory[0].output
+                            }}
                           />
-                        </div>
-                      ) : null
-                    }
-                    source={
-                      product.descriptionHtml ? (
-                        <div
-                          className="prose prose-sm dark:prose-invert max-w-none text-sm opacity-80"
-                          dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-                        />
-                      ) : (
-                        <p className="text-sm text-[var(--muted)] italic">—</p>
-                      )
-                    }
-                    ai={
-                      descriptionHistory[0] &&
-                      typeof descriptionHistory[0].output === 'string' ? (
-                        <div
-                          className="prose prose-sm dark:prose-invert max-w-none text-sm"
-                          dangerouslySetInnerHTML={{
-                            __html: descriptionHistory[0].output
-                          }}
-                        />
-                      ) : (
-                        <NoLatestGen />
-                      )
-                    }
-                  />
-                </FieldRow>
+                        ) : (
+                          <NoLatestGen />
+                        )
+                      }
+                    />
+                  </FieldRow>
 
-                <FieldRow field="tags" hasHistory={hasHistory.tags}>
-                  <FieldSwap
-                    label={{
-                      source: tReport('sourceTagsLabel'),
-                      ai: tReport('aiTags')
-                    }}
-                    sourceLabel={tReport('swapSource')}
-                    aiLabel={tReport('swapAi')}
-                    source={
-                      <TagPills
-                        tags={product.signals.tags ?? []}
-                        variant="muted"
-                        copyLabel={tReport('copyTags')}
-                        copiedLabel={tReport('copied')}
-                      />
-                    }
-                    ai={
-                      tagsHistory[0] && Array.isArray(tagsHistory[0].output) ? (
+                  <FieldRow field="tags" hasHistory={hasHistory.tags}>
+                    <FieldSwap
+                      label={{
+                        source: tReport('sourceTagsLabel'),
+                        ai: tReport('aiTags')
+                      }}
+                      sourceLabel={tReport('swapSource')}
+                      aiLabel={tReport('swapAi')}
+                      source={
                         <TagPills
-                          tags={tagsHistory[0].output}
-                          variant="accent"
+                          tags={product.signals.tags ?? []}
+                          variant="muted"
                           copyLabel={tReport('copyTags')}
                           copiedLabel={tReport('copied')}
                         />
-                      ) : (
-                        <NoLatestGen />
-                      )
-                    }
-                  />
-                </FieldRow>
-
-                <FieldRow
-                  field="images"
-                  hasHistory={hasHistory.images}
-                  available={product.images.length > 0}
-                >
-                  <FieldSwap
-                    label={{
-                      source: tReport('sourceImagesLabel'),
-                      ai: tReport('aiImagesLabel')
-                    }}
-                    sourceLabel={tReport('swapSource')}
-                    aiLabel={tReport('swapAi')}
-                    sourceAction={
-                      product.images.length > 0 ? (
-                        <DownloadAllButton
-                          urls={product.images.map((img) => img.src)}
-                          prefix="source-image"
-                          zipName="source-images"
-                          label={tReport('downloadAll')}
-                        />
-                      ) : null
-                    }
-                    aiAction={(() => {
-                      // Download-all only over images visible AND completed —
-                      // i.e. the same set the merchant currently sees in the
-                      // live grid. Pending/failed/hidden jobs are excluded.
-                      const aiUrls = liveImageJobs
-                        .filter(
-                          (j) =>
-                            j.status === 'completed' &&
-                            typeof j.imageUrl === 'string' &&
-                            j.imageUrl.length > 0
+                      }
+                      ai={
+                        tagsHistory[0] && Array.isArray(tagsHistory[0].output) ? (
+                          <TagPills
+                            tags={tagsHistory[0].output}
+                            variant="accent"
+                            copyLabel={tReport('copyTags')}
+                            copiedLabel={tReport('copied')}
+                          />
+                        ) : (
+                          <NoLatestGen />
                         )
-                        .map((j) => j.imageUrl as string);
-                      return aiUrls.length > 0 ? (
-                        <DownloadAllButton
-                          urls={aiUrls}
-                          prefix="ai-image"
-                          zipName="ai-images"
-                          label={tReport('downloadAll')}
+                      }
+                    />
+                  </FieldRow>
+
+                  <FieldRow
+                    field="images"
+                    hasHistory={hasHistory.images}
+                    available={product.images.length > 0}
+                  >
+                    <FieldSwap
+                      label={{
+                        source: tReport('sourceImagesLabel'),
+                        ai: tReport('aiImagesLabel')
+                      }}
+                      sourceLabel={tReport('swapSource')}
+                      aiLabel={tReport('swapAi')}
+                      sourceAction={
+                        product.images.length > 0 ? (
+                          <DownloadAllButton
+                            urls={product.images.map((img) => img.src)}
+                            prefix="source-image"
+                            zipName="source-images"
+                            label={tReport('downloadAll')}
+                          />
+                        ) : null
+                      }
+                      aiAction={(() => {
+                        // Download-all only over images visible AND completed —
+                        // i.e. the same set the merchant currently sees in the
+                        // live grid. Pending/failed/hidden jobs are excluded.
+                        const aiUrls = liveImageJobs
+                          .filter(
+                            (j) =>
+                              j.status === 'completed' &&
+                              typeof j.imageUrl === 'string' &&
+                              j.imageUrl.length > 0
+                          )
+                          .map((j) => j.imageUrl as string);
+                        return aiUrls.length > 0 ? (
+                          <DownloadAllButton
+                            urls={aiUrls}
+                            prefix="ai-image"
+                            zipName="ai-images"
+                            label={tReport('downloadAll')}
+                          />
+                        ) : null;
+                      })()}
+                      source={<SourceImageGrid images={product.images} />}
+                      ai={
+                        <AiImageGridLive
+                          siteId={siteId}
+                          productId={productId}
+                          initial={liveImageJobs}
+                          costPerImage={costPerImage}
+                          retentionDays={retentionDays}
                         />
-                      ) : null;
-                    })()}
-                    source={<SourceImageGrid images={product.images} />}
-                    ai={
-                      <AiImageGridLive
-                        siteId={siteId}
-                        productId={productId}
-                        initial={liveImageJobs}
-                        costPerImage={costPerImage}
-                        retentionDays={retentionDays}
-                      />
-                    }
-                  />
-                </FieldRow>
-              </div>
-            </FieldSwapGroup>
-          </div>
-        </Card>
+                      }
+                    />
+                  </FieldRow>
+                </div>
+              </FieldSwapGroup>
+            </div>
+          </Card>
         </div>
       </RetryableGenerateProvider>
 
@@ -718,11 +703,7 @@ function FieldRow({
       <div className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]">
         {children}
         <div className="flex justify-end">
-          <RetryableGenerateButton
-            field={field}
-            hasHistory={hasHistory}
-            available={available}
-          />
+          <RetryableGenerateButton field={field} hasHistory={hasHistory} available={available} />
         </div>
       </div>
     </FieldViewProvider>
@@ -733,7 +714,6 @@ function NoLatestGen() {
   const t = useTranslations('Product');
   return <p className="text-sm text-[var(--muted)] italic">{t('noLatestGeneration')}</p>;
 }
-
 
 function SourcePreview({ product }: { product: ProductSnapshot }) {
   const t = useTranslations('Report');
@@ -760,9 +740,7 @@ function SourcePreview({ product }: { product: ProductSnapshot }) {
             rel="noreferrer noopener"
             className="inline-flex items-start gap-1.5 hover:text-[var(--accent)] transition-colors group/title"
           >
-            <h3 className="font-semibold leading-tight line-clamp-2">
-              {product.title}
-            </h3>
+            <h3 className="font-semibold leading-tight line-clamp-2">{product.title}</h3>
             <ExternalLink
               className="size-3.5 mt-0.5 shrink-0 opacity-50 group-hover/title:opacity-100 transition-opacity"
               aria-hidden
@@ -893,10 +871,14 @@ function PastGenerationsSection({
 
 function pastGenLabelKey(field: OptimHistoryItem['field']): string {
   switch (field) {
-    case 'title': return 'jobKindTitle';
-    case 'description': return 'jobKindDescription';
-    case 'tags': return 'jobKindTags';
-    case 'images': return 'jobKindImageEdit';
+    case 'title':
+      return 'jobKindTitle';
+    case 'description':
+      return 'jobKindDescription';
+    case 'tags':
+      return 'jobKindTags';
+    case 'images':
+      return 'jobKindImageEdit';
   }
 }
 
@@ -957,9 +939,10 @@ function PastGenResult({ item }: { item: OptimHistoryItem }) {
     // Description is HTML — render it sanitised-style via prose so <p>/<ul>
     // come out properly. Output already comes from kie limited to outputCap
     // but truncate defensively for very long descriptions.
-    const html = item.output.length > PAST_GEN_DETAIL_LIMIT * 4
-      ? `${item.output.slice(0, PAST_GEN_DETAIL_LIMIT * 4)}…`
-      : item.output;
+    const html =
+      item.output.length > PAST_GEN_DETAIL_LIMIT * 4
+        ? `${item.output.slice(0, PAST_GEN_DETAIL_LIMIT * 4)}…`
+        : item.output;
     return (
       <div
         className="prose prose-sm dark:prose-invert max-w-none text-xs"
@@ -994,11 +977,13 @@ function ScoreBadge({ score }: { score: number }) {
 }
 
 function stripHtmlPreview(raw: string, max: number): string {
-  const text = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const text = raw
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
 function BackArrow() {
   return <ChevronLeft className="size-4" aria-hidden />;
 }
-

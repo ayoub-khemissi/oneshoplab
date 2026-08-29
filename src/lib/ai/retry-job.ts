@@ -10,8 +10,7 @@ import { SYSTEM_CHAT_MODELS } from './models';
 const IMAGE_MODEL = 'gpt-image-2-image-to-image';
 
 export type RetryResult =
-  | { ok: true; status: 'completed' | 'running' }
-  | { ok: false; reason: string; message?: string };
+  { ok: true; status: 'completed' | 'running' } | { ok: false; reason: string; message?: string };
 
 type JobRow = typeof jobs.$inferSelect;
 
@@ -137,10 +136,7 @@ async function retryImageEditJob(job: JobRow): Promise<RetryResult> {
       },
       ...(callBackUrl ? { callBackUrl } : {})
     });
-    await db
-      .update(jobs)
-      .set({ kieTaskId: taskId, status: 'running' })
-      .where(eq(jobs.id, job.id));
+    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, job.id));
     return { ok: true, status: 'running' };
   } catch (e) {
     const message = (e as Error).message;
@@ -197,9 +193,7 @@ async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
   const priceMin = product.signals?.priceMin;
   const priceMax = product.signals?.priceMax;
   const priceLine =
-    priceMin != null
-      ? `${priceMin}${priceMin === priceMax ? '' : `-${priceMax}`}`
-      : 'unknown';
+    priceMin != null ? `${priceMin}${priceMin === priceMax ? '' : `-${priceMax}`}` : 'unknown';
 
   const system = `You are an expert e-commerce SEO copywriter and Instagram strategist for ${platform} merchants. You output strictly valid JSON — no preamble, no markdown fences. Every text field must be written in ${langName}.`;
   const user = `Generate SEO-optimised, conversion-focused content for this product.
@@ -244,9 +238,7 @@ Output the JSON object only, no other text.`;
       })
       .where(eq(jobs.id, job.id));
 
-    return parsed
-      ? { ok: true, status: 'completed' }
-      : { ok: false, reason: 'parse_failed' };
+    return parsed ? { ok: true, status: 'completed' } : { ok: false, reason: 'parse_failed' };
   } catch (e) {
     const message = (e as Error).message;
     await db

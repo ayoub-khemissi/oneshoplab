@@ -85,9 +85,7 @@ export function LeadFilters({
 
       {/* Platform ------------------------------------------------------ */}
       <div className="flex flex-col gap-1.5">
-        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">
-          Plateforme
-        </Label>
+        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">Plateforme</Label>
         <Select
           selectedKey={platform}
           onSelectionChange={(k) => setPlatform(k == null ? '' : String(k))}
@@ -112,9 +110,7 @@ export function LeadFilters({
 
       {/* Email presence ------------------------------------------------ */}
       <div className="flex flex-col gap-1.5">
-        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">
-          Email
-        </Label>
+        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">Email</Label>
         <Select
           selectedKey={hasEmail}
           onSelectionChange={(k) => setHasEmail(k == null ? '' : String(k))}
@@ -144,9 +140,7 @@ export function LeadFilters({
         className="w-24"
         aria-label="Langue ISO-2"
       >
-        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">
-          Langue
-        </Label>
+        <Label className="text-xs uppercase tracking-wider text-[var(--muted)]">Langue</Label>
         <Input
           placeholder="fr"
           onKeyDown={(e) => {

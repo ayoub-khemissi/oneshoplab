@@ -7,10 +7,7 @@ import { listPostsWithFallback } from '@/lib/blog/posts';
  * <link rel="alternate" type="application/rss+xml">. A static route
  * segment ("rss.xml") so it wins over the sibling [slug] page.
  */
-const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(
-  /\/$/,
-  ''
-);
+const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
 export const dynamic = 'force-dynamic';
 

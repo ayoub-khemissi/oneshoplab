@@ -22,12 +22,7 @@ export const runtime = 'nodejs';
  */
 
 const MAX_SIZE = 8 * 1024 * 1024; // 8 MB
-const ALLOWED_MIME = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/gif'
-]);
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
 function extFromMime(mime: string): string {
   switch (mime) {
@@ -50,10 +45,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   if (!isR2Configured()) {
-    return NextResponse.json(
-      { error: 'storage_not_configured' },
-      { status: 503 }
-    );
+    return NextResponse.json({ error: 'storage_not_configured' }, { status: 503 });
   }
 
   const form = await req.formData().catch(() => null);
@@ -81,17 +73,11 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   if (file.size > MAX_SIZE) {
-    return NextResponse.json(
-      { error: 'file_too_large', max: MAX_SIZE },
-      { status: 413 }
-    );
+    return NextResponse.json({ error: 'file_too_large', max: MAX_SIZE }, { status: 413 });
   }
   const type = file.type || 'application/octet-stream';
   if (!ALLOWED_MIME.has(type)) {
-    return NextResponse.json(
-      { error: 'unsupported_mime', mime: type },
-      { status: 415 }
-    );
+    return NextResponse.json({ error: 'unsupported_mime', mime: type }, { status: 415 });
   }
 
   const buf = Buffer.from(await file.arrayBuffer());

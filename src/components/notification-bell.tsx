@@ -228,10 +228,14 @@ export function NotificationBell({
             <ul className="flex-1 overflow-y-auto divide-y divide-[var(--border)]">
               {rows.map((row) => (
                 <li key={row.id}>
-                  <NotificationItem row={row} labels={labels} onNavigate={() => {
-                    setOpen(false);
-                    router.refresh();
-                  }} />
+                  <NotificationItem
+                    row={row}
+                    labels={labels}
+                    onNavigate={() => {
+                      setOpen(false);
+                      router.refresh();
+                    }}
+                  />
                 </li>
               ))}
             </ul>
@@ -350,8 +354,7 @@ function kindDetail(
 
   // Images: render the product title the gen was about.
   if (row.kind === 'image_completed' || row.kind === 'image_failed') {
-    const productTitle =
-      typeof payload.productTitle === 'string' ? payload.productTitle : null;
+    const productTitle = typeof payload.productTitle === 'string' ? payload.productTitle : null;
     if (productTitle) sub = truncate(productTitle, SUB_MAX_LEN);
     return { title, sub };
   }

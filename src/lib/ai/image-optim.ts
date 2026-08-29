@@ -58,10 +58,7 @@ export async function startImageOptim(
   // Resolve product FK so the Activity tab can render a product
   // link instead of "—" (same rationale as runChatOptim).
   const productRow = await db.query.products.findFirst({
-    where: and(
-      eq(products.projectId, opts.projectId),
-      eq(products.sourceId, opts.productSourceId)
-    ),
+    where: and(eq(products.projectId, opts.projectId), eq(products.sourceId, opts.productSourceId)),
     columns: { id: true }
   });
 
@@ -114,10 +111,7 @@ export async function startImageOptim(
       ...(callBackUrl ? { callBackUrl } : {})
     });
 
-    await db
-      .update(jobs)
-      .set({ kieTaskId: taskId, status: 'running' })
-      .where(eq(jobs.id, jobId));
+    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, jobId));
 
     return { jobId, kieTaskId: taskId, creditsHeld: cost };
   } catch (e) {
@@ -126,7 +120,10 @@ export async function startImageOptim(
     // fallback first (same prompt + source), and only then flips the
     // job to failed + refunds (idempotency key `job-<id>-refund`).
     await persistKieJobFailure(jobId, 'kie_image_edit', message, 'kie_create_failed');
-    const after = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId), columns: { status: true } });
+    const after = await db.query.jobs.findFirst({
+      where: eq(jobs.id, jobId),
+      columns: { status: true }
+    });
     if (after?.status === 'completed') {
       return { jobId, kieTaskId: null, creditsHeld: cost };
     }

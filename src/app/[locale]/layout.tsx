@@ -164,7 +164,7 @@ export default async function LocaleLayout({
             covered by the existing CSP and emitted on every locale page. */}
         <script
           type="application/ld+json"
-           
+
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
@@ -172,8 +172,7 @@ export default async function LocaleLayout({
               name: 'OneShopLab',
               url: SITE_URL,
               logo: `${SITE_URL}/osl-dark.svg`,
-              description:
-                'AI product page optimization for Shopify, WooCommerce and Wix stores.',
+              description: 'AI product page optimization for Shopify, WooCommerce and Wix stores.',
               contactPoint: [
                 {
                   '@type': 'ContactPoint',

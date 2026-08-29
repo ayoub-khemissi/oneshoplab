@@ -133,7 +133,7 @@ export default async function PricingPage() {
     <main className="flex-1 p-6 md:p-12 max-w-6xl w-full mx-auto flex flex-col gap-12">
       <script
         type="application/ld+json"
-         
+
         dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalog) }}
       />
       <header className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">
@@ -171,9 +171,7 @@ export default async function PricingPage() {
 
       <section className="flex flex-col gap-3 max-w-4xl mx-auto w-full">
         <div className="flex flex-col gap-2 text-center">
-          <h2 className="text-2xl font-bold tracking-tight">
-            {tCredits('packsTitle')}
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">{tCredits('packsTitle')}</h2>
           <p className="text-sm text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
             {tCredits('packsHint')}
           </p>
@@ -207,13 +205,12 @@ export default async function PricingPage() {
           breakdown below is reference / educational copy. The id
           anchor is targeted by the home page CTA so a click there
           scrolls straight to this section. */}
-      <section
-        id="credits"
-        className="flex flex-col gap-6 max-w-3xl mx-auto w-full scroll-mt-24"
-      >
+      <section id="credits" className="flex flex-col gap-6 max-w-3xl mx-auto w-full scroll-mt-24">
         <h2 className="text-2xl font-bold tracking-tight text-center">{t('whatIsCreditTitle')}</h2>
         <Card variant="secondary" className="p-6 flex flex-col gap-4">
-          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody', modelNamesForCopy())}</p>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">
+            {t('whatIsCreditBody', modelNamesForCopy())}
+          </p>
           <div className="grid sm:grid-cols-3 gap-3">
             <Stat label={t('costFullGen')} value={`~50 ${t('credits')}`} />
             <Stat label={t('costImage1k')} value={`15 ${t('credits')}`} />
@@ -264,7 +261,5 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 function ChevronIcon({ className = '' }: { className?: string }) {
-  return (
-    <ChevronDown className={className} aria-hidden />
-  );
+  return <ChevronDown className={className} aria-hidden />;
 }

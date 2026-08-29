@@ -32,12 +32,7 @@ import { GoogleSignInButton } from '@/components/google-signin-button';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
-import {
-  claimAnonAudits,
-  claimAuditByToken,
-  clearAnonToken,
-  getAnonToken
-} from '@/lib/anon';
+import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/lib/anon';
 import { hashPassword, isGoogleAuthEnabled, signIn } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
@@ -213,18 +208,10 @@ export default async function SignupPage({ searchParams }: PageProps) {
               <Label>{t('nameLabel')}</Label>
               <Input placeholder="Jane Doe" autoComplete="name" />
             </TextField>
-            <TextField
-              fullWidth
-              isRequired
-              name="email"
-              type="email"
-              isInvalid={emailError}
-            >
+            <TextField fullWidth isRequired name="email" type="email" isInvalid={emailError}>
               <Label>{t('emailLabel')}</Label>
               <Input placeholder="you@example.com" autoComplete="email" />
-              {emailError && errorMessage ? (
-                <FieldError>{errorMessage}</FieldError>
-              ) : null}
+              {emailError && errorMessage ? <FieldError>{errorMessage}</FieldError> : null}
             </TextField>
             <TextField
               fullWidth
@@ -237,9 +224,7 @@ export default async function SignupPage({ searchParams }: PageProps) {
               <Label>{t('passwordLabel')}</Label>
               <Input autoComplete="new-password" />
               <Description>{t('passwordHint')}</Description>
-              {passwordError && errorMessage ? (
-                <FieldError>{errorMessage}</FieldError>
-              ) : null}
+              {passwordError && errorMessage ? <FieldError>{errorMessage}</FieldError> : null}
             </TextField>
             {recaptchaOn ? <RecaptchaWrapper siteKey={recaptchaSiteKey!} /> : null}
           </Card.Content>
@@ -250,12 +235,18 @@ export default async function SignupPage({ searchParams }: PageProps) {
             <p className="text-xs text-center text-[var(--muted)] leading-relaxed">
               {t.rich('termsNotice', {
                 terms: (chunks) => (
-                  <Link href="/terms" className="underline underline-offset-2 hover:text-[var(--foreground)]">
+                  <Link
+                    href="/terms"
+                    className="underline underline-offset-2 hover:text-[var(--foreground)]"
+                  >
                     {chunks}
                   </Link>
                 ),
                 privacy: (chunks) => (
-                  <Link href="/privacy" className="underline underline-offset-2 hover:text-[var(--foreground)]">
+                  <Link
+                    href="/privacy"
+                    className="underline underline-offset-2 hover:text-[var(--foreground)]"
+                  >
                     {chunks}
                   </Link>
                 )

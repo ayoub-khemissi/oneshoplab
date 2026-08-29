@@ -52,7 +52,9 @@ export async function postDiscordMessage(
   const base = process.env.DISCORD_BOT_API_URL?.replace(/\/$/, '');
   const key = process.env.DISCORD_BOT_API_KEY;
   if (!base || !key) {
-    console.warn('[discord] bot API not configured (DISCORD_BOT_API_URL / _KEY) — dropping message');
+    console.warn(
+      '[discord] bot API not configured (DISCORD_BOT_API_URL / _KEY) — dropping message'
+    );
     return { ok: false, reason: 'unconfigured' };
   }
   try {
@@ -62,7 +64,11 @@ export async function postDiscordMessage(
       body: JSON.stringify({ channel, content: truncateForDiscord(content, DISCORD_CONTENT_MAX) }),
       signal: AbortSignal.timeout(10_000)
     });
-    const json = (await res.json().catch(() => ({}))) as { success?: boolean; messageId?: string; error?: string };
+    const json = (await res.json().catch(() => ({}))) as {
+      success?: boolean;
+      messageId?: string;
+      error?: string;
+    };
     if (!res.ok || !json.success) {
       console.error('[discord] bot API POST failed', res.status, json.error ?? '');
       return { ok: false, reason: json.error ?? `http_${res.status}` };

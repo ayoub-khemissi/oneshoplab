@@ -220,11 +220,8 @@ async function main(): Promise<void> {
       sourceLabel = c.source;
     }
   } else if (args.mode.kind === 'cc') {
-    const pattern =
-      args.mode.pattern === 'shopify' ? '*.myshopify.com' : '*.wixsite.com';
-    console.log(
-      `[discover-leads] common-crawl pattern=${pattern} limit=${args.limit}`
-    );
+    const pattern = args.mode.pattern === 'shopify' ? '*.myshopify.com' : '*.wixsite.com';
+    console.log(`[discover-leads] common-crawl pattern=${pattern} limit=${args.limit}`);
     const provider = new CommonCrawlProvider(pattern);
     for await (const c of provider.discover({ limit: args.limit })) {
       let host: string;
@@ -241,9 +238,7 @@ async function main(): Promise<void> {
     const queries = getNicheQueries(args.country);
     const apiKey = process.env.BRAVE_API_KEY;
     if (!apiKey) {
-      console.error(
-        'BRAVE_API_KEY missing. Niche discovery uses Brave Search.'
-      );
+      console.error('BRAVE_API_KEY missing. Niche discovery uses Brave Search.');
       process.exit(1);
     }
     const perQueryLimit = Math.max(10, Math.ceil(args.limit / queries.length));
@@ -251,21 +246,14 @@ async function main(): Promise<void> {
       `[discover-leads] niche country=${args.country ?? 'en'} queries=${queries.length} perQueryLimit=${perQueryLimit}`
     );
     for (const q of queries) console.log(`  - ${q}`);
-    for await (const c of multiBraveDiscovery(
-      queries,
-      apiKey,
-      args.country,
-      perQueryLimit
-    )) {
+    for await (const c of multiBraveDiscovery(queries, apiKey, args.country, perQueryLimit)) {
       if (candidates.length >= args.limit) break;
       candidates.push(c.url);
       sourceLabel = `niche:${args.country ?? 'en'}`;
     }
-
   } else if (args.mode.kind === 'alt-platform') {
-    const { altPlatformQueries, ALT_PLATFORMS, isAltPlatformBlocked } = await import(
-      '@/lib/leads/alt-platforms'
-    );
+    const { altPlatformQueries, ALT_PLATFORMS, isAltPlatformBlocked } =
+      await import('@/lib/leads/alt-platforms');
     const lang: 'fr' | 'en' = args.country === 'fr' ? 'fr' : 'en';
     const platforms: ReadonlyArray<'magento' | 'prestashop' | 'bigcommerce' | 'squarespace'> =
       args.mode.platform === 'all' ? ALT_PLATFORMS : [args.mode.platform];
@@ -274,9 +262,7 @@ async function main(): Promise<void> {
       for (const q of altPlatformQueries(p, lang)) queries.push(q);
     }
     if (queries.length === 0) {
-      console.error(
-        `No alt-platform queries for platform=${args.mode.platform} lang=${lang}`
-      );
+      console.error(`No alt-platform queries for platform=${args.mode.platform} lang=${lang}`);
       process.exit(1);
     }
     const apiKey = process.env.BRAVE_API_KEY;
@@ -326,12 +312,7 @@ async function main(): Promise<void> {
         `queries=${queries.length} perQueryLimit=${perQueryLimit}`
     );
     for (const q of queries) console.log(`  - ${q}`);
-    for await (const c of multiBraveDiscovery(
-      queries,
-      apiKey,
-      args.country,
-      perQueryLimit
-    )) {
+    for await (const c of multiBraveDiscovery(queries, apiKey, args.country, perQueryLimit)) {
       if (candidates.length >= args.limit) break;
       candidates.push(c.url);
       sourceLabel = `brave-multi:${args.mode.platform}-${args.country ?? 'en'}`;
@@ -372,9 +353,7 @@ async function main(): Promise<void> {
     const { db } = await import('@/lib/db');
     const { leads } = await import('@/lib/db/schema');
     const known = new Set(
-      (await db.select({ domain: leads.domain }).from(leads)).map((r) =>
-        r.domain.toLowerCase()
-      )
+      (await db.select({ domain: leads.domain }).from(leads)).map((r) => r.domain.toLowerCase())
     );
     const before = candidates.length;
     toQualify = candidates.filter((u) => {
@@ -419,9 +398,7 @@ async function main(): Promise<void> {
         if (r.created) created += 1;
         else refreshed += 1;
         if (r.hasEmail) withEmail += 1;
-        console.log(
-          `  ${r.created ? '+' : '~'} ${host.padEnd(40)} ${c.email ?? '(no email)'}`
-        );
+        console.log(`  ${r.created ? '+' : '~'} ${host.padEnd(40)} ${c.email ?? '(no email)'}`);
       } catch {
         errored += 1;
         console.log(`  ! ${host.padEnd(40)} extract failed`);
@@ -526,9 +503,8 @@ async function main(): Promise<void> {
   // Magento / PrestaShop / BigCommerce / Squarespace shops we'd
   // otherwise skip.
   if (args.withAlt) {
-    const { qualifyUrl, upsertQualifiedLead, upsertManualMerchantLead, detectLanguage } = await import(
-      '@/lib/leads/qualify'
-    );
+    const { qualifyUrl, upsertQualifiedLead, upsertManualMerchantLead, detectLanguage } =
+      await import('@/lib/leads/qualify');
     const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
     const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
 
@@ -606,10 +582,7 @@ async function main(): Promise<void> {
       }
     }
     await Promise.all(
-      Array.from(
-        { length: Math.max(1, Math.min(args.concurrency, toQualify.length)) },
-        worker
-      )
+      Array.from({ length: Math.max(1, Math.min(args.concurrency, toQualify.length)) }, worker)
     );
 
     console.log('\n── Summary (with --with-alt) ────────────────────');
@@ -632,7 +605,9 @@ async function main(): Promise<void> {
 
   console.log('\n── Summary ─────────────────────────────────────');
   console.log(`  candidates:  ${summary.total}`);
-  console.log(`  qualified:   ${summary.qualified}  (${summary.created} new, ${summary.qualified - summary.created} refreshed)`);
+  console.log(
+    `  qualified:   ${summary.qualified}  (${summary.created} new, ${summary.qualified - summary.created} refreshed)`
+  );
   console.log(`  skipped:     ${summary.skipped}`);
   console.log(`  errored:     ${summary.errored}`);
   if (Object.keys(summary.byPlatform).length > 0) {

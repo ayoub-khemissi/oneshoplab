@@ -19,8 +19,7 @@ const FIELD_BRIEFS: Record<ProductField, string> = {
     'rewrite the product DESCRIPTION in different angles (storytelling, technical specs, benefit-led, sensory, eco-conscious)',
   images:
     'generate ALTERNATE LIFESTYLE IMAGES via image-to-image — different scenes/settings while keeping the product identical (outdoor natural, indoor minimalist, in-use shot, model wearing/holding, contextual scene)',
-  tags:
-    'suggest alternative TAG SETS for discovery (customer-search-oriented, mood-based, material/spec-based, occasion-based, demographic-based)'
+  tags: 'suggest alternative TAG SETS for discovery (customer-search-oriented, mood-based, material/spec-based, occasion-based, demographic-based)'
 };
 
 /**

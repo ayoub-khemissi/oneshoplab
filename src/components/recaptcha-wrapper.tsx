@@ -40,11 +40,7 @@ export function RecaptchaWrapper({ siteKey, theme = 'light' }: RecaptchaWrapperP
   // the hook the script searches for.
   return (
     <div className="flex justify-center">
-      <div
-        className="g-recaptcha"
-        data-sitekey={siteKey}
-        data-theme={theme}
-      />
+      <div className="g-recaptcha" data-sitekey={siteKey} data-theme={theme} />
     </div>
   );
 }

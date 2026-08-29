@@ -63,7 +63,9 @@ export function GenerateButton({ field, cost, enabled }: GenerateButtonProps) {
       ) : (
         <>
           <span>{isAll ? t('generateAll') : t('generateField')}</span>
-          <span className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}>
+          <span
+            className={`text-xs font-mono inline-flex items-center gap-1 ${isAll ? 'opacity-80' : 'text-[var(--muted)]'}`}
+          >
             · <Coins className="size-3" aria-hidden /> {cost}
           </span>
         </>

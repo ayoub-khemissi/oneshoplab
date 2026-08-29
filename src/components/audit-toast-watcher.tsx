@@ -83,7 +83,9 @@ export function AuditToastWatcher() {
       const project = a.projectName ?? '';
       if (a.status === 'completed') {
         toast.success(t('completedTitle'), {
-          description: project ? t('completedDescription', { project }) : t('completedDescriptionNoProject'),
+          description: project
+            ? t('completedDescription', { project })
+            : t('completedDescriptionNoProject'),
           actionProps:
             a.projectId != null
               ? {
@@ -94,7 +96,9 @@ export function AuditToastWatcher() {
         });
       } else {
         toast.danger(t('failedTitle'), {
-          description: project ? t('failedDescription', { project }) : t('failedDescriptionNoProject')
+          description: project
+            ? t('failedDescription', { project })
+            : t('failedDescriptionNoProject')
         });
       }
     }

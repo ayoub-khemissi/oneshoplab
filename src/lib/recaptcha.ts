@@ -56,7 +56,5 @@ export async function verifyRecaptcha(
 /** Whether the recaptcha wrapper should be rendered. Public — site key
  *  ships to the client; the secret stays server-only via verifyRecaptcha. */
 export function isRecaptchaEnabled(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && process.env.RECAPTCHA_SECRET_KEY
-  );
+  return Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && process.env.RECAPTCHA_SECRET_KEY);
 }

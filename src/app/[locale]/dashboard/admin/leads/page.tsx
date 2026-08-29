@@ -12,13 +12,7 @@ import { isAdminEmail } from '@/lib/admin';
 import { buildLeadOutreach, freshAuditsByDomain } from '@/lib/cold/lead-outreach';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import {
-  leads,
-  LEAD_STATUSES,
-  PLATFORMS,
-  type LeadStatus,
-  type Platform
-} from '@/lib/db/schema';
+import { leads, LEAD_STATUSES, PLATFORMS, type LeadStatus, type Platform } from '@/lib/db/schema';
 import { deleteLeadAction } from '@/lib/leads/actions';
 import { formatDate } from '@/lib/format-date';
 
@@ -117,8 +111,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
   // per-lead transform — no N+1.
   const freshAudits = await freshAuditsByDomain(rows.map((r) => r.domain));
   const appUrl = process.env.APP_URL ?? 'https://oneshoplab.com';
-  const discordUrl =
-    process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? 'https://discord.gg/oneshoplab';
+  const discordUrl = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? 'https://discord.gg/oneshoplab';
   const fromName = process.env.COLD_SMTP_FROM_NAME ?? 'Youbi';
   const outreachByLead = new Map(
     rows.map((l) => [
@@ -139,11 +132,10 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
         </span>
         <h1 className="text-3xl font-bold tracking-tight">Leads</h1>
         <p className="text-sm text-[var(--muted)] max-w-2xl">
-          Sites e-commerce auto-découverts puis qualifiés (plateforme
-          détectée + au moins un produit récupérable). Tu peux ajouter
-          des URLs à la main via le formulaire en bas, ou utiliser le CLI
-          (<code className="text-xs">pnpm tsx scripts/discover-leads.ts</code>)
-          pour les passes plus larges.
+          Sites e-commerce auto-découverts puis qualifiés (plateforme détectée + au moins un produit
+          récupérable). Tu peux ajouter des URLs à la main via le formulaire en bas, ou utiliser le
+          CLI (<code className="text-xs">pnpm tsx scripts/discover-leads.ts</code>) pour les passes
+          plus larges.
         </p>
       </header>
 
@@ -196,12 +188,8 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={9}
-                    className="px-4 py-8 text-center text-[var(--muted)]"
-                  >
-                    Aucun lead pour ce filtre. Colle des URLs en bas pour
-                    démarrer.
+                  <td colSpan={9} className="px-4 py-8 text-center text-[var(--muted)]">
+                    Aucun lead pour ce filtre. Colle des URLs en bas pour démarrer.
                   </td>
                 </tr>
               ) : null}
@@ -222,10 +210,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                         className="inline-flex items-center gap-1 font-medium hover:text-[var(--accent)]"
                       >
                         {l.domain}
-                        <ExternalLink
-                          className="size-3 opacity-50"
-                          aria-hidden
-                        />
+                        <ExternalLink className="size-3 opacity-50" aria-hidden />
                       </a>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">
                         {formatDate(l.discoveredAt)}
@@ -236,14 +221,10 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                       <span className="text-xs font-mono">{l.platform}</span>
                     </Td>
                     <Td>
-                      <span className="text-xs font-mono">
-                        {l.language ?? '—'}
-                      </span>
+                      <span className="text-xs font-mono">{l.language ?? '—'}</span>
                     </Td>
                     <Td>
-                      <span className="text-xs font-mono tabular-nums">
-                        {l.productsSampled}
-                      </span>
+                      <span className="text-xs font-mono tabular-nums">{l.productsSampled}</span>
                     </Td>
                     <Td>
                       {l.contactEmail ? (
@@ -261,10 +242,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
                           {socials.slice(0, 4).map((s) => {
                             const host = (() => {
                               try {
-                                return new URL(s).hostname.replace(
-                                  /^www\./,
-                                  ''
-                                );
+                                return new URL(s).hostname.replace(/^www\./, '');
                               } catch {
                                 return s;
                               }
@@ -327,10 +305,7 @@ export default async function LeadsAdminPage({ searchParams }: PageProps) {
       </Card>
 
       {totalPages > 1 ? (
-        <nav
-          className="flex items-center justify-center gap-1.5 text-sm"
-          aria-label="Pagination"
-        >
+        <nav className="flex items-center justify-center gap-1.5 text-sm" aria-label="Pagination">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <a
               key={p}

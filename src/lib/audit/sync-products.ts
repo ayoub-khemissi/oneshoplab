@@ -175,9 +175,7 @@ export async function syncProjectProducts(
     // Soft-archive everything that wasn't seen this round AND is currently
     // active. Already-archived rows stay archived (no-op). The customInstructions
     // and the jobs FK'd to these rows are untouched.
-    const orphans = existing.filter(
-      (e) => !seenIds.has(e.id) && e.status === 'active'
-    );
+    const orphans = existing.filter((e) => !seenIds.has(e.id) && e.status === 'active');
     if (orphans.length > 0) {
       await tx
         .update(products)
@@ -194,9 +192,7 @@ export async function syncProjectProducts(
     }
   });
 
-  const archived = existing.filter(
-    (e) => !seenIds.has(e.id) && e.status === 'active'
-  ).length;
+  const archived = existing.filter((e) => !seenIds.has(e.id) && e.status === 'active').length;
 
   return { inserted, updated, archived };
 }

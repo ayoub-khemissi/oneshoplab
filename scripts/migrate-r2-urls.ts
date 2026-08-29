@@ -48,9 +48,11 @@ async function main() {
   });
   let jobsTouched = 0;
   for (const j of imageJobs) {
-    const r = j.result as
-      | { persistedUrls?: string[]; resultUrls?: string[]; [k: string]: unknown }
-      | null;
+    const r = j.result as {
+      persistedUrls?: string[];
+      resultUrls?: string[];
+      [k: string]: unknown;
+    } | null;
     if (!r) continue;
     const persisted = (r.persistedUrls ?? []).map(rewrite);
     const result = (r.resultUrls ?? []).map(rewrite);
@@ -105,9 +107,7 @@ async function main() {
     sql`SELECT id, summary FROM audits WHERE summary LIKE ${'%' + OLD_BASE + '%'}`
   );
   let auditsTouched = 0;
-  for (const row of (auditRows as unknown as Array<
-    Array<{ id: string; summary: unknown }>
-  >)[0]) {
+  for (const row of (auditRows as unknown as Array<Array<{ id: string; summary: unknown }>>)[0]) {
     const json = JSON.stringify(row.summary);
     if (!json.includes(needle)) continue;
     const next = json.split(needle).join(NEW_BASE + '/');
@@ -125,9 +125,9 @@ async function main() {
     sql`SELECT id, input_payload FROM jobs WHERE input_payload LIKE ${'%' + OLD_BASE + '%'}`
   );
   let jobInputTouched = 0;
-  for (const row of (jobInputRows as unknown as Array<
-    Array<{ id: string; input_payload: unknown }>
-  >)[0]) {
+  for (const row of (
+    jobInputRows as unknown as Array<Array<{ id: string; input_payload: unknown }>>
+  )[0]) {
     const json = JSON.stringify(row.input_payload);
     if (!json.includes(needle)) continue;
     const next = json.split(needle).join(NEW_BASE + '/');
@@ -139,9 +139,7 @@ async function main() {
         .where(eq(jobs.id, row.id));
     }
   }
-  console.log(
-    `jobs.input_payload: ${jobInputTouched} rows ${DRY ? 'would be' : ''} updated`
-  );
+  console.log(`jobs.input_payload: ${jobInputTouched} rows ${DRY ? 'would be' : ''} updated`);
 
   console.log('done');
 }

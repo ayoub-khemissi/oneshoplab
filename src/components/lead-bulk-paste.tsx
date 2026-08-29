@@ -31,11 +31,9 @@ export function LeadBulkPaste() {
         </span>
       </div>
       <p className="text-xs text-[var(--muted)] leading-relaxed max-w-xl">
-        Une URL par ligne. Les lignes commençant par <code>#</code> sont
-        ignorées. Chaque URL passe par la même pipeline que le CLI
-        (détection plateforme + récup d&apos;un produit + extraction
-        email/socials). Max ≈25 URLs par paste pour rester sous la
-        limite des server actions (60s).
+        Une URL par ligne. Les lignes commençant par <code>#</code> sont ignorées. Chaque URL passe
+        par la même pipeline que le CLI (détection plateforme + récup d&apos;un produit + extraction
+        email/socials). Max ≈25 URLs par paste pour rester sous la limite des server actions (60s).
       </p>
       <form action={handleSubmit} className="flex flex-col gap-3">
         <textarea

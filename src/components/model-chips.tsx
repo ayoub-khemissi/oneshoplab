@@ -14,14 +14,10 @@ import { useGenerateContext } from './retryable-generate';
  * the bulk modal uses).
  */
 export function ModelChips() {
-  const { chatModelId, imageQualityId, setChatModelId, setImageQualityId } =
-    useGenerateContext();
+  const { chatModelId, imageQualityId, setChatModelId, setImageQualityId } = useGenerateContext();
   const [, startPersist] = useTransition();
 
-  function persist(next: {
-    chatModelId?: ChatModelId;
-    imageQualityId?: ImageQualityId;
-  }) {
+  function persist(next: { chatModelId?: ChatModelId; imageQualityId?: ImageQualityId }) {
     const fd = new FormData();
     fd.set('chatModel', next.chatModelId ?? chatModelId);
     fd.set('imageQuality', next.imageQualityId ?? imageQualityId);

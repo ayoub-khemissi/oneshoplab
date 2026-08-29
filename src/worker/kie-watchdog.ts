@@ -94,7 +94,10 @@ async function reconcilePendingImageJobs(now: number): Promise<void> {
   }
 
   for (const job of orphans) {
-    const ageRef = job.createdAt < (job.startedAt ?? job.createdAt) ? job.createdAt : (job.startedAt ?? job.createdAt);
+    const ageRef =
+      job.createdAt < (job.startedAt ?? job.createdAt)
+        ? job.createdAt
+        : (job.startedAt ?? job.createdAt);
     const pastGiveup = ageRef < giveupCutoff;
 
     if (pastGiveup) {
@@ -139,13 +142,11 @@ async function retryCreateImagePending(
   kie: KieClient,
   job: typeof jobs.$inferSelect
 ): Promise<void> {
-  const payload = job.inputPayload as
-    | {
-        userPrompt?: string;
-        sourceImageUrl?: string;
-        imageQualityId?: string;
-      }
-    | null;
+  const payload = job.inputPayload as {
+    userPrompt?: string;
+    sourceImageUrl?: string;
+    imageQualityId?: string;
+  } | null;
 
   if (!payload?.userPrompt || !payload?.sourceImageUrl || !payload?.imageQualityId) {
     await persistKieJobFailure(
@@ -160,9 +161,7 @@ async function retryCreateImagePending(
   const quality = getImageModel(payload.imageQualityId as ImageQualityId);
   const callBackUrl = buildKieCallbackUrl(process.env.APP_URL);
 
-  console.log(
-    `[kie-watchdog] retrying createTask for orphan job ${job.id} (kind=${job.kind})`
-  );
+  console.log(`[kie-watchdog] retrying createTask for orphan job ${job.id} (kind=${job.kind})`);
   // Bump attempts up-front so a slow / hung retry can't be retried
   // again by the next tick. The next tick will see attempts > 0 and
   // wait for the giveup window.
@@ -239,12 +238,7 @@ async function reconcileRunningImageJobs(now: number): Promise<void> {
         continue;
       }
       if (info.state === 'fail') {
-        await persistKieJobFailure(
-          job.id,
-          job.kind,
-          info.failMsg ?? null,
-          info.failCode ?? null
-        );
+        await persistKieJobFailure(job.id, job.kind, info.failMsg ?? null, info.failCode ?? null);
         continue;
       }
       if (overTimeout) {
@@ -322,12 +316,7 @@ async function reconcileOtherStuckJobs(now: number): Promise<void> {
           costTimeSeconds: info.costTime ?? null
         });
       } else if (info.state === 'fail') {
-        await persistKieJobFailure(
-          job.id,
-          job.kind,
-          info.failMsg ?? null,
-          info.failCode ?? null
-        );
+        await persistKieJobFailure(job.id, job.kind, info.failMsg ?? null, info.failCode ?? null);
       }
     } catch (e) {
       console.error(`[kie-watchdog] error checking ${job.kieTaskId}:`, e);

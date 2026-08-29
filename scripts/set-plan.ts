@@ -64,10 +64,7 @@ async function main() {
     process.exit(1);
   }
 
-  await db
-    .update(users)
-    .set({ plan, creditsBalance: credits })
-    .where(eq(users.id, user.id));
+  await db.update(users).set({ plan, creditsBalance: credits }).where(eq(users.id, user.id));
 
   console.log(`Updated ${user.email}:`);
   console.log(`  plan:    ${user.plan} → ${plan}  (siteLimit ${tier.siteLimit})`);

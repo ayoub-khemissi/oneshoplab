@@ -26,9 +26,7 @@ import { audits } from '@/lib/db/schema';
  * Use whenever a caller wants "the most recent audit matching X" and
  * couldn't care less about the row's content yet.
  */
-export async function findLatestAuditIdWhere(
-  whereExpr: SQL
-): Promise<string | null> {
+export async function findLatestAuditIdWhere(whereExpr: SQL): Promise<string | null> {
   const rows = await db
     .select({ id: audits.id })
     .from(audits)

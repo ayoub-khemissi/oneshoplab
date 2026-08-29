@@ -37,9 +37,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">
-          {t('subtitle')}
-        </p>
+        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">{t('subtitle')}</p>
       </header>
 
       {banner ? (
@@ -123,8 +121,7 @@ function BucketChip({
   hint: string;
   tone: 'accent' | 'success';
 }) {
-  const dot =
-    tone === 'success' ? 'bg-[var(--success)]' : 'bg-[var(--accent)]';
+  const dot = tone === 'success' ? 'bg-[var(--success)]' : 'bg-[var(--accent)]';
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--default)]">
       <span className={`size-2 rounded-full ${dot}`} aria-hidden />
@@ -138,4 +135,3 @@ function BucketChip({
     </div>
   );
 }
-

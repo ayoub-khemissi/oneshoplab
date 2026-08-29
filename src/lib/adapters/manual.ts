@@ -1,4 +1,9 @@
-import type { AdapterContext, NormalizedProduct, PlatformAdapter, PlatformDetection } from './types';
+import type {
+  AdapterContext,
+  NormalizedProduct,
+  PlatformAdapter,
+  PlatformDetection
+} from './types';
 
 /**
  * Greenfield adapter — for users without an existing storefront.

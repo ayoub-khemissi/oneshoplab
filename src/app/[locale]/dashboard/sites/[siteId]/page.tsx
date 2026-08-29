@@ -24,10 +24,7 @@ import { SiteBulkPrefsEditor } from '@/components/site-bulk-prefs-editor';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
 import { isAdminEmail } from '@/lib/admin';
-import {
-  listProductsWithGenerations,
-  listShareLinksForSite
-} from '@/lib/share/queries';
+import { listProductsWithGenerations, listShareLinksForSite } from '@/lib/share/queries';
 import {
   getActiveBulkJob,
   getEffectiveBulkPrefs,
@@ -36,12 +33,7 @@ import {
   listBulkCandidatesWithStatus,
   resolveBulkPrefs
 } from '@/lib/bulk/site-generate';
-import {
-  axesValueTiers,
-  commentaryTiers,
-  statsValueTiers,
-  type CommentaryTier
-} from '@/lib/audit';
+import { axesValueTiers, commentaryTiers, statsValueTiers, type CommentaryTier } from '@/lib/audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { audits, jobs, products, projects, type JobStatus } from '@/lib/db/schema';
@@ -185,14 +177,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         : rawTab === 'settings'
           ? 'settings'
           : 'overview';
-  const activityPage = Math.max(
-    1,
-    Number.parseInt(rawActivityPage ?? '1', 10) || 1
-  );
-  const productsPage = Math.max(
-    1,
-    Number.parseInt(rawProductsPage ?? '1', 10) || 1
-  );
+  const activityPage = Math.max(1, Number.parseInt(rawActivityPage ?? '1', 10) || 1);
+  const productsPage = Math.max(1, Number.parseInt(rawProductsPage ?? '1', 10) || 1);
   const productsQuery = (rawQuery ?? '').trim();
   const productsSort: ProductsSortKey = (PRODUCTS_SORT_KEYS as readonly string[]).includes(
     rawSort ?? ''
@@ -225,9 +211,8 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // and Settings tabs render fine off the small `status` + `scores`
   // fields, so we use a two-step lookup that omits `summary` for
   // those tabs and saves a multi-MB roundtrip per navigation.
-  const { findLatestAuditForProject, findLatestAuditIdWhere } = await import(
-    '@/lib/audit/find-latest'
-  );
+  const { findLatestAuditForProject, findLatestAuditIdWhere } =
+    await import('@/lib/audit/find-latest');
   const needsSummary = activeTab === 'overview' || activeTab === 'products';
   // Loose type: the slim variant omits `summary` / `anonToken` etc.
   // but downstream code never reaches for those when needsSummary is
@@ -273,9 +258,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // blocks the page render for a DB write the user doesn't see.
   const { touchProjectLastView } = await import('@/lib/auth-actions');
   const { refreshProjectIfStale } = await import('@/lib/audit');
-  void touchProjectLastView(project.id).catch((e) =>
-    console.error('[sites page last-view]', e)
-  );
+  void touchProjectLastView(project.id).catch((e) => console.error('[sites page last-view]', e));
   void refreshProjectIfStale(project.id).catch((e) =>
     console.error('[sites page auto-refresh]', e)
   );
@@ -328,36 +311,21 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // we don't lose the "any pending/running?" signal when the user is
   // on a later page.
   const [activityTotalRow, unfinishedCountRow] = await Promise.all([
+    db.select({ value: count() }).from(jobs).where(eq(jobs.projectId, project.id)),
     db
       .select({ value: count() })
       .from(jobs)
-      .where(eq(jobs.projectId, project.id)),
-    db
-      .select({ value: count() })
-      .from(jobs)
-      .where(
-        and(
-          eq(jobs.projectId, project.id),
-          inArray(jobs.status, ['pending', 'running'])
-        )
-      )
+      .where(and(eq(jobs.projectId, project.id), inArray(jobs.status, ['pending', 'running'])))
   ]);
   const activityTotal = activityTotalRow[0]?.value ?? 0;
-  const activityTotalPages = Math.max(
-    1,
-    Math.ceil(activityTotal / ACTIVITY_PAGE_SIZE)
-  );
+  const activityTotalPages = Math.max(1, Math.ceil(activityTotal / ACTIVITY_PAGE_SIZE));
 
   // Backfill: legacy audits never inserted into the products table (the
   // pipeline only wrote `audits.summary`). On first visit after the refactor,
   // hydrate the table from the summary so the per-product UUID URLs resolve.
   let productRows = initialProductRows;
   const summaryAll = summary.allProducts ?? [];
-  if (
-    productRows.length === 0 &&
-    summaryAll.length > 0 &&
-    audit.platform !== null
-  ) {
+  if (productRows.length === 0 && summaryAll.length > 0 && audit.platform !== null) {
     const { randomUUID } = await import('node:crypto');
     const inserted = summaryAll
       .filter((p) => p.sourceId || p.handle)
@@ -439,9 +407,11 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         : null;
     const id = r.productId ?? (sourceId ? (productIdByKey.get(sourceId) ?? null) : null);
     if (!id) continue;
-    const cur =
-      optimByProductId.get(id) ??
-      { lastOptimAt: null, count: 0, kinds: new Set<string>() };
+    const cur = optimByProductId.get(id) ?? {
+      lastOptimAt: null,
+      count: 0,
+      kinds: new Set<string>()
+    };
     cur.count += 1;
     cur.kinds.add(r.kind);
     if (r.finishedAt && (!cur.lastOptimAt || r.finishedAt > cur.lastOptimAt)) {
@@ -484,8 +454,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
             // but the runtime JSON still has it. Cast + extract so
             // the list chip is populated.
             const productType =
-              (p as { signals?: { productType?: string | null } })
-                .signals?.productType ?? null;
+              (p as { signals?: { productType?: string | null } }).signals?.productType ?? null;
             return {
               ...p,
               productType,
@@ -535,9 +504,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     ? [...allProductsWithIds, ...archivedProducts]
     : allProductsWithIds;
   const productsFiltered = productsQuery
-    ? productsCombined.filter((p) =>
-        p.title.toLowerCase().includes(productsQuery.toLowerCase())
-      )
+    ? productsCombined.filter((p) => p.title.toLowerCase().includes(productsQuery.toLowerCase()))
     : productsCombined;
   const productsSorted = [...productsFiltered].sort((a, b) => {
     // Archived sinks to the bottom regardless of the chosen sort —
@@ -563,10 +530,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
     }
   });
   const productsFilteredTotal = productsSorted.length;
-  const productsTotalPages = Math.max(
-    1,
-    Math.ceil(productsFilteredTotal / PRODUCTS_PAGE_SIZE)
-  );
+  const productsTotalPages = Math.max(1, Math.ceil(productsFilteredTotal / PRODUCTS_PAGE_SIZE));
   const safeProductsPage = Math.min(productsPage, productsTotalPages);
   const productsSliceStart = (safeProductsPage - 1) * PRODUCTS_PAGE_SIZE;
   const productsSlice = productsSorted.slice(
@@ -634,18 +598,11 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   //   - the user is on a tab that doesn't render the bulk section
   //     (only `products` does).
   // Saves ~5 round-trips per tab click for the common case.
-  const bulkChatModel: ChatModelId =
-    resolveChatModelId(session.user.preferredChatModel);
+  const bulkChatModel: ChatModelId = resolveChatModelId(session.user.preferredChatModel);
   const bulkImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
-  const needsBulk =
-    activeTab === 'products' && (userPlan === 'pro' || userPlan === 'scale');
-  const [
-    bulkCandidatesAll,
-    bulkCandidatesPending,
-    bulkActive,
-    bulkDetail
-  ] = needsBulk
+  const needsBulk = activeTab === 'products' && (userPlan === 'pro' || userPlan === 'scale');
+  const [bulkCandidatesAll, bulkCandidatesPending, bulkActive, bulkDetail] = needsBulk
     ? await Promise.all([
         listBulkCandidates(project.id),
         listBulkCandidatesWithStatus(project.id, bulkChatModel, bulkImageQuality),
@@ -653,19 +610,14 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
         getLatestBulkJobDetail(project.id)
       ])
     : [[], [], null, null];
-  const bulkCostEstimate = bulkCandidatesPending.reduce(
-    (sum, c) => sum + c.pendingCost,
-    0
-  );
+  const bulkCostEstimate = bulkCandidatesPending.reduce((sum, c) => sum + c.pendingCost, 0);
   // Effective bulk prefs (site → account → legacy) for the products
   // tab modal AND the settings-tab editor. Cheap single join; only
   // loaded for plans that can bulk + the tabs that surface it.
   const needsBulkPrefs =
     (userPlan === 'pro' || userPlan === 'scale') &&
     (activeTab === 'products' || activeTab === 'settings');
-  const bulkEffective = needsBulkPrefs
-    ? await getEffectiveBulkPrefs(project.id)
-    : null;
+  const bulkEffective = needsBulkPrefs ? await getEffectiveBulkPrefs(project.id) : null;
 
   // Admin-only: pre-load share links + candidate products for the
   // sales-prospection card on Settings. Gated by tab too because
@@ -842,10 +794,7 @@ function SiteHeaderBar({
             title={domain}
             className="inline-flex items-center gap-1.5 md:gap-2 text-sm md:text-base font-semibold min-w-0"
           >
-            <PenLine
-              className="size-3.5 md:size-4 text-[var(--accent)] shrink-0"
-              aria-hidden
-            />
+            <PenLine className="size-3.5 md:size-4 text-[var(--accent)] shrink-0" aria-hidden />
             <span className="truncate">{domain}</span>
             <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-mono font-semibold shrink-0">
               {t('siteHeaderManualBadge')}
@@ -937,9 +886,7 @@ function StatusLine({ status, error }: { status: string; error: string | null })
   if (status === 'failed') {
     const trimmed = (error ?? '').trim();
     const friendly =
-      trimmed in KNOWN_ERROR_CODES
-        ? t(KNOWN_ERROR_CODES[trimmed])
-        : sanitizeUserFacingError(error);
+      trimmed in KNOWN_ERROR_CODES ? t(KNOWN_ERROR_CODES[trimmed]) : sanitizeUserFacingError(error);
     return (
       <p role="alert" className="text-sm text-[var(--danger)]">
         {t('failed', { error: friendly })}
@@ -1160,12 +1107,8 @@ function WorstProductsQuickList({
         <Card.Content className="p-0 divide-y divide-[var(--border)]">
           {top.map((p) => {
             const productId =
-              productIdByKey.get(p.sourceId ?? '') ??
-              productIdByKey.get(p.handle ?? '') ??
-              null;
-            const href = productId
-              ? `/dashboard/sites/${siteId}/products/${productId}`
-              : null;
+              productIdByKey.get(p.sourceId ?? '') ?? productIdByKey.get(p.handle ?? '') ?? null;
+            const href = productId ? `/dashboard/sites/${siteId}/products/${productId}` : null;
             const category = p.signals?.productType?.trim() || null;
             return (
               <div
@@ -1238,10 +1181,7 @@ function ScoreCommentary({
       <ul className={`${base} flex flex-col gap-2`}>
         {items.map((item, i) => (
           <li key={i} className="flex gap-2.5">
-            <span
-              aria-hidden
-              className="mt-2 size-1 rounded-full bg-current opacity-50 shrink-0"
-            />
+            <span aria-hidden className="mt-2 size-1 rounded-full bg-current opacity-50 shrink-0" />
             <span>{item}</span>
           </li>
         ))}
@@ -1460,18 +1400,14 @@ function ProjectJobsList({
                             <Link
                               href={productHref}
                               className={`hover:text-[var(--accent)] hover:underline truncate min-w-0 ${
-                                j.product.status === 'archived'
-                                  ? 'italic'
-                                  : ''
+                                j.product.status === 'archived' ? 'italic' : ''
                               }`}
                               title={j.product.title}
                             >
                               {j.product.title}
                             </Link>
                           ) : (
-                            <span className="truncate min-w-0">
-                              {j.product.title}
-                            </span>
+                            <span className="truncate min-w-0">{j.product.title}</span>
                           )}
                         </>
                       ) : (
@@ -1522,14 +1458,12 @@ function truncate(text: string, max: number): string {
 
 function JobDetail({ job }: { job: ProjectJobRow }) {
   const t = useTranslations('Dashboard');
-  const result = (job.result ?? null) as
-    | {
-        output?: string | string[];
-        raw?: string;
-        persistedUrls?: string[];
-        resultUrls?: string[];
-      }
-    | null;
+  const result = (job.result ?? null) as {
+    output?: string | string[];
+    raw?: string;
+    persistedUrls?: string[];
+    resultUrls?: string[];
+  } | null;
 
   const outputText = renderOutputText(result);
   const hasError = job.status === 'failed' || job.status === 'timed_out';

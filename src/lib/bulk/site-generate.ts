@@ -18,14 +18,7 @@ import { getEffectiveLanguage } from '@/lib/audit/language';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { notify } from '@/lib/notifications';
-import {
-  jobs,
-  projects,
-  products,
-  users,
-  type JobKind,
-  type JobStatus
-} from '@/lib/db/schema';
+import { jobs, projects, products, users, type JobKind, type JobStatus } from '@/lib/db/schema';
 
 /**
  * Bulk catalog generation — Scale plan only.
@@ -146,10 +139,7 @@ function effectiveFields(prefs: ResolvedBulkPrefs): BulkFieldKey[] {
  * account-wide default; otherwise the legacy "everything on" default.
  * `null` means "not set" at that level (inherit downward).
  */
-export function pickBulkPrefs(
-  siteRaw: unknown,
-  userDefaultRaw: unknown
-): ResolvedBulkPrefs {
+export function pickBulkPrefs(siteRaw: unknown, userDefaultRaw: unknown): ResolvedBulkPrefs {
   if (siteRaw != null) return resolveBulkPrefs(siteRaw);
   if (userDefaultRaw != null) return resolveBulkPrefs(userDefaultRaw);
   return resolveBulkPrefs(null);
@@ -218,10 +208,7 @@ const FIELD_DEFAULT_PROMPT = {
   tags: 'Suggest 5-10 customer-facing discovery tags for this product.'
 } as const;
 
-function effectiveChatPrompt(
-  field: 'title' | 'description' | 'tags',
-  custom: string
-): string {
+function effectiveChatPrompt(field: 'title' | 'description' | 'tags', custom: string): string {
   const trimmed = custom.trim();
   return trimmed
     ? `${FIELD_DEFAULT_PROMPT[field]}\n\nAdditional instructions from the merchant:\n${trimmed}`
@@ -243,7 +230,10 @@ function combineInstructions(
 }
 
 function toProductContext(p: SummaryProduct): ProductContext {
-  const text = p.descriptionHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  const text = p.descriptionHtml
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
   return {
     title: p.title,
     descriptionText: text,
@@ -319,9 +309,9 @@ export function estimateBulkCost(
   return estimateBulkCostBreakdown(productCount, chatModelId, imageQualityId).total;
 }
 
-export async function listBulkCandidates(projectId: string): Promise<
-  { id: string; sourceId: string | null; handle: string | null }[]
-> {
+export async function listBulkCandidates(
+  projectId: string
+): Promise<{ id: string; sourceId: string | null; handle: string | null }[]> {
   return db
     .select({
       id: products.id,
@@ -605,9 +595,7 @@ export async function retryFailedFromBulk(opts: {
 
   const sourceResult = readResult(source.result);
   const failedProductIds = Object.entries(sourceResult.perProduct)
-    .filter(([, state]) =>
-      Object.values(state.fields).some((v) => v && v !== 'done')
-    )
+    .filter(([, state]) => Object.values(state.fields).some((v) => v && v !== 'done'))
     .map(([id]) => id);
   if (failedProductIds.length === 0) {
     return { ok: false, reason: 'no_failures' };
@@ -625,9 +613,7 @@ export async function retryFailedFromBulk(opts: {
     customInstructions: opts.customInstructions,
     totalCreditsBudget: opts.totalCreditsBudget,
     prefs: resolveBulkPrefs(
-      srcInput
-        ? { fields: srcInput.fields, imageAngles: srcInput.imageAngles }
-        : null
+      srcInput ? { fields: srcInput.fields, imageAngles: srcInput.imageAngles } : null
     )
   });
   if (!out.ok) return { ok: false, reason: 'already_running' };
@@ -751,13 +737,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
     where: and(eq(products.id, nextProductId), eq(products.projectId, project.id))
   });
   if (!productRow) {
-    await markFieldsErrored(
-      job.id,
-      result,
-      nextProductId,
-      'Product row not found',
-      wanted
-    );
+    await markFieldsErrored(job.id, result, nextProductId, 'Product row not found', wanted);
     return true;
   }
 
@@ -807,10 +787,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
       where: eq(jobs.id, job.id),
       columns: { status: true, error: true }
     });
-    if (
-      !fresh ||
-      (fresh.status !== 'running' && fresh.status !== 'pending')
-    ) {
+    if (!fresh || (fresh.status !== 'running' && fresh.status !== 'pending')) {
       // Cancelled or already finalised by another path; bail without
       // touching the row further.
       return true;
@@ -851,11 +828,9 @@ export async function processNextBulkProduct(): Promise<boolean> {
           const allFailed = settled.every((s) => s.status === 'rejected');
           if (allFailed) {
             const reason =
-              (settled.find((s) => s.status === 'rejected') as
-                | PromiseRejectedResult
-                | undefined)?.reason ?? null;
-            const message =
-              reason instanceof Error ? reason.message : 'Image fan-out failed';
+              (settled.find((s) => s.status === 'rejected') as PromiseRejectedResult | undefined)
+                ?.reason ?? null;
+            const message = reason instanceof Error ? reason.message : 'Image fan-out failed';
             state.fields.images = { error: message };
           } else {
             state.fields.images = 'done';
@@ -952,10 +927,8 @@ function readResult(raw: unknown): BulkResult {
   }
   return {
     total: typeof value.total === 'number' ? value.total : 0,
-    totalCreditsBudget:
-      typeof value.totalCreditsBudget === 'number' ? value.totalCreditsBudget : 0,
-    lastProgressAtMs:
-      typeof value.lastProgressAtMs === 'number' ? value.lastProgressAtMs : null,
+    totalCreditsBudget: typeof value.totalCreditsBudget === 'number' ? value.totalCreditsBudget : 0,
+    lastProgressAtMs: typeof value.lastProgressAtMs === 'number' ? value.lastProgressAtMs : null,
     perProduct: (value.perProduct as Record<string, BulkProductState>) ?? {}
   };
 }
@@ -979,10 +952,7 @@ async function markFieldsErrored(
     .where(eq(jobs.id, jobId));
 }
 
-async function stopBulkOnInsufficient(
-  jobId: string,
-  result: BulkResult
-): Promise<void> {
+async function stopBulkOnInsufficient(jobId: string, result: BulkResult): Promise<void> {
   result.lastProgressAtMs = Date.now();
   await db
     .update(jobs)
@@ -996,11 +966,7 @@ async function stopBulkOnInsufficient(
   await emitBulkNotification(jobId, 'bulk_failed', 'insufficient_credits', result);
 }
 
-async function markJobStatus(
-  jobId: string,
-  status: JobStatus,
-  errorText?: string
-): Promise<void> {
+async function markJobStatus(jobId: string, status: JobStatus, errorText?: string): Promise<void> {
   await db
     .update(jobs)
     .set({
@@ -1141,9 +1107,7 @@ export async function getActiveBulkJob(projectId: string): Promise<{
     result,
     result.total,
     effectiveFields(
-      resolveBulkPrefs(
-        snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null
-      )
+      resolveBulkPrefs(snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null)
     )
   );
   // For the simple progress bar we count attempts of any kind.
@@ -1164,10 +1128,7 @@ export async function getLatestBulkJobDetail(
   projectId: string
 ): Promise<BulkJobStatusForUi | null> {
   const job = await db.query.jobs.findFirst({
-    where: and(
-      eq(jobs.projectId, projectId),
-      eq(jobs.kind, 'bulk_site_generate')
-    ),
+    where: and(eq(jobs.projectId, projectId), eq(jobs.kind, 'bulk_site_generate')),
     orderBy: [desc(jobs.createdAt)]
   });
   if (!job) return null;
@@ -1177,9 +1138,7 @@ export async function getLatestBulkJobDetail(
     result,
     result.total,
     effectiveFields(
-      resolveBulkPrefs(
-        snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null
-      )
+      resolveBulkPrefs(snap ? { fields: snap.fields, imageAngles: snap.imageAngles } : null)
     )
   );
   return {

@@ -44,9 +44,7 @@ export default function GlobalError({
             gap: '1rem'
           }}
         >
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>
-            Something went wrong
-          </h1>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: 0 }}>Something went wrong</h1>
           <p style={{ fontSize: '0.875rem', opacity: 0.7, margin: 0 }}>
             A critical error occurred. We&apos;ve been notified.
           </p>

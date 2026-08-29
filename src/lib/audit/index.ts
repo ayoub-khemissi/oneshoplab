@@ -7,11 +7,7 @@ export {
   normalizeUrl,
   MIN_AUDIT_CREDITS
 } from './launch';
-export {
-  AUDIT_FRESH_FOR_MS,
-  refreshAuditProducts,
-  refreshProjectIfStale
-} from './refresh';
+export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from './refresh';
 export { durationSeconds, getJobAverages } from './job-stats';
 export type { JobKindStats } from './job-stats';
 export {

@@ -76,9 +76,7 @@ export default async function AddSitePage({ searchParams }: PageProps) {
       </Link>
 
       <header className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-          {t('addSitePageTitle')}
-        </h1>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t('addSitePageTitle')}</h1>
         <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">
           {t('addSitePageSubtitle', { credits: MIN_AUDIT_CREDITS })}
         </p>
@@ -132,9 +130,7 @@ export default async function AddSitePage({ searchParams }: PageProps) {
           <PenLine className="size-4 text-[var(--accent)]" aria-hidden />
           {t('addSiteScratchTitle')}
         </h2>
-        <p className="text-sm text-[var(--muted)] leading-relaxed">
-          {t('addSiteScratchSubtitle')}
-        </p>
+        <p className="text-sm text-[var(--muted)] leading-relaxed">{t('addSiteScratchSubtitle')}</p>
         <Link
           href="/dashboard/sites/new/scratch"
           className="self-start px-5 py-2.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium inline-flex items-center gap-2"

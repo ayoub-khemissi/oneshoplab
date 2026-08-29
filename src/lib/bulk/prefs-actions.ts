@@ -27,9 +27,7 @@ const Schema = z.union([
   })
 ]);
 
-export async function updateUserDefaultBulkPrefsAction(
-  formData: FormData
-): Promise<void> {
+export async function updateUserDefaultBulkPrefsAction(formData: FormData): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) return;
   const plan = (session.user.plan ?? 'free') as string;
@@ -52,10 +50,7 @@ export async function updateUserDefaultBulkPrefsAction(
           imageAngles: parsed.data.imageAngles
         });
 
-  await db
-    .update(users)
-    .set({ defaultBulkPrefs: value })
-    .where(eq(users.id, session.user.id));
+  await db.update(users).set({ defaultBulkPrefs: value }).where(eq(users.id, session.user.id));
 
   revalidatePath('/account/preferences');
 }

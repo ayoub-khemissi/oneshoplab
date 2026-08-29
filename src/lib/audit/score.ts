@@ -23,7 +23,10 @@ function tally(items: string[]): CountedValue[] {
 }
 
 function htmlToText(html: string): string {
-  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export interface ScoreOptions {
@@ -35,10 +38,7 @@ export interface ScoreOptions {
   skipAltText?: boolean;
 }
 
-function scoreProduct(
-  p: NormalizedProduct,
-  opts: ScoreOptions = {}
-): ProductInsight {
+function scoreProduct(p: NormalizedProduct, opts: ScoreOptions = {}): ProductInsight {
   const text = htmlToText(p.descriptionHtml);
   const titleLen = p.title.length;
   const descLen = text.length;
@@ -69,7 +69,15 @@ function scoreProduct(
   }
 
   const imgScore =
-    imageCount >= 4 ? 100 : imageCount === 3 ? 85 : imageCount === 2 ? 65 : imageCount === 1 ? 35 : 0;
+    imageCount >= 4
+      ? 100
+      : imageCount === 3
+        ? 85
+        : imageCount === 2
+          ? 65
+          : imageCount === 1
+            ? 35
+            : 0;
   const descScore =
     descLen === 0 ? 0 : descLen < 100 ? 25 : descLen < 300 ? 60 : descLen < 600 ? 85 : 100;
   const structureBonus = structured ? 1 : 0.85;
@@ -84,15 +92,15 @@ function scoreProduct(
   const score = Math.round(
     clamp(
       opts.skipAltText
-        ? (0.30 / 0.9) * imgScore +
-            (0.30 / 0.9) * descScore * structureBonus +
+        ? (0.3 / 0.9) * imgScore +
+            (0.3 / 0.9) * descScore * structureBonus +
             (0.15 / 0.9) * tagScore +
             (0.15 / 0.9) * titleScore
-        : 0.30 * imgScore +
-            0.30 * descScore * structureBonus +
+        : 0.3 * imgScore +
+            0.3 * descScore * structureBonus +
             0.15 * tagScore +
             0.15 * titleScore +
-            0.10 * altScore
+            0.1 * altScore
     )
   );
 
@@ -179,10 +187,7 @@ function emptyReport(): AuditReport {
  * adapter yields oldest-first; for many storefronts this is still a useful
  * proxy for "recent").
  */
-function pickLatestProducts(
-  insights: ProductInsight[],
-  n: number
-): ProductInsight[] {
+function pickLatestProducts(insights: ProductInsight[], n: number): ProductInsight[] {
   const dated = insights.filter((p) => p.signals.sourceUpdatedAt != null);
   if (dated.length >= n) {
     return [...dated]
@@ -232,10 +237,7 @@ function detectLanguage(insights: ProductInsight[]): string | null {
  * Compute an audit report from a normalized product catalog.
  * Pure function — no I/O, no side effects.
  */
-export function audit(
-  products: NormalizedProduct[],
-  opts: ScoreOptions = {}
-): AuditReport {
+export function audit(products: NormalizedProduct[], opts: ScoreOptions = {}): AuditReport {
   if (products.length === 0) return emptyReport();
 
   const insights = products.map((p) => scoreProduct(p, opts));
@@ -297,7 +299,8 @@ export function audit(
 
   const n = insights.length;
   const completenessScore = clamp(
-    (insights.filter((p) => p.signals.imageCount > 0 && p.signals.descriptionTextLength > 0).length /
+    (insights.filter((p) => p.signals.imageCount > 0 && p.signals.descriptionTextLength > 0)
+      .length /
       n) *
       100
   );

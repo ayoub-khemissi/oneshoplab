@@ -44,9 +44,14 @@ export type SubmitContactResult =
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX = 3;
 
-export async function isContactRateLimited(email: string, ip: string | null | undefined): Promise<boolean> {
+export async function isContactRateLimited(
+  email: string,
+  ip: string | null | undefined
+): Promise<boolean> {
   const since = new Date(Date.now() - RATE_WINDOW_MS);
-  const who = ip ? or(eq(contactMessages.email, email), eq(contactMessages.ip, ip)) : eq(contactMessages.email, email);
+  const who = ip
+    ? or(eq(contactMessages.email, email), eq(contactMessages.ip, ip))
+    : eq(contactMessages.email, email);
   const [{ n }] = (await db
     .select({ n: sql<number>`count(*)` })
     .from(contactMessages)
@@ -59,7 +64,11 @@ function inboxAddress(): string {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function buildEmail(input: ContactInput, ctx: ContactContext, id: string) {
@@ -155,7 +164,13 @@ export async function submitContactMessage(
 
   const mail = buildEmail(input, ctx, id);
   const [emailRes, discordRes] = await Promise.allSettled([
-    sendMail({ to: inboxAddress(), subject: mail.subject, html: mail.html, text: mail.text, replyTo: input.email }),
+    sendMail({
+      to: inboxAddress(),
+      subject: mail.subject,
+      html: mail.html,
+      text: mail.text,
+      replyTo: input.email
+    }),
     postDiscordMessage(discordChannel(), buildDiscordContent(input, ctx, id))
   ]);
 

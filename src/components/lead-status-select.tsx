@@ -12,13 +12,7 @@ import { updateLeadStatusAction } from '@/lib/leads/actions';
  * participate in form submission. Constructing FormData manually
  * keeps the action signature unchanged.
  */
-export function LeadStatusSelect({
-  leadId,
-  current
-}: {
-  leadId: string;
-  current: LeadStatus;
-}) {
+export function LeadStatusSelect({ leadId, current }: { leadId: string; current: LeadStatus }) {
   const [isPending, startTransition] = useTransition();
 
   function handleChange(key: string | number | null): void {

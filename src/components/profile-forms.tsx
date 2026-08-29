@@ -135,9 +135,7 @@ export function ProfilePasswordForm({
         <Field label={copy.confirmNewPasswordLabel}>
           <PasswordInput name="confirmPassword" autoComplete="new-password" min={8} />
         </Field>
-        {errorCode ? (
-          <ErrorLine message={copy.errors[errorCode] ?? copy.errors.generic} />
-        ) : null}
+        {errorCode ? <ErrorLine message={copy.errors[errorCode] ?? copy.errors.generic} /> : null}
         <FormFooter
           isPending={isPending}
           savedAt={savedAt}
@@ -214,9 +212,7 @@ export function AccountDeleteForm({
             className="w-full px-3 py-2 rounded-md text-sm bg-[var(--background)] border border-[var(--danger)]/40 focus:border-[var(--danger)] focus:outline-none disabled:opacity-50"
           />
         </Field>
-        {errorCode ? (
-          <ErrorLine message={copy.errors[errorCode] ?? copy.errors.generic} />
-        ) : null}
+        {errorCode ? <ErrorLine message={copy.errors[errorCode] ?? copy.errors.generic} /> : null}
         <div className="flex justify-end">
           <button
             type="submit"
@@ -237,9 +233,7 @@ export function AccountDeleteForm({
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-md border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col gap-3">
-      <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--muted)]">
-        {title}
-      </h2>
+      <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--muted)]">{title}</h2>
       {children}
     </div>
   );
@@ -258,9 +252,7 @@ function Field({
     <label className="flex flex-col gap-1.5">
       <span className="text-xs font-medium text-[var(--foreground)]">{label}</span>
       {children}
-      {hint ? (
-        <span className="text-xs text-[var(--muted)] leading-relaxed">{hint}</span>
-      ) : null}
+      {hint ? <span className="text-xs text-[var(--muted)] leading-relaxed">{hint}</span> : null}
     </label>
   );
 }
@@ -327,13 +319,9 @@ function FormFooter({
 
 function ErrorLine({ message }: { message: string }) {
   return (
-    <p
-      role="alert"
-      className="text-xs text-[var(--danger)] inline-flex items-start gap-1.5"
-    >
+    <p role="alert" className="text-xs text-[var(--danger)] inline-flex items-start gap-1.5">
       <AlertCircle className="size-3.5 mt-0.5 shrink-0" aria-hidden />
       <span>{message}</span>
     </p>
   );
 }
-

@@ -128,7 +128,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
     <main className="flex-1 px-4 md:px-10 py-8 md:py-12 max-w-3xl w-full mx-auto flex flex-col gap-8">
       <script
         type="application/ld+json"
-         
+
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div>
@@ -143,15 +143,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
       <header className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-mono uppercase tracking-wider text-[var(--muted)]">
-          <time dateTime={post.date}>
-            {t('publishedOn', { date: formatDate(post.date) })}
-          </time>
+          <time dateTime={post.date}>{t('publishedOn', { date: formatDate(post.date) })}</time>
           {modified !== post.date ? (
             <>
               <span aria-hidden>·</span>
-              <time dateTime={modified}>
-                {t('updatedOn', { date: formatDate(modified) })}
-              </time>
+              <time dateTime={modified}>{t('updatedOn', { date: formatDate(modified) })}</time>
             </>
           ) : null}
           <span aria-hidden>·</span>
@@ -160,9 +156,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
         <h1 className="text-3xl md:text-[2.5rem] font-bold tracking-tight leading-[1.12]">
           {tr.title}
         </h1>
-        <p className="text-base text-[var(--muted)] leading-relaxed">
-          {tr.description}
-        </p>
+        <p className="text-base text-[var(--muted)] leading-relaxed">{tr.description}</p>
       </header>
 
       {/* First-party repo content (src/lib/blog/content/*) → trusted HTML,
@@ -170,15 +164,13 @@ export default async function BlogArticlePage({ params }: PageProps) {
           the shared typographic spacing. */}
       <article
         className="prose max-w-none"
-         
+
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
       {related.length > 0 ? (
         <section className="flex flex-col gap-3 border-t border-[var(--border)] pt-6">
-          <h2 className="text-lg font-bold tracking-tight">
-            {t('relatedTitle')}
-          </h2>
+          <h2 className="text-lg font-bold tracking-tight">{t('relatedTitle')}</h2>
           <ul className="flex flex-col gap-2">
             {related.map(({ post: rp, tr: rt }) => (
               <li key={rp.key}>
@@ -189,9 +181,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                   <span className="font-medium group-hover:text-[var(--accent)] transition-colors">
                     {rt.title}
                   </span>
-                  <span className="text-xs text-[var(--muted)] line-clamp-2">
-                    {rt.description}
-                  </span>
+                  <span className="text-xs text-[var(--muted)] line-clamp-2">{rt.description}</span>
                 </Link>
               </li>
             ))}

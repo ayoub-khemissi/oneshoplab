@@ -56,7 +56,6 @@ export function ProductImageGallery({
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-     
   }, [index, total]);
 
   function scrollToIndex(i: number): void {

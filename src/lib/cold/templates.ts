@@ -63,7 +63,7 @@ Vous recevez ce message car votre activité (agence e-commerce) correspond à un
 };
 
 const EN_AGENCY_T1: Template = {
-  subject: "For {agencyName}: client audits",
+  subject: 'For {agencyName}: client audits',
   body: `Hi {firstName},
 
 I'm reaching out because you support e-commerce clients at {agencyName}. I just shipped OneShopLab and I think it could be a fit for your team.
@@ -226,11 +226,7 @@ const TEMPLATES: Record<ColdVariant, Record<ColdLang, Record<ColdTouch, Template
   }
 };
 
-export function getTemplate(
-  variant: ColdVariant,
-  lang: ColdLang,
-  touch: ColdTouch
-): Template {
+export function getTemplate(variant: ColdVariant, lang: ColdLang, touch: ColdTouch): Template {
   const t = TEMPLATES[variant]?.[lang]?.[touch];
   if (!t) throw new Error(`No template for variant=${variant} lang=${lang} touch=${touch}`);
   return t;

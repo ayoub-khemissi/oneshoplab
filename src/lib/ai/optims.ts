@@ -7,12 +7,7 @@ import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { notify } from '@/lib/notifications';
 import { chatCompletion } from './chat-provider';
 import { type ChatMessage } from './kie';
-import {
-  estimateChatCredits,
-  getChatModel,
-  outputTokenCapFor,
-  type ChatModelId
-} from './models';
+import { estimateChatCredits, getChatModel, outputTokenCapFor, type ChatModelId } from './models';
 import {
   buildDescriptionRewritePrompt,
   buildTagSuggestionPrompt,
@@ -89,10 +84,7 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
   // site Activity tab both pull the product link via the `product`
   // relation on jobs, which joins on jobs.product_id.
   const productRow = await db.query.products.findFirst({
-    where: and(
-      eq(products.projectId, opts.projectId),
-      eq(products.sourceId, opts.productSourceId)
-    ),
+    where: and(eq(products.projectId, opts.projectId), eq(products.sourceId, opts.productSourceId)),
     columns: { id: true }
   });
 
@@ -167,7 +159,13 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     .update(jobs)
     .set({
       status: 'completed',
-      result: { output, raw: text, providerUnitsConsumed: response.creditsConsumed, provider: response.provider, providerModel: response.model },
+      result: {
+        output,
+        raw: text,
+        providerUnitsConsumed: response.creditsConsumed,
+        provider: response.provider,
+        providerModel: response.model
+      },
       creditsCost: debit,
       finishedAt: now
     })
@@ -288,12 +286,7 @@ export async function listOptimHistory(
 }
 
 /** Job kinds that surface in the "Past generations" history strip. */
-const HISTORY_KINDS: JobKind[] = [
-  'kie_title',
-  'kie_description',
-  'kie_tags',
-  'kie_image_edit'
-];
+const HISTORY_KINDS: JobKind[] = ['kie_title', 'kie_description', 'kie_tags', 'kie_image_edit'];
 
 /** Field for a given kie_* kind. Inverse of KIND_BY_FIELD plus
  *  the image entry which the chat map doesn't carry. */

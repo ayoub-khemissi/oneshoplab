@@ -25,9 +25,9 @@ export type CheckoutConsentParams = Pick<
  */
 export async function checkoutConsentParams(): Promise<CheckoutConsentParams> {
   const raw = await getLocale();
-  const locale = ((SUPPORTED_LOCALES as readonly string[]).includes(raw)
-    ? raw
-    : 'en') as (typeof SUPPORTED_LOCALES)[number];
+  const locale = (
+    (SUPPORTED_LOCALES as readonly string[]).includes(raw) ? raw : 'en'
+  ) as (typeof SUPPORTED_LOCALES)[number];
   const t = await getTranslations({ locale, namespace: 'Checkout' });
   const terms = `[${t('termsLabel')}](${APP_URL}/${locale}/terms)`;
   const privacy = `[${t('privacyLabel')}](${APP_URL}/${locale}/privacy)`;

@@ -1,22 +1,12 @@
 import { Card } from '@heroui/react';
-import {
-  ArrowRight,
-  ChevronDown,
-  ExternalLink,
-  ImageIcon,
-  Sparkles
-} from 'lucide-react';
+import { ArrowRight, ChevronDown, ExternalLink, ImageIcon, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ImageZoom } from '@/components/image-zoom';
 import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
-import {
-  loadSharedAudit,
-  type SharedAuditSnapshot,
-  type SharedProduct
-} from '@/lib/share/queries';
+import { loadSharedAudit, type SharedAuditSnapshot, type SharedProduct } from '@/lib/share/queries';
 import { translateIssueText } from '@/lib/share/issue-text';
 import { formatDate } from '@/lib/format-date';
 
@@ -144,9 +134,7 @@ export default async function SharePage({ params }: PageProps) {
 
       {/* Products ---------------------------------------------------- */}
       <section className="flex flex-col gap-6">
-        <h2 className="text-2xl font-bold tracking-tight text-center">
-          {t('productsTitle')}
-        </h2>
+        <h2 className="text-2xl font-bold tracking-tight text-center">{t('productsTitle')}</h2>
         <div className="flex flex-col gap-8">
           {data.products.map((p, idx) => (
             <ProductCaseStudy
@@ -174,9 +162,7 @@ export default async function SharePage({ params }: PageProps) {
       <Card variant="tertiary" className="p-6 flex flex-col items-center gap-3 text-center">
         <Sparkles className="size-6 text-[var(--accent)]" aria-hidden />
         <h2 className="text-xl font-bold tracking-tight">{t('ctaTitle')}</h2>
-        <p className="text-sm text-[var(--muted)] max-w-xl leading-relaxed">
-          {t('ctaSubtitle')}
-        </p>
+        <p className="text-sm text-[var(--muted)] max-w-xl leading-relaxed">{t('ctaSubtitle')}</p>
         <div className="flex items-center gap-3 mt-2">
           <Link
             href="/signup"
@@ -227,10 +213,7 @@ function AuditDetailDisclosure({
 }: {
   details: NonNullable<SharedAuditSnapshot['details']>;
   labels: AuditDetailLabels;
-  translateIssue: (issue: {
-    code: string;
-    data?: Record<string, string | number>;
-  }) => string;
+  translateIssue: (issue: { code: string; data?: Record<string, string | number> }) => string;
 }) {
   // Render statistic tiles only when the backing field is present so
   // legacy audits don't show "—" everywhere.
@@ -318,9 +301,7 @@ function AuditDetailDisclosure({
                   <div className="text-[10px] uppercase tracking-wider text-[var(--muted)] font-mono">
                     {s.label}
                   </div>
-                  <div className="text-base font-semibold mt-0.5 tabular-nums">
-                    {s.value}
-                  </div>
+                  <div className="text-base font-semibold mt-0.5 tabular-nums">{s.value}</div>
                 </div>
               ))}
             </div>
@@ -332,32 +313,30 @@ function AuditDetailDisclosure({
             <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium">
               {labels.worstTitle}
             </span>
-            <p className="text-xs text-[var(--muted)] leading-relaxed">
-              {labels.worstHint}
-            </p>
+            <p className="text-xs text-[var(--muted)] leading-relaxed">{labels.worstHint}</p>
             <ul className="flex flex-col gap-2">
               {details.worstProducts.map((p, idx) => {
                 const title = decodeHtmlEntities(p.title ?? '');
                 return (
-                <li
-                  key={`${idx}-${title}`}
-                  className="px-3 py-2 rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex flex-col gap-1"
-                >
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-medium text-sm truncate">{title}</span>
-                    <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
-                      {p.score}/100
-                    </span>
-                  </div>
-                  {p.issues.length > 0 ? (
-                    <p className="text-xs text-[var(--muted)] leading-relaxed">
-                      <span className="text-[var(--foreground)] font-medium">
-                        {labels.issuesLabel}:
-                      </span>{' '}
-                      {p.issues.map((i) => translateIssue(i)).join(' · ')}
-                    </p>
-                  ) : null}
-                </li>
+                  <li
+                    key={`${idx}-${title}`}
+                    className="px-3 py-2 rounded-md bg-[var(--default)]/40 border border-[var(--border)] flex flex-col gap-1"
+                  >
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="font-medium text-sm truncate">{title}</span>
+                      <span className="text-xs font-mono tabular-nums text-[var(--muted)] shrink-0">
+                        {p.score}/100
+                      </span>
+                    </div>
+                    {p.issues.length > 0 ? (
+                      <p className="text-xs text-[var(--muted)] leading-relaxed">
+                        <span className="text-[var(--foreground)] font-medium">
+                          {labels.issuesLabel}:
+                        </span>{' '}
+                        {p.issues.map((i) => translateIssue(i)).join(' · ')}
+                      </p>
+                    ) : null}
+                  </li>
                 );
               })}
             </ul>
@@ -434,11 +413,7 @@ function ProductCaseStudy({
           />
           <Field
             label={labels.tags}
-            value={
-              product.source.tags.length > 0
-                ? product.source.tags.join(', ')
-                : labels.noTags
-            }
+            value={product.source.tags.length > 0 ? product.source.tags.join(', ') : labels.noTags}
             muted={product.source.tags.length === 0}
           />
           <ImageRow
@@ -454,11 +429,7 @@ function ProductCaseStudy({
             {labels.ai}
             <Sparkles className="size-3 text-[var(--accent)]" aria-hidden />
           </span>
-          <Field
-            label={labels.title}
-            value={aiTitle ?? labels.noTitle}
-            muted={!aiTitle}
-          />
+          <Field label={labels.title} value={aiTitle ?? labels.noTitle} muted={!aiTitle} />
           <AiHtmlField
             label={labels.description}
             html={product.ai.descriptionHtml}
@@ -466,9 +437,7 @@ function ProductCaseStudy({
           />
           <Field
             label={labels.tags}
-            value={
-              product.ai.tags.length > 0 ? product.ai.tags.join(', ') : labels.noTags
-            }
+            value={product.ai.tags.length > 0 ? product.ai.tags.join(', ') : labels.noTags}
             muted={product.ai.tags.length === 0}
           />
           <ImageRow
@@ -531,7 +500,7 @@ function AiHtmlField({
         // never produces script tags. Wrapped in `prose` for spacing.
         <div
           className="prose text-sm max-w-none"
-           
+
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (

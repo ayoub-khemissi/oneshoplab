@@ -77,7 +77,7 @@ export default async function FaqPage() {
     <main className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-6 py-12 md:py-16 flex flex-col gap-10">
       <script
         type="application/ld+json"
-         
+
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
@@ -85,12 +85,8 @@ export default async function FaqPage() {
         <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
           FAQ
         </span>
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
-          {t('title')}
-        </h1>
-        <p className="text-[var(--muted)] text-base leading-relaxed max-w-xl">
-          {t('subtitle')}
-        </p>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">{t('title')}</h1>
+        <p className="text-[var(--muted)] text-base leading-relaxed max-w-xl">{t('subtitle')}</p>
       </header>
 
       <section className="flex flex-col gap-3" aria-label={t('title')}>
@@ -119,12 +115,8 @@ export default async function FaqPage() {
       </section>
 
       <section className="rounded-xl border border-[var(--border)] bg-[var(--default)]/30 p-6 md:p-8 flex flex-col items-center text-center gap-4">
-        <h2 className="text-xl md:text-2xl font-semibold tracking-tight">
-          {t('ctaHeading')}
-        </h2>
-        <p className="text-sm text-[var(--muted)] leading-relaxed max-w-lg">
-          {t('ctaBody')}
-        </p>
+        <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{t('ctaHeading')}</h2>
+        <p className="text-sm text-[var(--muted)] leading-relaxed max-w-lg">{t('ctaBody')}</p>
         <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
           <Link
             href="/"

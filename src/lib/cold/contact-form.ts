@@ -206,7 +206,7 @@ Bonne journée,
 {fromName} — OneShopLab`
     },
     en: {
-      subject: 'An audit + generation tool for {name}\'s clients',
+      subject: "An audit + generation tool for {name}'s clients",
       body: `Hi,
 
 I'm reaching out because {name} supports e-commerce clients.

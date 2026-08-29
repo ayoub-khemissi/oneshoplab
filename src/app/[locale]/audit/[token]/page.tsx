@@ -1,12 +1,6 @@
 import { Card } from '@heroui/react';
 import { and, eq, isNull } from 'drizzle-orm';
-import {
-  AlertTriangle,
-  ArrowRight,
-  ExternalLink,
-  Loader2,
-  Sparkles
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight, ExternalLink, Loader2, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -71,10 +65,7 @@ interface SummaryShape {
 // next-intl resolves keys built at runtime (e.g.
 // `commentary.scores.catalog.${tier}`) fine, but TS can't see through
 // the template literal — cast rich() to a plain string-key signature.
-type RichValues = Record<
-  string,
-  string | number | ((chunks: ReactNode) => ReactNode)
->;
+type RichValues = Record<string, string | number | ((chunks: ReactNode) => ReactNode)>;
 
 const MAX_WORST = 12;
 
@@ -152,10 +143,7 @@ function Commentary({
       <ul className={`${base} flex flex-col gap-2`}>
         {items.map((item, i) => (
           <li key={i} className="flex gap-2.5">
-            <span
-              aria-hidden
-              className="mt-2 size-1 rounded-full bg-current opacity-50 shrink-0"
-            />
+            <span aria-hidden className="mt-2 size-1 rounded-full bg-current opacity-50 shrink-0" />
             <span>{item}</span>
           </li>
         ))}
@@ -173,9 +161,7 @@ function ScoreChip({ score }: { score: number }) {
         ? 'bg-[var(--warning)]/10 text-[var(--warning)]'
         : 'bg-[var(--danger)]/10 text-[var(--danger)]';
   return (
-    <span
-      className={`text-xs font-mono px-2 py-0.5 rounded font-semibold shrink-0 ${tone}`}
-    >
+    <span className={`text-xs font-mono px-2 py-0.5 rounded font-semibold shrink-0 ${tone}`}>
       {score}/100
     </span>
   );
@@ -193,9 +179,8 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
   const tReport = await getTranslations('Report');
   const tIssues = await getTranslations('Issues');
   const domain = audit.domain ?? '';
-  const platform = audit.platform && audit.platform !== 'unknown'
-    ? audit.platform
-    : 'your platform';
+  const platform =
+    audit.platform && audit.platform !== 'unknown' ? audit.platform : 'your platform';
 
   // --- In progress ---------------------------------------------------------
   if (audit.status === 'pending' || audit.status === 'running') {
@@ -211,9 +196,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
           {t('runningTitle', { domain })}
         </h1>
-        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">
-          {t('runningBody')}
-        </p>
+        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">{t('runningBody')}</p>
       </main>
     );
   }
@@ -223,12 +206,8 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
     return (
       <main className="flex-1 px-4 md:px-10 py-16 max-w-2xl w-full mx-auto flex flex-col items-center gap-6 text-center">
         <AlertTriangle className="size-10 text-[var(--danger)]" aria-hidden />
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          {t('failedTitle')}
-        </h1>
-        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">
-          {t('failedBody')}
-        </p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('failedTitle')}</h1>
+        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">{t('failedBody')}</p>
         <Link
           href="/audit"
           className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:border-[var(--accent)] inline-flex items-center gap-1.5"
@@ -272,10 +251,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
         (() => {
           // Tier helpers + rich-text chunk handlers (server-side
           // getTranslations exposes .rich just like the client hook).
-          const tRich = tReport.rich as unknown as (
-            key: string,
-            values: RichValues
-          ) => ReactNode;
+          const tRich = tReport.rich as unknown as (key: string, values: RichValues) => ReactNode;
           const scoreColor = (tier: CommentaryTier) =>
             tier === 'good'
               ? 'text-[var(--success)]'
@@ -287,18 +263,14 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
               <span className={`font-semibold ${scoreColor(tier)}`}>{chunks}</span>
             ),
             strong: (chunks: ReactNode) => (
-              <strong className="font-semibold text-[var(--foreground)]">
-                {chunks}
-              </strong>
+              <strong className="font-semibold text-[var(--foreground)]">{chunks}</strong>
             )
           });
 
           const round1 = (n: number) => Math.round(n * 10) / 10;
           const avgScore = Math.round(summary?.avgProductScore ?? 0);
           const avgImages = round1(summary?.averages?.imageCount ?? 0);
-          const avgDescLength = Math.round(
-            summary?.averages?.descriptionLength ?? 0
-          );
+          const avgDescLength = Math.round(summary?.averages?.descriptionLength ?? 0);
           const avgTags = round1(summary?.averages?.tagCount ?? 0);
           const noImage = summary?.distribution?.imagesZero ?? 0;
           const noDesc = summary?.distribution?.descEmpty ?? 0;
@@ -314,10 +286,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
             avgTags
           });
 
-          const overallText = tRich(
-            `commentary.overall.${tiers.overall}`,
-            richTags(tiers.overall)
-          );
+          const overallText = tRich(`commentary.overall.${tiers.overall}`, richTags(tiers.overall));
           const scoresItems: ReactNode[] = [
             tRich(`commentary.scores.catalog.${axes.catalog}`, {
               ...richTags(axes.catalog),
@@ -355,27 +324,25 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
               ...richTags(statsT.avgTags),
               value: avgTags
             }),
-            tRich(
-              `commentary.stats.productsNoImage.${noImage > 0 ? 'some' : 'none'}`,
-              { ...richTags(noImageTier), count: noImage }
-            ),
-            tRich(
-              `commentary.stats.productsNoDesc.${noDesc > 0 ? 'some' : 'none'}`,
-              { ...richTags(noDescTier), count: noDesc }
-            )
+            tRich(`commentary.stats.productsNoImage.${noImage > 0 ? 'some' : 'none'}`, {
+              ...richTags(noImageTier),
+              count: noImage
+            }),
+            tRich(`commentary.stats.productsNoDesc.${noDesc > 0 ? 'some' : 'none'}`, {
+              ...richTags(noDescTier),
+              count: noDesc
+            })
           ];
 
           // Products to optimize: worstProducts first, fall back to the
           // full list sorted worst-first for legacy summaries.
-          const allScored =
-            summary?.allProducts ?? summary?.worstProducts ?? [];
+          const allScored = summary?.allProducts ?? summary?.worstProducts ?? [];
           const worst = (
             summary?.worstProducts && summary.worstProducts.length > 0
               ? summary.worstProducts
               : [...allScored].sort((a, b) => a.score - b.score)
           ).slice(0, MAX_WORST);
-          const totalScored =
-            summary?.allProducts?.length ?? audit.productsSampled ?? worst.length;
+          const totalScored = summary?.allProducts?.length ?? audit.productsSampled ?? worst.length;
           const moreCount = Math.max(0, totalScored - worst.length);
 
           return (
@@ -386,35 +353,22 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
                   <span className="eyebrow">{tShare('overallScore')}</span>
                   <span className="text-6xl font-bold tabular-nums">
                     {scores.overall}
-                    <span className="text-2xl text-[var(--muted)] font-normal">
-                      /100
-                    </span>
+                    <span className="text-2xl text-[var(--muted)] font-normal">/100</span>
                   </span>
                 </div>
                 <Commentary tier={tiers.overall} content={overallText} />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <ScoreBox
-                    label={tShare('axisCatalog')}
-                    value={scores.catalogCompleteness}
-                  />
+                  <ScoreBox label={tShare('axisCatalog')} value={scores.catalogCompleteness} />
                   <ScoreBox label={tShare('axisCopy')} value={scores.copyQuality} />
-                  <ScoreBox
-                    label={tShare('axisVisual')}
-                    value={scores.visualQuality}
-                  />
-                  <ScoreBox
-                    label={tShare('axisTagging')}
-                    value={scores.taggingQuality}
-                  />
+                  <ScoreBox label={tShare('axisVisual')} value={scores.visualQuality} />
+                  <ScoreBox label={tShare('axisTagging')} value={scores.taggingQuality} />
                 </div>
                 <Commentary tier={tiers.axes} items={scoresItems} />
               </Card>
 
               {/* How the audit works ------------------------------------- */}
               <Card variant="tertiary" className="p-6 flex flex-col gap-2">
-                <h2 className="text-lg font-bold tracking-tight">
-                  {t('explainTitle')}
-                </h2>
+                <h2 className="text-lg font-bold tracking-tight">{t('explainTitle')}</h2>
                 <p className="text-sm text-[var(--muted)] leading-relaxed">
                   {t('explainBody', { platform })}
                 </p>
@@ -424,35 +378,17 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
               <section className="flex flex-col gap-3">
                 <h2 className="text-lg font-semibold">{tReport('quickStats')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <Stat
-                    label={tReport('avgScore')}
-                    value={`${avgScore} / 100`}
-                  />
-                  <Stat
-                    label={tReport('avgImages')}
-                    value={avgImages.toFixed(1)}
-                  />
+                  <Stat label={tReport('avgScore')} value={`${avgScore} / 100`} />
+                  <Stat label={tReport('avgImages')} value={avgImages.toFixed(1)} />
                   <Stat
                     label={tReport('avgDescLength')}
                     value={`${avgDescLength} ${tShare('detailCharsSuffix')}`}
                   />
                   <Stat label={tReport('avgTags')} value={avgTags.toFixed(1)} />
-                  <Stat
-                    label={tReport('productsNoImage')}
-                    value={String(noImage)}
-                  />
-                  <Stat
-                    label={tReport('productsNoDesc')}
-                    value={String(noDesc)}
-                  />
-                  <Stat
-                    label={tShare('detailProductsNoTags')}
-                    value={String(noTags)}
-                  />
-                  <Stat
-                    label={tShare('detailProductsNoAlt')}
-                    value={String(noAlt)}
-                  />
+                  <Stat label={tReport('productsNoImage')} value={String(noImage)} />
+                  <Stat label={tReport('productsNoDesc')} value={String(noDesc)} />
+                  <Stat label={tShare('detailProductsNoTags')} value={String(noTags)} />
+                  <Stat label={tShare('detailProductsNoAlt')} value={String(noAlt)} />
                 </div>
                 <Commentary tier={tiers.stats} items={statsItems} />
               </section>
@@ -460,9 +396,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
               {/* Products to optimize ------------------------------------ */}
               {worst.length > 0 ? (
                 <section className="flex flex-col gap-3">
-                  <h2 className="text-2xl font-bold tracking-tight">
-                    {t('productsTitle')}
-                  </h2>
+                  <h2 className="text-2xl font-bold tracking-tight">{t('productsTitle')}</h2>
                   <p className="text-sm text-[var(--muted)] leading-relaxed max-w-2xl">
                     {t('productsHint')}
                   </p>
@@ -477,9 +411,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
                         // re-run.
                         const title = decodeHtmlEntities(p.title ?? '');
                         const rawCategory = p.signals?.productType?.trim() || null;
-                        const category = rawCategory
-                          ? decodeHtmlEntities(rawCategory)
-                          : null;
+                        const category = rawCategory ? decodeHtmlEntities(rawCategory) : null;
                         const issues = (p.issues ?? [])
                           .map((i) => translateIssueText(tIssues, i))
                           .join(' · ');
@@ -494,9 +426,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
                                   {idx + 1}
                                 </span>
                                 <ScoreChip score={p.score} />
-                                <span className="truncate font-medium">
-                                  {title}
-                                </span>
+                                <span className="truncate font-medium">{title}</span>
                                 {category ? (
                                   <span
                                     className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] border border-[var(--border)] truncate max-w-[9rem] shrink-0"
@@ -542,10 +472,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
           );
         })()
       ) : (
-        <Card
-          variant="secondary"
-          className="p-6 text-center text-sm text-[var(--muted)]"
-        >
+        <Card variant="secondary" className="p-6 text-center text-sm text-[var(--muted)]">
           {t('noScores')}
         </Card>
       )}
@@ -560,9 +487,7 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
         <span className="inline-flex items-center justify-center size-12 rounded-full bg-[var(--accent)]/15">
           <Sparkles className="size-6 text-[var(--accent)]" aria-hidden />
         </span>
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-          {t('ctaTitle')}
-        </h2>
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{t('ctaTitle')}</h2>
         <p className="text-sm md:text-base text-[var(--muted)] max-w-xl leading-relaxed">
           {t('ctaBody')}
         </p>

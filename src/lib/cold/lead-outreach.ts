@@ -72,9 +72,7 @@ function platformLabelFor(lead: LeadLike): string {
 /** Batch lookup: most-recent fresh (24h) completed anonymous audit per
  *  domain, returning token + overall score. One query for the whole
  *  page. */
-export async function freshAuditsByDomain(
-  domains: string[]
-): Promise<Map<string, FreshAuditInfo>> {
+export async function freshAuditsByDomain(domains: string[]): Promise<Map<string, FreshAuditInfo>> {
   const out = new Map<string, FreshAuditInfo>();
   if (domains.length === 0) return out;
   const cutoff = new Date(Date.now() - FRESH_AUDIT_MS);

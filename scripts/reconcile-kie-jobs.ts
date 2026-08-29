@@ -27,9 +27,8 @@ if (existsSync('.env')) {
 
 async function main() {
   const { and, eq, isNotNull } = await import('drizzle-orm');
-  const { getKieClient, persistKieJobFailure, persistKieJobSuccess } = await import(
-    '../src/lib/ai/index'
-  );
+  const { getKieClient, persistKieJobFailure, persistKieJobSuccess } =
+    await import('../src/lib/ai/index');
   const { db } = await import('../src/lib/db/index');
   const { jobs } = await import('../src/lib/db/schema');
 
@@ -66,12 +65,7 @@ async function main() {
         console.log(`  ✓ ${label} → completed (kie costTime ${info.costTime ?? '?'}s)`);
         success++;
       } else if (info.state === 'fail') {
-        await persistKieJobFailure(
-          job.id,
-          job.kind,
-          info.failMsg ?? null,
-          info.failCode ?? null
-        );
+        await persistKieJobFailure(job.id, job.kind, info.failMsg ?? null, info.failCode ?? null);
         console.log(`  ✗ ${label} → failed (${info.failMsg ?? info.failCode ?? 'unknown'})`);
         failed++;
       } else {

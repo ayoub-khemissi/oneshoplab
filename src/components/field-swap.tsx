@@ -97,11 +97,7 @@ interface FieldViewState {
 }
 const FieldViewContext = createContext<FieldViewState | null>(null);
 
-export function FieldViewProvider({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export function FieldViewProvider({ children }: { children: React.ReactNode }) {
   const groupCtx = useContext(FieldSwapGroupContext);
   const [view, setView] = useState<View>(groupCtx?.view ?? 'ai');
   const groupSyncCount = groupCtx?.syncCount ?? 0;
@@ -111,9 +107,7 @@ export function FieldViewProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupSyncCount]);
   return (
-    <FieldViewContext.Provider value={{ view, setView }}>
-      {children}
-    </FieldViewContext.Provider>
+    <FieldViewContext.Provider value={{ view, setView }}>{children}</FieldViewContext.Provider>
   );
 }
 
@@ -205,8 +199,7 @@ export function FieldSwap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupSyncCount]);
 
-  const heading =
-    typeof label === 'string' ? label : view === 'source' ? label?.source : label?.ai;
+  const heading = typeof label === 'string' ? label : view === 'source' ? label?.source : label?.ai;
 
   return (
     <div className="flex flex-col gap-2">

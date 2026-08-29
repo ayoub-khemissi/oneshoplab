@@ -117,9 +117,7 @@ export interface ContactExtractionResult {
  * results. Returns the first email found (in mailto-priority order),
  * and the union of social URLs across all pages we hit.
  */
-export async function extractContactInfo(
-  url: string
-): Promise<ContactExtractionResult> {
+export async function extractContactInfo(url: string): Promise<ContactExtractionResult> {
   const root = rootOf(url);
   const ownHost = new URL(root).hostname;
   const allEmails: string[] = [];

@@ -33,10 +33,7 @@ export function verifyOptOutToken(token: string): string | null {
   if (dot < 1) return null;
   const leadId = token.slice(0, dot);
   const presented = token.slice(dot + 1);
-  const expected = createHmac('sha256', secret())
-    .update(leadId)
-    .digest('base64url')
-    .slice(0, 22);
+  const expected = createHmac('sha256', secret()).update(leadId).digest('base64url').slice(0, 22);
   if (presented.length !== expected.length) return null;
   try {
     if (!timingSafeEqual(Buffer.from(presented), Buffer.from(expected))) return null;

@@ -87,8 +87,7 @@ function ModeToggle({
   humanLabel: string;
   slugLabel: string;
 }) {
-  const baseClass =
-    'px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider transition-colors';
+  const baseClass = 'px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider transition-colors';
   const activeClass = 'bg-[var(--accent)] text-[var(--accent-foreground)]';
   const inactiveClass = 'text-[var(--muted)] hover:text-[var(--foreground)]';
   return (

@@ -42,7 +42,10 @@ export function SiteFavicon({ domain, size = 16, className = '' }: SiteFaviconPr
   const [step, setStep] = useState(0);
 
   if (!domain) return null;
-  const cleaned = domain.replace(/^https?:\/\//, '').split('/')[0].trim();
+  const cleaned = domain
+    .replace(/^https?:\/\//, '')
+    .split('/')[0]
+    .trim();
   if (!cleaned) return null;
 
   const sources = [

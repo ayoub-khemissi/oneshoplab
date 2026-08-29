@@ -129,9 +129,10 @@ export function BulkGenerateSection({
   const [active, setActive] = useState<ActiveBulkJob | null>(initialActive);
   const [detail, setDetail] = useState<BulkJobStatusForUi | null>(initialDetail);
   const [candidates, setCandidates] = useState<BulkCandidate[]>(initialCandidates);
-  const [estimate, setEstimate] = useState<{ total: number; breakdown: CostBreakdown | null }>(
-    { total: costEstimate, breakdown: null }
-  );
+  const [estimate, setEstimate] = useState<{ total: number; breakdown: CostBreakdown | null }>({
+    total: costEstimate,
+    breakdown: null
+  });
   const [balance, setBalance] = useState<number>(creditsBalance);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -139,9 +140,7 @@ export function BulkGenerateSection({
   const [retrying, setRetrying] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [detailExpanded, setDetailExpanded] = useState(false);
-  const [prefs, setPrefs] = useState<BulkPrefs>(() =>
-    canonicalizePrefs(initialPrefs)
-  );
+  const [prefs, setPrefs] = useState<BulkPrefs>(() => canonicalizePrefs(initialPrefs));
   // Serialized prefs known to be persisted, in STATE so the launch
   // gate recomputes. The save effect skips when current prefs match it
   // (covers mount + no echo loop). `prefsBusy` covers the debounce +
@@ -150,9 +149,7 @@ export function BulkGenerateSection({
   // stuck (toggling back to the saved value clears it) and never opens
   // early while a newer change is still settling (key mismatch holds
   // it until savedKey catches up).
-  const [savedKey, setSavedKey] = useState(
-    prefsKey(canonicalizePrefs(initialPrefs))
-  );
+  const [savedKey, setSavedKey] = useState(prefsKey(canonicalizePrefs(initialPrefs)));
   const [prefsBusy, setPrefsBusy] = useState(false);
   // Whether the site has its OWN prefs vs. inheriting the account
   // default. Drives the "reset to account default" link.
@@ -165,8 +162,7 @@ export function BulkGenerateSection({
   // Model picker (account-scoped, like the product page). Refs so the
   // stable `refresh` reads the latest without being re-created.
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModel);
-  const [imageQualityId, setImageQualityId] =
-    useState<ImageQualityId>(initialImageQuality);
+  const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQuality);
   const chatRef = useRef<ChatModelId>(initialChatModel);
   const imgRef = useRef<ImageQualityId>(initialImageQuality);
 
@@ -176,9 +172,7 @@ export function BulkGenerateSection({
       const res = await fetch(
         `/api/sites/bulk-generate?siteId=${encodeURIComponent(siteId)}&chat=${encodeURIComponent(
           chatRef.current
-        )}&img=${encodeURIComponent(imgRef.current)}${
-          q ? `&q=${encodeURIComponent(q)}` : ''
-        }`,
+        )}&img=${encodeURIComponent(imgRef.current)}${q ? `&q=${encodeURIComponent(q)}` : ''}`,
         { cache: 'no-store' }
       );
       if (!res.ok) return;
@@ -290,17 +284,14 @@ export function BulkGenerateSection({
   // Persist the model choice account-wide (same server action as the
   // product page — NO site-level config) and refresh the candidate
   // cost which depends on the chosen model + image quality.
-  const persistModels = useCallback(
-    (chat: ChatModelId, img: ImageQualityId) => {
-      const fd = new FormData();
-      fd.set('chatModel', chat);
-      fd.set('imageQuality', img);
-      // Non-blocking: the ids also travel with the bulk request, so a
-      // stale account write never affects the run in flight.
-      void updateUserPreferencesAction(fd).catch(() => {});
-    },
-    []
-  );
+  const persistModels = useCallback((chat: ChatModelId, img: ImageQualityId) => {
+    const fd = new FormData();
+    fd.set('chatModel', chat);
+    fd.set('imageQuality', img);
+    // Non-blocking: the ids also travel with the bulk request, so a
+    // stale account write never affects the run in flight.
+    void updateUserPreferencesAction(fd).catch(() => {});
+  }, []);
 
   const onPickChat = useCallback(
     (id: ChatModelId) => {
@@ -415,17 +406,13 @@ export function BulkGenerateSection({
   // ---------------------------------------------------------------------
   if (active) {
     const progress =
-      active.total > 0
-        ? Math.min(100, Math.round((active.processed / active.total) * 100))
-        : 0;
+      active.total > 0 ? Math.min(100, Math.round((active.processed / active.total) * 100)) : 0;
     return (
       <div className="flex items-start gap-3 p-4 rounded-md border border-[var(--accent)]/40 bg-[var(--accent)]/5">
         <Layers className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
         <div className="flex-1 flex flex-col gap-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-[var(--foreground)]">
-              {t('bannerInProgress')}
-            </span>
+            <span className="font-semibold text-[var(--foreground)]">{t('bannerInProgress')}</span>
             <span className="text-xs font-mono uppercase tracking-wider text-[var(--accent)]">
               {active.processed}/{active.total}
             </span>
@@ -550,15 +537,10 @@ export function BulkGenerateSection({
           ) : null}
 
           {detailExpanded ? (
-            <FailureBreakdown
-              perProduct={detail.perProduct}
-              productTitleById={productTitleById}
-            />
+            <FailureBreakdown perProduct={detail.perProduct} productTitleById={productTitleById} />
           ) : null}
 
-          {errorMsg ? (
-            <p className="text-xs text-[var(--danger)]">{errorMsg}</p>
-          ) : null}
+          {errorMsg ? <p className="text-xs text-[var(--danger)]">{errorMsg}</p> : null}
         </div>
 
         {modalOpen ? (
@@ -671,9 +653,7 @@ export function BulkGenerateSection({
           {t.rich('hintFullCost', {
             count: candidates.length,
             cost: estimate.total,
-            coins: () => (
-              <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
-            )
+            coins: () => <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
           })}
         </p>
       ) : null}
@@ -820,12 +800,9 @@ function SelectionModal({
 
   const allSelected = selected.size === candidates.length && candidates.length > 0;
   const noneSelected = selected.size === 0;
-  const budgetPct =
-    balance > 0 ? Math.min(100, Math.round((selectedCost / balance) * 100)) : 0;
+  const budgetPct = balance > 0 ? Math.min(100, Math.round((selectedCost / balance) * 100)) : 0;
 
-  const activeFieldLabels = (
-    ['title', 'description', 'tags', 'images'] as const
-  )
+  const activeFieldLabels = (['title', 'description', 'tags', 'images'] as const)
     .filter((f) => prefs.fields[f])
     .map((f) =>
       f === 'title'
@@ -836,10 +813,8 @@ function SelectionModal({
             ? t('fieldTags')
             : t('fieldImages')
     );
-  const chatName =
-    CHAT_MODEL_REGISTRY[chatModelId]?.displayName ?? chatModelId;
-  const imgName =
-    IMAGE_MODEL_REGISTRY[imageQualityId]?.displayName ?? imageQualityId;
+  const chatName = CHAT_MODEL_REGISTRY[chatModelId]?.displayName ?? chatModelId;
+  const imgName = IMAGE_MODEL_REGISTRY[imageQualityId]?.displayName ?? imageQualityId;
   const recap = [...activeFieldLabels, chatName, imgName].join(' · ');
 
   return (
@@ -856,12 +831,9 @@ function SelectionModal({
         {/* Header + stepper ---------------------------------------- */}
         <div className="p-4 sm:p-5 border-b border-[var(--border)] flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
-            <h3 className="text-base font-semibold shrink-0">
-              {t('selectionTitle')}
-            </h3>
+            <h3 className="text-base font-semibold shrink-0">{t('selectionTitle')}</h3>
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] truncate">
-              · {step}/2 ·{' '}
-              {step === 1 ? t('stepConfig') : t('stepSelect')}
+              · {step}/2 · {step === 1 ? t('stepConfig') : t('stepSelect')}
             </span>
           </div>
           <button
@@ -907,9 +879,7 @@ function SelectionModal({
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--muted)] px-1">
-              <span>
-                {t('eligibleCount', { count: candidates.length })}
-              </span>
+              <span>{t('eligibleCount', { count: candidates.length })}</span>
               <span className="font-mono tabular-nums inline-flex items-center gap-1">
                 <Coins className="size-3" aria-hidden />
                 {t('estimatedTotal', {
@@ -924,9 +894,7 @@ function SelectionModal({
             <div className="p-4 sm:p-5 border-b border-[var(--border)] flex flex-col gap-3">
               {/* Config recap (read-only) + edit back to step 1 */}
               <div className="flex items-center justify-between gap-3 rounded-md bg-[var(--default)]/30 px-3 py-2">
-                <span className="text-[11px] text-[var(--muted)] truncate min-w-0">
-                  {recap}
-                </span>
+                <span className="text-[11px] text-[var(--muted)] truncate min-w-0">{recap}</span>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
@@ -939,19 +907,13 @@ function SelectionModal({
               {/* Budget bar */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-[var(--muted)]">
-                    {t('budgetLabel')}
-                  </span>
+                  <span className="text-[var(--muted)]">{t('budgetLabel')}</span>
                   <span className="font-mono tabular-nums inline-flex items-center gap-1">
                     <Coins className="size-3" aria-hidden />
-                    <span
-                      className={overBudget ? 'text-[var(--danger)]' : ''}
-                    >
+                    <span className={overBudget ? 'text-[var(--danger)]' : ''}>
                       {selectedCost.toLocaleString(locale)}
                     </span>
-                    <span className="text-[var(--muted)]">
-                      / {balance.toLocaleString(locale)}
-                    </span>
+                    <span className="text-[var(--muted)]">/ {balance.toLocaleString(locale)}</span>
                   </span>
                 </div>
                 <div className="h-1.5 rounded-full bg-[var(--default)] overflow-hidden">
@@ -1037,17 +999,12 @@ function SelectionModal({
                   count: selected.size,
                   cost: selectedCost,
                   coins: () => (
-                    <Coins
-                      className="size-3 inline-block align-text-bottom"
-                      aria-hidden
-                    />
+                    <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
                   )
                 })}
               </span>
             ) : null}
-            {errorMsg ? (
-              <span className="text-[var(--danger)]">{errorMsg}</span>
-            ) : null}
+            {errorMsg ? <span className="text-[var(--danger)]">{errorMsg}</span> : null}
           </div>
           <div className="flex items-center gap-2 sm:shrink-0">
             {step === 1 ? (
@@ -1062,9 +1019,7 @@ function SelectionModal({
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  disabled={
-                    noFields || launchBlocked || candidates.length === 0
-                  }
+                  disabled={noFields || launchBlocked || candidates.length === 0}
                   title={
                     noFields
                       ? t('errorNoFields')
@@ -1090,11 +1045,7 @@ function SelectionModal({
                   type="button"
                   onClick={handleConfirm}
                   disabled={
-                    submitting ||
-                    selected.size === 0 ||
-                    overBudget ||
-                    noFields ||
-                    launchBlocked
+                    submitting || selected.size === 0 || overBudget || noFields || launchBlocked
                   }
                   title={noFields ? t('errorNoFields') : undefined}
                   className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
@@ -1208,19 +1159,13 @@ function FailureBreakdown({
               if (!outcome) return null;
               if (outcome === 'done') {
                 return (
-                  <li
-                    key={f}
-                    className="text-[var(--success)] inline-flex items-center gap-1.5"
-                  >
+                  <li key={f} className="text-[var(--success)] inline-flex items-center gap-1.5">
                     <CheckCircle2 className="size-3" /> {fieldLabel[f]}
                   </li>
                 );
               }
               return (
-                <li
-                  key={f}
-                  className="text-[var(--danger)] inline-flex items-start gap-1.5"
-                >
+                <li key={f} className="text-[var(--danger)] inline-flex items-start gap-1.5">
                   <X className="size-3 mt-0.5 shrink-0" />
                   <span>
                     <span className="font-medium">{fieldLabel[f]}</span>

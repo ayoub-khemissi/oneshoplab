@@ -108,10 +108,7 @@ async function loadOwnedContext(
   };
 }
 
-function combineInstructions(
-  projectInstructions: string,
-  productInstructions: string
-): string {
+function combineInstructions(projectInstructions: string, productInstructions: string): string {
   const parts: string[] = [];
   if (projectInstructions.trim()) {
     parts.push(`Site-wide brand guidance:\n${projectInstructions.trim()}`);
@@ -122,10 +119,7 @@ function combineInstructions(
   return parts.join('\n\n');
 }
 
-function imageQualityFromBody(
-  raw: unknown,
-  preferred: string | null | undefined
-): ImageQualityId {
+function imageQualityFromBody(raw: unknown, preferred: string | null | undefined): ImageQualityId {
   if (typeof raw === 'string' && raw in IMAGE_MODEL_REGISTRY) {
     return raw as ImageQualityId;
   }
@@ -195,10 +189,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const siteId = typeof body.siteId === 'string' ? body.siteId : '';
   const productId = typeof body.productId === 'string' ? body.productId : '';
   const angleRaw = typeof body.angle === 'string' ? body.angle : '';
-  const customPromptRaw =
-    typeof body.customPrompt === 'string' ? body.customPrompt : '';
-  const replaceJobId =
-    typeof body.replaceJobId === 'string' ? body.replaceJobId : null;
+  const customPromptRaw = typeof body.customPrompt === 'string' ? body.customPrompt : '';
+  const replaceJobId = typeof body.replaceJobId === 'string' ? body.replaceJobId : null;
 
   const isCustom = angleRaw === 'custom';
   const isPreset = (IMAGE_ANGLES as readonly string[]).includes(angleRaw);
@@ -275,10 +267,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // matches the user's mental model ("regenerate" implies the old one is
   // gone) and the new POST attempt simply starts another fresh job.
   if (replaceJobId) {
-    await db
-      .update(jobs)
-      .set({ hiddenAt: new Date() })
-      .where(eq(jobs.id, replaceJobId));
+    await db.update(jobs).set({ hiddenAt: new Date() }).where(eq(jobs.id, replaceJobId));
   }
 
   try {
@@ -355,18 +344,10 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
   // to throw away a paid result, that's their call.
   if (target.status === 'pending' || target.status === 'running') {
     try {
-      await persistKieJobFailure(
-        jobId,
-        target.kind,
-        'Cancelled by merchant',
-        'cancelled_by_user'
-      );
+      await persistKieJobFailure(jobId, target.kind, 'Cancelled by merchant', 'cancelled_by_user');
     } catch (e) {
       console.error('[DELETE /api/products/image-jobs] refund failed', e);
-      return NextResponse.json(
-        { error: 'cancel_failed' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'cancel_failed' }, { status: 500 });
     }
   }
 

@@ -198,11 +198,7 @@ function SiteCard({ site }: { site: SiteCardData }) {
       className="group rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <SiteFavicon
-          domain={site.domain}
-          size={28}
-          className="rounded shrink-0"
-        />
+        <SiteFavicon domain={site.domain} size={28} className="rounded shrink-0" />
         <div className="flex flex-col min-w-0 flex-1">
           <h3 className="font-semibold truncate">{site.domain}</h3>
         </div>

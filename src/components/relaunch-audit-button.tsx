@@ -64,8 +64,7 @@ export function RelaunchAuditButton({
     return () => window.clearInterval(id);
   }, [nextSlotAtIso]);
 
-  const remainingMs =
-    mounted && nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
+  const remainingMs = mounted && nextSlotAtIso ? Math.max(0, readyAt - now) : 0;
   const locked = remainingMs > 0;
 
   function requestConfirm(formData: FormData) {

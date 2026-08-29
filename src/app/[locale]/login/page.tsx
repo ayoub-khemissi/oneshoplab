@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  FieldError,
-  Form,
-  Input,
-  Label,
-  TextField
-} from '@heroui/react';
+import { Button, Card, FieldError, Form, Input, Label, TextField } from '@heroui/react';
 import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';

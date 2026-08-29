@@ -19,9 +19,7 @@ import Stripe from 'stripe';
 
 const key = process.env.STRIPE_LIVE_SECRET_KEY;
 if (!key || !key.startsWith('sk_live_')) {
-  console.error(
-    '[abort] STRIPE_LIVE_SECRET_KEY must be set to a live (sk_live_...) secret key.'
-  );
+  console.error('[abort] STRIPE_LIVE_SECRET_KEY must be set to a live (sk_live_...) secret key.');
   process.exit(1);
 }
 

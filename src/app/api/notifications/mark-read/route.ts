@@ -1,10 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
-import {
-  markAllRead,
-  markReadByAudit,
-  markReadByJob
-} from '@/lib/notifications';
+import { markAllRead, markReadByAudit, markReadByJob } from '@/lib/notifications';
 
 /**
  * POST /api/notifications/mark-read

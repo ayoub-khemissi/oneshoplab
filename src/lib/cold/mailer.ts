@@ -57,9 +57,7 @@ export interface SendColdMailResult {
   messageId?: string;
 }
 
-export async function sendColdMail(
-  opts: SendColdMailOptions
-): Promise<SendColdMailResult> {
+export async function sendColdMail(opts: SendColdMailOptions): Promise<SendColdMailResult> {
   const t = getTransporter();
   if (!t) {
     console.warn('[cold-mailer] COLD_SMTP_* not configured — dropping mail to', opts.to);

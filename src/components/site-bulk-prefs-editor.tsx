@@ -30,9 +30,7 @@ export function SiteBulkPrefsEditor({
   initialSiteOverride: boolean;
 }) {
   const t = useTranslations('BulkGenerate');
-  const [prefs, setPrefs] = useState<BulkPrefs>(() =>
-    canonicalizePrefs(initialPrefs)
-  );
+  const [prefs, setPrefs] = useState<BulkPrefs>(() => canonicalizePrefs(initialPrefs));
   const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
   const [siteOverride, setSiteOverride] = useState(initialSiteOverride);
 
@@ -113,9 +111,7 @@ export function SiteBulkPrefsEditor({
         <BulkPrefsEditor value={prefs} onChange={setPrefs} />
       ) : (
         <div className="flex flex-col items-start gap-2 rounded-md border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-4">
-          <p className="text-sm text-[var(--muted)] leading-relaxed">
-            {t('upgradeHint')}
-          </p>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('upgradeHint')}</p>
           <Link
             href="/pricing"
             className="px-3 py-1.5 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 inline-flex items-center gap-1.5"

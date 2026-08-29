@@ -83,9 +83,7 @@ export function SiteLanguageEditor({
               </span>
             ) : null}
           </span>
-          <p className="text-xs text-[var(--muted)] max-w-2xl leading-relaxed">
-            {t('hint')}
-          </p>
+          <p className="text-xs text-[var(--muted)] max-w-2xl leading-relaxed">{t('hint')}</p>
         </div>
         <Globe className="size-4 text-[var(--accent)] shrink-0" aria-hidden />
       </div>

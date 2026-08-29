@@ -16,10 +16,7 @@ import {
   type PlanId,
   type PlanTier
 } from '@/lib/ai/models';
-import {
-  createCheckoutSessionAction,
-  createPortalSessionAction
-} from '@/lib/stripe-actions';
+import { createCheckoutSessionAction, createPortalSessionAction } from '@/lib/stripe-actions';
 
 /** Plan ranks for upgrade/downgrade detection. The order mirrors the
  *  PLAN_IDS source-of-truth in pricing.ts. */
@@ -93,7 +90,7 @@ export function PricingCards({ signedIn, available, current, copy }: PricingCard
             tier={tier}
             cycle={cycle}
             signedIn={signedIn}
-            available={tier.id === 'free' ? true : available[`${tier.id}_${cycle}`] ?? false}
+            available={tier.id === 'free' ? true : (available[`${tier.id}_${cycle}`] ?? false)}
             current={current}
             copy={copy}
           />
@@ -175,12 +172,11 @@ function PlanCard({
   const isFeatured = tier.id === 'pro';
 
   // Monthly-equivalent display price for both cycles (yearly = -20%).
-  const displayPrice =
-    isFree
-      ? 0
-      : cycle === 'yearly'
-        ? yearlyMonthlyEquivalent(tier.priceEur)
-        : tier.priceEur;
+  const displayPrice = isFree
+    ? 0
+    : cycle === 'yearly'
+      ? yearlyMonthlyEquivalent(tier.priceEur)
+      : tier.priceEur;
 
   return (
     <div className="relative flex">
@@ -195,49 +191,49 @@ function PlanCard({
           isFeatured ? 'border-2 border-[var(--accent)]' : ''
         }`}
       >
-      <div className="flex flex-col gap-1">
-        <h3 className="text-lg font-bold tracking-tight">{tier.name}</h3>
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-4xl font-bold">
-            €{displayPrice.toFixed(displayPrice % 1 === 0 ? 0 : 2)}
-          </span>
-          {tier.recurring ? (
-            <span className="text-sm text-[var(--muted)]">/ {copy.perMonth}</span>
-          ) : (
-            <span className="text-sm text-[var(--muted)]">{copy.signupOnce}</span>
-          )}
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-bold tracking-tight">{tier.name}</h3>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-4xl font-bold">
+              €{displayPrice.toFixed(displayPrice % 1 === 0 ? 0 : 2)}
+            </span>
+            {tier.recurring ? (
+              <span className="text-sm text-[var(--muted)]">/ {copy.perMonth}</span>
+            ) : (
+              <span className="text-sm text-[var(--muted)]">{copy.signupOnce}</span>
+            )}
+          </div>
+          {tier.recurring && cycle === 'yearly' ? (
+            <span className="text-xs text-[var(--muted)] font-mono">
+              {copy.perMonthBilledYearly}
+            </span>
+          ) : null}
         </div>
-        {tier.recurring && cycle === 'yearly' ? (
-          <span className="text-xs text-[var(--muted)] font-mono">
-            {copy.perMonthBilledYearly}
+
+        <div className="flex flex-col gap-2 text-sm">
+          <span className="font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
+            {tier.recurring ? copy.monthlyCredits : copy.signupCredits}
           </span>
-        ) : null}
-      </div>
+          <span className="text-2xl font-bold tabular-nums inline-flex items-center gap-1.5">
+            <Coins className="size-5 text-[var(--accent)]" aria-hidden />
+            {tier.credits.toLocaleString(locale)}
+          </span>
+          <span className="text-xs text-[var(--muted)]">
+            ≈ {tier.approxFullGenerations.toLocaleString(locale)} {copy.fullGenerations}
+          </span>
+        </div>
 
-      <div className="flex flex-col gap-2 text-sm">
-        <span className="font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
-          {tier.recurring ? copy.monthlyCredits : copy.signupCredits}
-        </span>
-        <span className="text-2xl font-bold tabular-nums inline-flex items-center gap-1.5">
-          <Coins className="size-5 text-[var(--accent)]" aria-hidden />
-          {tier.credits.toLocaleString(locale)}
-        </span>
-        <span className="text-xs text-[var(--muted)]">
-          ≈ {tier.approxFullGenerations.toLocaleString(locale)} {copy.fullGenerations}
-        </span>
-      </div>
+        <PlanHighlights tier={tier} />
 
-      <PlanHighlights tier={tier} />
-
-      <CardCta
-        tier={tier}
-        cycle={cycle}
-        signedIn={signedIn}
-        available={available}
-        current={current}
-        copy={copy}
-        isFeatured={isFeatured}
-      />
+        <CardCta
+          tier={tier}
+          cycle={cycle}
+          signedIn={signedIn}
+          available={available}
+          current={current}
+          copy={copy}
+          isFeatured={isFeatured}
+        />
       </Card>
     </div>
   );
@@ -320,8 +316,7 @@ function CardCta({
   // any plan as a fresh checkout. Other states (active, trialing,
   // cancelling, past_due, unpaid) all count as "still on a paid plan"
   // for the purpose of this UI: changes go through the customer portal.
-  const hasLiveSubscription =
-    !!current && current.plan !== 'free' && current.status !== 'canceled';
+  const hasLiveSubscription = !!current && current.plan !== 'free' && current.status !== 'canceled';
   const isCurrentPlan = hasLiveSubscription && current!.plan === tier.id;
   const isCurrentCycle = isCurrentPlan && current!.cycle === cycle;
 
@@ -332,10 +327,7 @@ function CardCta({
     if (hasLiveSubscription) {
       return (
         <form action={createPortalSessionAction} className="contents">
-          <button
-            type="submit"
-            className={`${baseClasses} ${outlineClasses}`}
-          >
+          <button type="submit" className={`${baseClasses} ${outlineClasses}`}>
             {copy.ctaDowngrade}
           </button>
         </form>
@@ -386,8 +378,7 @@ function CardCta({
   // brand-new checkout session against an existing active sub — that
   // would create a second subscription rather than replace.
   if (isCurrentPlan && !isCurrentCycle) {
-    const label =
-      cycle === 'yearly' ? copy.ctaSwitchToYearly : copy.ctaSwitchToMonthly;
+    const label = cycle === 'yearly' ? copy.ctaSwitchToYearly : copy.ctaSwitchToMonthly;
     return (
       <form action={createPortalSessionAction} className="contents">
         <button

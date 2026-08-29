@@ -203,9 +203,7 @@ export const LANGUAGES: readonly LanguageEntry[] = [
   { code: 'zu', name: 'isiZulu', promptName: 'Zulu', country: 'za' }
 ];
 
-const BY_CODE: ReadonlyMap<string, LanguageEntry> = new Map(
-  LANGUAGES.map((l) => [l.code, l])
-);
+const BY_CODE: ReadonlyMap<string, LanguageEntry> = new Map(LANGUAGES.map((l) => [l.code, l]));
 
 /** Look up a language entry by ISO 639-1 code (case-insensitive). */
 export function findLanguage(code: string | null | undefined): LanguageEntry | null {

@@ -65,7 +65,7 @@ function toOpenAIContent(content: string | ChatContentBlock[]) {
     const src = b.source;
     const url =
       src.type === 'url'
-        ? src.url ?? ''
+        ? (src.url ?? '')
         : `data:${src.media_type ?? 'image/png'};base64,${src.data ?? ''}`;
     return { type: 'image_url' as const, image_url: { url } };
   });
@@ -112,7 +112,12 @@ async function viaOpenRouter(req: ChatCompletionRequest): Promise<ChatCompletion
     );
   }
   const text = stripCodeFences(String(json.choices?.[0]?.message?.content ?? ''));
-  if (!text) throw new ChatProviderError('openrouter returned an empty completion', 'openrouter', res.status);
+  if (!text)
+    throw new ChatProviderError(
+      'openrouter returned an empty completion',
+      'openrouter',
+      res.status
+    );
   const costUsd = Number(json.usage?.cost ?? 0);
   return {
     text,
@@ -169,7 +174,10 @@ export async function chatCompletion(req: ChatCompletionRequest): Promise<ChatCo
         lastError = e as Error;
         const status = (e as ChatProviderError).status;
         const retryable = status === undefined || status === 429 || status >= 500;
-        console.error(`[chat-provider] openrouter attempt ${attempt + 1} failed`, lastError.message);
+        console.error(
+          `[chat-provider] openrouter attempt ${attempt + 1} failed`,
+          lastError.message
+        );
         if (!retryable) break;
         await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
       }

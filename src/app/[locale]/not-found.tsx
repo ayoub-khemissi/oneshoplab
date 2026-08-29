@@ -20,12 +20,8 @@ export default async function NotFoundPage() {
           <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
             404
           </span>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {t('notFoundTitle')}
-          </h1>
-          <p className="text-sm text-[var(--muted)] leading-relaxed">
-            {t('notFoundBody')}
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('notFoundTitle')}</h1>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('notFoundBody')}</p>
         </div>
         <Link
           href="/"

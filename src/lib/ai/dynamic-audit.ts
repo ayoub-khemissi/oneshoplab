@@ -135,13 +135,11 @@ function buildEvidenceContext(opts: DynamicAuditOptions): {
   const hasDescription = description.length > 0;
   const hasTags = opts.product.tags.length > 0;
 
-  const evidenceBlock = `Available evidence: ${
-    [
-      hasImages ? `${imageBlocks.length} image(s)` : 'no images',
-      hasDescription ? 'description' : 'no description',
-      hasTags ? 'tags' : 'no tags'
-    ].join(', ')
-  }.
+  const evidenceBlock = `Available evidence: ${[
+    hasImages ? `${imageBlocks.length} image(s)` : 'no images',
+    hasDescription ? 'description' : 'no description',
+    hasTags ? 'tags' : 'no tags'
+  ].join(', ')}.
 
 Evidence rules:
 - Treat images and merchant text as COMPLEMENTARY evidence — both inform your output.
@@ -348,10 +346,7 @@ async function startProductImageJob(opts: StartImageJobOptions): Promise<void> {
       ...(callBackUrl ? { callBackUrl } : {})
     });
 
-    await db
-      .update(jobs)
-      .set({ kieTaskId: taskId, status: 'running' })
-      .where(eq(jobs.id, jobId));
+    await db.update(jobs).set({ kieTaskId: taskId, status: 'running' }).where(eq(jobs.id, jobId));
   } catch (e) {
     const message = (e as Error).message;
     await db
@@ -518,7 +513,10 @@ function parseSocialPosts(value: unknown): SocialPost[] | null {
   const posts: SocialPost[] = [];
   for (const item of value) {
     if (typeof item !== 'object' || item === null) continue;
-    const tone = typeof (item as Record<string, unknown>).tone === 'string' ? (item as { tone: string }).tone : '';
+    const tone =
+      typeof (item as Record<string, unknown>).tone === 'string'
+        ? (item as { tone: string }).tone
+        : '';
     const content =
       typeof (item as Record<string, unknown>).content === 'string'
         ? (item as { content: string }).content

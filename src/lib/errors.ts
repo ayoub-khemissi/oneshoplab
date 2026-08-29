@@ -13,10 +13,7 @@ export function sanitizeUserFacingError(raw: string | null | undefined): string 
   if (!raw) return 'Generation failed. Please try again.';
   let msg = raw.trim();
 
-  msg = msg.replace(
-    /^((kie|openrouter)\s+\S+\s+failed:\s*)/i,
-    ''
-  );
+  msg = msg.replace(/^((kie|openrouter)\s+\S+\s+failed:\s*)/i, '');
 
   msg = msg.replace(/\bkie\.ai\b/gi, 'AI service');
   msg = msg.replace(/\bkie\b/gi, 'AI service');

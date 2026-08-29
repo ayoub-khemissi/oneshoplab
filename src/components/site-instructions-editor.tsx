@@ -19,10 +19,7 @@ interface SiteInstructionsEditorProps {
  * voice, recurring constraints, audience). Saved manually via a server action;
  * the per-product field auto-saves on every generation, this one doesn't.
  */
-export function SiteInstructionsEditor({
-  projectId,
-  initialValue
-}: SiteInstructionsEditorProps) {
+export function SiteInstructionsEditor({ projectId, initialValue }: SiteInstructionsEditorProps) {
   const t = useTranslations('SiteInstructions');
   const [value, setValue] = useState(initialValue);
   const [savedValue, setSavedValue] = useState(initialValue);
@@ -48,9 +45,7 @@ export function SiteInstructionsEditor({
           <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
             {t('label')}
           </span>
-          <p className="text-xs text-[var(--muted)] max-w-2xl leading-relaxed">
-            {t('hint')}
-          </p>
+          <p className="text-xs text-[var(--muted)] max-w-2xl leading-relaxed">{t('hint')}</p>
         </div>
         <Sparkles className="size-4 text-[var(--accent)] shrink-0" aria-hidden />
       </div>
@@ -70,18 +65,18 @@ export function SiteInstructionsEditor({
             {value.length}/{MAX_CUSTOM_INSTRUCTIONS_CHARS}
           </span>
           <div className="flex items-center gap-3">
-          {savedAt ? (
-            <span className="text-xs text-[var(--success)] font-medium inline-flex items-center gap-1.5">
-              <Check className="size-3.5" /> {t('saved')}
-            </span>
-          ) : null}
-          <button
-            type="submit"
-            disabled={!dirty || isPending}
-            className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
-          >
-            {isPending ? <Spinner size="sm" /> : t('saveButton')}
-          </button>
+            {savedAt ? (
+              <span className="text-xs text-[var(--success)] font-medium inline-flex items-center gap-1.5">
+                <Check className="size-3.5" /> {t('saved')}
+              </span>
+            ) : null}
+            <button
+              type="submit"
+              disabled={!dirty || isPending}
+              className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-1.5"
+            >
+              {isPending ? <Spinner size="sm" /> : t('saveButton')}
+            </button>
           </div>
         </div>
       </form>

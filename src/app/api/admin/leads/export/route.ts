@@ -3,13 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { isAdminEmail } from '@/lib/admin';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import {
-  leads,
-  LEAD_STATUSES,
-  PLATFORMS,
-  type LeadStatus,
-  type Platform
-} from '@/lib/db/schema';
+import { leads, LEAD_STATUSES, PLATFORMS, type LeadStatus, type Platform } from '@/lib/db/schema';
 
 /**
  * CSV export of leads, optionally filtered by status / platform /

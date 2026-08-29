@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  FieldError,
-  Form,
-  Input,
-  Label,
-  TextField
-} from '@heroui/react';
+import { Button, Card, FieldError, Form, Input, Label, TextField } from '@heroui/react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
@@ -44,8 +36,7 @@ export default async function ForgotPasswordPage({ searchParams }: PageProps) {
   const t = await getTranslations('Auth');
 
   const sent = params.sent === '1';
-  const errorMessage =
-    params.error === 'invalid_email' ? t('errorInvalidEmail') : null;
+  const errorMessage = params.error === 'invalid_email' ? t('errorInvalidEmail') : null;
 
   return (
     <main className="flex-1 flex items-center justify-center p-8">
@@ -58,9 +49,7 @@ export default async function ForgotPasswordPage({ searchParams }: PageProps) {
         </Card.Header>
         {sent ? (
           <Card.Footer className="flex flex-col gap-3 pt-2">
-            <p className="text-sm text-[var(--muted)] leading-relaxed">
-              {t('forgotSentBody')}
-            </p>
+            <p className="text-sm text-[var(--muted)] leading-relaxed">{t('forgotSentBody')}</p>
             <Link
               href="/login"
               className="text-sm text-[var(--accent)] font-medium hover:underline"
@@ -97,10 +86,7 @@ export default async function ForgotPasswordPage({ searchParams }: PageProps) {
                 {t('forgotSubmit')}
               </Button>
               <p className="text-sm text-center text-[var(--muted)]">
-                <Link
-                  href="/login"
-                  className="text-[var(--accent)] font-medium hover:underline"
-                >
+                <Link href="/login" className="text-[var(--accent)] font-medium hover:underline">
                   {t('backToLogin')}
                 </Link>
               </p>

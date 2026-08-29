@@ -190,7 +190,9 @@ async function main(): Promise<void> {
         const r = await launchAnonymousAudit(norm);
         auditToken = r.token;
       } catch (e) {
-        console.error(`  [${idx + 1}/${queue.length}] ${lead.domain}  (launch failed: ${(e as Error).message})`);
+        console.error(
+          `  [${idx + 1}/${queue.length}] ${lead.domain}  (launch failed: ${(e as Error).message})`
+        );
         failed += 1;
         continue;
       }
@@ -209,7 +211,9 @@ async function main(): Promise<void> {
         continue;
       }
       if (audit.status === 'completed') {
-        console.log(`  [${idx + 1}/${queue.length}] ${lead.domain}  ✓ reused (token=${auditToken.slice(0, 8)}…)`);
+        console.log(
+          `  [${idx + 1}/${queue.length}] ${lead.domain}  ✓ reused (token=${auditToken.slice(0, 8)}…)`
+        );
         completed += 1;
         continue;
       }
@@ -217,7 +221,9 @@ async function main(): Promise<void> {
       const finalStatus = await pollAuditUntilDone(audit.id);
       const dt = ((Date.now() - t0) / 1000).toFixed(1);
       if (finalStatus === 'completed') {
-        console.log(`  [${idx + 1}/${queue.length}] ${lead.domain}  ✓ completed in ${dt}s (token=${auditToken.slice(0, 8)}…)`);
+        console.log(
+          `  [${idx + 1}/${queue.length}] ${lead.domain}  ✓ completed in ${dt}s (token=${auditToken.slice(0, 8)}…)`
+        );
         completed += 1;
       } else if (finalStatus === 'timeout') {
         console.log(`  [${idx + 1}/${queue.length}] ${lead.domain}  ⏱ timeout after ${dt}s`);
@@ -230,10 +236,7 @@ async function main(): Promise<void> {
   }
 
   await Promise.all(
-    Array.from(
-      { length: Math.max(1, Math.min(args.concurrency, queue.length)) },
-      worker
-    )
+    Array.from({ length: Math.max(1, Math.min(args.concurrency, queue.length)) }, worker)
   );
 
   console.log(

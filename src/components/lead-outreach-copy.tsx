@@ -197,9 +197,7 @@ function CopyField({
         </button>
       </div>
       {singleLine ? (
-        <p className="text-sm bg-[var(--default)]/40 rounded px-3 py-2 break-words">
-          {value}
-        </p>
+        <p className="text-sm bg-[var(--default)]/40 rounded px-3 py-2 break-words">{value}</p>
       ) : (
         <pre className="text-sm bg-[var(--default)]/40 rounded px-3 py-2 whitespace-pre-wrap font-sans leading-relaxed">
           {value}

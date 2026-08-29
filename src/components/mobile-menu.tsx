@@ -134,10 +134,7 @@ export function MobileMenu({
                     textValue={labels.dashboard}
                     onAction={() => setIsOpen(false)}
                   >
-                    <LayoutDashboard
-                      className="size-4 mr-2 text-[var(--muted)]"
-                      aria-hidden
-                    />
+                    <LayoutDashboard className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                     {labels.dashboard}
                   </ListBox.Item>
                 ) : null}
@@ -156,10 +153,7 @@ export function MobileMenu({
                   textValue={labels.faq}
                   onAction={() => setIsOpen(false)}
                 >
-                  <HelpCircle
-                    className="size-4 mr-2 text-[var(--muted)]"
-                    aria-hidden
-                  />
+                  <HelpCircle className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.faq}
                 </ListBox.Item>
                 <ListBox.Item
@@ -168,10 +162,7 @@ export function MobileMenu({
                   textValue={labels.blog}
                   onAction={() => setIsOpen(false)}
                 >
-                  <Newspaper
-                    className="size-4 mr-2 text-[var(--muted)]"
-                    aria-hidden
-                  />
+                  <Newspaper className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.blog}
                 </ListBox.Item>
                 <ListBox.Item

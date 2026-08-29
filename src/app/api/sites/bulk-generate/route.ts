@@ -135,25 +135,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     typeof body.imageQualityId === 'string' ? body.imageQualityId : null
   );
   const customInstructions =
-    typeof body.customInstructions === 'string'
-      ? body.customInstructions.slice(0, 750)
-      : '';
+    typeof body.customInstructions === 'string' ? body.customInstructions.slice(0, 750) : '';
 
   // Retry-failed branch — clones a previous bulk's failed productIds
   // and queues a new run. The worker's per-field skip means succeeded
   // fields aren't re-billed.
   if (typeof body.retryFromBulkId === 'string' && body.retryFromBulkId) {
-    const candidates = await listBulkCandidatesWithStatus(
-      project.id,
-      chatModelId,
-      imageQualityId
-    );
+    const candidates = await listBulkCandidatesWithStatus(project.id, chatModelId, imageQualityId);
     const total = candidates.reduce((sum, c) => sum + c.pendingCost, 0);
     if ((session.user.creditsBalance ?? 0) < total) {
-      return NextResponse.json(
-        { error: 'insufficient_credits', required: total },
-        { status: 402 }
-      );
+      return NextResponse.json({ error: 'insufficient_credits', required: total }, { status: 402 });
     }
     const out = await retryFailedFromBulk({
       projectId: project.id,
@@ -165,11 +156,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
     if (!out.ok) {
       const code =
-        out.reason === 'already_running'
-          ? 409
-          : out.reason === 'source_not_found'
-            ? 404
-            : 400;
+        out.reason === 'already_running' ? 409 : out.reason === 'source_not_found' ? 404 : 400;
       return NextResponse.json({ error: out.reason }, { status: code });
     }
     return NextResponse.json({
@@ -188,11 +175,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ? (body.productIds.filter((s): s is string => typeof s === 'string') as string[])
     : null;
 
-  const candidates = await listBulkCandidatesWithStatus(
-    project.id,
-    chatModelId,
-    imageQualityId
-  );
+  const candidates = await listBulkCandidatesWithStatus(project.id, chatModelId, imageQualityId);
   if (candidates.length === 0) {
     return NextResponse.json({ error: 'no_products' }, { status: 400 });
   }
@@ -201,9 +184,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // No selection passed = backward-compat path: take everything.
   // With selection = filter to the intersection.
   const selected =
-    requestedIds === null
-      ? candidates
-      : candidates.filter((c) => requestedIds.includes(c.id));
+    requestedIds === null ? candidates : candidates.filter((c) => requestedIds.includes(c.id));
   if (selected.length === 0) {
     return NextResponse.json({ error: 'no_products' }, { status: 400 });
   }
@@ -222,10 +203,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (requestedIds) {
     for (const id of requestedIds) {
       if (!candidateMap.has(id)) {
-        return NextResponse.json(
-          { error: 'invalid_selection' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'invalid_selection' }, { status: 400 });
       }
     }
   }
@@ -241,10 +219,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   });
 
   if (!result.ok) {
-    return NextResponse.json(
-      { error: 'bulk_already_running' },
-      { status: 409 }
-    );
+    return NextResponse.json({ error: 'bulk_already_running' }, { status: 409 });
   }
 
   return NextResponse.json({
@@ -279,11 +254,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     url.searchParams.get('img')
   );
   const { prefs, siteOverride } = await getEffectiveBulkPrefs(project.id);
-  const allCandidates = await listBulkCandidatesWithStatus(
-    project.id,
-    chatModelId,
-    imageQualityId
-  );
+  const allCandidates = await listBulkCandidatesWithStatus(project.id, chatModelId, imageQualityId);
   // Server-side title search (debounced from the modal). The cost
   // estimate stays on the FULL set — it represents the whole catalog,
   // not the current search view.
@@ -365,10 +336,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
 
   if ('reset' in data) {
     // Clear the site override → the site inherits the account default.
-    await db
-      .update(projects)
-      .set({ bulkPrefs: null })
-      .where(eq(projects.id, project.id));
+    await db.update(projects).set({ bulkPrefs: null }).where(eq(projects.id, project.id));
   } else {
     // resolveBulkPrefs sanitizes (e.g. images on + zero angles → all 3),
     // so we persist the canonical shape.
@@ -376,10 +344,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
       fields: data.fields,
       imageAngles: data.imageAngles
     });
-    await db
-      .update(projects)
-      .set({ bulkPrefs: resolved })
-      .where(eq(projects.id, project.id));
+    await db.update(projects).set({ bulkPrefs: resolved }).where(eq(projects.id, project.id));
   }
 
   // Echo the now-effective prefs (post-reset this is the account

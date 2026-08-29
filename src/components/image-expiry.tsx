@@ -31,12 +31,7 @@ interface ImageExpiryProps {
  * The expiry math (createdAt + retentionDays) is identical to what
  * the cleanup worker enforces, so the UI is never out of sync.
  */
-export function ImageExpiry({
-  createdAt,
-  retentionDays,
-  expiredAt,
-  className
-}: ImageExpiryProps) {
+export function ImageExpiry({ createdAt, retentionDays, expiredAt, className }: ImageExpiryProps) {
   const t = useTranslations('ImageExpiry');
 
   // The "days left" / expired branch depends on Date.now(), which is

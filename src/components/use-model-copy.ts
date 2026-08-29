@@ -19,7 +19,9 @@ export function useModelCopy() {
     chatTagline: (id: string, fallback: string) => pick(`chat.${id}.tagline`, fallback),
     /** "1K · Standard" → resolution from the catalog + localised label. */
     qualityLabel: (id: string, resolution: string, fallbackDisplayName: string) =>
-      t.has(`quality.${id}.label`) ? `${resolution} · ${t(`quality.${id}.label`)}` : fallbackDisplayName,
+      t.has(`quality.${id}.label`)
+        ? `${resolution} · ${t(`quality.${id}.label`)}`
+        : fallbackDisplayName,
     qualityTagline: (id: string, fallback: string) => pick(`quality.${id}.tagline`, fallback)
   };
 }

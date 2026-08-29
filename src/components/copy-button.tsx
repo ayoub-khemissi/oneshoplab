@@ -65,8 +65,7 @@ export function CopyButton({
     }
   }
 
-  const sizeClasses =
-    size === 'md' ? 'text-sm px-3 py-1.5' : 'text-xs px-2.5 py-1';
+  const sizeClasses = size === 'md' ? 'text-sm px-3 py-1.5' : 'text-xs px-2.5 py-1';
 
   return (
     <button

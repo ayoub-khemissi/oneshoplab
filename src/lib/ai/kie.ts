@@ -21,9 +21,7 @@ export function buildKieCallbackUrl(appUrl: string | null | undefined): string |
     // don't fail silently. The route still accepts un-tokened POSTs
     // when KIE_CALLBACK_SECRET is also unset on the server, so the
     // app stays functional in dev/test envs.
-    console.warn(
-      '[kie] KIE_CALLBACK_SECRET not set — webhook callbacks are unauthenticated'
-    );
+    console.warn('[kie] KIE_CALLBACK_SECRET not set — webhook callbacks are unauthenticated');
     return base;
   }
   return `${base}?token=${encodeURIComponent(secret)}`;
@@ -282,7 +280,11 @@ export class KieClient {
     try {
       parsed = JSON.parse(text);
     } catch {
-      throw new KieError(`kie chat returned non-JSON: ${text.slice(0, 200)}`, res.status, res.status);
+      throw new KieError(
+        `kie chat returned non-JSON: ${text.slice(0, 200)}`,
+        res.status,
+        res.status
+      );
     }
     if (!res.ok) {
       const msg =

@@ -23,8 +23,7 @@ export default async function ProfilePage() {
   const sub = await db.query.subscriptions.findFirst({
     where: eq(subscriptions.userId, session.user.id)
   });
-  const hasActiveSubscription =
-    sub != null && ACTIVE_SUB_STATUSES.includes(sub.status);
+  const hasActiveSubscription = sub != null && ACTIVE_SUB_STATUSES.includes(sub.status);
 
   // Translations are pulled here (server) and pushed into the client forms
   // as `copy` props so the form components stay locale-agnostic.
@@ -49,9 +48,7 @@ export default async function ProfilePage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">
-          {t('subtitle')}
-        </p>
+        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">{t('subtitle')}</p>
       </header>
 
       <ProfileNameForm

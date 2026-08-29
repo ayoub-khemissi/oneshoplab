@@ -72,17 +72,15 @@ async function trimOldest(userId: string): Promise<void> {
     .limit(KEEP_PER_USER);
   // No work to do if we're under the cap.
   if (keep.length < KEEP_PER_USER) return;
-  await db
-    .delete(notifications)
-    .where(
-      and(
-        eq(notifications.userId, userId),
-        notInArray(
-          notifications.id,
-          keep.map((r) => r.id)
-        )
+  await db.delete(notifications).where(
+    and(
+      eq(notifications.userId, userId),
+      notInArray(
+        notifications.id,
+        keep.map((r) => r.id)
       )
-    );
+    )
+  );
 }
 
 /** Mark every unread notification for `userId` as read. Fires when the
@@ -98,10 +96,7 @@ export async function markAllRead(userId: string): Promise<{ updated: number }> 
 /** Mark every unread notification linked to a given jobId as read.
  *  Called by the client right after firing a toast for that job, so
  *  the badge doesn't double up on the same event. */
-export async function markReadByJob(
-  userId: string,
-  jobId: string
-): Promise<{ updated: number }> {
+export async function markReadByJob(userId: string, jobId: string): Promise<{ updated: number }> {
   const r = await db
     .update(notifications)
     .set({ isRead: true })

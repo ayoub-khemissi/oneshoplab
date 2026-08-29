@@ -40,8 +40,7 @@ const FIELD_DEFAULT_PROMPT: Record<ChatOptimField, string> = {
     'Rewrite this title to be SEO-optimised, keyword-front-loaded and more compelling. Stay factually consistent with the product.',
   description:
     'Rewrite this description as benefit-led, scannable HTML (use <p>, <ul>, <li>, <strong>). 180-350 words. Stay factually consistent with the product.',
-  tags:
-    'Suggest 5-10 customer-facing discovery tags for this product.'
+  tags: 'Suggest 5-10 customer-facing discovery tags for this product.'
 };
 
 type GenField = 'title' | 'description' | 'tags' | 'images' | 'all';
@@ -89,7 +88,10 @@ function effectiveImagePrompt(angle: ImageAngle, custom: string): string {
 }
 
 function toProductContext(p: ProductSnapshot): ProductContext {
-  const text = p.descriptionHtml.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  const text = p.descriptionHtml
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
   return {
     title: p.title,
     descriptionText: text,
@@ -211,10 +213,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Truncate defensively — the front-end caps via maxLength but a hand-rolled
   // request could try to bypass it. Keeps the input-token cost bounded.
   const customInstructions = customInstructionsRaw.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS);
-  const bodyChatModel =
-    typeof body.chatModelId === 'string' ? body.chatModelId : null;
-  const bodyImageQuality =
-    typeof body.imageQualityId === 'string' ? body.imageQualityId : null;
+  const bodyChatModel = typeof body.chatModelId === 'string' ? body.chatModelId : null;
+  const bodyImageQuality = typeof body.imageQualityId === 'string' ? body.imageQualityId : null;
 
   if (!siteId || !productId || !VALID_FIELDS.includes(fieldRaw as GenField)) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
@@ -256,13 +256,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // page mutate the user's selection client-side and pass it through here, so
   // an in-flight click is honored even before the persist server action lands.
   const chatModelId: ChatModelId =
-    (bodyChatModel != null && bodyChatModel in CHAT_MODEL_REGISTRY
+    bodyChatModel != null && bodyChatModel in CHAT_MODEL_REGISTRY
       ? (bodyChatModel as ChatModelId)
-      : resolveChatModelId(session.user.preferredChatModel));
+      : resolveChatModelId(session.user.preferredChatModel);
   const imageQualityId: ImageQualityId =
     (bodyImageQuality != null && bodyImageQuality in IMAGE_MODEL_REGISTRY
       ? (bodyImageQuality as ImageQualityId)
-      : (session.user.preferredImageQuality as ImageQualityId | undefined)) ?? DEFAULT_IMAGE_QUALITY;
+      : (session.user.preferredImageQuality as ImageQualityId | undefined)) ??
+    DEFAULT_IMAGE_QUALITY;
 
   const totalCost = fieldsToRun.reduce((sum, f) => {
     if (f === 'images') return sum + costForImage(imageQualityId) * IMAGE_ANGLES.length;

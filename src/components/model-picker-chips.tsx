@@ -41,9 +41,7 @@ export function ModelPickerChips({
     <div className="flex flex-col gap-3">
       <ChipsRow label={t('chatModelLabel')}>
         {(
-          Object.values(CHAT_MODEL_REGISTRY) as Array<
-            (typeof CHAT_MODEL_REGISTRY)[ChatModelId]
-          >
+          Object.values(CHAT_MODEL_REGISTRY) as Array<(typeof CHAT_MODEL_REGISTRY)[ChatModelId]>
         ).map((m) => (
           <Chip
             key={m.id}
@@ -100,9 +98,7 @@ function ChipsRow({
           {label}
         </span>
         {sublabel ? (
-          <span className="text-[10px] font-mono text-[var(--muted)]/80">
-            {sublabel}
-          </span>
+          <span className="text-[10px] font-mono text-[var(--muted)]/80">{sublabel}</span>
         ) : null}
       </span>
       <div className="flex items-center gap-1.5 flex-wrap">{children}</div>
@@ -133,8 +129,7 @@ function Chip({
 }) {
   const base =
     'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border';
-  const activeCls =
-    'bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--accent)]';
+  const activeCls = 'bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--accent)]';
   const idleCls =
     'border-[var(--border)] text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)]';
   return (
@@ -148,9 +143,7 @@ function Chip({
       <span className="inline-flex items-center gap-1">
         <span>{label}</span>
         {sublabel ? (
-          <span
-            className={`text-[10px] ${active ? 'opacity-80' : 'text-[var(--muted)]'}`}
-          >
+          <span className={`text-[10px] ${active ? 'opacity-80' : 'text-[var(--muted)]'}`}>
             · {sublabel}
           </span>
         ) : null}

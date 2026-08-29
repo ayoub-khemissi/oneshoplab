@@ -132,9 +132,7 @@ export async function createManualProductAction(formData: FormData): Promise<voi
     // Use a specific error code for the missing-images case so the
     // create page can render a targeted message rather than the
     // generic "invalid input" banner.
-    const missingImages = input.error.issues.some(
-      (i) => i.path[0] === 'images'
-    );
+    const missingImages = input.error.issues.some((i) => i.path[0] === 'images');
     redirect(
       `/dashboard/sites/${projectId}/products/new?error=${
         missingImages ? 'missing_images' : 'invalid_input'
@@ -144,10 +142,7 @@ export async function createManualProductAction(formData: FormData): Promise<voi
   const data = input.data;
   // Capture the CTA the user clicked: "create" stops at the product
   // page; "optimize" hands off to the AI auto-run via query param.
-  const intent =
-    String(formData.get('intent') ?? 'create') === 'optimize'
-      ? 'optimize'
-      : 'create';
+  const intent = String(formData.get('intent') ?? 'create') === 'optimize' ? 'optimize' : 'create';
 
   const productId = randomUUID();
   await db.insert(products).values({
@@ -220,9 +215,7 @@ export async function updateManualProductAction(formData: FormData): Promise<voi
     images: parseImages(String(formData.get('images') ?? ''))
   });
   if (!input.success) {
-    const missingImages = input.error.issues.some(
-      (i) => i.path[0] === 'images'
-    );
+    const missingImages = input.error.issues.some((i) => i.path[0] === 'images');
     redirect(
       `/dashboard/sites/${projectId}/products/${productId}/edit?error=${
         missingImages ? 'missing_images' : 'invalid_input'
@@ -341,11 +334,7 @@ async function findLatestChatOutput(
   kind: 'kie_title' | 'kie_description' | 'kie_tags'
 ): Promise<string | string[] | null> {
   const candidates = await db.query.jobs.findMany({
-    where: and(
-      eq(jobs.projectId, projectId),
-      eq(jobs.kind, kind),
-      eq(jobs.status, 'completed')
-    ),
+    where: and(eq(jobs.projectId, projectId), eq(jobs.kind, kind), eq(jobs.status, 'completed')),
     orderBy: [desc(jobs.createdAt)],
     limit: 20
   });
@@ -358,10 +347,7 @@ async function findLatestChatOutput(
   return null;
 }
 
-async function findLatestImageJobs(
-  projectId: string,
-  productSourceId: string
-): Promise<string[]> {
+async function findLatestImageJobs(projectId: string, productSourceId: string): Promise<string[]> {
   // Pull every completed non-hidden image job that matches this
   // product. The merchant curates the visible set themselves via the
   // hide action on the AI grid (POST /api/products/image-jobs ...
@@ -472,9 +458,7 @@ export async function applyAiToManualProductAction(formData: FormData): Promise<
   }
 
   if (Object.keys(updates).length === 0) {
-    redirect(
-      `/dashboard/sites/${projectId}/products/${productId}?error=no_ai_to_apply`
-    );
+    redirect(`/dashboard/sites/${projectId}/products/${productId}?error=no_ai_to_apply`);
   }
 
   // Sweep the old user-uploaded images IF we're replacing them, so
@@ -495,7 +479,5 @@ export async function applyAiToManualProductAction(formData: FormData): Promise<
 
   revalidatePath(`/dashboard/sites/${projectId}`);
   revalidatePath(`/dashboard/sites/${projectId}/products/${productId}`);
-  redirect(
-    `/dashboard/sites/${projectId}/products/${productId}?applied=1`
-  );
+  redirect(`/dashboard/sites/${projectId}/products/${productId}?applied=1`);
 }

@@ -59,9 +59,7 @@ export default async function SubscriptionPage() {
   const statusInfo = STATUS_TONE[status] ?? { tone: 'muted', key: 'statusUnknown' };
   const statusLabel = t(statusInfo.key);
 
-  const periodEnd = sub?.currentPeriodEnd
-    ? formatDate(sub.currentPeriodEnd)
-    : null;
+  const periodEnd = sub?.currentPeriodEnd ? formatDate(sub.currentPeriodEnd) : null;
 
   const cycleLabel =
     sub?.billingCycle === 'yearly'
@@ -74,9 +72,7 @@ export default async function SubscriptionPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">
-          {t('subtitle')}
-        </p>
+        <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">{t('subtitle')}</p>
       </header>
 
       {/* Status banner — surfaced for any non-active state so the merchant
@@ -131,9 +127,7 @@ export default async function SubscriptionPage() {
             </form>
           ) : null}
         </div>
-        {isPaid ? (
-          <p className="text-xs text-[var(--muted)]">{t('manageBillingHint')}</p>
-        ) : null}
+        {isPaid ? <p className="text-xs text-[var(--muted)]">{t('manageBillingHint')}</p> : null}
       </Card>
 
       {/* Credits balance --------------------------------------------------- */}
@@ -191,7 +185,9 @@ function StatusPill({
     muted: 'bg-[var(--default)] text-[var(--muted)]'
   }[tone];
   return (
-    <span className={`text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded font-semibold ${cls}`}>
+    <span
+      className={`text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded font-semibold ${cls}`}
+    >
       {label}
     </span>
   );
@@ -260,22 +256,16 @@ function StatusBanner({
   if (!spec) return null;
   const Icon = spec.icon;
   const toneCls = {
-    warning:
-      'border-[var(--warning)]/40 bg-[var(--warning)]/5 text-[var(--warning)]',
+    warning: 'border-[var(--warning)]/40 bg-[var(--warning)]/5 text-[var(--warning)]',
     danger: 'border-[var(--danger)]/40 bg-[var(--danger)]/5 text-[var(--danger)]',
     muted: 'border-[var(--border)] bg-[var(--default)]/40 text-[var(--muted)]'
   }[spec.tone];
   return (
-    <div
-      role="alert"
-      className={`flex items-start gap-3 p-4 rounded-md border ${toneCls}`}
-    >
+    <div role="alert" className={`flex items-start gap-3 p-4 rounded-md border ${toneCls}`}>
       <Icon className="size-5 mt-0.5 shrink-0" aria-hidden />
       <div className="flex flex-col gap-1">
         <span className="font-semibold text-[var(--foreground)]">{spec.title}</span>
-        <span className="text-sm text-[var(--muted)] leading-relaxed">
-          {spec.body}
-        </span>
+        <span className="text-sm text-[var(--muted)] leading-relaxed">{spec.body}</span>
       </div>
     </div>
   );

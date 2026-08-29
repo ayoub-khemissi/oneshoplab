@@ -1,8 +1,5 @@
 import { and, eq, inArray, isNull, lt, notInArray } from 'drizzle-orm';
-import {
-  imageRetentionDaysForPlan,
-  MAX_IMAGE_RETENTION_DAYS
-} from '@/lib/ai/models';
+import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/lib/ai/models';
 import { db } from '@/lib/db';
 import { jobs, projects, shareLinks, users, type JobKind } from '@/lib/db/schema';
 import { deleteByKey, keyFromPublicUrl } from '@/lib/storage';
@@ -60,9 +57,7 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
     .select({ projectId: shareLinks.projectId })
     .from(shareLinks)
     .where(and(eq(shareLinks.showOnHome, true), isNull(shareLinks.revokedAt)));
-  const showcaseProjectIds = Array.from(
-    new Set(showcaseRows.map((r) => r.projectId))
-  );
+  const showcaseProjectIds = Array.from(new Set(showcaseRows.map((r) => r.projectId)));
 
   // We can't filter by per-plan retention at query time without joining
   // through projects/users — Drizzle's MySQL driver wants a flat where.
@@ -79,9 +74,7 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
       isNull(jobs.expiredAt),
       // Exclude showcase projects (guarded: notInArray on an empty set
       // would be a no-op we'd rather not emit).
-      showcaseProjectIds.length
-        ? notInArray(jobs.projectId, showcaseProjectIds)
-        : undefined
+      showcaseProjectIds.length ? notInArray(jobs.projectId, showcaseProjectIds) : undefined
     ),
     orderBy: (j, { asc }) => [asc(j.createdAt)],
     limit: 200
@@ -114,7 +107,7 @@ export async function runR2Cleanup(): Promise<{ deleted: number; r2Objects: numb
     // Resolve the owning plan; default to 'free' (shortest window) when
     // the chain is broken (orphan project / deleted user).
     const userId = job.projectId ? userIdByProject.get(job.projectId) : null;
-    const plan = userId ? userPlanById.get(userId) ?? 'free' : 'free';
+    const plan = userId ? (userPlanById.get(userId) ?? 'free') : 'free';
     const retentionMs = imageRetentionDaysForPlan(plan) * 24 * 60 * 60 * 1000;
     const cutoff = Date.now() - retentionMs;
     if (job.createdAt.getTime() >= cutoff) {

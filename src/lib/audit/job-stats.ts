@@ -63,9 +63,7 @@ function jobDurationMs(job: JobRow): number | null {
  * Used to show a "typical: 30s" hint next to in-flight job placeholders so
  * the user knows what to expect.
  */
-export async function getJobAverages(
-  limit = 500
-): Promise<Partial<Record<JobKind, JobKindStats>>> {
+export async function getJobAverages(limit = 500): Promise<Partial<Record<JobKind, JobKindStats>>> {
   const completed = await db.query.jobs.findMany({
     where: and(eq(jobs.status, 'completed'), isNotNull(jobs.finishedAt)),
     orderBy: [desc(jobs.createdAt)],

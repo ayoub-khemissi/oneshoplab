@@ -13,9 +13,7 @@ export function getStripeClient(): Stripe {
   if (_stripe) return _stripe;
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) {
-    throw new Error(
-      'STRIPE_SECRET_KEY is not set. Add it to .env to enable subscriptions.'
-    );
+    throw new Error('STRIPE_SECRET_KEY is not set. Add it to .env to enable subscriptions.');
   }
   _stripe = new Stripe(key, {
     apiVersion: '2026-04-22.dahlia',
@@ -40,9 +38,7 @@ export function getStripePriceId(plan: PlanId, cycle: BillingCycle): string | nu
 }
 
 /** Inverse of getStripePriceId: looks up the (plan, cycle) of a given price. */
-export function resolvePriceId(
-  priceId: string
-): { plan: PlanId; cycle: BillingCycle } | null {
+export function resolvePriceId(priceId: string): { plan: PlanId; cycle: BillingCycle } | null {
   const plans: PlanId[] = ['starter', 'pro', 'scale'];
   const cycles: BillingCycle[] = ['monthly', 'yearly'];
   for (const plan of plans) {

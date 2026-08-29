@@ -25,9 +25,7 @@ export function AccountBulkPrefsForm({
   initialHasDefault: boolean;
 }) {
   const t = useTranslations('BulkGenerate');
-  const [prefs, setPrefs] = useState<BulkPrefs>(() =>
-    canonicalizePrefs(initialPrefs)
-  );
+  const [prefs, setPrefs] = useState<BulkPrefs>(() => canonicalizePrefs(initialPrefs));
   const lastSavedKey = useRef(prefsKey(canonicalizePrefs(initialPrefs)));
   const [hasDefault, setHasDefault] = useState(initialHasDefault);
 
@@ -77,9 +75,7 @@ export function AccountBulkPrefsForm({
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-base font-semibold">{t('configAccountTitle')}</h2>
-          <p className="text-xs text-[var(--muted)]">
-            {t('configAccountHint')}
-          </p>
+          <p className="text-xs text-[var(--muted)]">{t('configAccountHint')}</p>
         </div>
         <button
           type="button"

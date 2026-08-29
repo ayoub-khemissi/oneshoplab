@@ -1,13 +1,7 @@
 'use client';
 
 import { Card, ListBox, Select } from '@heroui/react';
-import {
-  Archive,
-  ArchiveRestore,
-  ArrowRight,
-  CheckCircle2,
-  Sparkles
-} from 'lucide-react';
+import { Archive, ArchiveRestore, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
@@ -36,12 +30,7 @@ export interface PaginatedProduct {
   productType: string | null;
 }
 
-type SortKey =
-  | 'recently-optimized'
-  | 'score-asc'
-  | 'score-desc'
-  | 'title-asc'
-  | 'title-desc';
+type SortKey = 'recently-optimized' | 'score-asc' | 'score-desc' | 'title-asc' | 'title-desc';
 
 interface PaginatedProductsListProps {
   /** Server-paginated slice for the current page only. */
@@ -109,12 +98,14 @@ export function PaginatedProductsList({
     });
   };
 
-  function navigate(next: Partial<{
-    q: string | null;
-    sort: SortKey;
-    showArchived: boolean;
-    productsPage: number;
-  }>): void {
+  function navigate(
+    next: Partial<{
+      q: string | null;
+      sort: SortKey;
+      showArchived: boolean;
+      productsPage: number;
+    }>
+  ): void {
     startTransition(() => {
       router.push(
         buildHref({
@@ -162,17 +153,11 @@ export function PaginatedProductsList({
           ariaLabel={t('searchPlaceholder')}
           className="flex-1"
         />
-        <SortPicker
-          value={sort}
-          onChange={(v) => navigate({ sort: v, productsPage: 1 })}
-          t={t}
-        />
+        <SortPicker value={sort} onChange={(v) => navigate({ sort: v, productsPage: 1 })} t={t} />
         {totalArchivedCount > 0 ? (
           <button
             type="button"
-            onClick={() =>
-              navigate({ showArchived: !showArchived, productsPage: 1 })
-            }
+            onClick={() => navigate({ showArchived: !showArchived, productsPage: 1 })}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border whitespace-nowrap ${
               showArchived
                 ? 'bg-[var(--accent)]/10 text-[var(--accent)] border-[var(--accent)]'
@@ -181,9 +166,7 @@ export function PaginatedProductsList({
             aria-pressed={showArchived}
           >
             <Archive className="size-3.5" aria-hidden />
-            {showArchived
-              ? t('hideArchived')
-              : t('showArchived', { count: totalArchivedCount })}
+            {showArchived ? t('hideArchived') : t('showArchived', { count: totalArchivedCount })}
           </button>
         ) : null}
       </div>
@@ -199,9 +182,7 @@ export function PaginatedProductsList({
           <li key={p.productId}>
             <Card
               variant="secondary"
-              className={`p-4 flex flex-row items-center gap-4 ${
-                p.archived ? 'opacity-60' : ''
-              }`}
+              className={`p-4 flex flex-row items-center gap-4 ${p.archived ? 'opacity-60' : ''}`}
             >
               <div className="flex-1 flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
@@ -251,12 +232,8 @@ export function PaginatedProductsList({
                 </div>
                 {p.issues.length > 0 && (
                   <p className="text-xs text-[var(--muted)]">
-                    <strong className="text-[var(--foreground)]">
-                      {t('issuesLabel')}:
-                    </strong>{' '}
-                    {p.issues
-                      .map((i) => translateIssue(tIssues, i))
-                      .join(' · ')}
+                    <strong className="text-[var(--foreground)]">{t('issuesLabel')}:</strong>{' '}
+                    {p.issues.map((i) => translateIssue(tIssues, i)).join(' · ')}
                   </p>
                 )}
               </div>
@@ -392,13 +369,7 @@ function ArchiveToggle({
   );
 }
 
-function ArchiveSubmit({
-  archived,
-  label
-}: {
-  archived: boolean;
-  label: string;
-}) {
+function ArchiveSubmit({ archived, label }: { archived: boolean; label: string }) {
   const { pending } = useFormStatus();
   return (
     <button

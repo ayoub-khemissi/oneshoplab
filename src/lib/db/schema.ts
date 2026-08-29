@@ -262,9 +262,10 @@ export const products = mysqlTable(
     handle: varchar('handle', { length: 255 }),
     title: varchar('title', { length: 512 }).notNull(),
     descriptionHtml: text('description_html'),
-    images: json('images').$type<
-      Array<{ src: string; alt: string | null; width: number | null; height: number | null }>
-    >(),
+    images:
+      json('images').$type<
+        Array<{ src: string; alt: string | null; width: number | null; height: number | null }>
+      >(),
     tags: json('tags').$type<string[]>(),
     variants: json('variants').$type<
       Array<{
@@ -535,14 +536,7 @@ export const passwordResetTokens = mysqlTable(
 // time the operator contacts them.
 // ============================================================================
 
-export const LEAD_STATUSES = [
-  'new',
-  'contacted',
-  'replied',
-  'won',
-  'lost',
-  'dead'
-] as const;
+export const LEAD_STATUSES = ['new', 'contacted', 'replied', 'won', 'lost', 'dead'] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 
 export const LEAD_ATTEMPT_CHANNELS = [

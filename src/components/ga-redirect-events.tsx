@@ -53,8 +53,7 @@ export function GaRedirectEvents() {
     const rawValue = q.get('value');
     const value = rawValue && Number.isFinite(Number(rawValue)) ? Number(rawValue) : undefined;
     const currency = (q.get('currency') ?? undefined)?.toLowerCase();
-    const metaPurchaseParams =
-      value != null ? { value, currency: currency ?? 'eur' } : undefined;
+    const metaPurchaseParams = value != null ? { value, currency: currency ?? 'eur' } : undefined;
 
     let ev: typeof beacon = null;
     const consumed: string[] = [];
@@ -66,9 +65,7 @@ export function GaRedirectEvents() {
     // as a credentials one. URL markers take priority (a credentials
     // signup will never have this cookie since it doesn't go through
     // the adapter's createUser).
-    const hasOauthSignupCookie = /(?:^|;\s*)osl_new_signup=1(?:;|$)/.test(
-      document.cookie
-    );
+    const hasOauthSignupCookie = /(?:^|;\s*)osl_new_signup=1(?:;|$)/.test(document.cookie);
     const clearOauthSignupCookie = () => {
       document.cookie = 'osl_new_signup=; max-age=0; path=/; samesite=lax';
     };
@@ -158,11 +155,7 @@ export function GaRedirectEvents() {
   if (!beacon) return null;
   return (
     <>
-      <TrackEvent
-        event={beacon.event}
-        params={beacon.params}
-        onceKey={beacon.onceKey}
-      />
+      <TrackEvent event={beacon.event} params={beacon.params} onceKey={beacon.onceKey} />
       {beacon.metaEvent ? (
         <MetaPixelEvent
           event={beacon.metaEvent}

@@ -18,10 +18,7 @@ interface GoogleSignInButtonProps {
  * Pure server component: it just renders a <form> whose submit calls
  * `signIn('google')`. No client JS needed for the round-trip.
  */
-export function GoogleSignInButton({
-  redirectTo = '/dashboard',
-  label
-}: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ redirectTo = '/dashboard', label }: GoogleSignInButtonProps) {
   async function action() {
     'use server';
     await signIn('google', { redirectTo });

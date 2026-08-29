@@ -32,28 +32,18 @@ async function main(): Promise<void> {
       const tasks: Array<Promise<unknown>> = [
         runAuditRunner(),
         runKieWatchdog(),
-        runAuditWatchdog().catch((e) =>
-          console.error('[worker] audit-watchdog failed', e)
-        ),
+        runAuditWatchdog().catch((e) => console.error('[worker] audit-watchdog failed', e)),
         // Bulk catalog generation for Scale plans — one product per
         // tick to bound tick latency. The function returns quickly when
         // no bulk job is in flight.
-        processNextBulkProduct().catch((e) =>
-          console.error('[worker] bulk-generator failed', e)
-        ),
-        runBulkWatchdog().catch((e) =>
-          console.error('[worker] bulk-watchdog failed', e)
-        )
+        processNextBulkProduct().catch((e) => console.error('[worker] bulk-generator failed', e)),
+        runBulkWatchdog().catch((e) => console.error('[worker] bulk-watchdog failed', e))
       ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
       if (t0 - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
         lastCleanupAt = t0;
-        tasks.push(
-          runR2Cleanup().catch((e) =>
-            console.error('[worker] r2-cleanup failed', e)
-          )
-        );
+        tasks.push(runR2Cleanup().catch((e) => console.error('[worker] r2-cleanup failed', e)));
       }
       await Promise.allSettled(tasks);
     } catch (e) {
