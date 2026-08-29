@@ -63,7 +63,7 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
 
 - **What:** `scripts/backup/backup-mysql.sh` — `mysqldump --single-transaction`
   → zstd → gpg AES-256 → `~/backups/oneshoplab-mysql/` (30 days) → R2
-  `backups/mysql/` (**7 dailies + 4 weeklies**, R2 free tier is 10 GB — check
+  `backups/mysql/` (**7 dailies + 4 weeklies**, R2 free quota is small — check
   with `pnpm backup:usage`). Cron: daily 03:30. Failures alert Discord
   `#staff-logs` via the bot API.
 - **Drill:** `scripts/backup/restore-test.sh` restores the latest R2 backup
