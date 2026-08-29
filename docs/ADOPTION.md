@@ -13,7 +13,7 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
 | Gate | Status | Notes |
 |---|---|---|
 | Lint (0 errors) | ✅ | Flat ESLint config since 2026-08-29 (`next lint` had been broken since the Next 16 migration). |
-| Lint (0 warnings) | 🟡 34 | 19 `react-hooks/set-state-in-effect`, 4 `react-hooks/refs`, 2 `react-hooks/purity`, 4 unused vars, 5 `max-lines`. Ratchet: this number must only go down. |
+| Lint (0 warnings) | 🟡 28 | 19 `react-hooks/set-state-in-effect`, 4 `react-hooks/refs`, 2 `react-hooks/purity`, 3 unused vars. Ratchet: this number must only go down. |
 | Typecheck | ✅ | |
 | i18n parity + usage | ✅ | 13 locales, 933 keys, 972 static calls checked. Found 2 real holes on day one (crash-level). |
 | Format | ✅ | One-time `prettier --write` on 2026-08-29; hooks keep it. |
