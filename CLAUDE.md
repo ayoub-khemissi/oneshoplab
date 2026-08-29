@@ -28,6 +28,8 @@ pnpm db:migrate       # apply pending migrations
 pnpm check            # lint + typecheck + i18n:check + audit:prod — run before pushing
 pnpm i18n:check       # parity across 13 locales + every static t('key') resolves
 pnpm lint:strict      # 0-warning target (ratchet; see docs/ADOPTION.md)
+pnpm backup           # encrypted MySQL dump → local + R2 (cron 03:30; see docs/GUIDELINES.md → Backups)
+pnpm backup:restore-test  # restore drill of the latest R2 backup (cron Sundays)
 pnpm deploy           # scripts/deploy.sh — the ONLY way to deploy (gates → migrate → build → BUILD_ID check → restart → health)
 ```
 

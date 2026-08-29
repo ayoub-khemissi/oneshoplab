@@ -58,3 +58,21 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
 - Conventional Commits in English (`feat|fix|chore|docs|refactor(scope): …`), body explains the *why* and the rejected alternative when there is one.
 - One subject per commit. Migrations ship with the code that needs them and stay backward compatible with the running process.
 - Non-trivial changes go through a PR (CI runs there); the PR body states **Decisions**: choice / alternative rejected / invariant introduced / origin. Empty is a valid, explicit answer.
+
+## Backups (ops)
+
+- **What:** `scripts/backup/backup-mysql.sh` — `mysqldump --single-transaction`
+  → zstd → gpg AES-256 → `~/backups/oneshoplab-mysql/` (30 days) → R2
+  `backups/mysql/` (**7 dailies + 4 weeklies**, R2 free tier is 10 GB — check
+  with `pnpm backup:usage`). Cron: daily 03:30. Failures alert Discord
+  `#staff-logs` via the bot API.
+- **Drill:** `scripts/backup/restore-test.sh` restores the latest R2 backup
+  into `oneshoplab_restore_test`, checks all tables are present and compares
+  row counts, then drops it. Cron: Sundays 04:30. Logs in
+  `~/backups/oneshoplab-mysql/*.log`.
+- **Key:** `/home/ubuntu/.oneshoplab-backup.key` (0600, never in git). Without
+  it backups are unreadable — keep a copy in the password manager.
+- **Restore for real:** `gpg --decrypt --passphrase-file ~/.oneshoplab-backup.key FILE | zstd -d | sudo mysql oneshoplab`
+  (stop the worker first; `pnpm db:migrate` afterwards if the schema moved).
+- **CDN:** nginx returns 404 for `cdn.oneshoplab.com/backups/*` — the CDN
+  fronts the whole bucket, so this block must stay.

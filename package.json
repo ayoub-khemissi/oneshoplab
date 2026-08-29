@@ -23,7 +23,10 @@
     "format:check": "prettier --check .",
     "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm audit:prod",
     "prepare": "husky",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "backup": "bash scripts/backup/backup-mysql.sh",
+    "backup:restore-test": "bash scripts/backup/restore-test.sh",
+    "backup:usage": "tsx scripts/backup/r2-backup.ts usage"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
