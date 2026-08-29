@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { ContactForm } from '@/components/contact-form';
+import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 import { auth } from '@/lib/auth';
@@ -55,6 +56,9 @@ export default async function ContactPage({
           email: session?.user?.email ?? ''
         }}
       />
+      {/* Server component (getTranslations) — must stay outside the client
+          form, which is why it isn't rendered from ContactForm itself. */}
+      {recaptchaSiteKey ? <RecaptchaLegalNotice /> : null}
 
       {discordUrl ? (
         <p className="text-sm text-[var(--muted)]">

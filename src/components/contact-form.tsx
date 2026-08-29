@@ -4,7 +4,6 @@ import { Spinner } from '@heroui/react';
 import { CheckCircle2, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState, useState } from 'react';
-import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { submitContactAction, type ContactFormState } from '@/lib/contact-actions';
 
@@ -177,7 +176,6 @@ function InnerForm({
           {pending ? t('sending') : t('submit')}
         </button>
       </div>
-      {recaptchaSiteKey ? <RecaptchaLegalNotice /> : null}
     </form>
   );
 }
