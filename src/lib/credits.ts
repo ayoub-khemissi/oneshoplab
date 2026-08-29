@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { db } from './db';
 import { creditTransactions, users, type JobKind } from './db/schema';

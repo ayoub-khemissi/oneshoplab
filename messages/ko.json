@@ -393,7 +393,8 @@
     "siteHeaderAddProduct": "제품 추가",
     "siteHeaderManualBadge": "수동",
     "addSiteScratchUrlLabel": "스토어 URL",
-    "addSiteScratchUrlHint": "아직 온라인 상태가 아닌가요? 괜찮아요 — 사용할 예정인 URL을 입력하세요. 나중에 사이트 설정에서 변경할 수 있어요."
+    "addSiteScratchUrlHint": "아직 온라인 상태가 아닌가요? 괜찮아요 — 사용할 예정인 URL을 입력하세요. 나중에 사이트 설정에서 변경할 수 있어요.",
+    "jobScopeSiteWide": "사이트 전체"
   },
   "Product": {
     "backToDashboard": "대시보드로",
@@ -766,7 +767,8 @@
     "deleteEmailConfirmLabel": "이메일을 입력해 확인",
     "deleteEmailConfirmHint": "삭제 버튼을 활성화하려면 {email}을 입력하세요.",
     "errorMissingEmail": "확인을 위해 계정 이메일을 입력하세요.",
-    "errorEmailMismatch": "이 이메일은 계정의 이메일과 일치하지 않습니다."
+    "errorEmailMismatch": "이 이메일은 계정의 이메일과 일치하지 않습니다.",
+    "errorWrongPassword": "현재 비밀번호가 올바르지 않습니다."
   },
   "Subscription": {
     "title": "구독",

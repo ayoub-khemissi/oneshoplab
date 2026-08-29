@@ -133,7 +133,7 @@ export default async function PricingPage() {
     <main className="flex-1 p-6 md:p-12 max-w-6xl w-full mx-auto flex flex-col gap-12">
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
+         
         dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalog) }}
       />
       <header className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">

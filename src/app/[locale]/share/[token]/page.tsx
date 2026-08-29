@@ -531,7 +531,7 @@ function AiHtmlField({
         // never produces script tags. Wrapped in `prose` for spacing.
         <div
           className="prose text-sm max-w-none"
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (

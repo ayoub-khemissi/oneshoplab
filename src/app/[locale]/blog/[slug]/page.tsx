@@ -128,7 +128,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
     <main className="flex-1 px-4 md:px-10 py-8 md:py-12 max-w-3xl w-full mx-auto flex flex-col gap-8">
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
+         
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div>
@@ -170,7 +170,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           the shared typographic spacing. */}
       <article
         className="prose max-w-none"
-        // eslint-disable-next-line react/no-danger
+         
         dangerouslySetInnerHTML={{ __html: html }}
       />
 

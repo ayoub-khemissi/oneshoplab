@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "E-postanı yazarak onayla",
     "deleteEmailConfirmHint": "{email} yazınca silme butonu etkinleşir.",
     "errorMissingEmail": "Onaylamak için hesap e-postanı yaz.",
-    "errorEmailMismatch": "Bu e-posta hesapla eşleşmiyor."
+    "errorEmailMismatch": "Bu e-posta hesapla eşleşmiyor.",
+    "errorWrongPassword": "Mevcut şifre yanlış."
   },
   "Subscription": {
     "title": "Abonelik",

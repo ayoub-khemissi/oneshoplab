@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "Confirme en tapant ton email",
     "deleteEmailConfirmHint": "Tape {email} pour activer le bouton de suppression.",
     "errorMissingEmail": "Tape ton email de compte pour confirmer.",
-    "errorEmailMismatch": "Cet email ne correspond pas à ton compte."
+    "errorEmailMismatch": "Cet email ne correspond pas à ton compte.",
+    "errorWrongPassword": "Le mot de passe actuel est incorrect."
   },
   "Subscription": {
     "title": "Abonnement",

@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "Confirm by typing your email",
     "deleteEmailConfirmHint": "Type {email} to enable the delete button.",
     "errorMissingEmail": "Type your account email to confirm.",
-    "errorEmailMismatch": "That email doesn't match the one on this account."
+    "errorEmailMismatch": "That email doesn't match the one on this account.",
+    "errorWrongPassword": "Current password is incorrect."
   },
   "Subscription": {
     "title": "Subscription",

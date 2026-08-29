@@ -1,10 +1,9 @@
 import { Accordion, Card, Skeleton } from '@heroui/react';
-import { and, count, desc, eq, gte, inArray, isNull, or } from 'drizzle-orm';
+import { and, count, desc, eq, gte, inArray } from 'drizzle-orm';
 import { ArrowLeft, Coins, ExternalLink, PenLine, Plus } from 'lucide-react';
 import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
   auditRateLimitForPlan,
-  DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   type ChatModelId,
   type ImageQualityId,

@@ -393,7 +393,8 @@
     "siteHeaderAddProduct": "商品を追加",
     "siteHeaderManualBadge": "手動",
     "addSiteScratchUrlLabel": "ストアの URL",
-    "addSiteScratchUrlHint": "まだ公開していなくても大丈夫 — 使う予定の URL を入力してください。後でサイト設定から変更できます。"
+    "addSiteScratchUrlHint": "まだ公開していなくても大丈夫 — 使う予定の URL を入力してください。後でサイト設定から変更できます。",
+    "jobScopeSiteWide": "サイト全体"
   },
   "Product": {
     "backToDashboard": "ダッシュボードに戻る",
@@ -766,7 +767,8 @@
     "deleteEmailConfirmLabel": "メールアドレスを入力して確認",
     "deleteEmailConfirmHint": "削除ボタンを有効にするには {email} と入力してください。",
     "errorMissingEmail": "確認のためアカウントのメールアドレスを入力してください。",
-    "errorEmailMismatch": "入力されたメールアドレスはこのアカウントのものと一致しません。"
+    "errorEmailMismatch": "入力されたメールアドレスはこのアカウントのものと一致しません。",
+    "errorWrongPassword": "現在のパスワードが正しくありません。"
   },
   "Subscription": {
     "title": "サブスク",

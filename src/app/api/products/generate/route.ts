@@ -1,11 +1,10 @@
 import { resolveChatModelId } from '@/lib/ai/models';
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   CHAT_MODEL_REGISTRY,
   costForImage,
-  DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits,
   IMAGE_MODEL_REGISTRY,
@@ -22,7 +21,7 @@ import { auth } from '@/lib/auth';
 import { sanitizeUserFacingError } from '@/lib/errors';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { audits, products, projects } from '@/lib/db/schema';
+import { products, projects } from '@/lib/db/schema';
 
 const IMAGE_ANGLES = ['lifestyle', 'studio', 'inuse'] as const;
 type ImageAngle = (typeof IMAGE_ANGLES)[number];

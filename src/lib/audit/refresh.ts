@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
 import { findLatestAuditIdWhere } from './find-latest';

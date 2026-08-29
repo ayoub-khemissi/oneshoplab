@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "Bestätige durch Eingabe deiner E-Mail",
     "deleteEmailConfirmHint": "Gib {email} ein, um den Löschen-Button zu aktivieren.",
     "errorMissingEmail": "Gib deine Konto-E-Mail zur Bestätigung ein.",
-    "errorEmailMismatch": "Diese E-Mail stimmt nicht mit dem Konto überein."
+    "errorEmailMismatch": "Diese E-Mail stimmt nicht mit dem Konto überein.",
+    "errorWrongPassword": "Das aktuelle Passwort ist falsch."
   },
   "Subscription": {
     "title": "Abonnement",

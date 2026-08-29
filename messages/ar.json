@@ -393,7 +393,8 @@
     "siteHeaderAddProduct": "إضافة منتج",
     "siteHeaderManualBadge": "يدوي",
     "addSiteScratchUrlLabel": "رابط متجرك",
-    "addSiteScratchUrlHint": "متجرك ليس متصلًا بعد؟ لا مشكلة — اكتب الرابط الذي تنوي استخدامه. يمكنك تغييره لاحقًا من إعدادات الموقع."
+    "addSiteScratchUrlHint": "متجرك ليس متصلًا بعد؟ لا مشكلة — اكتب الرابط الذي تنوي استخدامه. يمكنك تغييره لاحقًا من إعدادات الموقع.",
+    "jobScopeSiteWide": "على مستوى الموقع"
   },
   "Product": {
     "backToDashboard": "العودة إلى اللوحة",
@@ -766,7 +767,8 @@
     "deleteEmailConfirmLabel": "أكِّد عبر كتابة بريدك",
     "deleteEmailConfirmHint": "اكتب {email} لتفعيل زر الحذف.",
     "errorMissingEmail": "اكتب بريد حسابك للتأكيد.",
-    "errorEmailMismatch": "هذا البريد لا يطابق بريد الحساب."
+    "errorEmailMismatch": "هذا البريد لا يطابق بريد الحساب.",
+    "errorWrongPassword": "كلمة المرور الحالية غير صحيحة."
   },
   "Subscription": {
     "title": "الاشتراك",

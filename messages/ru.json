@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "Подтвердите, введя ваш email",
     "deleteEmailConfirmHint": "Введите {email}, чтобы активировать кнопку удаления.",
     "errorMissingEmail": "Введите email аккаунта для подтверждения.",
-    "errorEmailMismatch": "Этот email не совпадает с email аккаунта."
+    "errorEmailMismatch": "Этот email не совпадает с email аккаунта.",
+    "errorWrongPassword": "Текущий пароль неверен."
   },
   "Subscription": {
     "title": "Подписка",

@@ -1,15 +1,13 @@
 import { resolveChatModelId } from '@/lib/ai/models';
 import { Accordion, Card } from '@heroui/react';
-import { and, desc, eq, gt, inArray, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray } from 'drizzle-orm';
 import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { CopyButton } from '@/components/copy-button';
 import { DownloadAllButton } from '@/components/download-all-button';
-import type { GenField } from '@/components/generate-button';
 import {
   CustomInstructionsField,
   RetryableGenerateButton,
@@ -34,7 +32,6 @@ import { HistoryImage } from '@/components/history-image';
 import { ServerPagination } from '@/components/server-pagination';
 import {
   costForImage,
-  DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   imageRetentionDaysForPlan,
@@ -48,10 +45,9 @@ import {
 } from '@/lib/ai';
 import { auth } from '@/lib/auth';
 import { touchProjectLastView } from '@/lib/auth-actions';
-import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { formatDate } from '@/lib/format-date';
-import { audits, jobs, products, projects } from '@/lib/db/schema';
+import { jobs, products, projects } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 

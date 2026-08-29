@@ -56,7 +56,7 @@ export function ProductImageGallery({
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [index, total]);
 
   function scrollToIndex(i: number): void {

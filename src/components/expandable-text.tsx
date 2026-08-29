@@ -73,7 +73,7 @@ export function ExpandableText({
           // Description HTML is produced by the optim flow with a
           // tightly-scoped tag set; no script payloads. Same render
           // path as the dashboard product page.
-          // eslint-disable-next-line react/no-danger
+           
           <div dangerouslySetInnerHTML={{ __html: text }} />
         ) : (
           text

@@ -19,7 +19,6 @@ import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { notify } from '@/lib/notifications';
 import {
-  audits,
   jobs,
   projects,
   products,

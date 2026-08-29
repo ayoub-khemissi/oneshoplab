@@ -1,6 +1,7 @@
 import { aiSubProcessors } from '@/lib/ai/models';
 import { getAppContactEmail } from '@/lib/app-contact';
 import type { Metadata } from 'next';
+import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
@@ -378,7 +379,7 @@ export default function TermsOfServicePage() {
         <p>
           Our collection and use of personal data in connection with the
           Service is described in our{' '}
-          <a href="/privacy">Privacy Policy</a>, which is incorporated into
+          <Link href="/privacy">Privacy Policy</Link>, which is incorporated into
           these Terms by reference.
         </p>
 

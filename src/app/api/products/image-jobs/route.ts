@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   buildImagePrompt,
@@ -15,7 +15,7 @@ import {
 import { auth } from '@/lib/auth';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { audits, jobs, products, projects } from '@/lib/db/schema';
+import { jobs, products, projects } from '@/lib/db/schema';
 import { sanitizeUserFacingError } from '@/lib/errors';
 
 interface ProductImage {

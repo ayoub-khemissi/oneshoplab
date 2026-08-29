@@ -767,7 +767,8 @@
     "deleteEmailConfirmLabel": "Confirma digitando o teu email",
     "deleteEmailConfirmHint": "Digita {email} para ativar o botão de eliminar.",
     "errorMissingEmail": "Digita o email da tua conta para confirmar.",
-    "errorEmailMismatch": "Esse email não corresponde a esta conta."
+    "errorEmailMismatch": "Esse email não corresponde a esta conta.",
+    "errorWrongPassword": "A palavra-passe atual está incorreta."
   },
   "Subscription": {
     "title": "Assinatura",

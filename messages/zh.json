@@ -393,7 +393,8 @@
     "siteHeaderAddProduct": "添加产品",
     "siteHeaderManualBadge": "手动",
     "addSiteScratchUrlLabel": "你的店铺 URL",
-    "addSiteScratchUrlHint": "店铺还没上线？没关系 — 输入你计划使用的 URL 即可，之后可以在站点设置中修改。"
+    "addSiteScratchUrlHint": "店铺还没上线？没关系 — 输入你计划使用的 URL 即可，之后可以在站点设置中修改。",
+    "jobScopeSiteWide": "全站"
   },
   "Product": {
     "backToDashboard": "返回控制台",
@@ -766,7 +767,8 @@
     "deleteEmailConfirmLabel": "输入你的邮箱进行确认",
     "deleteEmailConfirmHint": "输入 {email} 以启用删除按钮。",
     "errorMissingEmail": "请输入账户邮箱以确认。",
-    "errorEmailMismatch": "该邮箱与本账户不匹配。"
+    "errorEmailMismatch": "该邮箱与本账户不匹配。",
+    "errorWrongPassword": "当前密码不正确。"
   },
   "Subscription": {
     "title": "订阅",

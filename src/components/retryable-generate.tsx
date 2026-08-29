@@ -213,7 +213,7 @@ export function RetryableGenerateProvider({
     };
     // We intentionally do NOT depend on `states` here — the resumed
     // tracker is its own bag, fed only by the F5 seed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [productId, router]);
 
   // Surface chat-gen failures the merchant may have missed while

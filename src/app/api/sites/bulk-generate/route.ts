@@ -3,7 +3,6 @@ import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   CHAT_MODEL_REGISTRY,
-  DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,

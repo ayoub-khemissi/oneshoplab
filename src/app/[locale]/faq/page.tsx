@@ -77,7 +77,7 @@ export default async function FaqPage() {
     <main className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-6 py-12 md:py-16 flex flex-col gap-10">
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
+         
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 

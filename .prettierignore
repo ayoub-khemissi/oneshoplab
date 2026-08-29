@@ -1,0 +1,10 @@
+.next
+node_modules
+drizzle
+remotion-ads
+tools
+legacy
+public
+pnpm-lock.yaml
+messages
+*.md
