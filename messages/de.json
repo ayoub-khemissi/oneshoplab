@@ -131,7 +131,8 @@
     "terms": "AGB",
     "privacy": "Datenschutz",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Kontakt"
   },
   "Showcase": {
     "eyebrow": "Echte Shops, echte Ergebnisse",
@@ -991,5 +992,34 @@
     "privacyDescription": "Wie OneShopLab Ihre Daten erhebt, nutzt und schützt.",
     "termsTitle": "Nutzungsbedingungen",
     "termsDescription": "Die rechtlichen Bedingungen, die Ihre Nutzung von OneShopLab regeln."
+  },
+  "Contact": {
+    "metaTitle": "Kontakt",
+    "metaDescription": "Frage, Feedback oder Bug? Schreib dem OneShopLab-Team — wir antworten persönlich.",
+    "eyebrow": "Kontakt",
+    "title": "Sprich mit uns",
+    "lead": "Eine Frage zum Audit, eine fehlende Funktion, ein Bug, eine Partnerschaft? Schick uns eine Nachricht — ein Mensch (der Gründer) liest jede und antwortet, in der Regel innerhalb eines Werktags.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Dein Name",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "du@deinshop.de",
+    "subjectLabel": "Betreff",
+    "optional": "optional",
+    "subjectPlaceholder": "Worum geht es?",
+    "messageLabel": "Nachricht",
+    "messagePlaceholder": "Sag uns, was du brauchst. Wenn es um einen Shop geht, füge die URL ein.",
+    "submit": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "successTitle": "Nachricht gesendet",
+    "successBody": "Danke! Wir antworten an die angegebene Adresse, meist innerhalb eines Werktags.",
+    "sendAnother": "Weitere Nachricht senden",
+    "errorInvalid": "Bitte prüfe die Felder: Name, gültige E-Mail und eine Nachricht mit mindestens 10 Zeichen.",
+    "errorCaptcha": "Bitte schließe die Sicherheitsprüfung ab und versuche es erneut.",
+    "errorRateLimited": "Zu viele Nachrichten in kurzer Zeit. Bitte warte ein paar Minuten.",
+    "errorSend": "Bei uns ist etwas schiefgelaufen. Bitte versuche es gleich noch einmal.",
+    "privacyNote": "Wir nutzen deine Angaben nur, um dir zu antworten.",
+    "altDiscord": "Lieber chatten?",
+    "altDiscordLink": "Discord beitreten",
+    "privacyLink": "Datenschutzerklärung"
   }
 }

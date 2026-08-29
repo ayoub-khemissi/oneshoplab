@@ -131,7 +131,8 @@
     "terms": "条款",
     "privacy": "隐私",
     "faq": "常见问题",
-    "blog": "博客"
+    "blog": "博客",
+    "contact": "联系我们"
   },
   "Showcase": {
     "eyebrow": "真实店铺,真实结果",
@@ -990,5 +991,34 @@
     "privacyDescription": "OneShopLab 如何收集、使用和保护你的数据。",
     "termsTitle": "服务条款",
     "termsDescription": "管理你使用 OneShopLab 的法律条款。"
+  },
+  "Contact": {
+    "metaTitle": "联系我们",
+    "metaDescription": "有问题、反馈或发现了 bug？写信给 OneShopLab 团队——我们会亲自回复。",
+    "eyebrow": "联系",
+    "title": "和我们聊聊",
+    "lead": "关于审计的问题、需要的功能、bug 或合作意向？发送消息——由真人（创始人）阅读并回复，通常在一个工作日内。",
+    "nameLabel": "姓名",
+    "namePlaceholder": "您的姓名",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "you@yourstore.com",
+    "subjectLabel": "主题",
+    "optional": "可选",
+    "subjectPlaceholder": "想咨询什么？",
+    "messageLabel": "消息",
+    "messagePlaceholder": "告诉我们您的需求。如果涉及某个店铺，请粘贴其网址。",
+    "submit": "发送消息",
+    "sending": "发送中…",
+    "successTitle": "消息已发送",
+    "successBody": "谢谢！我们会回复到您提供的邮箱，通常在一个工作日内。",
+    "sendAnother": "再发一条消息",
+    "errorInvalid": "请检查各项：姓名、有效邮箱以及至少 10 个字符的消息。",
+    "errorCaptcha": "请完成安全验证后重试。",
+    "errorRateLimited": "短时间内消息过多，请稍等几分钟。",
+    "errorSend": "我们这边出了点问题，请稍后再试。",
+    "privacyNote": "我们仅使用您的信息来回复您。",
+    "altDiscord": "更喜欢聊天？",
+    "altDiscordLink": "加入 Discord",
+    "privacyLink": "隐私政策"
   }
 }

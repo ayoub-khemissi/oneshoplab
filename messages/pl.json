@@ -131,7 +131,8 @@
     "terms": "Regulamin",
     "privacy": "Prywatność",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Kontakt"
   },
   "Showcase": {
     "eyebrow": "Prawdziwe sklepy, prawdziwe wyniki",
@@ -991,5 +992,34 @@
     "privacyDescription": "Jak OneShopLab zbiera, wykorzystuje i chroni Twoje dane.",
     "termsTitle": "Regulamin",
     "termsDescription": "Warunki prawne korzystania z OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Skontaktuj się z nami",
+    "metaDescription": "Pytanie, opinia lub błąd? Napisz do zespołu OneShopLab — odpowiadamy osobiście.",
+    "eyebrow": "Kontakt",
+    "title": "Porozmawiaj z nami",
+    "lead": "Pytanie o audyt, brakująca funkcja, błąd, współpraca? Wyślij wiadomość — czyta ją człowiek (założyciel) i odpowiada, zwykle w ciągu jednego dnia roboczego.",
+    "nameLabel": "Imię",
+    "namePlaceholder": "Twoje imię",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "ty@twojsklep.pl",
+    "subjectLabel": "Temat",
+    "optional": "opcjonalnie",
+    "subjectPlaceholder": "Czego dotyczy?",
+    "messageLabel": "Wiadomość",
+    "messagePlaceholder": "Napisz, czego potrzebujesz. Jeśli chodzi o sklep, wklej jego adres URL.",
+    "submit": "Wyślij wiadomość",
+    "sending": "Wysyłanie…",
+    "successTitle": "Wiadomość wysłana",
+    "successBody": "Dziękujemy! Odpowiemy na podany adres, zwykle w ciągu jednego dnia roboczego.",
+    "sendAnother": "Wyślij kolejną wiadomość",
+    "errorInvalid": "Sprawdź pola: imię, poprawny e-mail i wiadomość o długości co najmniej 10 znaków.",
+    "errorCaptcha": "Ukończ weryfikację bezpieczeństwa i spróbuj ponownie.",
+    "errorRateLimited": "Zbyt wiele wiadomości w krótkim czasie. Odczekaj kilka minut.",
+    "errorSend": "Coś poszło nie tak po naszej stronie. Spróbuj ponownie za chwilę.",
+    "privacyNote": "Twoje dane wykorzystujemy wyłącznie, aby odpowiedzieć.",
+    "altDiscord": "Wolisz czat?",
+    "altDiscordLink": "Dołącz do Discorda",
+    "privacyLink": "Polityka prywatności"
   }
 }

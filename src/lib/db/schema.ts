@@ -683,3 +683,35 @@ export const leadsRelations = relations(leads, ({ many }) => ({
 export const leadAttemptsRelations = relations(leadAttempts, ({ one }) => ({
   lead: one(leads, { fields: [leadAttempts.leadId], references: [leads.id] })
 }));
+
+/**
+ * Public contact-form submissions (/contact). Stored first, THEN fanned
+ * out to Discord + the inbox, so a notification outage never loses a
+ * message — the two *NotifiedAt columns say which channels actually
+ * fired. userId is filled when the sender was logged in (lets support
+ * jump to the account). ip/userAgent feed the abuse rate-limit only.
+ */
+export const contactMessages = mysqlTable(
+  'contact_messages',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 }).references(() => users.id, {
+      onDelete: 'set null'
+    }),
+    name: varchar('name', { length: 120 }).notNull(),
+    email: varchar('email', { length: 255 }).notNull(),
+    subject: varchar('subject', { length: 200 }),
+    message: text('message').notNull(),
+    locale: varchar('locale', { length: 8 }).notNull().default('en'),
+    ip: varchar('ip', { length: 64 }),
+    userAgent: varchar('user_agent', { length: 255 }),
+    discordNotifiedAt: timestamp('discord_notified_at'),
+    emailNotifiedAt: timestamp('email_notified_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxCreatedAt: index('idx_contact_messages_created_at').on(t.createdAt),
+    idxEmail: index('idx_contact_messages_email').on(t.email),
+    idxIp: index('idx_contact_messages_ip').on(t.ip)
+  })
+);

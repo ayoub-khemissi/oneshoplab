@@ -131,7 +131,8 @@
     "terms": "Termini",
     "privacy": "Privacy",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Contatti"
   },
   "Showcase": {
     "eyebrow": "Negozi reali, risultati reali",
@@ -991,5 +992,34 @@
     "privacyDescription": "Come OneShopLab raccoglie, utilizza e protegge i tuoi dati.",
     "termsTitle": "Termini di servizio",
     "termsDescription": "I termini legali che disciplinano l'uso di OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Contattaci",
+    "metaDescription": "Una domanda, un feedback o un bug? Scrivi al team OneShopLab — rispondiamo personalmente.",
+    "eyebrow": "Contatti",
+    "title": "Parla con noi",
+    "lead": "Una domanda sull’audit, una funzione che ti manca, un bug, una partnership? Invia un messaggio: una persona (il fondatore) legge ogni messaggio e risponde, di solito entro un giorno lavorativo.",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Il tuo nome",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@tuonegozio.it",
+    "subjectLabel": "Oggetto",
+    "optional": "facoltativo",
+    "subjectPlaceholder": "Di cosa si tratta?",
+    "messageLabel": "Messaggio",
+    "messagePlaceholder": "Dicci di cosa hai bisogno. Se riguarda un negozio, incolla il suo URL.",
+    "submit": "Invia messaggio",
+    "sending": "Invio…",
+    "successTitle": "Messaggio inviato",
+    "successBody": "Grazie! Rispondiamo all’indirizzo indicato, di solito entro un giorno lavorativo.",
+    "sendAnother": "Invia un altro messaggio",
+    "errorInvalid": "Controlla i campi: un nome, un’email valida e un messaggio di almeno 10 caratteri.",
+    "errorCaptcha": "Completa la verifica di sicurezza e riprova.",
+    "errorRateLimited": "Troppi messaggi in poco tempo. Attendi qualche minuto.",
+    "errorSend": "Qualcosa è andato storto da parte nostra. Riprova tra un istante.",
+    "privacyNote": "Usiamo i tuoi dati solo per risponderti.",
+    "altDiscord": "Preferisci chattare?",
+    "altDiscordLink": "Entra nel Discord",
+    "privacyLink": "Informativa sulla privacy"
   }
 }

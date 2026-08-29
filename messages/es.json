@@ -131,7 +131,8 @@
     "terms": "Condiciones",
     "privacy": "Privacidad",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Contacto"
   },
   "Showcase": {
     "eyebrow": "Tiendas reales, resultados reales",
@@ -991,5 +992,34 @@
     "privacyDescription": "Cómo OneShopLab recopila, usa y protege tus datos.",
     "termsTitle": "Términos de servicio",
     "termsDescription": "Los términos legales que rigen tu uso de OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Contáctanos",
+    "metaDescription": "¿Una pregunta, un comentario o un error? Escribe al equipo de OneShopLab — respondemos personalmente.",
+    "eyebrow": "Contacto",
+    "title": "Habla con nosotros",
+    "lead": "¿Una pregunta sobre la auditoría, una función que necesitas, un error, una colaboración? Envía un mensaje: una persona (el fundador) lee cada uno y responde, normalmente en un día laborable.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@tutienda.com",
+    "subjectLabel": "Asunto",
+    "optional": "opcional",
+    "subjectPlaceholder": "¿De qué se trata?",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Cuéntanos qué necesitas. Si es sobre una tienda, pega su URL.",
+    "submit": "Enviar mensaje",
+    "sending": "Enviando…",
+    "successTitle": "Mensaje enviado",
+    "successBody": "¡Gracias! Respondemos a la dirección indicada, normalmente en un día laborable.",
+    "sendAnother": "Enviar otro mensaje",
+    "errorInvalid": "Revisa los campos: un nombre, un email válido y un mensaje de al menos 10 caracteres.",
+    "errorCaptcha": "Completa la verificación de seguridad e inténtalo de nuevo.",
+    "errorRateLimited": "Demasiados mensajes en poco tiempo. Espera unos minutos.",
+    "errorSend": "Algo salió mal por nuestra parte. Inténtalo de nuevo en un momento.",
+    "privacyNote": "Usamos tus datos solo para responderte.",
+    "altDiscord": "¿Prefieres chatear?",
+    "altDiscordLink": "Únete al Discord",
+    "privacyLink": "Política de privacidad"
   }
 }

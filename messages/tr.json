@@ -131,7 +131,8 @@
     "terms": "Şartlar",
     "privacy": "Gizlilik",
     "faq": "SSS",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "İletişim"
   },
   "Showcase": {
     "eyebrow": "Gerçek mağazalar, gerçek sonuçlar",
@@ -991,5 +992,34 @@
     "privacyDescription": "OneShopLab verilerinizi nasıl toplar, kullanır ve korur.",
     "termsTitle": "Kullanım Şartları",
     "termsDescription": "OneShopLab'i kullanımınızı düzenleyen yasal şartlar."
+  },
+  "Contact": {
+    "metaTitle": "Bize ulaşın",
+    "metaDescription": "Soru, geri bildirim veya hata mı? OneShopLab ekibine yazın — kişisel olarak yanıtlıyoruz.",
+    "eyebrow": "İletişim",
+    "title": "Bizimle konuşun",
+    "lead": "Denetimle ilgili bir soru, ihtiyaç duyduğunuz bir özellik, bir hata, bir iş birliği? Mesaj gönderin — her mesajı bir insan (kurucu) okur ve genellikle bir iş günü içinde yanıtlar.",
+    "nameLabel": "Ad",
+    "namePlaceholder": "Adınız",
+    "emailLabel": "E-posta",
+    "emailPlaceholder": "siz@magazaniz.com",
+    "subjectLabel": "Konu",
+    "optional": "isteğe bağlı",
+    "subjectPlaceholder": "Ne hakkında?",
+    "messageLabel": "Mesaj",
+    "messagePlaceholder": "Neye ihtiyacınız olduğunu anlatın. Bir mağazayla ilgiliyse URL’sini yapıştırın.",
+    "submit": "Mesaj gönder",
+    "sending": "Gönderiliyor…",
+    "successTitle": "Mesaj gönderildi",
+    "successBody": "Teşekkürler! Belirttiğiniz adrese genellikle bir iş günü içinde yanıt veriyoruz.",
+    "sendAnother": "Başka bir mesaj gönder",
+    "errorInvalid": "Alanları kontrol edin: bir ad, geçerli bir e-posta ve en az 10 karakterlik bir mesaj.",
+    "errorCaptcha": "Lütfen güvenlik doğrulamasını tamamlayıp tekrar deneyin.",
+    "errorRateLimited": "Kısa sürede çok fazla mesaj. Lütfen birkaç dakika bekleyin.",
+    "errorSend": "Bizim tarafımızda bir sorun oluştu. Lütfen birazdan tekrar deneyin.",
+    "privacyNote": "Bilgilerinizi yalnızca size yanıt vermek için kullanırız.",
+    "altDiscord": "Sohbet etmeyi mi tercih edersiniz?",
+    "altDiscordLink": "Discord’a katılın",
+    "privacyLink": "Gizlilik politikası"
   }
 }

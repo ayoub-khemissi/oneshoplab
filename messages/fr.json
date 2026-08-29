@@ -131,7 +131,8 @@
     "terms": "Conditions",
     "privacy": "Confidentialité",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Contact"
   },
   "Showcase": {
     "eyebrow": "Vraies boutiques, vrais résultats",
@@ -991,5 +992,34 @@
     "privacyDescription": "Comment OneShopLab collecte, utilise et protège vos données.",
     "termsTitle": "Conditions d'utilisation",
     "termsDescription": "Les conditions légales régissant votre utilisation de OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Nous contacter",
+    "metaDescription": "Une question, un retour ou un bug ? Écrivez à l’équipe OneShopLab — on répond personnellement.",
+    "eyebrow": "Contact",
+    "title": "Parlez-nous",
+    "lead": "Une question sur l’audit, une fonctionnalité qui vous manque, un bug, un partenariat ? Envoyez un message — un humain (le fondateur) lit chaque message et répond, en général sous un jour ouvré.",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Votre nom",
+    "emailLabel": "Email",
+    "emailPlaceholder": "vous@votreboutique.com",
+    "subjectLabel": "Objet",
+    "optional": "facultatif",
+    "subjectPlaceholder": "De quoi s’agit-il ?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Dites-nous ce dont vous avez besoin. Si ça concerne une boutique, collez son URL.",
+    "submit": "Envoyer le message",
+    "sending": "Envoi…",
+    "successTitle": "Message envoyé",
+    "successBody": "Merci ! Nous répondons à l’adresse indiquée, en général sous un jour ouvré.",
+    "sendAnother": "Envoyer un autre message",
+    "errorInvalid": "Vérifiez les champs : un nom, un email valide et un message d’au moins 10 caractères.",
+    "errorCaptcha": "Merci de compléter la vérification de sécurité puis de réessayer.",
+    "errorRateLimited": "Trop de messages en peu de temps. Patientez quelques minutes.",
+    "errorSend": "Un problème est survenu de notre côté. Réessayez dans un instant.",
+    "privacyNote": "Vos informations servent uniquement à vous répondre.",
+    "altDiscord": "Vous préférez discuter ?",
+    "altDiscordLink": "Rejoindre le Discord",
+    "privacyLink": "Politique de confidentialité"
   }
 }

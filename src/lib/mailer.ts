@@ -50,6 +50,9 @@ export interface SendMailOptions {
   /** Optional plain-text fallback. Recommended for deliverability —
    *  some spam filters down-weight HTML-only mail. */
   text?: string;
+  /** Reply-To header — e.g. the visitor's address on a contact-form
+   *  notification, so "Reply" in the inbox goes to them, not to us. */
+  replyTo?: string;
 }
 
 export interface SendMailResult {
@@ -73,7 +76,8 @@ export async function sendMail(opts: SendMailOptions): Promise<SendMailResult> {
       to: opts.to,
       subject: opts.subject,
       html: opts.html,
-      text: opts.text
+      text: opts.text,
+      ...(opts.replyTo ? { replyTo: opts.replyTo } : {})
     });
     return { ok: true };
   } catch (e) {

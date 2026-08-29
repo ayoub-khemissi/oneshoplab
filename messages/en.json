@@ -131,7 +131,8 @@
     "terms": "Terms",
     "privacy": "Privacy",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Contact"
   },
   "Showcase": {
     "eyebrow": "Real stores, real results",
@@ -991,5 +992,34 @@
     "privacyDescription": "How OneShopLab collects, uses and protects your data.",
     "termsTitle": "Terms of Service",
     "termsDescription": "The legal terms governing your use of OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Contact us",
+    "metaDescription": "Question, feedback or bug? Write to the OneShopLab team — we reply personally.",
+    "eyebrow": "Contact",
+    "title": "Talk to us",
+    "lead": "A question about the audit, a feature you need, a bug, a partnership? Send a message — a human (the founder) reads every one and replies, usually within a business day.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@yourstore.com",
+    "subjectLabel": "Subject",
+    "optional": "optional",
+    "subjectPlaceholder": "What is it about?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us what you need. If it concerns a store, paste its URL.",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "successTitle": "Message sent",
+    "successBody": "Thanks! We reply to the address you gave, usually within a business day.",
+    "sendAnother": "Send another message",
+    "errorInvalid": "Please check the fields: a name, a valid email and a message of at least 10 characters.",
+    "errorCaptcha": "Please complete the security check and try again.",
+    "errorRateLimited": "Too many messages in a short time. Please wait a few minutes.",
+    "errorSend": "Something went wrong on our side. Please try again in a moment.",
+    "privacyNote": "We use your details only to answer you.",
+    "altDiscord": "Prefer chatting?",
+    "altDiscordLink": "Join the Discord",
+    "privacyLink": "Privacy policy"
   }
 }

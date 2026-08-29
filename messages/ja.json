@@ -131,7 +131,8 @@
     "terms": "利用規約",
     "privacy": "プライバシー",
     "faq": "よくあるご質問",
-    "blog": "ブログ"
+    "blog": "ブログ",
+    "contact": "お問い合わせ"
   },
   "Showcase": {
     "eyebrow": "実際のストア、実際の結果",
@@ -990,5 +991,34 @@
     "privacyDescription": "OneShopLab があなたのデータをどのように収集・使用・保護するか。",
     "termsTitle": "利用規約",
     "termsDescription": "OneShopLab の利用を規定する法的条件。"
+  },
+  "Contact": {
+    "metaTitle": "お問い合わせ",
+    "metaDescription": "ご質問・ご意見・不具合報告は OneShopLab チームまで。担当者が直接お返事します。",
+    "eyebrow": "お問い合わせ",
+    "title": "お気軽にご連絡ください",
+    "lead": "監査についての質問、欲しい機能、不具合、提携のご相談など。メッセージを送信いただければ、人間（創業者）がすべて読み、通常 1 営業日以内にお返事します。",
+    "nameLabel": "お名前",
+    "namePlaceholder": "お名前",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "you@yourstore.com",
+    "subjectLabel": "件名",
+    "optional": "任意",
+    "subjectPlaceholder": "ご用件は？",
+    "messageLabel": "メッセージ",
+    "messagePlaceholder": "ご要望をお書きください。ストアに関する内容なら URL を貼り付けてください。",
+    "submit": "送信する",
+    "sending": "送信中…",
+    "successTitle": "送信しました",
+    "successBody": "ありがとうございます！ご入力のアドレスに通常 1 営業日以内にお返事します。",
+    "sendAnother": "別のメッセージを送る",
+    "errorInvalid": "入力内容をご確認ください：お名前、有効なメールアドレス、10 文字以上のメッセージが必要です。",
+    "errorCaptcha": "セキュリティ確認を完了してから再度お試しください。",
+    "errorRateLimited": "短時間に送信が多すぎます。数分待ってからお試しください。",
+    "errorSend": "こちら側で問題が発生しました。しばらくしてから再度お試しください。",
+    "privacyNote": "ご入力情報はお返事のためにのみ使用します。",
+    "altDiscord": "チャットの方がよければ",
+    "altDiscordLink": "Discord に参加",
+    "privacyLink": "プライバシーポリシー"
   }
 }

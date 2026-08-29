@@ -131,7 +131,8 @@
     "terms": "Termos",
     "privacy": "Privacidade",
     "faq": "FAQ",
-    "blog": "Blog"
+    "blog": "Blog",
+    "contact": "Contato"
   },
   "Showcase": {
     "eyebrow": "Lojas reais, resultados reais",
@@ -991,5 +992,34 @@
     "privacyDescription": "Como o OneShopLab recolhe, utiliza e protege os teus dados.",
     "termsTitle": "Termos de Serviço",
     "termsDescription": "Os termos legais que regem o teu uso do OneShopLab."
+  },
+  "Contact": {
+    "metaTitle": "Fale conosco",
+    "metaDescription": "Dúvida, feedback ou bug? Escreva para a equipe OneShopLab — respondemos pessoalmente.",
+    "eyebrow": "Contato",
+    "title": "Fale com a gente",
+    "lead": "Uma dúvida sobre a auditoria, uma função que falta, um bug, uma parceria? Envie uma mensagem — uma pessoa (o fundador) lê cada uma e responde, geralmente em um dia útil.",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Seu nome",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "voce@sualoja.com",
+    "subjectLabel": "Assunto",
+    "optional": "opcional",
+    "subjectPlaceholder": "Sobre o que é?",
+    "messageLabel": "Mensagem",
+    "messagePlaceholder": "Conte o que você precisa. Se for sobre uma loja, cole a URL.",
+    "submit": "Enviar mensagem",
+    "sending": "Enviando…",
+    "successTitle": "Mensagem enviada",
+    "successBody": "Obrigado! Respondemos no endereço informado, geralmente em um dia útil.",
+    "sendAnother": "Enviar outra mensagem",
+    "errorInvalid": "Verifique os campos: um nome, um e-mail válido e uma mensagem com pelo menos 10 caracteres.",
+    "errorCaptcha": "Conclua a verificação de segurança e tente novamente.",
+    "errorRateLimited": "Muitas mensagens em pouco tempo. Aguarde alguns minutos.",
+    "errorSend": "Algo deu errado do nosso lado. Tente novamente em instantes.",
+    "privacyNote": "Usamos seus dados apenas para responder a você.",
+    "altDiscord": "Prefere conversar?",
+    "altDiscordLink": "Entrar no Discord",
+    "privacyLink": "Política de privacidade"
   }
 }
