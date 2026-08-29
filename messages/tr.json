@@ -1023,5 +1023,37 @@
     "altDiscord": "Sohbet etmeyi mi tercih edersiniz?",
     "altDiscordLink": "Discord’a katılın",
     "privacyLink": "Gizlilik politikası"
+  },
+  "Models": {
+    "tier": {
+      "budget": "Ekonomik",
+      "balanced": "Dengeli",
+      "premium": "Premium"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "Hızlı ve ekonomik — toplu üretimler için ideal."
+      },
+      "sonnet-5": {
+        "tagline": "Ürün metinleri için en iyi fiyat / kalite dengesi."
+      },
+      "opus-5": {
+        "tagline": "Üst düzey akıl yürütme — premium ton ve zor durumlar."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "Standart",
+        "tagline": "Hızlı ve net — küçük resimler ve listeler için ideal."
+      },
+      "image-2k": {
+        "label": "Yüksek",
+        "tagline": "Net lifestyle çekimleri — ana görseller için önerilir."
+      },
+      "image-4k": {
+        "label": "Premium",
+        "tagline": "Baskı kalitesi — ajanslar ve lüks markalar."
+      }
+    }
   }
 }

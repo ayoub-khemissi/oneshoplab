@@ -14,6 +14,7 @@ import {
   type ImageQualityId
 } from '@/lib/ai/models';
 import { updateUserPreferencesAction } from '@/lib/auth-actions';
+import { useModelCopy } from './use-model-copy';
 
 interface ModelPreferencesFormProps {
   initialChatModel: ChatModelId;
@@ -41,6 +42,7 @@ export function ModelPreferencesForm({
   initialImageQuality,
   copy
 }: ModelPreferencesFormProps) {
+  const modelCopy = useModelCopy();
   const [chatModel, setChatModel] = useState<ChatModelId>(initialChatModel);
   const [imageQuality, setImageQuality] = useState<ImageQualityId>(initialImageQuality);
   const [savedAt, setSavedAt] = useState<number | null>(null);
@@ -79,7 +81,8 @@ export function ModelPreferencesForm({
                 title={m.displayName}
                 provider={m.provider}
                 tier={m.tier}
-                tagline={m.tagline}
+                tierLabel={modelCopy.tierLabel(m.tier)}
+                tagline={modelCopy.chatTagline(m.id, m.tagline)}
                 costLabel={`~${cost} ${copy.perGen}`}
                 onSelect={() => setChatModel(m.id)}
               />
@@ -107,10 +110,11 @@ export function ModelPreferencesForm({
               <ModelOptionCard
                 key={m.id}
                 active={active}
-                title={`${m.modelName} · ${m.displayName}`}
+                title={`${m.modelName} · ${modelCopy.qualityLabel(m.id, m.resolution, m.displayName)}`}
                 provider={m.provider}
                 tier={m.tier}
-                tagline={m.tagline}
+                tierLabel={modelCopy.tierLabel(m.tier)}
+                tagline={modelCopy.qualityTagline(m.id, m.tagline)}
                 costLabel={`${cost} ${copy.perImage}`}
                 onSelect={() => setImageQuality(m.id)}
               />
@@ -144,6 +148,7 @@ function ModelOptionCard({
   title,
   provider,
   tier,
+  tierLabel,
   tagline,
   costLabel,
   onSelect
@@ -152,6 +157,8 @@ function ModelOptionCard({
   title: string;
   provider: string;
   tier: 'budget' | 'balanced' | 'premium';
+  /** Localised badge text; `tier` itself only drives the colour. */
+  tierLabel: string;
   tagline: string;
   costLabel: string;
   onSelect: () => void;
@@ -181,7 +188,7 @@ function ModelOptionCard({
           <span
             className={`text-[10px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded ${tierColors[tier]}`}
           >
-            {tier}
+            {tierLabel}
           </span>
         </div>
         <p className="text-xs text-[var(--muted)] leading-relaxed">{tagline}</p>

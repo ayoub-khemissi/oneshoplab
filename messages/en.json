@@ -1023,5 +1023,37 @@
     "altDiscord": "Prefer chatting?",
     "altDiscordLink": "Join the Discord",
     "privacyLink": "Privacy policy"
+  },
+  "Models": {
+    "tier": {
+      "budget": "Budget",
+      "balanced": "Balanced",
+      "premium": "Premium"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "Fast and economical — great for bulk runs."
+      },
+      "sonnet-5": {
+        "tagline": "Best price / quality balance for product copy."
+      },
+      "opus-5": {
+        "tagline": "Top-tier reasoning — premium tone and edge cases."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "Standard",
+        "tagline": "Fast and crisp — fine for thumbnails and listings."
+      },
+      "image-2k": {
+        "label": "High",
+        "tagline": "Sharp lifestyle shots — recommended for hero images."
+      },
+      "image-4k": {
+        "label": "Premium",
+        "tagline": "Print-grade quality — agencies and luxury brands."
+      }
+    }
   }
 }

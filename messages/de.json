@@ -1023,5 +1023,37 @@
     "altDiscord": "Lieber chatten?",
     "altDiscordLink": "Discord beitreten",
     "privacyLink": "Datenschutzerklärung"
+  },
+  "Models": {
+    "tier": {
+      "budget": "Günstig",
+      "balanced": "Ausgewogen",
+      "premium": "Premium"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "Schnell und günstig — ideal für Massengenerierungen."
+      },
+      "sonnet-5": {
+        "tagline": "Bestes Preis-Leistungs-Verhältnis für Produkttexte."
+      },
+      "opus-5": {
+        "tagline": "Spitzen-Reasoning — Premium-Ton und Sonderfälle."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "Standard",
+        "tagline": "Schnell und scharf — ideal für Thumbnails und Listen."
+      },
+      "image-2k": {
+        "label": "Hoch",
+        "tagline": "Scharfe Lifestyle-Aufnahmen — empfohlen für Hauptbilder."
+      },
+      "image-4k": {
+        "label": "Premium",
+        "tagline": "Druckqualität — Agenturen und Luxusmarken."
+      }
+    }
   }
 }

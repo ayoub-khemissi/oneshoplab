@@ -1023,5 +1023,37 @@
     "altDiscord": "Vous préférez discuter ?",
     "altDiscordLink": "Rejoindre le Discord",
     "privacyLink": "Politique de confidentialité"
+  },
+  "Models": {
+    "tier": {
+      "budget": "Éco",
+      "balanced": "Équilibré",
+      "premium": "Premium"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "Rapide et économique — idéal pour les générations en masse."
+      },
+      "sonnet-5": {
+        "tagline": "Le meilleur rapport prix / qualité pour les fiches produit."
+      },
+      "opus-5": {
+        "tagline": "Raisonnement haut de gamme — ton premium et cas complexes."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "Standard",
+        "tagline": "Rapide et net — parfait pour les vignettes et les listes."
+      },
+      "image-2k": {
+        "label": "Haute",
+        "tagline": "Photos lifestyle nettes — recommandé pour les images principales."
+      },
+      "image-4k": {
+        "label": "Premium",
+        "tagline": "Qualité impression — agences et marques de luxe."
+      }
+    }
   }
 }

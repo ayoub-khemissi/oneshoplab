@@ -2,6 +2,7 @@
 
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useModelCopy } from './use-model-copy';
 import type { ReactNode } from 'react';
 import {
   CHAT_MODEL_REGISTRY,
@@ -31,6 +32,7 @@ export function ModelPickerChips({
   onPickImage: (id: ImageQualityId) => void;
 }) {
   const t = useTranslations('Product');
+  const modelCopy = useModelCopy();
   const firstImage = Object.values(IMAGE_MODEL_REGISTRY)[0];
   const imageModelName = firstImage.modelName;
   const imageModelProvider = firstImage.provider;
@@ -69,7 +71,7 @@ export function ModelPickerChips({
           <Chip
             key={m.id}
             active={m.id === imageQualityId}
-            label={m.displayName}
+            label={modelCopy.qualityLabel(m.id, m.resolution, m.displayName)}
             cost={`${costForImage(m.id)}`}
             tier={m.tier}
             onClick={() => {

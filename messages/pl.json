@@ -1023,5 +1023,37 @@
     "altDiscord": "Wolisz czat?",
     "altDiscordLink": "Dołącz do Discorda",
     "privacyLink": "Polityka prywatności"
+  },
+  "Models": {
+    "tier": {
+      "budget": "Ekonomiczny",
+      "balanced": "Zrównoważony",
+      "premium": "Premium"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "Szybki i tani — idealny do masowych generacji."
+      },
+      "sonnet-5": {
+        "tagline": "Najlepszy stosunek ceny do jakości dla opisów produktów."
+      },
+      "opus-5": {
+        "tagline": "Najwyższej klasy rozumowanie — ton premium i trudne przypadki."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "Standard",
+        "tagline": "Szybko i ostro — do miniatur i list."
+      },
+      "image-2k": {
+        "label": "Wysoka",
+        "tagline": "Ostre zdjęcia lifestyle — polecane na zdjęcia główne."
+      },
+      "image-4k": {
+        "label": "Premium",
+        "tagline": "Jakość do druku — agencje i marki luksusowe."
+      }
+    }
   }
 }

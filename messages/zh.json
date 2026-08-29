@@ -1022,5 +1022,37 @@
     "altDiscord": "更喜欢聊天？",
     "altDiscordLink": "加入 Discord",
     "privacyLink": "隐私政策"
+  },
+  "Models": {
+    "tier": {
+      "budget": "经济",
+      "balanced": "均衡",
+      "premium": "高级"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "快速经济——适合批量生成。"
+      },
+      "sonnet-5": {
+        "tagline": "商品文案的最佳性价比。"
+      },
+      "opus-5": {
+        "tagline": "顶级推理——高端语气与复杂场景。"
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "标准",
+        "tagline": "快速清晰——适合缩略图和列表。"
+      },
+      "image-2k": {
+        "label": "高清",
+        "tagline": "清晰的生活方式照片——推荐用于主图。"
+      },
+      "image-4k": {
+        "label": "高级",
+        "tagline": "印刷级画质——面向代理机构与奢侈品牌。"
+      }
+    }
   }
 }

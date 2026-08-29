@@ -1022,5 +1022,37 @@
     "altDiscord": "채팅이 더 편하신가요?",
     "altDiscordLink": "Discord 참여하기",
     "privacyLink": "개인정보 처리방침"
+  },
+  "Models": {
+    "tier": {
+      "budget": "절약형",
+      "balanced": "균형형",
+      "premium": "프리미엄"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "빠르고 경제적 — 대량 생성에 적합."
+      },
+      "sonnet-5": {
+        "tagline": "상품 문구에 최적의 가격 대비 품질."
+      },
+      "opus-5": {
+        "tagline": "최상급 추론 — 프리미엄 톤과 까다로운 사례."
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "표준",
+        "tagline": "빠르고 선명 — 썸네일과 목록에 적합."
+      },
+      "image-2k": {
+        "label": "고화질",
+        "tagline": "선명한 라이프스타일 사진 — 대표 이미지에 추천."
+      },
+      "image-4k": {
+        "label": "프리미엄",
+        "tagline": "인쇄급 품질 — 에이전시 및 럭셔리 브랜드."
+      }
+    }
   }
 }

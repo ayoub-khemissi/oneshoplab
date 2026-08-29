@@ -1022,5 +1022,37 @@
     "altDiscord": "チャットの方がよければ",
     "altDiscordLink": "Discord に参加",
     "privacyLink": "プライバシーポリシー"
+  },
+  "Models": {
+    "tier": {
+      "budget": "エコノミー",
+      "balanced": "バランス",
+      "premium": "プレミアム"
+    },
+    "chat": {
+      "haiku-4-5": {
+        "tagline": "高速かつ低コスト——一括生成に最適。"
+      },
+      "sonnet-5": {
+        "tagline": "商品コピーに最適な価格と品質のバランス。"
+      },
+      "opus-5": {
+        "tagline": "最上位の推論力——プレミアムなトーンと難しいケース向け。"
+      }
+    },
+    "quality": {
+      "image-1k": {
+        "label": "標準",
+        "tagline": "高速でシャープ——サムネイルや一覧に。"
+      },
+      "image-2k": {
+        "label": "高品質",
+        "tagline": "鮮明なライフスタイル写真——メイン画像におすすめ。"
+      },
+      "image-4k": {
+        "label": "プレミアム",
+        "tagline": "印刷品質——代理店やラグジュアリーブランド向け。"
+      }
+    }
   }
 }
