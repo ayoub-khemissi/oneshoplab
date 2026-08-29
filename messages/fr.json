@@ -121,7 +121,8 @@
         "description": "Description",
         "tags": "Tags"
       }
-    }
+    },
+    "contact": "Contact"
   },
   "Footer": {
     "tagline": "Optimisation IA des fiches produits",

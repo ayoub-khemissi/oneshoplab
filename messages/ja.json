@@ -121,7 +121,8 @@
         "description": "説明",
         "tags": "タグ"
       }
-    }
+    },
+    "contact": "お問い合わせ"
   },
   "Footer": {
     "tagline": "AIによる商品ページ最適化",

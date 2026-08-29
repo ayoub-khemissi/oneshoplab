@@ -121,7 +121,8 @@
         "description": "Descrição",
         "tags": "Tags"
       }
-    }
+    },
+    "contact": "Contato"
   },
   "Footer": {
     "tagline": "Otimização IA de páginas de produto",

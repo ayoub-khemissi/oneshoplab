@@ -121,7 +121,8 @@
         "description": "Beschreibung",
         "tags": "Tags"
       }
-    }
+    },
+    "contact": "Kontakt"
   },
   "Footer": {
     "tagline": "KI-Optimierung von Produktseiten",

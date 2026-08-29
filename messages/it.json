@@ -121,7 +121,8 @@
         "description": "Descrizione",
         "tags": "Tag"
       }
-    }
+    },
+    "contact": "Contatti"
   },
   "Footer": {
     "tagline": "Ottimizzazione AI delle schede prodotto",

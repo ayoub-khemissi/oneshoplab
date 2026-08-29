@@ -1,87 +1,74 @@
 /**
- * Minimal Discord incoming-webhook client. No SDK: a webhook is a plain
- * POST of {content, embeds} to a URL that already carries its own secret
- * (the URL IS the credential — keep it in .env, never in the client
- * bundle, never in logs).
+ * Client for the OneShopLab Discord bot's HTTP API
+ * (../oneshoplab-discord-bot, Fastify on 127.0.0.1:3101, PM2
+ * `oneshoplab-discord-bot`). The bot owns the Discord token and the
+ * channel-id map; the web app only ever posts plain content into a
+ * named channel through it — no discord.js, no token here.
  *
- * Dev-friendly: when the URL is unset we warn and report ok:false so the
- * caller can record "not notified" without throwing — a missing webhook
- * must never break the user-facing flow that triggered it.
+ * Contract (src/routes/messages.ts in the bot):
+ *   POST {DISCORD_BOT_API_URL}/api/messages
+ *   headers: x-api-key: {DISCORD_BOT_API_KEY}   (= the bot's BOT_API_KEY)
+ *   body:    { channel: <name>, content: <string ≤ 4000> }
+ *
+ * Dev-friendly: when the URL/key are unset we warn and return ok:false
+ * so callers can record "not notified" without throwing — a missing
+ * bot must never break the user-facing flow that triggered the post.
  */
 
-export interface DiscordEmbedField {
-  name: string;
-  value: string;
-  inline?: boolean;
-}
-
-export interface DiscordEmbed {
-  title?: string;
-  description?: string;
-  color?: number;
-  fields?: DiscordEmbedField[];
-  footer?: { text: string };
-  timestamp?: string;
-}
-
-export interface DiscordWebhookMessage {
-  content?: string;
-  username?: string;
-  embeds?: DiscordEmbed[];
-}
+/** Channel names the bot's API accepts (its VALID_CHANNELS enum). */
+export type DiscordChannel =
+  | 'welcome'
+  | 'rules'
+  | 'announcements'
+  | 'changelog'
+  | 'suggestions'
+  | 'bug-reports'
+  | 'support'
+  | 'staff-logs';
 
 export interface DiscordPostResult {
   ok: boolean;
+  messageId?: string;
   reason?: string;
 }
 
-/** Discord hard limits — exceeding them makes the whole POST 400. */
-const MAX_FIELD_VALUE = 1024;
-const MAX_DESCRIPTION = 4096;
+/** Discord hard limit on message content; the bot's schema enforces it too. */
+export const DISCORD_CONTENT_MAX = 4000;
 
 export function truncateForDiscord(value: string, max: number): string {
   const v = value.trim();
   return v.length <= max ? v : `${v.slice(0, max - 1)}…`;
 }
 
-export function isDiscordContactWebhookConfigured(): boolean {
-  return Boolean(process.env.DISCORD_CONTACT_WEBHOOK_URL);
+export function isDiscordBotConfigured(): boolean {
+  return Boolean(process.env.DISCORD_BOT_API_URL && process.env.DISCORD_BOT_API_KEY);
 }
 
-export async function postDiscordWebhook(
-  url: string | undefined,
-  message: DiscordWebhookMessage
+export async function postDiscordMessage(
+  channel: DiscordChannel,
+  content: string
 ): Promise<DiscordPostResult> {
-  if (!url) {
-    console.warn('[discord] webhook URL not configured — dropping message');
+  const base = process.env.DISCORD_BOT_API_URL?.replace(/\/$/, '');
+  const key = process.env.DISCORD_BOT_API_KEY;
+  if (!base || !key) {
+    console.warn('[discord] bot API not configured (DISCORD_BOT_API_URL / _KEY) — dropping message');
     return { ok: false, reason: 'unconfigured' };
   }
-  const safe: DiscordWebhookMessage = {
-    ...message,
-    embeds: message.embeds?.map((e) => ({
-      ...e,
-      description: e.description ? truncateForDiscord(e.description, MAX_DESCRIPTION) : undefined,
-      fields: e.fields?.map((f) => ({
-        ...f,
-        value: truncateForDiscord(f.value || '—', MAX_FIELD_VALUE)
-      }))
-    }))
-  };
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`${base}/api/messages`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(safe),
+      headers: { 'content-type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({ channel, content: truncateForDiscord(content, DISCORD_CONTENT_MAX) }),
       signal: AbortSignal.timeout(10_000)
     });
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      console.error('[discord] webhook POST failed', res.status, body.slice(0, 200));
-      return { ok: false, reason: `http_${res.status}` };
+    const json = (await res.json().catch(() => ({}))) as { success?: boolean; messageId?: string; error?: string };
+    if (!res.ok || !json.success) {
+      console.error('[discord] bot API POST failed', res.status, json.error ?? '');
+      return { ok: false, reason: json.error ?? `http_${res.status}` };
     }
-    return { ok: true };
+    return { ok: true, messageId: json.messageId };
   } catch (e) {
-    console.error('[discord] webhook POST threw', (e as Error).message);
+    console.error('[discord] bot API POST threw', (e as Error).message);
     return { ok: false, reason: 'network' };
   }
 }

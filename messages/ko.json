@@ -121,7 +121,8 @@
         "description": "설명",
         "tags": "태그"
       }
-    }
+    },
+    "contact": "문의하기"
   },
   "Footer": {
     "tagline": "AI 기반 제품 페이지 최적화",

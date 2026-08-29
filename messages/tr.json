@@ -121,7 +121,8 @@
         "description": "Açıklama",
         "tags": "Etiketler"
       }
-    }
+    },
+    "contact": "İletişim"
   },
   "Footer": {
     "tagline": "Yapay zekâ tabanlı ürün sayfası optimizasyonu",

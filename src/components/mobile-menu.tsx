@@ -6,6 +6,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
   Newspaper,
   Repeat,
@@ -33,6 +34,7 @@ interface MobileMenuProps {
     pricing: string;
     faq: string;
     blog: string;
+    contact: string;
     dashboard: string;
     credits: string;
     signedInAs: string;
@@ -171,6 +173,15 @@ export function MobileMenu({
                     aria-hidden
                   />
                   {labels.blog}
+                </ListBox.Item>
+                <ListBox.Item
+                  id="contact"
+                  href="/contact"
+                  textValue={labels.contact}
+                  onAction={() => setIsOpen(false)}
+                >
+                  <Mail className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                  {labels.contact}
                 </ListBox.Item>
                 {discordUrl ? (
                   <ListBox.Item

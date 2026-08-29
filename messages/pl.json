@@ -121,7 +121,8 @@
         "description": "Opis",
         "tags": "Tagi"
       }
-    }
+    },
+    "contact": "Kontakt"
   },
   "Footer": {
     "tagline": "Optymalizacja AI stron produktów",

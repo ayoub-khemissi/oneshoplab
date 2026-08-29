@@ -121,7 +121,8 @@
         "description": "描述",
         "tags": "标签"
       }
-    }
+    },
+    "contact": "联系我们"
   },
   "Footer": {
     "tagline": "AI 产品页优化",

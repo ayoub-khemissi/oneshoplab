@@ -3,7 +3,7 @@ import { and, gte, or, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { contactMessages } from '@/lib/db/schema';
-import { postDiscordWebhook } from '@/lib/discord';
+import { postDiscordMessage, type DiscordChannel } from '@/lib/discord';
 import { sendMail } from '@/lib/mailer';
 
 /**
@@ -95,6 +95,32 @@ function buildEmail(input: ContactInput, ctx: ContactContext, id: string) {
   return { subject: `[Contact] ${subject} — ${input.name}`, text, html };
 }
 
+/** Contact messages carry a visitor's email — they belong in a
+ *  staff-only channel. `staff-logs` is the bot's private feed; override
+ *  with DISCORD_CONTACT_CHANNEL if a dedicated channel is added later. */
+function discordChannel(): DiscordChannel {
+  return (process.env.DISCORD_CONTACT_CHANNEL as DiscordChannel | undefined) ?? 'staff-logs';
+}
+
+/** Plain Discord markdown — the bot API takes `content` only (no embeds). */
+function buildDiscordContent(input: ContactInput, ctx: ContactContext, id: string): string {
+  const subject = input.subject?.trim() || '—';
+  // Quote each line so the message body reads as a block even when it
+  // contains blank lines; cap it so the header never gets truncated away.
+  const body = input.message
+    .split('\n')
+    .map((l) => `> ${l}`)
+    .join('\n');
+  const header =
+    `📩 **Nouveau message de contact**\n` +
+    `**De :** ${input.name} <${input.email}>\n` +
+    `**Objet :** ${subject}\n` +
+    `**Langue :** ${ctx.locale} · ${ctx.userId ? 'compte connecté' : 'visiteur'}\n`;
+  const footer = `\n-# id ${id} · répondre : ${input.email}`;
+  const room = 4000 - header.length - footer.length;
+  return header + (body.length > room ? `${body.slice(0, room - 1)}…` : body) + footer;
+}
+
 export async function submitContactMessage(
   input: ContactInput,
   ctx: ContactContext
@@ -119,24 +145,7 @@ export async function submitContactMessage(
   const mail = buildEmail(input, ctx, id);
   const [emailRes, discordRes] = await Promise.allSettled([
     sendMail({ to: inboxAddress(), subject: mail.subject, html: mail.html, text: mail.text, replyTo: input.email }),
-    postDiscordWebhook(process.env.DISCORD_CONTACT_WEBHOOK_URL, {
-      username: 'OneShopLab Contact',
-      embeds: [
-        {
-          title: `📩 ${input.subject?.trim() || 'Nouveau message de contact'}`,
-          description: input.message,
-          color: 0x5865f2,
-          fields: [
-            { name: 'De', value: `${input.name} <${input.email}>`, inline: false },
-            { name: 'Langue', value: ctx.locale, inline: true },
-            { name: 'Compte', value: ctx.userId ? 'connecté' : 'visiteur', inline: true },
-            { name: 'Répondre', value: `mailto:${input.email}`, inline: false }
-          ],
-          footer: { text: `id ${id}` },
-          timestamp: new Date().toISOString()
-        }
-      ]
-    })
+    postDiscordMessage(discordChannel(), buildDiscordContent(input, ctx, id))
   ]);
 
   const emailOk = emailRes.status === 'fulfilled' && emailRes.value.ok;
