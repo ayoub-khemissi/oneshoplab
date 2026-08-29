@@ -377,7 +377,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                   />
                 </summary>
                 <div className="px-4 md:px-5 pb-4 -mt-1 text-sm leading-relaxed text-[var(--muted)]">
-                  {tFaq(`${id}a`)}
+                  {tFaq(`${id}a`, modelNamesForCopy())}
                 </div>
               </details>
             ))}
