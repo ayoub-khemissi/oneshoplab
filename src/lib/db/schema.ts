@@ -726,3 +726,32 @@ export const contactMessages = mysqlTable(
     idxIp: index('idx_contact_messages_ip').on(t.ip)
   })
 );
+
+/**
+ * Proof of legal acceptance. Stripe Checkout collects a mandatory
+ * "I accept the Terms" checkbox (consent_collection) whose result comes
+ * back on checkout.session.completed; we persist it here with the terms
+ * version so a dispute can be answered with a timestamped record.
+ * Also used for future consents (signup click-wrap, marketing…).
+ */
+export const legalConsents = mysqlTable(
+  'legal_consents',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** 'checkout_tos' | 'signup_tos' | … */
+    kind: varchar('kind', { length: 40 }).notNull(),
+    /** Terms/Privacy version accepted (the "Last updated" date). */
+    version: varchar('version', { length: 32 }).notNull(),
+    /** Where the acceptance was captured (Stripe session id, form name…). */
+    source: varchar('source', { length: 128 }),
+    locale: varchar('locale', { length: 8 }),
+    acceptedAt: timestamp('accepted_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxUser: index('idx_legal_consents_user').on(t.userId),
+    uniqSource: uniqueIndex('uniq_legal_consents_source').on(t.kind, t.source)
+  })
+);

@@ -244,6 +244,23 @@ export default async function SignupPage({ searchParams }: PageProps) {
             {recaptchaOn ? <RecaptchaWrapper siteKey={recaptchaSiteKey!} /> : null}
           </Card.Content>
           <Card.Footer className="flex flex-col gap-4 pt-2">
+            {/* Click-wrap: the notice sits directly above the action it
+                binds, with the two documents one tap away. The acceptance
+                itself is recorded server-side on account creation. */}
+            <p className="text-xs text-center text-[var(--muted)] leading-relaxed">
+              {t.rich('termsNotice', {
+                terms: (chunks) => (
+                  <Link href="/terms" className="underline underline-offset-2 hover:text-[var(--foreground)]">
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link href="/privacy" className="underline underline-offset-2 hover:text-[var(--foreground)]">
+                    {chunks}
+                  </Link>
+                )
+              })}
+            </p>
             <Button type="submit" variant="primary" size="lg" fullWidth>
               {t('signupButton')}
             </Button>

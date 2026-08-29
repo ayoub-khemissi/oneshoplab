@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Passwort bestätigen",
     "errorPasswordMismatch": "Die Passwörter stimmen nicht überein.",
     "resetSuccessSubtitle": "Passwort aktualisiert. Du kannst dich jetzt anmelden.",
-    "recaptchaNotice": "Diese Website ist durch reCAPTCHA geschützt; es gelten die <privacy>Datenschutzerklärung</privacy> und <terms>Nutzungsbedingungen</terms> von Google."
+    "recaptchaNotice": "Diese Website ist durch reCAPTCHA geschützt; es gelten die <privacy>Datenschutzerklärung</privacy> und <terms>Nutzungsbedingungen</terms> von Google.",
+    "termsNotice": "Mit der Kontoerstellung akzeptierst du die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>."
   },
   "Dashboard": {
     "title": "Dashboard",
@@ -1055,5 +1056,10 @@
         "tagline": "Druckqualität — Agenturen und Luxusmarken."
       }
     }
+  },
+  "Checkout": {
+    "consent": "Ich akzeptiere die {terms} und die {privacy} und verlange die sofortige Ausführung des Dienstes; ich nehme zur Kenntnis, dass ich damit mein 14-tägiges Widerrufsrecht für den bereits erbrachten Teil verliere.",
+    "termsLabel": "Nutzungsbedingungen",
+    "privacyLabel": "Datenschutzerklärung"
   }
 }

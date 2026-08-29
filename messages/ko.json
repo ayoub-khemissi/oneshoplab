@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "비밀번호 확인",
     "errorPasswordMismatch": "비밀번호가 일치하지 않습니다.",
     "resetSuccessSubtitle": "비밀번호가 업데이트되었습니다. 이제 로그인할 수 있습니다.",
-    "recaptchaNotice": "이 사이트는 reCAPTCHA로 보호되며 Google의 <privacy>개인정보처리방침</privacy>과 <terms>서비스 약관</terms>이 적용됩니다."
+    "recaptchaNotice": "이 사이트는 reCAPTCHA로 보호되며 Google의 <privacy>개인정보처리방침</privacy>과 <terms>서비스 약관</terms>이 적용됩니다.",
+    "termsNotice": "계정을 만들면 <terms>서비스 약관</terms> 및 <privacy>개인정보 처리방침</privacy>에 동의하는 것입니다."
   },
   "Dashboard": {
     "title": "대시보드",
@@ -1054,5 +1055,10 @@
         "tagline": "인쇄급 품질 — 에이전시 및 럭셔리 브랜드."
       }
     }
+  },
+  "Checkout": {
+    "consent": "{terms} 및 {privacy}에 동의하며 서비스의 즉시 시작을 요청합니다. 이에 따라 이미 제공된 부분에 대한 14일 철회권을 포기함을 확인합니다.",
+    "termsLabel": "서비스 약관",
+    "privacyLabel": "개인정보 처리방침"
   }
 }

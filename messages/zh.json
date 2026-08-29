@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "确认密码",
     "errorPasswordMismatch": "两次输入的密码不一致。",
     "resetSuccessSubtitle": "密码已更新。现在可以登录了。",
-    "recaptchaNotice": "此网站受 reCAPTCHA 保护，适用 Google <privacy>隐私政策</privacy>和<terms>服务条款</terms>。"
+    "recaptchaNotice": "此网站受 reCAPTCHA 保护，适用 Google <privacy>隐私政策</privacy>和<terms>服务条款</terms>。",
+    "termsNotice": "创建账户即表示你接受<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
   },
   "Dashboard": {
     "title": "控制台",
@@ -1054,5 +1055,10 @@
         "tagline": "印刷级画质——面向代理机构与奢侈品牌。"
       }
     }
+  },
+  "Checkout": {
+    "consent": "我接受{terms}和{privacy}，并要求立即开始服务；我知悉因此放弃对已提供部分的 14 天撤回权。",
+    "termsLabel": "服务条款",
+    "privacyLabel": "隐私政策"
   }
 }

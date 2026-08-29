@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Confirmar password",
     "errorPasswordMismatch": "As passwords não coincidem.",
     "resetSuccessSubtitle": "Password atualizada. Já podes entrar.",
-    "recaptchaNotice": "Este site é protegido por reCAPTCHA e aplicam-se a <privacy>Política de Privacidade</privacy> e os <terms>Termos de Serviço</terms> da Google."
+    "recaptchaNotice": "Este site é protegido por reCAPTCHA e aplicam-se a <privacy>Política de Privacidade</privacy> e os <terms>Termos de Serviço</terms> da Google.",
+    "termsNotice": "Ao criar uma conta, aceita os <terms>Termos de serviço</terms> e a <privacy>Política de privacidade</privacy>."
   },
   "Dashboard": {
     "title": "Painel",
@@ -1055,5 +1056,10 @@
         "tagline": "Qualidade de impressão — agências e marcas de luxo."
       }
     }
+  },
+  "Checkout": {
+    "consent": "Aceito os {terms} e a {privacy}, e peço que o serviço comece imediatamente; reconheço que renuncio assim ao meu direito de retratação de 14 dias pela parte já prestada.",
+    "termsLabel": "Termos de serviço",
+    "privacyLabel": "Política de privacidade"
   }
 }

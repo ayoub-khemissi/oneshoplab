@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Potwierdź hasło",
     "errorPasswordMismatch": "Hasła nie pasują do siebie.",
     "resetSuccessSubtitle": "Hasło zaktualizowane. Możesz się zalogować.",
-    "recaptchaNotice": "Ta strona jest chroniona przez reCAPTCHA — obowiązują <privacy>Polityka prywatności</privacy> oraz <terms>Warunki korzystania z usług</terms> Google."
+    "recaptchaNotice": "Ta strona jest chroniona przez reCAPTCHA — obowiązują <privacy>Polityka prywatności</privacy> oraz <terms>Warunki korzystania z usług</terms> Google.",
+    "termsNotice": "Tworząc konto, akceptujesz <terms>Regulamin</terms> i <privacy>Politykę prywatności</privacy>."
   },
   "Dashboard": {
     "title": "Panel",
@@ -1055,5 +1056,10 @@
         "tagline": "Jakość do druku — agencje i marki luksusowe."
       }
     }
+  },
+  "Checkout": {
+    "consent": "Akceptuję {terms} oraz {privacy} i proszę o natychmiastowe rozpoczęcie świadczenia usługi; przyjmuję do wiadomości, że tym samym tracę 14-dniowe prawo odstąpienia w zakresie już wykonanej części.",
+    "termsLabel": "Regulamin",
+    "privacyLabel": "Politykę prywatności"
   }
 }

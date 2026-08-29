@@ -1,5 +1,6 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import bcrypt from 'bcryptjs';
+import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
@@ -7,6 +8,7 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { applyCreditTransaction } from './credits';
 import { SIGNUP_FREE_CREDITS } from './ai/models';
+import { LEGAL_TERMS_VERSION } from './legal-version';
 import { db } from './db';
 import {
   accounts,
@@ -15,7 +17,8 @@ import {
   verificationTokens,
   type ChatModelDbId,
   type ImageQualityDbId,
-  type Plan
+  type Plan,
+  legalConsents
 } from './db/schema';
 
 declare module 'next-auth' {
@@ -118,6 +121,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
       } catch (e) {
         console.error('[auth] failed to grant signup credits to', user.id, e);
+      }
+      // Record the click-wrap acceptance shown on the signup form ("By
+      // creating an account you accept the Terms and the Privacy
+      // Policy") — both credentials and Google signups pass through this
+      // event, so this is the single place that captures it.
+      try {
+        const jar = await cookies();
+        await db.insert(legalConsents).values({
+          id: randomUUID(),
+          userId: user.id,
+          kind: 'signup_tos',
+          version: LEGAL_TERMS_VERSION,
+          source: `user:${user.id}`,
+          locale: jar.get('NEXT_LOCALE')?.value ?? null
+        });
+      } catch (e) {
+        console.error('[auth] failed to record signup consent for', user.id, e);
       }
       // Mark a fresh OAuth (Google) signup so the browser can fire the
       // sign_up / CompleteRegistration conversion events. The

@@ -17,6 +17,7 @@ import {
   type BillingCycle,
   type PlanId
 } from './ai/models';
+import { checkoutConsentParams } from './legal-consent';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
 import type Stripe from 'stripe';
 
@@ -108,10 +109,15 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
   // still fires as a conversion count. Yearly ≠ monthly×12 (−20%), so
   // we read Stripe's authoritative unit_amount rather than computing.
   const valueParam = await stripePriceValueParam(stripe, priceId);
+  // Mandatory Terms/Privacy checkbox + withdrawal waiver, in the buyer's
+  // locale; the acceptance comes back on checkout.session.completed and
+  // is persisted in legal_consents by the webhook.
+  const consent = await checkoutConsentParams();
 
   const checkout = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: customerId,
+    ...consent,
     line_items: [{ price: priceId, quantity: 1 }],
     // sid = Stripe-substituted Checkout Session id → GA4 transaction_id
     // (natural purchase dedupe). plan/cycle drive the GA4 item label;
@@ -192,10 +198,12 @@ export async function buyCreditPackAction(formData: FormData): Promise<void> {
   // on a one-time pack), so feed the Meta Purchase value straight from
   // pricing config — no Stripe round-trip needed.
   const packValueParam = `&value=${pack.priceEur.toFixed(2)}&currency=eur`;
+  const consent = await checkoutConsentParams();
 
   const checkout = await stripe.checkout.sessions.create({
     mode: 'payment',
     customer: customerId,
+    ...consent,
     line_items: [{ price: priceId, quantity: 1 }],
     // sid → GA4 transaction_id (purchase dedupe); pack → GA4 item label;
     // value/currency feed the Meta Pixel Purchase event.

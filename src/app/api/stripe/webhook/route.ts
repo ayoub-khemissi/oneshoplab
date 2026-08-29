@@ -1,9 +1,11 @@
+import { randomUUID } from 'node:crypto';
+import { LEGAL_TERMS_VERSION } from '@/lib/legal-version';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
-import { creditTransactions, subscriptions } from '@/lib/db/schema';
+import { creditTransactions, subscriptions, legalConsents } from '@/lib/db/schema';
 import {
   getStripeClient,
   getStripeWebhookSecret,
@@ -95,6 +97,10 @@ async function handleCheckoutCompleted(
 ): Promise<void> {
   const userId = (cs.metadata?.oneshoplabUserId ?? '') as string;
   if (!userId) return;
+
+  // Persist the Terms acceptance collected by Checkout (mandatory
+  // checkbox) — timestamped proof, idempotent per session.
+  await recordCheckoutConsent(cs, userId);
 
   if (cs.mode === 'subscription' && cs.subscription) {
     const subscription = await stripe.subscriptions.retrieve(
@@ -531,3 +537,22 @@ async function syncFromStripeSubscription(
   });
 }
 
+async function recordCheckoutConsent(cs: Stripe.Checkout.Session, userId: string): Promise<void> {
+  if (cs.consent?.terms_of_service !== 'accepted') return;
+  try {
+    await db.insert(legalConsents).values({
+      id: randomUUID(),
+      userId,
+      kind: 'checkout_tos',
+      version: LEGAL_TERMS_VERSION,
+      source: cs.id,
+      locale: cs.locale ?? null,
+      acceptedAt: cs.created ? new Date(cs.created * 1000) : new Date()
+    });
+  } catch (e) {
+    // Unique (kind, source) → a replayed event is a no-op; anything else
+    // is logged but must not block the credit grant.
+    const msg = (e as Error).message;
+    if (!/Duplicate entry|ER_DUP_ENTRY/.test(msg)) console.error('[stripe-webhook] consent record failed', msg);
+  }
+}

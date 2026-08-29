@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Confirmar contraseña",
     "errorPasswordMismatch": "Las contraseñas no coinciden.",
     "resetSuccessSubtitle": "Contraseña actualizada. Ya puedes iniciar sesión.",
-    "recaptchaNotice": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos del Servicio</terms> de Google."
+    "recaptchaNotice": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos del Servicio</terms> de Google.",
+    "termsNotice": "Al crear una cuenta aceptas los <terms>Términos del servicio</terms> y la <privacy>Política de privacidad</privacy>."
   },
   "Dashboard": {
     "title": "Panel",
@@ -1055,5 +1056,10 @@
         "tagline": "Calidad de impresión — agencias y marcas de lujo."
       }
     }
+  },
+  "Checkout": {
+    "consent": "Acepto los {terms} y la {privacy}, y solicito que el servicio comience de inmediato; reconozco que renuncio así a mi derecho de desistimiento de 14 días por la parte ya prestada.",
+    "termsLabel": "Términos del servicio",
+    "privacyLabel": "Política de privacidad"
   }
 }

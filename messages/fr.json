@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Confirmer le mot de passe",
     "errorPasswordMismatch": "Les mots de passe ne correspondent pas.",
     "resetSuccessSubtitle": "Mot de passe mis à jour. Tu peux te connecter avec.",
-    "recaptchaNotice": "Ce site est protégé par reCAPTCHA et soumis aux <privacy>Règles de confidentialité</privacy> et aux <terms>Conditions d'utilisation</terms> de Google."
+    "recaptchaNotice": "Ce site est protégé par reCAPTCHA et soumis aux <privacy>Règles de confidentialité</privacy> et aux <terms>Conditions d'utilisation</terms> de Google.",
+    "termsNotice": "En créant un compte, vous acceptez les <terms>Conditions générales</terms> et la <privacy>Politique de confidentialité</privacy>."
   },
   "Dashboard": {
     "title": "Tableau de bord",
@@ -1055,5 +1056,10 @@
         "tagline": "Qualité impression — agences et marques de luxe."
       }
     }
+  },
+  "Checkout": {
+    "consent": "J'accepte les {terms} et la {privacy}, et je demande l'exécution immédiate du service ; je reconnais renoncer de ce fait à mon droit de rétractation de 14 jours pour la partie déjà fournie.",
+    "termsLabel": "Conditions générales",
+    "privacyLabel": "Politique de confidentialité"
   }
 }

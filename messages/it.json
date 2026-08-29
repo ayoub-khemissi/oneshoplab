@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Conferma password",
     "errorPasswordMismatch": "Le password non coincidono.",
     "resetSuccessSubtitle": "Password aggiornata. Ora puoi accedere.",
-    "recaptchaNotice": "Questo sito è protetto da reCAPTCHA e si applicano le <privacy>Norme sulla privacy</privacy> e i <terms>Termini di servizio</terms> di Google."
+    "recaptchaNotice": "Questo sito è protetto da reCAPTCHA e si applicano le <privacy>Norme sulla privacy</privacy> e i <terms>Termini di servizio</terms> di Google.",
+    "termsNotice": "Creando un account accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
   },
   "Dashboard": {
     "title": "Dashboard",
@@ -1055,5 +1056,10 @@
         "tagline": "Qualità da stampa — agenzie e marchi di lusso."
       }
     }
+  },
+  "Checkout": {
+    "consent": "Accetto i {terms} e l'{privacy} e chiedo l'esecuzione immediata del servizio; riconosco di rinunciare così al diritto di recesso di 14 giorni per la parte già fornita.",
+    "termsLabel": "Termini di servizio",
+    "privacyLabel": "Informativa sulla privacy"
   }
 }

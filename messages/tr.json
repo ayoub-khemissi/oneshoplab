@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Şifreyi doğrula",
     "errorPasswordMismatch": "Şifreler eşleşmiyor.",
     "resetSuccessSubtitle": "Şifre güncellendi. Şimdi giriş yapabilirsin.",
-    "recaptchaNotice": "Bu site reCAPTCHA tarafından korunmaktadır; Google <privacy>Gizlilik Politikası</privacy> ve <terms>Hizmet Şartları</terms> geçerlidir."
+    "recaptchaNotice": "Bu site reCAPTCHA tarafından korunmaktadır; Google <privacy>Gizlilik Politikası</privacy> ve <terms>Hizmet Şartları</terms> geçerlidir.",
+    "termsNotice": "Hesap oluşturarak <terms>Hizmet Şartları</terms>'nı ve <privacy>Gizlilik Politikası</privacy>'nı kabul etmiş olursunuz."
   },
   "Dashboard": {
     "title": "Panel",
@@ -1055,5 +1056,10 @@
         "tagline": "Baskı kalitesi — ajanslar ve lüks markalar."
       }
     }
+  },
+  "Checkout": {
+    "consent": "{terms} ve {privacy} kabul ediyorum ve hizmetin derhal başlamasını talep ediyorum; böylece halihazırda sunulan kısım için 14 günlük cayma hakkımdan feragat ettiğimi kabul ediyorum.",
+    "termsLabel": "Hizmet Şartları'nı",
+    "privacyLabel": "Gizlilik Politikası'nı"
   }
 }

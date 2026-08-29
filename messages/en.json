@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "Confirm password",
     "errorPasswordMismatch": "The passwords don't match.",
     "resetSuccessSubtitle": "Password updated. You can now sign in with the new one.",
-    "recaptchaNotice": "This site is protected by reCAPTCHA and the Google <privacy>Privacy Policy</privacy> and <terms>Terms of Service</terms> apply."
+    "recaptchaNotice": "This site is protected by reCAPTCHA and the Google <privacy>Privacy Policy</privacy> and <terms>Terms of Service</terms> apply.",
+    "termsNotice": "By creating an account you accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
   },
   "Dashboard": {
     "title": "Dashboard",
@@ -1055,5 +1056,10 @@
         "tagline": "Print-grade quality — agencies and luxury brands."
       }
     }
+  },
+  "Checkout": {
+    "consent": "I accept the {terms} and the {privacy}, and I ask for the service to start immediately; I acknowledge that I therefore waive my 14-day right of withdrawal for the part already provided.",
+    "termsLabel": "Terms of Service",
+    "privacyLabel": "Privacy Policy"
   }
 }

@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "تأكيد كلمة المرور",
     "errorPasswordMismatch": "كلمتا المرور غير متطابقتين.",
     "resetSuccessSubtitle": "تم تحديث كلمة المرور. يمكنك تسجيل الدخول الآن.",
-    "recaptchaNotice": "هذا الموقع محمي بواسطة reCAPTCHA وتنطبق <privacy>سياسة الخصوصية</privacy> و<terms>شروط الخدمة</terms> الخاصة بـ Google."
+    "recaptchaNotice": "هذا الموقع محمي بواسطة reCAPTCHA وتنطبق <privacy>سياسة الخصوصية</privacy> و<terms>شروط الخدمة</terms> الخاصة بـ Google.",
+    "termsNotice": "بإنشاء حساب فإنك توافق على <terms>شروط الخدمة</terms> و<privacy>سياسة الخصوصية</privacy>."
   },
   "Dashboard": {
     "title": "لوحة التحكم",
@@ -1054,5 +1055,10 @@
         "tagline": "جودة طباعة — للوكالات والعلامات الفاخرة."
       }
     }
+  },
+  "Checkout": {
+    "consent": "أوافق على {terms} و{privacy}، وأطلب بدء الخدمة فورًا؛ وأقرّ بأنني أتنازل بذلك عن حقي في الانسحاب خلال 14 يومًا عن الجزء الذي تم تقديمه بالفعل.",
+    "termsLabel": "شروط الخدمة",
+    "privacyLabel": "سياسة الخصوصية"
   }
 }

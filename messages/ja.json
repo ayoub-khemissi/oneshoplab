@@ -251,7 +251,8 @@
     "confirmPasswordLabel": "パスワードを確認",
     "errorPasswordMismatch": "パスワードが一致しません。",
     "resetSuccessSubtitle": "パスワードを更新しました。サインインできます。",
-    "recaptchaNotice": "このサイトは reCAPTCHA によって保護されており、Google の<privacy>プライバシー ポリシー</privacy>と<terms>利用規約</terms>が適用されます。"
+    "recaptchaNotice": "このサイトは reCAPTCHA によって保護されており、Google の<privacy>プライバシー ポリシー</privacy>と<terms>利用規約</terms>が適用されます。",
+    "termsNotice": "アカウントを作成すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
   },
   "Dashboard": {
     "title": "ダッシュボード",
@@ -1054,5 +1055,10 @@
         "tagline": "印刷品質——代理店やラグジュアリーブランド向け。"
       }
     }
+  },
+  "Checkout": {
+    "consent": "{terms}および{privacy}に同意し、サービスの即時開始を求めます。これにより、既に提供された部分について14日間の撤回権を放棄することを了承します。",
+    "termsLabel": "利用規約",
+    "privacyLabel": "プライバシーポリシー"
   }
 }
