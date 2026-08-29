@@ -185,7 +185,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true
 });
 
-/** Hash a plaintext password for storage. cost factor 12 ≈ ~250ms on modern CPUs. */
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
-}
+// Kept in its own framework-free module so server actions and tests can
+// hash passwords without importing next-auth; re-exported for callers.
+export { hashPassword } from './password';

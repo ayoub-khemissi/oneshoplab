@@ -3,7 +3,7 @@
 import { and, eq, gte, isNull } from 'drizzle-orm';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
-import { hashPassword } from './auth';
+import { hashPassword } from './password';
 import { db } from './db';
 import { passwordResetTokens, users } from './db/schema';
 import { sendMail } from './mailer';

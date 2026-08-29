@@ -62,3 +62,15 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   `db/schema.ts` 751 (leave — one schema file is deliberate), `leads/discovery.ts`
   717, `ai-image-grid-live.tsx` 675, `share/queries.ts` 636, `share-links-card.tsx` 626.
   `max-lines` stays a warning until those are done.
+
+## 2026-08-29 (late) — Phase 3 done, Phase 5 partial
+
+- All 10 oversized files split; `max-lines` (600) is now an **error**, with
+  `src/lib/db/schema.ts` as the single explicit exception.
+- Monitoring: `/api/health` + `scripts/ops/healthcheck.sh` (cron 5 min →
+  Discord). Still missing: an **external** uptime monitor (needs an account
+  outside the box) and error tracking (Sentry — needs a DSN; decide first).
+- CSP shipped **report-only**; review `[csp-report]` logs after a week
+  before enforcing.
+- Test campaign on business features in progress (auth, audit engine,
+  adapters, share/retention, contact/prospecting/legal).

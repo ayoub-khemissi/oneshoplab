@@ -14,7 +14,8 @@ import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from './ai/pricing';
 import { launchAuditForUser } from './audit/launch';
 import { touchProjectLastView as touchLastView } from './projects/touch-last-view';
 import { refreshAuditProducts } from './audit/refresh';
-import { auth, hashPassword, signOut } from './auth';
+import { auth, signOut } from './auth';
+import { hashPassword } from './password';
 import { db } from './db';
 import { findLanguage } from './i18n/languages';
 import {

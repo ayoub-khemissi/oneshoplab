@@ -1,0 +1,68 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`catalog report > realistic mixed catalog — snapshot (rule changes must be deliberate) 1`] = `
+{
+  "averages": {
+    "descriptionLength": 364,
+    "imageCount": 2.5,
+    "tagCount": 3,
+    "titleLength": 23,
+    "variantCount": 0.75,
+  },
+  "avg": 62,
+  "products": [
+    {
+      "handle": "empty",
+      "issues": [
+        {
+          "code": "no_image",
+        },
+        {
+          "code": "no_description",
+        },
+        {
+          "code": "no_tags",
+        },
+      ],
+      "score": 0,
+    },
+    {
+      "handle": "b",
+      "issues": [
+        {
+          "code": "missing_alt_text",
+          "data": {
+            "missing": 2,
+            "total": 2,
+          },
+        },
+      ],
+      "score": 71,
+    },
+    {
+      "handle": "c",
+      "issues": [
+        {
+          "code": "unstructured_description",
+        },
+        {
+          "code": "short_title",
+        },
+      ],
+      "score": 76,
+    },
+    {
+      "handle": "mug",
+      "issues": [],
+      "score": 100,
+    },
+  ],
+  "scores": {
+    "catalogCompleteness": 75,
+    "copyQuality": 63,
+    "overall": 66,
+    "taggingQuality": 60,
+    "visualQuality": 66,
+  },
+}
+`;

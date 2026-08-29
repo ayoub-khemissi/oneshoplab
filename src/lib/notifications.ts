@@ -90,7 +90,7 @@ export async function markAllRead(userId: string): Promise<{ updated: number }> 
     .update(notifications)
     .set({ isRead: true })
     .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
-  return { updated: (r as unknown as { rowsAffected?: number }).rowsAffected ?? 0 };
+  return { updated: r[0].affectedRows };
 }
 
 /** Mark every unread notification linked to a given jobId as read.
@@ -107,7 +107,7 @@ export async function markReadByJob(userId: string, jobId: string): Promise<{ up
         eq(notifications.isRead, false)
       )
     );
-  return { updated: (r as unknown as { rowsAffected?: number }).rowsAffected ?? 0 };
+  return { updated: r[0].affectedRows };
 }
 
 /** Same as markReadByJob but keyed on auditId (audit_completed /
@@ -126,7 +126,7 @@ export async function markReadByAudit(
         eq(notifications.isRead, false)
       )
     );
-  return { updated: (r as unknown as { rowsAffected?: number }).rowsAffected ?? 0 };
+  return { updated: r[0].affectedRows };
 }
 
 export interface NotificationRow {

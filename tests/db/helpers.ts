@@ -5,7 +5,20 @@ import { creditTransactions, users } from '@/lib/db/schema';
 
 export async function resetTables(): Promise<void> {
   await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);
-  for (const t of ['credit_transactions', 'legal_consents', 'subscriptions', 'users']) {
+  for (const t of [
+    'credit_transactions',
+    'legal_consents',
+    'subscriptions',
+    'password_reset_tokens',
+    'contact_messages',
+    'notifications',
+    'share_links',
+    'jobs',
+    'audits',
+    'products',
+    'projects',
+    'users'
+  ]) {
     await db.execute(sql.raw(`TRUNCATE TABLE \`${t}\``));
   }
   await db.execute(sql`SET FOREIGN_KEY_CHECKS = 1`);
