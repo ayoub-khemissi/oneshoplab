@@ -72,5 +72,7 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   outside the box) and error tracking (Sentry — needs a DSN; decide first).
 - CSP shipped **report-only**; review `[csp-report]` logs after a week
   before enforcing.
-- Test campaign on business features in progress (auth, audit engine,
-  adapters, share/retention, contact/prospecting/legal).
+- Test campaign on business features done: 124 tests / 15 files (~33 s).
+  Not yet covered: store adapters (Shopify/Woo/Wix normalisation — needs
+  fixtures), signup via next-auth `createUser` (framework-bound), legal
+  consent params (next-intl request context), dynamic audit / bulk pipeline.

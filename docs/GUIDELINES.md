@@ -85,8 +85,12 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
   `tests/global-setup.ts` applies `drizzle/` migrations to it. The runner
   refuses any database whose name does not end in `_test`.
 - Suites: `tests/unit` (no I/O: pricing snapshot + catalog invariants,
-  provider routing with stubbed fetch/kie) and `tests/db` (real MySQL: credit
-  ledger under concurrency, Stripe webhook replay). Each DB test truncates
+  provider routing, audit engine rules + snapshot, job transition table,
+  cold-outreach lead filters + rendering) and `tests/db` (real MySQL: credit
+  ledger under concurrency, Stripe webhook replay, job transitions, password
+  reset, account actions, contact form, share links, image retention,
+  notifications). Server actions are tested with `auth()` mocked through
+  `vi.hoisted` state; next-auth itself is never imported by a test. Each DB test truncates
   the tables it uses; seed helpers write ledger rows so `balance == SUM(ledger)`
   holds from the first assertion.
 - Rule: any change on the money path (`src/lib/credits.ts`, webhook, pricing)
