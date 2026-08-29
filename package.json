@@ -21,7 +21,9 @@
     "i18n:check": "node scripts/check-i18n.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm audit:prod"
+    "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm audit:prod",
+    "prepare": "husky",
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",

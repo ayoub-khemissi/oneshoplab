@@ -24,9 +24,22 @@ pnpm db:generate      # create a new migration from drizzle schema diff
 pnpm db:migrate       # apply pending migrations
 ```
 
-There is no automated test suite. Verification = `pnpm typecheck`, `pnpm lint`,
-and manual QA. If you can't reproduce a UI change in the browser, say so
-explicitly rather than declaring it done.
+```bash
+pnpm check            # lint + typecheck + i18n:check + audit:prod — run before pushing
+pnpm i18n:check       # parity across 13 locales + every static t('key') resolves
+pnpm lint:strict      # 0-warning target (ratchet; see docs/ADOPTION.md)
+pnpm deploy           # scripts/deploy.sh — the ONLY way to deploy (gates → migrate → build → BUILD_ID check → restart → health)
+```
+
+Quality rules live in `docs/GUIDELINES.md`; the dated state of adoption in
+`docs/ADOPTION.md`. Git hooks (husky): pre-commit runs prettier + eslint on
+staged files + typecheck; pre-push runs the i18n check + audit. CI
+(`.github/workflows/ci.yml`) runs the same gates plus a build on every push.
+
+There is no automated test suite yet (planned: vitest on the credit ledger,
+pricing snapshot, job state machine, webhook idempotency). Verification =
+`pnpm check` + manual QA. If you can't reproduce a UI change in the browser,
+say so explicitly rather than declaring it done.
 
 ## Path alias
 

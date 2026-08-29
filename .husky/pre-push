@@ -1,0 +1,2 @@
+pnpm i18n:check
+pnpm audit:prod

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+      - name: Lint (errors block; warnings are the ratchet)
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: i18n parity + key usage
+        run: pnpm i18n:check
+      - name: Format check
+        run: pnpm format:check
+      - name: Dependency audit (critical only)
+        run: pnpm audit:prod
+      - name: Migrations in sync with schema
+        run: pnpm drizzle-kit check
+      - name: Build
+        env:
+          # Build-time public config only; no secrets are needed to compile.
+          APP_URL: https://oneshoplab.com
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ci-placeholder
+        run: pnpm build && test -s .next/BUILD_ID
