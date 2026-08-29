@@ -40,6 +40,9 @@ jobs:
         run: pnpm typecheck
       - name: i18n parity + key usage
         run: pnpm i18n:check
+      - name: Import cycles (madge)
+        run: pnpm deps:circular
+
       - name: Tests (vitest — unit + ledger/webhook against MySQL)
         env:
           TEST_DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
