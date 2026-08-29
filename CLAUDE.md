@@ -82,6 +82,13 @@ the two markups (`chatMarkupFactor` for text — 2.0, `creditMarkupFactor` for
 images — 3.5, env-overridable via `CREDIT_MARKUP_FACTOR`). Rates are USD/M
 tokens in units of `providerUnitUsd` (0.005 $): $2/M → 400.
 
+User-facing prose about a model (tier badge, tagline, image-quality label)
+is translated under `Models.*` in `messages/*.json`, keyed by catalog id, and
+read through `useModelCopy()` with a fallback to the English text in
+`pricing.json` — model NAMES themselves are never translated. When you add
+a model, add its `Models.chat.<id>.tagline` (and `quality.<id>.*` for image
+tiers) in the locales you care about; the rest shows English until then.
+
 Credits debited = field token cap × rate × markup (`estimateChatCredits`)
 or flat cost × markup (`costForImage`) in `src/lib/ai/models.ts`. Never
 hardcode credit costs or model ids at call sites; never mention a model
