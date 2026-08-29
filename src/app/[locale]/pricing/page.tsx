@@ -1,3 +1,4 @@
+import { modelNamesForCopy } from '@/lib/ai/models';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
@@ -212,7 +213,7 @@ export default async function PricingPage() {
       >
         <h2 className="text-2xl font-bold tracking-tight text-center">{t('whatIsCreditTitle')}</h2>
         <Card variant="secondary" className="p-6 flex flex-col gap-4">
-          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody')}</p>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('whatIsCreditBody', modelNamesForCopy())}</p>
           <div className="grid sm:grid-cols-3 gap-3">
             <Stat label={t('costFullGen')} value={`~50 ${t('credits')}`} />
             <Stat label={t('costImage1k')} value={`15 ${t('credits')}`} />

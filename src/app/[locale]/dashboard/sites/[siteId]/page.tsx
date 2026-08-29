@@ -7,7 +7,8 @@ import {
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   type ChatModelId,
-  type ImageQualityId
+  type ImageQualityId,
+  resolveChatModelId
 } from '@/lib/ai/models';
 import { useTranslations } from 'next-intl';
 import { notFound, redirect } from 'next/navigation';
@@ -635,7 +636,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   //     (only `products` does).
   // Saves ~5 round-trips per tab click for the common case.
   const bulkChatModel: ChatModelId =
-    (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
+    resolveChatModelId(session.user.preferredChatModel);
   const bulkImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
   const needsBulk =

@@ -17,7 +17,18 @@ import {
 export const PLATFORMS = ['shopify', 'woocommerce', 'wix', 'manual', 'unknown'] as const;
 export const PLANS = ['free', 'starter', 'pro', 'scale'] as const;
 export const BILLING_CYCLES = ['monthly', 'yearly'] as const;
-export const CHAT_MODEL_IDS = ['gemini-3-1-pro', 'sonnet-4-6', 'opus-4-6'] as const;
+/** Every id ever stored in users.preferred_chat_model. The ACTIVE lineup
+ *  lives in pricing.json (src/lib/ai/pricing.ts CHAT_MODEL_IDS); retired
+ *  ids stay here so old rows remain valid and are remapped on read via
+ *  resolveChatModelId(). Add new ids here too when the catalog grows. */
+export const CHAT_MODEL_IDS = [
+  'gemini-3-1-pro',
+  'sonnet-4-6',
+  'opus-4-6',
+  'haiku-4-5',
+  'sonnet-5',
+  'opus-5'
+] as const;
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
 export const JOB_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
 export const AUDIT_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
@@ -92,7 +103,7 @@ export const users = mysqlTable('users', {
   creditsBalancePack: int('credits_balance_pack').notNull().default(0),
   preferredChatModel: mysqlEnum('preferred_chat_model', CHAT_MODEL_IDS)
     .notNull()
-    .default('sonnet-4-6'),
+    .default('sonnet-5'),
   preferredImageQuality: mysqlEnum('preferred_image_quality', IMAGE_QUALITY_IDS)
     .notNull()
     .default('image-1k'),

@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
+import { persistKieJobFailure } from './persist-result';
 import { db } from '@/lib/db';
 import { jobs, products, users } from '@/lib/db/schema';
 import { buildKieCallbackUrl, getKieClient } from './kie';
@@ -23,7 +24,9 @@ export interface StartImageOptimOptions {
 
 export interface StartImageOptimResult {
   jobId: string;
-  kieTaskId: string;
+  /** null when kie's createTask failed and the OpenRouter fallback
+   *  completed the job synchronously instead. */
+  kieTaskId: string | null;
   creditsHeld: number;
 }
 
@@ -119,19 +122,14 @@ export async function startImageOptim(
     return { jobId, kieTaskId: taskId, creditsHeld: cost };
   } catch (e) {
     const message = (e as Error).message;
-    await db
-      .update(jobs)
-      .set({ status: 'failed', error: message, finishedAt: new Date() })
-      .where(eq(jobs.id, jobId));
-
-    // Refund credits (idempotency key avoids double-refund on retry).
-    await applyCreditTransaction({
-      userId: opts.userId,
-      delta: cost,
-      reason: 'kie_image_edit_refund',
-      jobId,
-      idempotencyKey: `job-${jobId}-refund`
-    });
+    // Fail through the shared path: it tries the OpenRouter image
+    // fallback first (same prompt + source), and only then flips the
+    // job to failed + refunds (idempotency key `job-<id>-refund`).
+    await persistKieJobFailure(jobId, 'kie_image_edit', message, 'kie_create_failed');
+    const after = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId), columns: { status: true } });
+    if (after?.status === 'completed') {
+      return { jobId, kieTaskId: null, creditsHeld: cost };
+    }
 
     throw e;
   }

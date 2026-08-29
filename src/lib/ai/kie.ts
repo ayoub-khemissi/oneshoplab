@@ -85,11 +85,8 @@ export interface ChatMessage {
   content: string | ChatContentBlock[];
 }
 
-export const CHAT_MODELS = {
-  haiku: 'claude-haiku-4-5',
-  sonnet: 'claude-sonnet-4-6',
-  opus: 'claude-opus-4-6'
-} as const;
+// Model ids live in pricing.json (see models.ts SYSTEM_CHAT_MODELS /
+// CHAT_MODEL_REGISTRY) — kie is now the fallback text provider only.
 
 export type ChatModel =
   | 'claude-haiku-4-5'

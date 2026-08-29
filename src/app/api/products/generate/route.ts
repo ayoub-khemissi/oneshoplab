@@ -1,3 +1,4 @@
+import { resolveChatModelId } from '@/lib/ai/models';
 import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -258,7 +259,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const chatModelId: ChatModelId =
     (bodyChatModel != null && bodyChatModel in CHAT_MODEL_REGISTRY
       ? (bodyChatModel as ChatModelId)
-      : (session.user.preferredChatModel as ChatModelId | undefined)) ?? DEFAULT_CHAT_MODEL;
+      : resolveChatModelId(session.user.preferredChatModel));
   const imageQualityId: ImageQualityId =
     (bodyImageQuality != null && bodyImageQuality in IMAGE_MODEL_REGISTRY
       ? (bodyImageQuality as ImageQualityId)

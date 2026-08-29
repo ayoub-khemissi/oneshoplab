@@ -1,3 +1,4 @@
+import { resolveChatModelId } from '@/lib/ai/models';
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
@@ -64,10 +65,7 @@ function resolveModels(
   const chatModelId: ChatModelId =
     overrideChat && overrideChat in CHAT_MODEL_REGISTRY
       ? (overrideChat as ChatModelId)
-      : session.user?.preferredChatModel &&
-          session.user.preferredChatModel in CHAT_MODEL_REGISTRY
-        ? (session.user.preferredChatModel as ChatModelId)
-        : DEFAULT_CHAT_MODEL;
+      : resolveChatModelId(session.user?.preferredChatModel);
   const imageQualityId: ImageQualityId =
     overrideImage && overrideImage in IMAGE_MODEL_REGISTRY
       ? (overrideImage as ImageQualityId)

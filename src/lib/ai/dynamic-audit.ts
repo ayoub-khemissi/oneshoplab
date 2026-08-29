@@ -4,14 +4,14 @@ import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import {
-  CHAT_MODELS,
-  KieClient,
   buildKieCallbackUrl,
   getKieClient,
   type ChatContentBlock,
   type ChatImageContent,
   type ChatTextContent
 } from './kie';
+import { chatCompletion } from './chat-provider';
+import { SYSTEM_CHAT_MODELS } from './models';
 import { retryJob } from './retry-job';
 
 /** How many product images we send to Claude as visual context for the rewrite. */
@@ -244,7 +244,6 @@ export async function runDynamicAuditForProduct(opts: DynamicAuditOptions): Prom
 }
 
 async function runDynamicAuditChat(opts: DynamicAuditOptions): Promise<void> {
-  const kie = getKieClient();
   const { system, userContent } = buildDynamicAuditPrompt(opts);
 
   const jobId = randomUUID();
@@ -255,14 +254,14 @@ async function runDynamicAuditChat(opts: DynamicAuditOptions): Promise<void> {
   let error: string | null = null;
 
   try {
-    const response = await kie.chat({
-      model: CHAT_MODELS.sonnet,
+    const response = await chatCompletion({
+      model: SYSTEM_CHAT_MODELS.quality,
       system,
       messages: [{ role: 'user', content: userContent }],
       max_tokens: 3072
     });
-    creditsConsumed = response.credits_consumed;
-    const text = KieClient.extractText(response);
+    creditsConsumed = response.creditsConsumed;
+    const text = response.text;
     parsed = parseStructuredJson(text);
     if (!parsed) {
       error = 'Could not parse Claude response as expected JSON.';
@@ -394,7 +393,6 @@ export async function regenerateProductSection(opts: {
     return { ok: false, reason: 'no_base_job' };
   }
 
-  const kie = getKieClient();
   const { system, userContent } = buildSectionPrompt(opts, opts.section);
 
   let creditsConsumed = 0;
@@ -402,14 +400,14 @@ export async function regenerateProductSection(opts: {
   let error: string | null = null;
 
   try {
-    const response = await kie.chat({
-      model: CHAT_MODELS.sonnet,
+    const response = await chatCompletion({
+      model: SYSTEM_CHAT_MODELS.quality,
       system,
       messages: [{ role: 'user', content: userContent }],
       max_tokens: 1536
     });
-    creditsConsumed = response.credits_consumed;
-    const text = KieClient.extractText(response);
+    creditsConsumed = response.creditsConsumed;
+    const text = response.text;
     partial = parseSectionResponse(text, opts.section);
     if (!partial) {
       error = `Could not parse ${opts.section} response.`;

@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { jobs, products, projects, type JobKind } from '@/lib/db/schema';
 import { notify } from '@/lib/notifications';
 import { isR2Configured, uploadFromUrl } from '@/lib/storage';
+import { generateFallbackImage, isImageFallbackConfigured } from './image-fallback';
 
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];
 
@@ -186,6 +187,23 @@ export async function persistKieJobFailure(
 ): Promise<void> {
   const errorText = failMsg ?? failCode ?? 'kie reported failure';
 
+  // Image jobs: before failing + refunding, try the OpenRouter fallback
+  // model with the same prompt/source. Skipped when the merchant cancelled
+  // (they don't want the image), when R2 itself is the problem (the
+  // fallback would fail the same upload), or when the fallback isn't
+  // configured. On success the job completes normally and the original
+  // credit hold stands — the merchant paid for an image and got one.
+  const fallbackEligible =
+    isImageJob(jobKind) &&
+    isImageFallbackConfigured() &&
+    failCode !== 'cancelled_by_user' &&
+    failMsg !== 'r2_persist_failed' &&
+    failCode !== 'fallback_failed';
+  if (fallbackEligible) {
+    const rescued = await tryImageFallback(jobId, jobKind, errorText);
+    if (rescued) return;
+  }
+
   // Read the job *first* so we can decide whether to flip it to failed
   // and whether to issue a refund. Two terminal-state guards live here:
   //   - if the row is already `completed`, we don't change status (the
@@ -221,4 +239,48 @@ export async function persistKieJobFailure(
   });
 
   await emitImageNotification(jobId, 'image_failed', errorText);
+}
+
+/**
+ * Regenerate a failed image job through the catalog's fallback model and
+ * complete the job with the R2 URL. Returns false (and logs) when the
+ * fallback itself fails so the caller proceeds with the normal
+ * fail + refund path. Terminal-state guard mirrors persistKieJobSuccess.
+ */
+async function tryImageFallback(jobId: string, jobKind: string, originalError: string): Promise<boolean> {
+  const job = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId) });
+  if (!job || (job.status !== 'pending' && job.status !== 'running')) return false;
+  const input = job.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
+  if (!input?.userPrompt) return false;
+  try {
+    const r = await generateFallbackImage({
+      jobId,
+      prompt: input.userPrompt,
+      sourceImageUrl: input.sourceImageUrl ?? null
+    });
+    const prev = (job.result && typeof job.result === 'object' ? job.result : {}) as Record<string, unknown>;
+    await db
+      .update(jobs)
+      .set({
+        status: 'completed',
+        error: null,
+        finishedAt: new Date(),
+        result: {
+          ...prev,
+          resultUrls: [],
+          persistedUrls: [r.publicUrl],
+          provider: 'openrouter',
+          providerModel: r.model,
+          providerUnitsConsumed: r.providerUnits,
+          fallbackFrom: originalError.slice(0, 200)
+        }
+      })
+      .where(and(eq(jobs.id, jobId), inArray(jobs.status, ['pending', 'running'])));
+    console.warn(`[persist-result] image job ${jobId} rescued by fallback ${r.model} (kie: ${originalError.slice(0, 80)})`);
+    await emitImageNotification(jobId, 'image_completed', null);
+    return true;
+  } catch (e) {
+    console.error(`[persist-result] image fallback failed for job ${jobId}:`, (e as Error).message);
+    return false;
+  }
 }

@@ -3,7 +3,9 @@ import { getEffectiveLanguage } from '@/lib/audit/language';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
-import { CHAT_MODELS, KieClient, buildKieCallbackUrl, getKieClient } from './kie';
+import { chatCompletion } from './chat-provider';
+import { buildKieCallbackUrl, getKieClient } from './kie';
+import { SYSTEM_CHAT_MODELS } from './models';
 
 const IMAGE_MODEL = 'gpt-image-2-image-to-image';
 
@@ -179,7 +181,6 @@ async function retryDynamicAuditJob(job: JobRow): Promise<RetryResult> {
     })
     .where(eq(jobs.id, job.id));
 
-  const kie = getKieClient();
   // Re-resolve language from the project override (or audit detection) at
   // retry time, not from the stored payload. An override set after the
   // first run is "a future generation" per the product spec.
@@ -223,13 +224,13 @@ Output JSON with these EXACT keys, all text in ${langName}:
 Output the JSON object only, no other text.`;
 
   try {
-    const response = await kie.chat({
-      model: CHAT_MODELS.sonnet,
+    const response = await chatCompletion({
+      model: SYSTEM_CHAT_MODELS.quality,
       system,
       messages: [{ role: 'user', content: user }],
       max_tokens: 2048
     });
-    const text = KieClient.extractText(response);
+    const text = response.text;
     const parsed = parseStructuredJson(text);
 
     await db
@@ -238,7 +239,7 @@ Output the JSON object only, no other text.`;
         status: parsed ? 'completed' : 'failed',
         result: parsed ? { ...parsed, productSourceId: input.productSourceId } : null,
         error: parsed ? null : 'Could not parse Claude response as expected JSON.',
-        creditsCost: response.credits_consumed,
+        creditsCost: response.creditsConsumed,
         finishedAt: new Date()
       })
       .where(eq(jobs.id, job.id));

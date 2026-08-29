@@ -10,13 +10,13 @@ import {
   auditRateLimitForPlan,
   MAX_CUSTOM_INSTRUCTIONS_CHARS
 } from './ai/models';
+import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from './ai/pricing';
 import { launchAuditForUser } from './audit/launch';
 import { refreshAuditProducts } from './audit/refresh';
 import { auth, hashPassword, signOut } from './auth';
 import { db } from './db';
 import { findLanguage } from './i18n/languages';
 import {
-  CHAT_MODEL_IDS,
   IMAGE_QUALITY_IDS,
   audits,
   projects,
@@ -51,7 +51,7 @@ export async function updateUserPreferencesAction(formData: FormData): Promise<v
     preferredImageQuality?: ImageQualityDbId;
   } = {};
 
-  if ((CHAT_MODEL_IDS as readonly string[]).includes(chatModelRaw)) {
+  if ((ACTIVE_CHAT_MODEL_IDS as readonly string[]).includes(chatModelRaw)) {
     updates.preferredChatModel = chatModelRaw as ChatModelDbId;
   }
   if ((IMAGE_QUALITY_IDS as readonly string[]).includes(imageQualityRaw)) {

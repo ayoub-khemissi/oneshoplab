@@ -71,13 +71,34 @@ in the matched locale.
 Don't write plan changes from anywhere except `/api/stripe/webhook`. Manual
 plan flips for testing go through `scripts/set-plan.ts`.
 
-### kie.ai pricing — `CREDIT_MARKUP_FACTOR`
+### AI models + pricing — `pricing.json` is the ONLY place to edit
 
-Credits debited per generation = raw kie cost × `CREDIT_MARKUP_FACTOR`
-(default 2.5, clamped [1, 10]). Pricing logic is centralized in
-`src/lib/ai/models.ts` (`chatCreditsToDebit`, `costForImage`,
-`PLAN_TIERS`). Don't hardcode credit costs at call sites — go through these
-helpers so a markup change propagates.
+`pricing.json` (repo root) is the single catalog: for every model its
+upstream ids (`openrouterId` primary, `kieModelId` fallback), display name,
+provider, tier, tagline and rates; the default model; `chatModelAliases`
+for retired ids; `systemChatModels` (fast/quality, used by suggestions and
+the dynamic audit); the image family + qualities; `imageFallbackModel`; and
+the two markups (`chatMarkupFactor` for text — 2.0, `creditMarkupFactor` for
+images — 3.5, env-overridable via `CREDIT_MARKUP_FACTOR`). Rates are USD/M
+tokens in units of `providerUnitUsd` (0.005 $): $2/M → 400.
+
+Credits debited = field token cap × rate × markup (`estimateChatCredits`)
+or flat cost × markup (`costForImage`) in `src/lib/ai/models.ts`. Never
+hardcode credit costs or model ids at call sites; never mention a model
+name in `messages/*.json` — use the `{budgetModel}`/`{imageModel}`… placeholders
+fed by `modelNamesForCopy()`. Rebuild + restart web and worker after editing.
+
+**Swapping a model:** change its entry in `pricing.json`; if the *id* changes,
+add the old id to `chatModelAliases` AND append the new id to
+`CHAT_MODEL_IDS` in `src/lib/db/schema.ts` (MySQL enum for
+`users.preferred_chat_model` — additive, then `pnpm db:generate && pnpm db:migrate`).
+
+**Providers:** text goes through `src/lib/ai/chat-provider.ts` (OpenRouter,
+`OPENROUTER_API_KEY`, one retry, then kie fallback). Images go through kie
+(`startImageOptim`); when kie fails, `persistKieJobFailure` first tries
+`src/lib/ai/image-fallback.ts` (OpenRouter `imageFallbackModel`) and only then
+fails + refunds. Reasoning is disabled on text calls on purpose — Sonnet 5
+reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 
 ## Code conventions
 
@@ -105,7 +126,7 @@ helpers so a markup change propagates.
 ## Useful entry points when investigating
 
 - Audit pipeline: `src/lib/audit/run.ts` → `process.ts` → `score.ts`
-- Generation: `src/lib/ai/kie.ts` (client) + `prompts.ts` + `optims.ts`
+- Generation: `src/lib/ai/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images) + `prompts.ts` + `optims.ts`; catalog in `pricing.json`
 - Job queue: `src/worker/audit-runner.ts` and `src/worker/kie-watchdog.ts`
 - Pricing/plans: `src/lib/ai/models.ts` (`PLAN_TIERS`, credit costs)
 - Storage: `src/lib/storage/r2.ts` (TLS 1.3 forced — don't relax it)

@@ -1,3 +1,4 @@
+import { modelNamesForCopy } from '@/lib/ai/models';
 import { ChevronDown } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
@@ -67,7 +68,7 @@ export default async function FaqPage() {
       name: t(`${id}q`),
       acceptedAnswer: {
         '@type': 'Answer',
-        text: t(`${id}a`)
+        text: t(`${id}a`, modelNamesForCopy())
       }
     }))
   };
@@ -111,7 +112,7 @@ export default async function FaqPage() {
               />
             </summary>
             <div className="px-4 md:px-5 pb-4 -mt-1 text-sm leading-relaxed text-[var(--muted)]">
-              {t(`${id}a`)}
+              {t(`${id}a`, modelNamesForCopy())}
             </div>
           </details>
         ))}

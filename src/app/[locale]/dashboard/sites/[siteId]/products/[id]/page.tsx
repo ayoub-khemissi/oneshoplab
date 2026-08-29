@@ -1,3 +1,4 @@
+import { resolveChatModelId } from '@/lib/ai/models';
 import { Accordion, Card } from '@heroui/react';
 import { and, desc, eq, gt, inArray, isNull, or } from 'drizzle-orm';
 import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
@@ -325,7 +326,7 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
   // (with persistence via the preferences server action). Costs and affordance
   // checks are recomputed live in RetryableGenerateProvider.
   const userChatModel: ChatModelId =
-    (session.user.preferredChatModel as ChatModelId | undefined) ?? DEFAULT_CHAT_MODEL;
+    resolveChatModelId(session.user.preferredChatModel);
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
 

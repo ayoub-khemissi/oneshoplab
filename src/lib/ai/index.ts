@@ -1,4 +1,4 @@
-export { CHAT_MODELS, KieClient, KieError, getKieClient } from './kie';
+export { KieClient, KieError, getKieClient } from './kie';
 export {
   AUDIT_RATE_LIMIT_WINDOW_MS,
   auditRateLimitForPlan,

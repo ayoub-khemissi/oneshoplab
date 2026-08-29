@@ -5,7 +5,8 @@ import { db } from '@/lib/db';
 import { jobs, products, type JobKind } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { notify } from '@/lib/notifications';
-import { KieClient, getKieClient, type ChatMessage } from './kie';
+import { chatCompletion } from './chat-provider';
+import { type ChatMessage } from './kie';
 import {
   estimateChatCredits,
   getChatModel,
@@ -57,8 +58,6 @@ const KIND_BY_FIELD: Record<ChatOptimField, JobKind> = {
  * tail debits if the LLM ran a bit long.
  */
 export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimResult> {
-  const kie = getKieClient();
-
   const languageName = languageNameForPrompt(opts.languageCode);
 
   const built =
@@ -121,8 +120,8 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
 
   let response;
   try {
-    response = await kie.chat({
-      model: model.kieModelId,
+    response = await chatCompletion({
+      model,
       system: built.system,
       messages,
       max_tokens: safetyMaxTokens
@@ -156,7 +155,7 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     throw e;
   }
 
-  const text = KieClient.extractText(response);
+  const text = response.text;
   const output: string | string[] = opts.field === 'tags' ? parseTags(text) : text;
 
   // Quoted = debited. The user paid for the cap; whether kie's actual
@@ -168,7 +167,7 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     .update(jobs)
     .set({
       status: 'completed',
-      result: { output, raw: text, kieCreditsConsumed: response.credits_consumed },
+      result: { output, raw: text, providerUnitsConsumed: response.creditsConsumed, provider: response.provider, providerModel: response.model },
       creditsCost: debit,
       finishedAt: now
     })

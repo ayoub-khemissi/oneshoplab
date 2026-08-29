@@ -1,0 +1,1 @@
+ALTER TABLE `users` MODIFY COLUMN `preferred_chat_model` enum('gemini-3-1-pro','sonnet-4-6','opus-4-6','haiku-4-5','sonnet-5','opus-5') NOT NULL DEFAULT 'sonnet-5';

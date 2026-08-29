@@ -1,39 +1,152 @@
 {
+  "_comment": "SINGLE SOURCE OF TRUTH for AI models, their upstream ids, retail rates and credit costs. Swap a model here (ids, displayName, inputPerM/outputPerM) — pricing, credit debits, the model picker and the marketing copy all follow. Rates are provider USD per 1M tokens expressed in credit units of providerUnitUsd (e.g. $2/M -> 400). creditMarkupFactor applies to images, chatMarkupFactor to text. Rebuild + restart web & worker after editing.",
   "creditMarkupFactor": 3.5,
+  "chatMarkupFactor": 2.0,
   "creditUsdValue": 0.005,
-  "kieCreditUsdValue": 0.005,
+  "providerUnitUsd": 0.005,
   "imageAnglesPerGen": 3,
-
   "plans": {
-    "free":    { "credits": 150,    "siteLimit": 1,  "priceEur": 0,      "recurring": false },
-    "starter": { "credits": 5500,   "siteLimit": 3,  "priceEur": 39.99,  "recurring": true  },
-    "pro":     { "credits": 15000,  "siteLimit": 10, "priceEur": 89.99,  "recurring": true  },
-    "scale":   { "credits": 38000,  "siteLimit": 50, "priceEur": 199.99, "recurring": true  }
+    "free": {
+      "credits": 150,
+      "siteLimit": 1,
+      "priceEur": 0,
+      "recurring": false
+    },
+    "starter": {
+      "credits": 5500,
+      "siteLimit": 3,
+      "priceEur": 39.99,
+      "recurring": true
+    },
+    "pro": {
+      "credits": 15000,
+      "siteLimit": 10,
+      "priceEur": 89.99,
+      "recurring": true
+    },
+    "scale": {
+      "credits": 38000,
+      "siteLimit": 50,
+      "priceEur": 199.99,
+      "recurring": true
+    }
   },
-
   "fieldCaps": {
-    "title":       { "inputTokens": 1500, "outputTokens": 100  },
-    "description": { "inputTokens": 1500, "outputTokens": 600  },
-    "tags":        { "inputTokens": 1500, "outputTokens": 120  },
-    "social":      { "inputTokens": 1500, "outputTokens": 800  },
-    "fullAudit":   { "inputTokens": 2500, "outputTokens": 1900 }
+    "title": {
+      "inputTokens": 1500,
+      "outputTokens": 100
+    },
+    "description": {
+      "inputTokens": 1500,
+      "outputTokens": 600
+    },
+    "tags": {
+      "inputTokens": 1500,
+      "outputTokens": 120
+    },
+    "social": {
+      "inputTokens": 1500,
+      "outputTokens": 800
+    },
+    "fullAudit": {
+      "inputTokens": 2500,
+      "outputTokens": 1900
+    }
   },
-
   "chatModels": {
-    "gemini-3-1-pro": { "kieInputPerM": 100, "kieOutputPerM": 700  },
-    "sonnet-4-6":     { "kieInputPerM": 170, "kieOutputPerM": 855  },
-    "opus-4-6":       { "kieInputPerM": 285, "kieOutputPerM": 1430 }
+    "haiku-4-5": {
+      "displayName": "Claude Haiku 4.5",
+      "provider": "Anthropic",
+      "tier": "budget",
+      "tagline": "Fast and economical — great for bulk runs.",
+      "openrouterId": "anthropic/claude-haiku-4.5",
+      "kieModelId": "claude-haiku-4-5",
+      "inputPerM": 200,
+      "outputPerM": 1000
+    },
+    "sonnet-5": {
+      "displayName": "Claude Sonnet 5",
+      "provider": "Anthropic",
+      "tier": "balanced",
+      "tagline": "Best price / quality balance for product copy.",
+      "openrouterId": "anthropic/claude-sonnet-5",
+      "kieModelId": "claude-sonnet-4-6",
+      "inputPerM": 400,
+      "outputPerM": 2000
+    },
+    "opus-5": {
+      "displayName": "Claude Opus 5",
+      "provider": "Anthropic",
+      "tier": "premium",
+      "tagline": "Top-tier reasoning — premium tone and edge cases.",
+      "openrouterId": "anthropic/claude-opus-5",
+      "kieModelId": "claude-opus-4-6",
+      "inputPerM": 1000,
+      "outputPerM": 5000
+    }
   },
-
+  "defaultChatModel": "sonnet-5",
+  "chatModelAliases": {
+    "gemini-3-1-pro": "haiku-4-5",
+    "sonnet-4-6": "sonnet-5",
+    "opus-4-6": "opus-5"
+  },
+  "systemChatModels": {
+    "fast": {
+      "openrouterId": "anthropic/claude-haiku-4.5",
+      "kieModelId": "claude-haiku-4-5"
+    },
+    "quality": {
+      "openrouterId": "anthropic/claude-sonnet-5",
+      "kieModelId": "claude-sonnet-4-6"
+    }
+  },
+  "imageModel": {
+    "modelName": "GPT-Image 2",
+    "provider": "OpenAI",
+    "kieModelId": "gpt-image-2-image-to-image"
+  },
   "imageQualities": {
-    "image-1k": { "kieCost": 6  },
-    "image-2k": { "kieCost": 10 },
-    "image-4k": { "kieCost": 16 }
+    "image-1k": {
+      "displayName": "1K · Standard",
+      "resolution": "1K",
+      "tier": "budget",
+      "tagline": "Fast and crisp — fine for thumbnails and listings.",
+      "cost": 6
+    },
+    "image-2k": {
+      "displayName": "2K · High",
+      "resolution": "2K",
+      "tier": "balanced",
+      "tagline": "Sharp lifestyle shots — recommended for hero images.",
+      "cost": 10
+    },
+    "image-4k": {
+      "displayName": "4K · Premium",
+      "resolution": "4K",
+      "tier": "premium",
+      "tagline": "Print-grade quality — agencies and luxury brands.",
+      "cost": 16
+    }
   },
-
+  "defaultImageQuality": "image-1k",
+  "imageFallbackModel": {
+    "displayName": "Gemini 3.1 Flash Image",
+    "provider": "Google",
+    "openrouterId": "google/gemini-3.1-flash-image"
+  },
   "creditPacks": {
-    "boost": { "credits": 500,  "priceEur": 4.99  },
-    "power": { "credits": 2000, "priceEur": 17.99 },
-    "mega":  { "credits": 8000, "priceEur": 59.99 }
+    "boost": {
+      "credits": 500,
+      "priceEur": 4.99
+    },
+    "power": {
+      "credits": 2000,
+      "priceEur": 17.99
+    },
+    "mega": {
+      "credits": 8000,
+      "priceEur": 59.99
+    }
   }
 }

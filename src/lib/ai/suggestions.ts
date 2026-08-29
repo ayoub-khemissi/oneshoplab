@@ -4,7 +4,8 @@ import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, type ProductField } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
-import { CHAT_MODELS, KieClient, getKieClient } from './kie';
+import { chatCompletion } from './chat-provider';
+import { SYSTEM_CHAT_MODELS } from './models';
 import { buildSuggestionPrompt, type ProductContext } from './prompts';
 
 export interface PromptSuggestion {
@@ -38,20 +39,19 @@ export async function getOrGenerateSuggestions(opts: {
     return { suggestions: cached.suggestions, fromCache: true, jobId: cached.jobId };
   }
 
-  const kie = getKieClient();
   const userPrompt = buildSuggestionPrompt(
     opts.field,
     opts.product,
     languageNameForPrompt(opts.languageCode)
   );
 
-  const response = await kie.chat({
-    model: CHAT_MODELS.haiku,
+  const response = await chatCompletion({
+    model: SYSTEM_CHAT_MODELS.fast,
     messages: [{ role: 'user', content: userPrompt }],
     max_tokens: 1024
   });
 
-  const text = KieClient.extractText(response);
+  const text = response.text;
   const suggestions = parseSuggestions(text);
 
   const jobId = randomUUID();
@@ -63,15 +63,15 @@ export async function getOrGenerateSuggestions(opts: {
     status: 'completed',
     inputPayload: { productSourceId: opts.productSourceId, field: opts.field },
     result: { suggestions },
-    creditsCost: response.credits_consumed,
+    creditsCost: response.creditsConsumed,
     startedAt: now,
     finishedAt: now
   });
 
-  if (response.credits_consumed > 0) {
+  if (response.creditsConsumed > 0) {
     await applyCreditTransaction({
       userId: opts.userId,
-      delta: -response.credits_consumed,
+      delta: -response.creditsConsumed,
       reason: 'kie_prompt_suggest',
       jobId,
       idempotencyKey: `job-${jobId}`

@@ -22,7 +22,7 @@
  * Pricing math (from `pricing.json`):
  *
  *   revenue_usd = user_credits_debited × creditUsdValue
- *   cost_usd    = kie_credits_consumed × kieCreditUsdValue
+ *   cost_usd    = kie_credits_consumed × providerUnitUsd
  *   margin %    = (revenue - cost) / revenue
  *
  * Usage:
@@ -113,7 +113,7 @@ async function main(): Promise<void> {
   );
   console.log(
     `Pricing: 1 user credit = $${PRICING.creditUsdValue}, ` +
-      `1 kie credit = $${PRICING.kieCreditUsdValue}, ` +
+      `1 kie credit = $${PRICING.providerUnitUsd}, ` +
       `markup target = ${PRICING.creditMarkupFactor}×.`
   );
   console.log();
@@ -245,7 +245,7 @@ async function main(): Promise<void> {
   for (const kind of kinds) {
     const a = agg[kind];
     const revenue = a.userCreditsDebited * PRICING.creditUsdValue;
-    const cost = a.kieCreditsConsumed * PRICING.kieCreditUsdValue;
+    const cost = a.kieCreditsConsumed * PRICING.providerUnitUsd;
     const margin = fmtPct(cost, revenue);
 
     const unknownSuffix =
@@ -267,7 +267,7 @@ async function main(): Promise<void> {
 
   console.log('─'.repeat(header.length));
   const totalRevenue = totalUserCredits * PRICING.creditUsdValue;
-  const totalCost = totalKieCredits * PRICING.kieCreditUsdValue;
+  const totalCost = totalKieCredits * PRICING.providerUnitUsd;
   console.log(
     `${'TOTAL'.padEnd(colWidth.kind)}  ` +
       `${String(rows.length).padStart(colWidth.count)}  ` +

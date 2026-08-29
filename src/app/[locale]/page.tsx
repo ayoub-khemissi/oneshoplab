@@ -1,3 +1,4 @@
+import { modelNamesForCopy } from '@/lib/ai/models';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ArrowRight, Check, ChevronDown, PenLine, Sparkles } from 'lucide-react';
@@ -290,7 +291,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             <FeatureCard
               number="02"
               title={t('step2Title')}
-              description={t('step2Description')}
+              description={t('step2Description', modelNamesForCopy())}
             />
             <FeatureCard
               number="03"
