@@ -22,6 +22,10 @@ const CSP_REPORT_ONLY = [
 ].join('; ');
 
 const config: NextConfig = {
+  // Build output dir. Default `.next` is what PM2 serves; a separate dir lets
+  // us build/serve a production bundle (e2e, future blue-green) without
+  // touching the live one: NEXT_DIST_DIR=.next-e2e pnpm build && next start.
+  distDir: process.env.NEXT_DIST_DIR ?? '.next',
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }]
   },

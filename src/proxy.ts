@@ -61,10 +61,13 @@ export default async function middleware(req: NextRequest) {
         // the request's URL scheme, but we pin it explicitly to avoid
         // surprises behind nginx where req.url may appear http even
         // though the user-facing URL is https.
-        cookieName:
-          process.env.NODE_ENV === 'production'
-            ? '__Secure-authjs.session-token'
-            : 'authjs.session-token'
+        // Auth.js derives the name from the protocol of AUTH_URL (`__Secure-` on
+        // https), not from NODE_ENV — keying on NODE_ENV made a production build
+        // served over http (e2e, local blue/green) look logged-out. Env-based, so
+        // nginx's http upstream does not affect it.
+        secureCookie: (process.env.AUTH_URL ?? process.env.APP_URL ?? 'https://').startsWith(
+          'https://'
+        )
       });
       const isAuthed = Boolean(token);
 

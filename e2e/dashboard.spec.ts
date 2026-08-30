@@ -22,8 +22,14 @@ test.describe('dashboard', () => {
 
   test('products tab lists the catalog and opens a product page', async ({ page }) => {
     await page.goto(`/fr/dashboard/sites/${SEED.project.id}?tab=products`);
-    await expect(page.getByText('Hand-thrown stoneware coffee mug, 350 ml').first()).toBeVisible();
-    await page.getByText('Hand-thrown stoneware coffee mug, 350 ml').first().click();
+    const productLink = page
+      .getByRole('link', { name: /Hand-thrown stoneware coffee mug/ })
+      .filter({ visible: true })
+      .first();
+    await expect(productLink).toBeVisible();
+    // Navigate through the href: the row sits under the cookie banner in a
+    // headless viewport and a real click gets intercepted.
+    await page.goto((await productLink.getAttribute('href'))!);
     await page.waitForURL(/\/products\//);
     await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
     await expect(page.getByText('Hand-thrown stoneware coffee mug, 350 ml').first()).toBeVisible();

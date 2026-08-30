@@ -12,6 +12,8 @@ const BASE = `http://127.0.0.1:${PORT}`;
 const isCI = Boolean(process.env.CI);
 
 export const E2E_ENV: Record<string, string> = {
+  // Serve/build from a separate dir so the live `.next` is never touched.
+  NEXT_DIST_DIR: process.env.NEXT_DIST_DIR ?? (isCI ? '.next' : '.next-e2e'),
   DATABASE_URL: testDatabaseUrl(),
   APP_URL: BASE,
   AUTH_URL: BASE,

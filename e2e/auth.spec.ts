@@ -9,7 +9,7 @@ test.describe('authentication', () => {
     await page.fill('input[name="password"]', 'brand-new-password-1');
     await page.getByRole('button', { name: 'Créer mon compte' }).click();
     await page.waitForURL(/\/fr\/dashboard/);
-    await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
+    await expect(page.getByText(/Bienvenue/)).toBeVisible(); // fresh account: onboarding dashboard
   });
 
   test('signup refuses a taken email and a short password', async ({ page }) => {
@@ -26,6 +26,7 @@ test.describe('authentication', () => {
     await page.fill('input[name="password"]', 'wrong-password');
     await page.getByRole('button', { name: 'Se connecter' }).click();
     await expect(page.getByText('Email ou mot de passe incorrect.').first()).toBeVisible();
+    await page.goto('/fr/login'); // the error came through a redirect: start from a settled page
 
     await page.fill('input[name="email"]', SEED.user.email);
     await page.fill('input[name="password"]', SEED.user.password);

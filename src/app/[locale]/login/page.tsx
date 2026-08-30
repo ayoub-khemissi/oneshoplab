@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { localizedPath } from '@/lib/localized-path';
 import { Link } from '@/i18n/navigation';
 import { GoogleSignInButton } from '@/components/google-signin-button';
 import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
@@ -44,7 +45,7 @@ async function loginAction(formData: FormData) {
   redirectTo += `${redirectTo.includes('?') ? '&' : '?'}ga=login`;
 
   try {
-    await signIn('credentials', { email, password, redirectTo });
+    await signIn('credentials', { email, password, redirectTo: await localizedPath(redirectTo) });
   } catch (err) {
     if (err instanceof AuthError) {
       const params = new URLSearchParams({ error: 'credentials' });
@@ -83,7 +84,9 @@ export default async function LoginPage({ searchParams }: PageProps) {
         {isGoogleAuthEnabled() ? (
           <Card.Content className="flex flex-col gap-3 pt-0">
             <GoogleSignInButton
-              redirectTo={nextParam && nextParam.startsWith('/') ? nextParam : '/dashboard'}
+              redirectTo={await localizedPath(
+                nextParam && nextParam.startsWith('/') ? nextParam : '/dashboard'
+              )}
               label={t('continueWithGoogle')}
             />
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider font-mono text-[var(--muted)]">

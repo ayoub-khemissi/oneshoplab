@@ -22,3 +22,4 @@ access.txt
 # playwright
 playwright-report/
 test-results/
+.next-e2e/
