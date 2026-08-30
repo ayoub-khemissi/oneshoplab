@@ -4,7 +4,7 @@ import { db } from '@/shared/db';
 import { audits, projects } from '@/shared/db/schema';
 import { notify } from '@/entities/notification';
 import { runAudit } from './run';
-import { syncProjectProducts } from './sync-products';
+import { syncProjectProducts } from '@/entities/product';
 
 const DYNAMIC_AUDIT_PRODUCTS = 3;
 

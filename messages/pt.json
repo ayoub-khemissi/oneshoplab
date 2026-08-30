@@ -1062,5 +1062,143 @@
     "consent": "Aceito os {terms} e a {privacy}, e peço que o serviço comece imediatamente; reconheço que renuncio assim ao meu direito de retratação de 14 dias pela parte já prestada.",
     "termsLabel": "Termos de serviço",
     "privacyLabel": "Política de privacidade"
+  },
+  "Integrations": {
+    "tabLabel": "Ligação da loja",
+    "wizardTitle": "Ligue a sua loja",
+    "wizardIntro": "Depois de ligada, os textos e imagens que aprovar aqui são aplicados na sua loja pelo plugin. Quatro passos curtos, sem conhecimentos técnicos.",
+    "step1Title": "Escolha a sua plataforma",
+    "step1Hint": "Onde a sua loja funciona.",
+    "platformDetected": "Detetada durante a auditoria",
+    "step2Title": "Instale o plugin",
+    "estimated": "Cerca de {minutes} min",
+    "comingSoonTitle": "Em breve",
+    "comingSoonBody": "A ligação {platform} ainda não está pronta. Ative o interruptor e avisamos por e-mail.",
+    "notifyMe": "Avisar-me quando estiver pronta",
+    "notifySaved": "Vamos avisá-lo",
+    "chooseFirst": "Escolha a sua plataforma acima para ver os passos.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "Instale o plugin OneShopLab",
+          "body": "No admin do WordPress, abra Plugins › Adicionar novo › Carregar plugin, escolha o ficheiro oneshoplab.zip e clique em Instalar agora."
+        },
+        "step2": {
+          "title": "Ative-o",
+          "body": "Clique em Ativar plugin. Aparece uma entrada OneShopLab no menu da esquerda."
+        },
+        "step3": {
+          "title": "Cole a sua chave do site",
+          "body": "Abra OneShopLab no menu da esquerda e cole a chave do site do passo 3 abaixo na caixa Chave do site."
+        },
+        "step4": {
+          "title": "Guarde",
+          "body": "Clique em Guardar. O plugin envia os seus produtos de imediato — o cartão do passo 4 fica verde em menos de um minuto."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Abra as definições das apps",
+          "body": "No admin do Shopify, vá a Definições › Apps e canais de vendas › Desenvolver apps."
+        },
+        "step2": {
+          "title": "Crie uma app",
+          "body": "Clique em Criar uma app e dê-lhe este nome."
+        },
+        "step3": {
+          "title": "Marque as permissões",
+          "body": "Em Configuração › Integração da API Admin, marque estas duas permissões e guarde."
+        },
+        "step4": {
+          "title": "Instale a app",
+          "body": "Clique em Instalar app e depois em Revelar token uma vez. Copie o token — o Shopify só o mostra uma vez."
+        },
+        "step5": {
+          "title": "Cole o token no OneShopLab",
+          "body": "Volte aqui e cole o token na caixa que aparecerá no passo 3."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Endereço a abrir no admin do WordPress",
+      "appName": "Nome da app",
+      "scopes": "Permissões a marcar",
+      "siteKey": "A sua chave do site (criada no passo 3)"
+    },
+    "siteKeyPending": "Vai obtê-la no passo 3 abaixo.",
+    "screenshotAlt": "Captura de ecrã do passo {n}",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "step3Title": "A sua chave do site",
+    "step3Body": "Esta chave é uma palavra-passe entre a sua loja e o OneShopLab. Mostramo-la uma única vez: copie-a, cole-a no plugin e guarde-a em segurança. Se a perder, crie uma nova.",
+    "generateKey": "Criar a minha chave do site",
+    "generating": "A criar…",
+    "keyRevealTitle": "Copie-a agora — não voltará a ser mostrada",
+    "keySavedButton": "Já a guardei",
+    "keyExistsTitle": "A sua chave do site está configurada.",
+    "keyExistsBody": "Chave {prefix}… criada a {date}. Perdeu-a? Use «Nova chave» abaixo.",
+    "step3NotAvailable": "Vai obter aqui a sua chave do site assim que a ligação {platform} estiver disponível.",
+    "step4Title": "Verificação da ligação",
+    "waiting": "À espera da primeira troca com a sua loja…",
+    "waitingHint": "Assim que o plugin for guardado, este cartão fica verde sozinho. Nada a clicar.",
+    "connected": "Ligado — última troca {ago}, {count, plural, =1 {1 produto sincronizado} other {# produtos sincronizados}}",
+    "ago": {
+      "seconds": "há {n} s",
+      "minutes": "há {n} min",
+      "hours": "há {n} h",
+      "days": "há {n} d"
+    },
+    "troubleTitle": "Algo não está bem?",
+    "fix1": "Verifique a chave no plugin: sem espaços antes ou depois, e a chave completa.",
+    "fix2": "Confirme que o plugin está ativo (Plugins › Plugins instalados).",
+    "fix3": "Se o seu site está em manutenção ou protegido por palavra-passe, desative isso por um minuto.",
+    "keysTitle": "As suas chaves do site",
+    "keysHint": "Uma chave nova substitui a antiga após 24 horas: cole-a antes no plugin. Revogar para o plugin de imediato.",
+    "keyCreated": "Criada a {date}",
+    "keyLastUsed": "Usada a {date}",
+    "keyNeverUsed": "Nunca usada",
+    "keyExpires": "Expira a {date}",
+    "keyNoExpiry": "Sem expiração",
+    "keyGrace": "A chave antiga ainda funciona até {date}",
+    "state": {
+      "active": "Ativa",
+      "grace": "Em substituição",
+      "revoked": "Revogada",
+      "expired": "Expirada"
+    },
+    "rotate": "Nova chave",
+    "revoke": "Revogar",
+    "rotateConfirmTitle": "Criar uma nova chave?",
+    "rotateConfirmBody": "A chave atual continua a funcionar 24 horas. Cole a nova no plugin antes disso, ou a ligação para.",
+    "rotateConfirm": "Criar a nova chave",
+    "revokeConfirmTitle": "Revogar esta chave?",
+    "revokeConfirmBody": "O seu plugin para de imediato. Nada sincroniza até criar uma nova chave e colá-la no plugin.",
+    "revokeConfirm": "Revogar",
+    "cancel": "Cancelar",
+    "errorGeneric": "Algo correu mal. Tente novamente."
+  },
+  "ApplyToStore": {
+    "apply": "Aplicar na minha loja",
+    "applyAgain": "Aplicar de novo",
+    "pending": "À espera do plugin",
+    "cancel": "Cancelar",
+    "applied": "Aplicado na sua loja",
+    "conflict": "Não aplicado: este campo mudou na sua loja entretanto.",
+    "conflictHint": "Verifique o produto na sua loja e aplique de novo se quiser.",
+    "failed": "O plugin não conseguiu aplicar{error}",
+    "expired": "Esta alteração expirou antes de o plugin a recolher.",
+    "noKeyHint": "Ligue a sua loja para aplicar isto automaticamente.",
+    "noKeyLink": "Configurar a ligação",
+    "listTitle": "Alterações a aplicar",
+    "listHint": "O plugin recolhe-as na próxima visita (cerca de 5 em 5 minutos). Retire uma se mudar de ideias.",
+    "listEmpty": "Nenhuma alteração em espera.",
+    "field": {
+      "title": "Título",
+      "description": "Descrição",
+      "tags": "Etiquetas",
+      "images": "Imagens"
+    },
+    "approvedOn": "Aprovado a {date}",
+    "errorGeneric": "Algo correu mal. Tente novamente."
   }
 }

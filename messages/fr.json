@@ -1062,5 +1062,143 @@
     "consent": "J'accepte les {terms} et la {privacy}, et je demande l'exécution immédiate du service ; je reconnais renoncer de ce fait à mon droit de rétractation de 14 jours pour la partie déjà fournie.",
     "termsLabel": "Conditions générales",
     "privacyLabel": "Politique de confidentialité"
+  },
+  "Integrations": {
+    "tabLabel": "Connexion boutique",
+    "wizardTitle": "Connectez votre boutique",
+    "wizardIntro": "Une fois connectée, les textes et images que vous validez ici sont appliqués dans votre boutique par le plugin. Quatre étapes courtes, aucune compétence technique.",
+    "step1Title": "Choisissez votre plateforme",
+    "step1Hint": "Là où tourne votre boutique.",
+    "platformDetected": "Détectée pendant l’audit",
+    "step2Title": "Installez le plugin",
+    "estimated": "Environ {minutes} min",
+    "comingSoonTitle": "Bientôt disponible",
+    "comingSoonBody": "La connexion {platform} n’est pas encore prête. Activez l’interrupteur et nous vous préviendrons par e-mail.",
+    "notifyMe": "Me prévenir",
+    "notifySaved": "Nous vous préviendrons",
+    "chooseFirst": "Choisissez votre plateforme ci-dessus pour voir les étapes.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "Installez le plugin OneShopLab",
+          "body": "Dans votre admin WordPress, ouvrez Extensions › Ajouter › Téléverser une extension, choisissez le fichier oneshoplab.zip et cliquez sur Installer maintenant."
+        },
+        "step2": {
+          "title": "Activez-le",
+          "body": "Cliquez sur Activer l’extension. Une entrée OneShopLab apparaît dans le menu de gauche."
+        },
+        "step3": {
+          "title": "Collez votre clé du site",
+          "body": "Ouvrez OneShopLab dans le menu de gauche et collez la clé du site de l’étape 3 ci-dessous dans la case Clé du site."
+        },
+        "step4": {
+          "title": "Enregistrez",
+          "body": "Cliquez sur Enregistrer. Le plugin envoie vos produits tout de suite — la carte de l’étape 4 passe au vert en moins d’une minute."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Ouvrez les réglages des applications",
+          "body": "Dans votre admin Shopify, allez dans Paramètres › Applications et canaux de vente › Développer des applications."
+        },
+        "step2": {
+          "title": "Créez une application",
+          "body": "Cliquez sur Créer une application et donnez-lui ce nom."
+        },
+        "step3": {
+          "title": "Cochez les autorisations",
+          "body": "Dans Configuration › Intégration de l’API Admin, cochez ces deux autorisations et enregistrez."
+        },
+        "step4": {
+          "title": "Installez l’application",
+          "body": "Cliquez sur Installer l’application, puis Révéler le jeton une fois. Copiez le jeton — Shopify ne le montre qu’une fois."
+        },
+        "step5": {
+          "title": "Collez le jeton dans OneShopLab",
+          "body": "Revenez ici et collez le jeton dans la case qui apparaîtra à l’étape 3."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Adresse à ouvrir dans votre admin WordPress",
+      "appName": "Nom de l’application",
+      "scopes": "Autorisations à cocher",
+      "siteKey": "Votre clé du site (créée à l’étape 3)"
+    },
+    "siteKeyPending": "Vous l’obtiendrez à l’étape 3 ci-dessous.",
+    "screenshotAlt": "Capture d’écran de l’étape {n}",
+    "copy": "Copier",
+    "copied": "Copié",
+    "step3Title": "Votre clé du site",
+    "step3Body": "Cette clé est un mot de passe entre votre boutique et OneShopLab. Nous l’affichons une seule fois : copiez-la, collez-la dans le plugin et gardez-la en lieu sûr. Si vous la perdez, créez-en une nouvelle.",
+    "generateKey": "Créer ma clé du site",
+    "generating": "Création…",
+    "keyRevealTitle": "Copiez-la maintenant — elle ne sera plus affichée",
+    "keySavedButton": "Je l’ai enregistrée",
+    "keyExistsTitle": "Votre clé du site est en place.",
+    "keyExistsBody": "Clé {prefix}… créée le {date}. Perdue ? Utilisez « Nouvelle clé » ci-dessous.",
+    "step3NotAvailable": "Vous obtiendrez votre clé du site ici dès que la connexion {platform} sera disponible.",
+    "step4Title": "Vérification de la connexion",
+    "waiting": "En attente du premier échange avec votre boutique…",
+    "waitingHint": "Dès que le plugin est enregistré, cette carte passe au vert toute seule. Rien à cliquer.",
+    "connected": "Connecté — dernier échange {ago}, {count, plural, =1 {1 produit synchronisé} other {# produits synchronisés}}",
+    "ago": {
+      "seconds": "il y a {n} s",
+      "minutes": "il y a {n} min",
+      "hours": "il y a {n} h",
+      "days": "il y a {n} j"
+    },
+    "troubleTitle": "Un problème ?",
+    "fix1": "Vérifiez la clé dans le plugin : pas d’espace avant ou après, et la clé entière.",
+    "fix2": "Vérifiez que le plugin est activé (Extensions › Extensions installées).",
+    "fix3": "Si votre site est en maintenance ou protégé par mot de passe, désactivez-le une minute.",
+    "keysTitle": "Vos clés du site",
+    "keysHint": "Une nouvelle clé remplace l’ancienne après 24 heures : collez-la dans le plugin avant. Révoquer arrête le plugin immédiatement.",
+    "keyCreated": "Créée le {date}",
+    "keyLastUsed": "Utilisée le {date}",
+    "keyNeverUsed": "Jamais utilisée",
+    "keyExpires": "Expire le {date}",
+    "keyNoExpiry": "Sans expiration",
+    "keyGrace": "L’ancienne clé fonctionne encore jusqu’au {date}",
+    "state": {
+      "active": "Active",
+      "grace": "En remplacement",
+      "revoked": "Révoquée",
+      "expired": "Expirée"
+    },
+    "rotate": "Nouvelle clé",
+    "revoke": "Révoquer",
+    "rotateConfirmTitle": "Créer une nouvelle clé ?",
+    "rotateConfirmBody": "La clé actuelle continue de fonctionner 24 heures. Collez la nouvelle clé dans votre plugin avant, sinon la connexion s’arrête.",
+    "rotateConfirm": "Créer la nouvelle clé",
+    "revokeConfirmTitle": "Révoquer cette clé ?",
+    "revokeConfirmBody": "Votre plugin s’arrête immédiatement. Plus rien ne se synchronise tant que vous n’avez pas créé une nouvelle clé et collé celle-ci dans le plugin.",
+    "revokeConfirm": "Révoquer",
+    "cancel": "Annuler",
+    "errorGeneric": "Une erreur est survenue. Réessayez."
+  },
+  "ApplyToStore": {
+    "apply": "Appliquer sur la boutique",
+    "applyAgain": "Appliquer à nouveau",
+    "pending": "En attente du plugin",
+    "cancel": "Annuler",
+    "applied": "Appliqué dans votre boutique",
+    "conflict": "Non appliqué : ce champ a changé dans votre boutique entre-temps.",
+    "conflictHint": "Vérifiez le produit dans votre boutique, puis appliquez à nouveau si vous le souhaitez.",
+    "failed": "Le plugin n’a pas pu l’appliquer{error}",
+    "expired": "Ce changement a expiré avant que le plugin ne le récupère.",
+    "noKeyHint": "Connectez votre boutique pour l’appliquer automatiquement.",
+    "noKeyLink": "Configurer la connexion",
+    "listTitle": "Changements à appliquer",
+    "listHint": "Le plugin les récupère à son prochain passage (environ toutes les 5 minutes). Retirez-en un si vous changez d’avis.",
+    "listEmpty": "Aucun changement en attente.",
+    "field": {
+      "title": "Titre",
+      "description": "Description",
+      "tags": "Tags",
+      "images": "Images"
+    },
+    "approvedOn": "Validé le {date}",
+    "errorGeneric": "Une erreur est survenue. Réessayez."
   }
 }

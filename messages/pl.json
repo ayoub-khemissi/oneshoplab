@@ -1062,5 +1062,143 @@
     "consent": "Akceptuję {terms} oraz {privacy} i proszę o natychmiastowe rozpoczęcie świadczenia usługi; przyjmuję do wiadomości, że tym samym tracę 14-dniowe prawo odstąpienia w zakresie już wykonanej części.",
     "termsLabel": "Regulamin",
     "privacyLabel": "Politykę prywatności"
+  },
+  "Integrations": {
+    "tabLabel": "Połączenie sklepu",
+    "wizardTitle": "Połącz swój sklep",
+    "wizardIntro": "Po połączeniu wtyczka przenosi do sklepu teksty i zdjęcia, które tu zatwierdzisz. Cztery krótkie kroki, bez wiedzy technicznej.",
+    "step1Title": "Wybierz platformę",
+    "step1Hint": "Gdzie działa Twój sklep.",
+    "platformDetected": "Wykryta podczas audytu",
+    "step2Title": "Zainstaluj wtyczkę",
+    "estimated": "Około {minutes} min",
+    "comingSoonTitle": "Wkrótce",
+    "comingSoonBody": "Połączenie {platform} nie jest jeszcze gotowe. Włącz przełącznik, a damy znać e-mailem.",
+    "notifyMe": "Powiadom mnie",
+    "notifySaved": "Damy znać",
+    "chooseFirst": "Wybierz platformę powyżej, aby zobaczyć kroki.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "Zainstaluj wtyczkę OneShopLab",
+          "body": "W panelu WordPress otwórz Wtyczki › Dodaj nową › Wyślij wtyczkę na serwer, wybierz plik oneshoplab.zip i kliknij Zainstaluj."
+        },
+        "step2": {
+          "title": "Włącz ją",
+          "body": "Kliknij Włącz wtyczkę. W lewym menu pojawi się pozycja OneShopLab."
+        },
+        "step3": {
+          "title": "Wklej klucz sklepu",
+          "body": "Otwórz OneShopLab w lewym menu i wklej klucz sklepu z kroku 3 poniżej w pole Klucz sklepu."
+        },
+        "step4": {
+          "title": "Zapisz",
+          "body": "Kliknij Zapisz. Wtyczka od razu wysyła produkty — karta w kroku 4 zmieni kolor na zielony w niecałą minutę."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Otwórz ustawienia aplikacji",
+          "body": "W panelu Shopify przejdź do Ustawienia › Aplikacje i kanały sprzedaży › Tworzenie aplikacji."
+        },
+        "step2": {
+          "title": "Utwórz aplikację",
+          "body": "Kliknij Utwórz aplikację i nadaj jej tę nazwę."
+        },
+        "step3": {
+          "title": "Zaznacz uprawnienia",
+          "body": "W Konfiguracja › Integracja Admin API zaznacz te dwa uprawnienia i zapisz."
+        },
+        "step4": {
+          "title": "Zainstaluj aplikację",
+          "body": "Kliknij Zainstaluj aplikację, potem Pokaż token raz. Skopiuj token — Shopify pokazuje go tylko raz."
+        },
+        "step5": {
+          "title": "Wklej token w OneShopLab",
+          "body": "Wróć tutaj i wklej token w pole, które pojawi się w kroku 3."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Adres do otwarcia w panelu WordPress",
+      "appName": "Nazwa aplikacji",
+      "scopes": "Uprawnienia do zaznaczenia",
+      "siteKey": "Twój klucz sklepu (tworzony w kroku 3)"
+    },
+    "siteKeyPending": "Otrzymasz go w kroku 3 poniżej.",
+    "screenshotAlt": "Zrzut ekranu kroku {n}",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano",
+    "step3Title": "Twój klucz sklepu",
+    "step3Body": "Ten klucz to hasło między Twoim sklepem a OneShopLab. Pokazujemy go tylko raz: skopiuj, wklej we wtyczce i zachowaj w bezpiecznym miejscu. Jeśli go zgubisz, utwórz nowy.",
+    "generateKey": "Utwórz mój klucz sklepu",
+    "generating": "Tworzenie…",
+    "keyRevealTitle": "Skopiuj teraz — nie zostanie pokazany ponownie",
+    "keySavedButton": "Zapisałem go",
+    "keyExistsTitle": "Twój klucz sklepu jest gotowy.",
+    "keyExistsBody": "Klucz {prefix}… utworzony {date}. Zgubiony? Użyj „Nowy klucz” poniżej.",
+    "step3NotAvailable": "Klucz sklepu pojawi się tutaj, gdy tylko połączenie {platform} będzie dostępne.",
+    "step4Title": "Sprawdzenie połączenia",
+    "waiting": "Czekamy na pierwszą wymianę ze sklepem…",
+    "waitingHint": "Gdy tylko wtyczka zostanie zapisana, karta sama zmieni kolor na zielony. Nic nie klikaj.",
+    "connected": "Połączono — ostatnia wymiana {ago}, {count, plural, =1 {1 produkt zsynchronizowany} one {# produkt zsynchronizowany} few {# produkty zsynchronizowane} other {# produktów zsynchronizowanych}}",
+    "ago": {
+      "seconds": "{n} s temu",
+      "minutes": "{n} min temu",
+      "hours": "{n} godz. temu",
+      "days": "{n} dni temu"
+    },
+    "troubleTitle": "Coś nie działa?",
+    "fix1": "Sprawdź klucz we wtyczce: bez spacji przed i po, i cały klucz.",
+    "fix2": "Upewnij się, że wtyczka jest włączona (Wtyczki › Zainstalowane wtyczki).",
+    "fix3": "Jeśli strona jest w trybie konserwacji lub chroniona hasłem, wyłącz to na minutę.",
+    "keysTitle": "Twoje klucze sklepu",
+    "keysHint": "Nowy klucz zastępuje stary po 24 godzinach: wcześniej wklej go we wtyczce. Unieważnienie zatrzymuje wtyczkę natychmiast.",
+    "keyCreated": "Utworzony {date}",
+    "keyLastUsed": "Ostatnio użyty {date}",
+    "keyNeverUsed": "Nigdy nie użyty",
+    "keyExpires": "Wygasa {date}",
+    "keyNoExpiry": "Bez wygaśnięcia",
+    "keyGrace": "Stary klucz działa jeszcze do {date}",
+    "state": {
+      "active": "Aktywny",
+      "grace": "W trakcie wymiany",
+      "revoked": "Unieważniony",
+      "expired": "Wygasł"
+    },
+    "rotate": "Nowy klucz",
+    "revoke": "Unieważnij",
+    "rotateConfirmTitle": "Utworzyć nowy klucz?",
+    "rotateConfirmBody": "Obecny klucz działa jeszcze 24 godziny. Wklej nowy we wtyczce przed upływem tego czasu, inaczej połączenie się przerwie.",
+    "rotateConfirm": "Utwórz nowy klucz",
+    "revokeConfirmTitle": "Unieważnić ten klucz?",
+    "revokeConfirmBody": "Wtyczka zatrzyma się natychmiast. Nic nie będzie się synchronizować, dopóki nie utworzysz nowego klucza i nie wkleisz go we wtyczce.",
+    "revokeConfirm": "Unieważnij",
+    "cancel": "Anuluj",
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "ApplyToStore": {
+    "apply": "Zastosuj w sklepie",
+    "applyAgain": "Zastosuj ponownie",
+    "pending": "Czekamy na wtyczkę",
+    "cancel": "Anuluj",
+    "applied": "Zastosowano w sklepie",
+    "conflict": "Nie zastosowano: to pole zmieniło się w sklepie.",
+    "conflictHint": "Sprawdź produkt w sklepie i w razie potrzeby zastosuj ponownie.",
+    "failed": "Wtyczka nie mogła tego zastosować{error}",
+    "expired": "Ta zmiana wygasła, zanim wtyczka ją pobrała.",
+    "noKeyHint": "Połącz sklep, aby stosować to automatycznie.",
+    "noKeyLink": "Skonfiguruj połączenie",
+    "listTitle": "Zmiany do zastosowania",
+    "listHint": "Wtyczka pobiera je przy następnej wizycie (mniej więcej co 5 minut). Wycofaj zmianę, jeśli zmienisz zdanie.",
+    "listEmpty": "Brak oczekujących zmian.",
+    "field": {
+      "title": "Tytuł",
+      "description": "Opis",
+      "tags": "Tagi",
+      "images": "Zdjęcia"
+    },
+    "approvedOn": "Zatwierdzono {date}",
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }

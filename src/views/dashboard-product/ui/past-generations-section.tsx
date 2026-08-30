@@ -5,6 +5,7 @@ import { HistoryImage } from '@/features/generate-product-images';
 import { ImageExpiry } from '@/features/generate-product-images';
 import { ServerPagination } from '@/shared/ui';
 import type { OptimHistoryItem } from '@/entities/generation-job';
+import { ApplyToStoreButton, type ChangeSummary } from '@/features/apply-to-store';
 import { formatDate } from '@/shared/lib';
 
 const PAST_GEN_DETAIL_LIMIT = 600;
@@ -15,7 +16,11 @@ export function PastGenerationsSection({
   items,
   retentionDays,
   page,
-  totalPages
+  totalPages,
+  siteId,
+  archived,
+  hasSiteKey,
+  changeByJobId
 }: {
   title: string;
   emptyText: string;
@@ -25,6 +30,11 @@ export function PastGenerationsSection({
   retentionDays: number;
   page: number;
   totalPages: number;
+  siteId: string;
+  archived: boolean;
+  /** A usable site key exists — otherwise the row shows a link to set one up. */
+  hasSiteKey: boolean;
+  changeByJobId: Record<string, ChangeSummary>;
 }) {
   const tDash = useTranslations('Dashboard');
   if (items.length === 0) {
@@ -75,8 +85,17 @@ export function PastGenerationsSection({
                 </Accordion.Trigger>
               </Accordion.Heading>
               <Accordion.Panel>
-                <Accordion.Body className="px-4 py-3 bg-[var(--default)]/30 text-xs">
+                <Accordion.Body className="px-4 py-3 bg-[var(--default)]/30 text-xs flex flex-col gap-3">
                   <PastGenResult item={h} />
+                  {h.field === 'images' && h.expiredAt ? null : (
+                    <ApplyToStoreButton
+                      jobId={h.jobId}
+                      siteId={siteId}
+                      initialChange={changeByJobId[h.jobId] ?? null}
+                      hasSiteKey={hasSiteKey}
+                      disabled={archived}
+                    />
+                  )}
                 </Accordion.Body>
               </Accordion.Panel>
             </Accordion.Item>

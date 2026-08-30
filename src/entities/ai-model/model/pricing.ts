@@ -24,6 +24,8 @@ const PositiveNum = z.number().positive();
 const PlanSchema = z.object({
   credits: NonNegInt,
   siteLimit: PositiveInt,
+  /** Max products a site may hold through the Integration API (spec §3 `plan_limit`). */
+  productLimit: PositiveInt,
   priceEur: z.number().nonnegative(),
   recurring: z.boolean()
 });

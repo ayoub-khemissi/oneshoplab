@@ -1062,5 +1062,143 @@
     "consent": "I accept the {terms} and the {privacy}, and I ask for the service to start immediately; I acknowledge that I therefore waive my 14-day right of withdrawal for the part already provided.",
     "termsLabel": "Terms of Service",
     "privacyLabel": "Privacy Policy"
+  },
+  "Integrations": {
+    "tabLabel": "Store connection",
+    "wizardTitle": "Connect your store",
+    "wizardIntro": "Once connected, the texts and images you approve here are applied in your store by the plugin. Four short steps, no technical skills needed.",
+    "step1Title": "Choose your platform",
+    "step1Hint": "Where your store runs.",
+    "platformDetected": "Detected during the audit",
+    "step2Title": "Set up the plugin",
+    "estimated": "About {minutes} min",
+    "comingSoonTitle": "Coming soon",
+    "comingSoonBody": "The {platform} connection is not ready yet. Turn on the switch and we’ll email you when it is.",
+    "notifyMe": "Tell me when it’s ready",
+    "notifySaved": "We’ll let you know",
+    "chooseFirst": "Choose your platform above to see the steps.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "Install the OneShopLab plugin",
+          "body": "In your WordPress admin, open Plugins › Add New › Upload Plugin, pick the oneshoplab.zip file and click Install Now."
+        },
+        "step2": {
+          "title": "Activate it",
+          "body": "Click Activate Plugin. A OneShopLab entry appears in the left menu."
+        },
+        "step3": {
+          "title": "Paste your site key",
+          "body": "Open OneShopLab in the left menu and paste the site key from step 3 below into the Site key box."
+        },
+        "step4": {
+          "title": "Save",
+          "body": "Click Save. The plugin sends your products right away — the card in step 4 turns green in under a minute."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Open the app settings",
+          "body": "In your Shopify admin, go to Settings › Apps and sales channels › Develop apps."
+        },
+        "step2": {
+          "title": "Create an app",
+          "body": "Click Create an app and give it this name."
+        },
+        "step3": {
+          "title": "Tick the permissions",
+          "body": "In Configuration › Admin API integration, tick these two permissions and save."
+        },
+        "step4": {
+          "title": "Install the app",
+          "body": "Click Install app, then Reveal token once. Copy the token — Shopify shows it only once."
+        },
+        "step5": {
+          "title": "Paste the token in OneShopLab",
+          "body": "Come back here and paste the token in the box that will appear at step 3."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Address to open in your WordPress admin",
+      "appName": "App name",
+      "scopes": "Permissions to tick",
+      "siteKey": "Your site key (created at step 3)"
+    },
+    "siteKeyPending": "You’ll get it at step 3 below.",
+    "screenshotAlt": "Screenshot of step {n}",
+    "copy": "Copy",
+    "copied": "Copied",
+    "step3Title": "Your site key",
+    "step3Body": "This key is a password between your store and OneShopLab. We show it once: copy it, paste it in the plugin and keep it somewhere safe. If you lose it, create a new one.",
+    "generateKey": "Create my site key",
+    "generating": "Creating…",
+    "keyRevealTitle": "Copy it now — it won’t be shown again",
+    "keySavedButton": "I saved it",
+    "keyExistsTitle": "Your site key is set up.",
+    "keyExistsBody": "Key {prefix}… created {date}. Lost it? Use “New key” below.",
+    "step3NotAvailable": "You’ll get your site key here as soon as the {platform} connection is available.",
+    "step4Title": "Connection check",
+    "waiting": "Waiting for the first exchange with your store…",
+    "waitingHint": "As soon as the plugin is saved, this card turns green by itself. Nothing to click.",
+    "connected": "Connected — last exchange {ago}, {count, plural, =1 {1 product} other {# products}} synced",
+    "ago": {
+      "seconds": "{n} s ago",
+      "minutes": "{n} min ago",
+      "hours": "{n} h ago",
+      "days": "{n} d ago"
+    },
+    "troubleTitle": "Something’s wrong?",
+    "fix1": "Check the key in the plugin: no space before or after, and the whole key.",
+    "fix2": "Make sure the plugin is activated (Plugins › Installed Plugins).",
+    "fix3": "If your site is in maintenance mode or password-protected, turn it off for a minute.",
+    "keysTitle": "Your site keys",
+    "keysHint": "A new key replaces the old one after 24 hours: paste it in the plugin before then. Revoking stops the plugin immediately.",
+    "keyCreated": "Created {date}",
+    "keyLastUsed": "Last used {date}",
+    "keyNeverUsed": "Never used",
+    "keyExpires": "Expires {date}",
+    "keyNoExpiry": "No expiry",
+    "keyGrace": "Old key still works until {date}",
+    "state": {
+      "active": "Active",
+      "grace": "Being replaced",
+      "revoked": "Revoked",
+      "expired": "Expired"
+    },
+    "rotate": "New key",
+    "revoke": "Revoke",
+    "rotateConfirmTitle": "Create a new key?",
+    "rotateConfirmBody": "The current key keeps working for 24 hours. Paste the new key in your plugin before then, or the connection stops.",
+    "rotateConfirm": "Create the new key",
+    "revokeConfirmTitle": "Revoke this key?",
+    "revokeConfirmBody": "Your plugin stops immediately. Nothing will sync until you create a new key and paste it in the plugin.",
+    "revokeConfirm": "Revoke",
+    "cancel": "Cancel",
+    "errorGeneric": "Something went wrong. Try again."
+  },
+  "ApplyToStore": {
+    "apply": "Apply to my store",
+    "applyAgain": "Apply again",
+    "pending": "Waiting for the plugin",
+    "cancel": "Cancel",
+    "applied": "Applied to your store",
+    "conflict": "Not applied: this field changed in your store since.",
+    "conflictHint": "Check the product in your store, then apply again if you want.",
+    "failed": "The plugin couldn’t apply it{error}",
+    "expired": "This change expired before the plugin picked it up.",
+    "noKeyHint": "Connect your store to apply this automatically.",
+    "noKeyLink": "Set up the connection",
+    "listTitle": "Changes to apply",
+    "listHint": "The plugin picks these up on its next visit (about every 5 minutes). Withdraw one if you change your mind.",
+    "listEmpty": "No change waiting.",
+    "field": {
+      "title": "Title",
+      "description": "Description",
+      "tags": "Tags",
+      "images": "Images"
+    },
+    "approvedOn": "Approved {date}",
+    "errorGeneric": "Something went wrong. Try again."
   }
 }

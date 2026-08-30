@@ -23,6 +23,9 @@ import {
   listProductImageJobs
 } from '@/entities/generation-job';
 import { auth } from '@/entities/user';
+import { listProjectKeys } from '@/entities/api-key';
+import { listChangesForJobs } from '@/features/apply-to-store';
+import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
 import { BackArrow, ScoreBadge } from './score-badge';
@@ -133,6 +136,16 @@ export async function DashboardProductPage({
 
   const { inFlightChatJobs, recentFailedChatJobs } = await loadRecentChatJobs(productId);
 
+  // Apply-to-store state per past generation + whether a plugin can pick it up.
+  const [changeByJobId, siteKeys] = await Promise.all([
+    listChangesForJobs(
+      projectId,
+      pastGenPage.items.map((h) => h.jobId)
+    ),
+    listProjectKeys({ projectId, userId: session.user.id })
+  ]);
+  const hasSiteKey = siteKeys.some((k) => isUsableKey(k));
+
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
       <header className="flex items-center justify-between gap-4 flex-wrap">
@@ -235,6 +248,10 @@ export async function DashboardProductPage({
         retentionDays={retentionDays}
         page={historyPage}
         totalPages={pastGenPage.totalPages}
+        siteId={siteId}
+        archived={archived}
+        hasSiteKey={hasSiteKey}
+        changeByJobId={changeByJobId}
       />
     </main>
   );

@@ -1062,5 +1062,143 @@
     "consent": "我接受{terms}和{privacy}，并要求立即开始服务；我知悉因此放弃对已提供部分的 14 天撤回权。",
     "termsLabel": "服务条款",
     "privacyLabel": "隐私政策"
+  },
+  "Integrations": {
+    "tabLabel": "店铺连接",
+    "wizardTitle": "连接你的店铺",
+    "wizardIntro": "连接后，你在这里批准的文案和图片会由插件应用到你的店铺。四个简短步骤，无需技术知识。",
+    "step1Title": "选择你的平台",
+    "step1Hint": "你的店铺运行的地方。",
+    "platformDetected": "审计时检测到",
+    "step2Title": "安装插件",
+    "estimated": "约 {minutes} 分钟",
+    "comingSoonTitle": "即将推出",
+    "comingSoonBody": "{platform} 连接尚未就绪。打开开关，就绪后我们会发邮件通知你。",
+    "notifyMe": "就绪时通知我",
+    "notifySaved": "我们会通知你",
+    "chooseFirst": "在上方选择平台以查看步骤。",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "安装 OneShopLab 插件",
+          "body": "在 WordPress 后台打开 插件 › 安装插件 › 上传插件，选择 oneshoplab.zip 文件并点击 现在安装。"
+        },
+        "step2": {
+          "title": "启用插件",
+          "body": "点击 启用插件。左侧菜单会出现 OneShopLab。"
+        },
+        "step3": {
+          "title": "粘贴站点密钥",
+          "body": "在左侧菜单打开 OneShopLab，把下方第 3 步的站点密钥粘贴到 站点密钥 框中。"
+        },
+        "step4": {
+          "title": "保存",
+          "body": "点击 保存。插件会立即发送你的商品——第 4 步的卡片会在一分钟内变绿。"
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "打开应用设置",
+          "body": "在 Shopify 后台进入 设置 › 应用和销售渠道 › 开发应用。"
+        },
+        "step2": {
+          "title": "创建应用",
+          "body": "点击 创建应用，并使用这个名称。"
+        },
+        "step3": {
+          "title": "勾选权限",
+          "body": "在 配置 › Admin API 集成 中勾选这两项权限并保存。"
+        },
+        "step4": {
+          "title": "安装应用",
+          "body": "点击 安装应用，然后点击一次 显示令牌。复制令牌——Shopify 只显示一次。"
+        },
+        "step5": {
+          "title": "把令牌粘贴到 OneShopLab",
+          "body": "回到这里，把令牌粘贴到第 3 步将出现的框中。"
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "在 WordPress 后台打开的地址",
+      "appName": "应用名称",
+      "scopes": "需要勾选的权限",
+      "siteKey": "你的站点密钥（在第 3 步创建）"
+    },
+    "siteKeyPending": "你会在下方第 3 步获得。",
+    "screenshotAlt": "第 {n} 步截图",
+    "copy": "复制",
+    "copied": "已复制",
+    "step3Title": "你的站点密钥",
+    "step3Body": "这个密钥是你的店铺与 OneShopLab 之间的密码。我们只显示一次：复制它，粘贴到插件中，并妥善保存。丢失后请创建新的密钥。",
+    "generateKey": "创建我的站点密钥",
+    "generating": "创建中…",
+    "keyRevealTitle": "现在复制——之后不会再显示",
+    "keySavedButton": "我已保存",
+    "keyExistsTitle": "你的站点密钥已就绪。",
+    "keyExistsBody": "密钥 {prefix}… 创建于 {date}。丢失了？使用下方的“新密钥”。",
+    "step3NotAvailable": "{platform} 连接可用后，你将在这里获得站点密钥。",
+    "step4Title": "连接检查",
+    "waiting": "等待与店铺的首次通信…",
+    "waitingHint": "插件保存后，这张卡片会自动变绿。无需点击任何东西。",
+    "connected": "已连接 — 上次通信 {ago}，已同步 {count, plural, other {# 个商品}}",
+    "ago": {
+      "seconds": "{n} 秒前",
+      "minutes": "{n} 分钟前",
+      "hours": "{n} 小时前",
+      "days": "{n} 天前"
+    },
+    "troubleTitle": "有问题？",
+    "fix1": "检查插件中的密钥：前后不能有空格，且必须是完整密钥。",
+    "fix2": "确认插件已启用（插件 › 已安装的插件）。",
+    "fix3": "如果你的网站处于维护模式或有密码保护，请先关闭一分钟。",
+    "keysTitle": "你的站点密钥",
+    "keysHint": "新密钥会在 24 小时后替换旧密钥：请在此之前粘贴到插件中。撤销会立即停止插件。",
+    "keyCreated": "创建于 {date}",
+    "keyLastUsed": "上次使用 {date}",
+    "keyNeverUsed": "从未使用",
+    "keyExpires": "到期 {date}",
+    "keyNoExpiry": "永不过期",
+    "keyGrace": "旧密钥可用至 {date}",
+    "state": {
+      "active": "有效",
+      "grace": "替换中",
+      "revoked": "已撤销",
+      "expired": "已过期"
+    },
+    "rotate": "新密钥",
+    "revoke": "撤销",
+    "rotateConfirmTitle": "创建新密钥？",
+    "rotateConfirmBody": "当前密钥还能使用 24 小时。请在此之前把新密钥粘贴到插件中，否则连接会中断。",
+    "rotateConfirm": "创建新密钥",
+    "revokeConfirmTitle": "撤销这个密钥？",
+    "revokeConfirmBody": "插件会立即停止。在你创建新密钥并粘贴到插件之前，不会同步任何内容。",
+    "revokeConfirm": "撤销",
+    "cancel": "取消",
+    "errorGeneric": "出了点问题，请重试。"
+  },
+  "ApplyToStore": {
+    "apply": "应用到我的店铺",
+    "applyAgain": "再次应用",
+    "pending": "等待插件",
+    "cancel": "取消",
+    "applied": "已应用到你的店铺",
+    "conflict": "未应用：此字段在你的店铺中已被修改。",
+    "conflictHint": "检查店铺中的商品，如需要可再次应用。",
+    "failed": "插件无法应用{error}",
+    "expired": "插件获取之前此更改已过期。",
+    "noKeyHint": "连接你的店铺即可自动应用。",
+    "noKeyLink": "设置连接",
+    "listTitle": "待应用的更改",
+    "listHint": "插件会在下次访问时获取（大约每 5 分钟）。改变主意可撤回。",
+    "listEmpty": "没有待处理的更改。",
+    "field": {
+      "title": "标题",
+      "description": "描述",
+      "tags": "标签",
+      "images": "图片"
+    },
+    "approvedOn": "批准于 {date}",
+    "errorGeneric": "出了点问题，请重试。"
   }
 }

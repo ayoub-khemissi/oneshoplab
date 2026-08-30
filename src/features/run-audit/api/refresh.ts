@@ -3,7 +3,7 @@ import { db } from '@/shared/db';
 import { audits } from '@/shared/db/schema';
 import { findLatestAuditIdWhere } from '@/entities/audit';
 import { runAudit } from './run';
-import { syncProjectProducts } from './sync-products';
+import { syncProjectProducts } from '@/entities/product';
 
 /** How long an audit's product data is considered fresh before it qualifies
  *  for an automatic background refresh. */

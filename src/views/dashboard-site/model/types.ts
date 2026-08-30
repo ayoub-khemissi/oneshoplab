@@ -1,6 +1,6 @@
 import type { jobs } from '@/shared/db/schema';
 
-export type Tab = 'overview' | 'products' | 'jobs' | 'settings';
+export type Tab = 'overview' | 'products' | 'jobs' | 'integrations' | 'settings';
 
 export const ACTIVITY_PAGE_SIZE = 15;
 export const PRODUCTS_PAGE_SIZE = 15;

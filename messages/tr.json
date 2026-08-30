@@ -1062,5 +1062,143 @@
     "consent": "{terms} ve {privacy} kabul ediyorum ve hizmetin derhal başlamasını talep ediyorum; böylece halihazırda sunulan kısım için 14 günlük cayma hakkımdan feragat ettiğimi kabul ediyorum.",
     "termsLabel": "Hizmet Şartları'nı",
     "privacyLabel": "Gizlilik Politikası'nı"
+  },
+  "Integrations": {
+    "tabLabel": "Mağaza bağlantısı",
+    "wizardTitle": "Mağazanızı bağlayın",
+    "wizardIntro": "Bağlandıktan sonra burada onayladığınız metinler ve görseller eklenti tarafından mağazanıza uygulanır. Dört kısa adım, teknik bilgi gerekmez.",
+    "step1Title": "Platformunuzu seçin",
+    "step1Hint": "Mağazanızın çalıştığı yer.",
+    "platformDetected": "Denetim sırasında algılandı",
+    "step2Title": "Eklentiyi kurun",
+    "estimated": "Yaklaşık {minutes} dk",
+    "comingSoonTitle": "Çok yakında",
+    "comingSoonBody": "{platform} bağlantısı henüz hazır değil. Anahtarı açın, hazır olunca e-posta ile haber verelim.",
+    "notifyMe": "Hazır olunca haber ver",
+    "notifySaved": "Haber vereceğiz",
+    "chooseFirst": "Adımları görmek için yukarıdan platformunuzu seçin.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "OneShopLab eklentisini kurun",
+          "body": "WordPress yönetim panelinde Eklentiler › Yeni Ekle › Eklenti Yükle’yi açın, oneshoplab.zip dosyasını seçin ve Şimdi Kur’a tıklayın."
+        },
+        "step2": {
+          "title": "Etkinleştirin",
+          "body": "Eklentiyi Etkinleştir’e tıklayın. Sol menüde OneShopLab girişi görünür."
+        },
+        "step3": {
+          "title": "Site anahtarınızı yapıştırın",
+          "body": "Sol menüden OneShopLab’ı açın ve aşağıdaki 3. adımdaki site anahtarını Site anahtarı kutusuna yapıştırın."
+        },
+        "step4": {
+          "title": "Kaydedin",
+          "body": "Kaydet’e tıklayın. Eklenti ürünlerinizi hemen gönderir — 4. adımdaki kart bir dakikadan kısa sürede yeşile döner."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Uygulama ayarlarını açın",
+          "body": "Shopify yönetim panelinde Ayarlar › Uygulamalar ve satış kanalları › Uygulama geliştir’e gidin."
+        },
+        "step2": {
+          "title": "Bir uygulama oluşturun",
+          "body": "Uygulama oluştur’a tıklayın ve bu adı verin."
+        },
+        "step3": {
+          "title": "İzinleri işaretleyin",
+          "body": "Yapılandırma › Admin API entegrasyonu altında bu iki izni işaretleyip kaydedin."
+        },
+        "step4": {
+          "title": "Uygulamayı kurun",
+          "body": "Uygulamayı kur’a, sonra bir kez Belirteci göster’e tıklayın. Belirteci kopyalayın — Shopify yalnızca bir kez gösterir."
+        },
+        "step5": {
+          "title": "Belirteci OneShopLab’a yapıştırın",
+          "body": "Buraya dönün ve belirteci 3. adımda görünecek kutuya yapıştırın."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "WordPress panelinde açılacak adres",
+      "appName": "Uygulama adı",
+      "scopes": "İşaretlenecek izinler",
+      "siteKey": "Site anahtarınız (3. adımda oluşturulur)"
+    },
+    "siteKeyPending": "Aşağıdaki 3. adımda alacaksınız.",
+    "screenshotAlt": "{n}. adımın ekran görüntüsü",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı",
+    "step3Title": "Site anahtarınız",
+    "step3Body": "Bu anahtar, mağazanız ile OneShopLab arasındaki bir paroladır. Yalnızca bir kez gösteririz: kopyalayın, eklentiye yapıştırın ve güvenli bir yerde saklayın. Kaybederseniz yenisini oluşturun.",
+    "generateKey": "Site anahtarımı oluştur",
+    "generating": "Oluşturuluyor…",
+    "keyRevealTitle": "Şimdi kopyalayın — bir daha gösterilmeyecek",
+    "keySavedButton": "Kaydettim",
+    "keyExistsTitle": "Site anahtarınız hazır.",
+    "keyExistsBody": "{prefix}… anahtarı {date} tarihinde oluşturuldu. Kaybettiniz mi? Aşağıdaki “Yeni anahtar”ı kullanın.",
+    "step3NotAvailable": "{platform} bağlantısı kullanılabilir olduğunda site anahtarınızı burada alacaksınız.",
+    "step4Title": "Bağlantı kontrolü",
+    "waiting": "Mağazanızla ilk alışveriş bekleniyor…",
+    "waitingHint": "Eklenti kaydedilir kaydedilmez bu kart kendiliğinden yeşile döner. Tıklamanız gereken bir şey yok.",
+    "connected": "Bağlı — son alışveriş {ago}, {count, plural, =1 {1 ürün eşitlendi} other {# ürün eşitlendi}}",
+    "ago": {
+      "seconds": "{n} sn önce",
+      "minutes": "{n} dk önce",
+      "hours": "{n} sa önce",
+      "days": "{n} gün önce"
+    },
+    "troubleTitle": "Bir sorun mu var?",
+    "fix1": "Eklentideki anahtarı kontrol edin: başında veya sonunda boşluk olmasın ve anahtarın tamamı olsun.",
+    "fix2": "Eklentinin etkin olduğundan emin olun (Eklentiler › Yüklü Eklentiler).",
+    "fix3": "Siteniz bakım modundaysa veya parola korumalıysa bir dakikalığına kapatın.",
+    "keysTitle": "Site anahtarlarınız",
+    "keysHint": "Yeni anahtar 24 saat sonra eskisinin yerini alır: bundan önce eklentiye yapıştırın. İptal etmek eklentiyi hemen durdurur.",
+    "keyCreated": "{date} tarihinde oluşturuldu",
+    "keyLastUsed": "Son kullanım {date}",
+    "keyNeverUsed": "Hiç kullanılmadı",
+    "keyExpires": "{date} tarihinde sona erer",
+    "keyNoExpiry": "Süresiz",
+    "keyGrace": "Eski anahtar {date} tarihine kadar çalışır",
+    "state": {
+      "active": "Etkin",
+      "grace": "Değiştiriliyor",
+      "revoked": "İptal edildi",
+      "expired": "Süresi doldu"
+    },
+    "rotate": "Yeni anahtar",
+    "revoke": "İptal et",
+    "rotateConfirmTitle": "Yeni anahtar oluşturulsun mu?",
+    "rotateConfirmBody": "Mevcut anahtar 24 saat daha çalışır. Yeni anahtarı bu süre içinde eklentiye yapıştırın, yoksa bağlantı kesilir.",
+    "rotateConfirm": "Yeni anahtarı oluştur",
+    "revokeConfirmTitle": "Bu anahtar iptal edilsin mi?",
+    "revokeConfirmBody": "Eklentiniz hemen durur. Yeni bir anahtar oluşturup eklentiye yapıştırana kadar hiçbir şey eşitlenmez.",
+    "revokeConfirm": "İptal et",
+    "cancel": "Vazgeç",
+    "errorGeneric": "Bir sorun oluştu. Tekrar deneyin."
+  },
+  "ApplyToStore": {
+    "apply": "Mağazama uygula",
+    "applyAgain": "Tekrar uygula",
+    "pending": "Eklenti bekleniyor",
+    "cancel": "Vazgeç",
+    "applied": "Mağazanıza uygulandı",
+    "conflict": "Uygulanmadı: bu alan bu arada mağazanızda değişti.",
+    "conflictHint": "Mağazanızdaki ürünü kontrol edin, isterseniz tekrar uygulayın.",
+    "failed": "Eklenti uygulayamadı{error}",
+    "expired": "Bu değişiklik eklenti almadan önce süresi doldu.",
+    "noKeyHint": "Bunu otomatik uygulamak için mağazanızı bağlayın.",
+    "noKeyLink": "Bağlantıyı kur",
+    "listTitle": "Uygulanacak değişiklikler",
+    "listHint": "Eklenti bunları bir sonraki ziyaretinde alır (yaklaşık her 5 dakikada). Fikrinizi değiştirirseniz geri çekin.",
+    "listEmpty": "Bekleyen değişiklik yok.",
+    "field": {
+      "title": "Başlık",
+      "description": "Açıklama",
+      "tags": "Etiketler",
+      "images": "Görseller"
+    },
+    "approvedOn": "{date} tarihinde onaylandı",
+    "errorGeneric": "Bir sorun oluştu. Tekrar deneyin."
   }
 }

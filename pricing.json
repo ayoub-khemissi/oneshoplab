@@ -9,24 +9,28 @@
     "free": {
       "credits": 150,
       "siteLimit": 1,
+      "productLimit": 200,
       "priceEur": 0,
       "recurring": false
     },
     "starter": {
       "credits": 5500,
       "siteLimit": 3,
+      "productLimit": 1000,
       "priceEur": 39.99,
       "recurring": true
     },
     "pro": {
       "credits": 15000,
       "siteLimit": 10,
+      "productLimit": 5000,
       "priceEur": 89.99,
       "recurring": true
     },
     "scale": {
       "credits": 38000,
       "siteLimit": 50,
+      "productLimit": 20000,
       "priceEur": 199.99,
       "recurring": true
     }

@@ -160,6 +160,7 @@ function PulsingDot() {
 
 export function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
   const t = useTranslations('Dashboard');
+  const tIntegrations = useTranslations('Integrations');
   return (
     <nav className="border-b border-[var(--border)] flex gap-1 -mt-2 overflow-x-auto">
       <TabLink
@@ -176,6 +177,11 @@ export function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
         href={`/dashboard/sites/${siteId}?tab=jobs`}
         active={active === 'jobs'}
         label={t('tabJobs')}
+      />
+      <TabLink
+        href={`/dashboard/sites/${siteId}?tab=integrations`}
+        active={active === 'integrations'}
+        label={tIntegrations('tabLabel')}
       />
       <TabLink
         href={`/dashboard/sites/${siteId}?tab=settings`}

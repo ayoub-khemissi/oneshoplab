@@ -25,6 +25,15 @@ import { BulkGenerateSection } from '@/widgets/bulk-generate-section';
 import { ShareLinksCard } from '@/widgets/share-links-card';
 import { isAdminEmail } from '@/entities/user';
 import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/share-link';
+import { listProjectKeys } from '@/entities/api-key';
+import { listPendingChangesForSite, PendingChangesList } from '@/features/apply-to-store';
+import {
+  INTEGRATION_PLATFORMS,
+  isUsableKey,
+  IntegrationsWizard,
+  toSiteKeySummary,
+  type IntegrationPlatform
+} from '@/features/integrations';
 import {
   getActiveBulkJob,
   getEffectiveBulkPrefs,
@@ -76,9 +85,11 @@ export async function DashboardSitePage({
       ? 'products'
       : rawTab === 'jobs'
         ? 'jobs'
-        : rawTab === 'settings'
-          ? 'settings'
-          : 'overview';
+        : rawTab === 'integrations'
+          ? 'integrations'
+          : rawTab === 'settings'
+            ? 'settings'
+            : 'overview';
   const activityPage = Math.max(1, Number.parseInt(rawActivityPage ?? '1', 10) || 1);
   const productsPage = Math.max(1, Number.parseInt(rawProductsPage ?? '1', 10) || 1);
   const productsQuery = (rawQuery ?? '').trim();
@@ -358,6 +369,24 @@ export async function DashboardSitePage({
       ])
     : [[], []];
 
+  // Integrations tab: site keys + the plugin's "to apply" queue. Two cheap
+  // indexed reads, gated by tab like everything else above.
+  const [siteKeys, pendingChanges] =
+    activeTab === 'integrations'
+      ? await Promise.all([
+          listProjectKeys({ projectId: project.id, userId: session.user.id }),
+          listPendingChangesForSite(project.id)
+        ])
+      : [[], []];
+  const detectedPlatform: IntegrationPlatform | null = (
+    INTEGRATION_PLATFORMS as readonly string[]
+  ).includes(project.source)
+    ? (project.source as IntegrationPlatform)
+    : null;
+  const lastPluginCall = siteKeys
+    .map((k) => k.lastUsedAt?.getTime() ?? 0)
+    .reduce((max, ts) => Math.max(max, ts), 0);
+
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       {isLoading ? <AutoRefresh /> : null}
@@ -431,6 +460,21 @@ export async function DashboardSitePage({
           page={activityPage}
           totalPages={activityTotalPages}
         />
+      ) : activeTab === 'integrations' ? (
+        <div className="flex flex-col gap-4">
+          <IntegrationsWizard
+            projectId={project.id}
+            detectedPlatform={detectedPlatform}
+            initialKeys={siteKeys.map((k) => toSiteKeySummary(k))}
+            initialStatus={{
+              hasActiveKey: siteKeys.some((k) => isUsableKey(k)),
+              lastUsedAtIso: lastPluginCall > 0 ? new Date(lastPluginCall).toISOString() : null,
+              productCount: productRows.filter((p) => p.status === 'active').length
+            }}
+            interest={project.integrationInterest ?? {}}
+          />
+          <PendingChangesList siteId={siteId} initialItems={pendingChanges} />
+        </div>
       ) : (
         // settings tab
         <div className="flex flex-col gap-4">

@@ -25,11 +25,70 @@ import type { NormalizedProduct } from '@/entities/store-adapter';
  * platform), handle as a fallback for legacy adapters that didn't emit
  * an ID. Both keys are unique within a project.
  */
+export interface SyncProductsOptions {
+  /**
+   * Archive rows absent from `scraped` (default). The Integration API's
+   * paged sync passes `false`: one page is never the whole catalog, the
+   * archive step runs once on the final page (see features/catalog-sync).
+   */
+  archiveMissing?: boolean;
+}
+
+export interface SyncProductsResult {
+  inserted: number;
+  updated: number;
+  archived: number;
+  /** Matched rows whose volatile metadata was byte-identical (still touched for lastSeenAt). */
+  unchanged: number;
+}
+
+function volatileFingerprint(p: NormalizedProduct): string {
+  return JSON.stringify([
+    p.title,
+    p.sourceId,
+    p.sourceUrl,
+    p.handle,
+    p.descriptionHtml,
+    p.images,
+    p.tags,
+    p.variants,
+    p.vendor,
+    p.productType,
+    p.priceMin,
+    p.priceMax,
+    p.currency,
+    p.sku,
+    p.sourceUpdatedAt?.getTime() ?? null
+  ]);
+}
+
+function rowFingerprint(e: typeof products.$inferSelect): string {
+  return JSON.stringify([
+    e.title,
+    e.sourceId,
+    e.sourceUrl,
+    e.handle,
+    e.descriptionHtml,
+    e.images,
+    e.tags,
+    e.variants,
+    e.vendor,
+    e.productType,
+    e.priceMin != null ? Number(e.priceMin) : null,
+    e.priceMax != null ? Number(e.priceMax) : null,
+    e.currency,
+    e.sku,
+    e.sourceUpdatedAt?.getTime() ?? null
+  ]);
+}
+
 export async function syncProjectProducts(
   projectId: string,
   platform: Platform,
-  scraped: NormalizedProduct[]
-): Promise<{ inserted: number; updated: number; archived: number }> {
+  scraped: NormalizedProduct[],
+  options: SyncProductsOptions = {}
+): Promise<SyncProductsResult> {
+  const archiveMissing = options.archiveMissing ?? true;
   const existing = await db.query.products.findMany({
     where: eq(products.projectId, projectId)
   });
@@ -49,6 +108,7 @@ export async function syncProjectProducts(
   const now = new Date();
   let inserted = 0;
   let updated = 0;
+  let unchanged = 0;
 
   // Two-pass match: sourceId-first across the whole scrape, then
   // handle for whatever's left. Some platforms (WooCommerce sites
@@ -101,6 +161,8 @@ export async function syncProjectProducts(
         // archived rows un-archive normally.
         const prev = existingById.get(existingId);
         const keepArchived = prev?.manuallyArchived === true;
+        if (prev && rowFingerprint(prev) === volatileFingerprint(p)) unchanged += 1;
+        else updated += 1;
         await tx
           .update(products)
           .set({
@@ -135,7 +197,6 @@ export async function syncProjectProducts(
             archivedAt: keepArchived ? (prev?.archivedAt ?? now) : null
           })
           .where(eq(products.id, existingId));
-        updated += 1;
       } else {
         const id = randomUUID();
         await tx.insert(products).values({
@@ -175,7 +236,9 @@ export async function syncProjectProducts(
     // Soft-archive everything that wasn't seen this round AND is currently
     // active. Already-archived rows stay archived (no-op). The customInstructions
     // and the jobs FK'd to these rows are untouched.
-    const orphans = existing.filter((e) => !seenIds.has(e.id) && e.status === 'active');
+    const orphans = archiveMissing
+      ? existing.filter((e) => !seenIds.has(e.id) && e.status === 'active')
+      : [];
     if (orphans.length > 0) {
       await tx
         .update(products)
@@ -192,7 +255,9 @@ export async function syncProjectProducts(
     }
   });
 
-  const archived = existing.filter((e) => !seenIds.has(e.id) && e.status === 'active').length;
+  const archived = archiveMissing
+    ? existing.filter((e) => !seenIds.has(e.id) && e.status === 'active').length
+    : 0;
 
-  return { inserted, updated, archived };
+  return { inserted, updated, archived, unchanged };
 }

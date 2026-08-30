@@ -1062,5 +1062,143 @@
     "consent": "Ich akzeptiere die {terms} und die {privacy} und verlange die sofortige Ausführung des Dienstes; ich nehme zur Kenntnis, dass ich damit mein 14-tägiges Widerrufsrecht für den bereits erbrachten Teil verliere.",
     "termsLabel": "Nutzungsbedingungen",
     "privacyLabel": "Datenschutzerklärung"
+  },
+  "Integrations": {
+    "tabLabel": "Shop-Verbindung",
+    "wizardTitle": "Shop verbinden",
+    "wizardIntro": "Sobald der Shop verbunden ist, überträgt das Plugin die hier freigegebenen Texte und Bilder in deinen Shop. Vier kurze Schritte, keine technischen Kenntnisse nötig.",
+    "step1Title": "Plattform wählen",
+    "step1Hint": "Wo dein Shop läuft.",
+    "platformDetected": "Beim Audit erkannt",
+    "step2Title": "Plugin einrichten",
+    "estimated": "Etwa {minutes} Min.",
+    "comingSoonTitle": "Bald verfügbar",
+    "comingSoonBody": "Die {platform}-Verbindung ist noch nicht fertig. Schalte den Schalter ein und wir benachrichtigen dich per E-Mail.",
+    "notifyMe": "Benachrichtige mich",
+    "notifySaved": "Wir sagen Bescheid",
+    "chooseFirst": "Wähle oben deine Plattform, um die Schritte zu sehen.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "OneShopLab-Plugin installieren",
+          "body": "Öffne im WordPress-Admin Plugins › Installieren › Plugin hochladen, wähle die Datei oneshoplab.zip und klicke auf Jetzt installieren."
+        },
+        "step2": {
+          "title": "Aktivieren",
+          "body": "Klicke auf Plugin aktivieren. Im linken Menü erscheint der Eintrag OneShopLab."
+        },
+        "step3": {
+          "title": "Site-Schlüssel einfügen",
+          "body": "Öffne OneShopLab im linken Menü und füge den Site-Schlüssel aus Schritt 3 unten in das Feld Site-Schlüssel ein."
+        },
+        "step4": {
+          "title": "Speichern",
+          "body": "Klicke auf Speichern. Das Plugin sendet deine Produkte sofort — die Karte in Schritt 4 wird in unter einer Minute grün."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "App-Einstellungen öffnen",
+          "body": "Gehe im Shopify-Admin zu Einstellungen › Apps und Vertriebskanäle › Apps entwickeln."
+        },
+        "step2": {
+          "title": "App erstellen",
+          "body": "Klicke auf App erstellen und gib ihr diesen Namen."
+        },
+        "step3": {
+          "title": "Berechtigungen anhaken",
+          "body": "Hake unter Konfiguration › Admin-API-Integration diese zwei Berechtigungen an und speichere."
+        },
+        "step4": {
+          "title": "App installieren",
+          "body": "Klicke auf App installieren, dann einmal auf Token anzeigen. Kopiere das Token — Shopify zeigt es nur einmal."
+        },
+        "step5": {
+          "title": "Token in OneShopLab einfügen",
+          "body": "Komm hierher zurück und füge das Token in das Feld ein, das in Schritt 3 erscheint."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Adresse im WordPress-Admin öffnen",
+      "appName": "App-Name",
+      "scopes": "Anzuhakende Berechtigungen",
+      "siteKey": "Dein Site-Schlüssel (in Schritt 3 erstellt)"
+    },
+    "siteKeyPending": "Du bekommst ihn in Schritt 3 unten.",
+    "screenshotAlt": "Screenshot von Schritt {n}",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "step3Title": "Dein Site-Schlüssel",
+    "step3Body": "Dieser Schlüssel ist ein Passwort zwischen deinem Shop und OneShopLab. Wir zeigen ihn nur einmal: kopiere ihn, füge ihn im Plugin ein und bewahre ihn sicher auf. Falls du ihn verlierst, erstelle einen neuen.",
+    "generateKey": "Meinen Site-Schlüssel erstellen",
+    "generating": "Wird erstellt…",
+    "keyRevealTitle": "Jetzt kopieren — er wird nicht noch einmal angezeigt",
+    "keySavedButton": "Ich habe ihn gespeichert",
+    "keyExistsTitle": "Dein Site-Schlüssel ist eingerichtet.",
+    "keyExistsBody": "Schlüssel {prefix}… erstellt am {date}. Verloren? Nutze unten „Neuer Schlüssel“.",
+    "step3NotAvailable": "Du bekommst deinen Site-Schlüssel hier, sobald die {platform}-Verbindung verfügbar ist.",
+    "step4Title": "Verbindungsprüfung",
+    "waiting": "Warten auf den ersten Austausch mit deinem Shop…",
+    "waitingHint": "Sobald das Plugin gespeichert ist, wird diese Karte von selbst grün. Nichts zu klicken.",
+    "connected": "Verbunden — letzter Austausch {ago}, {count, plural, =1 {1 Produkt synchronisiert} other {# Produkte synchronisiert}}",
+    "ago": {
+      "seconds": "vor {n} s",
+      "minutes": "vor {n} Min.",
+      "hours": "vor {n} Std.",
+      "days": "vor {n} Tagen"
+    },
+    "troubleTitle": "Stimmt etwas nicht?",
+    "fix1": "Prüfe den Schlüssel im Plugin: kein Leerzeichen davor oder danach, und der ganze Schlüssel.",
+    "fix2": "Prüfe, ob das Plugin aktiviert ist (Plugins › Installierte Plugins).",
+    "fix3": "Wenn deine Website im Wartungsmodus oder passwortgeschützt ist, schalte das für eine Minute aus.",
+    "keysTitle": "Deine Site-Schlüssel",
+    "keysHint": "Ein neuer Schlüssel ersetzt den alten nach 24 Stunden: füge ihn vorher im Plugin ein. Widerrufen stoppt das Plugin sofort.",
+    "keyCreated": "Erstellt am {date}",
+    "keyLastUsed": "Zuletzt verwendet am {date}",
+    "keyNeverUsed": "Nie verwendet",
+    "keyExpires": "Läuft ab am {date}",
+    "keyNoExpiry": "Kein Ablauf",
+    "keyGrace": "Alter Schlüssel funktioniert noch bis {date}",
+    "state": {
+      "active": "Aktiv",
+      "grace": "Wird ersetzt",
+      "revoked": "Widerrufen",
+      "expired": "Abgelaufen"
+    },
+    "rotate": "Neuer Schlüssel",
+    "revoke": "Widerrufen",
+    "rotateConfirmTitle": "Neuen Schlüssel erstellen?",
+    "rotateConfirmBody": "Der aktuelle Schlüssel funktioniert noch 24 Stunden. Füge den neuen vorher im Plugin ein, sonst bricht die Verbindung ab.",
+    "rotateConfirm": "Neuen Schlüssel erstellen",
+    "revokeConfirmTitle": "Diesen Schlüssel widerrufen?",
+    "revokeConfirmBody": "Dein Plugin stoppt sofort. Nichts wird synchronisiert, bis du einen neuen Schlüssel erstellst und im Plugin einfügst.",
+    "revokeConfirm": "Widerrufen",
+    "cancel": "Abbrechen",
+    "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal."
+  },
+  "ApplyToStore": {
+    "apply": "In meinem Shop anwenden",
+    "applyAgain": "Erneut anwenden",
+    "pending": "Wartet auf das Plugin",
+    "cancel": "Abbrechen",
+    "applied": "In deinem Shop angewendet",
+    "conflict": "Nicht angewendet: dieses Feld wurde inzwischen im Shop geändert.",
+    "conflictHint": "Prüfe das Produkt in deinem Shop und wende es bei Bedarf erneut an.",
+    "failed": "Das Plugin konnte es nicht anwenden{error}",
+    "expired": "Diese Änderung ist abgelaufen, bevor das Plugin sie abgeholt hat.",
+    "noKeyHint": "Verbinde deinen Shop, um das automatisch anzuwenden.",
+    "noKeyLink": "Verbindung einrichten",
+    "listTitle": "Anzuwendende Änderungen",
+    "listHint": "Das Plugin holt sie beim nächsten Besuch ab (etwa alle 5 Minuten). Ziehe eine zurück, wenn du es dir anders überlegst.",
+    "listEmpty": "Keine Änderung wartet.",
+    "field": {
+      "title": "Titel",
+      "description": "Beschreibung",
+      "tags": "Tags",
+      "images": "Bilder"
+    },
+    "approvedOn": "Freigegeben am {date}",
+    "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal."
   }
 }

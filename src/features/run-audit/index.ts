@@ -8,7 +8,6 @@ export {
   MIN_AUDIT_CREDITS
 } from './api/launch';
 export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from './api/refresh';
-export { syncProjectProducts } from './api/sync-products';
 export { regenerateProductSection, runDynamicAuditForProduct } from './api/dynamic-audit';
 export type {
   DynamicAuditOptions,

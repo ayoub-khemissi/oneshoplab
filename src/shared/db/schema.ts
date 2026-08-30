@@ -171,6 +171,10 @@ export const verificationTokens = mysqlTable(
 // DOMAIN TABLES
 // ============================================================================
 
+export const INTEGRATION_INTEREST_PLATFORMS = ['shopify', 'wix'] as const;
+export type IntegrationInterestPlatform = (typeof INTEGRATION_INTEREST_PLATFORMS)[number];
+export type IntegrationInterest = Partial<Record<IntegrationInterestPlatform, boolean>>;
+
 export const projects = mysqlTable(
   'projects',
   {
@@ -207,6 +211,10 @@ export const projects = mysqlTable(
       };
       imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
     } | null>(),
+    /** "Notify me" toggles of the Integrations wizard for the connectors
+     *  that have not shipped yet (Shopify phase 3, Wix phase 5). NULL =
+     *  never asked. Read by the launch announcement, nothing else. */
+    integrationInterest: json('integration_interest').$type<IntegrationInterest | null>(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
   },

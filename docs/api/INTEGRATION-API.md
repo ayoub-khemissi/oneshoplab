@@ -82,12 +82,14 @@ Upsert a batch. Body:
   session per project (`409 sync_in_progress` otherwise).
 - Idempotent per `Idempotency-Key` header (required, ≤128 chars, kept 24 h):
   same key + same body hash → cached response; same key + different body →
-  `409 idempotency_mismatch`.
+  `409 idempotency_mismatch`. Only 200 responses are cached: 409/422/423
+  depend on state the plugin fixes before retrying with the same key.
 - Validation: duplicate `sourceId` in a batch → `422 validation` with the
   index; unknown fields ignored; strings capped (title 512, tags 50 × 64,
   images 30 per product, descriptionHtml 64 KiB).
-- Plan limit: if the upsert would exceed `limits.maxProducts` the whole
-  batch is rejected `422 plan_limit` (`details.maxProducts`, `current`).
+- Plan limit: if the upsert would exceed `limits.maxProducts` (pricing.json
+  `plans.<id>.productLimit`, read through `maxProductsForPlan`) the whole
+  batch is rejected `422 plan_limit` (`details.maxProducts`, `current`, `incoming`).
 - Concurrency: a MySQL advisory lock per project (`GET_LOCK('osl:sync:<id>', 5)`)
   serialises batches; `423 locked` if it cannot be acquired in 5 s.
 - Response: `{ inserted, updated, archived, unchanged, session?, errors: [{index, sourceId, code}] }`.
@@ -97,6 +99,7 @@ Upsert a batch. Body:
 
 ### `DELETE /products/{sourceId}` — `catalog:write`
 Archives (never hard-deletes — generation history must survive). 404 if unknown, 200 idempotent if already archived.
+Response: `{ sourceId, status: "archived", alreadyArchived }`.
 
 ### `GET /changes?since=<cursor>&limit=<1..200>` — `changes:read`
 Approved changes not yet acknowledged, oldest first:
@@ -131,6 +134,12 @@ Approved changes not yet acknowledged, oldest first:
 60/min. Single-instance deployment → in-memory buckets are exact; when the
 app runs on several instances move the bucket to MySQL/Redis (documented
 seam: `shared/api/rate-limit.ts`).
+
+### Reference client
+`scripts/integration-client.ts` (`pnpm tsx scripts/integration-client.ts --key osl_live_… [--base URL] site | sync '<json>' | changes [since] [limit] | ack <id> <status>`)
+signs requests exactly as above and is the copy-paste example for plugin
+authors: `signedFetch()` is the whole client contract (bearer + `X-OSL-Signature`
+over the pathname, `Idempotency-Key` on sync).
 
 ## 4. Data model (drizzle, `src/shared/db/schema.ts`)
 
@@ -228,3 +237,24 @@ Copy tone: second person, short sentences, no jargon ("clé du site" not
 `messages/*.json` under `Integrations.*`; screenshots in
 `public/integrations/<platform>/step-<n>.png` (placeholders allowed until the
 plugin exists, tracked in docs/ADOPTION.md).
+
+Implemented 2026-08-30 as `features/integrations` (wizard, `?tab=integrations`)
+and `features/apply-to-store` (button on each past generation + the
+"changes to apply" list). The "notify me" toggle is stored in
+`projects.integration_interest` (json `{ shopify?, wix? }`).
+
+### Screenshots to produce (replace the grey placeholders)
+
+800×450 PNG, English admin, callout on the element to click, no personal
+data. Path = `public/integrations/<platform>/step-<n>.png`.
+
+- [ ] `woocommerce/step-1.png` — Plugins › Add New › Upload Plugin with the zip selected
+- [ ] `woocommerce/step-2.png` — "Activate Plugin" button after install
+- [ ] `woocommerce/step-3.png` — OneShopLab menu entry + the Site key field
+- [ ] `woocommerce/step-4.png` — Save button and the green status inside the plugin
+- [ ] `shopify/step-1.png` — Settings › Apps and sales channels › Develop apps
+- [ ] `shopify/step-2.png` — Create an app dialog with the name filled
+- [ ] `shopify/step-3.png` — Admin API scopes with read_products / write_products ticked
+- [ ] `shopify/step-4.png` — Install app → Reveal token once
+- [ ] `shopify/step-5.png` — OSL token field (ships with the phase-3 connector)
+- Wix: no screenshots until the app exists (phase 5).

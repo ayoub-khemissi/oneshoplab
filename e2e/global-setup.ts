@@ -24,7 +24,8 @@ export default async function globalSetup(): Promise<void> {
     await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);
     for (const t of [
       'credit_transactions', 'legal_consents', 'subscriptions', 'password_reset_tokens',
-      'contact_messages', 'notifications', 'share_links', 'jobs', 'audits', 'products',
+      'contact_messages', 'notifications', 'share_links', 'product_changes', 'api_key_events',
+      'api_keys', 'api_idempotency', 'catalog_sync_sessions', 'jobs', 'audits', 'products',
       'projects', 'users', 'sessions', 'accounts'
     ]) {
       await db.execute(sql.raw(`TRUNCATE TABLE \`${t}\``));

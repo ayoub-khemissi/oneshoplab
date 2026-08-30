@@ -1062,5 +1062,143 @@
     "consent": "Accetto i {terms} e l'{privacy} e chiedo l'esecuzione immediata del servizio; riconosco di rinunciare così al diritto di recesso di 14 giorni per la parte già fornita.",
     "termsLabel": "Termini di servizio",
     "privacyLabel": "Informativa sulla privacy"
+  },
+  "Integrations": {
+    "tabLabel": "Connessione negozio",
+    "wizardTitle": "Collega il tuo negozio",
+    "wizardIntro": "Una volta collegato, i testi e le immagini che approvi qui vengono applicati nel negozio dal plugin. Quattro brevi passaggi, nessuna competenza tecnica.",
+    "step1Title": "Scegli la tua piattaforma",
+    "step1Hint": "Dove gira il tuo negozio.",
+    "platformDetected": "Rilevata durante l’audit",
+    "step2Title": "Installa il plugin",
+    "estimated": "Circa {minutes} min",
+    "comingSoonTitle": "Presto disponibile",
+    "comingSoonBody": "La connessione {platform} non è ancora pronta. Attiva l’interruttore e ti avviseremo via e-mail.",
+    "notifyMe": "Avvisami quando è pronta",
+    "notifySaved": "Ti avviseremo",
+    "chooseFirst": "Scegli la piattaforma qui sopra per vedere i passaggi.",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "Installa il plugin OneShopLab",
+          "body": "Nell’admin di WordPress apri Plugin › Aggiungi nuovo › Carica plugin, scegli il file oneshoplab.zip e fai clic su Installa ora."
+        },
+        "step2": {
+          "title": "Attivalo",
+          "body": "Fai clic su Attiva plugin. Nel menu a sinistra compare la voce OneShopLab."
+        },
+        "step3": {
+          "title": "Incolla la chiave del sito",
+          "body": "Apri OneShopLab nel menu a sinistra e incolla la chiave del sito del passaggio 3 qui sotto nella casella Chiave del sito."
+        },
+        "step4": {
+          "title": "Salva",
+          "body": "Fai clic su Salva. Il plugin invia subito i tuoi prodotti: la scheda del passaggio 4 diventa verde in meno di un minuto."
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "Apri le impostazioni delle app",
+          "body": "Nell’admin di Shopify vai su Impostazioni › App e canali di vendita › Sviluppa app."
+        },
+        "step2": {
+          "title": "Crea un’app",
+          "body": "Fai clic su Crea un’app e assegnale questo nome."
+        },
+        "step3": {
+          "title": "Spunta le autorizzazioni",
+          "body": "In Configurazione › Integrazione API Admin spunta queste due autorizzazioni e salva."
+        },
+        "step4": {
+          "title": "Installa l’app",
+          "body": "Fai clic su Installa app, poi su Mostra token una volta. Copia il token: Shopify lo mostra una sola volta."
+        },
+        "step5": {
+          "title": "Incolla il token in OneShopLab",
+          "body": "Torna qui e incolla il token nella casella che comparirà al passaggio 3."
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "Indirizzo da aprire nell’admin di WordPress",
+      "appName": "Nome dell’app",
+      "scopes": "Autorizzazioni da spuntare",
+      "siteKey": "La tua chiave del sito (creata al passaggio 3)"
+    },
+    "siteKeyPending": "La otterrai al passaggio 3 qui sotto.",
+    "screenshotAlt": "Schermata del passaggio {n}",
+    "copy": "Copia",
+    "copied": "Copiato",
+    "step3Title": "La tua chiave del sito",
+    "step3Body": "Questa chiave è una password tra il tuo negozio e OneShopLab. La mostriamo una sola volta: copiala, incollala nel plugin e conservala al sicuro. Se la perdi, creane una nuova.",
+    "generateKey": "Crea la mia chiave del sito",
+    "generating": "Creazione…",
+    "keyRevealTitle": "Copiala ora: non verrà più mostrata",
+    "keySavedButton": "L’ho salvata",
+    "keyExistsTitle": "La tua chiave del sito è pronta.",
+    "keyExistsBody": "Chiave {prefix}… creata il {date}. Persa? Usa «Nuova chiave» qui sotto.",
+    "step3NotAvailable": "Otterrai qui la chiave del sito non appena la connessione {platform} sarà disponibile.",
+    "step4Title": "Verifica della connessione",
+    "waiting": "In attesa del primo scambio con il tuo negozio…",
+    "waitingHint": "Appena il plugin è salvato, questa scheda diventa verde da sola. Niente da cliccare.",
+    "connected": "Connesso — ultimo scambio {ago}, {count, plural, =1 {1 prodotto sincronizzato} other {# prodotti sincronizzati}}",
+    "ago": {
+      "seconds": "{n} s fa",
+      "minutes": "{n} min fa",
+      "hours": "{n} h fa",
+      "days": "{n} g fa"
+    },
+    "troubleTitle": "Qualcosa non va?",
+    "fix1": "Controlla la chiave nel plugin: nessuno spazio prima o dopo, e la chiave intera.",
+    "fix2": "Verifica che il plugin sia attivo (Plugin › Plugin installati).",
+    "fix3": "Se il sito è in manutenzione o protetto da password, disattivalo per un minuto.",
+    "keysTitle": "Le tue chiavi del sito",
+    "keysHint": "Una nuova chiave sostituisce la vecchia dopo 24 ore: incollala prima nel plugin. Revocare ferma subito il plugin.",
+    "keyCreated": "Creata il {date}",
+    "keyLastUsed": "Usata il {date}",
+    "keyNeverUsed": "Mai usata",
+    "keyExpires": "Scade il {date}",
+    "keyNoExpiry": "Senza scadenza",
+    "keyGrace": "La vecchia chiave funziona ancora fino al {date}",
+    "state": {
+      "active": "Attiva",
+      "grace": "In sostituzione",
+      "revoked": "Revocata",
+      "expired": "Scaduta"
+    },
+    "rotate": "Nuova chiave",
+    "revoke": "Revoca",
+    "rotateConfirmTitle": "Creare una nuova chiave?",
+    "rotateConfirmBody": "La chiave attuale continua a funzionare per 24 ore. Incolla prima la nuova nel plugin, altrimenti la connessione si interrompe.",
+    "rotateConfirm": "Crea la nuova chiave",
+    "revokeConfirmTitle": "Revocare questa chiave?",
+    "revokeConfirmBody": "Il plugin si ferma subito. Nulla si sincronizza finché non crei una nuova chiave e la incolli nel plugin.",
+    "revokeConfirm": "Revoca",
+    "cancel": "Annulla",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
+  },
+  "ApplyToStore": {
+    "apply": "Applica nel mio negozio",
+    "applyAgain": "Applica di nuovo",
+    "pending": "In attesa del plugin",
+    "cancel": "Annulla",
+    "applied": "Applicato nel tuo negozio",
+    "conflict": "Non applicato: questo campo è cambiato nel negozio nel frattempo.",
+    "conflictHint": "Controlla il prodotto nel negozio e applica di nuovo se vuoi.",
+    "failed": "Il plugin non è riuscito ad applicarlo{error}",
+    "expired": "Questa modifica è scaduta prima che il plugin la prendesse.",
+    "noKeyHint": "Collega il tuo negozio per applicarlo in automatico.",
+    "noKeyLink": "Configura la connessione",
+    "listTitle": "Modifiche da applicare",
+    "listHint": "Il plugin le raccoglie al prossimo passaggio (circa ogni 5 minuti). Ritirane una se cambi idea.",
+    "listEmpty": "Nessuna modifica in attesa.",
+    "field": {
+      "title": "Titolo",
+      "description": "Descrizione",
+      "tags": "Tag",
+      "images": "Immagini"
+    },
+    "approvedOn": "Approvato il {date}",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
   }
 }

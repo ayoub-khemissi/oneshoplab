@@ -282,6 +282,8 @@ export interface PlanTier {
   approxFullGenerations: number;
   /** Max number of distinct stores (projects) the user can audit on this plan. */
   siteLimit: number;
+  /** Max products per site pushed through the Integration API (`plan_limit`). */
+  productLimit: number;
   /** Per-plan marketing bullets, identified by stable keys. The client
    *  resolves these to translated strings via next-intl in PricingCards
    *  (`Pricing.highlightExtras.{key}`). Stored as identifiers — never as
@@ -343,6 +345,7 @@ export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {
     recurring: p.recurring,
     approxFullGenerations: fullGens,
     siteLimit: p.siteLimit,
+    productLimit: p.productLimit,
     highlightExtras: PLAN_DISPLAY[id].highlightExtras
   };
 });
@@ -351,6 +354,12 @@ export const PLAN_TIERS: PlanTier[] = PLAN_IDS.map((id) => {
 export function siteLimitForPlan(plan: string | null | undefined): number {
   const tier = PLAN_TIERS.find((p) => p.id === plan);
   return tier?.siteLimit ?? PLAN_TIERS[0].siteLimit;
+}
+
+/** Product cap per site for the Integration API (pricing.json `productLimit`). */
+export function maxProductsForPlan(plan: string | null | undefined): number {
+  const tier = PLAN_TIERS.find((p) => p.id === plan);
+  return tier?.productLimit ?? PLAN_TIERS[0].productLimit;
 }
 
 export function yearlyPriceEur(monthlyPriceEur: number): number {

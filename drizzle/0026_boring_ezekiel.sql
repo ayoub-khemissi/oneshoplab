@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `integration_interest` json;

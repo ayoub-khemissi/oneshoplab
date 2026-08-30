@@ -1062,5 +1062,143 @@
     "consent": "{terms}および{privacy}に同意し、サービスの即時開始を求めます。これにより、既に提供された部分について14日間の撤回権を放棄することを了承します。",
     "termsLabel": "利用規約",
     "privacyLabel": "プライバシーポリシー"
+  },
+  "Integrations": {
+    "tabLabel": "ストア接続",
+    "wizardTitle": "ストアを接続する",
+    "wizardIntro": "接続すると、ここで承認したテキストと画像がプラグインによってストアに反映されます。短い4ステップ、技術的な知識は不要です。",
+    "step1Title": "プラットフォームを選ぶ",
+    "step1Hint": "ストアが動いている場所。",
+    "platformDetected": "監査で検出",
+    "step2Title": "プラグインを設定する",
+    "estimated": "約 {minutes} 分",
+    "comingSoonTitle": "近日公開",
+    "comingSoonBody": "{platform} との接続はまだ準備中です。スイッチをオンにすると、準備ができ次第メールでお知らせします。",
+    "notifyMe": "準備ができたら知らせて",
+    "notifySaved": "お知らせします",
+    "chooseFirst": "上でプラットフォームを選ぶと手順が表示されます。",
+    "guide": {
+      "woocommerce": {
+        "step1": {
+          "title": "OneShopLab プラグインをインストール",
+          "body": "WordPress 管理画面で プラグイン › 新規追加 › プラグインのアップロード を開き、oneshoplab.zip を選んで 今すぐインストール をクリックします。"
+        },
+        "step2": {
+          "title": "有効化する",
+          "body": "プラグインを有効化 をクリックします。左メニューに OneShopLab が表示されます。"
+        },
+        "step3": {
+          "title": "サイトキーを貼り付ける",
+          "body": "左メニューの OneShopLab を開き、下のステップ3のサイトキーを サイトキー 欄に貼り付けます。"
+        },
+        "step4": {
+          "title": "保存する",
+          "body": "保存 をクリックします。プラグインがすぐに商品を送信し、ステップ4のカードが1分以内に緑になります。"
+        }
+      },
+      "shopify": {
+        "step1": {
+          "title": "アプリ設定を開く",
+          "body": "Shopify 管理画面で 設定 › アプリと販売チャネル › アプリを開発 に進みます。"
+        },
+        "step2": {
+          "title": "アプリを作成する",
+          "body": "アプリを作成 をクリックし、この名前を付けます。"
+        },
+        "step3": {
+          "title": "権限にチェックを入れる",
+          "body": "構成 › Admin API 統合 でこの2つの権限にチェックを入れて保存します。"
+        },
+        "step4": {
+          "title": "アプリをインストールする",
+          "body": "アプリをインストール をクリックし、トークンを一度だけ表示 をクリックします。トークンをコピーしてください。Shopify は一度しか表示しません。"
+        },
+        "step5": {
+          "title": "トークンを OneShopLab に貼り付ける",
+          "body": "ここに戻り、ステップ3に表示される欄にトークンを貼り付けます。"
+        }
+      }
+    },
+    "valueLabel": {
+      "adminPath": "WordPress 管理画面で開くアドレス",
+      "appName": "アプリ名",
+      "scopes": "チェックする権限",
+      "siteKey": "サイトキー（ステップ3で作成）"
+    },
+    "siteKeyPending": "下のステップ3で取得できます。",
+    "screenshotAlt": "ステップ {n} のスクリーンショット",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "step3Title": "サイトキー",
+    "step3Body": "このキーはストアと OneShopLab の間のパスワードです。表示は一度だけ。コピーしてプラグインに貼り付け、安全な場所に保管してください。紛失したら新しく作成します。",
+    "generateKey": "サイトキーを作成",
+    "generating": "作成中…",
+    "keyRevealTitle": "今すぐコピーしてください。二度と表示されません",
+    "keySavedButton": "保存しました",
+    "keyExistsTitle": "サイトキーは設定済みです。",
+    "keyExistsBody": "キー {prefix}… は {date} に作成。紛失した場合は下の「新しいキー」を使ってください。",
+    "step3NotAvailable": "{platform} との接続が利用可能になり次第、ここでサイトキーを取得できます。",
+    "step4Title": "接続の確認",
+    "waiting": "ストアとの最初の通信を待っています…",
+    "waitingHint": "プラグインを保存すると、このカードは自動で緑になります。クリックは不要です。",
+    "connected": "接続済み — 最終通信 {ago}、{count, plural, other {# 件の商品}}を同期",
+    "ago": {
+      "seconds": "{n} 秒前",
+      "minutes": "{n} 分前",
+      "hours": "{n} 時間前",
+      "days": "{n} 日前"
+    },
+    "troubleTitle": "うまくいかない？",
+    "fix1": "プラグインのキーを確認：前後に空白がなく、キー全体が入っているか。",
+    "fix2": "プラグインが有効化されているか確認（プラグイン › インストール済みプラグイン）。",
+    "fix3": "サイトがメンテナンスモードやパスワード保護中なら、1分だけ解除してください。",
+    "keysTitle": "サイトキー一覧",
+    "keysHint": "新しいキーは24時間後に古いキーと置き換わります。それまでにプラグインへ貼り付けてください。取り消すとプラグインはすぐ停止します。",
+    "keyCreated": "{date} 作成",
+    "keyLastUsed": "最終使用 {date}",
+    "keyNeverUsed": "未使用",
+    "keyExpires": "{date} に期限切れ",
+    "keyNoExpiry": "無期限",
+    "keyGrace": "古いキーは {date} まで有効",
+    "state": {
+      "active": "有効",
+      "grace": "置き換え中",
+      "revoked": "取り消し済み",
+      "expired": "期限切れ"
+    },
+    "rotate": "新しいキー",
+    "revoke": "取り消す",
+    "rotateConfirmTitle": "新しいキーを作成しますか？",
+    "rotateConfirmBody": "現在のキーは24時間使えます。それまでに新しいキーをプラグインに貼り付けないと接続が止まります。",
+    "rotateConfirm": "新しいキーを作成",
+    "revokeConfirmTitle": "このキーを取り消しますか？",
+    "revokeConfirmBody": "プラグインはすぐに停止します。新しいキーを作成してプラグインに貼り付けるまで、何も同期されません。",
+    "revokeConfirm": "取り消す",
+    "cancel": "キャンセル",
+    "errorGeneric": "問題が発生しました。もう一度お試しください。"
+  },
+  "ApplyToStore": {
+    "apply": "ストアに反映",
+    "applyAgain": "もう一度反映",
+    "pending": "プラグインを待っています",
+    "cancel": "取り消す",
+    "applied": "ストアに反映済み",
+    "conflict": "未反映：この項目はその後ストアで変更されました。",
+    "conflictHint": "ストアの商品を確認し、必要ならもう一度反映してください。",
+    "failed": "プラグインが反映できませんでした{error}",
+    "expired": "プラグインが取得する前にこの変更は期限切れになりました。",
+    "noKeyHint": "ストアを接続すると自動で反映できます。",
+    "noKeyLink": "接続を設定",
+    "listTitle": "反映待ちの変更",
+    "listHint": "プラグインは次回のアクセス時（約5分ごと）に取得します。気が変わったら取り下げられます。",
+    "listEmpty": "待機中の変更はありません。",
+    "field": {
+      "title": "タイトル",
+      "description": "説明",
+      "tags": "タグ",
+      "images": "画像"
+    },
+    "approvedOn": "{date} に承認",
+    "errorGeneric": "問題が発生しました。もう一度お試しください。"
   }
 }

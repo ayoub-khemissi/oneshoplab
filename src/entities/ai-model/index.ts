@@ -47,6 +47,7 @@ export {
   getCreditPack,
   getImageModel,
   imageRetentionDaysForPlan,
+  maxProductsForPlan,
   modelNamesForCopy,
   outputTokenCapFor,
   resolveChatModelId,
