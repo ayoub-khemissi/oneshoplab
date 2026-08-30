@@ -1,5 +1,5 @@
 import { and, desc, gte, inArray } from 'drizzle-orm';
-import { AUDIT_RATE_LIMIT_WINDOW_MS, auditRateLimitForPlan } from '@/lib/ai/models';
+import { AUDIT_RATE_LIMIT_WINDOW_MS, auditRateLimitForPlan } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
 

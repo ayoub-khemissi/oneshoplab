@@ -7,7 +7,7 @@ import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { applyCreditTransaction } from './credits';
-import { SIGNUP_FREE_CREDITS } from './ai/models';
+import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { LEGAL_TERMS_VERSION } from './legal-version';
 import { db } from './db';
 import {

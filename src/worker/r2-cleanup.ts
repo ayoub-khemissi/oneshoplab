@@ -1,5 +1,5 @@
 import { and, eq, inArray, isNull, lt, notInArray } from 'drizzle-orm';
-import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/lib/ai/models';
+import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { jobs, projects, shareLinks, users, type JobKind } from '@/lib/db/schema';
 import { deleteByKey, keyFromPublicUrl } from '@/lib/storage';

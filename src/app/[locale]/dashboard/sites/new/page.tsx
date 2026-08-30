@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Globe, PenLine, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { siteLimitForPlan } from '@/lib/ai/models';
+import { siteLimitForPlan } from '@/entities/ai-model';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';

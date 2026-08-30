@@ -2,16 +2,17 @@ import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   buildImagePrompt,
+  IMAGE_ANGLES,
+  MAX_IMAGES_PER_PRODUCT,
+  startImageOptim
+} from '@/features/generate-product-images';
+import {
   costForImage,
   DEFAULT_IMAGE_QUALITY,
-  IMAGE_ANGLES,
   IMAGE_MODEL_REGISTRY,
-  listProductImageJobs,
-  MAX_IMAGES_PER_PRODUCT,
-  persistKieJobFailure,
-  startImageOptim,
   type ImageQualityId
-} from '@/lib/ai';
+} from '@/entities/ai-model';
+import { listProductImageJobs, persistKieJobFailure } from '@/entities/generation-job';
 import { auth } from '@/lib/auth';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';

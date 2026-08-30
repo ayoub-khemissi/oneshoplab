@@ -9,8 +9,8 @@ import {
   AUDIT_RATE_LIMIT_WINDOW_MS,
   auditRateLimitForPlan,
   MAX_CUSTOM_INSTRUCTIONS_CHARS
-} from './ai/models';
-import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from './ai/pricing';
+} from '@/entities/ai-model';
+import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from '@/entities/ai-model';
 import { launchAuditForUser, refreshAuditProducts } from '@/features/run-audit';
 import { touchProjectLastView as touchLastView } from './projects/touch-last-view';
 import { auth, signOut } from './auth';

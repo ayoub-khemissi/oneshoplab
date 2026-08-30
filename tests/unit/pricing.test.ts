@@ -18,14 +18,14 @@ import {
   YEARLY_DISCOUNT,
   yearlyMonthlyEquivalent,
   yearlyPriceEur
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 import {
   CHAT_MODEL_IDS,
   CREDIT_PACK_IDS,
   FIELD_IDS,
   IMAGE_QUALITY_IDS,
   PRICING
-} from '@/lib/ai/pricing';
+} from '@/entities/ai-model';
 import { CHAT_MODEL_IDS as DB_CHAT_MODEL_IDS } from '@/lib/db/schema';
 
 describe('credit costs (snapshot — update deliberately)', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canTransition, JOB_TRANSITIONS, TERMINAL_JOB_STATUSES } from '@/lib/jobs/transitions';
+import { canTransition, JOB_TRANSITIONS, TERMINAL_JOB_STATUSES } from '@/entities/generation-job';
 import { JOB_STATUSES } from '@/lib/db/schema';
 
 describe('job transition table', () => {

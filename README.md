@@ -229,7 +229,7 @@ but it loops behind a reverse proxy: `/` rewrites to `/en` internally, and
 
 ## Plans & billing
 
-Defined in `src/lib/ai/models.ts` (`PLAN_TIERS`):
+Defined in `src/entities/ai-model/model/models.ts` (`PLAN_TIERS`):
 
 | Plan | Monthly (EUR) | Credits / mo | Stores |
 |---|---|---|---|
@@ -239,7 +239,7 @@ Defined in `src/lib/ai/models.ts` (`PLAN_TIERS`):
 | Scale | €199.99 | 38,000 | 50 |
 
 Yearly cycle = monthly × 12 × 0.8 (-20%). Credits are debited per generation
-through `chatCreditsToDebit` / `costForImage` in `src/lib/ai/models.ts`.
+through `chatCreditsToDebit` / `costForImage` in `src/entities/ai-model/model/models.ts`.
 Stripe webhook (`/api/stripe/webhook`) is the source of truth for plan
 changes — it grants/resets the monthly credit balance and persists the
 plan + cycle on the user row.

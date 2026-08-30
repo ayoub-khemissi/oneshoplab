@@ -7,7 +7,7 @@
  * Sources of truth, by job kind:
  *
  *   - `kie_title|description|tags`  → `result.kieCreditsConsumed` is
- *     persisted at write time (see lib/ai/optims.ts) from the
+ *     persisted at write time (see features/generate-product-copy/api/optims.ts) from the
  *     `/claude/v1/messages` response body. No HTTP roundtrip needed.
  *
  *   - `kie_image_edit|generate`     → kie's `/api/v1/jobs/recordInfo`
@@ -103,8 +103,8 @@ async function main(): Promise<void> {
   const { and, eq, gte, isNotNull, sql } = await import('drizzle-orm');
   const { db } = await import('@/lib/db');
   const { jobs } = await import('@/lib/db/schema');
-  const { getKieClient } = await import('@/lib/ai/kie');
-  const { PRICING } = await import('@/lib/ai/pricing');
+  const { getKieClient } = await import('@/entities/ai-provider');
+  const { PRICING } = await import('@/entities/ai-model');
 
   const since = new Date(Date.now() - args.days * 86_400_000);
 
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
   const agg: Record<string, Aggregate> = {};
 
   // kie_dynamic_audit is a public-audit narration we eat (see
-  // lib/ai/dynamic-audit.ts:286 — creditsCost there is the kie raw
+  // features/run-audit/api/dynamic-audit.ts — creditsCost there is the kie raw
   // cost, never a user debit). Don't count it as revenue.
   const IS_FREE_KIND = (kind: string): boolean => kind === 'kie_dynamic_audit';
 

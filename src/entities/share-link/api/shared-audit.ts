@@ -1,7 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects, shareLinks } from '@/lib/db/schema';
-import { listOptimHistory, listProductImageJobs } from '@/lib/ai';
+import { listOptimHistory, listProductImageJobs } from '@/entities/generation-job';
 import { resolveFeaturedProduct } from './featured-product';
 import type { SharedAuditSnapshot, SharedProduct } from '../model/types';
 

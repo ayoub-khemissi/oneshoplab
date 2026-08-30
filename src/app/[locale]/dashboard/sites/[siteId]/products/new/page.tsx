@@ -3,7 +3,7 @@ import { ArrowLeft, PenLine } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { ManualProductForm } from '@/components/manual-product-form';
+import { ManualProductForm } from '@/features/manual-catalog';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';

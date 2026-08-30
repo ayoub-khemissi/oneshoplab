@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { subscriptions, users } from '@/lib/db/schema';
 import { getStripeClient, resolvePriceId } from '@/lib/stripe';
 import { syncSubscriptionFromStripe } from '@/lib/stripe-actions';
-import type { PlanId } from '@/lib/ai/models';
+import type { PlanId } from '@/entities/ai-model';
 
 /**
  * Re-pull a user's subscription state from Stripe and write it to the DB

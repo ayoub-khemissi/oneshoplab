@@ -10,7 +10,7 @@ import {
   DEFAULT_CHAT_MODEL,
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 import { cancelBulkJob, retryFailedFromBulk, startBulkSiteGenerate } from '@/lib/bulk/lifecycle';
 import { estimateBulkCostBreakdown } from '@/lib/bulk/planning';
 import { resolveBulkPrefs } from '@/lib/bulk/types';

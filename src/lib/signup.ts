@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
-import { SIGNUP_FREE_CREDITS } from '@/lib/ai/models';
+import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { legalConsents, users } from '@/lib/db/schema';

@@ -1,10 +1,10 @@
 import { Accordion, Card } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { HistoryImage } from '@/components/history-image';
-import { ImageExpiry } from '@/components/image-expiry';
+import { HistoryImage } from '@/features/generate-product-images';
+import { ImageExpiry } from '@/features/generate-product-images';
 import { ServerPagination } from '@/components/server-pagination';
-import type { OptimHistoryItem } from '@/lib/ai';
+import type { OptimHistoryItem } from '@/entities/generation-job';
 import { formatDate } from '@/lib/format-date';
 
 const PAST_GEN_DETAIL_LIMIT = 600;

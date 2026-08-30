@@ -1,10 +1,10 @@
-import { resolveChatModelId } from '@/lib/ai/models';
+import { resolveChatModelId } from '@/entities/ai-model';
 import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { AccountBulkPrefsForm } from '@/components/account-bulk-prefs-form';
-import { ModelPreferencesForm } from '@/components/model-preferences-form';
+import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/lib/auth';
 import { resolveBulkPrefs } from '@/lib/bulk/site-generate';

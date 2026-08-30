@@ -47,7 +47,7 @@ async function main() {
   const { eq } = await import('drizzle-orm');
   const { db } = await import('../src/lib/db/index');
   const { users } = await import('../src/lib/db/schema');
-  const { PLAN_TIERS } = await import('../src/lib/ai/models');
+  const { PLAN_TIERS } = await import('../src/entities/ai-model');
 
   const user = await db.query.users.findFirst({ where: eq(users.email, email) });
   if (!user) {

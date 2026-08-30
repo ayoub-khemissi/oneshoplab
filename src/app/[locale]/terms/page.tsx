@@ -1,4 +1,4 @@
-import { aiSubProcessors } from '@/lib/ai/models';
+import { aiSubProcessors } from '@/entities/ai-model';
 import { getAppContactEmail } from '@/lib/app-contact';
 import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';

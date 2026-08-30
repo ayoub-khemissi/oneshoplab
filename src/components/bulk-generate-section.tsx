@@ -25,7 +25,7 @@ import {
   noFieldsSelected as prefsHasNoFields,
   type BulkPrefs
 } from '@/components/bulk-prefs-editor';
-import type { ChatModelId, ImageQualityId } from '@/lib/ai/models';
+import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 interface BulkGenerateSectionProps {
   siteId: string;

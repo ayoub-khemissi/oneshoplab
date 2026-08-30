@@ -14,7 +14,7 @@ vi.mock('@/lib/storage', () => ({
   keyFromPublicUrl: (url: string) => new URL(url).pathname.slice(1)
 }));
 
-import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/lib/ai/models';
+import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { jobs, users } from '@/lib/db/schema';
 import { runR2Cleanup } from '@/worker/r2-cleanup';

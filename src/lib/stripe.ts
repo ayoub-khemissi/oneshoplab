@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import type { BillingCycle, CreditPackId, PlanId } from './ai/models';
+import type { BillingCycle, CreditPackId, PlanId } from '@/entities/ai-model';
 
 /**
  * Lazily-instantiated Stripe client. We don't fail at import time when

@@ -8,13 +8,13 @@ import { CandidateRow } from '@/components/bulk-generate/candidate-row';
 import type { BulkCandidate } from '@/components/bulk-generate/types';
 import { BulkPrefsEditor, type BulkPrefs } from '@/components/bulk-prefs-editor';
 import { DebouncedSearchInput } from '@/components/debounced-search-input';
-import { ModelPickerChips } from '@/components/model-picker-chips';
+import { ModelPickerChips } from '@/features/model-preferences';
 import {
   CHAT_MODEL_REGISTRY,
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,
   type ImageQualityId
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 
 export interface SelectionModalProps {
   candidates: BulkCandidate[];

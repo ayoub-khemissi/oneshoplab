@@ -1,4 +1,4 @@
-import { resolveChatModelId } from '@/lib/ai/models';
+import { resolveChatModelId } from '@/entities/ai-model';
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
@@ -7,7 +7,7 @@ import {
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,
   type ImageQualityId
-} from '@/lib/ai';
+} from '@/entities/ai-model';
 import { z } from 'zod';
 import {
   cancelBulkJob,

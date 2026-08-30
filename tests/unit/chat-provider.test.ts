@@ -6,10 +6,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const kieChat = vi.fn();
-vi.mock('@/lib/ai/kie', () => ({ getKieClient: () => ({ chat: kieChat }) }));
+vi.mock('@/entities/ai-provider/api/kie', () => ({ getKieClient: () => ({ chat: kieChat }) }));
 
-import { chatCompletion, ChatProviderError, stripCodeFences } from '@/lib/ai/chat-provider';
-import { getChatModel } from '@/lib/ai/models';
+import { chatCompletion, ChatProviderError, stripCodeFences } from '@/entities/ai-provider';
+import { getChatModel } from '@/entities/ai-model';
 
 const req = () => ({
   model: getChatModel('sonnet-5'),

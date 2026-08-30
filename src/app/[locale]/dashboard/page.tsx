@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { DeleteSiteButton } from '@/components/delete-site-button';
 import { SiteFavicon } from '@/components/site-favicon';
-import { siteLimitForPlan } from '@/lib/ai/models';
+import { siteLimitForPlan } from '@/entities/ai-model';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { audits, projects, type AuditStatus } from '@/lib/db/schema';

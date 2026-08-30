@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 // Import from the leaf module (no server-only deps) so this client bundle
-// stays free of mysql2 / drizzle imports leaking through the @/lib/ai barrel.
+// stays free of mysql2 / drizzle imports leaking through a server barrel.
 import {
   imageRetentionDaysForPlan,
   PLAN_TIERS,
@@ -15,7 +15,7 @@ import {
   type BillingCycle,
   type PlanId,
   type PlanTier
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 import { createCheckoutSessionAction, createPortalSessionAction } from '@/lib/stripe-actions';
 
 /** Plan ranks for upgrade/downgrade detection. The order mirrors the

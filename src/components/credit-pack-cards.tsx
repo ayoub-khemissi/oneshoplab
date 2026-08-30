@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { Coins, Sparkles } from 'lucide-react';
-import { CREDIT_PACKS } from '@/lib/ai/models';
+import { CREDIT_PACKS } from '@/entities/ai-model';
 import { buyCreditPackAction } from '@/lib/stripe-actions';
 import { getStripePackPriceId } from '@/lib/stripe';
 

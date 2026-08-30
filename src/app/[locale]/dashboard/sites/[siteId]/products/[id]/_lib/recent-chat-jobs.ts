@@ -1,5 +1,5 @@
 import { and, desc, eq, gt, inArray } from 'drizzle-orm';
-import type { ChatOptimField } from '@/lib/ai';
+import type { ChatOptimField } from '@/entities/generation-job';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
 

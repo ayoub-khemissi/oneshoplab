@@ -1,15 +1,11 @@
 import { and, eq, inArray, isNotNull, isNull, lt, or } from 'drizzle-orm';
-import {
-  getImageModel,
-  getKieClient,
-  persistKieJobFailure,
-  persistKieJobSuccess,
-  type ImageQualityId
-} from '@/lib/ai';
-import { buildKieCallbackUrl, type KieClient } from '@/lib/ai/kie';
+import { getImageModel, type ImageQualityId } from '@/entities/ai-model';
+import { getKieClient } from '@/entities/ai-provider';
+import { persistKieJobFailure, persistKieJobSuccess } from '@/entities/generation-job';
+import { buildKieCallbackUrl, type KieClient } from '@/entities/ai-provider';
 import { db } from '@/lib/db';
 import { jobs, type JobKind } from '@/lib/db/schema';
-import { transitionJob } from '@/lib/jobs/transitions';
+import { transitionJob } from '@/entities/generation-job';
 
 // Time before we start polling kie directly when no webhook came in.
 // 30s gives the webhook a brief head start; in dev (localhost callback

@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { applyCreditTransaction } from '@/lib/credits';
-import { PLAN_TIERS } from '@/lib/ai/models';
+import { PLAN_TIERS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { users, subscriptions } from '@/lib/db/schema';
 import { getStripeClient, resolvePriceId } from '@/lib/stripe';

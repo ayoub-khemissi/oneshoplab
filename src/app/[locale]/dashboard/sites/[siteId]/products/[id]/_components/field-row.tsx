@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { RetryableGenerateButton } from '@/components/retryable-generate';
+import { RetryableGenerateButton } from '@/features/retryable-generate';
 import { FieldViewProvider } from '@/components/field-swap';
 
 export function FieldRow({

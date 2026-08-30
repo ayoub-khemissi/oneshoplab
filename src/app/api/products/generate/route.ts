@@ -1,4 +1,4 @@
-import { resolveChatModelId } from '@/lib/ai/models';
+import { resolveChatModelId } from '@/entities/ai-model';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -9,13 +9,12 @@ import {
   estimateChatCredits,
   IMAGE_MODEL_REGISTRY,
   MAX_CUSTOM_INSTRUCTIONS_CHARS,
-  runChatOptim,
-  startImageOptim,
   type ChatModelId,
-  type ChatOptimField,
-  type ImageQualityId,
-  type ProductContext
-} from '@/lib/ai';
+  type ImageQualityId
+} from '@/entities/ai-model';
+import { runChatOptim, type ProductContext } from '@/features/generate-product-copy';
+import { startImageOptim } from '@/features/generate-product-images';
+import type { ChatOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/lib/auth';
 import { sanitizeUserFacingError } from '@/lib/errors';

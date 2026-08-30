@@ -22,7 +22,7 @@ vi.mock('@/lib/stripe', () => ({
 }));
 
 import { POST } from '@/app/api/stripe/webhook/route';
-import { getCreditPack } from '@/lib/ai/models';
+import { getCreditPack } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { buckets, createUser, ledgerCount, resetTables } from './helpers';
 

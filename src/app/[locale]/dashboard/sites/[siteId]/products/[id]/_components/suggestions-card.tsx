@@ -1,13 +1,13 @@
 import { Card } from '@heroui/react';
 import { getTranslations } from 'next-intl/server';
-import { AiImageGridLive } from '@/components/ai-image-grid-live';
-import { ApplyAiButton } from '@/components/apply-ai-button';
+import { AiImageGridLive } from '@/features/generate-product-images';
+import { ApplyAiButton } from '@/features/manual-catalog';
 import { CopyButton } from '@/components/copy-button';
 import { DownloadAllButton } from '@/components/download-all-button';
 import { FieldSwap, FieldSwapGroup, FieldSwapGroupToggle } from '@/components/field-swap';
-import { RetryableGenerateButton } from '@/components/retryable-generate';
+import { RetryableGenerateButton } from '@/features/retryable-generate';
 import { TagPills } from '@/components/tag-pills';
-import type { ImageJobRow, OptimHistoryItem } from '@/lib/ai';
+import type { ImageJobRow, OptimHistoryItem } from '@/entities/generation-job';
 import type { ProductSnapshot } from '../_lib/load-product';
 import { FieldRow, NoLatestGen } from './field-row';
 import { SourcePreview, SourceImageGrid } from './source-preview';

@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { notify } from '@/lib/notifications';
 import { jobs, projects, type JobStatus } from '@/lib/db/schema';
-import { transitionJob, type TransitionOptions } from '@/lib/jobs/transitions';
+import { transitionJob, type TransitionOptions } from '@/entities/generation-job';
 import type { BulkFieldKey, BulkProductState, BulkResult } from '@/lib/bulk/types';
 
 export async function markFieldsErrored(

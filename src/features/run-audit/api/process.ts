@@ -1,5 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm';
-import { runDynamicAuditForProduct } from '@/lib/ai';
+import { runDynamicAuditForProduct } from './dynamic-audit';
 import { db } from '@/lib/db';
 import { audits, projects } from '@/lib/db/schema';
 import { notify } from '@/lib/notifications';

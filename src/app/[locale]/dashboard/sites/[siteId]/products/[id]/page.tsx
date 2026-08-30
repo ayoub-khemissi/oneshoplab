@@ -1,26 +1,25 @@
-import { resolveChatModelId } from '@/lib/ai/models';
+import { resolveChatModelId } from '@/entities/ai-model';
 import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import {
-  CustomInstructionsField,
-  RetryableGenerateProvider
-} from '@/components/retryable-generate';
-import { ModelChips } from '@/components/model-chips';
+import { CustomInstructionsField, RetryableGenerateProvider } from '@/features/retryable-generate';
+import { ModelChips } from '@/widgets/model-chips';
 import { AppliedToastOnMount } from '@/components/applied-toast-on-mount';
-import { AutoOptimizeOnMount } from '@/components/auto-optimize-on-mount';
+import { AutoOptimizeOnMount } from '@/features/retryable-generate';
 import {
   costForImage,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   imageRetentionDaysForPlan,
-  listOptimHistory,
-  listOptimHistoryPaginated,
-  listProductImageJobs,
   type ChatModelId,
   type ImageQualityId
-} from '@/lib/ai';
+} from '@/entities/ai-model';
+import {
+  listOptimHistory,
+  listOptimHistoryPaginated,
+  listProductImageJobs
+} from '@/entities/generation-job';
 import { auth } from '@/lib/auth';
 import { touchProjectLastView } from '@/lib/auth-actions';
 import { PastGenerationsSection } from './_components/past-generations-section';

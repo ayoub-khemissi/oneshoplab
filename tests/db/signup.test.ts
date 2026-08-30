@@ -5,7 +5,7 @@
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { SIGNUP_FREE_CREDITS } from '@/lib/ai/models';
+import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { LEGAL_TERMS_VERSION } from '@/lib/legal-version';

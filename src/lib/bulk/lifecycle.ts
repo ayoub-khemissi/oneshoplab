@@ -7,10 +7,10 @@ import {
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,
   type ImageQualityId
-} from '@/lib/ai';
+} from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
-import { transitionJob } from '@/lib/jobs/transitions';
+import { transitionJob } from '@/entities/generation-job';
 import {
   readResult,
   resolveBulkPrefs,

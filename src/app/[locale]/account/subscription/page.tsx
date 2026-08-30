@@ -13,7 +13,7 @@ import {
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { PLAN_TIERS } from '@/lib/ai/models';
+import { PLAN_TIERS } from '@/entities/ai-model';
 import { auth } from '@/lib/auth';
 import { getCreditBuckets } from '@/lib/credits';
 import { db } from '@/lib/db';

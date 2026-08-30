@@ -1,4 +1,4 @@
-import { modelNamesForCopy } from '@/lib/ai/models';
+import { modelNamesForCopy } from '@/entities/ai-model';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
@@ -12,7 +12,7 @@ import {
   yearlyPriceEur,
   type BillingCycle,
   type PlanId
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';

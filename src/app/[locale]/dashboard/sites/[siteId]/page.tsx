@@ -4,7 +4,7 @@ import {
   type ChatModelId,
   type ImageQualityId,
   resolveChatModelId
-} from '@/lib/ai/models';
+} from '@/entities/ai-model';
 import { notFound, redirect } from 'next/navigation';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { BulkGenerateSection } from '@/components/bulk-generate-section';
@@ -184,7 +184,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // is always visible now that we navigate via the hub (no auto-redirect).
   // This list is reused below for the audit rate-limit window — keep ONE
   // copy so we don't fan out duplicate queries on every tab click.
-  const { siteLimitForPlan } = await import('@/lib/ai/models');
+  const { siteLimitForPlan } = await import('@/entities/ai-model');
   const userSites = await db.query.projects.findMany({
     where: eq(projects.userId, session.user.id),
     columns: { id: true }

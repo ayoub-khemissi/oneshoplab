@@ -27,8 +27,9 @@ if (existsSync('.env')) {
 
 async function main() {
   const { and, eq, isNotNull } = await import('drizzle-orm');
-  const { getKieClient, persistKieJobFailure, persistKieJobSuccess } =
-    await import('../src/lib/ai/index');
+  const { getKieClient } = await import('../src/entities/ai-provider');
+  const { persistKieJobFailure, persistKieJobSuccess } =
+    await import('../src/entities/generation-job');
   const { db } = await import('../src/lib/db/index');
   const { jobs } = await import('../src/lib/db/schema');
 

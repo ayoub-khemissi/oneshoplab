@@ -11,7 +11,7 @@ import {
   type CostBreakdown
 } from '@/components/bulk-generate/types';
 import { updateUserPreferencesAction } from '@/lib/auth-actions';
-import type { ChatModelId, ImageQualityId } from '@/lib/ai/models';
+import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 export interface UseBulkGenerateArgs {
   siteId: string;

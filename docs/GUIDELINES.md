@@ -101,7 +101,7 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
 ## Job status transitions
 
 `jobs.status` is written in ONE place: `transitionJob()` in
-`src/lib/jobs/transitions.ts` — a guarded `UPDATE … WHERE status IN (allowed
+`src/entities/generation-job/api/transitions.ts` — a guarded `UPDATE … WHERE status IN (allowed
 sources)`. Never `db.update(jobs).set({ status })` directly. Options:
 `{ tolerate: true }` for best-effort callers (watchdogs, late kie callbacks —
 log the `'refused'` result), `{ force }` for a user-driven retry of a

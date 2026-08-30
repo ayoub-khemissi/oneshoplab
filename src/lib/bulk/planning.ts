@@ -1,5 +1,10 @@
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
-import { costForImage, estimateChatCredits, type ChatModelId, type ImageQualityId } from '@/lib/ai';
+import {
+  costForImage,
+  estimateChatCredits,
+  type ChatModelId,
+  type ImageQualityId
+} from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { jobs, projects, products, users, type JobKind } from '@/lib/db/schema';
 import {

@@ -11,7 +11,7 @@ import {
   users,
   type BillingCycle as DbBillingCycle
 } from './db/schema';
-import { PLAN_TIERS, getCreditPack, type BillingCycle, type PlanId } from './ai/models';
+import { PLAN_TIERS, getCreditPack, type BillingCycle, type PlanId } from '@/entities/ai-model';
 import { checkoutConsentParams } from './legal-consent';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
 import type Stripe from 'stripe';

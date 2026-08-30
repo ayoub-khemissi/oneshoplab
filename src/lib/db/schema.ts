@@ -18,7 +18,7 @@ export const PLATFORMS = ['shopify', 'woocommerce', 'wix', 'manual', 'unknown'] 
 export const PLANS = ['free', 'starter', 'pro', 'scale'] as const;
 export const BILLING_CYCLES = ['monthly', 'yearly'] as const;
 /** Every id ever stored in users.preferred_chat_model. The ACTIVE lineup
- *  lives in pricing.json (src/lib/ai/pricing.ts CHAT_MODEL_IDS); retired
+ *  lives in pricing.json (src/entities/ai-model/model/pricing.ts CHAT_MODEL_IDS); retired
  *  ids stay here so old rows remain valid and are remapped on read via
  *  resolveChatModelId(). Add new ids here too when the catalog grows. */
 export const CHAT_MODEL_IDS = [

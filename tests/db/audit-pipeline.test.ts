@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const runDynamicAuditForProduct = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/lib/ai', () => ({
+vi.mock('@/features/run-audit/api/dynamic-audit', () => ({
   runDynamicAuditForProduct: (...a: unknown[]) => runDynamicAuditForProduct(...a)
 }));
 vi.mock('@/lib/auth', () => ({ auth: async () => null }));

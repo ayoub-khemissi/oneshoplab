@@ -1,4 +1,4 @@
-import type { ChatModelId, ImageQualityId } from '@/lib/ai';
+import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 export const BULK_STALL_TIMEOUT_MS = 15 * 60_000;
 

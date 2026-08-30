@@ -1,10 +1,11 @@
 import { and, asc, eq, lt, or } from 'drizzle-orm';
-import { buildImagePrompt, runChatOptim, startImageOptim } from '@/lib/ai';
+import { buildImagePrompt, startImageOptim } from '@/features/generate-product-images';
+import { runChatOptim } from '@/features/generate-product-copy';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, projects, products } from '@/lib/db/schema';
-import { transitionJob } from '@/lib/jobs/transitions';
+import { transitionJob } from '@/entities/generation-job';
 import {
   combineInstructions,
   effectiveChatPrompt,

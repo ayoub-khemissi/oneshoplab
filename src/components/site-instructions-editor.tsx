@@ -4,7 +4,7 @@ import { Card, Spinner } from '@heroui/react';
 import { Check, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
-import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/lib/ai/models';
+import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
 import { updateProjectInstructionsAction } from '@/lib/auth-actions';
 
 interface SiteInstructionsEditorProps {

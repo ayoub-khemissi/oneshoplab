@@ -1,4 +1,4 @@
-import type { ProductContext } from '@/lib/ai';
+import type { ProductContext } from '@/features/generate-product-copy';
 
 interface ProductImage {
   src: string;

@@ -110,7 +110,7 @@ a model, add its `Models.chat.<id>.tagline` (and `quality.<id>.*` for image
 tiers) in the locales you care about; the rest shows English until then.
 
 Credits debited = field token cap × rate × markup (`estimateChatCredits`)
-or flat cost × markup (`costForImage`) in `src/lib/ai/models.ts`. Never
+or flat cost × markup (`costForImage`) in `src/entities/ai-model/model/models.ts`. Never
 hardcode credit costs or model ids at call sites; never mention a model
 name in `messages/*.json` — use the `{budgetModel}`/`{imageModel}`… placeholders
 fed by `modelNamesForCopy()`. Rebuild + restart web and worker after editing.
@@ -120,10 +120,10 @@ add the old id to `chatModelAliases` AND append the new id to
 `CHAT_MODEL_IDS` in `src/lib/db/schema.ts` (MySQL enum for
 `users.preferred_chat_model` — additive, then `pnpm db:generate && pnpm db:migrate`).
 
-**Providers:** text goes through `src/lib/ai/chat-provider.ts` (OpenRouter,
+**Providers:** text goes through `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter,
 `OPENROUTER_API_KEY`, one retry, then kie fallback). Images go through kie
 (`startImageOptim`); when kie fails, `persistKieJobFailure` first tries
-`src/lib/ai/image-fallback.ts` (OpenRouter `imageFallbackModel`) and only then
+`src/entities/ai-provider/api/image-fallback.ts` (OpenRouter `imageFallbackModel`) and only then
 fails + refunds. Reasoning is disabled on text calls on purpose — Sonnet 5
 reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 
@@ -153,9 +153,9 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 ## Useful entry points when investigating
 
 - Audit pipeline: `src/features/run-audit/api/run.ts` → `process.ts` → `src/entities/audit/lib/score.ts` (adapters in `src/entities/store-adapter/`)
-- Generation: `src/lib/ai/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images) + `prompts.ts` + `optims.ts`; catalog in `pricing.json`
+- Generation: `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images); text in `src/features/generate-product-copy/` (`lib/prompts.ts`, `api/optims.ts`), images in `src/features/generate-product-images/` (`api/image-optim.ts`), job lifecycle in `src/entities/generation-job/` (`transitions.ts`, `persist-result.ts`); catalog in `pricing.json` loaded by `src/entities/ai-model/`
 - Job queue: `src/worker/audit-runner.ts` and `src/worker/kie-watchdog.ts`
-- Pricing/plans: `src/lib/ai/models.ts` (`PLAN_TIERS`, credit costs)
+- Pricing/plans: `src/entities/ai-model/model/models.ts` (`PLAN_TIERS`, credit costs)
 - Storage: `src/lib/storage/r2.ts` (TLS 1.3 forced — don't relax it)
 
 ## Admin one-shots

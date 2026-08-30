@@ -13,7 +13,7 @@ import {
   resolvePriceId
 } from '@/lib/stripe';
 import { syncSubscriptionFromStripe } from '@/lib/stripe-actions';
-import { getCreditPack, PLAN_TIERS, type PlanId } from '@/lib/ai/models';
+import { getCreditPack, PLAN_TIERS, type PlanId } from '@/entities/ai-model';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

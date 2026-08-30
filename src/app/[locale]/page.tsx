@@ -1,4 +1,4 @@
-import { modelNamesForCopy } from '@/lib/ai/models';
+import { modelNamesForCopy } from '@/entities/ai-model';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ArrowRight, Check, ChevronDown, PenLine, Sparkles } from 'lucide-react';
@@ -9,7 +9,7 @@ import { Link } from '@/i18n/navigation';
 import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos';
 import { PricingCards } from '@/components/pricing-cards';
 import { ShowcaseSection } from '@/components/showcase-section';
-import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/lib/ai/models';
+import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/entities/ai-model';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';

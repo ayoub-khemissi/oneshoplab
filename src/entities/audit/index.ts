@@ -35,3 +35,4 @@ export {
 } from './api/find-latest';
 export { durationSeconds, getJobAverages } from './api/job-stats';
 export type { JobKindStats } from './api/job-stats';
+export { recomputeManualAudit } from './api/recompute-manual';
