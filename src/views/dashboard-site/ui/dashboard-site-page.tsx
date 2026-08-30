@@ -393,10 +393,14 @@ export async function DashboardSitePage({
         ])
       : [[], [], null];
   const activeProductCount = productRows.filter((p) => p.status === 'active').length;
+  // Prefer the stored source; fall back to the latest audit's detection so a
+  // project created before source persistence still routes to its platform.
+  const platformGuess =
+    project.source !== 'unknown' ? project.source : (audit?.platform ?? 'unknown');
   const detectedPlatform: IntegrationPlatform | null = (
     INTEGRATION_PLATFORMS as readonly string[]
-  ).includes(project.source)
-    ? (project.source as IntegrationPlatform)
+  ).includes(platformGuess)
+    ? (platformGuess as IntegrationPlatform)
     : null;
   const lastPluginCall = siteKeys
     .map((k) => k.lastUsedAt?.getTime() ?? 0)
