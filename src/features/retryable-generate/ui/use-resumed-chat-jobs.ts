@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import type { GenField } from './generate-button';

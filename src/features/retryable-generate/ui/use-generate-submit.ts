@@ -1,3 +1,5 @@
+'use client';
+
 import { toast } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useRef, type RefObject } from 'react';

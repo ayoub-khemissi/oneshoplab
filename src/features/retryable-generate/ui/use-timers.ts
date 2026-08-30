@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 /** Tracks the wait between retries so we can show "next attempt in Xs". */

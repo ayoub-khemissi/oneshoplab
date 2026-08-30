@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext } from 'react';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 import type { GenField } from './generate-button';
