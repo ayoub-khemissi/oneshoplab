@@ -46,7 +46,7 @@ export function WixDashboard({ variant }: { variant: 'apps' | 'install' | 'conse
               <span className="text-[#5f6d7a]">{t('fromOsl')}</span>
             </div>
           ) : (
-            <div className="absolute inset-x-5 top-8 flex flex-col gap-2 rounded-lg border border-[#dfe5eb] bg-white p-3 shadow-lg">
+            <div className="z-10 mx-5 flex flex-col gap-2 rounded-lg border border-[#dfe5eb] bg-white p-3 shadow-lg">
               <span className="font-medium">
                 {variant === 'install' ? t('addTitle') : t('consentTitle')}
               </span>

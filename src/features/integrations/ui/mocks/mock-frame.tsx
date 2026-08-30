@@ -23,7 +23,10 @@ export function MockFrame({
       role="img"
       aria-label={label}
       data-mock={id}
-      className="w-full overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background)] text-[10px] md:text-xs leading-tight select-none"
+      // `zoom` scales the whole mock uniformly on wider screens (text, chrome,
+      // spacing) so the "screenshot" genuinely fills its half of the row; the
+      // frame simply gets taller. Percent widths keep fitting under zoom.
+      className="w-full overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background)] text-[10px] leading-tight select-none md:[zoom:1.35] xl:[zoom:1.55]"
     >
       <div className="flex items-center gap-2 border-b border-[var(--border)] bg-[var(--default)]/60 px-2 py-1.5">
         <span className="flex gap-1" aria-hidden>
@@ -31,7 +34,7 @@ export function MockFrame({
           <i className="size-2 rounded-full bg-[var(--border)]" />
           <i className="size-2 rounded-full bg-[var(--border)]" />
         </span>
-        <span className="flex-1 truncate rounded bg-[var(--background)] px-2 py-0.5 font-mono text-[9px] md:text-[11px] text-[var(--muted)]">
+        <span className="flex-1 truncate rounded bg-[var(--background)] px-2 py-0.5 font-mono text-[9px] text-[var(--muted)]">
           {url}
         </span>
       </div>
@@ -44,7 +47,7 @@ export function MockFrame({
 export function Callout({ n, className = '' }: { n: number; className?: string }) {
   return (
     <span
-      className={`inline-flex size-4 md:size-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[9px] md:text-[10px] font-bold text-[var(--accent-foreground)] shadow ${className}`}
+      className={`inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[9px] font-bold text-[var(--accent-foreground)] shadow ${className}`}
     >
       {n}
     </span>
@@ -74,7 +77,7 @@ export function MockSidebar({
       ? 'bg-[#1d2327] text-[#c3c4c7]'
       : 'bg-[var(--default)]/50 text-[var(--foreground)] border-r border-[var(--border)]';
   return (
-    <ul className={`flex h-full w-[72px] md:w-24 shrink-0 flex-col gap-0.5 py-1.5 ${base}`}>
+    <ul className={`flex h-full w-[72px] shrink-0 flex-col gap-0.5 py-1.5 ${base}`}>
       {items.map((item) => {
         const isActive = item === active;
         const isHighlight = item === highlight;
@@ -108,7 +111,7 @@ export function MockButton({
 }) {
   return (
     <span
-      className={`relative inline-flex items-center gap-1 rounded px-2 py-1 text-[10px] md:text-xs font-medium ${
+      className={`relative inline-flex items-center gap-1 rounded px-2 py-1 text-[10px] font-medium ${
         primary
           ? 'bg-[#2271b1] text-white'
           : 'border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]'
@@ -136,7 +139,7 @@ export function MockField({
 }) {
   return (
     <label className="flex flex-col gap-0.5">
-      <span className="text-[9px] md:text-[11px] text-[var(--muted)]">{label}</span>
+      <span className="text-[9px] text-[var(--muted)]">{label}</span>
       <span
         className={`flex items-center justify-between rounded border border-[var(--border)] bg-[var(--background)] px-1.5 py-1 ${
           mono ? 'font-mono' : ''

@@ -45,7 +45,8 @@ export function ShopifyDevApps({ variant }: { variant: 'open' | 'create' }) {
             <span className="text-[#616161]">{t('shopify.noApps')}</span>
           </div>
           {variant === 'create' ? (
-            <div className="absolute inset-x-6 top-10 flex flex-col gap-2 rounded-lg border border-[#e3e3e3] bg-white p-3 shadow-lg">
+            // In flow (slight overlap): an absolute dialog contributed no height and got clipped by overflow-hidden.
+            <div className="z-10 mx-6 -mt-2 flex flex-col gap-2 rounded-lg border border-[#e3e3e3] bg-white p-3 shadow-lg">
               <span className="font-medium">{t('shopify.createApp')}</span>
               <MockField label={t('shopify.appName')} value="OneShopLab" highlight callout={2} />
               <div className={`flex justify-end gap-2`}>
