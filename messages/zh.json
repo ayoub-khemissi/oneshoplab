@@ -1125,6 +1125,20 @@
           "title": "把令牌粘贴到 OneShopLab",
           "body": "回到这里，把令牌粘贴到第 3 步将出现的框中。"
         }
+      },
+      "wix": {
+        "step1": {
+          "title": "从这里开始",
+          "body": "点击下方的“在 Wix 上安装”。如果您有多个 Wix 网站，Wix 会询问您要使用哪一个。"
+        },
+        "step2": {
+          "title": "将应用添加到您的网站",
+          "body": "Wix 会显示 OneShopLab 应用。点击“添加到网站”。"
+        },
+        "step3": {
+          "title": "批准权限",
+          "body": "批准两项权限（读取和更新产品）。您会自动返回此页面。"
+        }
       }
     },
     "mocks": {
@@ -1181,6 +1195,27 @@
         "tokenField": "访问令牌",
         "installAria": "Shopify 后台：安装应用，然后显示令牌一次",
         "pasteAria": "Shopify 后台：粘贴到 OneShopLab 的访问令牌"
+      },
+      "wix": {
+        "home": "首页",
+        "store": "商店",
+        "apps": "应用",
+        "settings": "设置",
+        "manageApps": "管理应用",
+        "appMarket": "App Market",
+        "noApps": "暂无第三方应用。",
+        "fromOsl": "安装从 OneShopLab 发起 — 无需在此搜索。",
+        "addTitle": "将 OneShopLab 添加到您的网站",
+        "addBody": "OneShopLab 会优化您的商品文案和图片，并将其写回您的商店。",
+        "consentTitle": "OneShopLab 需要以下权限",
+        "permProducts": "读取并更新您商店的产品",
+        "permSite": "读取您网站的名称和地址",
+        "cancel": "取消",
+        "addToSite": "添加到网站",
+        "agree": "同意并添加",
+        "appsAria": "Wix 后台：网站菜单中的“应用”入口",
+        "installAria": "Wix 安装向导：“将 OneShopLab 添加到您的网站”对话框",
+        "consentAria": "Wix 安装向导：需要批准的两项权限"
       }
     },
     "valueLabel": {
@@ -1294,7 +1329,181 @@
         "minutes": "{n} 分钟前",
         "hours": "{n} 小时前",
         "days": "{n} 天前"
+      },
+      "authMode": {
+        "oauth": "通过应用安装",
+        "custom_app": "访问令牌"
+      },
+      "uninstall": "卸载",
+      "uninstallConfirmTitle": "要卸载 OneShopLab 吗？",
+      "uninstallConfirmBody": "OneShopLab 会立即停止同步和应用更改。要彻底完成卸载，请从您的 Shopify 后台移除 OneShopLab 应用（设置 › 应用和销售渠道）。",
+      "openInstalledApps": "在 Shopify 中打开我的应用",
+      "uninstallConfirm": "卸载"
+    },
+    "returnDismiss": "关闭",
+    "shopifyApp": {
+      "step2Title": "安装 OneShopLab 应用",
+      "title": "安装 OneShopLab 应用",
+      "body": "最快的方法：确认您的店铺地址，点击按钮，然后在 Shopify 中批准该应用。您会自动返回此页面——无需复制任何内容。",
+      "domainLabel": "店铺地址",
+      "domainHint": "以 .myshopify.com 结尾（可在“设置 › 域名”中查看）。",
+      "invalidDomain": "请输入以 .myshopify.com 结尾的店铺地址。",
+      "install": "安装 OneShopLab 应用",
+      "afterInstall": "Shopify 会要求您批准两项权限（读取和更新产品）。批准后，您会返回此页面。",
+      "otherMethod": "其他方式：访问令牌（进阶）",
+      "otherMethodBody": "如果您不想安装该应用，可以在 Shopify 中创建一个自定义应用并粘贴其访问令牌。两种方式效果相同。",
+      "waiting": "应用安装完成后，您的店铺会连同同步状态一起显示在这里。",
+      "return": {
+        "success": "您的 Shopify 店铺已连接。首次同步已加入队列——下方卡片会自动更新。",
+        "webhooksFailed": "店铺已连接，但无法开启实时更新。您的商品目录将在每晚自动同步，您也可以点击“立即同步”。",
+        "error": {
+          "not_configured": "我们这边尚未设置 Shopify 应用。请使用下方的访问令牌方式，或联系我们。",
+          "bad_hmac": "Shopify 发回的响应我们无法验证。请重新开始安装。",
+          "bad_state": "安装耗时过长，或是在另一个标签页中发起的。请从本页重新开始。",
+          "unauthorized": "您必须使用发起安装的同一账号登录。请登录后重试。",
+          "invalid_domain": "请输入以 .myshopify.com 结尾的店铺地址。",
+          "exchange_failed": "Shopify 未确认此次安装。请一分钟后重试。",
+          "scopes_missing": "该应用未获得所需权限。请重新安装并批准两项权限。",
+          "unreachable": "Shopify 未响应。请检查地址后重试。",
+          "not_found": "该网站不属于您，或已不存在。",
+          "no_key": "我们这边尚未配置连接。请联系我们。",
+          "unknown": "安装未完成。请重试。"
+        }
       }
+    },
+    "wix": {
+      "step2Title": "在 Wix 上安装",
+      "installTitle": "在您的 Wix 网站上安装 OneShopLab",
+      "installBody": "一键完成：Wix 会要求您批准两项权限（读取和更新产品）。您会自动返回此页面。",
+      "install": "在 Wix 上安装",
+      "installing": "正在打开 Wix…",
+      "installError": {
+        "unauthorized": "您已退出登录。请登录后重试。",
+        "bad_request": "出了点问题。请刷新页面后重试。",
+        "not_found": "该网站不属于您，或已不存在。",
+        "not_configured": "我们这边尚未设置 Wix 应用。请联系我们。"
+      },
+      "alreadyConnected": "您的 Wix 网站 {shop} 已连接。如需重新安装，请先在第 3 步断开连接。",
+      "waiting": "应用安装完成后，您的网站会连同同步状态一起显示在这里。",
+      "return": {
+        "success": "您的 Wix 网站已连接。首次同步已加入队列——下方卡片会自动更新。",
+        "error": {
+          "not_configured": "我们这边尚未设置 Wix 应用。请联系我们。",
+          "bad_state": "安装耗时过长，或是在另一个标签页中发起的。请从本页重新开始。",
+          "unauthorized": "您必须使用发起安装的同一账号登录。请登录后重试。",
+          "bad_request": "Wix 发回的响应不完整。请重新开始安装。",
+          "exchange_failed": "Wix 未确认此次安装。请一分钟后重试。",
+          "unreachable": "Wix 未响应。请一分钟后重试。",
+          "not_found": "该网站不属于您，或已不存在。",
+          "no_key": "我们这边尚未配置连接。请联系我们。",
+          "invalid_token": "Wix 拒绝了此次连接。请重新安装该应用。",
+          "unknown": "安装未完成。请重试。"
+        }
+      },
+      "connected": "已连接到 {shop} — 上次同步 {ago}，共 {count, plural, =1 {1 件商品} other {# 件商品}}",
+      "connectedNoSync": "已连接到 {shop} — 首次同步待处理",
+      "shopLine": "网站：{shop}",
+      "syncingProgress": "正在同步 {done}/{total}",
+      "syncingCount": "正在同步 — 已获取 {done} 件商品",
+      "syncQueued": "同步已加入队列 — 将在几分钟内开始",
+      "syncFailed": "上次同步失败",
+      "tokenInvalid": "Wix 拒绝了此次连接 — 请重新安装该应用",
+      "tokenInvalidHint": "请先断开连接，然后在第 2 步点击“在 Wix 上安装”。",
+      "revoked": "已断开连接 — 请在第 2 步重新安装应用以重新连接",
+      "planLimit": "您的套餐支持 {n} 件商品：其余部分未导入。请升级套餐以同步全部商品。",
+      "lastWebhook": "Wix 最近一次更新时间：{ago}",
+      "noWebhookYet": "来自 Wix 的更新会实时送达；此外每晚也会运行一次完整同步。",
+      "syncNow": "立即同步",
+      "syncRunning": "正在同步",
+      "disconnect": "断开连接",
+      "actionFailed": "未能成功。请刷新页面后重试。",
+      "disconnectConfirmTitle": "要断开与该网站的连接吗？",
+      "disconnectConfirmBody": "OneShopLab 会立即停止同步和应用更改。OneShopLab 应用仍会保留在您的 Wix 网站上：请也在那里将其移除（应用 › 管理应用）。",
+      "openWixDashboard": "打开我的 Wix 后台",
+      "disconnectConfirm": "断开连接",
+      "cancel": "取消",
+      "ago": {
+        "seconds": "{n} 秒前",
+        "minutes": "{n} 分钟前",
+        "hours": "{n} 小时前",
+        "days": "{n} 天前"
+      }
+    },
+    "webhooks": {
+      "advancedTitle": "高级",
+      "title": "第一时间获取更改",
+      "intro": "每当您批准一项更改，OneShopLab 都可以立即通知您的商店，而不必等到下次访问。WooCommerce 插件（1.1 或更高版本）会在您保存网站密钥时自动完成这项设置 — 无需手动操作。本节适用于其他集成方式。",
+      "loading": "加载中…",
+      "loadFailed": "无法加载此部分。请刷新页面。",
+      "listTitle": "我们通知的地址",
+      "listEmpty": "暂无地址。WooCommerce 插件会自行添加其地址；如需接入其他集成，请使用下方表单。",
+      "kind": {
+        "self": "插件",
+        "manual": "其他集成"
+      },
+      "enabled": "已启用",
+      "disabled": "已暂停",
+      "disabledReason": "连续 {n} 次尝试失败后已暂停。请修正地址并发送测试以检查。",
+      "lastDelivery": "上次发送 {date} — 响应 {code}",
+      "noDeliveryYet": "尚未发送过任何内容",
+      "sendTest": "发送测试",
+      "pingWaiting": "发送中…",
+      "pingResult": "测试：",
+      "delete": "删除",
+      "actionFailed": "未能成功。请刷新页面后重试。",
+      "deleteConfirmTitle": "要删除该地址吗？",
+      "deleteConfirmSelf": "您的插件将立即停止接收更改。下次您在插件中保存网站密钥时，它会重新注册。",
+      "deleteConfirmManual": "该集成将立即停止接收更改。",
+      "deleteConfirm": "删除",
+      "cancel": "取消",
+      "logTitle": "最近的发送记录",
+      "logEmpty": "暂无发送记录。",
+      "logDate": "日期",
+      "logEvent": "事件",
+      "logStatus": "状态",
+      "logResponse": "响应",
+      "deliveryStatus": {
+        "pending": "等待中",
+        "delivered": "已送达",
+        "failed": "失败 — 将重试",
+        "dead": "已放弃"
+      },
+      "manualTitle": "其他集成",
+      "manualIntro": "连接您自己的工具：输入要通知的地址，并勾选您想接收的内容。我们会提供一个密钥，供您核实消息确实来自我们。",
+      "urlLabel": "要通知的地址",
+      "urlHint": "必须以 https:// 开头，且可从互联网访问。",
+      "eventsLabel": "要发送的内容",
+      "event": {
+        "change": {
+          "approved": "有更改被批准",
+          "cancelled": "有更改被撤回"
+        },
+        "sync": {
+          "completed": "同步已完成",
+          "failed": "同步失败"
+        },
+        "connection": {
+          "status_changed": "店铺连接状态发生变化"
+        }
+      },
+      "create": "添加此地址",
+      "creating": "正在添加…",
+      "error": {
+        "bad_request": "请检查地址并至少勾选一个事件。",
+        "unauthorized": "您已退出登录。请登录后重试。",
+        "not_found": "该网站不属于您，或已不存在。",
+        "sealing_unavailable": "我们目前无法保存该密钥。请联系我们。",
+        "invalid_url": "这不是一个有效的地址。",
+        "not_https": "地址必须以 https:// 开头。",
+        "blocked_host": "该地址指向内部服务器。请使用公共地址。",
+        "private_address": "该地址指向私有网络。请使用公共地址。",
+        "dns_failed": "我们找不到该地址。请检查后重试。"
+      },
+      "secretTitle": "请立即复制此密钥 — 之后将不再显示",
+      "secretBody": "请将其粘贴到您的工具中：我们发送的每条消息都会用它签名，以便您的工具核实消息确实来自 OneShopLab。",
+      "copy": "复制",
+      "copied": "已复制",
+      "secretSaved": "我已保存"
     }
   },
   "ApplyToStore": {

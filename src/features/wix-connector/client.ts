@@ -1,3 +1,5 @@
-// Client-safe entry: types only (index.ts opens the db). UI components are the wizard agent's.
+// Client-safe entry: UI + types only (index.ts opens the db).
+export { WixConnectionCard } from './ui/wix-connection-card';
+export { WixInstallButton } from './ui/wix-install-button';
 export type { WixActionError, WixActionResult } from './api/actions';
 export type { WixConnectionView } from '@/entities/shop-connection/client';

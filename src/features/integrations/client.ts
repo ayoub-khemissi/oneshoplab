@@ -4,7 +4,10 @@ export { KeyManagement } from './ui/key-management';
 export { PlatformGuide } from './ui/platform-guide';
 export { PlatformPicker, platformName } from './ui/platform-picker';
 export { KeyReveal, SiteKeyStep } from './ui/site-key-step';
-export { COMING_SOON, shopifyAdminBase } from './lib/guide-steps';
+export { ReturnNotice } from './ui/return-notice';
+export { COMING_SOON, isComingSoon, shopifyAdminBase } from './lib/guide-steps';
+export { parseIntegrationReturn, RETURN_PARAM_KEYS } from './lib/return-params';
+export type { IntegrationReturn } from './lib/return-params';
 export type {
   ConnectionStatus,
   IntegrationInterestMap,

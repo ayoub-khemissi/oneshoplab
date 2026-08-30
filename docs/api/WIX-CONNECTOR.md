@@ -7,7 +7,7 @@ last-verified: 2026-08-30
 # Wix connector — Wix app (OAuth), Wix Stores products
 
 Backend implemented 2026-08-30 (`features/wix-connector`, migration
-`0029_shop_oauth_wix`); wizard UI pending. Wix has no "custom app" token: the
+`0029_shop_oauth_wix`); wizard UI shipped 2026-08-30 (`features/wix-connector/ui`: `WixInstallButton`, `WixConnectionCard`; mocks `wix-*` in `features/integrations/ui/mocks`). Wix has no "custom app" token: the
 merchant installs **our Wix app** on their site, OSL keeps the app's refresh
 token and talks to the Wix Stores REST API on the merchant's behalf.
 

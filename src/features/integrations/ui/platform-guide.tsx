@@ -7,7 +7,6 @@ import { CopyButton } from '@/shared/ui';
 import { setIntegrationInterestAction } from '../api/actions';
 import {
   buildSteps,
-  COMING_SOON,
   ESTIMATED_MINUTES,
   GUIDE_VALUES,
   type GuideStep,
@@ -23,10 +22,13 @@ export function PlatformGuide({
   domain,
   pluginVersion,
   siteKeyPlaintext,
-  interest
+  interest,
+  comingSoon
 }: {
   projectId: string;
   platform: IntegrationPlatform | null;
+  /** The widget decides from `isComingSoon(platform, …)` — the guide has no env access. */
+  comingSoon: boolean;
   /** Project domain or URL — feeds the "Open" links of each step. */
   domain: string | null;
   pluginVersion: string | null;
@@ -41,7 +43,7 @@ export function PlatformGuide({
   const steps = buildSteps({ platform, domain });
   return (
     <div className="flex flex-col gap-4">
-      {COMING_SOON[platform] ? (
+      {comingSoon ? (
         <ComingSoonNotice
           projectId={projectId}
           platform={platform}
@@ -54,7 +56,7 @@ export function PlatformGuide({
             <Clock className="size-3.5" aria-hidden />
             {t('estimated', { minutes: ESTIMATED_MINUTES[platform] })}
           </p>
-          <ol className={`flex flex-col gap-5 ${COMING_SOON[platform] ? 'opacity-60' : ''}`}>
+          <ol className={`flex flex-col gap-5 ${comingSoon ? 'opacity-60' : ''}`}>
             {steps.map((step) => (
               <GuideStepItem
                 key={step.n}

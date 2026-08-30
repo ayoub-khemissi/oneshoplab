@@ -1,30 +1,21 @@
 'use client';
 
-import {
-  AlertTriangle,
-  CheckCircle2,
-  ExternalLink,
-  KeyRound,
-  RefreshCw,
-  Unplug
-} from 'lucide-react';
+import { AlertTriangle, CheckCircle2, ExternalLink, RefreshCw, Unplug } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
-import type { ShopifyConnectionView } from '@/entities/shop-connection/client';
+import type { WixConnectionView } from '@/entities/shop-connection/client';
 import { ConfirmDialog } from '@/shared/ui';
-import {
-  disconnectShopifyAction,
-  getShopifyConnectionAction,
-  requestShopifyPullAction
-} from '../api/actions';
+import { disconnectWixAction, getWixConnectionAction, requestWixPullAction } from '../api/actions';
 
 const POLL_MS = 10_000;
 const TICK_MS = 1_000;
 const PLAN_LIMIT_PREFIX = 'plan_limit:';
+/** The merchant removes the app from their site there (the Wix side of "Disconnect"). */
+export const WIX_MANAGE_APPS_URL = 'https://manage.wix.com/dashboard';
 
 type CardState = 'connected' | 'syncing' | 'token_invalid' | 'revoked' | 'error';
 
-function cardState(c: ShopifyConnectionView): CardState {
+function cardState(c: WixConnectionView): CardState {
   if (c.status === 'revoked') return 'revoked';
   if (c.status === 'token_invalid') return 'token_invalid';
   if (c.pullProgress?.running || c.pullPending) return 'syncing';
@@ -32,24 +23,17 @@ function cardState(c: ShopifyConnectionView): CardState {
   return 'connected';
 }
 
-/**
- * Wizard step 4 (Shopify) + "after setup": live status of the connection,
- * "Synchroniser maintenant" and "Déconnecter". Polls every 10 s like the
- * plugin card so the first pull's progress shows up without a reload.
- */
-export function ShopifyConnectionCard({
+/** Mirror of the Shopify card: status, last pull, progress, "Sync now", "Disconnect". */
+export function WixConnectionCard({
   projectId,
   initial,
-  appsUrl,
   onDisconnected
 }: {
   projectId: string;
-  initial: ShopifyConnectionView;
-  /** Deep link to the Shopify apps page: custom apps (token) or installed apps (OAuth) — the app itself must be removed there. */
-  appsUrl: string;
+  initial: WixConnectionView;
   onDisconnected?: () => void;
 }) {
-  const t = useTranslations('Integrations.shopify');
+  const t = useTranslations('Integrations.wix');
   const [conn, setConn] = useState(initial);
   const [now, setNow] = useState(() => Date.now());
   const [confirm, setConfirm] = useState(false);
@@ -62,7 +46,7 @@ export function ShopifyConnectionCard({
     fd.set('projectId', projectId);
     const poll = async () => {
       try {
-        const next = await getShopifyConnectionAction(fd);
+        const next = await getWixConnectionAction(fd);
         if (!cancelled && next) setConn(next);
       } catch {
         /* transient — the next tick retries */
@@ -88,7 +72,7 @@ export function ShopifyConnectionCard({
     fd.set('projectId', projectId);
     setFailed(false);
     startTransition(async () => {
-      const res = await requestShopifyPullAction(fd);
+      const res = await requestWixPullAction(fd);
       if (res.ok) setConn((c) => ({ ...c, pullPending: true }));
       else setFailed(true);
     });
@@ -99,32 +83,29 @@ export function ShopifyConnectionCard({
     fd.set('projectId', projectId);
     setFailed(false);
     startTransition(async () => {
-      const res = await disconnectShopifyAction(fd);
+      const res = await disconnectWixAction(fd);
       setConfirm(false);
       if (!res.ok) {
         setFailed(true);
         return;
       }
-      setConn((c) => ({ ...c, status: 'revoked', pullPending: false, hasWebhookSecret: false }));
+      setConn((c) => ({ ...c, status: 'revoked', pullPending: false }));
       onDisconnected?.();
     });
   }
 
   const green = state === 'connected' || state === 'syncing';
-  const viaApp = conn.authMode === 'oauth';
+  const progress = conn.pullProgress;
   const headline =
     state === 'revoked'
       ? t('revoked')
       : state === 'token_invalid'
         ? t('tokenInvalid')
         : state === 'syncing'
-          ? conn.pullProgress?.running
-            ? conn.pullProgress.total
-              ? t('syncingProgress', {
-                  done: conn.pullProgress.done,
-                  total: conn.pullProgress.total
-                })
-              : t('syncingCount', { done: conn.pullProgress.done })
+          ? progress?.running
+            ? progress.total
+              ? t('syncingProgress', { done: progress.done, total: progress.total })
+              : t('syncingCount', { done: progress.done })
             : t('syncQueued')
           : state === 'error'
             ? t('syncFailed')
@@ -132,13 +113,13 @@ export function ShopifyConnectionCard({
               ? t('connected', {
                   shop,
                   ago: relativeAgo(now - new Date(conn.lastPullAtIso).getTime(), t),
-                  count: conn.pullProgress?.total ?? 0
+                  count: progress?.total ?? 0
                 })
               : t('connectedNoSync', { shop });
 
   return (
     <div
-      data-testid="shopify-connection"
+      data-testid="wix-connection"
       data-state={state}
       className={`rounded-md border p-4 flex flex-col gap-3 ${
         green
@@ -165,34 +146,25 @@ export function ShopifyConnectionCard({
         )}
         <div className="flex flex-col gap-1 min-w-0">
           <span className="text-sm font-semibold">{headline}</span>
-          <span
-            data-testid="shopify-auth-mode"
-            className="text-xs text-[var(--muted)] inline-flex items-center gap-1"
-          >
-            <KeyRound className="size-3" aria-hidden />
-            {viaApp ? t('authMode.oauth') : t('authMode.custom_app')}
-          </span>
-          {state === 'syncing' ? (
-            <span className="text-xs text-[var(--muted)]">{t('shopLine', { shop })}</span>
-          ) : null}
+          <span className="text-xs text-[var(--muted)]">{t('shopLine', { shop })}</span>
           {planLimit !== null && green ? (
             <span className="text-xs text-[var(--danger)]">{t('planLimit', { n: planLimit })}</span>
           ) : null}
-          {state === 'error' && conn.pullProgress?.error ? (
-            <span className="text-xs text-[var(--muted)] break-all">{conn.pullProgress.error}</span>
+          {state === 'error' && progress?.error ? (
+            <span className="text-xs text-[var(--muted)] break-all">{progress.error}</span>
           ) : null}
           {state === 'token_invalid' ? (
             <span className="text-xs text-[var(--muted)]">{t('tokenInvalidHint')}</span>
           ) : null}
-          {green && !conn.hasWebhookSecret ? (
-            <span className="text-xs text-[var(--muted)]">{t('noSecretNote')}</span>
-          ) : null}
-          {green && conn.hasWebhookSecret && conn.lastWebhookAtIso ? (
+          {green && conn.lastWebhookAtIso ? (
             <span className="text-xs text-[var(--muted)]">
               {t('lastWebhook', {
                 ago: relativeAgo(now - new Date(conn.lastWebhookAtIso).getTime(), t)
               })}
             </span>
+          ) : null}
+          {green && !conn.lastWebhookAtIso ? (
+            <span className="text-xs text-[var(--muted)]">{t('noWebhookYet')}</span>
           ) : null}
         </div>
       </div>
@@ -215,7 +187,7 @@ export function ShopifyConnectionCard({
             className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:border-[var(--danger)] hover:text-[var(--danger)] disabled:opacity-50"
           >
             <Unplug className="size-3.5" aria-hidden />
-            {viaApp ? t('uninstall') : t('disconnect')}
+            {t('disconnect')}
           </button>
           {failed ? (
             <span role="alert" className="text-xs text-[var(--danger)]">
@@ -225,36 +197,25 @@ export function ShopifyConnectionCard({
         </div>
       ) : null}
 
-      <details className="text-xs">
-        <summary className="cursor-pointer text-[var(--accent)] hover:underline select-none">
-          {t('troubleTitle')}
-        </summary>
-        <ol className="mt-2 flex flex-col gap-1.5 list-decimal pl-5 text-[var(--muted)] leading-relaxed">
-          <li>{t('fix1')}</li>
-          <li>{t('fix2')}</li>
-          <li>{t('fix3')}</li>
-        </ol>
-      </details>
-
       <ConfirmDialog
         isOpen={confirm}
         onOpenChange={setConfirm}
-        title={viaApp ? t('uninstallConfirmTitle') : t('disconnectConfirmTitle')}
+        title={t('disconnectConfirmTitle')}
         description={
           <span className="flex flex-col gap-2">
-            <span>{viaApp ? t('uninstallConfirmBody') : t('disconnectConfirmBody')}</span>
+            <span>{t('disconnectConfirmBody')}</span>
             <a
-              href={appsUrl}
+              href={WIX_MANAGE_APPS_URL}
               target="_blank"
               rel="noopener"
               className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
             >
-              {viaApp ? t('openInstalledApps') : t('openAppsPage')}
+              {t('openWixDashboard')}
               <ExternalLink className="size-3" aria-hidden />
             </a>
           </span>
         }
-        confirmLabel={viaApp ? t('uninstallConfirm') : t('disconnectConfirm')}
+        confirmLabel={t('disconnectConfirm')}
         cancelLabel={t('cancel')}
         isPending={pending}
         onConfirm={disconnect}

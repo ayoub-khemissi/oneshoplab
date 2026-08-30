@@ -1125,6 +1125,20 @@
           "title": "Paste the token in OneShopLab",
           "body": "Come back here and paste the token in the box that will appear at step 3."
         }
+      },
+      "wix": {
+        "step1": {
+          "title": "Start from here",
+          "body": "Click Install on Wix below. If you have several Wix sites, Wix asks which one to use."
+        },
+        "step2": {
+          "title": "Add the app to your site",
+          "body": "Wix shows the OneShopLab app. Click Add to Site."
+        },
+        "step3": {
+          "title": "Approve the permissions",
+          "body": "Approve the two permissions (read and update products). You come back here automatically."
+        }
       }
     },
     "mocks": {
@@ -1181,6 +1195,27 @@
         "tokenField": "Access token",
         "installAria": "Shopify admin: Install app then Reveal token once",
         "pasteAria": "Shopify admin: the access token copied into OneShopLab"
+      },
+      "wix": {
+        "home": "Home",
+        "store": "Store",
+        "apps": "Apps",
+        "settings": "Settings",
+        "manageApps": "Manage apps",
+        "appMarket": "App Market",
+        "noApps": "No third-party app yet.",
+        "fromOsl": "The install starts from OneShopLab — nothing to search here.",
+        "addTitle": "Add OneShopLab to your site",
+        "addBody": "OneShopLab improves your product texts and images and writes them back to your store.",
+        "consentTitle": "OneShopLab needs the following permissions",
+        "permProducts": "Read and update your store's products",
+        "permSite": "Read your site's name and address",
+        "cancel": "Cancel",
+        "addToSite": "Add to Site",
+        "agree": "Agree & Add",
+        "appsAria": "Wix dashboard: the Apps entry in the site menu",
+        "installAria": "Wix installer: the Add OneShopLab to your site dialog",
+        "consentAria": "Wix installer: the two permissions to approve"
       }
     },
     "valueLabel": {
@@ -1294,7 +1329,181 @@
         "minutes": "{n} min ago",
         "hours": "{n} h ago",
         "days": "{n} d ago"
+      },
+      "authMode": {
+        "oauth": "Installed via the app",
+        "custom_app": "Access token"
+      },
+      "uninstall": "Uninstall",
+      "uninstallConfirmTitle": "Uninstall OneShopLab?",
+      "uninstallConfirmBody": "OneShopLab stops syncing and applying changes at once. To finish, remove the OneShopLab app from your Shopify admin (Settings › Apps and sales channels).",
+      "openInstalledApps": "Open my apps in Shopify",
+      "uninstallConfirm": "Uninstall"
+    },
+    "returnDismiss": "Dismiss",
+    "shopifyApp": {
+      "step2Title": "Install the OneShopLab app",
+      "title": "Install the OneShopLab app",
+      "body": "The fastest way: confirm your store address, click the button, and approve the app in Shopify. You come back here automatically — nothing to copy.",
+      "domainLabel": "Store address",
+      "domainHint": "Ends with .myshopify.com (you can find it in Settings › Domains).",
+      "invalidDomain": "Enter your store address ending with .myshopify.com.",
+      "install": "Install the OneShopLab app",
+      "afterInstall": "Shopify will ask you to approve two permissions (read and update products). Once approved, you land back on this page.",
+      "otherMethod": "Other method: access token (advanced)",
+      "otherMethodBody": "If you prefer not to install the app, you can create a custom app in Shopify and paste its access token. Both methods give the same result.",
+      "waiting": "Once the app is installed, your store appears here with its sync status.",
+      "return": {
+        "success": "Your Shopify store is connected. The first sync is queued — the card below updates by itself.",
+        "webhooksFailed": "Store connected, but real-time updates could not be turned on. Your catalog will sync every night and when you press Sync now.",
+        "error": {
+          "not_configured": "The Shopify app is not set up on our side. Use the access token method below or contact us.",
+          "bad_hmac": "Shopify sent a reply we could not verify. Start the install again.",
+          "bad_state": "The install took too long or was started from another tab. Start it again from this page.",
+          "unauthorized": "You must be signed in to the same account that started the install. Sign in and try again.",
+          "invalid_domain": "Enter your store address ending with .myshopify.com.",
+          "exchange_failed": "Shopify did not confirm the install. Try again in a minute.",
+          "scopes_missing": "The app did not get the permissions it needs. Install it again and approve both permissions.",
+          "unreachable": "Shopify did not answer. Check the address and try again.",
+          "not_found": "This site is not yours or no longer exists.",
+          "no_key": "Connection is not configured on our side. Contact us.",
+          "unknown": "The install did not complete. Try again."
+        }
       }
+    },
+    "wix": {
+      "step2Title": "Install on Wix",
+      "installTitle": "Install OneShopLab on your Wix site",
+      "installBody": "One click: Wix asks you to approve two permissions (read and update products). You come back here automatically.",
+      "install": "Install on Wix",
+      "installing": "Opening Wix…",
+      "installError": {
+        "unauthorized": "You are signed out. Sign in and try again.",
+        "bad_request": "Something went wrong. Reload the page and try again.",
+        "not_found": "This site is not yours or no longer exists.",
+        "not_configured": "The Wix app is not set up on our side. Contact us."
+      },
+      "alreadyConnected": "Your Wix site {shop} is connected. To reinstall, disconnect first in step 3.",
+      "waiting": "Once the app is installed, your site appears here with its sync status.",
+      "return": {
+        "success": "Your Wix site is connected. The first sync is queued — the card below updates by itself.",
+        "error": {
+          "not_configured": "The Wix app is not set up on our side. Contact us.",
+          "bad_state": "The install took too long or was started from another tab. Start it again from this page.",
+          "unauthorized": "You must be signed in to the same account that started the install. Sign in and try again.",
+          "bad_request": "Wix sent an incomplete reply. Start the install again.",
+          "exchange_failed": "Wix did not confirm the install. Try again in a minute.",
+          "unreachable": "Wix did not answer. Try again in a minute.",
+          "not_found": "This site is not yours or no longer exists.",
+          "no_key": "Connection is not configured on our side. Contact us.",
+          "invalid_token": "Wix refused the connection. Install the app again.",
+          "unknown": "The install did not complete. Try again."
+        }
+      },
+      "connected": "Connected to {shop} — last sync {ago}, {count, plural, =1 {1 product} other {# products}}",
+      "connectedNoSync": "Connected to {shop} — first sync pending",
+      "shopLine": "Site: {shop}",
+      "syncingProgress": "Syncing {done}/{total}",
+      "syncingCount": "Syncing — {done} products fetched",
+      "syncQueued": "Sync queued — starts within a few minutes",
+      "syncFailed": "Last sync failed",
+      "tokenInvalid": "Wix refused the connection — install the app again",
+      "tokenInvalidHint": "Disconnect, then click Install on Wix in step 2.",
+      "revoked": "Disconnected — install the app again in step 2 to reconnect",
+      "planLimit": "Your plan covers {n} products: the rest was not imported. Upgrade to sync everything.",
+      "lastWebhook": "Last update from Wix {ago}",
+      "noWebhookYet": "Updates from Wix arrive in real time; a full sync also runs every night.",
+      "syncNow": "Sync now",
+      "syncRunning": "Sync running",
+      "disconnect": "Disconnect",
+      "actionFailed": "That did not work. Reload the page and try again.",
+      "disconnectConfirmTitle": "Disconnect this site?",
+      "disconnectConfirmBody": "OneShopLab stops syncing and applying changes at once. The OneShopLab app stays on your Wix site: remove it there too (Apps › Manage apps).",
+      "openWixDashboard": "Open my Wix dashboard",
+      "disconnectConfirm": "Disconnect",
+      "cancel": "Cancel",
+      "ago": {
+        "seconds": "{n} s ago",
+        "minutes": "{n} min ago",
+        "hours": "{n} h ago",
+        "days": "{n} d ago"
+      }
+    },
+    "webhooks": {
+      "advancedTitle": "Advanced",
+      "title": "Get changes right away",
+      "intro": "Every time you approve a change, OneShopLab can tell your store at once instead of waiting for the next visit. The WooCommerce plugin (version 1.1 or later) sets this up on its own when you save the site key — nothing to do. This section is for other integrations.",
+      "loading": "Loading…",
+      "loadFailed": "Could not load this section. Reload the page.",
+      "listTitle": "Addresses we notify",
+      "listEmpty": "No address yet. The WooCommerce plugin adds its own; use the form below for another integration.",
+      "kind": {
+        "self": "Plugin",
+        "manual": "Other integration"
+      },
+      "enabled": "Active",
+      "disabled": "Paused",
+      "disabledReason": "Paused after {n} failed attempts in a row. Fix the address and send a test to check it.",
+      "lastDelivery": "Last delivery {date} — response {code}",
+      "noDeliveryYet": "Nothing sent yet",
+      "sendTest": "Send a test",
+      "pingWaiting": "Sending…",
+      "pingResult": "Test:",
+      "delete": "Delete",
+      "actionFailed": "That did not work. Reload the page and try again.",
+      "deleteConfirmTitle": "Delete this address?",
+      "deleteConfirmSelf": "Your plugin will stop receiving changes right away. It registers again the next time you save the site key in the plugin.",
+      "deleteConfirmManual": "This integration will stop receiving changes right away.",
+      "deleteConfirm": "Delete",
+      "cancel": "Cancel",
+      "logTitle": "Latest deliveries",
+      "logEmpty": "No delivery yet.",
+      "logDate": "Date",
+      "logEvent": "Event",
+      "logStatus": "Status",
+      "logResponse": "Response",
+      "deliveryStatus": {
+        "pending": "Waiting",
+        "delivered": "Delivered",
+        "failed": "Failed — will retry",
+        "dead": "Given up"
+      },
+      "manualTitle": "Other integration",
+      "manualIntro": "Connect a tool of your own: enter the address to notify and tick what you want to receive. We give you a secret to check the messages come from us.",
+      "urlLabel": "Address to notify",
+      "urlHint": "Must start with https:// and be reachable from the internet.",
+      "eventsLabel": "What to send",
+      "event": {
+        "change": {
+          "approved": "A change is approved",
+          "cancelled": "A change is withdrawn"
+        },
+        "sync": {
+          "completed": "A sync finished",
+          "failed": "A sync failed"
+        },
+        "connection": {
+          "status_changed": "The store connection changed"
+        }
+      },
+      "create": "Add this address",
+      "creating": "Adding…",
+      "error": {
+        "bad_request": "Check the address and tick at least one event.",
+        "unauthorized": "You are signed out. Sign in and try again.",
+        "not_found": "This site is not yours or no longer exists.",
+        "sealing_unavailable": "We cannot store the secret right now. Contact us.",
+        "invalid_url": "This is not a valid address.",
+        "not_https": "The address must start with https://.",
+        "blocked_host": "This address points to an internal server. Use a public one.",
+        "private_address": "This address points to a private network. Use a public one.",
+        "dns_failed": "We could not find this address. Check it and try again."
+      },
+      "secretTitle": "Copy the secret now — it won’t be shown again",
+      "secretBody": "Paste it in your tool: every message we send is signed with it so your tool can check it really comes from OneShopLab.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "secretSaved": "I saved it"
     }
   },
   "ApplyToStore": {

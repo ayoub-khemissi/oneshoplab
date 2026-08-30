@@ -1125,6 +1125,20 @@
           "title": "Belirteci OneShopLab’a yapıştırın",
           "body": "Buraya dönün ve belirteci 3. adımda görünecek kutuya yapıştırın."
         }
+      },
+      "wix": {
+        "step1": {
+          "title": "Buradan başlayın",
+          "body": "Aşağıdaki Wix'e yükleyin'e tıklayın. Birden fazla Wix siteniz varsa Wix hangisini kullanacağınızı sorar."
+        },
+        "step2": {
+          "title": "Uygulamayı sitenize ekleyin",
+          "body": "Wix, OneShopLab uygulamasını gösterir. Siteye ekle'ye tıklayın."
+        },
+        "step3": {
+          "title": "İzinleri onaylayın",
+          "body": "İki izni onaylayın (ürünleri okuma ve güncelleme). Otomatik olarak buraya geri dönersiniz."
+        }
       }
     },
     "mocks": {
@@ -1181,6 +1195,27 @@
         "tokenField": "Erişim belirteci",
         "installAria": "Shopify yönetimi: Uygulamayı yükle, ardından Belirteci bir kez göster",
         "pasteAria": "Shopify yönetimi: OneShopLab’a yapıştırılan erişim belirteci"
+      },
+      "wix": {
+        "home": "Ana Sayfa",
+        "store": "Mağaza",
+        "apps": "Uygulamalar",
+        "settings": "Ayarlar",
+        "manageApps": "Uygulamaları yönet",
+        "appMarket": "App Market",
+        "noApps": "Henüz üçüncü taraf uygulama yok.",
+        "fromOsl": "Yükleme OneShopLab'dan başlar — burada arama yapmanıza gerek yok.",
+        "addTitle": "OneShopLab'ı sitenize ekleyin",
+        "addBody": "OneShopLab ürün metinlerinizi ve görsellerinizi iyileştirir ve mağazanıza geri yazar.",
+        "consentTitle": "OneShopLab aşağıdaki izinlere ihtiyaç duyuyor",
+        "permProducts": "Mağazanızın ürünlerini okuma ve güncelleme",
+        "permSite": "Sitenizin adını ve adresini okuma",
+        "cancel": "Vazgeç",
+        "addToSite": "Siteye ekle",
+        "agree": "Kabul et ve ekle",
+        "appsAria": "Wix paneli: site menüsündeki Uygulamalar girişi",
+        "installAria": "Wix yükleyicisi: OneShopLab'ı sitenize ekleyin penceresi",
+        "consentAria": "Wix yükleyicisi: onaylanacak iki izin"
       }
     },
     "valueLabel": {
@@ -1294,7 +1329,181 @@
         "minutes": "{n} dk önce",
         "hours": "{n} sa önce",
         "days": "{n} gün önce"
+      },
+      "authMode": {
+        "oauth": "Uygulama üzerinden yüklendi",
+        "custom_app": "Erişim jetonu"
+      },
+      "uninstall": "Kaldır",
+      "uninstallConfirmTitle": "OneShopLab kaldırılsın mı?",
+      "uninstallConfirmBody": "OneShopLab senkronizasyonu ve değişiklikleri uygulamayı hemen durdurur. Tamamlamak için OneShopLab uygulamasını Shopify yönetim panelinizden kaldırın (Ayarlar › Uygulamalar ve satış kanalları).",
+      "openInstalledApps": "Shopify'daki uygulamalarımı aç",
+      "uninstallConfirm": "Kaldır"
+    },
+    "returnDismiss": "Kapat",
+    "shopifyApp": {
+      "step2Title": "OneShopLab uygulamasını yükleyin",
+      "title": "OneShopLab uygulamasını yükleyin",
+      "body": "En hızlı yol: mağaza adresinizi onaylayın, düğmeye tıklayın ve Shopify'da uygulamayı onaylayın. Otomatik olarak buraya geri dönersiniz — kopyalamanıza gerek yok.",
+      "domainLabel": "Mağaza adresi",
+      "domainHint": ".myshopify.com ile biter (Ayarlar › Alan Adları bölümünde bulabilirsiniz).",
+      "invalidDomain": ".myshopify.com ile biten mağaza adresinizi girin.",
+      "install": "OneShopLab uygulamasını yükleyin",
+      "afterInstall": "Shopify sizden iki izni onaylamanızı isteyecek (ürünleri okuma ve güncelleme). Onayladıktan sonra bu sayfaya geri dönersiniz.",
+      "otherMethod": "Diğer yöntem: erişim jetonu (ileri düzey)",
+      "otherMethodBody": "Uygulamayı yüklemek istemiyorsanız Shopify'da özel bir uygulama oluşturup erişim jetonunu yapıştırabilirsiniz. Her iki yöntem de aynı sonucu verir.",
+      "waiting": "Uygulama yüklendikten sonra mağazanız senkronizasyon durumuyla birlikte burada görünür.",
+      "return": {
+        "success": "Shopify mağazanız bağlandı. İlk senkronizasyon sıraya alındı — aşağıdaki kart kendiliğinden güncellenir.",
+        "webhooksFailed": "Mağaza bağlandı, ancak anlık güncellemeler açılamadı. Kataloğunuz her gece ve Şimdi senkronize et'e bastığınızda senkronize edilecek.",
+        "error": {
+          "not_configured": "Shopify uygulaması bizim tarafımızda ayarlanmamış. Aşağıdaki erişim jetonu yöntemini kullanın veya bize ulaşın.",
+          "bad_hmac": "Shopify doğrulayamadığımız bir yanıt gönderdi. Yüklemeyi yeniden başlatın.",
+          "bad_state": "Yükleme çok uzun sürdü veya başka bir sekmeden başlatıldı. Bu sayfadan yeniden başlatın.",
+          "unauthorized": "Yüklemeyi başlatan hesapla oturum açmış olmanız gerekir. Oturum açın ve tekrar deneyin.",
+          "invalid_domain": ".myshopify.com ile biten mağaza adresinizi girin.",
+          "exchange_failed": "Shopify yüklemeyi onaylamadı. Bir dakika sonra tekrar deneyin.",
+          "scopes_missing": "Uygulama gereken izinleri alamadı. Yeniden yükleyin ve her iki izni de onaylayın.",
+          "unreachable": "Shopify yanıt vermedi. Adresi kontrol edip tekrar deneyin.",
+          "not_found": "Bu site size ait değil veya artık mevcut değil.",
+          "no_key": "Bağlantı bizim tarafımızda ayarlanmamış. Bize ulaşın.",
+          "unknown": "Yükleme tamamlanmadı. Tekrar deneyin."
+        }
       }
+    },
+    "wix": {
+      "step2Title": "Wix'e yükleyin",
+      "installTitle": "OneShopLab'ı Wix sitenize yükleyin",
+      "installBody": "Tek tıkla: Wix sizden iki izni onaylamanızı ister (ürünleri okuma ve güncelleme). Otomatik olarak buraya geri dönersiniz.",
+      "install": "Wix'e yükleyin",
+      "installing": "Wix açılıyor…",
+      "installError": {
+        "unauthorized": "Oturumunuz kapalı. Oturum açın ve tekrar deneyin.",
+        "bad_request": "Bir sorun oluştu. Sayfayı yenileyip tekrar deneyin.",
+        "not_found": "Bu site size ait değil veya artık mevcut değil.",
+        "not_configured": "Wix uygulaması bizim tarafımızda ayarlanmamış. Bize ulaşın."
+      },
+      "alreadyConnected": "Wix siteniz {shop} bağlı. Yeniden yüklemek için önce 3. adımda bağlantıyı kesin.",
+      "waiting": "Uygulama yüklendikten sonra siteniz senkronizasyon durumuyla birlikte burada görünür.",
+      "return": {
+        "success": "Wix siteniz bağlandı. İlk senkronizasyon sıraya alındı — aşağıdaki kart kendiliğinden güncellenir.",
+        "error": {
+          "not_configured": "Wix uygulaması bizim tarafımızda ayarlanmamış. Bize ulaşın.",
+          "bad_state": "Yükleme çok uzun sürdü veya başka bir sekmeden başlatıldı. Bu sayfadan yeniden başlatın.",
+          "unauthorized": "Yüklemeyi başlatan hesapla oturum açmış olmanız gerekir. Oturum açın ve tekrar deneyin.",
+          "bad_request": "Wix eksik bir yanıt gönderdi. Yüklemeyi yeniden başlatın.",
+          "exchange_failed": "Wix yüklemeyi onaylamadı. Bir dakika sonra tekrar deneyin.",
+          "unreachable": "Wix yanıt vermedi. Bir dakika sonra tekrar deneyin.",
+          "not_found": "Bu site size ait değil veya artık mevcut değil.",
+          "no_key": "Bağlantı bizim tarafımızda ayarlanmamış. Bize ulaşın.",
+          "invalid_token": "Wix bağlantıyı reddetti. Uygulamayı yeniden yükleyin.",
+          "unknown": "Yükleme tamamlanmadı. Tekrar deneyin."
+        }
+      },
+      "connected": "{shop} bağlandı — son senkronizasyon {ago}, {count, plural, =1 {1 ürün} other {# ürün}}",
+      "connectedNoSync": "{shop} bağlandı — ilk senkronizasyon bekleniyor",
+      "shopLine": "Site: {shop}",
+      "syncingProgress": "Senkronize ediliyor {done}/{total}",
+      "syncingCount": "Senkronize ediliyor — {done} ürün alındı",
+      "syncQueued": "Senkronizasyon sıraya alındı — birkaç dakika içinde başlar",
+      "syncFailed": "Son senkronizasyon başarısız oldu",
+      "tokenInvalid": "Wix bağlantıyı reddetti — uygulamayı yeniden yükleyin",
+      "tokenInvalidHint": "Bağlantıyı kesin, ardından 2. adımda Wix'e yükleyin'e tıklayın.",
+      "revoked": "Bağlantı kesildi — yeniden bağlanmak için 2. adımda uygulamayı tekrar yükleyin",
+      "planLimit": "Planınız {n} ürünü kapsıyor: kalanı içe aktarılmadı. Her şeyi senkronize etmek için yükseltin.",
+      "lastWebhook": "Wix'ten son güncelleme {ago}",
+      "noWebhookYet": "Wix'ten gelen güncellemeler anlık olarak ulaşır; ayrıca her gece tam bir senkronizasyon da çalışır.",
+      "syncNow": "Şimdi senkronize et",
+      "syncRunning": "Senkronizasyon çalışıyor",
+      "disconnect": "Bağlantıyı kes",
+      "actionFailed": "Bu işe yaramadı. Sayfayı yenileyip tekrar deneyin.",
+      "disconnectConfirmTitle": "Bu sitenin bağlantısı kesilsin mi?",
+      "disconnectConfirmBody": "OneShopLab senkronizasyonu ve değişiklikleri uygulamayı hemen durdurur. OneShopLab uygulaması Wix sitenizde kalır: onu da orada kaldırın (Uygulamalar › Uygulamaları yönet).",
+      "openWixDashboard": "Wix panelimi aç",
+      "disconnectConfirm": "Bağlantıyı kes",
+      "cancel": "Vazgeç",
+      "ago": {
+        "seconds": "{n} sn önce",
+        "minutes": "{n} dk önce",
+        "hours": "{n} sa önce",
+        "days": "{n} gün önce"
+      }
+    },
+    "webhooks": {
+      "advancedTitle": "Gelişmiş",
+      "title": "Değişiklikleri anında alın",
+      "intro": "Onayladığınız her değişiklikte OneShopLab, bir sonraki ziyareti beklemek yerine mağazanızı hemen bilgilendirebilir. WooCommerce eklentisi (1.1 veya üzeri sürüm) site anahtarını kaydettiğinizde bunu kendiliğinden ayarlar — yapmanız gereken bir şey yok. Bu bölüm diğer entegrasyonlar içindir.",
+      "loading": "Yükleniyor…",
+      "loadFailed": "Bu bölüm yüklenemedi. Sayfayı yenileyin.",
+      "listTitle": "Bilgilendirdiğimiz adresler",
+      "listEmpty": "Henüz adres yok. WooCommerce eklentisi kendi adresini ekler; başka bir entegrasyon için aşağıdaki formu kullanın.",
+      "kind": {
+        "self": "Eklenti",
+        "manual": "Diğer entegrasyon"
+      },
+      "enabled": "Etkin",
+      "disabled": "Duraklatıldı",
+      "disabledReason": "Art arda {n} başarısız denemeden sonra duraklatıldı. Adresi düzeltin ve kontrol etmek için bir test gönderin.",
+      "lastDelivery": "Son gönderim {date} — yanıt {code}",
+      "noDeliveryYet": "Henüz bir şey gönderilmedi",
+      "sendTest": "Test gönder",
+      "pingWaiting": "Gönderiliyor…",
+      "pingResult": "Test:",
+      "delete": "Sil",
+      "actionFailed": "Bu işe yaramadı. Sayfayı yenileyip tekrar deneyin.",
+      "deleteConfirmTitle": "Bu adres silinsin mi?",
+      "deleteConfirmSelf": "Eklentiniz değişiklikleri almayı hemen durdurur. Eklentide site anahtarını bir sonraki kaydedişinizde yeniden kaydolur.",
+      "deleteConfirmManual": "Bu entegrasyon değişiklikleri almayı hemen durdurur.",
+      "deleteConfirm": "Sil",
+      "cancel": "Vazgeç",
+      "logTitle": "Son gönderimler",
+      "logEmpty": "Henüz gönderim yok.",
+      "logDate": "Tarih",
+      "logEvent": "Olay",
+      "logStatus": "Durum",
+      "logResponse": "Yanıt",
+      "deliveryStatus": {
+        "pending": "Bekliyor",
+        "delivered": "Teslim edildi",
+        "failed": "Başarısız — tekrar denenecek",
+        "dead": "Vazgeçildi"
+      },
+      "manualTitle": "Diğer entegrasyon",
+      "manualIntro": "Kendi aracınızı bağlayın: bilgilendirilecek adresi girin ve almak istediklerinizi işaretleyin. Mesajların bizden geldiğini kontrol etmeniz için size bir gizli anahtar veririz.",
+      "urlLabel": "Bilgilendirilecek adres",
+      "urlHint": "https:// ile başlamalı ve internetten erişilebilir olmalıdır.",
+      "eventsLabel": "Ne gönderilecek",
+      "event": {
+        "change": {
+          "approved": "Bir değişiklik onaylandı",
+          "cancelled": "Bir değişiklik geri çekildi"
+        },
+        "sync": {
+          "completed": "Bir senkronizasyon tamamlandı",
+          "failed": "Bir senkronizasyon başarısız oldu"
+        },
+        "connection": {
+          "status_changed": "Mağaza bağlantısı değişti"
+        }
+      },
+      "create": "Bu adresi ekle",
+      "creating": "Ekleniyor…",
+      "error": {
+        "bad_request": "Adresi kontrol edin ve en az bir olay işaretleyin.",
+        "unauthorized": "Oturumunuz kapalı. Oturum açın ve tekrar deneyin.",
+        "not_found": "Bu site size ait değil veya artık mevcut değil.",
+        "sealing_unavailable": "Gizli anahtarı şu anda kaydedemiyoruz. Bize ulaşın.",
+        "invalid_url": "Bu geçerli bir adres değil.",
+        "not_https": "Adres https:// ile başlamalıdır.",
+        "blocked_host": "Bu adres iç bir sunucuyu gösteriyor. Herkese açık bir adres kullanın.",
+        "private_address": "Bu adres özel bir ağı gösteriyor. Herkese açık bir adres kullanın.",
+        "dns_failed": "Bu adresi bulamadık. Kontrol edip tekrar deneyin."
+      },
+      "secretTitle": "Gizli anahtarı şimdi kopyalayın — bir daha gösterilmeyecek",
+      "secretBody": "Aracınıza yapıştırın: gönderdiğimiz her mesaj bununla imzalanır, böylece aracınız mesajın gerçekten OneShopLab'dan geldiğini kontrol edebilir.",
+      "copy": "Kopyala",
+      "copied": "Kopyalandı",
+      "secretSaved": "Kaydettim"
     }
   },
   "ApplyToStore": {

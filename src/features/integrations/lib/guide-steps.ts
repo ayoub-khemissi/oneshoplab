@@ -13,7 +13,10 @@ export type GuideMockId =
   | 'shopifyCreateApp'
   | 'shopifyScopes'
   | 'shopifyInstall'
-  | 'shopifyPasteToken';
+  | 'shopifyPasteToken'
+  | 'wixApps'
+  | 'wixInstall'
+  | 'wixConsent';
 
 export interface GuideStep {
   n: number;
@@ -39,21 +42,41 @@ export const GUIDE_STEPS: Record<IntegrationPlatform, StaticStep[]> = {
     { n: 4, mock: 'shopifyInstall' },
     { n: 5, mock: 'shopifyPasteToken' }
   ],
-  wix: []
+  wix: [
+    { n: 1, mock: 'wixApps' },
+    { n: 2, mock: 'wixInstall' },
+    { n: 3, mock: 'wixConsent' }
+  ]
 };
 
-/** Connectors that have not shipped (spec §8 phase 5: Wix). */
+/**
+ * Connectors that have not shipped without a configured app (spec §8 phase 5:
+ * Wix). Wix only exists as our Wix app, so the branch opens when
+ * `WIX_APP_ID`/`WIX_APP_SECRET` are set (`isWixAppConfigured`, passed down as
+ * `wixAppConfigured`).
+ */
 export const COMING_SOON: Record<IntegrationPlatform, boolean> = {
   woocommerce: false,
   shopify: false,
   wix: true
 };
 
+export function isComingSoon(
+  platform: IntegrationPlatform,
+  opts: { wixAppConfigured: boolean }
+): boolean {
+  if (platform === 'wix') return !opts.wixAppConfigured;
+  return COMING_SOON[platform];
+}
+
 export const ESTIMATED_MINUTES: Record<IntegrationPlatform, number> = {
   woocommerce: 3,
   shopify: 5,
-  wix: 5
+  wix: 2
 };
+
+/** Where the merchant lands after the install (the guide's "Open" link for Wix). */
+export const WIX_DASHBOARD_URL = 'https://manage.wix.com/dashboard';
 
 /** Latest plugin zip served from public/downloads by scripts/ops (versioned copy alongside). */
 export const WP_PLUGIN_ZIP_PATH = '/downloads/oneshoplab-wp-plugin.zip';
@@ -110,6 +133,7 @@ export function buildSteps({
     let openUrl: string | null = null;
     if (platform === 'woocommerce' && base) openUrl = `${base}${WP_PATHS[step.n] ?? ''}`;
     if (platform === 'shopify' && step.n <= 4) openUrl = `${shopify}/settings/apps/development`;
+    if (platform === 'wix' && step.n === 1) openUrl = WIX_DASHBOARD_URL;
     return { ...step, openUrl };
   });
 }

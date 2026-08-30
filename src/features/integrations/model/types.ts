@@ -1,4 +1,4 @@
-import type { ShopifyConnectionView } from '@/entities/shop-connection/client';
+import type { ShopifyConnectionView, WixConnectionView } from '@/entities/shop-connection/client';
 import type { IntegrationInterest } from '@/shared/db/schema';
 
 /** Platforms the wizard knows how to guide (manual/unknown have no plugin). */
@@ -24,8 +24,10 @@ export interface ConnectionStatus {
   hasActiveKey: boolean;
   lastUsedAtIso: string | null;
   productCount: number;
-  /** Shopify branch: the project's connection row (null when none). */
+  /** Shopify branch: the project's connection row (null when none or another platform). */
   shopify: ShopifyConnectionView | null;
+  /** Wix branch: same row when `platform = 'wix'`. */
+  wix: WixConnectionView | null;
 }
 
 export type IntegrationInterestMap = IntegrationInterest;

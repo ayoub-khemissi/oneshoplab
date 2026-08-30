@@ -13,8 +13,11 @@ export {
   buildSteps,
   COMING_SOON,
   GUIDE_STEPS,
+  isComingSoon,
   shopifyAdminBase
 } from './lib/guide-steps';
+export { parseIntegrationReturn, RETURN_PARAM_KEYS } from './lib/return-params';
+export type { IntegrationReturn } from './lib/return-params';
 export {
   createSiteKeyAction,
   getConnectionStatusAction,

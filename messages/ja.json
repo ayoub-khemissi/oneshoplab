@@ -1125,6 +1125,20 @@
           "title": "トークンを OneShopLab に貼り付ける",
           "body": "ここに戻り、ステップ3に表示される欄にトークンを貼り付けます。"
         }
+      },
+      "wix": {
+        "step1": {
+          "title": "ここから始めましょう",
+          "body": "下の「Wixにインストール」をクリックしてください。複数のWixサイトをお持ちの場合、Wixがどのサイトを使うか尋ねます。"
+        },
+        "step2": {
+          "title": "サイトにアプリを追加",
+          "body": "WixにOneShopLabアプリが表示されます。「サイトに追加」をクリックしてください。"
+        },
+        "step3": {
+          "title": "権限を承認",
+          "body": "2つの権限(商品の読み取りと更新)を承認してください。自動的にこのページに戻ります。"
+        }
       }
     },
     "mocks": {
@@ -1181,6 +1195,27 @@
         "tokenField": "アクセストークン",
         "installAria": "Shopify 管理画面: アプリをインストール、次にトークンを一度だけ表示",
         "pasteAria": "Shopify 管理画面: OneShopLab に貼り付けたアクセストークン"
+      },
+      "wix": {
+        "home": "ホーム",
+        "store": "ストア",
+        "apps": "アプリ",
+        "settings": "設定",
+        "manageApps": "アプリを管理",
+        "appMarket": "App Market",
+        "noApps": "サードパーティアプリはまだありません。",
+        "fromOsl": "インストールはOneShopLabから始まります — ここで探す必要はありません。",
+        "addTitle": "サイトにOneShopLabを追加",
+        "addBody": "OneShopLabは商品の文章と画像を改善し、ストアに書き戻します。",
+        "consentTitle": "OneShopLabには次の権限が必要です",
+        "permProducts": "ストアの商品を読み取り・更新する",
+        "permSite": "サイトの名前と住所を読み取る",
+        "cancel": "キャンセル",
+        "addToSite": "サイトに追加",
+        "agree": "同意して追加",
+        "appsAria": "Wixダッシュボード:サイトメニューの「アプリ」項目",
+        "installAria": "Wixインストーラー:「サイトにOneShopLabを追加」ダイアログ",
+        "consentAria": "Wixインストーラー:承認する2つの権限"
       }
     },
     "valueLabel": {
@@ -1294,7 +1329,181 @@
         "minutes": "{n} 分前",
         "hours": "{n} 時間前",
         "days": "{n} 日前"
+      },
+      "authMode": {
+        "oauth": "アプリ経由でインストール",
+        "custom_app": "アクセストークン"
+      },
+      "uninstall": "アンインストール",
+      "uninstallConfirmTitle": "OneShopLabをアンインストールしますか?",
+      "uninstallConfirmBody": "OneShopLabはただちに同期と変更の適用を停止します。完了するには、Shopify管理画面からOneShopLabアプリを削除してください(設定 › アプリと販売チャネル)。",
+      "openInstalledApps": "Shopifyのアプリを開く",
+      "uninstallConfirm": "アンインストール"
+    },
+    "returnDismiss": "閉じる",
+    "shopifyApp": {
+      "step2Title": "OneShopLabアプリをインストール",
+      "title": "OneShopLabアプリをインストール",
+      "body": "最も簡単な方法です。ストアの住所を確認し、ボタンをクリックして、Shopifyでアプリを承認してください。自動的にこのページに戻ります — コピーする必要はありません。",
+      "domainLabel": "ストアの住所",
+      "domainHint": ".myshopify.comで終わります(設定 › ドメインで確認できます)。",
+      "invalidDomain": ".myshopify.comで終わるストアの住所を入力してください。",
+      "install": "OneShopLabアプリをインストール",
+      "afterInstall": "Shopifyから2つの権限(商品の読み取りと更新)の承認を求められます。承認されると、このページに戻ります。",
+      "otherMethod": "その他の方法:アクセストークン(上級者向け)",
+      "otherMethodBody": "アプリをインストールしたくない場合は、Shopifyでカスタムアプリを作成し、そのアクセストークンを貼り付けることもできます。どちらの方法でも結果は同じです。",
+      "waiting": "アプリがインストールされると、同期状況とともにストアがここに表示されます。",
+      "return": {
+        "success": "Shopifyストアが接続されました。最初の同期は順番待ちです — 下のカードは自動的に更新されます。",
+        "webhooksFailed": "ストアは接続されましたが、リアルタイム更新を有効にできませんでした。カタログは毎晩、また「今すぐ同期」を押したときにも同期されます。",
+        "error": {
+          "not_configured": "こちらの設定でShopifyアプリが準備できていません。下のアクセストークンの方法を使うか、お問い合わせください。",
+          "bad_hmac": "Shopifyからの返信を確認できませんでした。インストールをやり直してください。",
+          "bad_state": "インストールに時間がかかりすぎたか、別のタブから開始されました。このページからやり直してください。",
+          "unauthorized": "インストールを開始したアカウントでサインインする必要があります。サインインしてもう一度お試しください。",
+          "invalid_domain": ".myshopify.comで終わるストアの住所を入力してください。",
+          "exchange_failed": "Shopifyがインストールを確認できませんでした。1分ほど待ってからもう一度お試しください。",
+          "scopes_missing": "アプリに必要な権限が付与されませんでした。もう一度インストールし、2つの権限を承認してください。",
+          "unreachable": "Shopifyから応答がありませんでした。住所を確認してもう一度お試しください。",
+          "not_found": "このサイトはお客様のものではないか、存在しません。",
+          "no_key": "こちらの設定で接続が準備できていません。お問い合わせください。",
+          "unknown": "インストールが完了しませんでした。もう一度お試しください。"
+        }
       }
+    },
+    "wix": {
+      "step2Title": "Wixにインストール",
+      "installTitle": "WixサイトにOneShopLabをインストール",
+      "installBody": "ワンクリックです。Wixから2つの権限(商品の読み取りと更新)の承認を求められます。自動的にこのページに戻ります。",
+      "install": "Wixにインストール",
+      "installing": "Wixを開いています…",
+      "installError": {
+        "unauthorized": "サインアウトされています。サインインしてもう一度お試しください。",
+        "bad_request": "問題が発生しました。ページを再読み込みしてもう一度お試しください。",
+        "not_found": "このサイトはお客様のものではないか、存在しません。",
+        "not_configured": "こちらの設定でWixアプリが準備できていません。お問い合わせください。"
+      },
+      "alreadyConnected": "Wixサイト{shop}は接続済みです。再インストールするには、まずステップ3で接続を解除してください。",
+      "waiting": "アプリがインストールされると、同期状況とともにサイトがここに表示されます。",
+      "return": {
+        "success": "Wixサイトが接続されました。最初の同期は順番待ちです — 下のカードは自動的に更新されます。",
+        "error": {
+          "not_configured": "こちらの設定でWixアプリが準備できていません。お問い合わせください。",
+          "bad_state": "インストールに時間がかかりすぎたか、別のタブから開始されました。このページからやり直してください。",
+          "unauthorized": "インストールを開始したアカウントでサインインする必要があります。サインインしてもう一度お試しください。",
+          "bad_request": "Wixからの返信が不完全でした。インストールをやり直してください。",
+          "exchange_failed": "Wixがインストールを確認できませんでした。1分ほど待ってからもう一度お試しください。",
+          "unreachable": "Wixから応答がありませんでした。1分ほど待ってからもう一度お試しください。",
+          "not_found": "このサイトはお客様のものではないか、存在しません。",
+          "no_key": "こちらの設定で接続が準備できていません。お問い合わせください。",
+          "invalid_token": "Wixが接続を拒否しました。アプリを再度インストールしてください。",
+          "unknown": "インストールが完了しませんでした。もう一度お試しください。"
+        }
+      },
+      "connected": "{shop}に接続済み — 最終同期{ago}、{count, plural, =1 {商品1点} other {商品#点}}",
+      "connectedNoSync": "{shop}に接続済み — 最初の同期は準備中",
+      "shopLine": "サイト: {shop}",
+      "syncingProgress": "同期中 {done}/{total}",
+      "syncingCount": "同期中 — {done}件の商品を取得しました",
+      "syncQueued": "同期を順番待ちしています — 数分以内に開始します",
+      "syncFailed": "前回の同期に失敗しました",
+      "tokenInvalid": "Wixが接続を拒否しました — アプリを再度インストールしてください",
+      "tokenInvalidHint": "接続を解除してから、ステップ2で「Wixにインストール」をクリックしてください。",
+      "revoked": "接続解除済み — 再接続するにはステップ2でアプリを再度インストールしてください",
+      "planLimit": "現在のプランでは{n}点までの商品に対応しています。残りはインポートされませんでした。すべて同期するにはプランをアップグレードしてください。",
+      "lastWebhook": "Wixからの最終更新 {ago}",
+      "noWebhookYet": "Wixからの更新はリアルタイムで届きます。また、毎晩完全な同期も行われます。",
+      "syncNow": "今すぐ同期",
+      "syncRunning": "同期を実行中",
+      "disconnect": "接続を解除",
+      "actionFailed": "うまくいきませんでした。ページを再読み込みしてもう一度お試しください。",
+      "disconnectConfirmTitle": "このサイトの接続を解除しますか?",
+      "disconnectConfirmBody": "OneShopLabはただちに同期と変更の適用を停止します。OneShopLabアプリはWixサイトに残るため、そちらでも削除してください(アプリ › アプリを管理)。",
+      "openWixDashboard": "Wixダッシュボードを開く",
+      "disconnectConfirm": "接続を解除",
+      "cancel": "キャンセル",
+      "ago": {
+        "seconds": "{n}秒前",
+        "minutes": "{n}分前",
+        "hours": "{n}時間前",
+        "days": "{n}日前"
+      }
+    },
+    "webhooks": {
+      "advancedTitle": "詳細設定",
+      "title": "変更をすぐに反映",
+      "intro": "変更を承認するたびに、OneShopLabは次回の訪問を待たずにすぐストアへ知らせることができます。WooCommerceプラグイン(バージョン1.1以降)は、サイトキーを保存すると自動的にこれを設定します — 何もする必要はありません。このセクションはその他の連携向けです。",
+      "loading": "読み込み中…",
+      "loadFailed": "このセクションを読み込めませんでした。ページを再読み込みしてください。",
+      "listTitle": "通知先のアドレス",
+      "listEmpty": "アドレスはまだありません。WooCommerceプラグインは自動で追加されます。他の連携には下のフォームをご利用ください。",
+      "kind": {
+        "self": "プラグイン",
+        "manual": "その他の連携"
+      },
+      "enabled": "有効",
+      "disabled": "一時停止中",
+      "disabledReason": "{n}回連続で失敗したため一時停止しました。アドレスを修正し、テストを送信して確認してください。",
+      "lastDelivery": "最終送信 {date} — 応答 {code}",
+      "noDeliveryYet": "まだ送信されていません",
+      "sendTest": "テストを送信",
+      "pingWaiting": "送信中…",
+      "pingResult": "テスト:",
+      "delete": "削除",
+      "actionFailed": "うまくいきませんでした。ページを再読み込みしてもう一度お試しください。",
+      "deleteConfirmTitle": "このアドレスを削除しますか?",
+      "deleteConfirmSelf": "プラグインはただちに変更の受信を停止します。プラグインでサイトキーを次に保存したときに再登録されます。",
+      "deleteConfirmManual": "この連携はただちに変更の受信を停止します。",
+      "deleteConfirm": "削除",
+      "cancel": "キャンセル",
+      "logTitle": "最近の送信",
+      "logEmpty": "送信はまだありません。",
+      "logDate": "日付",
+      "logEvent": "イベント",
+      "logStatus": "状態",
+      "logResponse": "応答",
+      "deliveryStatus": {
+        "pending": "待機中",
+        "delivered": "送信済み",
+        "failed": "失敗 — 再試行予定",
+        "dead": "中止しました"
+      },
+      "manualTitle": "その他の連携",
+      "manualIntro": "お使いのツールを接続します。通知先のアドレスを入力し、受け取りたい内容にチェックを入れてください。メッセージが確かに当社からのものか確認できるよう、シークレットをお渡しします。",
+      "urlLabel": "通知先のアドレス",
+      "urlHint": "https://で始まり、インターネットから到達可能である必要があります。",
+      "eventsLabel": "送信する内容",
+      "event": {
+        "change": {
+          "approved": "変更が承認された",
+          "cancelled": "変更が取り下げられた"
+        },
+        "sync": {
+          "completed": "同期が完了した",
+          "failed": "同期が失敗した"
+        },
+        "connection": {
+          "status_changed": "ストアの接続状況が変わった"
+        }
+      },
+      "create": "このアドレスを追加",
+      "creating": "追加中…",
+      "error": {
+        "bad_request": "アドレスを確認し、イベントを少なくとも1つ選択してください。",
+        "unauthorized": "サインアウトされています。サインインしてもう一度お試しください。",
+        "not_found": "このサイトはお客様のものではないか、存在しません。",
+        "sealing_unavailable": "現在シークレットを保存できません。お問い合わせください。",
+        "invalid_url": "このアドレスは無効です。",
+        "not_https": "アドレスはhttps://で始まる必要があります。",
+        "blocked_host": "このアドレスは内部サーバーを指しています。公開アドレスをご利用ください。",
+        "private_address": "このアドレスはプライベートネットワークを指しています。公開アドレスをご利用ください。",
+        "dns_failed": "このアドレスが見つかりませんでした。確認してもう一度お試しください。"
+      },
+      "secretTitle": "今すぐシークレットをコピーしてください — 二度と表示されません",
+      "secretBody": "お使いのツールに貼り付けてください。当社が送信するすべてのメッセージにはこれで署名されており、確かにOneShopLabから送られたものか確認できます。",
+      "copy": "コピー",
+      "copied": "コピーしました",
+      "secretSaved": "保存しました"
     }
   },
   "ApplyToStore": {

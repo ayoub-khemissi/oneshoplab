@@ -3,6 +3,7 @@ import type { GuideMockId } from '../../lib/guide-steps';
 import { ShopifyDevApps } from './shopify-dev-apps';
 import { ShopifyInstallToken } from './shopify-install-token';
 import { ShopifyScopes } from './shopify-scopes';
+import { WixDashboard } from './wix-dashboard';
 import { WpOslSettings } from './wp-osl-settings';
 import { WpPluginsUpload } from './wp-plugins-upload';
 
@@ -16,5 +17,8 @@ export const MOCK_VIEWS: Record<GuideMockId, ComponentType> = {
   shopifyCreateApp: () => <ShopifyDevApps variant="create" />,
   shopifyScopes: ShopifyScopes,
   shopifyInstall: () => <ShopifyInstallToken variant="install" />,
-  shopifyPasteToken: () => <ShopifyInstallToken variant="paste" />
+  shopifyPasteToken: () => <ShopifyInstallToken variant="paste" />,
+  wixApps: () => <WixDashboard variant="apps" />,
+  wixInstall: () => <WixDashboard variant="install" />,
+  wixConsent: () => <WixDashboard variant="consent" />
 };

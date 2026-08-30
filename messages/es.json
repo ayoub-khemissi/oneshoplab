@@ -1125,6 +1125,20 @@
           "title": "Pega el token en OneShopLab",
           "body": "Vuelve aquí y pega el token en la casilla que aparecerá en el paso 3."
         }
+      },
+      "wix": {
+        "step1": {
+          "title": "Empieza aquí",
+          "body": "Haz clic en Instalar en Wix abajo. Si tienes varios sitios Wix, Wix te preguntará cuál usar."
+        },
+        "step2": {
+          "title": "Añade la app a tu sitio",
+          "body": "Wix muestra la app OneShopLab. Haz clic en Añadir al sitio."
+        },
+        "step3": {
+          "title": "Aprueba los permisos",
+          "body": "Aprueba los dos permisos (leer y actualizar productos). Volverás aquí automáticamente."
+        }
       }
     },
     "mocks": {
@@ -1181,6 +1195,27 @@
         "tokenField": "Token de acceso",
         "installAria": "Admin de Shopify: Instalar aplicación y luego Revelar token una vez",
         "pasteAria": "Admin de Shopify: el token de acceso pegado en OneShopLab"
+      },
+      "wix": {
+        "home": "Inicio",
+        "store": "Tienda",
+        "apps": "Aplicaciones",
+        "settings": "Configuración",
+        "manageApps": "Gestionar aplicaciones",
+        "appMarket": "App Market",
+        "noApps": "Aún no hay ninguna aplicación de terceros.",
+        "fromOsl": "La instalación empieza desde OneShopLab — no hay nada que buscar aquí.",
+        "addTitle": "Añadir OneShopLab a tu sitio",
+        "addBody": "OneShopLab mejora los textos e imágenes de tus productos y los guarda de nuevo en tu tienda.",
+        "consentTitle": "OneShopLab necesita los siguientes permisos",
+        "permProducts": "Leer y actualizar los productos de tu tienda",
+        "permSite": "Leer el nombre y la dirección de tu sitio",
+        "cancel": "Cancelar",
+        "addToSite": "Añadir al sitio",
+        "agree": "Aceptar y añadir",
+        "appsAria": "Panel de Wix: la entrada Aplicaciones en el menú del sitio",
+        "installAria": "Instalador de Wix: la ventana Añadir OneShopLab a tu sitio",
+        "consentAria": "Instalador de Wix: los dos permisos a aprobar"
       }
     },
     "valueLabel": {
@@ -1294,7 +1329,181 @@
         "minutes": "hace {n} min",
         "hours": "hace {n} h",
         "days": "hace {n} d"
+      },
+      "authMode": {
+        "oauth": "Instalada mediante la app",
+        "custom_app": "Token de acceso"
+      },
+      "uninstall": "Desinstalar",
+      "uninstallConfirmTitle": "¿Desinstalar OneShopLab?",
+      "uninstallConfirmBody": "OneShopLab deja de sincronizar y aplicar cambios de inmediato. Para terminar, retira la app OneShopLab de tu administrador de Shopify (Configuración › Aplicaciones y canales de venta).",
+      "openInstalledApps": "Abrir mis apps en Shopify",
+      "uninstallConfirm": "Desinstalar"
+    },
+    "returnDismiss": "Descartar",
+    "shopifyApp": {
+      "step2Title": "Instala la app de OneShopLab",
+      "title": "Instala la app de OneShopLab",
+      "body": "La forma más rápida: confirma la dirección de tu tienda, haz clic en el botón y aprueba la app en Shopify. Volverás aquí automáticamente, no hay nada que copiar.",
+      "domainLabel": "Dirección de la tienda",
+      "domainHint": "Termina en .myshopify.com (la encuentras en Configuración › Dominios).",
+      "invalidDomain": "Escribe la dirección de tu tienda, que termina en .myshopify.com.",
+      "install": "Instalar la app de OneShopLab",
+      "afterInstall": "Shopify te pedirá que apruebes dos permisos (leer y actualizar productos). Una vez aprobados, volverás a esta página.",
+      "otherMethod": "Otro método: token de acceso (avanzado)",
+      "otherMethodBody": "Si prefieres no instalar la app, puedes crear una app personalizada en Shopify y pegar su token de acceso. Ambos métodos dan el mismo resultado.",
+      "waiting": "Una vez instalada la app, tu tienda aparecerá aquí con su estado de sincronización.",
+      "return": {
+        "success": "Tu tienda Shopify está conectada. La primera sincronización está en cola: la tarjeta de abajo se actualiza sola.",
+        "webhooksFailed": "Tienda conectada, pero no se pudieron activar las actualizaciones en tiempo real. Tu catálogo se sincronizará cada noche y cuando pulses Sincronizar ahora.",
+        "error": {
+          "not_configured": "La app de Shopify no está configurada por nuestra parte. Usa el método del token de acceso de abajo o contáctanos.",
+          "bad_hmac": "Shopify envió una respuesta que no pudimos verificar. Vuelve a empezar la instalación.",
+          "bad_state": "La instalación tardó demasiado o se inició desde otra pestaña. Vuelve a iniciarla desde esta página.",
+          "unauthorized": "Debes iniciar sesión con la misma cuenta que inició la instalación. Inicia sesión y vuelve a intentarlo.",
+          "invalid_domain": "Escribe la dirección de tu tienda, que termina en .myshopify.com.",
+          "exchange_failed": "Shopify no confirmó la instalación. Inténtalo de nuevo en un minuto.",
+          "scopes_missing": "La app no obtuvo los permisos que necesita. Instálala de nuevo y aprueba los dos permisos.",
+          "unreachable": "Shopify no respondió. Comprueba la dirección e inténtalo de nuevo.",
+          "not_found": "Este sitio no es tuyo o ya no existe.",
+          "no_key": "La conexión no está configurada por nuestra parte. Contáctanos.",
+          "unknown": "La instalación no se completó. Inténtalo de nuevo."
+        }
       }
+    },
+    "wix": {
+      "step2Title": "Instalar en Wix",
+      "installTitle": "Instala OneShopLab en tu sitio Wix",
+      "installBody": "Un clic: Wix te pedirá que apruebes dos permisos (leer y actualizar productos). Volverás aquí automáticamente.",
+      "install": "Instalar en Wix",
+      "installing": "Abriendo Wix…",
+      "installError": {
+        "unauthorized": "Has cerrado sesión. Inicia sesión y vuelve a intentarlo.",
+        "bad_request": "Algo salió mal. Recarga la página e inténtalo de nuevo.",
+        "not_found": "Este sitio no es tuyo o ya no existe.",
+        "not_configured": "La app de Wix no está configurada por nuestra parte. Contáctanos."
+      },
+      "alreadyConnected": "Tu sitio Wix {shop} está conectado. Para reinstalar, desconéctalo primero en el paso 3.",
+      "waiting": "Una vez instalada la app, tu sitio aparecerá aquí con su estado de sincronización.",
+      "return": {
+        "success": "Tu sitio Wix está conectado. La primera sincronización está en cola: la tarjeta de abajo se actualiza sola.",
+        "error": {
+          "not_configured": "La app de Wix no está configurada por nuestra parte. Contáctanos.",
+          "bad_state": "La instalación tardó demasiado o se inició desde otra pestaña. Vuelve a iniciarla desde esta página.",
+          "unauthorized": "Debes iniciar sesión con la misma cuenta que inició la instalación. Inicia sesión y vuelve a intentarlo.",
+          "bad_request": "Wix envió una respuesta incompleta. Vuelve a empezar la instalación.",
+          "exchange_failed": "Wix no confirmó la instalación. Inténtalo de nuevo en un minuto.",
+          "unreachable": "Wix no respondió. Inténtalo de nuevo en un minuto.",
+          "not_found": "Este sitio no es tuyo o ya no existe.",
+          "no_key": "La conexión no está configurada por nuestra parte. Contáctanos.",
+          "invalid_token": "Wix rechazó la conexión. Instala la app de nuevo.",
+          "unknown": "La instalación no se completó. Inténtalo de nuevo."
+        }
+      },
+      "connected": "Conectado a {shop} — última sincronización {ago}, {count, plural, =1 {1 producto} other {# productos}}",
+      "connectedNoSync": "Conectado a {shop} — primera sincronización pendiente",
+      "shopLine": "Sitio: {shop}",
+      "syncingProgress": "Sincronizando {done}/{total}",
+      "syncingCount": "Sincronizando — {done} productos obtenidos",
+      "syncQueued": "Sincronización en cola — empieza en unos minutos",
+      "syncFailed": "La última sincronización falló",
+      "tokenInvalid": "Wix rechazó la conexión — instala la app de nuevo",
+      "tokenInvalidHint": "Desconecta y luego haz clic en Instalar en Wix en el paso 2.",
+      "revoked": "Desconectado — instala la app de nuevo en el paso 2 para reconectar",
+      "planLimit": "Tu plan cubre {n} productos: el resto no se importó. Mejora tu plan para sincronizarlo todo.",
+      "lastWebhook": "Última actualización de Wix {ago}",
+      "noWebhookYet": "Las actualizaciones de Wix llegan en tiempo real; también se ejecuta una sincronización completa cada noche.",
+      "syncNow": "Sincronizar ahora",
+      "syncRunning": "Sincronización en curso",
+      "disconnect": "Desconectar",
+      "actionFailed": "Eso no funcionó. Recarga la página e inténtalo de nuevo.",
+      "disconnectConfirmTitle": "¿Desconectar este sitio?",
+      "disconnectConfirmBody": "OneShopLab deja de sincronizar y aplicar cambios de inmediato. La app de OneShopLab sigue en tu sitio Wix: retírala también allí (Aplicaciones › Gestionar aplicaciones).",
+      "openWixDashboard": "Abrir mi panel de Wix",
+      "disconnectConfirm": "Desconectar",
+      "cancel": "Cancelar",
+      "ago": {
+        "seconds": "hace {n} s",
+        "minutes": "hace {n} min",
+        "hours": "hace {n} h",
+        "days": "hace {n} d"
+      }
+    },
+    "webhooks": {
+      "advancedTitle": "Avanzado",
+      "title": "Recibe los cambios al instante",
+      "intro": "Cada vez que apruebas un cambio, OneShopLab puede avisar a tu tienda de inmediato en lugar de esperar a la próxima visita. El plugin de WooCommerce (versión 1.1 o posterior) lo configura solo al guardar la clave del sitio — no tienes que hacer nada. Esta sección es para otras integraciones.",
+      "loading": "Cargando…",
+      "loadFailed": "No se pudo cargar esta sección. Recarga la página.",
+      "listTitle": "Direcciones a las que avisamos",
+      "listEmpty": "Aún no hay ninguna dirección. El plugin de WooCommerce añade la suya; usa el formulario de abajo para otra integración.",
+      "kind": {
+        "self": "Plugin",
+        "manual": "Otra integración"
+      },
+      "enabled": "Activo",
+      "disabled": "En pausa",
+      "disabledReason": "En pausa tras {n} intentos fallidos seguidos. Corrige la dirección y envía una prueba para comprobarlo.",
+      "lastDelivery": "Último envío {date} — respuesta {code}",
+      "noDeliveryYet": "Nada enviado todavía",
+      "sendTest": "Enviar una prueba",
+      "pingWaiting": "Enviando…",
+      "pingResult": "Prueba:",
+      "delete": "Eliminar",
+      "actionFailed": "Eso no funcionó. Recarga la página e inténtalo de nuevo.",
+      "deleteConfirmTitle": "¿Eliminar esta dirección?",
+      "deleteConfirmSelf": "Tu plugin dejará de recibir cambios de inmediato. Se vuelve a registrar la próxima vez que guardes la clave del sitio en el plugin.",
+      "deleteConfirmManual": "Esta integración dejará de recibir cambios de inmediato.",
+      "deleteConfirm": "Eliminar",
+      "cancel": "Cancelar",
+      "logTitle": "Últimos envíos",
+      "logEmpty": "Aún no hay ningún envío.",
+      "logDate": "Fecha",
+      "logEvent": "Evento",
+      "logStatus": "Estado",
+      "logResponse": "Respuesta",
+      "deliveryStatus": {
+        "pending": "En espera",
+        "delivered": "Entregado",
+        "failed": "Fallido — se reintentará",
+        "dead": "Abandonado"
+      },
+      "manualTitle": "Otra integración",
+      "manualIntro": "Conecta tu propia herramienta: indica la dirección a la que avisar y marca lo que quieres recibir. Te damos un secreto para comprobar que los mensajes vienen de nosotros.",
+      "urlLabel": "Dirección a la que avisar",
+      "urlHint": "Debe empezar por https:// y ser accesible desde internet.",
+      "eventsLabel": "Qué enviar",
+      "event": {
+        "change": {
+          "approved": "Se aprueba un cambio",
+          "cancelled": "Se retira un cambio"
+        },
+        "sync": {
+          "completed": "Termina una sincronización",
+          "failed": "Falla una sincronización"
+        },
+        "connection": {
+          "status_changed": "Cambia la conexión de la tienda"
+        }
+      },
+      "create": "Añadir esta dirección",
+      "creating": "Añadiendo…",
+      "error": {
+        "bad_request": "Comprueba la dirección y marca al menos un evento.",
+        "unauthorized": "Has cerrado sesión. Inicia sesión y vuelve a intentarlo.",
+        "not_found": "Este sitio no es tuyo o ya no existe.",
+        "sealing_unavailable": "No podemos guardar el secreto en este momento. Contáctanos.",
+        "invalid_url": "Esta dirección no es válida.",
+        "not_https": "La dirección debe empezar por https://.",
+        "blocked_host": "Esta dirección apunta a un servidor interno. Usa una dirección pública.",
+        "private_address": "Esta dirección apunta a una red privada. Usa una dirección pública.",
+        "dns_failed": "No pudimos encontrar esta dirección. Compruébala e inténtalo de nuevo."
+      },
+      "secretTitle": "Copia el secreto ahora — no volverá a mostrarse",
+      "secretBody": "Pégalo en tu herramienta: cada mensaje que enviamos va firmado con él para que tu herramienta pueda comprobar que viene de OneShopLab.",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "secretSaved": "Lo he guardado"
     }
   },
   "ApplyToStore": {

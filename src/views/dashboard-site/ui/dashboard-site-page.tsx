@@ -30,12 +30,19 @@ import { listPendingChangesForSite, PendingChangesList } from '@/features/apply-
 import {
   INTEGRATION_PLATFORMS,
   isUsableKey,
+  parseIntegrationReturn,
   readWpPluginVersion,
   toSiteKeySummary,
   type IntegrationPlatform
 } from '@/features/integrations';
+import { isShopifyAppConfigured } from '@/features/shopify-connector';
+import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
-import { getConnectionForUser, toShopifyConnectionView } from '@/entities/shop-connection';
+import {
+  getConnectionForUser,
+  toShopifyConnectionView,
+  toWixConnectionView
+} from '@/entities/shop-connection';
 import {
   getActiveBulkJob,
   getEffectiveBulkPrefs,
@@ -65,6 +72,10 @@ export interface DashboardSiteSearchParams {
   q?: string;
   sort?: string;
   showArchived?: string;
+  /** OAuth return of the Integrations tab (`integrationsTabPath`): parsed by `parseIntegrationReturn`. */
+  connected?: string;
+  warning?: string;
+  error?: string;
 }
 
 export async function DashboardSitePage({
@@ -476,11 +487,19 @@ export async function DashboardSitePage({
               hasActiveKey: siteKeys.some((k) => isUsableKey(k)),
               lastUsedAtIso: lastPluginCall > 0 ? new Date(lastPluginCall).toISOString() : null,
               productCount: activeProductCount,
-              shopify: shopConnection
-                ? toShopifyConnectionView(shopConnection, activeProductCount)
-                : null
+              shopify:
+                shopConnection && shopConnection.platform === 'shopify'
+                  ? toShopifyConnectionView(shopConnection, activeProductCount)
+                  : null,
+              wix:
+                shopConnection && shopConnection.platform === 'wix'
+                  ? toWixConnectionView(shopConnection, activeProductCount)
+                  : null
             }}
             interest={project.integrationInterest ?? {}}
+            shopifyAppConfigured={isShopifyAppConfigured()}
+            wixAppConfigured={isWixAppConfigured()}
+            returnNotice={parseIntegrationReturn(searchParams)}
           />
           <PendingChangesList siteId={siteId} initialItems={pendingChanges} />
         </div>

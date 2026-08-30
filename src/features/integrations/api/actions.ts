@@ -11,7 +11,11 @@ import {
   type OwnedResult,
   type CreatedApiKey
 } from '@/entities/api-key';
-import { getConnectionForUser, toShopifyConnectionView } from '@/entities/shop-connection';
+import {
+  getConnectionForUser,
+  toShopifyConnectionView,
+  toWixConnectionView
+} from '@/entities/shop-connection';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { INTEGRATION_INTEREST_PLATFORMS, products, projects } from '@/shared/db/schema';
@@ -127,7 +131,8 @@ export async function getConnectionStatusAction(formData: FormData): Promise<Con
     hasActiveKey: false,
     lastUsedAtIso: null,
     productCount: 0,
-    shopify: null
+    shopify: null,
+    wix: null
   };
   const session = await auth();
   if (!session?.user?.id) return empty;
@@ -157,6 +162,13 @@ export async function getConnectionStatusAction(formData: FormData): Promise<Con
     hasActiveKey: usable.length > 0,
     lastUsedAtIso: lastUsed > 0 ? new Date(lastUsed).toISOString() : null,
     productCount,
-    shopify: connection ? toShopifyConnectionView(connection, productCount) : null
+    shopify:
+      connection && connection.platform === 'shopify'
+        ? toShopifyConnectionView(connection, productCount)
+        : null,
+    wix:
+      connection && connection.platform === 'wix'
+        ? toWixConnectionView(connection, productCount)
+        : null
   };
 }

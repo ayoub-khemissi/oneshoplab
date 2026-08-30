@@ -223,7 +223,8 @@ The Integrations tab of a site is a **wizard**, not a settings form:
      paste it in OSL. Estimated 5 min. Live since 2026-08-30 (see
      `SHOPIFY-CONNECTOR.md` → "Wizard branch"): no site key, the token form
      is step 3 and the connection card step 4.
-   - Wix: "Bientôt disponible" with the same toggle.
+   - Wix: install-only (our Wix app, 3 steps with mocks + "Installer sur Wix") when `isWixAppConfigured()`; "Bientôt disponible" with the same toggle otherwise (2026-08-30).
+   - Shopify with `isShopifyAppConfigured()`: one-click "Installer l'application" card first, the token path behind "Autre méthode (avancé)"; the tab reads `?connected|warning|error` (`parseIntegrationReturn`). An "Avancé" collapsible (all platforms) exposes the outbound webhooks (`features/webhook-delivery/ui`).
 3. **Your site key** — generated at this step (not before), shown once with
    Copy + "I saved it"; the page explains it is a password, that it can be
    regenerated, and never asks the merchant to understand hashing/HMAC.

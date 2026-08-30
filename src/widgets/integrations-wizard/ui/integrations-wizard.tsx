@@ -1,35 +1,47 @@
 'use client';
 
 import { Card } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { ChevronDown } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
-import type { ShopifyConnectionView } from '@/entities/shop-connection/client';
+import type { ShopifyConnectionView, WixConnectionView } from '@/entities/shop-connection/client';
 import { setPlatformAction } from '@/features/integrations/actions';
 import {
-  COMING_SOON,
   ConnectionStatusCard,
+  isComingSoon,
   KeyManagement,
   KeyReveal,
   PlatformGuide,
   PlatformPicker,
-  SiteKeyStep,
   platformName,
+  ReturnNotice,
   shopifyAdminBase,
+  SiteKeyStep,
   type ConnectionStatus,
   type IntegrationInterestMap,
   type IntegrationPlatform,
+  type IntegrationReturn,
   type KeyActionResult,
   type SiteKeySummary
 } from '@/features/integrations/client';
-import { ShopifyConnectForm, ShopifyConnectionCard } from '@/features/shopify-connector/client';
+import {
+  ShopifyConnectForm,
+  ShopifyConnectionCard,
+  ShopifyInstallCard
+} from '@/features/shopify-connector/client';
+import { WebhooksSection } from '@/features/webhook-delivery/client';
+import { WixConnectionCard, WixInstallButton } from '@/features/wix-connector/client';
 
 /**
  * Spec §9: choose platform → numbered guide → site key (created here, shown
  * once) → live connection check → key management. State stays client-side so
  * the freshly created plaintext survives until the merchant confirms it.
- * Shopify has no site key: OSL is the client, so step 3 is the token form and
- * step 4 the connection card (features/integrations + features/shopify-connector
- * composed here — a widget, because features never import each other).
+ * Shopify has no site key: with the public app configured, step 2 is the
+ * one-click install (token form kept behind "other method") and step 3 the
+ * connection card; without it, step 3 is the token form and step 4 the card.
+ * Wix is install-only (our Wix app), mirrored on the Shopify app path. The
+ * widget composes features/integrations, shopify-connector, wix-connector
+ * and webhook-delivery — features never import each other.
  */
 export function IntegrationsWizard({
   projectId,
@@ -38,7 +50,10 @@ export function IntegrationsWizard({
   detectedPlatform,
   initialKeys,
   initialStatus,
-  interest
+  interest,
+  shopifyAppConfigured,
+  wixAppConfigured,
+  returnNotice
 }: {
   projectId: string;
   /** Project domain or URL used to build the "Open" links of the guide. */
@@ -49,19 +64,30 @@ export function IntegrationsWizard({
   initialKeys: SiteKeySummary[];
   initialStatus: ConnectionStatus;
   interest: IntegrationInterestMap;
+  /** `isShopifyAppConfigured()` / `isWixAppConfigured()`, computed by the view (env is server-only). */
+  shopifyAppConfigured: boolean;
+  wixAppConfigured: boolean;
+  returnNotice: IntegrationReturn;
 }) {
   const t = useTranslations('Integrations');
+  const locale = useLocale();
   const [platform, setPlatform] = useState<IntegrationPlatform | null>(detectedPlatform);
   const [keys, setKeys] = useState(initialKeys);
   const [revealed, setRevealed] = useState<string | null>(null);
   const [rotatedPlaintext, setRotatedPlaintext] = useState<string | null>(null);
   const [shopify, setShopify] = useState<ShopifyConnectionView | null>(initialStatus.shopify);
+  const [wix, setWix] = useState<WixConnectionView | null>(initialStatus.wix);
 
   const usable = keys.filter((k) => k.state === 'active' || k.state === 'grace');
   const activeKey = usable.find((k) => k.state === 'active') ?? usable[0] ?? null;
   const isShopify = platform === 'shopify';
-  const keyStepAvailable = platform !== null && !isShopify && !COMING_SOON[platform];
+  const isWix = platform === 'wix';
+  const comingSoon = platform !== null && isComingSoon(platform, { wixAppConfigured });
+  const keyStepAvailable = platform !== null && !isShopify && !isWix && !comingSoon;
   const shopifyLive = shopify !== null && shopify.status !== 'revoked';
+  const wixLive = wix !== null && wix.status !== 'revoked';
+  const shopifyApp = isShopify && shopifyAppConfigured;
+  const wixApp = isWix && wixAppConfigured;
 
   function choosePlatform(next: IntegrationPlatform) {
     setPlatform(next);
@@ -84,6 +110,48 @@ export function IntegrationsWizard({
     setRotatedPlaintext(res.plaintext);
   }
 
+  const guide = (
+    <PlatformGuide
+      projectId={projectId}
+      platform={platform}
+      domain={domain}
+      pluginVersion={pluginVersion}
+      siteKeyPlaintext={revealed}
+      interest={interest}
+      comingSoon={comingSoon}
+    />
+  );
+
+  const shopifyTokenForm = shopifyLive ? (
+    <p className="text-sm text-[var(--muted)]">
+      {t('shopify.alreadyConnected', { shop: shopify.shopName ?? shopify.shopDomain })}
+    </p>
+  ) : (
+    <ShopifyConnectForm projectId={projectId} domain={domain} onConnected={setShopify} />
+  );
+
+  const shopifyCard = shopify ? (
+    <ShopifyConnectionCard
+      key={shopify.status}
+      projectId={projectId}
+      initial={shopify}
+      appsUrl={
+        shopify.authMode === 'oauth'
+          ? `${shopifyAdminBase(shopify.shopDomain)}/settings/apps`
+          : `${shopifyAdminBase(domain)}/settings/apps/development`
+      }
+      onDisconnected={() => setShopify(null)}
+    />
+  ) : null;
+
+  const step2Title = shopifyApp
+    ? t('shopifyApp.step2Title')
+    : isShopify
+      ? t('shopify.step2Title')
+      : wixApp
+        ? t('wix.step2Title')
+        : t('step2Title');
+
   return (
     <div className="flex flex-col gap-4">
       <Card variant="secondary" className="p-5 flex flex-col gap-2">
@@ -91,60 +159,101 @@ export function IntegrationsWizard({
         <p className="text-sm text-[var(--muted)] leading-relaxed max-w-2xl">{t('wizardIntro')}</p>
       </Card>
 
+      <ReturnNotice notice={returnNotice} platform={platform} />
+
       <Step n={1} title={t('step1Title')} hint={t('step1Hint')}>
         <PlatformPicker value={platform} detected={detectedPlatform} onChange={choosePlatform} />
       </Step>
 
-      <Step n={2} title={isShopify ? t('shopify.step2Title') : t('step2Title')}>
-        <PlatformGuide
-          projectId={projectId}
-          platform={platform}
-          domain={domain}
-          pluginVersion={pluginVersion}
-          siteKeyPlaintext={revealed}
-          interest={interest}
-        />
-      </Step>
-
-      <Step n={3} title={isShopify ? t('shopify.step3Title') : t('step3Title')}>
-        {isShopify ? (
-          shopifyLive ? (
-            <p className="text-sm text-[var(--muted)]">
-              {t('shopify.alreadyConnected', { shop: shopify.shopName ?? shopify.shopDomain })}
-            </p>
-          ) : (
-            <ShopifyConnectForm projectId={projectId} domain={domain} onConnected={setShopify} />
-          )
-        ) : keyStepAvailable ? (
-          <SiteKeyStep
-            projectId={projectId}
-            activeKey={activeKey}
-            revealed={revealed}
-            onCreated={onCreated}
-            onSaved={() => setRevealed(null)}
-          />
+      <Step n={2} title={step2Title}>
+        {shopifyApp ? (
+          <div className="flex flex-col gap-4">
+            {shopifyLive ? (
+              <p className="text-sm text-[var(--muted)]">
+                {t('shopify.alreadyConnected', { shop: shopify.shopName ?? shopify.shopDomain })}
+              </p>
+            ) : (
+              <ShopifyInstallCard projectId={projectId} domain={domain} locale={locale} />
+            )}
+            <details data-testid="shopify-token-method" className="group">
+              <summary className="cursor-pointer select-none text-sm font-medium text-[var(--accent)] inline-flex items-center gap-1">
+                <ChevronDown
+                  className="size-4 transition-transform group-open:rotate-180"
+                  aria-hidden
+                />
+                {t('shopifyApp.otherMethod')}
+              </summary>
+              <div className="mt-4 flex flex-col gap-5">
+                <p className="text-sm text-[var(--muted)] leading-relaxed">
+                  {t('shopifyApp.otherMethodBody')}
+                </p>
+                {guide}
+                {shopifyTokenForm}
+              </div>
+            </details>
+          </div>
+        ) : wixApp ? (
+          <div className="flex flex-col gap-5">
+            {guide}
+            {wixLive ? (
+              <p className="text-sm text-[var(--muted)]">
+                {t('wix.alreadyConnected', { shop: wix.shopName ?? wix.shopDomain })}
+              </p>
+            ) : (
+              <WixInstallButton projectId={projectId} locale={locale} />
+            )}
+          </div>
         ) : (
-          <p className="text-sm text-[var(--muted)] italic">
-            {platform
-              ? t('step3NotAvailable', { platform: platformName(platform) })
-              : t('chooseFirst')}
-          </p>
+          guide
         )}
       </Step>
 
-      {isShopify && shopify ? (
+      {shopifyApp || wixApp ? (
+        <Step n={3} title={t('step4Title')}>
+          {shopifyApp && shopifyCard ? (
+            shopifyCard
+          ) : wixApp && wix ? (
+            <WixConnectionCard
+              key={wix.status}
+              projectId={projectId}
+              initial={wix}
+              onDisconnected={() => setWix(null)}
+            />
+          ) : (
+            <p className="text-sm text-[var(--muted)] italic" data-testid="install-waiting">
+              {shopifyApp ? t('shopifyApp.waiting') : t('wix.waiting')}
+            </p>
+          )}
+        </Step>
+      ) : (
+        <Step n={3} title={isShopify ? t('shopify.step3Title') : t('step3Title')}>
+          {isShopify ? (
+            shopifyTokenForm
+          ) : keyStepAvailable ? (
+            <SiteKeyStep
+              projectId={projectId}
+              activeKey={activeKey}
+              revealed={revealed}
+              onCreated={onCreated}
+              onSaved={() => setRevealed(null)}
+            />
+          ) : (
+            <p className="text-sm text-[var(--muted)] italic">
+              {platform
+                ? t('step3NotAvailable', { platform: platformName(platform) })
+                : t('chooseFirst')}
+            </p>
+          )}
+        </Step>
+      )}
+
+      {isShopify && !shopifyAppConfigured && shopifyCard ? (
         <Step n={4} title={t('step4Title')}>
-          <ShopifyConnectionCard
-            key={shopify.status}
-            projectId={projectId}
-            initial={shopify}
-            appsUrl={`${shopifyAdminBase(domain)}/settings/apps/development`}
-            onDisconnected={() => setShopify(null)}
-          />
+          {shopifyCard}
         </Step>
       ) : null}
 
-      {!isShopify && activeKey ? (
+      {keyStepAvailable && activeKey ? (
         <Step n={4} title={t('step4Title')}>
           <ConnectionStatusCard projectId={projectId} initial={initialStatus} />
         </Step>
@@ -168,6 +277,8 @@ export function IntegrationsWizard({
           />
         </Card>
       ) : null}
+
+      <WebhooksSection projectId={projectId} />
     </div>
   );
 }
