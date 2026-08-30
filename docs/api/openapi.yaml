@@ -1,0 +1,223 @@
+openapi: 3.1.0
+info:
+  title: OneShopLab Integration API
+  version: 1.0.0
+  description: |
+    Server-to-server API for store plugins. Authenticate with a site key
+    (`Authorization: Bearer osl_live_…`) AND a request signature
+    (`X-OSL-Signature: t=<unix>,v1=<hex HMAC-SHA256(key, "t.METHOD.path.sha256(body)")>`).
+    See docs/api/INTEGRATION-API.md for the full contract and edge cases.
+servers:
+  - url: https://oneshoplab.com/api/v1
+security:
+  - siteKey: []
+components:
+  securitySchemes:
+    siteKey:
+      type: http
+      scheme: bearer
+      description: Site key created in the OSL dashboard (site settings → Integrations).
+  parameters:
+    Signature:
+      name: X-OSL-Signature
+      in: header
+      required: true
+      schema: { type: string, example: "t=1756500000,v1=9f2c…" }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, maxLength: 128 }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum: [unauthorized, key_revoked, key_expired, signature_invalid, clock_skew, forbidden,
+                     rate_limited, validation, payload_too_large, idempotency_mismatch, sync_in_progress,
+                     plan_limit, locked, not_found, already_acked, conflict, internal]
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+    Image:
+      type: object
+      required: [src]
+      properties:
+        src: { type: string, format: uri }
+        alt: { type: [string, "null"] }
+        width: { type: [integer, "null"] }
+        height: { type: [integer, "null"] }
+        position: { type: integer }
+    Variant:
+      type: object
+      required: [id, price, available]
+      properties:
+        id: { type: string }
+        sourceVariantId: { type: [string, "null"] }
+        title: { type: [string, "null"] }
+        sku: { type: [string, "null"] }
+        price: { type: number }
+        available: { type: boolean }
+        options: { type: object, additionalProperties: { type: string } }
+    Product:
+      type: object
+      required: [sourceId, title]
+      properties:
+        sourceId: { type: string, maxLength: 255 }
+        sourceUrl: { type: [string, "null"], maxLength: 1024 }
+        handle: { type: [string, "null"], maxLength: 255 }
+        title: { type: string, maxLength: 512 }
+        descriptionHtml: { type: string, description: "≤ 64 KiB" }
+        images: { type: array, maxItems: 30, items: { $ref: "#/components/schemas/Image" } }
+        tags: { type: array, maxItems: 50, items: { type: string, maxLength: 64 } }
+        variants: { type: array, items: { $ref: "#/components/schemas/Variant" } }
+        vendor: { type: [string, "null"] }
+        productType: { type: [string, "null"] }
+        priceMin: { type: [number, "null"] }
+        priceMax: { type: [number, "null"] }
+        currency: { type: [string, "null"], maxLength: 8 }
+        sku: { type: [string, "null"] }
+        sourceUpdatedAt: { type: [string, "null"], format: date-time }
+    Change:
+      type: object
+      required: [id, productSourceId, field, value, approvedAt]
+      properties:
+        id: { type: string, description: ULID }
+        productSourceId: { type: string }
+        field: { type: string, enum: [title, description, tags, images] }
+        value:
+          oneOf:
+            - { type: string }
+            - { type: array, items: { type: string } }
+            - { type: array, items: { $ref: "#/components/schemas/Image" } }
+        sourceJobId: { type: [string, "null"] }
+        approvedAt: { type: string, format: date-time }
+        expiresAt: { type: [string, "null"], format: date-time }
+  responses:
+    Err: { description: Error envelope, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+paths:
+  /site:
+    get:
+      summary: Site + key info (connection test)
+      parameters: [{ $ref: "#/components/parameters/Signature" }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  site:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      name: { type: string }
+                      domain: { type: [string, "null"] }
+                      platform: { type: string }
+                      plan: { type: string }
+                      limits: { type: object, properties: { maxProducts: { type: integer }, batchSize: { type: integer } } }
+                  key:
+                    type: object
+                    properties:
+                      prefix: { type: string }
+                      permissions: { type: array, items: { type: string } }
+                      expiresAt: { type: [string, "null"] }
+                      graceUntil: { type: [string, "null"] }
+                  serverTime: { type: string, format: date-time }
+        "401": { $ref: "#/components/responses/Err" }
+  /products/sync:
+    post:
+      summary: Upsert a batch of products (partial or paged full sync)
+      parameters: [{ $ref: "#/components/parameters/Signature" }, { $ref: "#/components/parameters/IdempotencyKey" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode, products]
+              properties:
+                mode: { type: string, enum: [partial, full] }
+                session: { type: string }
+                final: { type: boolean }
+                products: { type: array, maxItems: 200, items: { $ref: "#/components/schemas/Product" } }
+      responses:
+        "200":
+          description: Counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted: { type: integer }
+                  updated: { type: integer }
+                  archived: { type: integer }
+                  unchanged: { type: integer }
+                  session: { type: string }
+                  errors: { type: array, items: { type: object, properties: { index: { type: integer }, sourceId: { type: string }, code: { type: string } } } }
+        "409": { $ref: "#/components/responses/Err" }
+        "413": { $ref: "#/components/responses/Err" }
+        "422": { $ref: "#/components/responses/Err" }
+        "423": { $ref: "#/components/responses/Err" }
+        "429": { $ref: "#/components/responses/Err" }
+  /products/{sourceId}:
+    delete:
+      summary: Archive a product
+      parameters:
+        - { name: sourceId, in: path, required: true, schema: { type: string } }
+        - { $ref: "#/components/parameters/Signature" }
+      responses:
+        "200": { description: Archived (idempotent) }
+        "404": { $ref: "#/components/responses/Err" }
+  /changes:
+    get:
+      summary: Approved changes to apply (oldest first)
+      parameters:
+        - { name: since, in: query, schema: { type: string }, description: cursor (last change id) }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+        - { $ref: "#/components/parameters/Signature" }
+      responses:
+        "200":
+          description: Page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  changes: { type: array, items: { $ref: "#/components/schemas/Change" } }
+                  nextCursor: { type: [string, "null"] }
+  /changes/{id}/ack:
+    post:
+      summary: Acknowledge a change
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+        - { $ref: "#/components/parameters/Signature" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [applied, failed, skipped] }
+                error: { type: string, maxLength: 1000 }
+                storeUpdatedAt: { type: string, format: date-time }
+                storeValueHash: { type: string, description: sha256 hex of the field value before applying }
+      responses:
+        "200":
+          description: Recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [applied, failed, skipped, conflict] }
+        "404": { $ref: "#/components/responses/Err" }
+        "409": { $ref: "#/components/responses/Err" }
