@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 # Three independent jobs so wall-clock ≈ the slowest one (~1 min), not the sum.
-# The browser smoke suite lives in e2e.yml (slower, non-blocking).
+# Anything that needs MySQL or a browser (DB suites, Playwright) lives in
+# e2e.yml — slower, non-blocking, on main + manual.
 jobs:
   checks:
     name: Lint · types · i18n · format · deps
@@ -40,19 +41,9 @@ jobs:
         run: pnpm drizzle-kit check
 
   unit:
-    name: Vitest (unit + MySQL suites)
+    name: Vitest (pure unit suites)
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: oneshoplab_test
-        ports: ['3306:3306']
-        options: >-
-          --health-cmd "mysqladmin ping -proot"
-          --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -61,10 +52,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Tests
-        env:
-          TEST_DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
-        run: pnpm test
+      - name: Unit tests (the MySQL suites run in e2e.yml beside this workflow)
+        run: pnpm test:unit
 
   build:
     name: Next build

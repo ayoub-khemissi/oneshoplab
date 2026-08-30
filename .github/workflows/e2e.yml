@@ -1,4 +1,4 @@
-name: E2E smoke
+name: E2E + DB suites
 
 # Browser smoke suite (Playwright): ~5 min, so it runs beside CI instead of
 # inside it — on every push to main and on demand. A red run here is a real
@@ -40,6 +40,10 @@ jobs:
           path: .next/cache
           key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'messages/**', 'pricing.json') }}
           restore-keys: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+      - name: DB suites (vitest against MySQL)
+        env:
+          TEST_DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
+        run: pnpm test:db
       - name: Build (served by the tests)
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
