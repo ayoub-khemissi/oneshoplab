@@ -15,7 +15,9 @@ export default async function globalSetup(): Promise<void> {
     await migrate(db, { migrationsFolder: 'drizzle' });
 
     // Modules that read env at import time come after the env is set.
-    const { audit } = await import('@/entities/audit');
+    // File path on purpose: Playwright's TS loader cannot resolve an alias to a
+    // directory index (the barrel reaches @/shared/db → index.ts).
+    const { audit } = await import('@/entities/audit/lib/score');
     const { product, images } = await import('../tests/unit/audit-fixtures');
     const schema = await import('@/shared/db/schema');
 
