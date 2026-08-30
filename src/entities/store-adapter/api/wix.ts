@@ -5,8 +5,8 @@ import type {
   PlatformAdapter,
   PlatformDetection,
   ProductImage
-} from './types';
-import { decodeHtmlEntities, fetchText, rootOf } from './fetch-utils';
+} from '../model/types';
+import { decodeHtmlEntities, fetchText, rootOf } from '../lib/fetch-utils';
 
 const CONCURRENCY = 6;
 

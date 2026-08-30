@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
-import { detectPlatform } from '@/lib/adapters';
+import { detectPlatform } from '@/entities/store-adapter';
 import { db } from '@/lib/db';
 import { leads, type LeadStatus } from '@/lib/db/schema';
 import { extractContactInfo } from './contact-scraper';

@@ -1,10 +1,10 @@
 /**
  * The audit engine is the product: what a merchant sees as their score and
- * their issues. Rules pinned here come from src/lib/audit/score.ts; a change
+ * their issues. Rules pinned here come from src/entities/audit/lib/score.ts; a change
  * to any threshold must update these tests (and the snapshot) deliberately.
  */
 import { describe, expect, it } from 'vitest';
-import { audit } from '@/lib/audit/score';
+import { audit } from '@/entities/audit';
 import {
   emptyProduct,
   images,

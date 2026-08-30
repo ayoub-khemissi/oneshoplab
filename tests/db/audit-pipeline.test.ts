@@ -12,8 +12,8 @@ vi.mock('@/lib/ai', () => ({
 }));
 vi.mock('@/lib/auth', () => ({ auth: async () => null }));
 
-import { launchAnonymousAudit, launchAuditForUser, normalizeUrl } from '@/lib/audit/launch';
-import { processAudit } from '@/lib/audit/process';
+import { launchAnonymousAudit, launchAuditForUser, normalizeUrl } from '@/features/run-audit';
+import { processAudit } from '@/features/run-audit';
 import { db } from '@/lib/db';
 import { audits, notifications, products, projects } from '@/lib/db/schema';
 import { createUser, resetTables } from './helpers';

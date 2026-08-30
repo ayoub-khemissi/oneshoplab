@@ -1,5 +1,5 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { getEffectiveLanguage } from '@/lib/audit/language';
+import { getEffectiveLanguage } from '@/entities/audit';
 import { db } from '@/lib/db';
 import { audits, jobs } from '@/lib/db/schema';
 import { transitionJob } from '@/lib/jobs/transitions';

@@ -6,8 +6,8 @@ import type {
   PlatformDetection,
   ProductImage,
   ProductVariant
-} from './types';
-import { decodeHtmlEntities, fetchJson, normalizeTags, rootOf } from './fetch-utils';
+} from '../model/types';
+import { decodeHtmlEntities, fetchJson, normalizeTags, rootOf } from '../lib/fetch-utils';
 
 const PAGE_SIZE = 100;
 

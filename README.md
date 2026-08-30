@@ -42,9 +42,7 @@ src/
   components/              UI components (server + client)
   i18n/                    next-intl routing + request config
   lib/
-    adapters/              store-platform readers (shopify, woocommerce, wix, manual)
     ai/                    kie.ai client, model registry, prompts, optims
-    audit/                 scoring, run/process/refresh, commentary tiers
     auth.ts auth-actions.ts session + login/signup server actions
     credits.ts             credit ledger (debit/grant atomically)
     db/                    drizzle client + schema

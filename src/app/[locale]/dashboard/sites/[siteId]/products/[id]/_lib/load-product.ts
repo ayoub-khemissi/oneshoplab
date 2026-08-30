@@ -81,7 +81,7 @@ export async function loadProductForUser(
   });
   if (!productRow) return null;
 
-  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const { findLatestAuditForProject } = await import('@/entities/audit');
   const audit = await findLatestAuditForProject(project.id, project.domain);
 
   const summary = (audit?.summary ?? null) as SummaryShape | null;

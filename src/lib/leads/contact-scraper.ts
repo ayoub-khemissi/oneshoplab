@@ -1,4 +1,4 @@
-import { fetchText, rootOf } from '@/lib/adapters/fetch-utils';
+import { fetchText, rootOf } from '@/entities/store-adapter';
 
 /**
  * Lightweight contact extractor for prospection.

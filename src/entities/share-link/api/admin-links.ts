@@ -63,7 +63,7 @@ export async function listProductsWithGenerations(projectId: string): Promise<
   });
   if (!project) return [];
 
-  const { findLatestAuditIdWhere } = await import('@/lib/audit/find-latest');
+  const { findLatestAuditIdWhere } = await import('@/entities/audit');
   const auditId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
   const audit = auditId
     ? await db.query.audits.findFirst({

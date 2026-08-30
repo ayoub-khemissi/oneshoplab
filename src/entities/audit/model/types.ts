@@ -1,4 +1,4 @@
-import type { NormalizedProduct, ProductImage, ProductVariant } from '@/lib/adapters/types';
+import type { NormalizedProduct, ProductImage, ProductVariant } from '@/entities/store-adapter';
 
 export type IssueCode =
   | 'no_image'

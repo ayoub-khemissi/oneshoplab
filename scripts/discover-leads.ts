@@ -418,7 +418,7 @@ async function main(): Promise<void> {
   // tops here, the bottleneck is the fingerprint fetch which is
   // already polite (~5-10 req/s without concurrency).
   if (args.mode.kind === 'alt-platform') {
-    const { fetchText } = await import('@/lib/adapters/fetch-utils');
+    const { fetchText } = await import('@/entities/store-adapter');
     const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
     const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
     const { upsertManualMerchantLead } = await import('@/lib/leads/qualify');

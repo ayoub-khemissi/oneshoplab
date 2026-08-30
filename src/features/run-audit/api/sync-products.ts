@@ -2,7 +2,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { db } from '@/lib/db';
 import { products, type Platform } from '@/lib/db/schema';
-import type { NormalizedProduct } from '@/lib/adapters/types';
+import type { NormalizedProduct } from '@/entities/store-adapter';
 
 /**
  * 3-way merge between a fresh scrape and the persisted products table for

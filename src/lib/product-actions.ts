@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { recomputeManualAudit } from '@/lib/audit/from-scratch';
+import { recomputeManualAudit } from '@/features/run-audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { products, projects } from '@/lib/db/schema';

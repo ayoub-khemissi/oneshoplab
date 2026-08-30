@@ -1,9 +1,9 @@
 /**
  * Hand-built product fixtures for the audit engine tests. `perfectProduct()`
- * satisfies every scoring rule in `src/lib/audit/score.ts` (scores 100, no
+ * satisfies every scoring rule in `src/entities/audit/lib/score.ts` (scores 100, no
  * issues); each test derives a flawed variant from it with `product({...})`.
  */
-import type { NormalizedProduct, ProductImage } from '@/lib/adapters/types';
+import type { NormalizedProduct, ProductImage } from '@/entities/store-adapter';
 
 export const PERFECT_TITLE = 'Hand-thrown stoneware coffee mug, 350 ml'; // 40 chars
 export const SHORT_TITLE = 'Coffee mug'; // 10 chars

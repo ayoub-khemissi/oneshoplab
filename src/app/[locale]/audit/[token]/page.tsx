@@ -10,13 +10,13 @@ import { SiteFavicon } from '@/components/site-favicon';
 import { MetaPixelEvent } from '@/components/meta-pixel-track';
 import { TrackEvent } from '@/components/track-event';
 import { Link } from '@/i18n/navigation';
-import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
+import { decodeHtmlEntities } from '@/entities/store-adapter';
 import {
   axesValueTiers,
   commentaryTiers,
   statsValueTiers,
   type CommentaryTier
-} from '@/lib/audit/commentary';
+} from '@/entities/audit';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
 import { translateIssueText } from '@/entities/share-link';

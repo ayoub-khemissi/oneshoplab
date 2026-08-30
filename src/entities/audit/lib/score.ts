@@ -1,4 +1,4 @@
-import type { NormalizedProduct } from '@/lib/adapters/types';
+import type { NormalizedProduct } from '@/entities/store-adapter';
 import type {
   AuditDistribution,
   AuditReport,
@@ -6,7 +6,7 @@ import type {
   CountedValue,
   Issue,
   ProductInsight
-} from './types';
+} from '../model/types';
 
 const WORST_N = 10;
 const BEST_N = 5;

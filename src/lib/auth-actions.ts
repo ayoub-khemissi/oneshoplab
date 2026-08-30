@@ -11,9 +11,8 @@ import {
   MAX_CUSTOM_INSTRUCTIONS_CHARS
 } from './ai/models';
 import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from './ai/pricing';
-import { launchAuditForUser } from './audit/launch';
+import { launchAuditForUser, refreshAuditProducts } from '@/features/run-audit';
 import { touchProjectLastView as touchLastView } from './projects/touch-last-view';
-import { refreshAuditProducts } from './audit/refresh';
 import { auth, signOut } from './auth';
 import { hashPassword } from './password';
 import { db } from './db';
@@ -105,7 +104,7 @@ export async function relaunchProjectAuditAction(formData: FormData): Promise<vo
 
   // Use the two-step lookup so the multi-MB `summary` JSON never
   // hits MySQL's sort buffer. Only url / domain are needed below.
-  const { findLatestAuditIdWhere } = await import('./audit/find-latest');
+  const { findLatestAuditIdWhere } = await import('@/entities/audit');
   const latestId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
   const latest = latestId
     ? await db.query.audits.findFirst({
@@ -222,7 +221,7 @@ export async function refreshProjectAction(formData: FormData): Promise<void> {
   if (!project) return;
 
   // Manual refresh — forces a re-scrape regardless of freshness.
-  const { findLatestAuditIdWhere } = await import('./audit/find-latest');
+  const { findLatestAuditIdWhere } = await import('@/entities/audit');
   const latestId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
   if (latestId) {
     await refreshAuditProducts(latestId);

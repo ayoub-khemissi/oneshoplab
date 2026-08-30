@@ -1,10 +1,10 @@
 import type { Platform } from '@/lib/db/schema';
-import { fetchText, rootOf } from './fetch-utils';
+import { fetchText, rootOf } from '../lib/fetch-utils';
 import { manualAdapter } from './manual';
 import { shopifyAdapter } from './shopify';
 import { wixAdapter } from './wix';
 import { woocommerceAdapter } from './woocommerce';
-import type { AdapterContext, PlatformAdapter, PlatformDetection } from './types';
+import type { AdapterContext, PlatformAdapter, PlatformDetection } from '../model/types';
 
 export const ADAPTERS: PlatformAdapter[] = [
   shopifyAdapter,
@@ -66,14 +66,3 @@ export async function detectPlatform(url: string): Promise<DetectionResult> {
     adapter
   };
 }
-
-export type {
-  AdapterContext,
-  FetchOptions,
-  FetchProgress,
-  NormalizedProduct,
-  PlatformAdapter,
-  PlatformDetection,
-  ProductImage,
-  ProductVariant
-} from './types';

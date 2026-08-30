@@ -176,7 +176,10 @@ const eslintConfig = [
         'error',
         {
           patterns: [
-            { group: ['@/app/*'], message: 'widgets never depend on routes.' },
+            {
+              group: ['@/app/*', '@/views/*'],
+              message: 'widgets never depend on routes or views.'
+            },
             {
               group: ['@/widgets/*'],
               message: 'Widgets do not import each other — compose them in the page.'
@@ -204,6 +207,27 @@ const eslintConfig = [
     }
   },
   {
+    files: ['src/views/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@/app/*'], message: 'views never depend on routes.' },
+            {
+              group: ['@/views/*'],
+              message: 'Views do not import each other — share through a widget.'
+            },
+            {
+              group: ['@/widgets/*/*', '@/features/*/*', '@/entities/*/*'],
+              message: 'Use the slice public API.'
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
     files: ['src/app/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
@@ -211,7 +235,7 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ['@/features/*/*', '@/entities/*/*', '@/widgets/*/*'],
+              group: ['@/views/*/*', '@/widgets/*/*', '@/features/*/*', '@/entities/*/*'],
               message: 'Use the slice public API.'
             }
           ]

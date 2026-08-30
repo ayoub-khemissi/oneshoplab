@@ -5,8 +5,8 @@ import { projects } from '@/lib/db/schema';
 
 /**
  * Stamp `projects.lastViewedAt` for the signed-in owner. Lives outside
- * auth-actions so lib/audit can use it without importing the server-actions
- * module (which itself imports lib/audit → circular).
+ * auth-actions so features/run-audit can use it without importing the server-actions
+ * module (which itself imports features/run-audit → circular).
  */
 export async function touchProjectLastView(projectId: string): Promise<void> {
   const session = await auth();

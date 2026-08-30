@@ -1,6 +1,6 @@
 import { and, asc, eq, lt, or } from 'drizzle-orm';
 import { buildImagePrompt, runChatOptim, startImageOptim } from '@/lib/ai';
-import { getEffectiveLanguage } from '@/lib/audit/language';
+import { getEffectiveLanguage } from '@/entities/audit';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, projects, products } from '@/lib/db/schema';
@@ -90,7 +90,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
-  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const { findLatestAuditForProject } = await import('@/entities/audit');
   const audit = await findLatestAuditForProject(project.id, project.domain);
 
   const summary = (audit?.summary ?? null) as SummaryShape | null;

@@ -2,7 +2,12 @@ import { Card, Skeleton } from '@heroui/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { axesValueTiers, commentaryTiers, statsValueTiers, type CommentaryTier } from '@/lib/audit';
+import {
+  axesValueTiers,
+  commentaryTiers,
+  statsValueTiers,
+  type CommentaryTier
+} from '@/entities/audit';
 import type {
   ProductInsightLite,
   Scores,

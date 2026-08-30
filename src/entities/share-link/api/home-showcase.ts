@@ -63,7 +63,7 @@ export async function loadHomeShowcaseCards(
       where: eq(projects.id, link.projectId)
     });
     if (!project) continue;
-    const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+    const { findLatestAuditForProject } = await import('@/entities/audit');
     const audit = await findLatestAuditForProject(project.id, project.domain);
     if (!audit?.summary) continue;
 

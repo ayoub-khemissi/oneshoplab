@@ -153,8 +153,9 @@ fails on any import cycle — it is part of `pnpm check` and CI.
 
 ## Feature-Sliced Design (migration in progress since 2026-08-30)
 
-Layers live under `src/{shared,entities,features,widgets}`; `src/app` stays
-routing-only. Each layer imports only from the layers below it, slices never
+Layers: `src/app` (routing only) → `src/views` (FSD *pages* layer, renamed
+because `src/pages` is Next's Pages Router) → `src/widgets` → `src/features`
+→ `src/entities` → `src/shared`. Each layer imports only from the layers below it, slices never
 import each other sideways, and importers use a slice's `index.ts` public API
 only — all enforced by ESLint (`no-restricted-imports`, see
 `eslint.config.mjs`). `src/lib` and `src/components` are **legacy**: importable
@@ -162,5 +163,5 @@ from anywhere while the migration runs, but no new module goes there, and
 touching a legacy module means moving it into its slice. Layout and rules:
 `src/shared/README.md`. Pilot slice: share links (`entities/share-link`,
 `features/share-link`, `widgets/share-links-card`). Order of the remaining
-moves: contact → audit (launch/process/score) → generation (text/images) →
-bulk → billing/credits → auth/account → prospecting → dashboard widgets.
+moves: audit → generation (text/images) → bulk → billing/credits →
+auth/account → dashboard views/widgets → shared (db, mailer, i18n glue).

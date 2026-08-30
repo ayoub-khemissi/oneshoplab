@@ -16,7 +16,7 @@ import {
   type ImageQualityId,
   type ProductContext
 } from '@/lib/ai';
-import { getEffectiveLanguage } from '@/lib/audit/language';
+import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/lib/auth';
 import { sanitizeUserFacingError } from '@/lib/errors';
 import { InsufficientCreditsError } from '@/lib/credits';
@@ -130,7 +130,7 @@ async function loadSnapshot(
   });
   if (!productRow) return null;
 
-  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const { findLatestAuditForProject } = await import('@/entities/audit');
   const audit = await findLatestAuditForProject(project.id, project.domain);
   if (!audit?.summary) return null;
 

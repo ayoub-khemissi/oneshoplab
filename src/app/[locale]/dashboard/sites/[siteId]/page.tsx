@@ -129,8 +129,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // and Settings tabs render fine off the small `status` + `scores`
   // fields, so we use a two-step lookup that omits `summary` for
   // those tabs and saves a multi-MB roundtrip per navigation.
-  const { findLatestAuditForProject, findLatestAuditIdWhere } =
-    await import('@/lib/audit/find-latest');
+  const { findLatestAuditForProject, findLatestAuditIdWhere } = await import('@/entities/audit');
   const needsSummary = activeTab === 'overview' || activeTab === 'products';
   // Loose type: the slim variant omits `summary` / `anonToken` etc.
   // but downstream code never reaches for those when needsSummary is
@@ -175,7 +174,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
   // Both writes are documented "fire-and-forget" — awaiting them
   // blocks the page render for a DB write the user doesn't see.
   const { touchProjectLastView } = await import('@/lib/auth-actions');
-  const { refreshProjectIfStale } = await import('@/lib/audit');
+  const { refreshProjectIfStale } = await import('@/features/run-audit');
   void touchProjectLastView(project.id).catch((e) => console.error('[sites page last-view]', e));
   void refreshProjectIfStale(project.id).catch((e) =>
     console.error('[sites page auto-refresh]', e)

@@ -1,7 +1,7 @@
 /**
  * One-shot data fix: decode HTML entities in cached audit summaries
  * AND the products table. Older audits captured product titles BEFORE
- * the decoder in src/lib/adapters/fetch-utils.ts covered numeric refs
+ * the decoder in src/entities/store-adapter/lib/fetch-utils.ts covered numeric refs
  * (&#8211;, &#8217;, &#xNNNN;), so the JSON we render from still holds
  * the raw entities. WordPress's wptexturize is the usual offender on
  * WooCommerce catalogs (Lacafetiere, Dammann, …).
@@ -69,7 +69,7 @@ interface AuditSummary {
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
-  const { decodeHtmlEntities } = await import('@/lib/adapters/fetch-utils');
+  const { decodeHtmlEntities } = await import('@/entities/store-adapter');
   const { db } = await import('@/lib/db');
   const { audits, products } = await import('@/lib/db/schema');
   const { eq, isNotNull, ne } = await import('drizzle-orm');

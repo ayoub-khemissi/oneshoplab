@@ -4,11 +4,13 @@
  * stubbed per URL, nothing leaves the box.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { detectPlatform } from '@/lib/adapters';
-import { shopifyAdapter } from '@/lib/adapters/shopify';
-import { wixAdapter } from '@/lib/adapters/wix';
-import { woocommerceAdapter } from '@/lib/adapters/woocommerce';
-import type { NormalizedProduct } from '@/lib/adapters/types';
+import {
+  detectPlatform,
+  shopifyAdapter,
+  wixAdapter,
+  woocommerceAdapter,
+  type NormalizedProduct
+} from '@/entities/store-adapter';
 
 type Route = (url: string) => Response | null;
 let routes: Route[] = [];

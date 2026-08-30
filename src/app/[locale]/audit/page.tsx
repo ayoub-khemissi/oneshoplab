@@ -6,7 +6,7 @@ import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos'
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { Link } from '@/i18n/navigation';
-import { launchAnonymousAudit, normalizeUrl } from '@/lib/audit';
+import { launchAnonymousAudit, normalizeUrl } from '@/features/run-audit';
 import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 

@@ -137,7 +137,7 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
   `src/lib/stripe-actions.ts` for the pattern). Validate input with `zod`.
 - **Drizzle queries** colocate near the feature, not in a giant `queries.ts`.
   Schema is the single source of truth in `src/lib/db/schema.ts`.
-- **Adapters** (`src/lib/adapters/`) implement the same `StoreAdapter`
+- **Adapters** (`src/entities/store-adapter/api/`) implement the same `StoreAdapter`
   interface — when adding a platform, mirror the existing `shopify.ts` /
   `woocommerce.ts` / `wix.ts` shape.
 - **Comments**: only when the *why* is non-obvious (a workaround, an
@@ -152,7 +152,7 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 
 ## Useful entry points when investigating
 
-- Audit pipeline: `src/lib/audit/run.ts` → `process.ts` → `score.ts`
+- Audit pipeline: `src/features/run-audit/api/run.ts` → `process.ts` → `src/entities/audit/lib/score.ts` (adapters in `src/entities/store-adapter/`)
 - Generation: `src/lib/ai/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images) + `prompts.ts` + `optims.ts`; catalog in `pricing.json`
 - Job queue: `src/worker/audit-runner.ts` and `src/worker/kie-watchdog.ts`
 - Pricing/plans: `src/lib/ai/models.ts` (`PLAN_TIERS`, credit costs)

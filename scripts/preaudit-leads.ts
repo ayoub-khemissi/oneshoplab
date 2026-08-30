@@ -96,7 +96,7 @@ const FRESH_MS = 24 * 60 * 60 * 1000;
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
-  const { launchAnonymousAudit, normalizeUrl } = await import('@/lib/audit/launch');
+  const { launchAnonymousAudit, normalizeUrl } = await import('@/features/run-audit');
   const { db } = await import('@/lib/db');
   const { audits, leads } = await import('@/lib/db/schema');
   const { and, desc, eq, gt, isNotNull, isNull, or, sql } = await import('drizzle-orm');

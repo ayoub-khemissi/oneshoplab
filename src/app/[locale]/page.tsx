@@ -10,7 +10,7 @@ import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos'
 import { PricingCards } from '@/components/pricing-cards';
 import { ShowcaseSection } from '@/components/showcase-section';
 import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/lib/ai/models';
-import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/lib/audit';
+import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { projects, subscriptions } from '@/lib/db/schema';

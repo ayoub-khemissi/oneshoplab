@@ -40,7 +40,7 @@ async function main() {
   const { desc, eq } = await import('drizzle-orm');
   const { db } = await import('../src/lib/db/index');
   const { audits } = await import('../src/lib/db/schema');
-  const { runAudit } = await import('../src/lib/audit/run');
+  const { runAudit } = await import('../src/features/run-audit');
 
   const audit = await db.query.audits.findFirst({
     where: eq(audits.domain, domain),

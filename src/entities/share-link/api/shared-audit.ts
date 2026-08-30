@@ -22,7 +22,7 @@ export async function loadSharedAudit(token: string): Promise<SharedAuditSnapsho
   });
   if (!project) return null;
 
-  const { findLatestAuditForProject } = await import('@/lib/audit/find-latest');
+  const { findLatestAuditForProject } = await import('@/entities/audit');
   const audit = await findLatestAuditForProject(project.id, project.domain);
   if (!audit?.summary) return null;
 

@@ -1,9 +1,9 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import type { NormalizedProduct } from '@/lib/adapters/types';
+import type { NormalizedProduct } from '@/entities/store-adapter';
 import { db } from '@/lib/db';
 import { audits, products } from '@/lib/db/schema';
-import { audit as runScore } from './score';
+import { audit as runScore } from '@/entities/audit';
 
 /**
  * Re-compute the audit summary for a from-scratch ("manual") project.

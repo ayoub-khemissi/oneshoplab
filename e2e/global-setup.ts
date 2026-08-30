@@ -15,7 +15,7 @@ export default async function globalSetup(): Promise<void> {
     await migrate(db, { migrationsFolder: 'drizzle' });
 
     // Modules that read env at import time come after the env is set.
-    const { audit } = await import('@/lib/audit/score');
+    const { audit } = await import('@/entities/audit');
     const { product, images } = await import('../tests/unit/audit-fixtures');
     const schema = await import('@/lib/db/schema');
 

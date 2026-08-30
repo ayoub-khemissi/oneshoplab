@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { siteLimitForPlan } from '@/lib/ai/models';
-import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/lib/audit';
+import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';

@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { processAudit } from '@/lib/audit';
+import { processAudit } from '@/features/run-audit';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
 

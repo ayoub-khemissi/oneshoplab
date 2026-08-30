@@ -27,7 +27,7 @@ export async function getEffectiveLanguage(projectId: string | null): Promise<st
   // Two-step lookup: pick the latest audit id by tiny projection,
   // then fetch only `summary` by primary key. Avoids filesort on the
   // multi-MB JSON column.
-  const { findLatestAuditIdWhere } = await import('./find-latest');
+  const { findLatestAuditIdWhere } = await import('../api/find-latest');
   const latestId = await findLatestAuditIdWhere(eq(audits.projectId, projectId));
   if (!latestId) return 'en';
   const latest = await db.query.audits.findFirst({

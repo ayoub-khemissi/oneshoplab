@@ -3,7 +3,7 @@ import type {
   NormalizedProduct,
   PlatformAdapter,
   PlatformDetection
-} from './types';
+} from '../model/types';
 
 /**
  * Greenfield adapter — for users without an existing storefront.

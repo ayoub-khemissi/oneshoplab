@@ -1,8 +1,6 @@
-import { detectPlatform } from '@/lib/adapters';
-import type { NormalizedProduct } from '@/lib/adapters/types';
+import { detectPlatform, type NormalizedProduct } from '@/entities/store-adapter';
 import type { Platform } from '@/lib/db/schema';
-import { audit } from './score';
-import type { AuditReport } from './types';
+import { audit, type AuditReport } from '@/entities/audit';
 
 export interface RunAuditResult {
   url: string;
