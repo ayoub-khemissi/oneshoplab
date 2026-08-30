@@ -46,9 +46,11 @@ interface CreateOpts extends UpsertWebhookInput {
  * webhooks: one per url. The secret is returned exactly once.
  */
 async function createOrRotate(projectId: string, opts: CreateOpts): Promise<UpsertWebhookResult> {
-  if (!hasSecretBoxKey()) return { ok: false, reason: 'sealing_unavailable' };
+  // Validate the URL first: a merchant typo deserves its own message even
+  // when the server is missing INTEGRATION_ENCRYPTION_KEY.
   const checked = await checkWebhookUrl(opts.url, opts.lookup);
   if (!checked.ok) return { ok: false, reason: checked.reason };
+  if (!hasSecretBoxKey()) return { ok: false, reason: 'sealing_unavailable' };
   const url = checked.url.toString();
   const urlHash = hashWebhookUrl(url);
   const events = opts.events && opts.events.length ? opts.events : [...WEBHOOK_EVENTS];

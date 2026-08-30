@@ -31,6 +31,8 @@ export const E2E_ENV: Record<string, string> = {
   KIE_API_KEY: '',
   R2_ACCOUNT_ID: '',
   STRIPE_SECRET_KEY: 'sk_test_placeholder',
+  // Fixed test key so the integrations UI (site keys, webhooks) can seal secrets in e2e.
+  INTEGRATION_ENCRYPTION_KEY: 'BpEQFNZUujC6p1fJmwJbivHlnJlwTw6jEiJ+yYX6UrM=',
   STRIPE_WEBHOOK_SECRET: 'whsec_placeholder',
   NEXT_PUBLIC_GA_MEASUREMENT_ID: '',
   NEXT_PUBLIC_META_PIXEL_ID: ''
