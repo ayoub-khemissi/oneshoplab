@@ -1,4 +1,4 @@
-import type { ProductContext } from '@/features/generate-product-copy';
+import type { ProductContext } from '@/entities/generation-job';
 
 interface ProductImage {
   src: string;

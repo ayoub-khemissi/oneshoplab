@@ -1,11 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
-import {
-  buildImagePrompt,
-  IMAGE_ANGLES,
-  MAX_IMAGES_PER_PRODUCT,
-  startImageOptim
-} from '@/features/generate-product-images';
+import { MAX_IMAGES_PER_PRODUCT } from '@/features/generate-product-images';
+import { buildImagePrompt, IMAGE_ANGLES, startImageOptim } from '@/entities/generation-job';
 import {
   costForImage,
   DEFAULT_IMAGE_QUALITY,

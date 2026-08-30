@@ -1,10 +1,10 @@
 import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
-import { persistKieJobFailure } from '@/entities/generation-job';
+import { persistKieJobFailure } from './persist-result';
 import { db } from '@/lib/db';
 import { jobs, products, users } from '@/lib/db/schema';
-import { transitionJob } from '@/entities/generation-job';
+import { transitionJob } from './transitions';
 import { buildKieCallbackUrl, getKieClient } from '@/entities/ai-provider';
 import { costForImage, getImageModel, type ImageQualityId } from '@/entities/ai-model';
 

@@ -55,7 +55,7 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
 - Split: `dashboard/sites/[siteId]/page.tsx` 1582 → 7 files (max 482),
   `products/[id]/page.tsx` 989 → 8 files (max 269),
   `components/bulk-generate-section.tsx` 1206 → 6 files (max 420),
-  `lib/bulk/site-generate.ts` 1152 → see `src/lib/bulk/`.
+  `lib/bulk/site-generate.ts` 1152 → see `src/features/bulk-generate/`.
 - Import boundaries enforced (no-restricted-imports) + `pnpm deps:circular`
   (1 cycle found and broken: auth-actions ↔ audit/launch).
 - Still > 600 lines (next candidates): `retryable-generate.tsx` 780,
@@ -94,6 +94,10 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
 ## 2026-08-30 — FSD migration started
 
 - Skeleton `src/{shared,entities,features,widgets}` + ESLint layer rules.
+- Bulk generation moved: `src/lib/bulk/` → `src/features/bulk-generate/`,
+  `components/bulk-generate*` → `src/widgets/bulk-generate-section/`;
+  `runChatOptim`/`startImageOptim` + prompt builders lifted into
+  `src/entities/generation-job/` so features never import each other.
 - Legacy ratchet (must only go down): `src/lib` 118 files, `src/components`
   102 files (28 top-level lib files still to classify).
 - Also today: Playwright smoke suite (24 tests) — its own non-blocking

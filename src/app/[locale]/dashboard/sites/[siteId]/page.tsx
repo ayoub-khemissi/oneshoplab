@@ -7,7 +7,7 @@ import {
 } from '@/entities/ai-model';
 import { notFound, redirect } from 'next/navigation';
 import { AutoRefresh } from '@/components/auto-refresh';
-import { BulkGenerateSection } from '@/components/bulk-generate-section';
+import { BulkGenerateSection } from '@/widgets/bulk-generate-section';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 import { ShareLinksCard } from '@/widgets/share-links-card';
@@ -23,7 +23,7 @@ import {
   listBulkCandidates,
   listBulkCandidatesWithStatus,
   resolveBulkPrefs
-} from '@/lib/bulk/site-generate';
+} from '@/features/bulk-generate';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { audits, jobs, products, projects } from '@/lib/db/schema';

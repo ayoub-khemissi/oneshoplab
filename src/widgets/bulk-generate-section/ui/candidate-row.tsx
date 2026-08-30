@@ -2,7 +2,7 @@
 
 import { Coins } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import type { BulkCandidate, FieldKey } from '@/components/bulk-generate/types';
+import type { BulkCandidate, FieldKey } from '../model/types';
 
 export interface CandidateRowProps {
   candidate: BulkCandidate;

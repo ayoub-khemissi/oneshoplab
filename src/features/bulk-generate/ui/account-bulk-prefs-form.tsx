@@ -9,7 +9,7 @@ import {
   prefsKey,
   type BulkPrefs
 } from '@/components/bulk-prefs-editor';
-import { updateUserDefaultBulkPrefsAction } from '@/lib/bulk/prefs-actions';
+import { updateUserDefaultBulkPrefsAction } from '../api/prefs-actions';
 
 /**
  * Account-wide DEFAULT bulk prefs editor (preferences page). Same

@@ -1,6 +1,6 @@
 import { and, asc, eq, lt, or } from 'drizzle-orm';
-import { buildImagePrompt, startImageOptim } from '@/features/generate-product-images';
-import { runChatOptim } from '@/features/generate-product-copy';
+import { buildImagePrompt, startImageOptim } from '@/entities/generation-job';
+import { runChatOptim } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { InsufficientCreditsError } from '@/lib/credits';
 import { db } from '@/lib/db';
@@ -12,9 +12,9 @@ import {
   toProductContext,
   type SummaryProduct,
   type SummaryShape
-} from '@/lib/bulk/context';
-import { hasExistingCompletedField } from '@/lib/bulk/planning';
-import { markFieldsErrored, markJobStatus, stopBulkOnInsufficient } from '@/lib/bulk/progress';
+} from '../lib/context';
+import { hasExistingCompletedField } from './planning';
+import { markFieldsErrored, markJobStatus, stopBulkOnInsufficient } from './progress';
 import {
   BULK_STALL_TIMEOUT_MS,
   effectiveFields,
@@ -22,7 +22,7 @@ import {
   resolveBulkPrefs,
   type BulkInputPayload,
   type BulkProductState
-} from '@/lib/bulk/types';
+} from '../model/types';
 
 // ---------------------------------------------------------------------------
 // Worker tick

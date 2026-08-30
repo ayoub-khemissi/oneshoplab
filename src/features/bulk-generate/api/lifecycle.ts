@@ -17,7 +17,7 @@ import {
   type BulkInputPayload,
   type BulkResult,
   type ResolvedBulkPrefs
-} from '@/lib/bulk/types';
+} from '../model/types';
 
 /**
  * Insert the parent bulk job atomically. The (existence-check, insert)

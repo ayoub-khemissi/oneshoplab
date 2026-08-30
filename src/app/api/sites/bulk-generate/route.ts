@@ -19,7 +19,7 @@ import {
   resolveBulkPrefs,
   retryFailedFromBulk,
   startBulkSiteGenerate
-} from '@/lib/bulk/site-generate';
+} from '@/features/bulk-generate';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';

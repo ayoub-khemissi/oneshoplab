@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/lib/credits';
 import { db } from '@/lib/db';
 import { jobs, products, type JobKind } from '@/lib/db/schema';
-import { transitionJob } from '@/entities/generation-job';
+import { transitionJob } from './transitions';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { notify } from '@/lib/notifications';
 import { chatCompletion } from '@/entities/ai-provider';
@@ -20,7 +20,7 @@ import {
   buildTitleRewritePrompt,
   type ProductContext
 } from '../lib/prompts';
-import type { ChatOptimField } from '@/entities/generation-job';
+import type { ChatOptimField } from '../model/types';
 
 export interface ChatOptimRequest {
   userId: string;

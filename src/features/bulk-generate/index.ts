@@ -2,13 +2,13 @@
  * Bulk catalog generation — Scale plan only. Public entry point; the
  * implementation is split across the sibling modules:
  *
- *   types.ts     — payload/result shapes, prefs resolution, readResult
- *   context.ts   — audit-summary product shapes + prompt builders
- *   planning.ts  — cost estimate, candidates, "already generated" detection
- *   lifecycle.ts — start / retry / cancel
- *   worker.ts    — per-product worker tick + stall watchdog
- *   progress.ts  — result persistence, terminal flips, notifications
- *   status.ts    — progress accessors for the UI
+ *   model/types.ts     — payload/result shapes, prefs resolution, readResult
+ *   lib/context.ts     — audit-summary product shapes + prompt builders
+ *   api/planning.ts    — cost estimate, candidates, "already generated" detection
+ *   api/lifecycle.ts   — start / retry / cancel
+ *   api/worker.ts      — per-product worker tick + stall watchdog
+ *   api/progress.ts    — result persistence, terminal flips, notifications
+ *   api/status.ts      — progress accessors for the UI
  *
  * Lifecycle:
  *
@@ -53,7 +53,7 @@ export {
   type BulkProductState,
   type BulkResult,
   type ResolvedBulkPrefs
-} from '@/lib/bulk/types';
+} from './model/types';
 export {
   estimateBulkCost,
   estimateBulkCostBreakdown,
@@ -62,11 +62,9 @@ export {
   listBulkCandidatesWithStatus,
   type BulkCandidate,
   type BulkCostBreakdown
-} from '@/lib/bulk/planning';
-export { cancelBulkJob, retryFailedFromBulk, startBulkSiteGenerate } from '@/lib/bulk/lifecycle';
-export { processNextBulkProduct, runBulkWatchdog } from '@/lib/bulk/worker';
-export {
-  getActiveBulkJob,
-  getLatestBulkJobDetail,
-  type BulkJobStatusForUi
-} from '@/lib/bulk/status';
+} from './api/planning';
+export { cancelBulkJob, retryFailedFromBulk, startBulkSiteGenerate } from './api/lifecycle';
+export { processNextBulkProduct, runBulkWatchdog } from './api/worker';
+export { getActiveBulkJob, getLatestBulkJobDetail, type BulkJobStatusForUi } from './api/status';
+export { updateUserDefaultBulkPrefsAction } from './api/prefs-actions';
+export { AccountBulkPrefsForm } from './ui/account-bulk-prefs-form';

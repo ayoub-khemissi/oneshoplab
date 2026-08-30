@@ -153,7 +153,7 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 ## Useful entry points when investigating
 
 - Audit pipeline: `src/features/run-audit/api/run.ts` → `process.ts` → `src/entities/audit/lib/score.ts` (adapters in `src/entities/store-adapter/`)
-- Generation: `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images); text in `src/features/generate-product-copy/` (`lib/prompts.ts`, `api/optims.ts`), images in `src/features/generate-product-images/` (`api/image-optim.ts`), job lifecycle in `src/entities/generation-job/` (`transitions.ts`, `persist-result.ts`); catalog in `pricing.json` loaded by `src/entities/ai-model/`
+- Generation: `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images); text + image job starters and prompt builders in `src/entities/generation-job/` (`api/optims.ts`, `api/image-optim.ts`, `lib/prompts.ts`, `lib/image-prompts.ts`, plus `transitions.ts`, `persist-result.ts`); suggestions in `src/features/generate-product-copy/`, image grid UI in `src/features/generate-product-images/`, bulk in `src/features/bulk-generate/` (worker/API/pages) + `src/widgets/bulk-generate-section/` (UI); catalog in `pricing.json` loaded by `src/entities/ai-model/`
 - Job queue: `src/worker/audit-runner.ts` and `src/worker/kie-watchdog.ts`
 - Pricing/plans: `src/entities/ai-model/model/models.ts` (`PLAN_TIERS`, credit costs)
 - Storage: `src/lib/storage/r2.ts` (TLS 1.3 forced — don't relax it)

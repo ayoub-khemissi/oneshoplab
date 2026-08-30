@@ -11,9 +11,13 @@ import {
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits
 } from '@/entities/ai-model';
-import { cancelBulkJob, retryFailedFromBulk, startBulkSiteGenerate } from '@/lib/bulk/lifecycle';
-import { estimateBulkCostBreakdown } from '@/lib/bulk/planning';
-import { resolveBulkPrefs } from '@/lib/bulk/types';
+import {
+  cancelBulkJob,
+  estimateBulkCostBreakdown,
+  resolveBulkPrefs,
+  retryFailedFromBulk,
+  startBulkSiteGenerate
+} from '@/features/bulk-generate';
 import { db } from '@/lib/db';
 import { jobs } from '@/lib/db/schema';
 import { createUser, resetTables } from './helpers';

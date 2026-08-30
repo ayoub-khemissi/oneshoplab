@@ -2,7 +2,7 @@
 
 import { CheckCircle2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { FieldKey, ProductBulkState } from '@/components/bulk-generate/types';
+import type { FieldKey, ProductBulkState } from '../model/types';
 
 export interface FailureBreakdownProps {
   perProduct: Record<string, ProductBulkState>;

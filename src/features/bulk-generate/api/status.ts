@@ -10,7 +10,7 @@ import {
   type BulkInputPayload,
   type BulkProductState,
   type BulkResult
-} from '@/lib/bulk/types';
+} from '../model/types';
 
 export interface BulkJobStatusForUi {
   id: string;

@@ -13,14 +13,10 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { FailureBreakdown } from '@/components/bulk-generate/failure-breakdown';
-import { SelectionModal } from '@/components/bulk-generate/selection-modal';
-import type {
-  ActiveBulkJob,
-  BulkCandidate,
-  BulkJobStatusForUi
-} from '@/components/bulk-generate/types';
-import { useBulkGenerate } from '@/components/bulk-generate/use-bulk-generate';
+import { FailureBreakdown } from './failure-breakdown';
+import { SelectionModal } from './selection-modal';
+import type { ActiveBulkJob, BulkCandidate, BulkJobStatusForUi } from '../model/types';
+import { useBulkGenerate } from './use-bulk-generate';
 import {
   noFieldsSelected as prefsHasNoFields,
   type BulkPrefs

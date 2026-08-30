@@ -13,7 +13,7 @@ import {
   resolveBulkPrefs,
   type BulkFieldKey,
   type ResolvedBulkPrefs
-} from '@/lib/bulk/types';
+} from '../model/types';
 
 /**
  * Single source of truth for "what should this site's bulk produce".

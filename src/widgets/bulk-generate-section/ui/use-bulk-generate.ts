@@ -9,7 +9,7 @@ import {
   type BulkCandidate,
   type BulkJobStatusForUi,
   type CostBreakdown
-} from '@/components/bulk-generate/types';
+} from '../model/types';
 import { updateUserPreferencesAction } from '@/lib/auth-actions';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 

@@ -12,8 +12,8 @@ import {
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
-import { runChatOptim, type ProductContext } from '@/features/generate-product-copy';
-import { startImageOptim } from '@/features/generate-product-images';
+import { runChatOptim, type ProductContext } from '@/entities/generation-job';
+import { startImageOptim } from '@/entities/generation-job';
 import type { ChatOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/lib/auth';

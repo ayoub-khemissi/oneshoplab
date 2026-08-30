@@ -6,7 +6,7 @@ import { jobs, type ProductField } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
 import { chatCompletion } from '@/entities/ai-provider';
 import { SYSTEM_CHAT_MODELS } from '@/entities/ai-model';
-import { buildSuggestionPrompt, type ProductContext } from '../lib/prompts';
+import { buildSuggestionPrompt, type ProductContext } from '@/entities/generation-job';
 
 export interface PromptSuggestion {
   tone: string;

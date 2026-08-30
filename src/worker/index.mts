@@ -8,7 +8,7 @@ const { runAuditRunner } = await import('./audit-runner');
 const { runAuditWatchdog } = await import('./audit-watchdog');
 const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
-const { processNextBulkProduct, runBulkWatchdog } = await import('@/lib/bulk/site-generate');
+const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 
 import { writeWorkerHeartbeat } from '@/lib/health/heartbeat';
 

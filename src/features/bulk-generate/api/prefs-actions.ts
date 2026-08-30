@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
-import { resolveBulkPrefs } from '@/lib/bulk/site-generate';
+import { resolveBulkPrefs } from '../model/types';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 
