@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects } from '@/shared/db/schema';
 
 /**
  * Stamp `projects.lastViewedAt` for the signed-in owner. Lives outside

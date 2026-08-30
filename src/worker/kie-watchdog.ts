@@ -3,8 +3,8 @@ import { getImageModel, type ImageQualityId } from '@/entities/ai-model';
 import { getKieClient } from '@/entities/ai-provider';
 import { persistKieJobFailure, persistKieJobSuccess } from '@/entities/generation-job';
 import { buildKieCallbackUrl, type KieClient } from '@/entities/ai-provider';
-import { db } from '@/lib/db';
-import { jobs, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobKind } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
 
 // Time before we start polling kie directly when no webhook came in.

@@ -21,8 +21,8 @@ import {
   startBulkSiteGenerate
 } from '@/features/bulk-generate';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects } from '@/shared/db/schema';
 
 /**
  * Bulk catalog generation endpoint.

@@ -11,7 +11,7 @@ import { CancelButton } from './cancel-button';
 import { useGenerateContext } from './context';
 import { FIELDS, isInflight, MAX_ATTEMPTS } from './state';
 import { useCountdownTo, useElapsedSinceMs } from './use-timers';
-import { trackEvent } from '@/lib/analytics-event';
+import { trackEvent } from '@/shared/analytics';
 
 interface ButtonProps {
   field: GenField;

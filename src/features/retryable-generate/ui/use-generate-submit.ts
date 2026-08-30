@@ -7,8 +7,7 @@ import { useRouter } from '@/i18n/navigation';
 import type { GenField } from './generate-button';
 import { MAX_ATTEMPTS, RETRY_DELAYS_MS, type FieldState } from './state';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
-import { sanitizeUserFacingError } from '@/lib/errors';
-import { refreshKeepingScroll } from '@/lib/preserve-scroll';
+import { refreshKeepingScroll, sanitizeUserFacingError } from '@/shared/lib';
 
 interface UseGenerateSubmitArgs {
   siteId: string;

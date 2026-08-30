@@ -112,9 +112,9 @@ and the guard is DB-tested (`tests/db/job-transitions.test.ts`).
 ## Import boundaries
 
 Enforced by ESLint `no-restricted-imports` (see `eslint.config.mjs`):
-app → components → lib; worker → lib. `src/components` never imports
-`@/lib/db`, `@/worker`, `@/app`; `src/lib` never imports `@/components`,
-`@/app`, `@/worker`; the worker never imports UI. `pnpm deps:circular` (madge)
+app → components → shared/lib; worker → shared/lib. `src/components` never
+imports `@/shared/db`, `@/worker`, `@/app`; `src/lib` never imports
+`@/components`, `@/app`, `@/worker`; the worker never imports UI. `pnpm deps:circular` (madge)
 fails on any import cycle — it is part of `pnpm check` and CI.
 
 ## Monitoring (ops)

@@ -28,8 +28,8 @@ vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
 import { changePasswordAction, deleteAccountAction } from '@/features/account';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { creditTransactions, projects, subscriptions, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { creditTransactions, projects, subscriptions, users } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProject } from './site-helpers';
 

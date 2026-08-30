@@ -14,8 +14,8 @@ vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 
 import { launchAnonymousAudit, launchAuditForUser, normalizeUrl } from '@/features/run-audit';
 import { processAudit } from '@/features/run-audit';
-import { db } from '@/lib/db';
-import { audits, notifications, products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, notifications, products, projects } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 
 type Store = { products: ReturnType<typeof shopifyProduct>[]; up: boolean };

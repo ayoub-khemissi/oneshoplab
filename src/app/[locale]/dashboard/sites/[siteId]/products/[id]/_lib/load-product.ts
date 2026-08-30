@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { products, projects } from '@/shared/db/schema';
 
 export interface ProductImage {
   src: string;

@@ -6,8 +6,8 @@ import { redirect } from 'next/navigation';
 import { ManualProductForm } from '@/features/manual-catalog';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

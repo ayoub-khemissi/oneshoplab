@@ -15,8 +15,8 @@
  *   completed → ∅  (only `force: true` re-opens it: pending | running)
  */
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, type JobStatus } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobStatus } from '@/shared/db/schema';
 
 export type DbExecutor = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 

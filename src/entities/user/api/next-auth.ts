@@ -9,7 +9,7 @@ import Google from 'next-auth/providers/google';
 import { applyCreditTransaction } from '@/entities/credit';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
-import { db } from '@/lib/db';
+import { db } from '@/shared/db';
 import {
   accounts,
   sessions,
@@ -19,7 +19,7 @@ import {
   type ImageQualityDbId,
   type Plan,
   legalConsents
-} from '@/lib/db/schema';
+} from '@/shared/db/schema';
 
 declare module 'next-auth' {
   interface Session {

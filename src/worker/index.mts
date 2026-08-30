@@ -10,7 +10,7 @@ const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 
-import { writeWorkerHeartbeat } from '@/lib/health/heartbeat';
+import { writeWorkerHeartbeat } from '@/shared/health';
 
 const TICK_MS = 5_000;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly

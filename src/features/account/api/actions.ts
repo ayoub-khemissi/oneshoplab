@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import { auth, hashPassword, signOut } from '@/entities/user';
-import { db } from '@/lib/db';
-import { subscriptions, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { subscriptions, users } from '@/shared/db/schema';
 
 /**
  * Server action wrapper around Auth.js' `signOut`. Used by client components

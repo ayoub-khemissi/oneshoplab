@@ -1,4 +1,4 @@
-import { getAnalyticsConsent } from '@/lib/consent';
+import { getAnalyticsConsent } from './consent';
 
 /**
  * Fire a Meta (Facebook) Pixel event — but only if the visitor granted

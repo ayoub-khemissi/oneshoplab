@@ -11,10 +11,16 @@ import { LeadStatusSelect } from '@/components/lead-status-select';
 import { isAdminEmail } from '@/entities/user';
 import { buildLeadOutreach, freshAuditsByDomain } from '@/features/cold-outreach';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { leads, LEAD_STATUSES, PLATFORMS, type LeadStatus, type Platform } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import {
+  leads,
+  LEAD_STATUSES,
+  PLATFORMS,
+  type LeadStatus,
+  type Platform
+} from '@/shared/db/schema';
 import { deleteLeadAction } from '@/lib/leads/actions';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 
 export const dynamic = 'force-dynamic';
 

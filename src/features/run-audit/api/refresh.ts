@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 import { findLatestAuditIdWhere } from '@/entities/audit';
 import { runAudit } from './run';
 import { syncProjectProducts } from './sync-products';

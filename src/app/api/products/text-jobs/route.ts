@@ -1,8 +1,8 @@
 import { and, eq, gt, inArray } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { jobs, products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, products, projects } from '@/shared/db/schema';
 
 /**
  * Lightweight poll endpoint for the F5-resume code path in

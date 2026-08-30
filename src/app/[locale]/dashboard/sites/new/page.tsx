@@ -7,8 +7,8 @@ import { Link } from '@/i18n/navigation';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

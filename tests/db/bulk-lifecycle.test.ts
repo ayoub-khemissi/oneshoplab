@@ -18,8 +18,8 @@ import {
   retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/features/bulk-generate';
-import { db } from '@/lib/db';
-import { jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProject } from './site-helpers';
 

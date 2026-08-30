@@ -350,8 +350,8 @@ async function main(): Promise<void> {
   // default; --skip-known turns the filter on.
   let toQualify = candidates;
   if (args.skipKnown) {
-    const { db } = await import('@/lib/db');
-    const { leads } = await import('@/lib/db/schema');
+    const { db } = await import('@/shared/db');
+    const { leads } = await import('@/shared/db/schema');
     const known = new Set(
       (await db.select({ domain: leads.domain }).from(leads)).map((r) => r.domain.toLowerCase())
     );

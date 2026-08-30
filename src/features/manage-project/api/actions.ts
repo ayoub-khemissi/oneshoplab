@@ -5,9 +5,9 @@ import { revalidatePath } from 'next/cache';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
 import { touchProjectLastView as touchLastView } from '@/entities/project';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects } from '@/lib/db/schema';
-import { findLanguage } from '@/lib/i18n/languages';
+import { db } from '@/shared/db';
+import { projects } from '@/shared/db/schema';
+import { findLanguage } from '@/shared/i18n';
 
 /**
  * Mark a project as "just viewed" by stamping `lastViewedAt`. The dashboard

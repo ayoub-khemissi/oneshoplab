@@ -1,6 +1,6 @@
 import { and, desc, eq, isNotNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobKind } from '@/shared/db/schema';
 
 export interface JobKindStats {
   avgMs: number;

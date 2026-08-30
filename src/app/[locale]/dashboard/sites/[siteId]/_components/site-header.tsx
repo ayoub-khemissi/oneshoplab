@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { RelaunchAuditButton } from '@/components/relaunch-audit-button';
 import { SiteFavicon } from '@/components/site-favicon';
-import { sanitizeUserFacingError } from '@/lib/errors';
+import { sanitizeUserFacingError } from '@/shared/lib';
 import type { Tab } from '@/app/[locale]/dashboard/sites/[siteId]/_lib/types';
 
 export function SiteHeaderBar({

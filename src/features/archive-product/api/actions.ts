@@ -6,8 +6,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { recomputeManualAudit } from '@/entities/audit';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { products, projects } from '@/shared/db/schema';
 
 /**
  * Manual archive / restore of a single product from the products tab.

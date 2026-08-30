@@ -7,7 +7,7 @@ import {
   submitContactMessage,
   type ContactErrorCode
 } from '@/entities/contact-message';
-import { verifyRecaptcha } from '@/lib/recaptcha';
+import { verifyRecaptcha } from '@/shared/recaptcha';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 export interface ContactFormValues {

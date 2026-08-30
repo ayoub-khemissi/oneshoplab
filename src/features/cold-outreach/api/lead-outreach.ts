@@ -1,6 +1,6 @@
 import { and, desc, eq, gt, inArray, isNotNull, isNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 import { agencyNameFromDomain } from '../lib/render';
 import { platformDisplayName } from '../lib/templates';
 import {

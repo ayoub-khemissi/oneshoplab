@@ -1,8 +1,8 @@
 import { and, desc, eq, gt, isNotNull, isNull } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { touchProjectLastView } from '@/entities/project';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
 import { processAudit } from './process';
 
 /** Minimum credit balance required to launch an audit (one full dynamic

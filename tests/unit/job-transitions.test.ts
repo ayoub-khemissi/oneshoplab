@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { canTransition, JOB_TRANSITIONS, TERMINAL_JOB_STATUSES } from '@/entities/generation-job';
-import { JOB_STATUSES } from '@/lib/db/schema';
+import { JOB_STATUSES } from '@/shared/db/schema';
 
 describe('job transition table', () => {
   it('covers every status exactly once as a target', () => {

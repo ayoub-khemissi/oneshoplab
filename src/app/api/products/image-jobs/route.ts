@@ -11,9 +11,9 @@ import {
 import { listProductImageJobs, persistKieJobFailure } from '@/entities/generation-job';
 import { auth } from '@/entities/user';
 import { InsufficientCreditsError } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { jobs, products, projects } from '@/lib/db/schema';
-import { sanitizeUserFacingError } from '@/lib/errors';
+import { db } from '@/shared/db';
+import { jobs, products, projects } from '@/shared/db/schema';
+import { sanitizeUserFacingError } from '@/shared/lib';
 
 interface ProductImage {
   src: string;

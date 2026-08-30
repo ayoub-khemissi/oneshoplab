@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { legalConsents, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { legalConsents, users } from '@/shared/db/schema';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
 import { hashPassword } from '../model/password';
 

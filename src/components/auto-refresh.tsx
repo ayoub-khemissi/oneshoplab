@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { refreshKeepingScroll } from '@/lib/preserve-scroll';
+import { refreshKeepingScroll } from '@/shared/lib';
 
 /**
  * Triggers a server-side route refresh on a fixed interval as long as this

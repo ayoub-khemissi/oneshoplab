@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CONSENT_EVENT, getAnalyticsConsent } from '@/lib/consent';
+import { CONSENT_EVENT, getAnalyticsConsent } from '../consent';
 
 /**
  * GA4 loader, consent-gated. Renders nothing — and injects nothing —

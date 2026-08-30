@@ -1,8 +1,8 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { runDynamicAuditForProduct } from './dynamic-audit';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
-import { notify } from '@/lib/notifications';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
+import { notify } from '@/entities/notification';
 import { runAudit } from './run';
 import { syncProjectProducts } from './sync-products';
 

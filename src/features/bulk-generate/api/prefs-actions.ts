@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '../model/types';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { users } from '@/shared/db/schema';
 
 /**
  * Persist the account-wide DEFAULT bulk-generation prefs (users.

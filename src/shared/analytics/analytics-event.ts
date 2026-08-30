@@ -1,4 +1,4 @@
-import { getAnalyticsConsent } from '@/lib/consent';
+import { getAnalyticsConsent } from './consent';
 
 /**
  * Fire a GA4 event — but only if the visitor granted analytics consent

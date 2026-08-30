@@ -1,7 +1,7 @@
 import { and, desc, gte, inArray } from 'drizzle-orm';
 import { AUDIT_RATE_LIMIT_WINDOW_MS, auditRateLimitForPlan } from '@/entities/ai-model';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 
 export type UserPlan = 'free' | 'starter' | 'pro' | 'scale';
 

@@ -7,9 +7,9 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { recomputeManualAudit } from '@/entities/audit';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { jobs, products, projects } from '@/lib/db/schema';
-import { deleteByKey, keyFromPublicUrl, uploadFromUrl } from '@/lib/storage';
+import { db } from '@/shared/db';
+import { jobs, products, projects } from '@/shared/db/schema';
+import { deleteByKey, keyFromPublicUrl, uploadFromUrl } from '@/shared/storage';
 
 /**
  * CRUD for manual (from-scratch) products. Each mutation:

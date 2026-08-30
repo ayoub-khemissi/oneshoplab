@@ -3,11 +3,14 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos';
-import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
-import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { Link } from '@/i18n/navigation';
 import { launchAnonymousAudit, normalizeUrl } from '@/features/run-audit';
-import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
+import {
+  isRecaptchaEnabled,
+  RecaptchaLegalNotice,
+  RecaptchaWrapper,
+  verifyRecaptcha
+} from '@/shared/recaptcha';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');

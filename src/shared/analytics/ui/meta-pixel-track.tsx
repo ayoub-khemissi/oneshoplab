@@ -1,23 +1,22 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CONSENT_EVENT } from '@/lib/consent';
-import { trackEvent } from '@/lib/analytics-event';
+import { CONSENT_EVENT } from '../consent';
+import { trackMetaEvent } from '../meta-pixel-event';
 
 /**
- * Declarative GA4 conversion beacon. Drop it in a server component and
- * it fires `event` once on mount. Robust to the consent-after-landing
- * case: if the visitor hasn't accepted analytics yet, it waits for the
- * consent-change event (and polls briefly, since gtag.js loads a tick
- * after consent) then fires — so a conversion is never lost just
- * because the cookie banner was still open.
+ * Declarative Meta Pixel conversion beacon — the fbq twin of <TrackEvent>.
+ * Drop it in a server component and it fires `event` once on mount. Robust to
+ * the consent-after-landing case: if the visitor hasn't accepted analytics
+ * yet, it waits for the consent-change event (and polls briefly, since
+ * fbevents.js loads a tick after consent) then fires — so a conversion is
+ * never lost just because the cookie banner was still open.
  *
- * `onceKey` dedupes via sessionStorage (per tab) so a refresh of e.g.
- * the audit result page doesn't double-count. The key is only marked
- * AFTER the event actually fires, so a pre-consent mount that no-ops
- * can still fire later once consent is granted.
+ * `onceKey` dedupes via sessionStorage (per tab). The key is only marked
+ * AFTER the event actually fires, so a pre-consent mount that no-ops can
+ * still fire later once consent is granted.
  */
-export function TrackEvent({
+export function MetaPixelEvent({
   event,
   params,
   onceKey
@@ -27,7 +26,7 @@ export function TrackEvent({
   onceKey?: string;
 }) {
   useEffect(() => {
-    const sk = onceKey ? `oneshoplab.ev.${onceKey}` : null;
+    const sk = onceKey ? `oneshoplab.fbev.${onceKey}` : null;
     const alreadyFired = () => {
       if (!sk) return false;
       try {
@@ -50,7 +49,7 @@ export function TrackEvent({
 
     function attempt() {
       if (done) return;
-      if (trackEvent(event, params)) {
+      if (trackMetaEvent(event, params)) {
         done = true;
         if (sk) {
           try {
@@ -66,8 +65,8 @@ export function TrackEvent({
     attempt();
     if (done) return;
 
-    // Not fired yet (no consent, or gtag.js still loading). React to
-    // consent changes and poll for up to ~12s for gtag to come online.
+    // Not fired yet (no consent, or fbevents.js still loading). React to
+    // consent changes and poll for up to ~12s for fbq to come online.
     window.addEventListener(CONSENT_EVENT, attempt);
     interval = setInterval(() => {
       tries += 1;

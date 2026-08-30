@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { notify } from '@/lib/notifications';
-import { jobs, projects, type JobStatus } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { notify } from '@/entities/notification';
+import { jobs, projects, type JobStatus } from '@/shared/db/schema';
 import { transitionJob, type TransitionOptions } from '@/entities/generation-job';
 import type { BulkFieldKey, BulkProductState, BulkResult } from '../model/types';
 

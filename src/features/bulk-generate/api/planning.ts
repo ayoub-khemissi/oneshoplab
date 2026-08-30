@@ -5,8 +5,8 @@ import {
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
-import { db } from '@/lib/db';
-import { jobs, projects, products, users, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, projects, products, users, type JobKind } from '@/shared/db/schema';
 import {
   effectiveFields,
   pickBulkPrefs,

@@ -17,7 +17,7 @@ export default async function globalSetup(): Promise<void> {
     // Modules that read env at import time come after the env is set.
     const { audit } = await import('@/entities/audit');
     const { product, images } = await import('../tests/unit/audit-fixtures');
-    const schema = await import('@/lib/db/schema');
+    const schema = await import('@/shared/db/schema');
 
     await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);
     for (const t of [

@@ -9,8 +9,8 @@ import { DeleteSiteButton } from '@/features/manage-project';
 import { SiteFavicon } from '@/components/site-favicon';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { audits, projects, type AuditStatus } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects, type AuditStatus } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

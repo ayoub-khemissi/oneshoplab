@@ -1,11 +1,11 @@
 import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { jobs, products, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, products, type JobKind } from '@/shared/db/schema';
 import { transitionJob } from './transitions';
-import { languageNameForPrompt } from '@/lib/i18n/languages';
-import { notify } from '@/lib/notifications';
+import { languageNameForPrompt } from '@/shared/i18n';
+import { notify } from '@/entities/notification';
 import { chatCompletion } from '@/entities/ai-provider';
 import type { ChatMessage } from '@/entities/ai-provider';
 import {

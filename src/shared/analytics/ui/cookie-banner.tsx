@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from '@/i18n/navigation';
-import { getAnalyticsConsent, setAnalyticsConsent } from '@/lib/consent';
+import { getAnalyticsConsent, setAnalyticsConsent } from '../consent';
 
 const STORAGE_KEY = 'oneshoplab.cookies-acknowledged.v1';
 

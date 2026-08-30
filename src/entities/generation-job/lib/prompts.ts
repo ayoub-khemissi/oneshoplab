@@ -1,4 +1,4 @@
-import type { ProductField } from '@/lib/db/schema';
+import type { ProductField } from '@/shared/db/schema';
 
 export interface ProductContext {
   title: string;

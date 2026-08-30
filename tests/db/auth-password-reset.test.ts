@@ -19,11 +19,11 @@ vi.mock('next/navigation', () => ({
   }
 }));
 const sendMail = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/lib/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
+vi.mock('@/shared/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
 
 import { requestPasswordResetAction, resetPasswordAction } from '@/features/auth';
-import { db } from '@/lib/db';
-import { passwordResetTokens, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { passwordResetTokens, users } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 
 async function redirectOf(p: Promise<unknown>): Promise<string> {

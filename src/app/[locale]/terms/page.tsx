@@ -1,5 +1,5 @@
 import { aiSubProcessors } from '@/entities/ai-model';
-import { getAppContactEmail } from '@/lib/app-contact';
+import { getAppContactEmail } from '@/shared/config';
 import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';

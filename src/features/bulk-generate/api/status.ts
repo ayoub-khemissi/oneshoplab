@@ -1,6 +1,6 @@
 import { and, desc, eq, or } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, type JobStatus } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobStatus } from '@/shared/db/schema';
 import {
   ALL_FIELDS,
   effectiveFields,

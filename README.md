@@ -11,7 +11,7 @@ Production: <https://oneshoplab.com>
 
 - **Next.js 16** (App Router, Turbopack) — server components, server actions,
   middleware-based locale routing via `next-intl`.
-- **MySQL 8** + **Drizzle ORM** — schema in `src/lib/db/schema.ts`,
+- **MySQL 8** + **Drizzle ORM** — schema in `src/shared/db/schema.ts`,
   migrations in `drizzle/`.
 - **Auth.js v5 (next-auth beta)** with the Drizzle adapter — credentials +
   OAuth providers, session cookies signed with `AUTH_SECRET`.

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
-import { db } from './db';
-import { notifications, type NotificationKind } from './db/schema';
+import { db } from '@/shared/db';
+import { notifications, type NotificationKind } from '@/shared/db/schema';
 
 /** Per-user retention cap. We keep the 20 most recent notifications
  *  and trim older rows on every insert — the bell isn't an archive,
@@ -187,7 +187,7 @@ export async function userIdsForJobs(jobIds: string[]): Promise<Map<string, stri
   if (jobIds.length === 0) return new Map();
   // Resolve via projects.userId — every job ties to a project, every
   // project to a user.
-  const { jobs, projects } = await import('./db/schema');
+  const { jobs, projects } = await import('@/shared/db/schema');
   const rows = await db
     .select({ jobId: jobs.id, userId: projects.userId })
     .from(jobs)

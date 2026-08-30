@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { workerHeartbeatAgeMs } from '@/lib/health/heartbeat';
+import { db } from '@/shared/db';
+import { workerHeartbeatAgeMs } from '@/shared/health';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

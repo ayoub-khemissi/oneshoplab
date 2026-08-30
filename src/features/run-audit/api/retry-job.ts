@@ -1,9 +1,9 @@
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { getEffectiveLanguage } from '@/entities/audit';
-import { db } from '@/lib/db';
-import { audits, jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, jobs } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
-import { languageNameForPrompt } from '@/lib/i18n/languages';
+import { languageNameForPrompt } from '@/shared/i18n';
 import { chatCompletion } from '@/entities/ai-provider';
 import { buildKieCallbackUrl, getKieClient } from '@/entities/ai-provider';
 import { SYSTEM_CHAT_MODELS } from '@/entities/ai-model';

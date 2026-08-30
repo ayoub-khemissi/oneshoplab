@@ -3,8 +3,8 @@ import { buildImagePrompt, startImageOptim } from '@/entities/generation-job';
 import { runChatOptim } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { InsufficientCreditsError } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { jobs, projects, products } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, projects, products } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
 import {
   combineInstructions,

@@ -5,8 +5,8 @@
 import { randomUUID } from 'node:crypto';
 import { eq, sql } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { db } from '@/lib/db';
-import { jobs, type JobStatus } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobStatus } from '@/shared/db/schema';
 import { IllegalJobTransition, JobNotFound, transitionJob } from '@/entities/generation-job';
 
 async function makeJob(status: JobStatus = 'pending'): Promise<string> {

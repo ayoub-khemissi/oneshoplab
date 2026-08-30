@@ -5,11 +5,11 @@ import { auth } from '@/entities/user';
 import { DiscordGlyph } from './discord-glyph';
 import { LocaleSwitcher } from './locale-switcher';
 import { MobileMenu } from './mobile-menu';
-import { NotificationBell } from './notification-bell';
+import { NotificationBell } from '@/entities/notification/client';
 import { ScrollHidingHeader } from './scroll-hiding-header';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu } from '@/widgets/user-menu';
-import type { NotificationKind } from '@/lib/db/schema';
+import type { NotificationKind } from '@/shared/db/schema';
 import type { Locale } from '@/i18n/routing';
 
 /**

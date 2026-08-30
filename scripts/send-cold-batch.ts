@@ -169,8 +169,8 @@ async function main(): Promise<void> {
     en: { overall: 'Overall', catalog: 'Catalog', copy: 'Copy', visual: 'Visual', tagging: 'Tags' }
   };
   const { makeOptOutToken } = await import('@/features/cold-outreach');
-  const { db } = await import('@/lib/db');
-  const { audits, leads, leadAttempts } = await import('@/lib/db/schema');
+  const { db } = await import('@/shared/db');
+  const { audits, leads, leadAttempts } = await import('@/shared/db/schema');
   const { and, desc, eq, isNotNull, isNull, inArray, sql, or } = await import('drizzle-orm');
   const { randomUUID } = await import('node:crypto');
 

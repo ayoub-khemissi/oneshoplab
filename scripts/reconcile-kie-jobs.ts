@@ -30,8 +30,8 @@ async function main() {
   const { getKieClient } = await import('../src/entities/ai-provider');
   const { persistKieJobFailure, persistKieJobSuccess } =
     await import('../src/entities/generation-job');
-  const { db } = await import('../src/lib/db/index');
-  const { jobs } = await import('../src/lib/db/schema');
+  const { db } = await import('../src/shared/db');
+  const { jobs } = await import('../src/shared/db/schema');
 
   const stuck = await db.query.jobs.findMany({
     where: and(eq(jobs.status, 'running'), isNotNull(jobs.kieTaskId)),

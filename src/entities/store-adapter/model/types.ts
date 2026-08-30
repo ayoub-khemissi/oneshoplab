@@ -1,4 +1,4 @@
-import type { Platform } from '@/lib/db/schema';
+import type { Platform } from '@/shared/db/schema';
 
 export interface ProductImage {
   src: string;

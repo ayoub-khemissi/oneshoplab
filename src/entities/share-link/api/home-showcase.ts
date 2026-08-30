@@ -1,6 +1,6 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { projects, shareLinks } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects, shareLinks } from '@/shared/db/schema';
 import { listOptimHistory, listProductImageJobs } from '@/entities/generation-job';
 import { resolveFeaturedProduct } from './featured-product';
 import type { HomeShowcaseCard } from '../model/types';

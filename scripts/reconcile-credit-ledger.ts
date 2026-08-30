@@ -41,8 +41,8 @@ const APPLY = process.argv.includes('--apply');
 
 async function main() {
   const { randomUUID } = await import('node:crypto');
-  const { db } = await import('@/lib/db');
-  const { users, projects, jobs, creditTransactions } = await import('@/lib/db/schema');
+  const { db } = await import('@/shared/db');
+  const { users, projects, jobs, creditTransactions } = await import('@/shared/db/schema');
   const { eq, and, inArray, sql, like } = await import('drizzle-orm');
   const TAG = { reconciliation: '2026-08-28', cause: 'concurrent-debit race (pre FOR UPDATE)' };
 

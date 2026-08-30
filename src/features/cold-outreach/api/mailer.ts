@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { getAppContactEmail } from '@/lib/app-contact';
+import { getAppContactEmail } from '@/shared/config';
 
 /**
  * Cold-outreach mailer. Separate from `src/lib/mailer.ts` (transactional

@@ -5,7 +5,7 @@ import { RotateCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { ConfirmDialog } from '@/components/confirm-dialog';
-import { relaunchProjectAuditAction } from '@/features/run-audit';
+import { relaunchProjectAuditAction } from '@/features/run-audit/actions';
 
 interface RelaunchAuditButtonProps {
   projectId: string;

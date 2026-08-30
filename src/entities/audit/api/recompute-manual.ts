@@ -1,8 +1,8 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import type { NormalizedProduct } from '@/entities/store-adapter';
-import { db } from '@/lib/db';
-import { audits, products } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, products } from '@/shared/db/schema';
 import { audit as runScore } from '../lib/score';
 
 /**

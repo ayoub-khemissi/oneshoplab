@@ -38,8 +38,8 @@ async function main() {
   const domain = domainArg.trim();
 
   const { desc, eq } = await import('drizzle-orm');
-  const { db } = await import('../src/lib/db/index');
-  const { audits } = await import('../src/lib/db/schema');
+  const { db } = await import('../src/shared/db');
+  const { audits } = await import('../src/shared/db/schema');
   const { runAudit } = await import('../src/features/run-audit');
 
   const audit = await db.query.audits.findFirst({

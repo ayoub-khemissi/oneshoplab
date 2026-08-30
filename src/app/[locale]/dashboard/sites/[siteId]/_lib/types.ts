@@ -1,4 +1,4 @@
-import type { jobs } from '@/lib/db/schema';
+import type { jobs } from '@/shared/db/schema';
 
 export type Tab = 'overview' | 'products' | 'jobs' | 'settings';
 

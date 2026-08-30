@@ -3,7 +3,7 @@
 import { CalendarX, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 
 interface ImageExpiryProps {
   /** When the source generation was recorded. */

@@ -67,7 +67,7 @@ const eslintConfig = [
     }
   },
   // Import boundaries (all already respected on 2026-08-29; these rules only
-  // keep it that way). Direction: app → components → lib; worker → lib.
+  // keep it that way). Direction: app → components → shared/lib; worker → shared/lib.
   {
     files: ['src/components/**/*.{ts,tsx}'],
     rules: {
@@ -76,7 +76,7 @@ const eslintConfig = [
         {
           paths: [
             {
-              name: '@/lib/db',
+              name: '@/shared/db',
               message:
                 'Components never touch the database — load in the page/server action, pass props.'
             }
@@ -84,7 +84,7 @@ const eslintConfig = [
           patterns: [
             {
               // Exact module only: schema.ts (types + enum constants) stays importable.
-              group: ['@/lib/db/index'],
+              group: ['@/shared/db/index'],
               message:
                 'Components never touch the database — load in the page/server action, pass props.'
             },
@@ -124,13 +124,15 @@ const eslintConfig = [
   {
     // One schema file is deliberate (drizzle relations + single source of
     // truth); it is the only file allowed past the max-lines ceiling.
-    files: ['src/lib/db/schema.ts'],
+    files: ['src/shared/db/schema.ts'],
     rules: { 'max-lines': 'off' }
   },
   // Feature-Sliced Design layers: each layer may only import from the layers
   // below it; slices of one layer never import each other. Public API only
   // (`@/features/<slice>`), never deep paths. src/lib + src/components are
-  // legacy and importable from anywhere until they are empty.
+  // legacy and importable from anywhere until they are empty. `<slice>/client`
+  // is the one allowed second entry: a client-only barrel for slices whose
+  // index.ts opens the db / uses server-only APIs (see src/shared/README.md).
   {
     files: ['src/entities/**/*.{ts,tsx}'],
     rules: {
@@ -142,7 +144,10 @@ const eslintConfig = [
               group: ['@/features/*', '@/widgets/*', '@/app/*'],
               message: 'entities import only from shared.'
             },
-            { group: ['@/entities/*/*'], message: 'Use the slice public API (@/entities/<slice>).' }
+            {
+              group: ['@/entities/*/*', '!@/entities/*/client'],
+              message: 'Use the slice public API (@/entities/<slice>).'
+            }
           ]
         }
       ]
@@ -163,7 +168,10 @@ const eslintConfig = [
               group: ['@/features/*'],
               message: 'A feature never imports another feature — lift to a widget or an entity.'
             },
-            { group: ['@/entities/*/*'], message: 'Use the slice public API (@/entities/<slice>).' }
+            {
+              group: ['@/entities/*/*', '!@/entities/*/client'],
+              message: 'Use the slice public API (@/entities/<slice>).'
+            }
           ]
         }
       ]
@@ -184,7 +192,15 @@ const eslintConfig = [
               group: ['@/widgets/*'],
               message: 'Widgets do not import each other — compose them in the page.'
             },
-            { group: ['@/features/*/*', '@/entities/*/*'], message: 'Use the slice public API.' }
+            {
+              group: [
+                '@/features/*/*',
+                '!@/features/*/actions',
+                '@/entities/*/*',
+                '!@/entities/*/client'
+              ],
+              message: 'Use the slice public API.'
+            }
           ]
         }
       ]
@@ -219,7 +235,13 @@ const eslintConfig = [
               message: 'Views do not import each other — share through a widget.'
             },
             {
-              group: ['@/widgets/*/*', '@/features/*/*', '@/entities/*/*'],
+              group: [
+                '@/widgets/*/*',
+                '@/features/*/*',
+                '!@/features/*/actions',
+                '@/entities/*/*',
+                '!@/entities/*/client'
+              ],
               message: 'Use the slice public API.'
             }
           ]
@@ -235,7 +257,14 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ['@/views/*/*', '@/widgets/*/*', '@/features/*/*', '@/entities/*/*'],
+              group: [
+                '@/views/*/*',
+                '@/widgets/*/*',
+                '@/features/*/*',
+                '!@/features/*/actions',
+                '@/entities/*/*',
+                '!@/entities/*/client'
+              ],
               message: 'Use the slice public API.'
             }
           ]

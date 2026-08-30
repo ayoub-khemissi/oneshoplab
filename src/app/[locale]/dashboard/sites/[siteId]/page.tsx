@@ -25,8 +25,8 @@ import {
   resolveBulkPrefs
 } from '@/features/bulk-generate';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { audits, jobs, products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, jobs, products, projects } from '@/shared/db/schema';
 import {
   OverviewTab,
   StaticSkeleton

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { db } from '@/lib/db';
-import { projects, shareLinks } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects, shareLinks } from '@/shared/db/schema';
 
 export async function createProject(userId: string, name = 'Shop'): Promise<string> {
   const id = randomUUID();

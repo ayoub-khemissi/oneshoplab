@@ -117,7 +117,7 @@ fed by `modelNamesForCopy()`. Rebuild + restart web and worker after editing.
 
 **Swapping a model:** change its entry in `pricing.json`; if the *id* changes,
 add the old id to `chatModelAliases` AND append the new id to
-`CHAT_MODEL_IDS` in `src/lib/db/schema.ts` (MySQL enum for
+`CHAT_MODEL_IDS` in `src/shared/db/schema.ts` (MySQL enum for
 `users.preferred_chat_model` — additive, then `pnpm db:generate && pnpm db:migrate`).
 
 **Providers:** text goes through `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter,
@@ -136,7 +136,7 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 - **Server actions** for mutations (see `src/features/account/api/actions.ts`,
   `src/features/billing/api/actions.ts` for the pattern). Validate input with `zod`.
 - **Drizzle queries** colocate near the feature, not in a giant `queries.ts`.
-  Schema is the single source of truth in `src/lib/db/schema.ts`.
+  Schema is the single source of truth in `src/shared/db/schema.ts`.
 - **Adapters** (`src/entities/store-adapter/api/`) implement the same `StoreAdapter`
   interface — when adding a platform, mirror the existing `shopify.ts` /
   `woocommerce.ts` / `wix.ts` shape.
@@ -156,7 +156,7 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
 - Generation: `src/entities/ai-provider/api/chat-provider.ts` (OpenRouter→kie) + `kie.ts` (images); text + image job starters and prompt builders in `src/entities/generation-job/` (`api/optims.ts`, `api/image-optim.ts`, `lib/prompts.ts`, `lib/image-prompts.ts`, plus `transitions.ts`, `persist-result.ts`); suggestions in `src/features/generate-product-copy/`, image grid UI in `src/features/generate-product-images/`, bulk in `src/features/bulk-generate/` (worker/API/pages) + `src/widgets/bulk-generate-section/` (UI); catalog in `pricing.json` loaded by `src/entities/ai-model/`
 - Job queue: `src/worker/audit-runner.ts` and `src/worker/kie-watchdog.ts`
 - Pricing/plans: `src/entities/ai-model/model/models.ts` (`PLAN_TIERS`, credit costs)
-- Storage: `src/lib/storage/r2.ts` (TLS 1.3 forced — don't relax it)
+- Storage: `src/shared/storage/r2.ts` (TLS 1.3 forced — don't relax it)
 
 ## Admin one-shots
 

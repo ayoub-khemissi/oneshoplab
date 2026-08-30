@@ -4,8 +4,8 @@ import { and, eq, gte, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { AUDIT_RATE_LIMIT_WINDOW_MS, auditRateLimitForPlan } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
 import { launchAuditForUser } from './launch';
 import { refreshAuditProducts } from './refresh';
 

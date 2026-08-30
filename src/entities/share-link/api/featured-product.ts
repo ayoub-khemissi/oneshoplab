@@ -1,6 +1,6 @@
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, products } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, products } from '@/shared/db/schema';
 import type { FeaturedProductSnapshot } from '../model/types';
 
 export async function resolveFeaturedProduct(

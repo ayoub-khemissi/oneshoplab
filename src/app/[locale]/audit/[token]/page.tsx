@@ -7,8 +7,7 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { SiteFavicon } from '@/components/site-favicon';
-import { MetaPixelEvent } from '@/components/meta-pixel-track';
-import { TrackEvent } from '@/components/track-event';
+import { MetaPixelEvent, TrackEvent } from '@/shared/analytics';
 import { Link } from '@/i18n/navigation';
 import { decodeHtmlEntities } from '@/entities/store-adapter';
 import {
@@ -17,8 +16,8 @@ import {
   statsValueTiers,
   type CommentaryTier
 } from '@/entities/audit';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 import { translateIssueText } from '@/entities/share-link';
 
 export const dynamic = 'force-dynamic';

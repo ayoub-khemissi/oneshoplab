@@ -5,9 +5,9 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { db } from '@/lib/db';
-import { jobs, notifications } from '@/lib/db/schema';
-import { listForBell, markAllRead, markReadByJob, notify } from '@/lib/notifications';
+import { db } from '@/shared/db';
+import { jobs, notifications } from '@/shared/db/schema';
+import { listForBell, markAllRead, markReadByJob, notify } from '@/entities/notification';
 import { createUser, resetTables } from './helpers';
 
 async function makeJob(): Promise<string> {

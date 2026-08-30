@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { and, gte, or, eq, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { contactMessages } from '@/lib/db/schema';
-import { postDiscordMessage, type DiscordChannel } from '@/lib/discord';
-import { sendMail } from '@/lib/mailer';
-import { getAppContactEmail } from '@/lib/app-contact';
+import { db } from '@/shared/db';
+import { contactMessages } from '@/shared/db/schema';
+import { postDiscordMessage, type DiscordChannel } from '@/shared/discord';
+import { sendMail } from '@/shared/mailer';
+import { getAppContactEmail } from '@/shared/config';
 import type { ContactContext, ContactInput, SubmitContactResult } from '../model/schema';
 
 /**

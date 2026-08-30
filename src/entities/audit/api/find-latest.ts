@@ -1,6 +1,6 @@
 import { and, desc, eq, isNull, or, type SQL } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 
 /**
  * Why these helpers exist.

@@ -1,6 +1,6 @@
 import { and, eq, inArray } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, type products } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type products } from '@/shared/db/schema';
 import {
   PRODUCTS_PAGE_SIZE,
   type PaginatedProductPayload,

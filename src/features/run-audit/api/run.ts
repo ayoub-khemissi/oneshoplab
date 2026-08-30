@@ -1,5 +1,5 @@
 import { detectPlatform, type NormalizedProduct } from '@/entities/store-adapter';
-import type { Platform } from '@/lib/db/schema';
+import type { Platform } from '@/shared/db/schema';
 import { audit, type AuditReport } from '@/entities/audit';
 
 export interface RunAuditResult {

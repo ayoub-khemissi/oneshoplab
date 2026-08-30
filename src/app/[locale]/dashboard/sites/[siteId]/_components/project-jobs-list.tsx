@@ -3,7 +3,7 @@ import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { ServerPagination } from '@/components/server-pagination';
-import type { JobStatus } from '@/lib/db/schema';
+import type { JobStatus } from '@/shared/db/schema';
 import type { ProjectJobRow } from '@/app/[locale]/dashboard/sites/[siteId]/_lib/types';
 
 export function ProjectJobsList({

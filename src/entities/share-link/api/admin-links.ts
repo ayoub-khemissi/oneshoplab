@@ -1,6 +1,6 @@
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits, jobs, projects, shareLinks } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, jobs, projects, shareLinks } from '@/shared/db/schema';
 
 /**
  * Active (non-revoked) share links for one site, freshest first. Used

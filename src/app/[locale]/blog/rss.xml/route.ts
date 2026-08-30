@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { listPostsWithFallback } from '@/lib/blog/posts';
+import { listPostsWithFallback } from '@/entities/blog';
 
 /**
  * Per-locale RSS 2.0 feed for the blog. Locale-specific because article

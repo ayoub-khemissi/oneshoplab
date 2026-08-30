@@ -4,13 +4,13 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
+import { db } from '@/shared/db';
 import {
   BILLING_CYCLES,
   subscriptions,
   users,
   type BillingCycle as DbBillingCycle
-} from '@/lib/db/schema';
+} from '@/shared/db/schema';
 import { PLAN_TIERS, getCreditPack, type BillingCycle, type PlanId } from '@/entities/ai-model';
 import { checkoutConsentParams } from '@/entities/legal-consent';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';

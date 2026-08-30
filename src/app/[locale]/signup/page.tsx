@@ -29,12 +29,15 @@ export async function generateMetadata({
   };
 }
 import { GoogleSignInButton } from '@/features/auth';
-import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
-import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
 import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/entities/user';
 import { isGoogleAuthEnabled, signIn } from '@/entities/user';
 import { registerCredentialsUser } from '@/entities/user';
-import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
+import {
+  isRecaptchaEnabled,
+  RecaptchaLegalNotice,
+  RecaptchaWrapper,
+  verifyRecaptcha
+} from '@/shared/recaptcha';
 
 interface PageProps {
   searchParams: Promise<{

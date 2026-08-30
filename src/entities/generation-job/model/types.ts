@@ -1,4 +1,4 @@
-import type { JobStatus } from '@/lib/db/schema';
+import type { JobStatus } from '@/shared/db/schema';
 
 /**
  * Pure-data shape returned by the image-jobs API and consumed by the

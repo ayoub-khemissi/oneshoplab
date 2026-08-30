@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
 
 /**
  * Resolve the language code that drives every AI generation on a project.

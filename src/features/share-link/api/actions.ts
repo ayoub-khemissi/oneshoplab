@@ -5,8 +5,8 @@ import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/entities/user';
 import { isAdminEmail } from '@/entities/user';
-import { db } from '@/lib/db';
-import { projects, shareLinks } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { projects, shareLinks } from '@/shared/db/schema';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 /**

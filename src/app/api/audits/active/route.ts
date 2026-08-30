@@ -1,8 +1,8 @@
 import { and, desc, eq, gte, inArray, isNotNull } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

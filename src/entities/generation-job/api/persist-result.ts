@@ -1,11 +1,11 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { jobs, products, projects, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, products, projects, type JobKind } from '@/shared/db/schema';
 import { transitionJob } from './transitions';
-import { notify } from '@/lib/notifications';
-import { isR2Configured, uploadFromUrl } from '@/lib/storage';
+import { notify } from '@/entities/notification';
+import { isR2Configured, uploadFromUrl } from '@/shared/storage';
 import { generateFallbackImage, isImageFallbackConfigured } from '@/entities/ai-provider';
 
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];

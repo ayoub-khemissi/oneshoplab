@@ -26,7 +26,7 @@ import {
   IMAGE_QUALITY_IDS,
   PRICING
 } from '@/entities/ai-model';
-import { CHAT_MODEL_IDS as DB_CHAT_MODEL_IDS } from '@/lib/db/schema';
+import { CHAT_MODEL_IDS as DB_CHAT_MODEL_IDS } from '@/shared/db/schema';
 
 describe('credit costs (snapshot — update deliberately)', () => {
   it('text generation per model × field', () => {

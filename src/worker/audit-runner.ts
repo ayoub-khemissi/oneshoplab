@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { processAudit } from '@/features/run-audit';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 
 const MAX_CONCURRENT = 3;
 

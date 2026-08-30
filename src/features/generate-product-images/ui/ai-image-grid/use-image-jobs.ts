@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { errorKeyFromCode, rehydrateDates } from './helpers';
 import type { BusyKind, ImageAngle } from './types';
 import type { ImageJobRow } from '@/entities/generation-job';
-import { refreshKeepingScroll } from '@/lib/preserve-scroll';
+import { refreshKeepingScroll } from '@/shared/lib';
 
 interface UseImageJobsArgs {
   siteId: string;

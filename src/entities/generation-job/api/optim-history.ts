@@ -1,6 +1,6 @@
 import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs, type JobKind } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, type JobKind } from '@/shared/db/schema';
 import type { ChatOptimField } from '../model/types';
 
 export interface OptimHistoryItem {

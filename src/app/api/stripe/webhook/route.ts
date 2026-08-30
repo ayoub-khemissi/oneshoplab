@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { creditTransactions, subscriptions, legalConsents } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { creditTransactions, subscriptions, legalConsents } from '@/shared/db/schema';
 import {
   getStripeClient,
   getStripeWebhookSecret,

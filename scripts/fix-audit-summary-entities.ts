@@ -70,8 +70,8 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
   const { decodeHtmlEntities } = await import('@/entities/store-adapter');
-  const { db } = await import('@/lib/db');
-  const { audits, products } = await import('@/lib/db/schema');
+  const { db } = await import('@/shared/db');
+  const { audits, products } = await import('@/shared/db/schema');
   const { eq, isNotNull, ne } = await import('drizzle-orm');
 
   const mode = args.apply ? 'APPLY' : 'DRY-RUN';

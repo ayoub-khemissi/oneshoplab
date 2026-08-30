@@ -4,7 +4,7 @@ import { Card } from '@heroui/react';
 import { Check, Copy, ExternalLink, Home, Info, Link2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
 import { CreateModal, HomeOrderInput, RevokeButton, ShowOnHomeToggle } from '@/features/share-link';
 

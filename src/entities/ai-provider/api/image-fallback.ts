@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { uploadBuffer } from '@/lib/storage';
+import { uploadBuffer } from '@/shared/storage';
 import { IMAGE_FALLBACK_MODEL, PROVIDER_UNIT_USD } from '@/entities/ai-model';
 
 /**

@@ -8,8 +8,8 @@ import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '@/features/bulk-generate';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { users } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

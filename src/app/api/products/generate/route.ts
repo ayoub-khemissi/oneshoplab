@@ -17,10 +17,10 @@ import { startImageOptim } from '@/entities/generation-job';
 import type { ChatOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/entities/user';
-import { sanitizeUserFacingError } from '@/lib/errors';
+import { sanitizeUserFacingError } from '@/shared/lib';
 import { InsufficientCreditsError } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { products, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { products, projects } from '@/shared/db/schema';
 
 const IMAGE_ANGLES = ['lifestyle', 'studio', 'inuse'] as const;
 type ImageAngle = (typeof IMAGE_ANGLES)[number];

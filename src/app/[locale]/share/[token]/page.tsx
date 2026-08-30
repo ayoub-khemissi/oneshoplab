@@ -12,7 +12,7 @@ import {
   type SharedProduct
 } from '@/entities/share-link';
 import { translateIssueText } from '@/entities/share-link';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 
 export const dynamic = 'force-dynamic';
 

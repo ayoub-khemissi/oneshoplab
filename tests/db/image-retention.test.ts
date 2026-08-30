@@ -9,14 +9,14 @@ import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const deleteByKey = vi.fn().mockResolvedValue(true);
-vi.mock('@/lib/storage', () => ({
+vi.mock('@/shared/storage', () => ({
   deleteByKey: (k: string) => deleteByKey(k),
   keyFromPublicUrl: (url: string) => new URL(url).pathname.slice(1)
 }));
 
 import { imageRetentionDaysForPlan, MAX_IMAGE_RETENTION_DAYS } from '@/entities/ai-model';
-import { db } from '@/lib/db';
-import { jobs, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs, users } from '@/shared/db/schema';
 import { runR2Cleanup } from '@/worker/r2-cleanup';
 import { createUser, resetTables } from './helpers';
 import { createProject, createShareLink } from './site-helpers';

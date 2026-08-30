@@ -4,13 +4,13 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
+import { db } from '@/shared/db';
 import {
   IMAGE_QUALITY_IDS,
   users,
   type ChatModelDbId,
   type ImageQualityDbId
-} from '@/lib/db/schema';
+} from '@/shared/db/schema';
 
 /**
  * Update the current user's model preferences. Account-wide — applies to all

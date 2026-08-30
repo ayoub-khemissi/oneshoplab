@@ -1,7 +1,7 @@
 import { and, desc, eq, gt, inArray } from 'drizzle-orm';
 import type { ChatOptimField } from '@/entities/generation-job';
-import { db } from '@/lib/db';
-import { jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs } from '@/shared/db/schema';
 
 export interface RecentChatJobs {
   inFlightChatJobs: Array<{ field: ChatOptimField; startedAtMs: number }>;

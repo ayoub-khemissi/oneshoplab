@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/entities/user';
-import { listForBell } from '@/lib/notifications';
+import { listForBell } from '@/entities/notification';
 
 /**
  * GET /api/notifications

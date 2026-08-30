@@ -8,7 +8,7 @@ import { useFormStatus } from 'react-dom';
 import { Link, useRouter } from '@/i18n/navigation';
 import { DebouncedSearchInput } from '@/components/debounced-search-input';
 import { ServerPagination } from '@/components/server-pagination';
-import { setProductArchivedAction } from '@/features/archive-product';
+import { setProductArchivedAction } from '@/features/archive-product/actions';
 
 export interface PaginatedProduct {
   /** Stable UUID from the products table. Used to build the URL — no slug

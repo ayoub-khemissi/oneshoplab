@@ -1,7 +1,7 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { db } from '@/lib/db';
-import { products, type Platform } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { products, type Platform } from '@/shared/db/schema';
 import type { NormalizedProduct } from '@/entities/store-adapter';
 
 /**

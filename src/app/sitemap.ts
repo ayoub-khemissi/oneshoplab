@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { BLOG_POSTS, postLanguageAlternates } from '@/lib/blog/posts';
+import { BLOG_POSTS, postLanguageAlternates } from '@/entities/blog';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 

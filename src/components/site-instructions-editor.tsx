@@ -5,7 +5,7 @@ import { Check, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
-import { updateProjectInstructionsAction } from '@/features/manage-project';
+import { updateProjectInstructionsAction } from '@/features/manage-project/actions';
 
 interface SiteInstructionsEditorProps {
   projectId: string;

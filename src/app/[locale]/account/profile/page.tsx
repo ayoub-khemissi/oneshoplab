@@ -3,8 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { AccountDeleteForm, ProfileNameForm, ProfilePasswordForm } from '@/features/account';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { subscriptions } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { subscriptions } from '@/shared/db/schema';
 
 export const dynamic = 'force-dynamic';
 

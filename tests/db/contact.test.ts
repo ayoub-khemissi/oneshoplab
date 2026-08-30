@@ -8,11 +8,13 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 const sendMail = vi.fn();
 const postDiscordMessage = vi.fn();
 const verifyRecaptcha = vi.fn();
-vi.mock('@/lib/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
-vi.mock('@/lib/discord', () => ({
+vi.mock('@/shared/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
+vi.mock('@/shared/discord', () => ({
   postDiscordMessage: (...a: unknown[]) => postDiscordMessage(...a)
 }));
-vi.mock('@/lib/recaptcha', () => ({ verifyRecaptcha: (...a: unknown[]) => verifyRecaptcha(...a) }));
+vi.mock('@/shared/recaptcha', () => ({
+  verifyRecaptcha: (...a: unknown[]) => verifyRecaptcha(...a)
+}));
 vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9, 10.0.0.1' })
@@ -25,7 +27,7 @@ import {
   submitContactMessage
 } from '@/entities/contact-message';
 import { submitContactAction } from '@/features/contact';
-import { db } from '@/lib/db';
+import { db } from '@/shared/db';
 
 const input = {
   name: 'Visitor',

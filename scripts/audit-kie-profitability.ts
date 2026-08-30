@@ -101,8 +101,8 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
   const { and, eq, gte, isNotNull, sql } = await import('drizzle-orm');
-  const { db } = await import('@/lib/db');
-  const { jobs } = await import('@/lib/db/schema');
+  const { db } = await import('@/shared/db');
+  const { jobs } = await import('@/shared/db/schema');
   const { getKieClient } = await import('@/entities/ai-provider');
   const { PRICING } = await import('@/entities/ai-model');
 

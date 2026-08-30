@@ -2,7 +2,7 @@
 
 import { ListBox, Select } from '@heroui/react';
 import { useTransition } from 'react';
-import { LEAD_STATUSES, type LeadStatus } from '@/lib/db/schema';
+import { LEAD_STATUSES, type LeadStatus } from '@/shared/db/schema';
 import { updateLeadStatusAction } from '@/lib/leads/actions';
 
 /**

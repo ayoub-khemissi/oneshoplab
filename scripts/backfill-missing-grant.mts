@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { applyCreditTransaction } from '@/entities/credit';
 import { PLAN_TIERS } from '@/entities/ai-model';
-import { db } from '@/lib/db';
-import { users, subscriptions } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { users, subscriptions } from '@/shared/db/schema';
 import { getStripeClient, resolvePriceId } from '@/features/billing';
 
 /**

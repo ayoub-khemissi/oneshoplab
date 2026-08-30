@@ -1,9 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { db } from '@/lib/db';
-import { jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
-import { languageNameForPrompt } from '@/lib/i18n/languages';
+import { languageNameForPrompt } from '@/shared/i18n';
 import {
   buildKieCallbackUrl,
   getKieClient,

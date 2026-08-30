@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { subscriptions, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { subscriptions, users } from '@/shared/db/schema';
 import { getStripeClient, resolvePriceId, syncSubscriptionFromStripe } from '@/features/billing';
 import type { PlanId } from '@/entities/ai-model';
 

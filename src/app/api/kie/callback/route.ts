@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { persistKieJobFailure, persistKieJobSuccess } from '@/entities/generation-job';
-import { db } from '@/lib/db';
-import { jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
 
 interface CallbackBody {

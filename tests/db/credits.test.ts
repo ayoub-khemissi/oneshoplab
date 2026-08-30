@@ -8,7 +8,7 @@
  */
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { applyCreditTransaction, InsufficientCreditsError } from '@/entities/credit';
-import { db } from '@/lib/db';
+import { db } from '@/shared/db';
 import { buckets, createUser, ledgerCount, ledgerSum, resetTables } from './helpers';
 
 beforeEach(resetTables);

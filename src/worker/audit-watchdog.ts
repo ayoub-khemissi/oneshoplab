@@ -1,6 +1,6 @@
 import { and, eq, isNotNull, lt, sql } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { audits } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits } from '@/shared/db/schema';
 
 /**
  * Audits run inside the web process via `void processAudit(...)` fired from

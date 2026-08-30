@@ -4,7 +4,7 @@ import { Spinner } from '@heroui/react';
 import { CheckCircle2, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState, useState } from 'react';
-import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
+import { RecaptchaWrapper } from '@/shared/recaptcha/client';
 import { submitContactAction, type ContactFormState } from '../api/actions';
 
 interface ContactFormProps {

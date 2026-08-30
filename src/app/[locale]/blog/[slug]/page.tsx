@@ -8,10 +8,10 @@ import {
   getPost,
   postLanguageAlternates,
   relatedPosts,
+  renderMarkdown,
   type BlogPost
-} from '@/lib/blog/posts';
-import { renderMarkdown } from '@/lib/blog/render';
-import { formatDate } from '@/lib/format-date';
+} from '@/entities/blog';
+import { formatDate } from '@/shared/lib';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
@@ -159,7 +159,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
         <p className="text-base text-[var(--muted)] leading-relaxed">{tr.description}</p>
       </header>
 
-      {/* First-party repo content (src/lib/blog/content/*) → trusted HTML,
+      {/* First-party repo content (src/entities/blog/model/content/*) → trusted HTML,
           same model as the /share AI-HTML render. Wrapped in `prose` for
           the shared typographic spacing. */}
       <article

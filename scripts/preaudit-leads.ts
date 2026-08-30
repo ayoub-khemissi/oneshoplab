@@ -97,8 +97,8 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
   const { launchAnonymousAudit, normalizeUrl } = await import('@/features/run-audit');
-  const { db } = await import('@/lib/db');
-  const { audits, leads } = await import('@/lib/db/schema');
+  const { db } = await import('@/shared/db');
+  const { audits, leads } = await import('@/shared/db/schema');
   const { and, desc, eq, gt, isNotNull, isNull, or, sql } = await import('drizzle-orm');
 
   const langPredicate =

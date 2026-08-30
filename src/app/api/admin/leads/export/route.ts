@@ -2,8 +2,14 @@ import { and, desc, eq, isNotNull, isNull, like } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import { isAdminEmail } from '@/entities/user';
 import { auth } from '@/entities/user';
-import { db } from '@/lib/db';
-import { leads, LEAD_STATUSES, PLATFORMS, type LeadStatus, type Platform } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import {
+  leads,
+  LEAD_STATUSES,
+  PLATFORMS,
+  type LeadStatus,
+  type Platform
+} from '@/shared/db/schema';
 
 /**
  * CSV export of leads, optionally filtered by status / platform /

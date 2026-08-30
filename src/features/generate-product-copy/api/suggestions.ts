@@ -1,9 +1,9 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { jobs, type ProductField } from '@/lib/db/schema';
-import { languageNameForPrompt } from '@/lib/i18n/languages';
+import { db } from '@/shared/db';
+import { jobs, type ProductField } from '@/shared/db/schema';
+import { languageNameForPrompt } from '@/shared/i18n';
 import { chatCompletion } from '@/entities/ai-provider';
 import { SYSTEM_CHAT_MODELS } from '@/entities/ai-model';
 import { buildSuggestionPrompt, type ProductContext } from '@/entities/generation-job';

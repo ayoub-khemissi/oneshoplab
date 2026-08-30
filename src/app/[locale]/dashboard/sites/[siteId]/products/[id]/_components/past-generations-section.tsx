@@ -5,7 +5,7 @@ import { HistoryImage } from '@/features/generate-product-images';
 import { ImageExpiry } from '@/features/generate-product-images';
 import { ServerPagination } from '@/components/server-pagination';
 import type { OptimHistoryItem } from '@/entities/generation-job';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 
 const PAST_GEN_DETAIL_LIMIT = 600;
 

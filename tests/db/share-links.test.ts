@@ -20,8 +20,8 @@ vi.mock('@/entities/user/lib/admin', () => ({
 }));
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
-import { db } from '@/lib/db';
-import { shareLinks } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { shareLinks } from '@/shared/db/schema';
 import {
   createShareLinkAction,
   revokeShareLinkAction,

@@ -2,10 +2,10 @@ import { randomUUID } from 'node:crypto';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { eq } from 'drizzle-orm';
-import { getAppContactEmail } from '@/lib/app-contact';
+import { getAppContactEmail } from '@/shared/config';
 import { verifyOptOutToken } from '@/features/cold-outreach';
-import { db } from '@/lib/db';
-import { leadAttempts, leads } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { leadAttempts, leads } from '@/shared/db/schema';
 
 /**
  * Cold-outreach unsubscribe handler. Reached from the link in the

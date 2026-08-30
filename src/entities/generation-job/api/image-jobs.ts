@@ -1,6 +1,6 @@
 import { and, desc, eq, isNull } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { jobs } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { jobs } from '@/shared/db/schema';
 import type { ImageJobRow } from '../model/types';
 
 /**

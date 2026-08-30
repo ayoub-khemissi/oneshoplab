@@ -23,9 +23,9 @@ défauts mineurs de canonical sont à corriger.
 | 2 | hreflang réciproque + x-default + canonical self-référent | ✅ OK (pages existantes) | `app/[locale]/layout.tsx:90-93`, `app/[locale]/page.tsx:44-47`, `pricing/page.tsx:40-43`, `faq` idem |
 | 3 | Sitemap multilingue | ⚠️ OK mais incomplet | `app/sitemap.ts` — 5 chemins marketing seulement, ni blog ni audit-gratuit |
 | 4 | `html lang` + `dir=rtl` | ✅ OK | `app/[locale]/layout.tsx:149-153` (`dir` via `RTL_LOCALES`, `ar→rtl`) + JSON-LD Organization bonus |
-| 5 | GA4 / Search Console segmentés | ✅ **FAIT** (code) | GA4 consent-gated opt-in (`components/analytics.tsx` + `lib/consent.ts`), inerte sans `NEXT_PUBLIC_GA_MEASUREMENT_ID` ; politique de confidentialité mise à jour. Reste manuel : propriété GA4 + filtres GSC |
+| 5 | GA4 / Search Console segmentés | ✅ **FAIT** (code) | GA4 consent-gated opt-in (`shared/analytics` (`ui/analytics.tsx` + `consent.ts`)), inerte sans `NEXT_PUBLIC_GA_MEASUREMENT_ID` ; politique de confidentialité mise à jour. Reste manuel : propriété GA4 + filtres GSC |
 | 6 | **Page d'audit gratuit SANS inscription** | ✅ **FAIT** | `app/[locale]/audit/` (formulaire + résultat), `launchAnonymousAudit` (scrape+score, zéro crédit), entrée sitemap, i18n 13 langues |
-| P1.4 | Section blog `/fr/blog` | ✅ **FAIT** | `app/[locale]/blog/` (index + `[slug]`), registre `src/lib/blog/`, hreflang par-article (FR+EN), entrées sitemap dynamiques, article pilote seedé |
+| P1.4 | Section blog `/fr/blog` | ✅ **FAIT** | `app/[locale]/blog/` (index + `[slug]`), registre `src/entities/blog/`, hreflang par-article (FR+EN), entrées sitemap dynamiques, article pilote seedé |
 
 ---
 

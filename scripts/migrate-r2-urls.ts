@@ -21,8 +21,8 @@
  *   NEW_BASE=https://cdn.oneshoplab.com \
  *   pnpm exec tsx --tsconfig tsconfig.json scripts/migrate-r2-urls.ts [--dry]
  */
-import { db } from '@/lib/db';
-import { audits, jobs, products } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, jobs, products } from '@/shared/db/schema';
 import { eq, like, or, sql } from 'drizzle-orm';
 
 const OLD_BASE = (process.env.OLD_BASE ?? '').replace(/\/$/, '');

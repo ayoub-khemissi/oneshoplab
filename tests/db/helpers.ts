@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { and, eq, notLike, sql, sum } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { creditTransactions, users } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { creditTransactions, users } from '@/shared/db/schema';
 
 export async function resetTables(): Promise<void> {
   await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);

@@ -37,8 +37,8 @@ async function main() {
 
   const { and, desc, eq } = await import('drizzle-orm');
   const { randomUUID } = await import('node:crypto');
-  const { db } = await import('../src/lib/db/index');
-  const { audits, projects, users } = await import('../src/lib/db/schema');
+  const { db } = await import('../src/shared/db');
+  const { audits, projects, users } = await import('../src/shared/db/schema');
 
   const user = await db.query.users.findFirst({ where: eq(users.email, email) });
   if (!user) {

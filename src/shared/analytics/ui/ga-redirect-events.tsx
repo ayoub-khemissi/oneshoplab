@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TrackEvent } from '@/components/track-event';
-import { MetaPixelEvent } from '@/components/meta-pixel-track';
+import { TrackEvent } from './track-event';
+import { MetaPixelEvent } from './meta-pixel-track';
 
 /**
  * Fires the conversion event(s) encoded in the post-redirect URL, then

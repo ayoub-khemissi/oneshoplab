@@ -1,8 +1,8 @@
 import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { randomUUID } from 'node:crypto';
-import { db } from '@/lib/db';
-import { audits, projects } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { audits, projects } from '@/shared/db/schema';
 
 const COOKIE_NAME = 'oneshoplab_anon';
 const MAX_AGE_DAYS = 30;

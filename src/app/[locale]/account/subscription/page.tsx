@@ -16,10 +16,10 @@ import { Link } from '@/i18n/navigation';
 import { PLAN_TIERS } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
 import { getCreditBuckets } from '@/entities/credit';
-import { db } from '@/lib/db';
-import { subscriptions } from '@/lib/db/schema';
+import { db } from '@/shared/db';
+import { subscriptions } from '@/shared/db/schema';
 import { createPortalSessionAction } from '@/features/billing';
-import { formatDate } from '@/lib/format-date';
+import { formatDate } from '@/shared/lib';
 
 export const dynamic = 'force-dynamic';
 

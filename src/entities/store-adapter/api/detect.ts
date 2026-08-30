@@ -1,4 +1,4 @@
-import type { Platform } from '@/lib/db/schema';
+import type { Platform } from '@/shared/db/schema';
 import { fetchText, rootOf } from '../lib/fetch-utils';
 import { manualAdapter } from './manual';
 import { shopifyAdapter } from './shopify';

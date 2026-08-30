@@ -13,7 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
-import type { NotificationKind } from '@/lib/db/schema';
+import type { NotificationKind } from '@/shared/db/schema';
 
 interface NotificationRow {
   id: string;

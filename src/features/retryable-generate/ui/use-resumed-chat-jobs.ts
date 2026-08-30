@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import type { GenField } from './generate-button';
-import { refreshKeepingScroll } from '@/lib/preserve-scroll';
+import { refreshKeepingScroll } from '@/shared/lib';
 
 export function useResumedChatJobsPoll(
   productId: string,

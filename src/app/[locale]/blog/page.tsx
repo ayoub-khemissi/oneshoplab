@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { listPostsWithFallback } from '@/lib/blog/posts';
-import { formatDate } from '@/lib/format-date';
+import { listPostsWithFallback } from '@/entities/blog';
+import { formatDate } from '@/shared/lib';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 

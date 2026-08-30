@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { getAppContactEmail } from '@/lib/app-contact';
+import { getAppContactEmail } from '@/shared/config';
 
 /**
  * Transactional mail entry point. Reads SMTP credentials from env
