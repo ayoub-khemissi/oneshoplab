@@ -28,7 +28,7 @@
     "backup:restore-test": "bash scripts/backup/restore-test.sh",
     "backup:usage": "tsx scripts/backup/r2-backup.ts usage",
     "test": "vitest run",
-    "test:unit": "vitest run tests/unit",
+    "test:unit": "VITEST_DB=0 vitest run tests/unit",
     "test:db": "vitest run tests/db",
     "test:watch": "vitest",
     "deps:circular": "madge --extensions ts,tsx --ts-config tsconfig.json --circular src",

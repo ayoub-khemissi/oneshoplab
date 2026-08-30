@@ -3,7 +3,8 @@
 // the DB is `<prod>_test`, every secret is a placeholder.
 import { testDatabaseUrl } from './test-env';
 
-process.env.DATABASE_URL = testDatabaseUrl();
+process.env.DATABASE_URL =
+  process.env.VITEST_DB === '0' ? 'mysql://unit:unit@127.0.0.1:1/unit_test' : testDatabaseUrl();
 process.env.APP_URL = 'http://localhost:3030';
 process.env.STRIPE_SECRET_KEY = 'sk_test_placeholder';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_placeholder';
