@@ -3,12 +3,7 @@
 import { Card } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  BulkPrefsEditor,
-  canonicalizePrefs,
-  prefsKey,
-  type BulkPrefs
-} from '@/components/bulk-prefs-editor';
+import { BulkPrefsEditor, canonicalizePrefs, prefsKey, type BulkPrefs } from './bulk-prefs-editor';
 import { updateUserDefaultBulkPrefsAction } from '../api/prefs-actions';
 
 /**

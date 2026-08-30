@@ -66,58 +66,16 @@ const eslintConfig = [
       'max-lines': ['error', { max: 600, skipBlankLines: true, skipComments: true }]
     }
   },
-  // Import boundaries (all already respected on 2026-08-29; these rules only
-  // keep it that way). Direction: app → components → shared/lib; worker → shared/lib.
-  {
-    files: ['src/components/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: '@/shared/db',
-              message:
-                'Components never touch the database — load in the page/server action, pass props.'
-            }
-          ],
-          patterns: [
-            {
-              // Exact module only: schema.ts (types + enum constants) stays importable.
-              group: ['@/shared/db/index'],
-              message:
-                'Components never touch the database — load in the page/server action, pass props.'
-            },
-            { group: ['@/worker/*'], message: 'Worker code is not importable from the UI.' },
-            { group: ['@/app/*'], message: 'Components must not depend on routes.' }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    files: ['src/lib/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/components/*', '@/app/*'],
-              message: 'lib/ is the bottom layer — it must not import UI or routes.'
-            },
-            { group: ['@/worker/*'], message: 'lib/ must not depend on the worker entry.' }
-          ]
-        }
-      ]
-    }
-  },
   {
     files: ['src/worker/**/*.{ts,mts}'],
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: [{ group: ['@/components/*', '@/app/*'], message: 'The worker has no UI.' }] }
+        {
+          patterns: [
+            { group: ['@/widgets/*', '@/views/*', '@/app/*'], message: 'The worker has no UI.' }
+          ]
+        }
       ]
     }
   },
@@ -129,10 +87,10 @@ const eslintConfig = [
   },
   // Feature-Sliced Design layers: each layer may only import from the layers
   // below it; slices of one layer never import each other. Public API only
-  // (`@/features/<slice>`), never deep paths. src/lib + src/components are
-  // legacy and importable from anywhere until they are empty. `<slice>/client`
-  // is the one allowed second entry: a client-only barrel for slices whose
-  // index.ts opens the db / uses server-only APIs (see src/shared/README.md).
+  // (`@/features/<slice>`), never deep paths. Two allowed second entries:
+  // `<slice>/actions` (features: the 'use server' modules only) and
+  // `<slice>/client` (a client-only barrel for slices whose index.ts opens
+  // the db / uses server-only APIs) — see src/shared/README.md.
   {
     files: ['src/entities/**/*.{ts,tsx}'],
     rules: {
@@ -196,6 +154,7 @@ const eslintConfig = [
               group: [
                 '@/features/*/*',
                 '!@/features/*/actions',
+                '!@/features/*/client',
                 '@/entities/*/*',
                 '!@/entities/*/client'
               ],
@@ -239,6 +198,7 @@ const eslintConfig = [
                 '@/widgets/*/*',
                 '@/features/*/*',
                 '!@/features/*/actions',
+                '!@/features/*/client',
                 '@/entities/*/*',
                 '!@/entities/*/client'
               ],
@@ -262,6 +222,7 @@ const eslintConfig = [
                 '@/widgets/*/*',
                 '@/features/*/*',
                 '!@/features/*/actions',
+                '!@/features/*/client',
                 '@/entities/*/*',
                 '!@/entities/*/client'
               ],

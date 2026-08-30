@@ -39,7 +39,6 @@ src/
       stripe/webhook/      Stripe events → DB plan/credit updates
       kie/callback/        kie.ai webhook (job completion)
       products/generate/   on-demand product rewrite endpoint
-  components/              UI components (server + client)
   entities/credit/         credit ledger (applyCreditTransaction — debit/grant atomically)
   entities/legal-consent/  Terms version + checkout consent params
   features/billing/        Stripe client + checkout/portal actions, pricing + credit-pack cards

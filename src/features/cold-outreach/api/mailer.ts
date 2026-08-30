@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { getAppContactEmail } from '@/shared/config';
 
 /**
- * Cold-outreach mailer. Separate from `src/lib/mailer.ts` (transactional
+ * Cold-outreach mailer. Separate from `src/shared/mailer` (transactional
  * Brevo on oneshoplab.com) on purpose: cold sends go through Hostinger
  * SMTP on `get-oneshoplab.com` so a reputation hit on prospection never
  * bleeds into the app's transactional flow (password resets, receipts).

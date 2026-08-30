@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { canonicalizePrefs, prefsKey, type BulkPrefs } from '@/components/bulk-prefs-editor';
+import { canonicalizePrefs, prefsKey, type BulkPrefs } from '@/features/bulk-generate/client';
 import {
   errorKey,
   type ActiveBulkJob,

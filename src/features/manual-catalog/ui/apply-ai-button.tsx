@@ -4,7 +4,7 @@ import { Button } from '@heroui/react';
 import { Wand2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { ConfirmDialog } from '@/shared/ui';
 import { applyAiToManualProductAction } from '../api/actions';
 
 interface Props {

@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { randomUUID } from 'node:crypto';
-import { LocalePicker } from '@/components/locale-picker';
+import { LocalePicker } from '@/shared/ui';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES, type Locale } from '@/i18n/routing';
 import { siteLimitForPlan } from '@/entities/ai-model';

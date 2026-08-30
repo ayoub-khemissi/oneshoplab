@@ -20,7 +20,7 @@ import { useBulkGenerate } from './use-bulk-generate';
 import {
   noFieldsSelected as prefsHasNoFields,
   type BulkPrefs
-} from '@/components/bulk-prefs-editor';
+} from '@/features/bulk-generate/client';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 interface BulkGenerateSectionProps {

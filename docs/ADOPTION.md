@@ -104,7 +104,21 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   `features/{account,manage-project,model-preferences}/api/actions.ts` + `features/run-audit/api/project-actions.ts`,
   `components/{account-tabs,profile-forms}` → `src/features/account/ui/`, `components/user-menu` →
   `src/widgets/user-menu/`, `lib/localized-path` → `src/shared/lib/`.
-- Legacy ratchet (must only go down): `src/lib` 40 files, `src/components`
-  50 files.
+- Leads + admin moved (2026-08-30): `lib/leads/{qualify,contact-scraper,discovery/filters}` →
+  `src/entities/lead/` (api/qualify, api/contact-scraper, lib/blocked-domains — the db-writing
+  qualifier sits in the entity so both the discovery scripts and the admin actions reach it
+  without a feature→feature import), `lib/leads/discovery/*` + `alt-platforms` →
+  `src/features/lead-discovery/`, `lib/leads/actions` + `components/lead-*` →
+  `src/features/lead-qualification/` (`actions.ts` entry), `components/lead-outreach-copy` →
+  `src/features/cold-outreach/ui/` (`client.ts` entry).
+- Remaining `src/components` moved (2026-08-30): 23 generic primitives → `src/shared/ui/`
+  (one barrel), site chrome → `src/widgets/{site-header,site-footer,showcase-section,audit-toast-watcher}`,
+  feature UI → `features/{bulk-generate,manage-project,run-audit,manual-catalog}/ui/`
+  (`bulk-generate/client.ts`, `run-audit/client.ts` entries), dashboard page bodies +
+  `_components`/`_lib` → `src/views/{dashboard-home,dashboard-site,dashboard-product}`;
+  dead `components/image-carousel.tsx` deleted; `widgets/user-menu` folded into `widgets/site-header`
+  (its only consumer — widgets never import each other). ESLint now also allows `@/features/*/client`.
+- Legacy ratchet: `src/lib` 0 files, `src/components` 0 files — both directories deleted
+  (2026-08-30); the ESLint legacy blocks are gone.
 - Also today: Playwright smoke suite (24 tests) — its own non-blocking
   workflow with the MySQL suites; CI down to ~1 min (3 parallel jobs).

@@ -2,7 +2,7 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos';
+import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/shared/ui';
 import { Link } from '@/i18n/navigation';
 import { launchAnonymousAudit, normalizeUrl } from '@/features/run-audit';
 import {

@@ -4,7 +4,7 @@ import { Spinner } from '@heroui/react';
 import { AlertTriangle, Coins, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { BusyKind } from './types';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { ConfirmDialog } from '@/shared/ui';
 import type { ImageJobRow } from '@/entities/generation-job';
 
 interface FailedTileProps {

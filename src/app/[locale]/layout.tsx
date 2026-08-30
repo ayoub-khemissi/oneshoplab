@@ -5,11 +5,11 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Analytics, CookieBanner, GaRedirectEvents, MetaPixel } from '@/shared/analytics';
-import { AuditToastWatcher } from '@/components/audit-toast-watcher';
-import { SiteFooter } from '@/components/site-footer';
+import { AuditToastWatcher } from '@/widgets/audit-toast-watcher';
+import { SiteFooter } from '@/widgets/site-footer';
+import { SiteHeader } from '@/widgets/site-header';
+import { ThemeProvider } from '@/shared/ui';
 import { getAppContactEmail } from '@/shared/config';
-import { SiteHeader } from '@/components/site-header';
-import { ThemeProvider } from '@/components/theme-provider';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import '../globals.css';
 // SVG flag glyphs — Windows doesn't ship flag emoji in its system fonts,

@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { ImageZoom } from '@/components/image-zoom';
+import { ImageZoom } from '@/shared/ui';
 import { decodeHtmlEntities } from '@/entities/store-adapter';
 import {
   loadSharedAudit,

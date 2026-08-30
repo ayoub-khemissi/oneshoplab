@@ -6,3 +6,4 @@ export {
 } from './api/actions';
 export { ManualProductForm } from './ui/manual-product-form';
 export { ApplyAiButton } from './ui/apply-ai-button';
+export { AppliedToastOnMount } from './ui/applied-toast-on-mount';

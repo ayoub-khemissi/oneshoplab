@@ -3,11 +3,14 @@ import { and, desc, eq, isNotNull, isNull, like, sql } from 'drizzle-orm';
 import { ExternalLink, Trash2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { LeadBulkPaste } from '@/components/lead-bulk-paste';
-import { LeadFilters } from '@/components/lead-filters';
-import { LeadNotesEditor } from '@/components/lead-notes-editor';
-import { LeadOutreachCopy } from '@/components/lead-outreach-copy';
-import { LeadStatusSelect } from '@/components/lead-status-select';
+import { LeadOutreachCopy } from '@/features/cold-outreach/client';
+import {
+  LeadBulkPaste,
+  LeadFilters,
+  LeadNotesEditor,
+  LeadStatusSelect,
+  deleteLeadAction
+} from '@/features/lead-qualification';
 import { isAdminEmail } from '@/entities/user';
 import { buildLeadOutreach, freshAuditsByDomain } from '@/features/cold-outreach';
 import { auth } from '@/entities/user';
@@ -19,7 +22,6 @@ import {
   type LeadStatus,
   type Platform
 } from '@/shared/db/schema';
-import { deleteLeadAction } from '@/lib/leads/actions';
 import { formatDate } from '@/shared/lib';
 
 export const dynamic = 'force-dynamic';

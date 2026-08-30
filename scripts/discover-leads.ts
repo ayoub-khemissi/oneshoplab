@@ -189,11 +189,10 @@ async function main(): Promise<void> {
     getQueryTemplates,
     getNicheQueries,
     multiBraveDiscovery,
-    isBlockedDomain,
     CommonCrawlProvider,
     TrancoProvider
-  } = await import('@/lib/leads/discovery');
-  const { qualifyBatch } = await import('@/lib/leads/qualify');
+  } = await import('@/features/lead-discovery');
+  const { isBlockedDomain, qualifyBatch } = await import('@/entities/lead');
 
   // Materialise the candidate stream upfront so we know what we're
   // working with before hitting any merchant servers. The provider's
@@ -253,7 +252,7 @@ async function main(): Promise<void> {
     }
   } else if (args.mode.kind === 'alt-platform') {
     const { altPlatformQueries, ALT_PLATFORMS, isAltPlatformBlocked } =
-      await import('@/lib/leads/alt-platforms');
+      await import('@/features/lead-discovery');
     const lang: 'fr' | 'en' = args.country === 'fr' ? 'fr' : 'en';
     const platforms: ReadonlyArray<'magento' | 'prestashop' | 'bigcommerce' | 'squarespace'> =
       args.mode.platform === 'all' ? ALT_PLATFORMS : [args.mode.platform];
@@ -372,8 +371,8 @@ async function main(): Promise<void> {
   // Contacts-only: skip store qualification, just scrape the contact
   // and upsert (agencies, freelancers, anyone without a catalog).
   if (args.contactsOnly) {
-    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
-    const { upsertContactLead } = await import('@/lib/leads/qualify');
+    const { extractContactInfo } = await import('@/entities/lead');
+    const { upsertContactLead } = await import('@/entities/lead');
     let created = 0;
     let refreshed = 0;
     let withEmail = 0;
@@ -419,9 +418,9 @@ async function main(): Promise<void> {
   // already polite (~5-10 req/s without concurrency).
   if (args.mode.kind === 'alt-platform') {
     const { fetchText } = await import('@/entities/store-adapter');
-    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
-    const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
-    const { upsertManualMerchantLead } = await import('@/lib/leads/qualify');
+    const { extractContactInfo } = await import('@/entities/lead');
+    const { detectAltPlatform } = await import('@/features/lead-discovery');
+    const { upsertManualMerchantLead } = await import('@/entities/lead');
     const lang: 'fr' | 'en' = args.country === 'fr' ? 'fr' : 'en';
     let created = 0;
     let refreshed = 0;
@@ -504,9 +503,9 @@ async function main(): Promise<void> {
   // otherwise skip.
   if (args.withAlt) {
     const { qualifyUrl, upsertQualifiedLead, upsertManualMerchantLead, detectLanguage } =
-      await import('@/lib/leads/qualify');
-    const { detectAltPlatform } = await import('@/lib/leads/alt-platforms');
-    const { extractContactInfo } = await import('@/lib/leads/contact-scraper');
+      await import('@/entities/lead');
+    const { detectAltPlatform } = await import('@/features/lead-discovery');
+    const { extractContactInfo } = await import('@/entities/lead');
 
     let sQualified = 0;
     let sNew = 0;

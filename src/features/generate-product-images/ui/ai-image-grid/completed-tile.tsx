@@ -4,9 +4,8 @@ import { Spinner } from '@heroui/react';
 import { RefreshCw, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { BusyKind } from './types';
-import { ConfirmDialog } from '@/components/confirm-dialog';
+import { ConfirmDialog, ImageZoom } from '@/shared/ui';
 import { ImageExpiry } from '../image-expiry';
-import { ImageZoom } from '@/components/image-zoom';
 import type { ImageJobRow } from '@/entities/generation-job';
 
 interface CompletedTileProps {

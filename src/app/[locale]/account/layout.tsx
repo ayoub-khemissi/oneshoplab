@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { AccountTabs } from '@/features/account';
-import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
+import { ScrollAwareSticky } from '@/shared/ui';
 
 // Authenticated account area: noindex everywhere under /account.
 export const metadata: Metadata = {

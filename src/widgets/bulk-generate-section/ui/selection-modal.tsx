@@ -6,8 +6,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { CandidateRow } from './candidate-row';
 import type { BulkCandidate } from '../model/types';
-import { BulkPrefsEditor, type BulkPrefs } from '@/components/bulk-prefs-editor';
-import { DebouncedSearchInput } from '@/components/debounced-search-input';
+import { BulkPrefsEditor, type BulkPrefs } from '@/features/bulk-generate/client';
+import { DebouncedSearchInput } from '@/shared/ui';
 import { ModelPickerChips } from '@/features/model-preferences';
 import {
   CHAT_MODEL_REGISTRY,

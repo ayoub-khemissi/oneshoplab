@@ -112,9 +112,8 @@ and the guard is DB-tested (`tests/db/job-transitions.test.ts`).
 ## Import boundaries
 
 Enforced by ESLint `no-restricted-imports` (see `eslint.config.mjs`):
-app → components → shared/lib; worker → shared/lib. `src/components` never
-imports `@/shared/db`, `@/worker`, `@/app`; `src/lib` never imports
-`@/components`, `@/app`, `@/worker`; the worker never imports UI. `pnpm deps:circular` (madge)
+the FSD layer order below (app → views → widgets → features → entities → shared);
+the worker never imports UI (`@/widgets`, `@/views`, `@/app`). `pnpm deps:circular` (madge)
 fails on any import cycle — it is part of `pnpm check` and CI.
 
 ## Monitoring (ops)
@@ -158,9 +157,9 @@ because `src/pages` is Next's Pages Router) → `src/widgets` → `src/features`
 → `src/entities` → `src/shared`. Each layer imports only from the layers below it, slices never
 import each other sideways, and importers use a slice's `index.ts` public API
 only — all enforced by ESLint (`no-restricted-imports`, see
-`eslint.config.mjs`). `src/lib` and `src/components` are **legacy**: importable
-from anywhere while the migration runs, but no new module goes there, and
-touching a legacy module means moving it into its slice. Layout and rules:
+`eslint.config.mjs`). `src/lib` and `src/components` are gone (emptied 2026-08-30):
+every module lives in a slice, generic UI primitives in `src/shared/ui`, page
+bodies in `src/views/<route>` (`page.tsx` = params + one view). Layout and rules:
 `src/shared/README.md`. Pilot slice: share links (`entities/share-link`,
 `features/share-link`, `widgets/share-links-card`). Order of the remaining
 moves: audit → generation (text/images) → bulk → billing/credits →
