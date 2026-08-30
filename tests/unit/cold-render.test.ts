@@ -4,8 +4,12 @@
  * decision — never instructs the reader to reply "STOP" (link only).
  */
 import { describe, expect, it } from 'vitest';
-import { renderColdMail } from '@/lib/cold/render';
-import { getTemplate, platformDisplayName, type ColdVars } from '@/lib/cold/templates';
+import {
+  getTemplate,
+  platformDisplayName,
+  renderColdMail,
+  type ColdVars
+} from '@/features/cold-outreach';
 
 const OPT_OUT = 'https://oneshoplab.com/fr/unsubscribe?e=abc';
 const agencyVars: ColdVars = {

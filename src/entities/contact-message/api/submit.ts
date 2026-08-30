@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { and, gte, or, eq, sql } from 'drizzle-orm';
-import { z } from 'zod';
 import { db } from '@/lib/db';
 import { contactMessages } from '@/lib/db/schema';
 import { postDiscordMessage, type DiscordChannel } from '@/lib/discord';
 import { sendMail } from '@/lib/mailer';
 import { getAppContactEmail } from '@/lib/app-contact';
+import type { ContactContext, ContactInput, SubmitContactResult } from '../model/schema';
 
 /**
  * Contact-form core, independent of Next request plumbing so it can be
@@ -16,27 +16,6 @@ import { getAppContactEmail } from '@/lib/app-contact';
  * lose a message someone took the time to write. The *NotifiedAt
  * columns record which channels actually fired.
  */
-
-export const contactSchema = z.object({
-  name: z.string().trim().min(2).max(120),
-  email: z.string().trim().toLowerCase().email().max(255),
-  subject: z.string().trim().max(200).optional().or(z.literal('')),
-  message: z.string().trim().min(10).max(5000)
-});
-export type ContactInput = z.infer<typeof contactSchema>;
-
-export type ContactErrorCode = 'invalid' | 'captcha' | 'rate_limited' | 'send_failed';
-
-export interface ContactContext {
-  userId?: string | null;
-  locale: string;
-  ip?: string | null;
-  userAgent?: string | null;
-}
-
-export type SubmitContactResult =
-  | { ok: true; id: string; notified: { email: boolean; discord: boolean } }
-  | { ok: false; code: ContactErrorCode };
 
 /** Abuse guard: max 3 submissions per 10 min from the same email OR
  *  the same IP. Cheap DB count — no extra infra — and generous enough

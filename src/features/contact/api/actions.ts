@@ -2,7 +2,11 @@
 
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
-import { contactSchema, submitContactMessage, type ContactErrorCode } from '@/lib/contact';
+import {
+  contactSchema,
+  submitContactMessage,
+  type ContactErrorCode
+} from '@/entities/contact-message';
 import { verifyRecaptcha } from '@/lib/recaptcha';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 

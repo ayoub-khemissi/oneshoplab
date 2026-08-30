@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { ContactForm } from '@/components/contact-form';
+import { ContactForm } from '@/features/contact';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';

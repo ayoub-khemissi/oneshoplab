@@ -1,8 +1,8 @@
 import { and, desc, eq, gt, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
-import { agencyNameFromDomain } from './render';
-import { platformDisplayName } from './templates';
+import { agencyNameFromDomain } from '../lib/render';
+import { platformDisplayName } from '../lib/templates';
 import {
   buildContactCopy,
   CONTACT_LANGS,

@@ -222,7 +222,7 @@ const eslintConfig = [
   {
     // Worker + server-only libs log operational lines with console.log on
     // purpose (PM2 captures stdout); they are not UI code.
-    files: ['src/worker/**', 'src/lib/cold/**'],
+    files: ['src/worker/**', 'src/features/cold-outreach/**'],
     rules: { 'no-console': 'off' }
   }
 ];

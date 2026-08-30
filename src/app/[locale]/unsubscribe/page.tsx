@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { eq } from 'drizzle-orm';
 import { getAppContactEmail } from '@/lib/app-contact';
-import { verifyOptOutToken } from '@/lib/cold/opt-out';
+import { verifyOptOutToken } from '@/features/cold-outreach';
 import { db } from '@/lib/db';
 import { leadAttempts, leads } from '@/lib/db/schema';
 

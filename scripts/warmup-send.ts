@@ -105,7 +105,7 @@ function sleep(ms: number): Promise<void> {
 async function main(): Promise<void> {
   const { dryRun, recipients } = parseArgs(process.argv.slice(2));
 
-  const { sendColdMail } = await import('@/lib/cold/mailer');
+  const { sendColdMail } = await import('@/features/cold-outreach');
 
   console.log(`[warmup-send] mode=${dryRun ? 'DRY-RUN' : 'LIVE'} recipients=${recipients.length}`);
 

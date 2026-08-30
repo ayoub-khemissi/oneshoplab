@@ -19,8 +19,12 @@ vi.mock('next/headers', () => ({
 }));
 
 import { sql } from 'drizzle-orm';
-import { contactSchema, isContactRateLimited, submitContactMessage } from '@/lib/contact';
-import { submitContactAction } from '@/lib/contact-actions';
+import {
+  contactSchema,
+  isContactRateLimited,
+  submitContactMessage
+} from '@/entities/contact-message';
+import { submitContactAction } from '@/features/contact';
 import { db } from '@/lib/db';
 
 const input = {

@@ -5,7 +5,7 @@ import { CheckCircle2, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState, useState } from 'react';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
-import { submitContactAction, type ContactFormState } from '@/lib/contact-actions';
+import { submitContactAction, type ContactFormState } from '../api/actions';
 
 interface ContactFormProps {
   locale: string;

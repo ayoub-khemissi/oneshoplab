@@ -24,7 +24,7 @@
  * tripping the Hostinger SMTP rate limit.
  */
 import { existsSync, readFileSync } from 'node:fs';
-import type { ColdVariant } from '@/lib/cold/templates';
+import type { ColdVariant } from '@/features/cold-outreach';
 
 if (existsSync('.env')) {
   for (const line of readFileSync('.env', 'utf8').split('\n')) {
@@ -50,7 +50,7 @@ import {
   isSensitiveAddress,
   isValidContactEmail,
   SENSITIVE_LOCALPARTS
-} from '@/lib/cold/lead-filters';
+} from '@/entities/lead';
 
 interface CliArgs {
   mode: Mode;
@@ -149,11 +149,11 @@ function sleep(ms: number): Promise<void> {
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
 
-  const { sendColdMail } = await import('@/lib/cold/mailer');
+  const { sendColdMail } = await import('@/features/cold-outreach');
   const { renderColdMail, firstNameFromEmail, agencyNameFromDomain } =
-    await import('@/lib/cold/render');
-  type ScoreSnapshot = import('@/lib/cold/render').ScoreSnapshot;
-  const { platformDisplayName } = await import('@/lib/cold/templates');
+    await import('@/features/cold-outreach');
+  type ScoreSnapshot = import('@/features/cold-outreach').ScoreSnapshot;
+  const { platformDisplayName } = await import('@/features/cold-outreach');
 
   // Localised labels for the score grid + stats hook. Matches the
   // labels we use on the dashboard / audit page so the cold mail
@@ -168,7 +168,7 @@ async function main(): Promise<void> {
     },
     en: { overall: 'Overall', catalog: 'Catalog', copy: 'Copy', visual: 'Visual', tagging: 'Tags' }
   };
-  const { makeOptOutToken } = await import('@/lib/cold/opt-out');
+  const { makeOptOutToken } = await import('@/features/cold-outreach');
   const { db } = await import('@/lib/db');
   const { audits, leads, leadAttempts } = await import('@/lib/db/schema');
   const { and, desc, eq, isNotNull, isNull, inArray, sql, or } = await import('drizzle-orm');

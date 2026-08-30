@@ -9,7 +9,7 @@ import {
   isPlaceholderAddress,
   isSensitiveAddress,
   isValidContactEmail
-} from '@/lib/cold/lead-filters';
+} from '@/entities/lead';
 
 describe('isSensitiveAddress', () => {
   it.each([

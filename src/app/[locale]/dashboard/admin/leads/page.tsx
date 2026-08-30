@@ -9,7 +9,7 @@ import { LeadNotesEditor } from '@/components/lead-notes-editor';
 import { LeadOutreachCopy } from '@/components/lead-outreach-copy';
 import { LeadStatusSelect } from '@/components/lead-status-select';
 import { isAdminEmail } from '@/lib/admin';
-import { buildLeadOutreach, freshAuditsByDomain } from '@/lib/cold/lead-outreach';
+import { buildLeadOutreach, freshAuditsByDomain } from '@/features/cold-outreach';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { leads, LEAD_STATUSES, PLATFORMS, type LeadStatus, type Platform } from '@/lib/db/schema';

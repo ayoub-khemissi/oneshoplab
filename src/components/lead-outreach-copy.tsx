@@ -2,7 +2,7 @@
 
 import { Check, ClipboardCopy, MessageSquareText, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { ContactLang } from '@/lib/cold/contact-form';
+import type { ContactLang } from '@/features/cold-outreach';
 
 export interface OutreachCopyData {
   subject: string;
