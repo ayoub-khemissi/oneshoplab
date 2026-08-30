@@ -37,7 +37,7 @@ pnpm deploy           # scripts/deploy.sh — the ONLY way to deploy (gates → 
 Quality rules live in `docs/GUIDELINES.md`; the dated state of adoption in
 `docs/ADOPTION.md`. Git hooks (husky): pre-commit runs prettier + eslint on
 staged files + typecheck; pre-push runs the i18n check + audit. CI
-(`.github/workflows/ci.yml`) runs the same gates plus a build on every push.
+(`.github/workflows/ci.yml`, 3 parallel jobs ≈ 1 min) runs the same gates plus a build on every push; the Playwright smoke suite runs beside it in `e2e.yml` (main + manual).
 
 Tests: `pnpm test` (vitest; `tests/unit` = pure, `tests/db` = real MySQL
 `<db>_test`, migrated automatically, never prod — the runner refuses any DB

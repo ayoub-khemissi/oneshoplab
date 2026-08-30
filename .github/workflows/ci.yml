@@ -9,10 +9,40 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Three independent jobs so wall-clock ≈ the slowest one (~1 min), not the sum.
+# The browser smoke suite lives in e2e.yml (slower, non-blocking).
 jobs:
-  quality:
-    name: Quality gates
+  checks:
+    name: Lint · types · i18n · format · deps
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint (errors block; warnings are the ratchet)
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: i18n parity + key usage
+        run: pnpm i18n:check
+      - name: Format check
+        run: pnpm format:check
+      - name: Import cycles (madge)
+        run: pnpm deps:circular
+      - name: Dependency audit (critical only)
+        run: pnpm audit:prod
+      - name: Migrations in sync with schema
+        run: pnpm drizzle-kit check
+
+  unit:
+    name: Vitest (unit + MySQL suites)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     services:
       mysql:
         image: mysql:8.0
@@ -23,37 +53,37 @@ jobs:
         options: >-
           --health-cmd "mysqladmin ping -proot"
           --health-interval 5s --health-timeout 5s --health-retries 20
-    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      # pnpm version comes from package.json "packageManager" (single source).
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      - name: Install (frozen lockfile)
-        run: pnpm install --frozen-lockfile
-      - name: Lint (errors block; warnings are the ratchet)
-        run: pnpm lint
-      - name: Typecheck
-        run: pnpm typecheck
-      - name: i18n parity + key usage
-        run: pnpm i18n:check
-      - name: Import cycles (madge)
-        run: pnpm deps:circular
-
-      - name: Tests (vitest — unit + ledger/webhook against MySQL)
+      - run: pnpm install --frozen-lockfile
+      - name: Tests
         env:
           TEST_DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
         run: pnpm test
 
-      - name: Format check
-        run: pnpm format:check
-      - name: Dependency audit (critical only)
-        run: pnpm audit:prod
-      - name: Migrations in sync with schema
-        run: pnpm drizzle-kit check
+  build:
+    name: Next build
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Next build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'messages/**', 'pricing.json') }}
+          restore-keys: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Build
         env:
           # Build-time public config only; no secrets are needed to compile.
@@ -61,26 +91,5 @@ jobs:
           # only connects lazily, so a placeholder is enough to collect page data.
           DATABASE_URL: mysql://ci:ci@127.0.0.1:3306/ci
           APP_URL: https://oneshoplab.com
-          # Empty on purpose: the e2e run below serves this build and must not
-          # load Google's widget (no network, no keys).
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ''
         run: pnpm build && test -s .next/BUILD_ID
-
-      - name: Install Chromium for Playwright
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: E2E smoke (Playwright against next start + MySQL)
-        env:
-          CI: '1'
-          TEST_DATABASE_URL: mysql://root:root@127.0.0.1:3306/oneshoplab_test
-        run: pnpm e2e
-
-      - name: Upload Playwright report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            playwright-report
-            test-results
-          retention-days: 7
