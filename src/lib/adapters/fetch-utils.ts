@@ -159,5 +159,8 @@ export function decodeHtmlEntities(input: string): string {
         return _;
       }
     })
-    .replace(/&([a-z]+);/gi, (raw, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? raw);
+    .replace(
+      /&([a-z]+);/gi,
+      (raw, name: string) => NAMED_ENTITIES[name] ?? NAMED_ENTITIES[name.toLowerCase()] ?? raw
+    );
 }
