@@ -8,12 +8,11 @@ import {
   Label,
   TextField
 } from '@heroui/react';
-import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { randomUUID } from 'node:crypto';
 import { Link } from '@/i18n/navigation';
 
 export async function generateMetadata({
@@ -31,11 +30,9 @@ export async function generateMetadata({
 import { GoogleSignInButton } from '@/components/google-signin-button';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
-import { SIGNUP_FREE_CREDITS } from '@/lib/ai';
 import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/lib/anon';
-import { hashPassword, isGoogleAuthEnabled, signIn } from '@/lib/auth';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
+import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
+import { registerCredentialsUser } from '@/lib/signup';
 import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 
 interface PageProps {
@@ -82,31 +79,17 @@ async function signupAction(formData: FormData) {
     redirect(`/signup?error=captcha${carryQs}`);
   }
 
-  if (!email.includes('@') || email.length < 3) {
-    redirect(`/signup?error=invalid_email${carryQs}`);
-  }
-  if (password.length < 8) {
-    redirect(`/signup?error=short_password${carryQs}`);
-  }
-
-  const existing = await db.query.users.findFirst({ where: eq(users.email, email) });
-  if (existing) {
-    redirect(`/signup?error=email_taken${carryQs}`);
-  }
-
-  const userId = randomUUID();
-  const passwordHash = await hashPassword(password);
-  // Free tier signup grant lands in the pack bucket — it's a one-shot
-  // never-expire welcome, not a renewable subscription allowance.
-  await db.insert(users).values({
-    id: userId,
+  const jar = await cookies();
+  const created = await registerCredentialsUser({
     email,
+    password,
     name,
-    passwordHash,
-    creditsBalance: SIGNUP_FREE_CREDITS,
-    creditsBalancePack: SIGNUP_FREE_CREDITS,
-    plan: 'free'
+    locale: jar.get('NEXT_LOCALE')?.value ?? null
   });
+  if (!created.ok) {
+    redirect(`/signup?error=${created.error}${carryQs}`);
+  }
+  const userId = created.userId;
 
   const anonToken = await getAnonToken();
   if (anonToken) {

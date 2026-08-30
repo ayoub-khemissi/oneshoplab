@@ -97,7 +97,38 @@ const NAMED_ENTITIES: Record<string, string> = {
   copy: '©',
   reg: '®',
   trade: '™',
-  euro: '€'
+  euro: '€',
+  // Latin-1 letters WooCommerce/WordPress still emit on some setups
+  // ("Caf&eacute;") — without these a French title reaches the audit and
+  // the AI prompts with raw entities.
+  agrave: 'à',
+  aacute: 'á',
+  acirc: 'â',
+  auml: 'ä',
+  ccedil: 'ç',
+  egrave: 'è',
+  eacute: 'é',
+  ecirc: 'ê',
+  euml: 'ë',
+  igrave: 'ì',
+  iacute: 'í',
+  icirc: 'î',
+  iuml: 'ï',
+  ntilde: 'ñ',
+  ograve: 'ò',
+  oacute: 'ó',
+  ocirc: 'ô',
+  ouml: 'ö',
+  oelig: 'œ',
+  ugrave: 'ù',
+  uacute: 'ú',
+  ucirc: 'û',
+  uuml: 'ü',
+  Agrave: 'À',
+  Eacute: 'É',
+  Egrave: 'È',
+  Ccedil: 'Ç',
+  szlig: 'ß'
 };
 
 /**
