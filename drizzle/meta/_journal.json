@@ -176,6 +176,13 @@
       "when": 1788030443652,
       "tag": "0024_moaning_randall",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1788067776073,
+      "tag": "0025_striped_diamondback",
+      "breakpoints": true
     }
   ]
 }

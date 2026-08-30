@@ -6,6 +6,11 @@ import { creditTransactions, users } from '@/shared/db/schema';
 export async function resetTables(): Promise<void> {
   await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);
   for (const t of [
+    'api_key_events',
+    'api_keys',
+    'api_idempotency',
+    'catalog_sync_sessions',
+    'product_changes',
     'credit_transactions',
     'legal_consents',
     'subscriptions',

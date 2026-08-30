@@ -140,7 +140,7 @@ seam: `shared/api/rate-limit.ts`).
 - `api_key_events`: id, apiKeyId, kind (created|rotated|revoked|expired|auth_failed), ip, at, meta json.
 - `api_idempotency`: key (pk: sha256(apiKeyId + idemKey)), bodyHash, status, responseJson, createdAt (TTL 24 h, swept by the worker).
 - `catalog_sync_sessions`: id, projectId, seenSourceIds json, startedAt, expiresAt, closedAt.
-- `product_changes`: id (ULID), projectId, productId, productSourceId, field, value json, valueHash, sourceJobId, status (pending|applied|failed|skipped|conflict|cancelled|expired), approvedBy, approvedAt, ackedAt, ackPayload json, expiresAt.
+- `product_changes`: id (ULID), projectId, productId, productSourceId, field, value json, valueHash (sha256 of the new value), **priorValueHash** (sha256 of the store field at approval time — what `storeValueHash` is compared against), sourceJobId, status (pending|applied|failed|skipped|conflict|cancelled|expired), approvedBy, approvedAt, ackedAt, ackPayload json, expiresAt.
 
 "Approved change" is new product behaviour: on the product page the merchant
 clicks **Apply to store** on a generation → `product_changes` row (feature
@@ -171,8 +171,9 @@ listing is index-only. Nothing in the hot path calls the AI providers.
   lifecycle (rotate/revoke/expire), events.
 - `entities/product-change`: table + guarded status transitions (same
   pattern as `generation-job` transitions).
-- `shared/api`: route helpers — `withSiteKey()` (auth + signature + rate
-  limit + permission), error envelope, idempotency, zod body parsing.
+- `shared/api`: error envelope, rate limit, idempotency, zod body parsing;
+  `withSiteKey()` (auth + signature + rate limit + permission) lives in
+  `entities/api-key` because `shared` may not import entities.
 - `features/integrations`: key management (server actions + `ui/`) shown in
   site settings; `features/apply-to-store`: the "Apply to store" action + UI.
 - `views/dashboard-site` gets an **Integrations** tab; `app/api/v1/**` routes

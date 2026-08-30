@@ -9,6 +9,8 @@ const { runAuditWatchdog } = await import('./audit-watchdog');
 const { runKieWatchdog } = await import('./kie-watchdog');
 const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
+const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-key');
+const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
 
 import { writeWorkerHeartbeat } from '@/shared/health';
 
@@ -47,6 +49,14 @@ async function main(): Promise<void> {
       if (t0 - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
         lastCleanupAt = t0;
         tasks.push(runR2Cleanup().catch((e) => console.error('[worker] r2-cleanup failed', e)));
+        // Integration API housekeeping: key expiry/grace, stale changes,
+        // idempotency cache, abandoned catalog sync sessions.
+        tasks.push(
+          runApiKeySweeps().catch((e) => console.error('[worker] api-key sweep failed', e))
+        );
+        tasks.push(
+          runChangeSweeps().catch((e) => console.error('[worker] product-change sweep failed', e))
+        );
       }
       await Promise.allSettled(tasks);
     } catch (e) {

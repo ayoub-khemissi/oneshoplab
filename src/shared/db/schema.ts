@@ -749,3 +749,166 @@ export const legalConsents = mysqlTable(
     uniqSource: uniqueIndex('uniq_legal_consents_source').on(t.kind, t.source)
   })
 );
+
+// ============================================================================
+// INTEGRATION API — store plugins ↔ OSL (docs/api/INTEGRATION-API.md).
+// Site keys are hashed at rest (prefix for lookup, sha256 for the compare);
+// product_changes is the merchant's "apply to store" queue that plugins pull.
+// ============================================================================
+
+export const API_KEY_PERMISSIONS = ['catalog:write', 'changes:read', 'changes:ack'] as const;
+export type ApiKeyPermission = (typeof API_KEY_PERMISSIONS)[number];
+export const API_KEY_EVENT_KINDS = [
+  'created',
+  'rotated',
+  'revoked',
+  'expired',
+  'auth_failed'
+] as const;
+export type ApiKeyEventKind = (typeof API_KEY_EVENT_KINDS)[number];
+export const PRODUCT_CHANGE_STATUSES = [
+  'pending',
+  'applied',
+  'failed',
+  'skipped',
+  'conflict',
+  'cancelled',
+  'expired'
+] as const;
+export type ProductChangeStatus = (typeof PRODUCT_CHANGE_STATUSES)[number];
+export const PRODUCT_CHANGE_FIELDS = ['title', 'description', 'tags', 'images'] as const;
+export type ProductChangeField = (typeof PRODUCT_CHANGE_FIELDS)[number];
+
+export const apiKeys = mysqlTable(
+  'api_keys',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: varchar('user_id', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 120 }).notNull(),
+    /** First 12 chars of the plaintext (`osl_live_xxx`) — the lookup handle. */
+    prefix: varchar('prefix', { length: 12 }).notNull(),
+    /** sha256 hex of the full plaintext; the plaintext is never stored. */
+    keyHash: varchar('key_hash', { length: 64 }).notNull(),
+    permissions: json('permissions').$type<ApiKeyPermission[]>().notNull(),
+    expiresAt: timestamp('expires_at'),
+    revokedAt: timestamp('revoked_at'),
+    /** Set on rotation: the replacement key. The old key stays valid until
+     *  `graceUntil`, then the worker revokes it. */
+    rotatedToId: varchar('rotated_to_id', { length: 36 }),
+    graceUntil: timestamp('grace_until'),
+    lastUsedAt: timestamp('last_used_at'),
+    lastUsedIp: varchar('last_used_ip', { length: 64 }),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    uniqPrefix: uniqueIndex('uniq_api_keys_prefix').on(t.prefix),
+    uniqKeyHash: uniqueIndex('uniq_api_keys_key_hash').on(t.keyHash),
+    idxProject: index('idx_api_keys_project_id').on(t.projectId),
+    idxUser: index('idx_api_keys_user_id').on(t.userId)
+  })
+);
+
+export const apiKeyEvents = mysqlTable(
+  'api_key_events',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    apiKeyId: varchar('api_key_id', { length: 36 })
+      .notNull()
+      .references(() => apiKeys.id, { onDelete: 'cascade' }),
+    kind: mysqlEnum('kind', API_KEY_EVENT_KINDS).notNull(),
+    ip: varchar('ip', { length: 64 }),
+    at: timestamp('at').notNull().defaultNow(),
+    meta: json('meta').$type<Record<string, unknown> | null>()
+  },
+  (t) => ({
+    idxKey: index('idx_api_key_events_key').on(t.apiKeyId, t.kind)
+  })
+);
+
+/** Cached responses for `Idempotency-Key` requests (TTL 24 h, swept hourly). */
+export const apiIdempotency = mysqlTable(
+  'api_idempotency',
+  {
+    /** sha256(apiKeyId + ':' + Idempotency-Key) — scoped per key. */
+    key: varchar('key', { length: 64 }).primaryKey(),
+    bodyHash: varchar('body_hash', { length: 64 }).notNull(),
+    status: int('status').notNull(),
+    /** NULL = the cached response had no body (e.g. 204). */
+    responseJson: json('response_json'),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxCreatedAt: index('idx_api_idempotency_created_at').on(t.createdAt)
+  })
+);
+
+/** Multi-page `mode: "full"` catalog sync (TTL 30 min; one open per project). */
+export const catalogSyncSessions = mysqlTable(
+  'catalog_sync_sessions',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    seenSourceIds: json('seen_source_ids').$type<string[]>().notNull(),
+    startedAt: timestamp('started_at').notNull().defaultNow(),
+    expiresAt: timestamp('expires_at').notNull(),
+    closedAt: timestamp('closed_at')
+  },
+  (t) => ({
+    idxProject: index('idx_catalog_sync_sessions_project').on(t.projectId, t.closedAt),
+    idxExpires: index('idx_catalog_sync_sessions_expires').on(t.expiresAt)
+  })
+);
+
+export const productChanges = mysqlTable(
+  'product_changes',
+  {
+    /** ULID — time-ordered so the plugin cursor is the id itself. */
+    id: varchar('id', { length: 26 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    productId: varchar('product_id', { length: 36 })
+      .notNull()
+      .references(() => products.id, { onDelete: 'cascade' }),
+    productSourceId: varchar('product_source_id', { length: 255 }).notNull(),
+    field: mysqlEnum('field', PRODUCT_CHANGE_FIELDS).notNull(),
+    value: json('value').notNull(),
+    /** sha256 of the canonical JSON of `value` (integrity of what we sent). */
+    valueHash: varchar('value_hash', { length: 64 }).notNull(),
+    /** sha256 of the canonical JSON of the field as OSL knew it at approval
+     *  time; compared to the plugin's `storeValueHash` for conflict
+     *  detection. NULL = unknown (no conflict detection possible). */
+    priorValueHash: varchar('prior_value_hash', { length: 64 }),
+    sourceJobId: varchar('source_job_id', { length: 36 }).references(() => jobs.id, {
+      onDelete: 'set null'
+    }),
+    status: mysqlEnum('status', PRODUCT_CHANGE_STATUSES).notNull().default('pending'),
+    approvedBy: varchar('approved_by', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    approvedAt: timestamp('approved_at').notNull().defaultNow(),
+    ackedAt: timestamp('acked_at'),
+    ackPayload: json('ack_payload').$type<{
+      status: 'applied' | 'failed' | 'skipped';
+      error?: string;
+      storeUpdatedAt?: string;
+      storeValueHash?: string;
+    } | null>(),
+    expiresAt: timestamp('expires_at')
+  },
+  (t) => ({
+    idxProjectStatusId: index('idx_product_changes_project_status_id').on(
+      t.projectId,
+      t.status,
+      t.id
+    ),
+    idxProduct: index('idx_product_changes_product').on(t.productId)
+  })
+);
