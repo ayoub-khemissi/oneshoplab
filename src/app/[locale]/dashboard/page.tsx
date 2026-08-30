@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { DeleteSiteButton } from '@/components/delete-site-button';
+import { DeleteSiteButton } from '@/features/manage-project';
 import { SiteFavicon } from '@/components/site-favicon';
 import { siteLimitForPlan } from '@/entities/ai-model';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { audits, projects, type AuditStatus } from '@/lib/db/schema';
 

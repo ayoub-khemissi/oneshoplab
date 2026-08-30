@@ -10,7 +10,7 @@ const runDynamicAuditForProduct = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/features/run-audit/api/dynamic-audit', () => ({
   runDynamicAuditForProduct: (...a: unknown[]) => runDynamicAuditForProduct(...a)
 }));
-vi.mock('@/lib/auth', () => ({ auth: async () => null }));
+vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 
 import { launchAnonymousAudit, launchAuditForUser, normalizeUrl } from '@/features/run-audit';
 import { processAudit } from '@/features/run-audit';

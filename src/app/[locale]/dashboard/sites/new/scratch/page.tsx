@@ -11,7 +11,7 @@ import { SUPPORTED_LOCALES, type Locale } from '@/i18n/routing';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { recomputeManualAudit } from '@/entities/audit';
 import { normalizeUrl } from '@/features/run-audit';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 

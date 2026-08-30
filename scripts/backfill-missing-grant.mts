@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
-import { applyCreditTransaction } from '@/lib/credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { PLAN_TIERS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { users, subscriptions } from '@/lib/db/schema';
-import { getStripeClient, resolvePriceId } from '@/lib/stripe';
+import { getStripeClient, resolvePriceId } from '@/features/billing';
 
 /**
  * Backfill the renewal credit grant for a single user whose

@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
+import { applyCreditTransaction, InsufficientCreditsError } from '@/entities/credit';
 import { persistKieJobFailure } from './persist-result';
 import { db } from '@/lib/db';
 import { jobs, products, users } from '@/lib/db/schema';

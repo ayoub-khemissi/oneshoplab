@@ -1,4 +1,4 @@
-import { signIn } from '@/lib/auth';
+import { signIn } from '@/entities/user';
 
 interface GoogleSignInButtonProps {
   /** Where to land after a successful Google sign-in. Auth.js preserves

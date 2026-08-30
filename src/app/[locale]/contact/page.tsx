@@ -4,7 +4,7 @@ import { ContactForm } from '@/features/contact';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { isRecaptchaEnabled } from '@/lib/recaptcha';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');

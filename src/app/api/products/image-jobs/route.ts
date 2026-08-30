@@ -9,8 +9,8 @@ import {
   type ImageQualityId
 } from '@/entities/ai-model';
 import { listProductImageJobs, persistKieJobFailure } from '@/entities/generation-job';
-import { auth } from '@/lib/auth';
-import { InsufficientCreditsError } from '@/lib/credits';
+import { auth } from '@/entities/user';
+import { InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { jobs, products, projects } from '@/lib/db/schema';
 import { sanitizeUserFacingError } from '@/lib/errors';

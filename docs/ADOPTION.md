@@ -98,7 +98,13 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   `components/bulk-generate*` → `src/widgets/bulk-generate-section/`;
   `runChatOptim`/`startImageOptim` + prompt builders lifted into
   `src/entities/generation-job/` so features never import each other.
-- Legacy ratchet (must only go down): `src/lib` 118 files, `src/components`
-  102 files (28 top-level lib files still to classify).
+- Auth + account moved: `lib/{auth,password,signup,anon,admin}` → `src/entities/user/`,
+  `lib/projects/touch-last-view` → `src/entities/project/`, `lib/password-reset-actions` +
+  `components/google-signin-button` → `src/features/auth/`, `lib/auth-actions` split into
+  `features/{account,manage-project,model-preferences}/api/actions.ts` + `features/run-audit/api/project-actions.ts`,
+  `components/{account-tabs,profile-forms}` → `src/features/account/ui/`, `components/user-menu` →
+  `src/widgets/user-menu/`, `lib/localized-path` → `src/shared/lib/`.
+- Legacy ratchet (must only go down): `src/lib` 40 files, `src/components`
+  50 files.
 - Also today: Playwright smoke suite (24 tests) — its own non-blocking
   workflow with the MySQL suites; CI down to ~1 min (3 parallel jobs).

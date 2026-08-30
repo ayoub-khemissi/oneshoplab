@@ -4,8 +4,7 @@ import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { CreditPackCards } from '@/components/credit-pack-cards';
-import { PricingCards } from '@/components/pricing-cards';
+import { CreditPackCards, getStripePriceId, PricingCards } from '@/features/billing';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
@@ -13,11 +12,10 @@ import {
   type BillingCycle,
   type PlanId
 } from '@/entities/ai-model';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { getStripePriceId } from '@/lib/stripe';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 

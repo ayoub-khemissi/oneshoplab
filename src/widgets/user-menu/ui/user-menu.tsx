@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
-import { signOutAction } from '@/lib/auth-actions';
-import { createPortalSessionAction } from '@/lib/stripe-actions';
+import { signOutAction } from '@/features/account';
+import { createPortalSessionAction } from '@/features/billing';
 
 interface UserMenuProps {
   name: string | null | undefined;

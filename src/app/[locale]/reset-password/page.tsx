@@ -11,7 +11,7 @@ import {
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { resetPasswordAction } from '@/lib/password-reset-actions';
+import { resetPasswordAction } from '@/features/auth';
 
 export async function generateMetadata({
   params

@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect, notFound } from 'next/navigation';
 import { ManualProductForm } from '@/features/manual-catalog';
 import { Link } from '@/i18n/navigation';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { products, projects } from '@/lib/db/schema';
 

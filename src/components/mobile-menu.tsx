@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
-import { signOutAction } from '@/lib/auth-actions';
+import { signOutAction } from '@/features/account';
 import { DiscordGlyph } from './discord-glyph';
 
 interface MobileMenuProps {

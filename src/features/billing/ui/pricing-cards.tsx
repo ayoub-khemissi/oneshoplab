@@ -16,7 +16,7 @@ import {
   type PlanId,
   type PlanTier
 } from '@/entities/ai-model';
-import { createCheckoutSessionAction, createPortalSessionAction } from '@/lib/stripe-actions';
+import { createCheckoutSessionAction, createPortalSessionAction } from '../api/actions';
 
 /** Plan ranks for upgrade/downgrade detection. The order mirrors the
  *  PLAN_IDS source-of-truth in pricing.ts. */

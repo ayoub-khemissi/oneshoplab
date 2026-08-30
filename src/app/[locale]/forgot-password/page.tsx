@@ -2,7 +2,7 @@ import { Button, Card, FieldError, Form, Input, Label, TextField } from '@heroui
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { requestPasswordResetAction } from '@/lib/password-reset-actions';
+import { requestPasswordResetAction } from '@/features/auth';
 
 export async function generateMetadata({
   params

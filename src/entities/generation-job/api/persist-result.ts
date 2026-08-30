@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { applyCreditTransaction } from '@/lib/credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { jobs, products, projects, type JobKind } from '@/lib/db/schema';
 import { transitionJob } from './transitions';

@@ -20,7 +20,7 @@ import {
   retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/features/bulk-generate';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 

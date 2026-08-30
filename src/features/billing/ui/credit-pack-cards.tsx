@@ -1,8 +1,8 @@
 import { Card } from '@heroui/react';
 import { Coins, Sparkles } from 'lucide-react';
 import { CREDIT_PACKS } from '@/entities/ai-model';
-import { buyCreditPackAction } from '@/lib/stripe-actions';
-import { getStripePackPriceId } from '@/lib/stripe';
+import { buyCreditPackAction } from '../api/actions';
+import { getStripePackPriceId } from '../api/stripe';
 
 interface CreditPackCardsProps {
   /** Copy bag — server-translated by the caller so this component can

@@ -3,10 +3,10 @@
 import { and, eq, gte, isNull } from 'drizzle-orm';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
-import { hashPassword } from './password';
-import { db } from './db';
-import { passwordResetTokens, users } from './db/schema';
-import { sendMail } from './mailer';
+import { hashPassword } from '@/entities/user';
+import { db } from '@/lib/db';
+import { passwordResetTokens, users } from '@/lib/db/schema';
+import { sendMail } from '@/lib/mailer';
 
 const TOKEN_TTL_MS = 60 * 60_000; // 1h
 /** Per-email cooldown so a malicious actor can't spam someone's

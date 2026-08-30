@@ -10,7 +10,7 @@ import {
   type BulkJobStatusForUi,
   type CostBreakdown
 } from '../model/types';
-import { updateUserPreferencesAction } from '@/lib/auth-actions';
+import { updateUserPreferencesAction } from '@/features/model-preferences';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 export interface UseBulkGenerateArgs {

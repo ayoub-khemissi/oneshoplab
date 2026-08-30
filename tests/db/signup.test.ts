@@ -8,8 +8,8 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
-import { LEGAL_TERMS_VERSION } from '@/lib/legal-version';
-import { registerCredentialsUser } from '@/lib/signup';
+import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
+import { registerCredentialsUser } from '@/entities/user';
 import { buckets, ledgerSum, resetTables } from './helpers';
 
 beforeEach(resetTables);

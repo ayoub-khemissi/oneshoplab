@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
-import { applyCreditTransaction } from '@/lib/credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { legalConsents, users } from '@/lib/db/schema';
-import { LEGAL_TERMS_VERSION } from '@/lib/legal-version';
-import { hashPassword } from '@/lib/password';
+import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
+import { hashPassword } from '../model/password';
 
 export type SignupError = 'invalid_email' | 'short_password' | 'email_taken';
 

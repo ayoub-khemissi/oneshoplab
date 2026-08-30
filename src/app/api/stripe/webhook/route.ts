@@ -1,18 +1,18 @@
 import { randomUUID } from 'node:crypto';
-import { LEGAL_TERMS_VERSION } from '@/lib/legal-version';
+import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
-import { applyCreditTransaction } from '@/lib/credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { creditTransactions, subscriptions, legalConsents } from '@/lib/db/schema';
 import {
   getStripeClient,
   getStripeWebhookSecret,
   resolvePackPriceId,
-  resolvePriceId
-} from '@/lib/stripe';
-import { syncSubscriptionFromStripe } from '@/lib/stripe-actions';
+  resolvePriceId,
+  syncSubscriptionFromStripe
+} from '@/features/billing';
 import { getCreditPack, PLAN_TIERS, type PlanId } from '@/entities/ai-model';
 
 export const runtime = 'nodejs';

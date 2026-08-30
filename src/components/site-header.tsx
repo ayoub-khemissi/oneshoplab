@@ -1,14 +1,14 @@
 import { Coins } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { DiscordGlyph } from './discord-glyph';
 import { LocaleSwitcher } from './locale-switcher';
 import { MobileMenu } from './mobile-menu';
 import { NotificationBell } from './notification-bell';
 import { ScrollHidingHeader } from './scroll-hiding-header';
 import { ThemeToggle } from './theme-toggle';
-import { UserMenu } from './user-menu';
+import { UserMenu } from '@/widgets/user-menu';
 import type { NotificationKind } from '@/lib/db/schema';
 import type { Locale } from '@/i18n/routing';
 

@@ -3,7 +3,7 @@
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '../model/types';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';

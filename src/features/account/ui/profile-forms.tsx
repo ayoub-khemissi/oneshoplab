@@ -3,11 +3,7 @@
 import { Spinner } from '@heroui/react';
 import { AlertCircle, Check } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import {
-  changePasswordAction,
-  deleteAccountAction,
-  updateUserProfileAction
-} from '@/lib/auth-actions';
+import { changePasswordAction, deleteAccountAction, updateUserProfileAction } from '../api/actions';
 
 const SAVED_FLASH_MS = 2500;
 

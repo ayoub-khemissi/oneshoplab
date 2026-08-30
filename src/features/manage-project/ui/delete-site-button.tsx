@@ -3,7 +3,7 @@
 import { Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition, type MouseEvent } from 'react';
-import { deleteProjectAction } from '@/lib/auth-actions';
+import { deleteProjectAction } from '../api/actions';
 
 interface DeleteSiteButtonProps {
   projectId: string;

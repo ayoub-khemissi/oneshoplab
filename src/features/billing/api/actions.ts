@@ -3,16 +3,16 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
-import { auth } from './auth';
-import { db } from './db';
+import { auth } from '@/entities/user';
+import { db } from '@/lib/db';
 import {
   BILLING_CYCLES,
   subscriptions,
   users,
   type BillingCycle as DbBillingCycle
-} from './db/schema';
+} from '@/lib/db/schema';
 import { PLAN_TIERS, getCreditPack, type BillingCycle, type PlanId } from '@/entities/ai-model';
-import { checkoutConsentParams } from './legal-consent';
+import { checkoutConsentParams } from '@/entities/legal-consent';
 import { getStripeClient, getStripePackPriceId, getStripePriceId } from './stripe';
 import type Stripe from 'stripe';
 
@@ -301,7 +301,7 @@ export async function grantTierCredits(userId: string, plan: PlanId): Promise<vo
   // Idempotency hash: one grant per (user, plan, period_start). For this
   // first pass we just call applyCreditTransaction with a unique key per
   // call site (the webhook generates one).
-  const { applyCreditTransaction } = await import('./credits');
+  const { applyCreditTransaction } = await import('@/entities/credit');
   await applyCreditTransaction({
     userId,
     delta: tier.credits,

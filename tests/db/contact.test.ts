@@ -13,7 +13,7 @@ vi.mock('@/lib/discord', () => ({
   postDiscordMessage: (...a: unknown[]) => postDiscordMessage(...a)
 }));
 vi.mock('@/lib/recaptcha', () => ({ verifyRecaptcha: (...a: unknown[]) => verifyRecaptcha(...a) }));
-vi.mock('@/lib/auth', () => ({ auth: async () => null }));
+vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9, 10.0.0.1' })
 }));

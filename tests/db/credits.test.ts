@@ -7,7 +7,7 @@
  *   5. renewals reset the subscription bucket without touching packs
  */
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { applyCreditTransaction, InsufficientCreditsError } from '@/lib/credits';
+import { applyCreditTransaction, InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { buckets, createUser, ledgerCount, ledgerSum, resetTables } from './helpers';
 

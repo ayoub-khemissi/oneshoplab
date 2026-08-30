@@ -20,8 +20,8 @@ import {
   listOptimHistoryPaginated,
   listProductImageJobs
 } from '@/entities/generation-job';
-import { auth } from '@/lib/auth';
-import { touchProjectLastView } from '@/lib/auth-actions';
+import { auth } from '@/entities/user';
+import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './_components/past-generations-section';
 import { BackArrow, ScoreBadge } from './_components/score-badge';
 import { SuggestionsCard } from './_components/suggestions-card';

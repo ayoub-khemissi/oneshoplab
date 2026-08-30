@@ -58,7 +58,7 @@ paths inside `src/`.
 ### Credits — never touch `users.creditsBalance` directly
 
 `creditsBalance = creditsBalanceSubscription + creditsBalancePack`. The sum is
-maintained by `applyCreditTransaction` in `src/lib/credits.ts`. All grants and
+maintained by `applyCreditTransaction` in `src/entities/credit` (`api/ledger.ts`). All grants and
 debits go through that helper (it writes the `credit_transactions` audit row
 and updates both buckets atomically). Direct UPDATEs to `creditsBalance`
 desync the buckets and corrupt the ledger.
@@ -133,8 +133,8 @@ reasons by default and its hidden tokens eat `max_tokens` (empty titles).
   why a `unknown` + narrow won't work.
 - **Server components by default.** Only add `'use client'` when the file
   needs hooks, browser APIs, or event handlers.
-- **Server actions** for mutations (see `src/lib/auth-actions.ts`,
-  `src/lib/stripe-actions.ts` for the pattern). Validate input with `zod`.
+- **Server actions** for mutations (see `src/features/account/api/actions.ts`,
+  `src/features/billing/api/actions.ts` for the pattern). Validate input with `zod`.
 - **Drizzle queries** colocate near the feature, not in a giant `queries.ts`.
   Schema is the single source of truth in `src/lib/db/schema.ts`.
 - **Adapters** (`src/entities/store-adapter/api/`) implement the same `StoreAdapter`

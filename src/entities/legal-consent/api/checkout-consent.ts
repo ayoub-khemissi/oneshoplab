@@ -2,7 +2,7 @@ import type Stripe from 'stripe';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
-export { LEGAL_TERMS_VERSION } from './legal-version';
+export { LEGAL_TERMS_VERSION } from '../model/version';
 
 const APP_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 

@@ -3,8 +3,8 @@
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { isAdminEmail } from '@/lib/admin';
-import { auth } from '@/lib/auth';
+import { isAdminEmail } from '@/entities/user';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { leads, LEAD_STATUSES, type LeadStatus } from '@/lib/db/schema';
 import { qualifyBatch } from './qualify';

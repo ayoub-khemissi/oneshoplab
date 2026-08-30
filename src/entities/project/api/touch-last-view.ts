@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 

@@ -7,14 +7,13 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/components/brand-logos';
-import { PricingCards } from '@/components/pricing-cards';
+import { getStripePriceId, PricingCards } from '@/features/billing';
 import { ShowcaseSection } from '@/components/showcase-section';
 import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/entities/ai-model';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects, subscriptions } from '@/lib/db/schema';
-import { getStripePriceId } from '@/lib/stripe';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');

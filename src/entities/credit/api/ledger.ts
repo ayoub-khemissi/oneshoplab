@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { db } from './db';
-import { creditTransactions, users, type JobKind } from './db/schema';
+import { db } from '@/lib/db';
+import { creditTransactions, users, type JobKind } from '@/lib/db/schema';
 
 export class InsufficientCreditsError extends Error {
   constructor(

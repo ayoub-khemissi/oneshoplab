@@ -3,10 +3,10 @@ import type { Metadata } from 'next';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { localizedPath } from '@/lib/localized-path';
+import { localizedPath } from '@/shared/lib';
 import { Link } from '@/i18n/navigation';
-import { GoogleSignInButton } from '@/components/google-signin-button';
-import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
+import { GoogleSignInButton } from '@/features/auth';
+import { isGoogleAuthEnabled, signIn } from '@/entities/user';
 
 export async function generateMetadata({
   params

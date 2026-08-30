@@ -1,6 +1,6 @@
 import { and, eq, gt, inArray } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { jobs, products, projects } from '@/lib/db/schema';
 

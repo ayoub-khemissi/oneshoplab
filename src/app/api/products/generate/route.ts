@@ -16,9 +16,9 @@ import { runChatOptim, type ProductContext } from '@/entities/generation-job';
 import { startImageOptim } from '@/entities/generation-job';
 import type { ChatOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { sanitizeUserFacingError } from '@/lib/errors';
-import { InsufficientCreditsError } from '@/lib/credits';
+import { InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { products, projects } from '@/lib/db/schema';
 

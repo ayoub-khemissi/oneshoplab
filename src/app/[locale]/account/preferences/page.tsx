@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { AccountBulkPrefsForm } from '@/features/bulk-generate';
 import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '@/features/bulk-generate';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';

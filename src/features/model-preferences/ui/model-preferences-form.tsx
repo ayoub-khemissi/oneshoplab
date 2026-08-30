@@ -13,7 +13,7 @@ import {
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
-import { updateUserPreferencesAction } from '@/lib/auth-actions';
+import { updateUserPreferencesAction } from '../api/actions';
 import { useModelCopy } from './use-model-copy';
 
 interface ModelPreferencesFormProps {

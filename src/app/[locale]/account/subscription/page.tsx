@@ -14,11 +14,11 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { PLAN_TIERS } from '@/entities/ai-model';
-import { auth } from '@/lib/auth';
-import { getCreditBuckets } from '@/lib/credits';
+import { auth } from '@/entities/user';
+import { getCreditBuckets } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';
-import { createPortalSessionAction } from '@/lib/stripe-actions';
+import { createPortalSessionAction } from '@/features/billing';
 import { formatDate } from '@/lib/format-date';
 
 export const dynamic = 'force-dynamic';

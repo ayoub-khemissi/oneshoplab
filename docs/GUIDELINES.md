@@ -93,7 +93,7 @@ Every doc under `docs/` carries front-matter `status: acted|study|stale`, `imple
   `vi.hoisted` state; next-auth itself is never imported by a test. Each DB test truncates
   the tables it uses; seed helpers write ledger rows so `balance == SUM(ledger)`
   holds from the first assertion.
-- Rule: any change on the money path (`src/lib/credits.ts`, webhook, pricing)
+- Rule: any change on the money path (`src/entities/credit`, webhook, pricing)
   ships with a test; a credit-cost change must update
   `tests/unit/__snapshots__/pricing.test.ts.snap` in the same commit.
 - Gates: pre-push and CI run the full suite (CI uses a `mysql:8.0` service).

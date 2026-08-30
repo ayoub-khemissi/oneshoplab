@@ -2,9 +2,9 @@ import { Card } from '@heroui/react';
 import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { CreditPackCards } from '@/components/credit-pack-cards';
-import { auth } from '@/lib/auth';
-import { getCreditBuckets } from '@/lib/credits';
+import { CreditPackCards } from '@/features/billing';
+import { auth } from '@/entities/user';
+import { getCreditBuckets } from '@/entities/credit';
 
 export const dynamic = 'force-dynamic';
 

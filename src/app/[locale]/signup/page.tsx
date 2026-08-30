@@ -13,7 +13,7 @@ import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { localizedPath } from '@/lib/localized-path';
+import { localizedPath } from '@/shared/lib';
 import { Link } from '@/i18n/navigation';
 
 export async function generateMetadata({
@@ -28,12 +28,12 @@ export async function generateMetadata({
     robots: { index: false, follow: false }
   };
 }
-import { GoogleSignInButton } from '@/components/google-signin-button';
+import { GoogleSignInButton } from '@/features/auth';
 import { RecaptchaLegalNotice } from '@/components/recaptcha-legal-notice';
 import { RecaptchaWrapper } from '@/components/recaptcha-wrapper';
-import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/lib/anon';
-import { isGoogleAuthEnabled, signIn } from '@/lib/auth';
-import { registerCredentialsUser } from '@/lib/signup';
+import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/entities/user';
+import { isGoogleAuthEnabled, signIn } from '@/entities/user';
+import { registerCredentialsUser } from '@/entities/user';
 import { isRecaptchaEnabled, verifyRecaptcha } from '@/lib/recaptcha';
 
 interface PageProps {

@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import { randomUUID } from 'node:crypto';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 import { isR2Configured, uploadBuffer } from '@/lib/storage';

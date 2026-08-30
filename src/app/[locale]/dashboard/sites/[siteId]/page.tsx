@@ -14,7 +14,7 @@ import { ShareLinksCard } from '@/widgets/share-links-card';
 import { SiteBulkPrefsEditor } from '@/components/site-bulk-prefs-editor';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
-import { isAdminEmail } from '@/lib/admin';
+import { isAdminEmail } from '@/entities/user';
 import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/share-link';
 import {
   getActiveBulkJob,
@@ -24,7 +24,7 @@ import {
   listBulkCandidatesWithStatus,
   resolveBulkPrefs
 } from '@/features/bulk-generate';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { audits, jobs, products, projects } from '@/lib/db/schema';
 import {
@@ -173,7 +173,7 @@ export default async function ReportPage({ params, searchParams }: PageProps) {
 
   // Both writes are documented "fire-and-forget" — awaiting them
   // blocks the page render for a DB write the user doesn't see.
-  const { touchProjectLastView } = await import('@/lib/auth-actions');
+  const { touchProjectLastView } = await import('@/features/manage-project');
   const { refreshProjectIfStale } = await import('@/features/run-audit');
   void touchProjectLastView(project.id).catch((e) => console.error('[sites page last-view]', e));
   void refreshProjectIfStale(project.id).catch((e) =>

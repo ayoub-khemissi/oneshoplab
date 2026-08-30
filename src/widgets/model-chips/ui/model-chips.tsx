@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
-import { updateUserPreferencesAction } from '@/lib/auth-actions';
+import { updateUserPreferencesAction } from '@/features/model-preferences';
 import { ModelPickerChips } from '@/features/model-preferences';
 import { useGenerateContext } from '@/features/retryable-generate';
 

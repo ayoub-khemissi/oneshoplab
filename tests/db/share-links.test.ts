@@ -9,13 +9,13 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 // Share links are curated by admins only (isAdminEmail); the ownership
 // checks on top of that are what these tests exercise.
 const session = vi.hoisted(() => ({ userId: null as string | null, admin: true }));
-vi.mock('@/lib/auth', () => ({
+vi.mock('@/entities/user/api/next-auth', () => ({
   auth: async () =>
     session.userId
       ? { user: { id: session.userId, email: session.admin ? 'a@admin.test' : 'u@user.test' } }
       : null
 }));
-vi.mock('@/lib/admin', () => ({
+vi.mock('@/entities/user/lib/admin', () => ({
   isAdminEmail: (e: string | null) => !!e?.endsWith('@admin.test')
 }));
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));

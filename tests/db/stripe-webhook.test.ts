@@ -11,10 +11,10 @@ const stripeStub = {
   checkout: { sessions: { listLineItems: vi.fn().mockRejectedValue(new Error('offline')) } },
   subscriptions: { retrieve: vi.fn() }
 };
-// stripe-actions pulls next-auth (and with it next/server internals that
+// The billing actions pull next-auth (and with it next/server internals that
 // don't resolve under vitest); the subscription sync path is out of scope here.
-vi.mock('@/lib/stripe-actions', () => ({ syncSubscriptionFromStripe: vi.fn() }));
-vi.mock('@/lib/stripe', () => ({
+vi.mock('@/features/billing', () => ({
+  syncSubscriptionFromStripe: vi.fn(),
   getStripeClient: () => stripeStub,
   getStripeWebhookSecret: () => 'whsec_test_placeholder',
   resolvePackPriceId: () => null,

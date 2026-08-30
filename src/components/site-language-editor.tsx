@@ -15,7 +15,7 @@ import { Check, Globe } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { LANGUAGES } from '@/lib/i18n/languages';
-import { updateProjectLanguageAction } from '@/lib/auth-actions';
+import { updateProjectLanguageAction } from '@/features/manage-project';
 
 interface SiteLanguageEditorProps {
   projectId: string;

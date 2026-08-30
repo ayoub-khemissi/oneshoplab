@@ -2,7 +2,7 @@ import { and, asc, eq, lt, or } from 'drizzle-orm';
 import { buildImagePrompt, startImageOptim } from '@/entities/generation-job';
 import { runChatOptim } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
-import { InsufficientCreditsError } from '@/lib/credits';
+import { InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { jobs, projects, products } from '@/lib/db/schema';
 import { transitionJob } from '@/entities/generation-job';

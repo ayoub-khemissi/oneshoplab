@@ -9,7 +9,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const session = vi.hoisted(() => ({ userId: null as string | null }));
 const signOut = vi.hoisted(() => vi.fn());
-vi.mock('@/lib/auth', () => ({
+vi.mock('@/entities/user/api/next-auth', () => ({
   auth: async () => (session.userId ? { user: { id: session.userId } } : null),
   signOut: (...a: unknown[]) => signOut(...a),
   hashPassword: (p: string) => bcrypt.hash(p, 4)
@@ -26,8 +26,8 @@ vi.mock('next/navigation', () => ({
 }));
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
-import { changePasswordAction, deleteAccountAction } from '@/lib/auth-actions';
-import { applyCreditTransaction } from '@/lib/credits';
+import { changePasswordAction, deleteAccountAction } from '@/features/account';
+import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { creditTransactions, projects, subscriptions, users } from '@/lib/db/schema';
 import { createUser, resetTables } from './helpers';

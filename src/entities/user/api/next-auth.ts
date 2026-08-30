@@ -6,10 +6,10 @@ import { cookies } from 'next/headers';
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import { applyCreditTransaction } from './credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
-import { LEGAL_TERMS_VERSION } from './legal-version';
-import { db } from './db';
+import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
+import { db } from '@/lib/db';
 import {
   accounts,
   sessions,
@@ -19,7 +19,7 @@ import {
   type ImageQualityDbId,
   type Plan,
   legalConsents
-} from './db/schema';
+} from '@/lib/db/schema';
 
 declare module 'next-auth' {
   interface Session {
@@ -187,4 +187,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 // Kept in its own framework-free module so server actions and tests can
 // hash passwords without importing next-auth; re-exported for callers.
-export { hashPassword } from './password';
+export { hashPassword } from '../model/password';

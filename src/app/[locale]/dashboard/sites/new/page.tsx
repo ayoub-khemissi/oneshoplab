@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { projects } from '@/lib/db/schema';
 

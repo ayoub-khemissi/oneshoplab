@@ -40,14 +40,15 @@ src/
       kie/callback/        kie.ai webhook (job completion)
       products/generate/   on-demand product rewrite endpoint
   components/              UI components (server + client)
+  entities/credit/         credit ledger (applyCreditTransaction — debit/grant atomically)
+  entities/legal-consent/  Terms version + checkout consent params
+  features/billing/        Stripe client + checkout/portal actions, pricing + credit-pack cards
   i18n/                    next-intl routing + request config
   lib/
     ai/                    kie.ai client, model registry, prompts, optims
     auth.ts auth-actions.ts session + login/signup server actions
-    credits.ts             credit ledger (debit/grant atomically)
     db/                    drizzle client + schema
     storage/r2.ts          S3 client for Cloudflare R2 (TLS 1.3 forced)
-    stripe.ts stripe-actions.ts checkout + plan resolver
   worker/                  background job loop (audit-runner + kie-watchdog)
   proxy.ts                 next-intl middleware (locale routing)
 

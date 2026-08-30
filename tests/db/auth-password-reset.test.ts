@@ -21,7 +21,7 @@ vi.mock('next/navigation', () => ({
 const sendMail = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/lib/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
 
-import { requestPasswordResetAction, resetPasswordAction } from '@/lib/password-reset-actions';
+import { requestPasswordResetAction, resetPasswordAction } from '@/features/auth';
 import { db } from '@/lib/db';
 import { passwordResetTokens, users } from '@/lib/db/schema';
 import { createUser, resetTables } from './helpers';

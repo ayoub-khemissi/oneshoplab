@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth } from '@/entities/user';
 import { markAllRead, markReadByAudit, markReadByJob } from '@/lib/notifications';
 
 /**

@@ -220,7 +220,7 @@ async function main(): Promise<void> {
    *  weeks-old audit is still a valid hook and avoids re-auditing before
    *  every campaign.
    *
-   *  Two-step (mirrors claimAnonAudits in src/lib/anon.ts): pull the
+   *  Two-step (mirrors claimAnonAudits in src/entities/user/api/anon.ts): pull the
    *  most-recent id with a tiny projection so the ORDER BY sort buffer
    *  doesn't have to carry the multi-MB `summary` JSON. Then fetch the
    *  payload columns on the resolved id. Without the split, MySQL

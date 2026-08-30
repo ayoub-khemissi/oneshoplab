@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ChevronLeft } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { AccountTabs } from '@/components/account-tabs';
+import { AccountTabs } from '@/features/account';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
 
 // Authenticated account area: noindex everywhere under /account.

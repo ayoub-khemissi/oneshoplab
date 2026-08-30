@@ -19,3 +19,4 @@ export type {
 } from './api/dynamic-audit';
 export { regenerateProductJobs, retryJob } from './api/retry-job';
 export type { RetryResult } from './api/retry-job';
+export { refreshProjectAction, relaunchProjectAuditAction } from './api/project-actions';

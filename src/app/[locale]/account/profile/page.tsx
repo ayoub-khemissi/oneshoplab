@@ -1,12 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import {
-  AccountDeleteForm,
-  ProfileNameForm,
-  ProfilePasswordForm
-} from '@/components/profile-forms';
-import { auth } from '@/lib/auth';
+import { AccountDeleteForm, ProfileNameForm, ProfilePasswordForm } from '@/features/account';
+import { auth } from '@/entities/user';
 import { db } from '@/lib/db';
 import { subscriptions } from '@/lib/db/schema';
 

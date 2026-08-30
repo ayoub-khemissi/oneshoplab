@@ -1,6 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { applyCreditTransaction } from '@/lib/credits';
+import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/lib/db';
 import { jobs, type ProductField } from '@/lib/db/schema';
 import { languageNameForPrompt } from '@/lib/i18n/languages';
