@@ -3,8 +3,8 @@
 import { Spinner } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { createShareLinkAction } from '@/lib/share/actions';
-import type { CandidateProduct, ShareLinkRow } from '@/components/share-links/types';
+import { createShareLinkAction } from '../api/actions';
+import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
 
 interface CreateModalProps {
   siteId: string;

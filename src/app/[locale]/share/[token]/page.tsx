@@ -6,8 +6,12 @@ import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ImageZoom } from '@/components/image-zoom';
 import { decodeHtmlEntities } from '@/lib/adapters/fetch-utils';
-import { loadSharedAudit, type SharedAuditSnapshot, type SharedProduct } from '@/lib/share/queries';
-import { translateIssueText } from '@/lib/share/issue-text';
+import {
+  loadSharedAudit,
+  type SharedAuditSnapshot,
+  type SharedProduct
+} from '@/entities/share-link';
+import { translateIssueText } from '@/entities/share-link';
 import { formatDate } from '@/lib/format-date';
 
 export const dynamic = 'force-dynamic';

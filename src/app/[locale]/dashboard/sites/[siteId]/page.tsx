@@ -10,12 +10,12 @@ import { AutoRefresh } from '@/components/auto-refresh';
 import { BulkGenerateSection } from '@/components/bulk-generate-section';
 import { PaginatedProductsList } from '@/components/paginated-products-list';
 import { ScrollAwareSticky } from '@/components/scroll-aware-sticky';
-import { ShareLinksCard } from '@/components/share-links-card';
+import { ShareLinksCard } from '@/widgets/share-links-card';
 import { SiteBulkPrefsEditor } from '@/components/site-bulk-prefs-editor';
 import { SiteInstructionsEditor } from '@/components/site-instructions-editor';
 import { SiteLanguageEditor } from '@/components/site-language-editor';
 import { isAdminEmail } from '@/lib/admin';
-import { listProductsWithGenerations, listShareLinksForSite } from '@/lib/share/queries';
+import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/share-link';
 import {
   getActiveBulkJob,
   getEffectiveBulkPrefs,

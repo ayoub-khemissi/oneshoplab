@@ -24,6 +24,7 @@ const eslintConfig = [
   {
     ignores: [
       '.next/**',
+      '.next-*/**',
       'node_modules/**',
       'drizzle/**',
       'remotion-ads/**',
@@ -125,6 +126,98 @@ const eslintConfig = [
     // truth); it is the only file allowed past the max-lines ceiling.
     files: ['src/lib/db/schema.ts'],
     rules: { 'max-lines': 'off' }
+  },
+  // Feature-Sliced Design layers: each layer may only import from the layers
+  // below it; slices of one layer never import each other. Public API only
+  // (`@/features/<slice>`), never deep paths. src/lib + src/components are
+  // legacy and importable from anywhere until they are empty.
+  {
+    files: ['src/entities/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/*', '@/widgets/*', '@/app/*'],
+              message: 'entities import only from shared.'
+            },
+            { group: ['@/entities/*/*'], message: 'Use the slice public API (@/entities/<slice>).' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/widgets/*', '@/app/*'],
+              message: 'features import only from entities + shared.'
+            },
+            {
+              group: ['@/features/*'],
+              message: 'A feature never imports another feature — lift to a widget or an entity.'
+            },
+            { group: ['@/entities/*/*'], message: 'Use the slice public API (@/entities/<slice>).' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/widgets/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@/app/*'], message: 'widgets never depend on routes.' },
+            {
+              group: ['@/widgets/*'],
+              message: 'Widgets do not import each other — compose them in the page.'
+            },
+            { group: ['@/features/*/*', '@/entities/*/*'], message: 'Use the slice public API.' }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/shared/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/entities/*', '@/features/*', '@/widgets/*', '@/app/*'],
+              message: 'shared has no domain knowledge.'
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    files: ['src/app/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/*/*', '@/entities/*/*', '@/widgets/*/*'],
+              message: 'Use the slice public API.'
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     // Worker + server-only libs log operational lines with console.log on

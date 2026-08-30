@@ -5,10 +5,8 @@ import { Check, Copy, ExternalLink, Home, Info, Link2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { formatDate } from '@/lib/format-date';
-import { CreateModal } from '@/components/share-links/create-modal';
-import { HomeOrderInput, ShowOnHomeToggle } from '@/components/share-links/home-controls';
-import { RevokeButton } from '@/components/share-links/revoke-button';
-import type { CandidateProduct, ShareLinkRow } from '@/components/share-links/types';
+import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
+import { CreateModal, HomeOrderInput, RevokeButton, ShowOnHomeToggle } from '@/features/share-link';
 
 interface ShareLinksCardProps {
   siteId: string;

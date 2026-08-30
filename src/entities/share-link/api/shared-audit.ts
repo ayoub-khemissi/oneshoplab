@@ -2,73 +2,8 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects, shareLinks } from '@/lib/db/schema';
 import { listOptimHistory, listProductImageJobs } from '@/lib/ai';
-import { resolveFeaturedProduct } from '@/lib/share/featured-product';
-
-export interface SharedProduct {
-  sourceId: string;
-  /** From the audit summary at the time of viewing — never the raw
-   *  productRow stripped, so we get prices, vendor, etc. */
-  title: string;
-  source: {
-    descriptionHtml: string;
-    tags: string[];
-    images: { src: string; alt: string | null }[];
-  };
-  ai: {
-    title: string | null;
-    descriptionHtml: string | null;
-    tags: string[];
-    imageUrls: string[];
-  };
-}
-
-export interface SharedAuditSnapshot {
-  /** Site domain shown in the case-study header. */
-  domain: string;
-  /** Full URL of the merchant's storefront — used to make the header
-   *  domain clickable. Falls back to https://{domain} when the
-   *  project / audit didn't capture an explicit URL. */
-  siteUrl: string;
-  platform: string | null;
-  scores: {
-    catalogCompleteness: number;
-    copyQuality: number;
-    visualQuality: number;
-    taggingQuality: number;
-    overall: number;
-  } | null;
-  /** Optional summary insights surfaced inside the scores card via a
-   *  collapsible "See full audit detail" toggle. All fields are
-   *  resilient to missing data on legacy audits — `null` means the
-   *  audit predates that summary field and the toggle hides the row. */
-  details: {
-    sampled: number | null;
-    avgProductScore: number | null;
-    averages: {
-      imageCount: number | null;
-      descriptionLength: number | null;
-      tagCount: number | null;
-    };
-    distribution: {
-      imagesZero: number | null;
-      descEmpty: number | null;
-      tagsZero: number | null;
-      altNone: number | null;
-    };
-    /** Up to 6 worst-scoring products with their issue codes — used to
-     *  illustrate what the audit found without exposing the full list
-     *  on a public page. */
-    worstProducts: Array<{
-      title: string;
-      score: number;
-      issues: Array<{ code: string; data?: Record<string, string | number> }>;
-    }>;
-  } | null;
-  products: SharedProduct[];
-  /** When the share link was created — surfaced as "Generated on {date}". */
-  generatedAt: Date;
-  label: string | null;
-}
+import { resolveFeaturedProduct } from './featured-product';
+import type { SharedAuditSnapshot, SharedProduct } from '../model/types';
 
 /**
  * Load everything needed to render a public /share/[token] page in a

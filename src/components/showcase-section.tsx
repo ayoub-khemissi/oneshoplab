@@ -6,7 +6,7 @@ import { ExpandableText } from '@/components/expandable-text';
 import { ImageZoom } from '@/components/image-zoom';
 import { PlatformLogo } from '@/components/brand-logos';
 import { SiteFavicon } from '@/components/site-favicon';
-import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/lib/share/queries';
+import { loadHomeShowcaseCards, type HomeShowcaseCard } from '@/entities/share-link';
 
 /**
  * Public showcase strip on the landing page. Each card surfaces one

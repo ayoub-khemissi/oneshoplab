@@ -2,36 +2,8 @@ import { and, desc, eq, isNull } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects, shareLinks } from '@/lib/db/schema';
 import { listOptimHistory, listProductImageJobs } from '@/lib/ai';
-import { resolveFeaturedProduct } from '@/lib/share/featured-product';
-
-export interface HomeShowcaseCard {
-  /** Token used in the /share/[token] URL the prospect clicks. */
-  token: string;
-  domain: string;
-  siteUrl: string;
-  /** Detected e-commerce platform of the site, when known. Drives the
-   *  brand badge in the showcase header (Shopify / WooCommerce / Wix).
-   *  Null = `manual` audit or unrecognised platform — no badge shown. */
-  platform: 'shopify' | 'woocommerce' | 'wix' | null;
-  /** Both products from the share link with full before/after data:
-   *  source + AI title, description, tags, plus image arrays for the
-   *  carousel-style browsing on the home strip. */
-  products: Array<{
-    sourceId: string;
-    sourceTitle: string;
-    /** Direct product URL on the merchant's storefront (when the audit
-     *  summary captured one). Drives the clickable title link in the
-     *  home card; falls back to siteUrl when missing. */
-    productUrl: string | null;
-    aiTitle: string | null;
-    sourceDescriptionHtml: string;
-    aiDescriptionHtml: string | null;
-    sourceTags: string[];
-    aiTags: string[];
-    sourceImages: Array<{ src: string; alt: string | null }>;
-    aiImages: Array<{ src: string; alt: string | null }>;
-  }>;
-}
+import { resolveFeaturedProduct } from './featured-product';
+import type { HomeShowcaseCard } from '../model/types';
 
 interface LoadHomeShowcaseCardsOptions {
   /** Two-letter UI locale of the visitor (e.g. 'fr', 'en'). Showcase

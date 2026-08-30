@@ -19,7 +19,7 @@ import {
 } from '@/lib/audit/commentary';
 import { db } from '@/lib/db';
 import { audits } from '@/lib/db/schema';
-import { translateIssueText } from '@/lib/share/issue-text';
+import { translateIssueText } from '@/entities/share-link';
 
 export const dynamic = 'force-dynamic';
 

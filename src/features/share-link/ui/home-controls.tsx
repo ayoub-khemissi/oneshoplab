@@ -3,7 +3,7 @@
 import { Home } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
-import { setShareLinkHomeOrderAction, setShareLinkShowOnHomeAction } from '@/lib/share/actions';
+import { setShareLinkHomeOrderAction, setShareLinkShowOnHomeAction } from '../api/actions';
 
 interface ShowOnHomeToggleProps {
   linkId: string;

@@ -1,22 +1,7 @@
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { jobs, products } from '@/lib/db/schema';
-
-/** Minimal "source" product snapshot the showcase + shared-audit
- *  pages render. Either pulled from the audit summary or, when the
- *  upstream store rotated its product id and the summary no longer
- *  carries that sourceId, recovered from the persistent `products`
- *  table (whose sourceId stays stable across re-scrapes — see
- *  sync-products.ts). The AI side keys off the stored sourceId via
- *  the jobs table, which never rotates, so it keeps resolving even
- *  when the catalog id changed. */
-export interface FeaturedProductSnapshot {
-  title: string;
-  url?: string | null;
-  descriptionHtml?: string;
-  images?: Array<{ src: string; alt?: string | null }>;
-  signals?: { tags?: string[] };
-}
+import type { FeaturedProductSnapshot } from '../model/types';
 
 export async function resolveFeaturedProduct(
   projectId: string,

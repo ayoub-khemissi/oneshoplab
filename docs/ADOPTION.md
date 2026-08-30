@@ -90,3 +90,11 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
 - Gotcha: tsx 4.21 on Node 22.23 dropped named exports of `.ts` modules
   (worker crash-looped on `loadEnv`); fixed by tsx ≥ 4.23.
 - Upgrade path: drop a new tarball in `/opt/node22`, `bash scripts/deploy.sh`.
+
+## 2026-08-30 — FSD migration started
+
+- Skeleton `src/{shared,entities,features,widgets}` + ESLint layer rules.
+- Legacy ratchet (must only go down): `src/lib` 118 files, `src/components`
+  102 files (28 top-level lib files still to classify).
+- Also today: Playwright smoke suite (24 tests) — its own non-blocking
+  workflow with the MySQL suites; CI down to ~1 min (3 parallel jobs).

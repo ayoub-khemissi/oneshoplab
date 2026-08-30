@@ -3,7 +3,7 @@
 import { Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
-import { revokeShareLinkAction } from '@/lib/share/actions';
+import { revokeShareLinkAction } from '../api/actions';
 
 interface RevokeButtonProps {
   linkId: string;
