@@ -9,7 +9,7 @@ import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { db } from '@/shared/db';
 import { users } from '@/shared/db/schema';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
-import { registerCredentialsUser } from '@/entities/user';
+import { registerCredentialsUser } from '@/entities/user/api/signup';
 import { buckets, ledgerSum, resetTables } from './helpers';
 
 beforeEach(resetTables);

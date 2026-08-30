@@ -67,4 +67,3 @@ export { cancelBulkJob, retryFailedFromBulk, startBulkSiteGenerate } from './api
 export { processNextBulkProduct, runBulkWatchdog } from './api/worker';
 export { getActiveBulkJob, getLatestBulkJobDetail, type BulkJobStatusForUi } from './api/status';
 export { updateUserDefaultBulkPrefsAction } from './api/prefs-actions';
-export { AccountBulkPrefsForm } from './ui/account-bulk-prefs-form';

@@ -26,7 +26,7 @@ vi.mock('next/navigation', () => ({
 }));
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
-import { changePasswordAction, deleteAccountAction } from '@/features/account';
+import { changePasswordAction, deleteAccountAction } from '@/features/account/actions';
 import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/shared/db';
 import { creditTransactions, projects, subscriptions, users } from '@/shared/db/schema';

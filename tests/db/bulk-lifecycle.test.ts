@@ -4,7 +4,7 @@
  * re-queues only the products that had a failed field.
  */
 import { eq } from 'drizzle-orm';
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   costForImage,
   DEFAULT_CHAT_MODEL,
@@ -18,6 +18,15 @@ import {
   retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/features/bulk-generate';
+// The user entity barrel also loads next-auth (needs next/server at import
+// time); it is not under test here, so stub that module.
+vi.mock('@/entities/user/api/next-auth', () => ({
+  auth: async () => null,
+  signIn: async () => undefined,
+  signOut: async () => undefined,
+  handlers: {},
+  isGoogleAuthEnabled: () => false
+}));
 import { db } from '@/shared/db';
 import { jobs } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
-import { AccountBulkPrefsForm } from '@/features/bulk-generate';
+import { AccountBulkPrefsForm } from '@/features/bulk-generate/client';
 import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';

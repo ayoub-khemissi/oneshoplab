@@ -9,3 +9,4 @@ export {
   prefsKey
 } from './ui/bulk-prefs-editor';
 export { SiteBulkPrefsEditor } from './ui/site-bulk-prefs-editor';
+export { AccountBulkPrefsForm } from './ui/account-bulk-prefs-form';

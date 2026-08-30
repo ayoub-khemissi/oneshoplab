@@ -18,10 +18,19 @@ vi.mock('next/navigation', () => ({
     throw new RedirectSignal(to);
   }
 }));
+// The user entity barrel also loads next-auth (needs next/server at import
+// time); it is not under test here, so stub that module.
+vi.mock('@/entities/user/api/next-auth', () => ({
+  auth: async () => null,
+  signIn: async () => undefined,
+  signOut: async () => undefined,
+  handlers: {},
+  isGoogleAuthEnabled: () => false
+}));
 const sendMail = vi.fn().mockResolvedValue(undefined);
 vi.mock('@/shared/mailer', () => ({ sendMail: (...a: unknown[]) => sendMail(...a) }));
 
-import { requestPasswordResetAction, resetPasswordAction } from '@/features/auth';
+import { requestPasswordResetAction, resetPasswordAction } from '@/features/auth/actions';
 import { db } from '@/shared/db';
 import { passwordResetTokens, users } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
