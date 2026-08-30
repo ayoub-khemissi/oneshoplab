@@ -164,3 +164,15 @@ bodies in `src/views/<route>` (`page.tsx` = params + one view). Layout and rules
 `features/share-link`, `widgets/share-links-card`). Order of the remaining
 moves: audit → generation (text/images) → bulk → billing/credits →
 auth/account → dashboard views/widgets → shared (db, mailer, i18n glue).
+
+## nginx (outside the repo — `/etc/nginx/conf.d/oneshoplab.conf`)
+
+- `proxy_buffer_size 64k; proxy_buffers 8 64k; proxy_busy_buffers_size 128k;`
+  — Next 16 sends a `Link: rel=preload` header per chunk plus the session
+  cookie; the dashboard/product pages exceed nginx's 4k default, which
+  surfaces as **502 "upstream sent too big header"** in
+  `/var/log/nginx/oneshoplab_error.log` while the Node process is healthy
+  (added 2026-08-30 after the FSD split grew the chunk list).
+- `cdn.oneshoplab.conf`: `location ^~ /backups/ { return 404; }` (encrypted
+  DB backups live in the same bucket).
+- Diagnose a 502 there first: `sudo tail /var/log/nginx/oneshoplab_error.log`.
