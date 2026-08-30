@@ -72,7 +72,9 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   outside the box) and error tracking (Sentry — needs a DSN; decide first).
 - CSP shipped **report-only**; review `[csp-report]` logs after a week
   before enforcing.
-- Test campaign on business features done: 124 tests / 15 files (~33 s).
-  Not yet covered: store adapters (Shopify/Woo/Wix normalisation — needs
-  fixtures), signup via next-auth `createUser` (framework-bound), legal
-  consent params (next-intl request context), dynamic audit / bulk pipeline.
+- Test campaign on business features done: 144 tests / 19 files (~42 s),
+  incl. adapters (Shopify/Woo/Wix), credentials signup, the audit pipeline
+  end-to-end and the bulk lifecycle. Still uncovered: OAuth `createUser`
+  (next-auth-bound), `checkoutConsentParams` (next-intl request context),
+  the bulk worker tick (`processNextBulkProduct`, needs AI stubs) and the
+  dynamic AI audit itself.
