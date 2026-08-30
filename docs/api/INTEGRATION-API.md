@@ -217,8 +217,9 @@ The Integrations tab of a site is a **wizard**, not a settings form:
      *OneShopLab* in the WP menu → paste the site key → Save. Estimated 3 min.
    - Shopify (phase 3 connector): Settings → Apps → *Develop apps* → Create
      app → Admin API scopes (exact list shown) → Install → copy the token →
-     paste it in OSL. Estimated 5 min. Until the connector ships the step
-     shows "Bientôt disponible" with a "notify me" toggle.
+     paste it in OSL. Estimated 5 min. Live since 2026-08-30 (see
+     `SHOPIFY-CONNECTOR.md` → "Wizard branch"): no site key, the token form
+     is step 3 and the connection card step 4.
    - Wix: "Bientôt disponible" with the same toggle.
 3. **Your site key** — generated at this step (not before), shown once with
    Copy + "I saved it"; the page explains it is a password, that it can be
@@ -237,7 +238,8 @@ Copy tone: second person, short sentences, no jargon ("clé du site" not
 `messages/*.json` under `Integrations.*` (mock admin labels under
 `Integrations.mocks.*`).
 
-Implemented 2026-08-30 as `features/integrations` (wizard, `?tab=integrations`)
+Implemented 2026-08-30 as `features/integrations` (steps, `?tab=integrations`;
+the wizard composition root is `widgets/integrations-wizard`)
 and `features/apply-to-store` (button on each past generation + the
 "changes to apply" list). The "notify me" toggle is stored in
 `projects.integration_interest` (json `{ shopify?, wix? }`).

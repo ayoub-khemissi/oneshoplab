@@ -23,5 +23,4 @@ export {
   setIntegrationInterestAction,
   setPlatformAction
 } from './api/actions';
-export { IntegrationsWizard } from './ui/integrations-wizard';
 export { readWpPluginVersion } from './lib/plugin-download';

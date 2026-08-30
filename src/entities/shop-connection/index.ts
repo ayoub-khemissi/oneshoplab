@@ -24,3 +24,5 @@ export {
   touchWebhook,
   withDecryptedToken
 } from './api/connections';
+export type { ShopifyConnectionView } from './model/view';
+export { toShopifyConnectionView } from './model/view';

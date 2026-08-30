@@ -1,6 +1,6 @@
 # Shopify connector (phase 3) — custom-app token, no plugin
 
-Status: spec v1, 2026-08-30 — backend implemented 2026-08-30 (see "Implementation notes"). Shopify has no "plugin": the merchant creates a
+Status: spec v1, 2026-08-30 — backend + wizard branch implemented 2026-08-30 (see "Implementation notes"). Shopify has no "plugin": the merchant creates a
 **custom app** in their admin and gives OSL its Admin API access token. OSL
 then does what the WooCommerce plugin does, from its own side: pull the
 catalog, receive webhooks, and write approved changes back.
@@ -90,3 +90,22 @@ inventory writes.
 - Entry points for the wizard: `connectShopifyStore`, `disconnectShopifyStore`,
   `requestShopifyPull` (`@/features/shopify-connector`), `getConnectionForUser`
   (`@/entities/shop-connection`).
+
+## Wizard branch (2026-08-30)
+- Server actions `connectShopifyAction` / `disconnectShopifyAction` /
+  `requestShopifyPullAction` / `getShopifyConnectionAction` live in
+  `features/shopify-connector/api/actions.ts` (entries `/actions`, `/client`);
+  the UI (`ShopifyConnectForm`, `ShopifyConnectionCard`) in
+  `features/shopify-connector/ui/`. Reasons come back as codes translated
+  under `Integrations.shopify.error.*`; the token is never returned.
+- The wizard is a **widget** (`src/widgets/integrations-wizard`): it composes
+  `features/integrations` (picker, guide, site key, WooCommerce card) with
+  `features/shopify-connector` — features never import each other. For
+  Shopify there is no site key step: step 3 is the token form, step 4 the
+  connection card (status, "Synchroniser maintenant", "Déconnecter" behind
+  a confirmation that links to the Shopify apps page).
+- `ShopifyConnectionView` (`entities/shop-connection`, `toShopifyConnectionView`)
+  is the serialisable, secret-free shape polled by the card every 10 s;
+  `Integrations.getConnectionStatusAction` carries it as `shopify` too.
+- An obviously invalid domain is refused client-side (`normalizeShopDomain`
+  from `@/entities/shop-connection/client`) before any network call.

@@ -11,6 +11,7 @@ import {
   type OwnedResult,
   type CreatedApiKey
 } from '@/entities/api-key';
+import { getConnectionForUser, toShopifyConnectionView } from '@/entities/shop-connection';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { INTEGRATION_INTEREST_PLATFORMS, products, projects } from '@/shared/db/schema';
@@ -122,12 +123,17 @@ export async function setIntegrationInterestAction(
 
 /** Polled by the connection card (10 s): the plugin's last call + catalog size. */
 export async function getConnectionStatusAction(formData: FormData): Promise<ConnectionStatus> {
-  const empty: ConnectionStatus = { hasActiveKey: false, lastUsedAtIso: null, productCount: 0 };
+  const empty: ConnectionStatus = {
+    hasActiveKey: false,
+    lastUsedAtIso: null,
+    productCount: 0,
+    shopify: null
+  };
   const session = await auth();
   if (!session?.user?.id) return empty;
   const projectId = idSchema.safeParse(formData.get('projectId'));
   if (!projectId.success) return empty;
-  const [keys, countRow] = await Promise.all([
+  const [keys, countRow, connection] = await Promise.all([
     listProjectKeys({ projectId: projectId.data, userId: session.user.id }),
     db
       .select({ value: count() })
@@ -139,8 +145,10 @@ export async function getConnectionStatusAction(formData: FormData): Promise<Con
           eq(projects.userId, session.user.id),
           eq(products.status, 'active')
         )
-      )
+      ),
+    getConnectionForUser(projectId.data, session.user.id)
   ]);
+  const productCount = countRow[0]?.value ?? 0;
   const usable = keys.filter((k) => isUsableKey(k));
   const lastUsed = keys
     .map((k) => k.lastUsedAt?.getTime() ?? 0)
@@ -148,6 +156,7 @@ export async function getConnectionStatusAction(formData: FormData): Promise<Con
   return {
     hasActiveKey: usable.length > 0,
     lastUsedAtIso: lastUsed > 0 ? new Date(lastUsed).toISOString() : null,
-    productCount: countRow[0]?.value ?? 0
+    productCount,
+    shopify: connection ? toShopifyConnectionView(connection, productCount) : null
   };
 }

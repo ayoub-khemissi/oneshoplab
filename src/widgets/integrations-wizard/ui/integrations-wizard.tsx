@@ -3,25 +3,33 @@
 import { Card } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
-import { COMING_SOON } from '../lib/guide-steps';
-import type {
-  ConnectionStatus,
-  IntegrationInterestMap,
-  IntegrationPlatform,
-  KeyActionResult,
-  SiteKeySummary
-} from '../model/types';
-import { ConnectionStatusCard } from './connection-status-card';
-import { KeyManagement } from './key-management';
-import { PlatformGuide } from './platform-guide';
-import { PlatformPicker, platformName } from './platform-picker';
-import { KeyReveal, SiteKeyStep } from './site-key-step';
-import { setPlatformAction } from '../api/actions';
+import type { ShopifyConnectionView } from '@/entities/shop-connection/client';
+import { setPlatformAction } from '@/features/integrations/actions';
+import {
+  COMING_SOON,
+  ConnectionStatusCard,
+  KeyManagement,
+  KeyReveal,
+  PlatformGuide,
+  PlatformPicker,
+  SiteKeyStep,
+  platformName,
+  shopifyAdminBase,
+  type ConnectionStatus,
+  type IntegrationInterestMap,
+  type IntegrationPlatform,
+  type KeyActionResult,
+  type SiteKeySummary
+} from '@/features/integrations/client';
+import { ShopifyConnectForm, ShopifyConnectionCard } from '@/features/shopify-connector/client';
 
 /**
  * Spec §9: choose platform → numbered guide → site key (created here, shown
  * once) → live connection check → key management. State stays client-side so
  * the freshly created plaintext survives until the merchant confirms it.
+ * Shopify has no site key: OSL is the client, so step 3 is the token form and
+ * step 4 the connection card (features/integrations + features/shopify-connector
+ * composed here — a widget, because features never import each other).
  */
 export function IntegrationsWizard({
   projectId,
@@ -47,10 +55,13 @@ export function IntegrationsWizard({
   const [keys, setKeys] = useState(initialKeys);
   const [revealed, setRevealed] = useState<string | null>(null);
   const [rotatedPlaintext, setRotatedPlaintext] = useState<string | null>(null);
+  const [shopify, setShopify] = useState<ShopifyConnectionView | null>(initialStatus.shopify);
 
   const usable = keys.filter((k) => k.state === 'active' || k.state === 'grace');
   const activeKey = usable.find((k) => k.state === 'active') ?? usable[0] ?? null;
-  const keyStepAvailable = platform !== null && !COMING_SOON[platform];
+  const isShopify = platform === 'shopify';
+  const keyStepAvailable = platform !== null && !isShopify && !COMING_SOON[platform];
+  const shopifyLive = shopify !== null && shopify.status !== 'revoked';
 
   function choosePlatform(next: IntegrationPlatform) {
     setPlatform(next);
@@ -84,7 +95,7 @@ export function IntegrationsWizard({
         <PlatformPicker value={platform} detected={detectedPlatform} onChange={choosePlatform} />
       </Step>
 
-      <Step n={2} title={t('step2Title')}>
+      <Step n={2} title={isShopify ? t('shopify.step2Title') : t('step2Title')}>
         <PlatformGuide
           projectId={projectId}
           platform={platform}
@@ -95,8 +106,16 @@ export function IntegrationsWizard({
         />
       </Step>
 
-      <Step n={3} title={t('step3Title')}>
-        {keyStepAvailable ? (
+      <Step n={3} title={isShopify ? t('shopify.step3Title') : t('step3Title')}>
+        {isShopify ? (
+          shopifyLive ? (
+            <p className="text-sm text-[var(--muted)]">
+              {t('shopify.alreadyConnected', { shop: shopify.shopName ?? shopify.shopDomain })}
+            </p>
+          ) : (
+            <ShopifyConnectForm projectId={projectId} domain={domain} onConnected={setShopify} />
+          )
+        ) : keyStepAvailable ? (
           <SiteKeyStep
             projectId={projectId}
             activeKey={activeKey}
@@ -113,7 +132,19 @@ export function IntegrationsWizard({
         )}
       </Step>
 
-      {activeKey ? (
+      {isShopify && shopify ? (
+        <Step n={4} title={t('step4Title')}>
+          <ShopifyConnectionCard
+            key={shopify.status}
+            projectId={projectId}
+            initial={shopify}
+            appsUrl={`${shopifyAdminBase(domain)}/settings/apps/development`}
+            onDisconnected={() => setShopify(null)}
+          />
+        </Step>
+      ) : null}
+
+      {!isShopify && activeKey ? (
         <Step n={4} title={t('step4Title')}>
           <ConnectionStatusCard projectId={projectId} initial={initialStatus} />
         </Step>

@@ -42,10 +42,10 @@ export const GUIDE_STEPS: Record<IntegrationPlatform, StaticStep[]> = {
   wix: []
 };
 
-/** Connectors that have not shipped (spec §8 phases 3 and 5). */
+/** Connectors that have not shipped (spec §8 phase 5: Wix). */
 export const COMING_SOON: Record<IntegrationPlatform, boolean> = {
   woocommerce: false,
-  shopify: true,
+  shopify: false,
   wix: true
 };
 

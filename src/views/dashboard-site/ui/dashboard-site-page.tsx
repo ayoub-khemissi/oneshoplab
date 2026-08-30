@@ -31,10 +31,11 @@ import {
   INTEGRATION_PLATFORMS,
   isUsableKey,
   readWpPluginVersion,
-  IntegrationsWizard,
   toSiteKeySummary,
   type IntegrationPlatform
 } from '@/features/integrations';
+import { IntegrationsWizard } from '@/widgets/integrations-wizard';
+import { getConnectionForUser, toShopifyConnectionView } from '@/entities/shop-connection';
 import {
   getActiveBulkJob,
   getEffectiveBulkPrefs,
@@ -372,13 +373,15 @@ export async function DashboardSitePage({
 
   // Integrations tab: site keys + the plugin's "to apply" queue. Two cheap
   // indexed reads, gated by tab like everything else above.
-  const [siteKeys, pendingChanges] =
+  const [siteKeys, pendingChanges, shopConnection] =
     activeTab === 'integrations'
       ? await Promise.all([
           listProjectKeys({ projectId: project.id, userId: session.user.id }),
-          listPendingChangesForSite(project.id)
+          listPendingChangesForSite(project.id),
+          getConnectionForUser(project.id, session.user.id)
         ])
-      : [[], []];
+      : [[], [], null];
+  const activeProductCount = productRows.filter((p) => p.status === 'active').length;
   const detectedPlatform: IntegrationPlatform | null = (
     INTEGRATION_PLATFORMS as readonly string[]
   ).includes(project.source)
@@ -472,7 +475,10 @@ export async function DashboardSitePage({
             initialStatus={{
               hasActiveKey: siteKeys.some((k) => isUsableKey(k)),
               lastUsedAtIso: lastPluginCall > 0 ? new Date(lastPluginCall).toISOString() : null,
-              productCount: productRows.filter((p) => p.status === 'active').length
+              productCount: activeProductCount,
+              shopify: shopConnection
+                ? toShopifyConnectionView(shopConnection, activeProductCount)
+                : null
             }}
             interest={project.integrationInterest ?? {}}
           />
