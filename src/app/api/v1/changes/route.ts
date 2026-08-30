@@ -1,5 +1,5 @@
 import { withSiteKey } from '@/entities/api-key';
-import { listPendingChanges, type ProductChangeRow } from '@/entities/product-change';
+import { changeToWire, listPendingChanges } from '@/entities/product-change';
 import { changesQuerySchema } from '@/features/catalog-sync';
 import { errorResponse, jsonResponse } from '@/shared/api';
 
@@ -8,18 +8,6 @@ export const dynamic = 'force-dynamic';
 
 /** Spec §3: 120/min per key. */
 const CHANGES_BUCKET = { capacity: 120, refillPerSec: 2 };
-
-function toWire(c: ProductChangeRow) {
-  return {
-    id: c.id,
-    productSourceId: c.productSourceId,
-    field: c.field,
-    value: c.value,
-    sourceJobId: c.sourceJobId,
-    approvedAt: c.approvedAt.toISOString(),
-    expiresAt: c.expiresAt?.toISOString() ?? null
-  };
-}
 
 export const GET = withSiteKey(
   async (req, ctx) => {
@@ -34,7 +22,7 @@ export const GET = withSiteKey(
       });
     }
     const page = await listPendingChanges(ctx.project.id, parsed.data);
-    return jsonResponse({ changes: page.changes.map(toWire), nextCursor: page.nextCursor });
+    return jsonResponse({ changes: page.changes.map(changeToWire), nextCursor: page.nextCursor });
   },
   { permission: 'changes:read', bucket: CHANGES_BUCKET }
 );

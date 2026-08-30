@@ -23,6 +23,7 @@ export {
   MAX_CHANGES_PAGE,
   ackChange,
   cancelChange,
+  changeToWire,
   createChange,
   currentFieldValue,
   expireDueChanges,

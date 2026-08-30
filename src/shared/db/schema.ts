@@ -69,7 +69,8 @@ export const NOTIFICATION_KINDS = [
   'integration_key_expired',
   'integration_key_revoked',
   'integration_token_invalid',
-  'integration_sync_failed'
+  'integration_sync_failed',
+  'integration_webhook_disabled'
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
@@ -770,7 +771,12 @@ export const legalConsents = mysqlTable(
 // product_changes is the merchant's "apply to store" queue that plugins pull.
 // ============================================================================
 
-export const API_KEY_PERMISSIONS = ['catalog:write', 'changes:read', 'changes:ack'] as const;
+export const API_KEY_PERMISSIONS = [
+  'catalog:write',
+  'changes:read',
+  'changes:ack',
+  'webhooks:manage'
+] as const;
 export type ApiKeyPermission = (typeof API_KEY_PERMISSIONS)[number];
 export const API_KEY_EVENT_KINDS = [
   'created',
@@ -1017,4 +1023,88 @@ export const gdprRequests = mysqlTable(
     receivedAt: timestamp('received_at').notNull().defaultNow()
   },
   (t) => ({ idxShop: index('idx_gdpr_requests_shop').on(t.shopDomain) })
+);
+
+// ============================================================================
+// OUTBOUND WEBHOOKS — OSL → plugins/integrators (docs/api/OUTBOUND-WEBHOOKS.md).
+// The secret is sealed like a shop token; deliveries are the retry queue.
+// ============================================================================
+
+export const WEBHOOK_EVENTS = [
+  'change.approved',
+  'change.cancelled',
+  'sync.completed',
+  'sync.failed',
+  'connection.status_changed'
+] as const;
+export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];
+/** `self` = registered by the plugin through PUT /webhooks/self (one per
+ *  project); `manual` = entered by the merchant for another integration. */
+export const WEBHOOK_KINDS = ['self', 'manual'] as const;
+export type WebhookKind = (typeof WEBHOOK_KINDS)[number];
+/** `failed` = waiting for the next retry (`nextAttemptAt`); `dead` = given up. */
+export const WEBHOOK_DELIVERY_STATUSES = ['pending', 'delivered', 'failed', 'dead'] as const;
+export type WebhookDeliveryStatus = (typeof WEBHOOK_DELIVERY_STATUSES)[number];
+
+export const outboundWebhooks = mysqlTable(
+  'outbound_webhooks',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    kind: mysqlEnum('kind', WEBHOOK_KINDS).notNull().default('manual'),
+    url: varchar('url', { length: 2048 }).notNull(),
+    /** sha256 hex of `url` — the unique handle (the url itself is too long to index). */
+    urlHash: varchar('url_hash', { length: 64 }).notNull(),
+    /** `v1:<iv>:<tag>:<data>` (secret-box); the plaintext is shown once. */
+    secretCiphertext: text('secret_ciphertext').notNull(),
+    keyId: varchar('key_id', { length: 16 }).notNull().default('v1'),
+    events: json('events').$type<WebhookEvent[]>().notNull(),
+    enabled: boolean('enabled').notNull().default(true),
+    createdBy: varchar('created_by', { length: 36 }).references(() => users.id, {
+      onDelete: 'set null'
+    }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    lastDeliveryAt: timestamp('last_delivery_at'),
+    /** HTTP status of the last attempt; NULL = network error / never delivered. */
+    lastStatus: int('last_status'),
+    failureStreak: int('failure_streak').notNull().default(0),
+    /** First failure of the current streak — the "7 days of failures" clock. */
+    failingSince: timestamp('failing_since'),
+    disabledAt: timestamp('disabled_at')
+  },
+  (t) => ({
+    uniqProjectUrl: uniqueIndex('uniq_outbound_webhooks_project_url').on(t.projectId, t.urlHash),
+    idxProject: index('idx_outbound_webhooks_project').on(t.projectId)
+  })
+);
+
+export const webhookDeliveries = mysqlTable(
+  'webhook_deliveries',
+  {
+    /** ULID — the listing cursor and the `X-OSL-Delivery-Id` header. */
+    id: varchar('id', { length: 26 }).primaryKey(),
+    webhookId: varchar('webhook_id', { length: 36 })
+      .notNull()
+      .references(() => outboundWebhooks.id, { onDelete: 'cascade' }),
+    /** ULID shared by every delivery of one event (receivers dedupe on it). */
+    eventId: varchar('event_id', { length: 26 }).notNull(),
+    /** A `WebhookEvent` or `ping`. */
+    event: varchar('event', { length: 40 }).notNull(),
+    payload: json('payload').$type<Record<string, unknown>>().notNull(),
+    attempt: int('attempt').notNull().default(0),
+    status: mysqlEnum('status', WEBHOOK_DELIVERY_STATUSES).notNull().default('pending'),
+    responseStatus: int('response_status'),
+    /** First 1 KiB of the response body (or the failure reason). */
+    responseBody: text('response_body'),
+    nextAttemptAt: timestamp('next_attempt_at'),
+    deliveredAt: timestamp('delivered_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (t) => ({
+    idxDue: index('idx_webhook_deliveries_due').on(t.status, t.nextAttemptAt),
+    idxWebhook: index('idx_webhook_deliveries_webhook').on(t.webhookId, t.id),
+    idxCreatedAt: index('idx_webhook_deliveries_created_at').on(t.createdAt)
+  })
 );

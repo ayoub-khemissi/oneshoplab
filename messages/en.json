@@ -119,7 +119,8 @@
         "integration_key_expired": "API key expired",
         "integration_key_revoked": "API key revoked (rotation ended)",
         "integration_token_invalid": "Store token refused",
-        "integration_sync_failed": "Store sync failed"
+        "integration_sync_failed": "Store sync failed",
+        "integration_webhook_disabled": "Webhook disabled after repeated failures"
       },
       "fieldLabels": {
         "title": "Title",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "The store could not be reached. We retry automatically.",
       "reason_token_invalid": "The store token was refused. Save a new token from the Integrations tab.",
       "reason_unknown": "Details: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "Webhook disabled for {siteName}",
+      "body": "The webhook {url} of {siteName} was disabled after repeated delivery failures. Your integration no longer receives changes in real time.",
+      "action": "Check that the endpoint answers, then re-enable or re-register the webhook from the Integrations tab."
     }
   }
 }

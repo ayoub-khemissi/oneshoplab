@@ -119,7 +119,8 @@
         "integration_key_expired": "APIキーの有効期限が切れました",
         "integration_key_revoked": "APIキーが失効しました（ローテーション終了）",
         "integration_token_invalid": "ストアのトークンが拒否されました",
-        "integration_sync_failed": "ストアの同期に失敗しました"
+        "integration_sync_failed": "ストアの同期に失敗しました",
+        "integration_webhook_disabled": "繰り返しの失敗により Webhook を無効化しました"
       },
       "fieldLabels": {
         "title": "タイトル",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "ストアに接続できませんでした。自動的に再試行します。",
       "reason_token_invalid": "ストアのトークンが拒否されました。「連携」タブで新しいトークンを保存してください。",
       "reason_unknown": "詳細：{error}"
+    },
+    "webhook_disabled": {
+      "subject": "{siteName} の Webhook を無効化しました",
+      "body": "{siteName} の Webhook {url} は、配信の失敗が繰り返されたため無効化されました。連携は変更をリアルタイムで受信しなくなります。",
+      "action": "エンドポイントが応答することを確認し、「連携」タブで Webhook を再度有効化または再登録してください。"
     }
   }
 }

@@ -50,7 +50,12 @@ describe('api keys', () => {
     expect(plaintext).toMatch(/^osl_live_[A-Za-z0-9_-]{43}$/);
     expect(key.prefix).toBe(plaintext.slice(0, 12));
     expect('keyHash' in key).toBe(false);
-    expect(key.permissions).toEqual(['catalog:write', 'changes:read', 'changes:ack']);
+    expect(key.permissions).toEqual([
+      'catalog:write',
+      'changes:read',
+      'changes:ack',
+      'webhooks:manage'
+    ]);
 
     const v = await verifyApiKey(plaintext);
     expect(v.ok && v.key.id).toBe(key.id);

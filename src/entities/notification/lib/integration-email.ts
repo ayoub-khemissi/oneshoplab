@@ -17,7 +17,8 @@ export const INTEGRATION_EMAIL_KINDS = [
   'integration_key_expiring',
   'integration_key_expired',
   'integration_token_invalid',
-  'integration_sync_failed'
+  'integration_sync_failed',
+  'integration_webhook_disabled'
 ] as const;
 export type IntegrationEmailKind = (typeof INTEGRATION_EMAIL_KINDS)[number];
 
@@ -34,6 +35,8 @@ export interface IntegrationAlertParams {
   limit?: number;
   /** Raw error message (reason unknown). */
   error?: string;
+  /** Webhook endpoint (webhook_disabled). */
+  url?: string;
 }
 
 export interface IntegrationEmailInput {
@@ -65,7 +68,8 @@ const KEY_SUFFIX: Record<IntegrationEmailKind, string> = {
   integration_key_expiring: 'key_expiring',
   integration_key_expired: 'key_expired',
   integration_token_invalid: 'token_invalid',
-  integration_sync_failed: 'sync_failed'
+  integration_sync_failed: 'sync_failed',
+  integration_webhook_disabled: 'webhook_disabled'
 };
 
 export async function buildIntegrationEmail(
@@ -90,7 +94,8 @@ export async function buildIntegrationEmail(
       ? new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(p.expiresAt)
       : '',
     limit: p.limit ?? 0,
-    error: p.error ?? ''
+    error: p.error ?? '',
+    url: p.url ?? ''
   };
   const ns = KEY_SUFFIX[input.kind];
   const lines: string[] = [t(`${ns}.body`, values)];

@@ -1,5 +1,6 @@
 import { and, eq, exists, isNotNull, isNull, lt, ne, or } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { db } from '@/shared/db';
 import {
   productChanges,
@@ -20,6 +21,21 @@ import type {
   ShopConnection,
   ShopConnectionRow
 } from '../model/types';
+
+/** Best-effort webhook event (spec: `connection.status_changed`). */
+async function emitStatus(
+  projectId: string,
+  platform: ShopConnectionPlatform,
+  status: ShopConnectionRow['status'],
+  reason?: string
+): Promise<void> {
+  await emitProjectEvent(projectId, 'connection.status_changed', {
+    platform,
+    status,
+    changedAt: new Date().toISOString(),
+    ...(reason ? { reason: reason.slice(0, 500) } : {})
+  });
+}
 
 /** Interval between two worker-driven full pulls of one connection. */
 export const NIGHTLY_PULL_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -148,7 +164,9 @@ async function upsert(projectId: string, values: UpsertValues): Promise<ShopConn
   } else {
     await db.insert(shopConnections).values({ id: randomUUID(), projectId, ...reset });
   }
-  return getRow(projectId);
+  const row = await getRow(projectId);
+  if (row) await emitStatus(projectId, row.platform, 'connected');
+  return row;
 }
 
 export async function getConnection(projectId: string): Promise<ShopConnection | null> {
@@ -220,6 +238,10 @@ export async function markTokenInvalid(projectId: string, error: string): Promis
     .update(shopConnections)
     .set({ status: 'token_invalid', lastError: error.slice(0, 2000) })
     .where(and(eq(shopConnections.projectId, projectId), eq(shopConnections.status, 'connected')));
+  if (res.affectedRows > 0) {
+    const row = await getRow(projectId);
+    if (row) await emitStatus(projectId, row.platform, 'token_invalid', error);
+  }
   return res.affectedRows > 0;
 }
 
@@ -312,6 +334,7 @@ export async function disconnect(projectId: string, userId: string): Promise<boo
     .update(shopConnections)
     .set({ ...REVOKED_VALUES, revokedAt: new Date() })
     .where(eq(shopConnections.projectId, projectId));
+  await emitRevoked(projectId, 'disconnected');
   return res.affectedRows > 0;
 }
 
@@ -321,17 +344,34 @@ export async function revokeConnection(projectId: string, reason: string): Promi
     .update(shopConnections)
     .set({ ...REVOKED_VALUES, revokedAt: new Date(), lastError: reason.slice(0, 2000) })
     .where(eq(shopConnections.projectId, projectId));
+  await emitRevoked(projectId, reason);
   return res.affectedRows > 0;
+}
+
+async function emitRevoked(projectId: string, reason: string): Promise<void> {
+  const row = await getRow(projectId);
+  if (row) await emitStatus(projectId, row.platform, 'revoked', reason);
 }
 
 /** Shopify `shop/redact`: every connection of that shop, whatever the project. */
 export async function revokeByShopDomain(shopDomain: string, reason: string): Promise<number> {
+  const affected = await db
+    .select({ projectId: shopConnections.projectId })
+    .from(shopConnections)
+    .where(
+      and(
+        eq(shopConnections.shopDomain, shopDomain),
+        eq(shopConnections.platform, 'shopify'),
+        ne(shopConnections.status, 'revoked')
+      )
+    );
   const [res] = await db
     .update(shopConnections)
     .set({ ...REVOKED_VALUES, revokedAt: new Date(), lastError: reason.slice(0, 2000) })
     .where(
       and(eq(shopConnections.shopDomain, shopDomain), eq(shopConnections.platform, 'shopify'))
     );
+  for (const c of affected) await emitStatus(c.projectId, 'shopify', 'revoked', reason);
   return res.affectedRows;
 }
 

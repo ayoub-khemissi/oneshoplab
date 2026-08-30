@@ -5,6 +5,7 @@
  */
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { ProjectSyncLocked, syncProjectProducts, withProjectSyncLock } from '@/entities/product';
 import {
   listDueNightlyPulls,
@@ -98,6 +99,12 @@ export async function pullShopifyCatalog(
         { lastPullAt: finishedAt, clearRequest: true }
       );
       if (truncated) await alertSyncFailed(projectId, { reason: 'plan_limit', limit: max });
+      await emitProjectEvent(projectId, 'sync.completed', {
+        source: 'shopify',
+        fetched: products.length,
+        truncated,
+        ...counts
+      });
       return { ok: true, fetched: products.length, truncated, ...counts };
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
@@ -109,6 +116,11 @@ export async function pullShopifyCatalog(
           startedAt,
           error: message
         });
+        await emitProjectEvent(projectId, 'sync.failed', {
+          source: 'shopify',
+          reason: 'token_invalid',
+          error: message.slice(0, 500)
+        });
         return { ok: false, reason: 'token_invalid', error: message };
       }
       if (e instanceof ProjectSyncLocked) {
@@ -117,6 +129,11 @@ export async function pullShopifyCatalog(
       }
       await setPullProgress(projectId, { phase: 'failed', fetched: 0, startedAt, error: message });
       await alertSyncFailed(projectId, { reason: syncFailureReason(e), error: message });
+      await emitProjectEvent(projectId, 'sync.failed', {
+        source: 'shopify',
+        reason: syncFailureReason(e),
+        error: message.slice(0, 500)
+      });
       return { ok: false, reason: 'error', error: message };
     }
   });

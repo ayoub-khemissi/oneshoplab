@@ -15,6 +15,8 @@ const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
+const { drainWebhookDeliveries, sweepWebhookDeliveries } =
+  await import('@/features/webhook-delivery');
 
 import { writeWorkerHeartbeat } from '@/shared/health';
 
@@ -52,7 +54,9 @@ async function main(): Promise<void> {
         runShopifyApplies().catch((e) => console.error('[worker] shopify-apply failed', e)),
         runShopifyRequestedPulls().catch((e) => console.error('[worker] shopify-pull failed', e)),
         runWixApplies().catch((e) => console.error('[worker] wix-apply failed', e)),
-        runWixRequestedPulls().catch((e) => console.error('[worker] wix-pull failed', e))
+        runWixRequestedPulls().catch((e) => console.error('[worker] wix-pull failed', e)),
+        // Outbound webhooks: due deliveries + retries (docs/api/OUTBOUND-WEBHOOKS.md).
+        drainWebhookDeliveries().catch((e) => console.error('[worker] webhook-drain failed', e))
       ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
@@ -75,6 +79,9 @@ async function main(): Promise<void> {
         );
         tasks.push(
           runWixNightlyPulls().catch((e) => console.error('[worker] wix-nightly-pull failed', e))
+        );
+        tasks.push(
+          sweepWebhookDeliveries().catch((e) => console.error('[worker] webhook-sweep failed', e))
         );
       }
       await Promise.allSettled(tasks);

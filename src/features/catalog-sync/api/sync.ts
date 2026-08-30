@@ -14,6 +14,7 @@ import {
   syncProjectProducts,
   withProjectSyncLock
 } from '@/entities/product';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { ApiError } from '@/shared/api';
 import { db } from '@/shared/db';
 import { projects, users, type Platform } from '@/shared/db/schema';
@@ -104,6 +105,36 @@ export async function syncCatalog(input: SyncInput): Promise<SyncResponse> {
         : await startSession(project.id)
       : null;
 
+  let response: SyncResponse;
+  try {
+    response = await runSync(input, session, sourceIds);
+  } catch (e) {
+    await emitProjectEvent(project.id, 'sync.failed', {
+      source: 'plugin',
+      mode: body.mode,
+      reason: e instanceof ApiError ? e.code : 'error',
+      error: e instanceof Error ? e.message.slice(0, 500) : String(e)
+    });
+    throw e;
+  }
+  // Full mode: one event per completed sync, not per page.
+  if (body.mode === 'partial' || body.final) {
+    const { session: _s, errors: _e, ...counts } = response;
+    await emitProjectEvent(project.id, 'sync.completed', {
+      source: 'plugin',
+      mode: body.mode,
+      ...counts
+    });
+  }
+  return response;
+}
+
+async function runSync(
+  input: SyncInput,
+  session: Awaited<ReturnType<typeof startSession>> | null,
+  sourceIds: string[]
+): Promise<SyncResponse> {
+  const { project, body } = input;
   return withProjectLock(project.id, async () => {
     await assertPlanLimit(project, sourceIds);
     const platform = await resolvePlatform(project, input.platformHeader);

@@ -1,4 +1,5 @@
 import { and, asc, eq, gt, lte } from 'drizzle-orm';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { db } from '@/shared/db';
 import { productChanges, products, projects, type ProductChangeField } from '@/shared/db/schema';
 import { ulid } from '@/shared/lib';
@@ -34,6 +35,19 @@ export function currentFieldValue(product: ProductFieldSource, field: ProductCha
     case 'images':
       return (product.images ?? []).map((i) => ({ src: i.src, alt: i.alt ?? null }));
   }
+}
+
+/** Wire shape of `GET /changes` — also the `change.approved` webhook payload. */
+export function changeToWire(c: ProductChangeRow) {
+  return {
+    id: c.id,
+    productSourceId: c.productSourceId,
+    field: c.field,
+    value: c.value,
+    sourceJobId: c.sourceJobId,
+    approvedAt: c.approvedAt.toISOString(),
+    expiresAt: c.expiresAt?.toISOString() ?? null
+  };
 }
 
 async function getChange(projectId: string, id: string): Promise<ProductChangeRow | null> {
@@ -73,6 +87,7 @@ export async function createChange(input: CreateChangeInput): Promise<CreateChan
   });
   const change = await getChange(input.projectId, id);
   if (!change) return { ok: false, reason: 'not_found' };
+  await emitProjectEvent(input.projectId, 'change.approved', changeToWire(change));
   return { ok: true, change };
 }
 
@@ -156,7 +171,14 @@ export async function cancelChange(
   const change = await getChange(projectId, id);
   if (!change) return 'not_found';
   const res = await transitionChange(db, id, 'cancelled', { ackedAt: null }, { tolerate: true });
-  return res === 'applied' ? 'cancelled' : 'refused';
+  if (res !== 'applied') return 'refused';
+  await emitProjectEvent(projectId, 'change.cancelled', {
+    id: change.id,
+    productSourceId: change.productSourceId,
+    field: change.field,
+    cancelledAt: new Date().toISOString()
+  });
+  return 'cancelled';
 }
 
 /** Worker: pending changes past `expiresAt` become `expired`. */

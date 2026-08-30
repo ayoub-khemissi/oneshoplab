@@ -119,7 +119,8 @@
         "integration_key_expired": "Chiave API scaduta",
         "integration_key_revoked": "Chiave API revocata (fine rotazione)",
         "integration_token_invalid": "Token del negozio rifiutato",
-        "integration_sync_failed": "Sincronizzazione del negozio fallita"
+        "integration_sync_failed": "Sincronizzazione del negozio fallita",
+        "integration_webhook_disabled": "Webhook disattivato dopo errori ripetuti"
       },
       "fieldLabels": {
         "title": "Titolo",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "Impossibile raggiungere il negozio. Riproviamo automaticamente.",
       "reason_token_invalid": "Il token del negozio è stato rifiutato. Salva un nuovo token dalla scheda Integrazioni.",
       "reason_unknown": "Dettagli: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "Webhook disattivato per {siteName}",
+      "body": "Il webhook {url} di {siteName} è stato disattivato dopo ripetuti errori di consegna. La tua integrazione non riceve più le modifiche in tempo reale.",
+      "action": "Verifica che l’endpoint risponda, poi riattiva o registra di nuovo il webhook dalla scheda Integrazioni."
     }
   }
 }

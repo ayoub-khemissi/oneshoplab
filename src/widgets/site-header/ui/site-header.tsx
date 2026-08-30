@@ -38,7 +38,8 @@ export async function SiteHeader() {
     integration_key_expired: t('notifications.kinds.integration_key_expired'),
     integration_key_revoked: t('notifications.kinds.integration_key_revoked'),
     integration_token_invalid: t('notifications.kinds.integration_token_invalid'),
-    integration_sync_failed: t('notifications.kinds.integration_sync_failed')
+    integration_sync_failed: t('notifications.kinds.integration_sync_failed'),
+    integration_webhook_disabled: t('notifications.kinds.integration_webhook_disabled')
   };
   const notifLabels = {
     panelTitle: t('notifications.title'),

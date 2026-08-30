@@ -1,6 +1,7 @@
 /** Full catalog pull — mirrors shopify-connector/api/pull.ts on the Wix Stores query API. */
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { ProjectSyncLocked, syncProjectProducts, withProjectSyncLock } from '@/entities/product';
 import {
   listDueNightlyPulls,
@@ -86,6 +87,12 @@ export async function pullWixCatalog(
           { lastPullAt: finishedAt, clearRequest: true }
         );
         if (truncated) await alertSyncFailed(projectId, { reason: 'plan_limit', limit: max });
+        await emitProjectEvent(projectId, 'sync.completed', {
+          source: 'wix',
+          fetched: products.length,
+          truncated,
+          ...counts
+        });
         return { ok: true, fetched: products.length, truncated, ...counts };
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
@@ -96,6 +103,11 @@ export async function pullWixCatalog(
             fetched: 0,
             startedAt,
             error: message
+          });
+          await emitProjectEvent(projectId, 'sync.failed', {
+            source: 'wix',
+            reason: 'token_invalid',
+            error: message.slice(0, 500)
           });
           return { ok: false, reason: 'token_invalid', error: message };
         }
@@ -110,6 +122,11 @@ export async function pullWixCatalog(
           error: message
         });
         await alertSyncFailed(projectId, { reason: syncFailureReason(e), error: message });
+        await emitProjectEvent(projectId, 'sync.failed', {
+          source: 'wix',
+          reason: syncFailureReason(e),
+          error: message.slice(0, 500)
+        });
         return { ok: false, reason: 'error', error: message };
       }
     }

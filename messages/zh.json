@@ -119,7 +119,8 @@
         "integration_key_expired": "API 密钥已过期",
         "integration_key_revoked": "API 密钥已撤销（轮换结束）",
         "integration_token_invalid": "商店令牌被拒绝",
-        "integration_sync_failed": "商店同步失败"
+        "integration_sync_failed": "商店同步失败",
+        "integration_webhook_disabled": "Webhook 因多次失败已停用"
       },
       "fieldLabels": {
         "title": "标题",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "无法连接到商店。我们会自动重试。",
       "reason_token_invalid": "商店令牌被拒绝。请在“集成”标签页保存新令牌。",
       "reason_unknown": "详情：{error}"
+    },
+    "webhook_disabled": {
+      "subject": "{siteName} 的 Webhook 已停用",
+      "body": "{siteName} 的 Webhook {url} 在多次投递失败后已被停用。您的集成不再实时接收更改。",
+      "action": "请确认该地址可以响应，然后在“集成”标签页重新启用或重新注册 Webhook。"
     }
   }
 }

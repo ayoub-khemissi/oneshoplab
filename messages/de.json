@@ -119,7 +119,8 @@
         "integration_key_expired": "API-Schlüssel abgelaufen",
         "integration_key_revoked": "API-Schlüssel widerrufen (Rotation beendet)",
         "integration_token_invalid": "Shop-Token abgelehnt",
-        "integration_sync_failed": "Shop-Synchronisierung fehlgeschlagen"
+        "integration_sync_failed": "Shop-Synchronisierung fehlgeschlagen",
+        "integration_webhook_disabled": "Webhook nach wiederholten Fehlern deaktiviert"
       },
       "fieldLabels": {
         "title": "Titel",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "Der Shop war nicht erreichbar. Wir versuchen es automatisch erneut.",
       "reason_token_invalid": "Das Shop-Token wurde abgelehnt. Speichere ein neues Token im Tab „Integrationen“.",
       "reason_unknown": "Details: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "Webhook für {siteName} deaktiviert",
+      "body": "Der Webhook {url} von {siteName} wurde nach wiederholten Zustellfehlern deaktiviert. Deine Integration erhält Änderungen nicht mehr in Echtzeit.",
+      "action": "Prüfe, ob der Endpunkt antwortet, und aktiviere oder registriere den Webhook im Tab „Integrationen“ erneut."
     }
   }
 }

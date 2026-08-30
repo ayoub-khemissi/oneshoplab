@@ -119,7 +119,8 @@
         "integration_key_expired": "Klucz API wygasł",
         "integration_key_revoked": "Klucz API unieważniony (koniec rotacji)",
         "integration_token_invalid": "Token sklepu odrzucony",
-        "integration_sync_failed": "Synchronizacja sklepu nie powiodła się"
+        "integration_sync_failed": "Synchronizacja sklepu nie powiodła się",
+        "integration_webhook_disabled": "Webhook wyłączony po powtarzających się błędach"
       },
       "fieldLabels": {
         "title": "Tytuł",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "Nie udało się połączyć ze sklepem. Ponawiamy próbę automatycznie.",
       "reason_token_invalid": "Token sklepu został odrzucony. Zapisz nowy token na karcie Integracje.",
       "reason_unknown": "Szczegóły: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "Webhook {siteName} został wyłączony",
+      "body": "Webhook {url} witryny {siteName} został wyłączony po powtarzających się błędach dostarczania. Twoja integracja nie otrzymuje już zmian w czasie rzeczywistym.",
+      "action": "Sprawdź, czy adres odpowiada, a następnie włącz ponownie lub zarejestruj webhook na karcie Integracje."
     }
   }
 }

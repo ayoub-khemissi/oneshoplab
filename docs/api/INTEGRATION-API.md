@@ -24,8 +24,10 @@ phase 4), multi-store keys, end-user OAuth.
   12 chars (`prefix`) for lookup. Lookup by prefix → constant-time compare of
   the hash. Never logged (only the prefix).
 - Scope: one key = one **project** (site) + a permission set:
-  `catalog:write`, `changes:read`, `changes:ack` (all three by default;
-  read-only keys for reporting integrations possible).
+  `catalog:write`, `changes:read`, `changes:ack`, `webhooks:manage` (all
+  four by default; read-only keys for reporting integrations possible).
+  `webhooks:manage` covers `PUT/DELETE /webhooks/self`, its deliveries log
+  and the ping (docs/api/OUTBOUND-WEBHOOKS.md).
 - Transport: `Authorization: Bearer <key>` over TLS **plus** request
   signature `X-OSL-Signature: t=<unix seconds>,v1=<hex hmac>` where
   `v1 = HMAC-SHA256(key, "${t}.${METHOD}.${path}.${sha256(rawBody)}")`.
@@ -200,7 +202,8 @@ listing is index-only. Nothing in the hot path calls the AI providers.
    polls `/changes` every 5 min via WP-Cron, applies, acks.
 3. Shopify connector: custom-app Admin token stored on OSL, OSL pulls
    products + applies changes through the Admin API (no plugin).
-4. Outbound webhooks (`change.approved`) with HMAC, retries, dead-letter.
+4. Outbound webhooks (`change.approved`…) with HMAC, retries, dead-letter —
+   backend live 2026-08-30 (`OUTBOUND-WEBHOOKS.md`).
 5. Wix app.
 
 ## 9. Merchant onboarding (guided setup — merchants are not technical)

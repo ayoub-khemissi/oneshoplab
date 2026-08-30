@@ -211,6 +211,13 @@
       "when": 1788073152149,
       "tag": "0029_shop_oauth_wix",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "5",
+      "when": 1788092279186,
+      "tag": "0030_outbound_webhooks",
+      "breakpoints": true
     }
   ]
 }

@@ -119,7 +119,8 @@
         "integration_key_expired": "API anahtarının süresi doldu",
         "integration_key_revoked": "API anahtarı iptal edildi (rotasyon bitti)",
         "integration_token_invalid": "Mağaza belirteci reddedildi",
-        "integration_sync_failed": "Mağaza senkronizasyonu başarısız"
+        "integration_sync_failed": "Mağaza senkronizasyonu başarısız",
+        "integration_webhook_disabled": "Tekrarlanan hatalar sonrası webhook devre dışı"
       },
       "fieldLabels": {
         "title": "Başlık",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "Mağazaya ulaşılamadı. Otomatik olarak yeniden deniyoruz.",
       "reason_token_invalid": "Mağaza belirteci reddedildi. Entegrasyonlar sekmesinden yeni bir belirteç kaydedin.",
       "reason_unknown": "Ayrıntılar: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "{siteName} için webhook devre dışı bırakıldı",
+      "body": "{siteName} sitesinin {url} webhook’u tekrarlanan teslim hataları sonrası devre dışı bırakıldı. Entegrasyonunuz artık değişiklikleri anında almıyor.",
+      "action": "Uç noktanın yanıt verdiğini kontrol edin, ardından Entegrasyonlar sekmesinden webhook’u yeniden etkinleştirin veya kaydedin."
     }
   }
 }

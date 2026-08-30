@@ -119,7 +119,8 @@
         "integration_key_expired": "انتهت صلاحية مفتاح API",
         "integration_key_revoked": "تم إلغاء مفتاح API (انتهى التدوير)",
         "integration_token_invalid": "تم رفض رمز المتجر",
-        "integration_sync_failed": "فشلت مزامنة المتجر"
+        "integration_sync_failed": "فشلت مزامنة المتجر",
+        "integration_webhook_disabled": "تم تعطيل الويب هوك بعد إخفاقات متكررة"
       },
       "fieldLabels": {
         "title": "العنوان",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "تعذر الوصول إلى المتجر. سنعيد المحاولة تلقائيًا.",
       "reason_token_invalid": "تم رفض رمز المتجر. احفظ رمزًا جديدًا من تبويب التكاملات.",
       "reason_unknown": "التفاصيل: {error}"
+    },
+    "webhook_disabled": {
+      "subject": "تم تعطيل الويب هوك لموقع {siteName}",
+      "body": "تم تعطيل الويب هوك {url} الخاص بـ {siteName} بعد إخفاقات متكررة في التسليم. لم يعد تكاملك يستقبل التغييرات فوريًا.",
+      "action": "تحقق من أن نقطة النهاية تستجيب، ثم أعد تفعيل الويب هوك أو تسجيله من تبويب التكاملات."
     }
   }
 }

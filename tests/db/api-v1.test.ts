@@ -125,7 +125,7 @@ describe('GET /site + auth', () => {
     });
     expect(r.body.key).toMatchObject({
       prefix: key.slice(0, 12),
-      permissions: ['catalog:write', 'changes:read', 'changes:ack'],
+      permissions: ['catalog:write', 'changes:read', 'changes:ack', 'webhooks:manage'],
       expiresAt: null,
       graceUntil: null
     });

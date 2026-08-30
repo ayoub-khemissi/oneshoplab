@@ -1,6 +1,7 @@
 # Outbound webhooks (phase 4) — OSL → plugins/integrators
 
-Status: spec v1, 2026-08-30. Lets a plugin (or any integrator) react
+Status: spec v1, 2026-08-30 — backend implemented 2026-08-30 (migration
+`0030_outbound_webhooks`; UI section pending). Lets a plugin (or any integrator) react
 immediately instead of polling `/changes` every 5 minutes.
 
 ## Model
@@ -9,9 +10,13 @@ immediately instead of polling `/changes` every 5 minutes.
   time), secret (sealed, shown once like a site key), events json
   (`change.approved`, `change.cancelled`, `sync.completed`, `sync.failed`,
   `connection.status_changed`), enabled, createdBy, createdAt, lastDeliveryAt,
-  lastStatus, failureStreak, disabledAt (auto-disabled after 50 consecutive
-  failures or 7 days of failures; the merchant is notified — bell + email
-  kind `integration_webhook_disabled`).
+  lastStatus, failureStreak, failingSince (start of the current streak — the
+  7-day clock), disabledAt (auto-disabled after 50 consecutive failures or
+  7 days of failures; the merchant is notified — bell + email kind
+  `integration_webhook_disabled`), kind (`self` = registered by the plugin
+  through `/webhooks/self`, one per project; `manual` = other integration,
+  one per url), urlHash (unique per project). `ping` deliveries never count
+  towards the streak. Deliveries of a disabled webhook are marked `dead`.
 - `webhook_deliveries`: id (ULID), webhookId, eventId (ULID, shared by all
   deliveries of one event), event, payload json, attempt, status
   (pending|delivered|failed|dead), responseStatus, responseBody (first 1 KiB),
@@ -46,8 +51,15 @@ delivery log (last 20: date, event, status, response code).
 
 ## API additions (v1, key permission `webhooks:manage`)
 `PUT /api/v1/webhooks/self { url, events? }` → `{ id, secret }` (idempotent
-per url: re-PUT rotates the secret), `DELETE /api/v1/webhooks/self`,
-`GET /api/v1/webhooks/self/deliveries?limit=`.
+per url: re-PUT rotates the secret — 200; a new url replaces the endpoint —
+201; 422 `validation` with `details.reason` ∈ not_https | invalid_url |
+blocked_host | private_address | dns_failed), `DELETE /api/v1/webhooks/self`,
+`GET /api/v1/webhooks/self/deliveries?limit=` (≤ 100, default 20, newest
+first, no payloads), `POST /api/v1/webhooks/self/ping` → 202 `{ deliveryId }`.
+
+Server actions for the UI (`@/features/webhook-delivery/actions`):
+`listWebhooksAction`, `listDeliveriesAction`, `createManualWebhookAction`
+(secret once), `deleteWebhookAction`, `sendPingAction`.
 
 ## Placement
 `entities/outbound-webhook` (tables, SSRF guard, signing, delivery state

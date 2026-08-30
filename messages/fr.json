@@ -119,7 +119,8 @@
         "integration_key_expired": "Clé API expirée",
         "integration_key_revoked": "Clé API révoquée (fin de rotation)",
         "integration_token_invalid": "Jeton de la boutique refusé",
-        "integration_sync_failed": "Synchronisation de la boutique échouée"
+        "integration_sync_failed": "Synchronisation de la boutique échouée",
+        "integration_webhook_disabled": "Webhook désactivé après des échecs répétés"
       },
       "fieldLabels": {
         "title": "Titre",
@@ -1350,6 +1351,11 @@
       "reason_unreachable": "La boutique est injoignable. Nous réessayons automatiquement.",
       "reason_token_invalid": "Le jeton de la boutique a été refusé. Enregistrez un nouveau jeton depuis l’onglet Intégrations.",
       "reason_unknown": "Détails : {error}"
+    },
+    "webhook_disabled": {
+      "subject": "Webhook désactivé pour {siteName}",
+      "body": "Le webhook {url} de {siteName} a été désactivé après des échecs de livraison répétés. Votre intégration ne reçoit plus les changements en temps réel.",
+      "action": "Vérifiez que le point de terminaison répond, puis réactivez ou réenregistrez le webhook depuis l’onglet Intégrations."
     }
   }
 }
