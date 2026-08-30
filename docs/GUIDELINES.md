@@ -36,6 +36,7 @@ Git hooks (husky): pre-commit = prettier + eslint on staged files + typecheck; p
 - **Validate at the boundary**: server actions and routes parse input with zod; every endpoint checks ownership (`user_id`), not just authentication.
 - **Server components by default**; `'use client'` only on leaves that need hooks/events. A server-only helper (`getTranslations`, DB) must never be imported from a client component.
 - **File size (SHOULD, ratchet):** components ≲ 300 lines, modules ≲ 300 lines. `max-lines` warns at 600 today; the five known oversized files are listed in ADOPTION.md with a split plan. New files must not exceed 300.
+- **Adding a notification kind**: append to `NOTIFICATION_KINDS` (`schema.ts`, additive enum → `pnpm db:generate`), add `Nav.notifications.kinds.<kind>` in all 13 `messages/*.json` + the label in `widgets/site-header`, and the bell icon/href in `entities/notification/ui/notification-bell.tsx`. A kind that also emails goes through `sendIntegrationAlert` with its `IntegrationAlerts.*` copy (13 locales, covered by `tests/unit/integration-email.test.ts`).
 - **No dead code, no commented-out code, no `TODO` without a ticket or a date.**
 
 ## 3. Documentation — only the irrecoverable (MUST)

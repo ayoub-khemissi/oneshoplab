@@ -114,7 +114,12 @@
         "audit_completed": "Audit terminé",
         "audit_failed": "Audit échoué",
         "bulk_completed": "Génération en lot terminée",
-        "bulk_failed": "Génération en lot échouée"
+        "bulk_failed": "Génération en lot échouée",
+        "integration_key_expiring": "Clé API bientôt expirée",
+        "integration_key_expired": "Clé API expirée",
+        "integration_key_revoked": "Clé API révoquée (fin de rotation)",
+        "integration_token_invalid": "Jeton de la boutique refusé",
+        "integration_sync_failed": "Synchronisation de la boutique échouée"
       },
       "fieldLabels": {
         "title": "Titre",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "Validé le {date}",
     "errorGeneric": "Une erreur est survenue. Réessayez."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Bonjour {name},",
+    "greetingAnon": "Bonjour,",
+    "open": "Ouvrir l’onglet Intégrations",
+    "footer": "Vous recevez cet e-mail parce que vous êtes propriétaire du site {siteName} sur OneShopLab.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "Votre clé API « {keyName} » expire dans {days} jours ({siteName})",
+      "body": "La clé API « {keyName} » de {siteName} expire le {date}. Passé cette date, votre plugin ne synchronise plus.",
+      "action": "Créez une nouvelle clé depuis l’onglet Intégrations et collez-la dans votre plugin avant cette date."
+    },
+    "key_expired": {
+      "subject": "Votre clé API « {keyName} » a expiré ({siteName})",
+      "body": "La clé API « {keyName} » de {siteName} a expiré le {date}. Votre plugin ne peut plus synchroniser.",
+      "action": "Créez une nouvelle clé depuis l’onglet Intégrations et collez-la dans votre plugin."
+    },
+    "token_invalid": {
+      "subject": "Action requise : Shopify a refusé le jeton de {siteName}",
+      "body": "Shopify a refusé le jeton d’accès de {siteName}. Les synchronisations et mises à jour sont en pause jusqu’à l’enregistrement d’un nouveau jeton.",
+      "step1": "1. Dans votre admin Shopify, ouvrez l’application personnalisée et créez un nouveau jeton d’accès Admin API.",
+      "step2": "2. Collez-le dans OneShopLab : site → onglet Intégrations.",
+      "step3": "3. C’est tout — la synchronisation reprend au prochain passage."
+    },
+    "sync_failed": {
+      "subject": "Synchronisation échouée pour {siteName}",
+      "body": "La dernière synchronisation de {siteName} ne s’est pas terminée.",
+      "reason_plan_limit": "Votre plan couvre {limit} produits ; le reste du catalogue n’a pas été importé.",
+      "reason_unreachable": "La boutique est injoignable. Nous réessayons automatiquement.",
+      "reason_token_invalid": "Le jeton de la boutique a été refusé. Enregistrez un nouveau jeton depuis l’onglet Intégrations.",
+      "reason_unknown": "Détails : {error}"
+    }
   }
 }

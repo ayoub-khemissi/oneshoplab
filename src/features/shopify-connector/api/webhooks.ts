@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { archiveProductBySourceId, syncProjectProducts } from '@/entities/product';
 import {
   markTokenInvalid,
+  revokeConnection,
   setLastError,
   setWebhookIds,
   touchWebhook,
@@ -25,6 +26,8 @@ import {
 } from './admin-client';
 
 export const WEBHOOK_TOPICS: readonly WebhookTopic[] = ['PRODUCTS_UPDATE', 'PRODUCTS_DELETE'];
+/** Public-app installs also learn about their own removal (custom apps have no such event). */
+export const OAUTH_WEBHOOK_TOPICS: readonly WebhookTopic[] = [...WEBHOOK_TOPICS, 'APP_UNINSTALLED'];
 
 export function webhookCallbackUrl(projectId: string): string {
   const base = (process.env.APP_URL ?? '').replace(/\/+$/, '');
@@ -44,13 +47,13 @@ export async function registerShopifyWebhooks(
   projectId: string,
   makeClient: typeof createAdminClient = createAdminClient
 ): Promise<string[] | null> {
-  const ids = await withDecryptedToken(projectId, async (secrets) => {
+  const ids = await withDecryptedToken(projectId, async (secrets, connection) => {
     if (!secrets.webhookSecret) return null;
     const client = clientFor(secrets, makeClient);
     const url = webhookCallbackUrl(projectId);
     const created: string[] = [];
-    for (const topic of WEBHOOK_TOPICS)
-      created.push(await client.webhookSubscriptionCreate(topic, url));
+    const topics = connection.authMode === 'oauth' ? OAUTH_WEBHOOK_TOPICS : WEBHOOK_TOPICS;
+    for (const topic of topics) created.push(await client.webhookSubscriptionCreate(topic, url));
     return created;
   });
   if (ids) await setWebhookIds(projectId, ids);
@@ -161,6 +164,10 @@ export async function handleShopifyWebhook(
       }
 
       const topic = req.headers.get('x-shopify-topic')?.trim().toLowerCase() ?? '';
+      if (topic === 'app/uninstalled') {
+        await revokeConnection(req.projectId, 'app/uninstalled');
+        return { status: 200, body: { ok: true, action: 'revoked' } };
+      }
       const sourceId = sourceIdOf(req.rawBody);
       if (!sourceId) return { status: 200, body: { ok: true, action: 'ignored' } };
       try {

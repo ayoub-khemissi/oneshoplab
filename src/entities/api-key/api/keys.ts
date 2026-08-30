@@ -5,7 +5,7 @@
  * key/project the user does not own (no existence leak, never throws).
  */
 import { randomUUID } from 'node:crypto';
-import { and, eq, isNull, lt, lte, notExists, or, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, lt, lte, notExists, or, sql } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import {
   API_KEY_PERMISSIONS,
@@ -210,39 +210,75 @@ export async function listProjectKeys(input: {
   return rows.map((r) => stripHash(r.key));
 }
 
+/** Key ids + owner scope, what the sweeps need to raise an alert. */
+export interface SweptKey {
+  id: string;
+  projectId: string;
+  name: string;
+  expiresAt: Date | null;
+}
+const sweptColumns = {
+  id: apiKeys.id,
+  projectId: apiKeys.projectId,
+  name: apiKeys.name,
+  expiresAt: apiKeys.expiresAt
+};
+
+function withoutEvent(kind: ApiKeyEventKind) {
+  return notExists(
+    db
+      .select({ one: sql`1` })
+      .from(apiKeyEvents)
+      .where(and(eq(apiKeyEvents.apiKeyId, apiKeys.id), eq(apiKeyEvents.kind, kind)))
+  );
+}
+
 /**
  * Worker: log one `expired` event per key that crossed `expiresAt`
  * (the status itself is derived from the column — nothing else to flip).
+ * Returns the keys it just expired so the caller can alert the owner.
  */
-export async function expireDueKeys(now: Date = new Date()): Promise<number> {
+export async function expireDueKeys(now: Date = new Date()): Promise<SweptKey[]> {
   const due = await db
-    .select({ id: apiKeys.id })
+    .select(sweptColumns)
+    .from(apiKeys)
+    .where(and(lte(apiKeys.expiresAt, now), isNull(apiKeys.revokedAt), withoutEvent('expired')));
+  for (const k of due) await recordKeyEvent(k.id, 'expired');
+  return due;
+}
+
+/** J-7 window of the expiry email (docs/api/INTEGRATION-API.md §2). */
+export const EXPIRY_NOTICE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Worker: keys expiring within EXPIRY_NOTICE_MS that were never noticed.
+ * Records the `expiry_notice` event (the once-per-key marker) and returns them.
+ */
+export async function claimExpiringKeys(now: Date = new Date()): Promise<SweptKey[]> {
+  const due = await db
+    .select(sweptColumns)
     .from(apiKeys)
     .where(
       and(
-        lte(apiKeys.expiresAt, now),
+        gt(apiKeys.expiresAt, now),
+        lte(apiKeys.expiresAt, new Date(now.getTime() + EXPIRY_NOTICE_MS)),
         isNull(apiKeys.revokedAt),
-        notExists(
-          db
-            .select({ one: sql`1` })
-            .from(apiKeyEvents)
-            .where(and(eq(apiKeyEvents.apiKeyId, apiKeys.id), eq(apiKeyEvents.kind, 'expired')))
-        )
+        withoutEvent('expiry_notice')
       )
     );
-  for (const k of due) await recordKeyEvent(k.id, 'expired');
-  return due.length;
+  for (const k of due) await recordKeyEvent(k.id, 'expiry_notice');
+  return due;
 }
 
 /** Worker: revoke rotated keys whose grace window closed. */
-export async function revokeGraceExpired(now: Date = new Date()): Promise<number> {
+export async function revokeGraceExpired(now: Date = new Date()): Promise<SweptKey[]> {
   const due = await db
-    .select({ id: apiKeys.id })
+    .select(sweptColumns)
     .from(apiKeys)
     .where(and(lte(apiKeys.graceUntil, now), isNull(apiKeys.revokedAt)));
   for (const k of due) {
     await db.update(apiKeys).set({ revokedAt: now }).where(eq(apiKeys.id, k.id));
     await recordKeyEvent(k.id, 'revoked', { meta: { reason: 'grace_expired' } });
   }
-  return due.length;
+  return due;
 }

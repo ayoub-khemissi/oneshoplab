@@ -62,7 +62,7 @@ export interface CreateMediaInput {
   alt: string | null;
 }
 
-export type WebhookTopic = 'PRODUCTS_UPDATE' | 'PRODUCTS_DELETE';
+export type WebhookTopic = 'PRODUCTS_UPDATE' | 'PRODUCTS_DELETE' | 'APP_UNINSTALLED';
 
 interface GraphQLError {
   message: string;

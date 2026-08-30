@@ -114,7 +114,12 @@
         "audit_completed": "Audyt ukończony",
         "audit_failed": "Audyt nie powiódł się",
         "bulk_completed": "Generowanie masowe ukończone",
-        "bulk_failed": "Generowanie masowe nie powiodło się"
+        "bulk_failed": "Generowanie masowe nie powiodło się",
+        "integration_key_expiring": "Klucz API wkrótce wygaśnie",
+        "integration_key_expired": "Klucz API wygasł",
+        "integration_key_revoked": "Klucz API unieważniony (koniec rotacji)",
+        "integration_token_invalid": "Token sklepu odrzucony",
+        "integration_sync_failed": "Synchronizacja sklepu nie powiodła się"
       },
       "fieldLabels": {
         "title": "Tytuł",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "Zatwierdzono {date}",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Cześć {name},",
+    "greetingAnon": "Dzień dobry,",
+    "open": "Otwórz kartę Integracje",
+    "footer": "Otrzymujesz tę wiadomość, ponieważ jesteś właścicielem strony {siteName} w OneShopLab.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "Twój klucz API „{keyName}” wygasa za {days} dni ({siteName})",
+      "body": "Klucz API „{keyName}” strony {siteName} wygasa {date}. Po tej dacie wtyczka przestanie synchronizować.",
+      "action": "Utwórz nowy klucz na karcie Integracje i wklej go do wtyczki przed tą datą."
+    },
+    "key_expired": {
+      "subject": "Twój klucz API „{keyName}” wygasł ({siteName})",
+      "body": "Klucz API „{keyName}” strony {siteName} wygasł {date}. Wtyczka nie może już synchronizować.",
+      "action": "Utwórz nowy klucz na karcie Integracje i wklej go do wtyczki."
+    },
+    "token_invalid": {
+      "subject": "Wymagane działanie: Shopify odrzucił token {siteName}",
+      "body": "Shopify odrzucił token dostępu {siteName}. Synchronizacje i aktualizacje są wstrzymane do zapisania nowego tokenu.",
+      "step1": "1. W panelu Shopify otwórz aplikację niestandardową i utwórz nowy token dostępu Admin API.",
+      "step2": "2. Wklej go w OneShopLab: strona → karta Integracje.",
+      "step3": "3. Gotowe — synchronizacja wznowi się przy następnym uruchomieniu."
+    },
+    "sync_failed": {
+      "subject": "Synchronizacja {siteName} nie powiodła się",
+      "body": "Ostatnia synchronizacja {siteName} nie została ukończona.",
+      "reason_plan_limit": "Twój plan obejmuje {limit} produktów; reszta katalogu nie została zaimportowana.",
+      "reason_unreachable": "Nie udało się połączyć ze sklepem. Ponawiamy próbę automatycznie.",
+      "reason_token_invalid": "Token sklepu został odrzucony. Zapisz nowy token na karcie Integracje.",
+      "reason_unknown": "Szczegóły: {error}"
+    }
   }
 }

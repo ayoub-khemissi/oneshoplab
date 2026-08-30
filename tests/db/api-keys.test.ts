@@ -88,8 +88,8 @@ describe('api keys', () => {
     expect(await verifyApiKey(oldPlain, after)).toMatchObject({ ok: false, reason: 'key_revoked' });
     expect((await verifyApiKey(newPlain, after)).ok).toBe(true);
 
-    expect(await revokeGraceExpired(new Date())).toBe(0);
-    expect(await revokeGraceExpired(after)).toBe(1);
+    expect(await revokeGraceExpired(new Date())).toHaveLength(0);
+    expect(await revokeGraceExpired(after)).toHaveLength(1);
     expect(await verifyApiKey(oldPlain)).toMatchObject({ ok: false, reason: 'key_revoked' });
     expect(await eventKinds(oldKey.id)).toEqual(['created', 'revoked', 'rotated']);
     expect(await eventKinds(newKey.id)).toEqual(['created']);
@@ -116,8 +116,8 @@ describe('api keys', () => {
     const past = new Date(Date.now() - 60_000);
     const { key, plaintext } = await create('short', { expiresAt: past });
     expect(await verifyApiKey(plaintext)).toMatchObject({ ok: false, reason: 'key_expired' });
-    expect(await expireDueKeys()).toBe(1);
-    expect(await expireDueKeys()).toBe(0);
+    expect(await expireDueKeys()).toHaveLength(1);
+    expect(await expireDueKeys()).toHaveLength(0);
     expect(await eventKinds(key.id)).toEqual(['created', 'expired']);
   });
 

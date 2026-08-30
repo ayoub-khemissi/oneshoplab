@@ -114,7 +114,12 @@
         "audit_completed": "감사 완료",
         "audit_failed": "감사 실패",
         "bulk_completed": "일괄 생성 완료",
-        "bulk_failed": "일괄 생성 실패"
+        "bulk_failed": "일괄 생성 실패",
+        "integration_key_expiring": "API 키가 곧 만료됩니다",
+        "integration_key_expired": "API 키가 만료되었습니다",
+        "integration_key_revoked": "API 키가 취소되었습니다(교체 종료)",
+        "integration_token_invalid": "스토어 토큰이 거부되었습니다",
+        "integration_sync_failed": "스토어 동기화 실패"
       },
       "fieldLabels": {
         "title": "제목",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "{date} 승인",
     "errorGeneric": "문제가 발생했습니다. 다시 시도하세요."
+  },
+  "IntegrationAlerts": {
+    "greeting": "{name}님, 안녕하세요.",
+    "greetingAnon": "안녕하세요.",
+    "open": "연동 탭 열기",
+    "footer": "OneShopLab에서 사이트 {siteName}의 소유자이므로 이 이메일을 받으셨습니다.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "API 키 “{keyName}”이(가) {days}일 후 만료됩니다 ({siteName})",
+      "body": "{siteName}의 API 키 “{keyName}”이(가) {date}에 만료됩니다. 이후에는 플러그인 동기화가 중단됩니다.",
+      "action": "그 전에 연동 탭에서 새 키를 만들어 플러그인에 붙여넣으세요."
+    },
+    "key_expired": {
+      "subject": "API 키 “{keyName}”이(가) 만료되었습니다 ({siteName})",
+      "body": "{siteName}의 API 키 “{keyName}”이(가) {date}에 만료되었습니다. 플러그인이 더 이상 동기화할 수 없습니다.",
+      "action": "연동 탭에서 새 키를 만들어 플러그인에 붙여넣으세요."
+    },
+    "token_invalid": {
+      "subject": "조치 필요: Shopify가 {siteName}의 토큰을 거부했습니다",
+      "body": "Shopify가 {siteName}의 액세스 토큰을 거부했습니다. 새 토큰을 저장할 때까지 동기화와 업데이트가 일시 중지됩니다.",
+      "step1": "1. Shopify 관리자에서 사용자 지정 앱을 열고 새 Admin API 액세스 토큰을 만듭니다.",
+      "step2": "2. OneShopLab에 붙여넣습니다: 사이트 → 연동 탭.",
+      "step3": "3. 완료 — 다음 실행 시 동기화가 재개됩니다."
+    },
+    "sync_failed": {
+      "subject": "{siteName} 동기화 실패",
+      "body": "{siteName}의 마지막 동기화가 완료되지 않았습니다.",
+      "reason_plan_limit": "현재 플랜은 {limit}개 상품까지 지원합니다. 나머지 카탈로그는 가져오지 않았습니다.",
+      "reason_unreachable": "스토어에 연결할 수 없습니다. 자동으로 다시 시도합니다.",
+      "reason_token_invalid": "스토어 토큰이 거부되었습니다. 연동 탭에서 새 토큰을 저장하세요.",
+      "reason_unknown": "세부 정보: {error}"
+    }
   }
 }

@@ -114,7 +114,12 @@
         "audit_completed": "Denetim tamamlandı",
         "audit_failed": "Denetim başarısız",
         "bulk_completed": "Toplu oluşturma tamamlandı",
-        "bulk_failed": "Toplu oluşturma başarısız"
+        "bulk_failed": "Toplu oluşturma başarısız",
+        "integration_key_expiring": "API anahtarının süresi yakında doluyor",
+        "integration_key_expired": "API anahtarının süresi doldu",
+        "integration_key_revoked": "API anahtarı iptal edildi (rotasyon bitti)",
+        "integration_token_invalid": "Mağaza belirteci reddedildi",
+        "integration_sync_failed": "Mağaza senkronizasyonu başarısız"
       },
       "fieldLabels": {
         "title": "Başlık",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "{date} tarihinde onaylandı",
     "errorGeneric": "Bir sorun oluştu. Tekrar deneyin."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Merhaba {name},",
+    "greetingAnon": "Merhaba,",
+    "open": "Entegrasyonlar sekmesini aç",
+    "footer": "Bu e-postayı OneShopLab’de {siteName} sitesinin sahibi olduğunuz için alıyorsunuz.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "“{keyName}” API anahtarınızın süresi {days} gün içinde doluyor ({siteName})",
+      "body": "{siteName} sitesinin “{keyName}” API anahtarı {date} tarihinde sona eriyor. Bu tarihten sonra eklentiniz senkronize etmeyi durdurur.",
+      "action": "Bu tarihten önce Entegrasyonlar sekmesinden yeni bir anahtar oluşturup eklentinize yapıştırın."
+    },
+    "key_expired": {
+      "subject": "“{keyName}” API anahtarınızın süresi doldu ({siteName})",
+      "body": "{siteName} sitesinin “{keyName}” API anahtarı {date} tarihinde sona erdi. Eklentiniz artık senkronize edemez.",
+      "action": "Entegrasyonlar sekmesinden yeni bir anahtar oluşturup eklentinize yapıştırın."
+    },
+    "token_invalid": {
+      "subject": "İşlem gerekli: Shopify, {siteName} belirtecini reddetti",
+      "body": "Shopify, {siteName} erişim belirtecini reddetti. Yeni bir belirteç kaydedene kadar senkronizasyon ve güncellemeler duraklatıldı.",
+      "step1": "1. Shopify yöneticinizde özel uygulamayı açın ve yeni bir Admin API erişim belirteci oluşturun.",
+      "step2": "2. OneShopLab’e yapıştırın: site → Entegrasyonlar sekmesi.",
+      "step3": "3. Bitti — senkronizasyon bir sonraki çalıştırmada devam eder."
+    },
+    "sync_failed": {
+      "subject": "{siteName} senkronizasyonu başarısız",
+      "body": "{siteName} sitesinin son senkronizasyonu tamamlanmadı.",
+      "reason_plan_limit": "Planınız {limit} ürünü kapsıyor; kataloğun geri kalanı içe aktarılmadı.",
+      "reason_unreachable": "Mağazaya ulaşılamadı. Otomatik olarak yeniden deniyoruz.",
+      "reason_token_invalid": "Mağaza belirteci reddedildi. Entegrasyonlar sekmesinden yeni bir belirteç kaydedin.",
+      "reason_unknown": "Ayrıntılar: {error}"
+    }
   }
 }

@@ -26,6 +26,7 @@ export { SHOPIFY_HMAC_HEADER, computeShopifyHmac, verifyShopifyHmac } from './li
 export { pullShopifyCatalog, runShopifyNightlyPulls, runShopifyRequestedPulls } from './api/pull';
 export type { PullResult } from './api/pull';
 export {
+  OAUTH_WEBHOOK_TOPICS,
   WEBHOOK_TOPICS,
   deleteShopifyWebhooks,
   handleShopifyWebhook,
@@ -41,3 +42,22 @@ export type {
   ConnectShopifyStoreInput,
   ConnectShopifyStoreResult
 } from './api/validate';
+export {
+  DEFAULT_SHOPIFY_APP_SCOPES,
+  SHOPIFY_STATE_COOKIE,
+  computeShopifyQueryHmac,
+  isShopifyAppConfigured,
+  missingScopes,
+  shopifyAppConfig,
+  shopifyAuthorizeUrl,
+  verifyShopifyQueryHmac
+} from './lib/oauth';
+export type { ShopifyAppConfig } from './lib/oauth';
+export { beginShopifyInstall, completeShopifyInstall, shopifyRedirectUri } from './api/oauth';
+export type {
+  BeginShopifyInstallResult,
+  CompleteShopifyInstallFailure,
+  CompleteShopifyInstallResult
+} from './api/oauth';
+export { GDPR_ROUTE_TOPICS, handleShopifyGdprWebhook } from './api/gdpr';
+export type { GdprOutcome } from './api/gdpr';

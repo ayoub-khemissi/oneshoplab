@@ -47,7 +47,7 @@ indistinguishable), `key_revoked`, `key_expired`, `signature_invalid`,
 | Create | dashboard → site settings → Integrations; name + permissions + optional expiry (max 2 y). Secret shown once. `api_key_events` row `created`. |
 | Rotate | "Rotate" creates a new key and puts the old one in **grace** for 24 h (both valid, old flagged `rotatedTo`), then auto-revokes. Plugin shows a banner while in grace. |
 | Revoke | immediate; in-flight requests already authenticated finish; next request → `key_revoked`. Idempotency records keep working for the new key only. |
-| Expire | `expiresAt` ≤ now → `key_expired` (distinct from revoked so the plugin can say "renew"). Worker sends the owner an email 7 days before. |
+| Expire | `expiresAt` ≤ now → `key_expired` (distinct from revoked so the plugin can say "renew"). Worker alerts the owner (bell + email in their locale) 7 days before (`api_key_events` kind `expiry_notice`, once per key) and again on expiry; a grace-end revocation is bell-only. Module: `entities/notification/api/integration-alerts.ts`. |
 | Project deleted / account deleted | keys cascade-revoked (FK `onDelete: cascade` on the table + explicit event). |
 | Plan downgrade | keys keep working; **write limits** are enforced per request (§4). |
 | Lost key | cannot be recovered → rotate. |
@@ -146,7 +146,7 @@ over the pathname, `Idempotency-Key` on sync).
 - `api_keys`: id, projectId (FK cascade), userId, name, prefix (unique),
   keyHash (sha256 hex, unique), permissions json, expiresAt, revokedAt,
   rotatedToId, graceUntil, lastUsedAt, lastUsedIp, createdAt.
-- `api_key_events`: id, apiKeyId, kind (created|rotated|revoked|expired|auth_failed), ip, at, meta json.
+- `api_key_events`: id, apiKeyId, kind (created|rotated|revoked|expired|auth_failed|expiry_notice), ip, at, meta json.
 - `api_idempotency`: key (pk: sha256(apiKeyId + idemKey)), bodyHash, status, responseJson, createdAt (TTL 24 h, swept by the worker).
 - `catalog_sync_sessions`: id, projectId, seenSourceIds json, startedAt, expiresAt, closedAt.
 - `product_changes`: id (ULID), projectId, productId, productSourceId, field, value json, valueHash (sha256 of the new value), **priorValueHash** (sha256 of the store field at approval time — what `storeValueHash` is compared against), sourceJobId, status (pending|applied|failed|skipped|conflict|cancelled|expired), approvedBy, approvedAt, ackedAt, ackPayload json, expiresAt.

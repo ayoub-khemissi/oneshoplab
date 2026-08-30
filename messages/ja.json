@@ -114,7 +114,12 @@
         "audit_completed": "監査が完了しました",
         "audit_failed": "監査が失敗しました",
         "bulk_completed": "一括生成が完了しました",
-        "bulk_failed": "一括生成が失敗しました"
+        "bulk_failed": "一括生成が失敗しました",
+        "integration_key_expiring": "APIキーの有効期限が近づいています",
+        "integration_key_expired": "APIキーの有効期限が切れました",
+        "integration_key_revoked": "APIキーが失効しました（ローテーション終了）",
+        "integration_token_invalid": "ストアのトークンが拒否されました",
+        "integration_sync_failed": "ストアの同期に失敗しました"
       },
       "fieldLabels": {
         "title": "タイトル",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "{date} に承認",
     "errorGeneric": "問題が発生しました。もう一度お試しください。"
+  },
+  "IntegrationAlerts": {
+    "greeting": "{name} 様",
+    "greetingAnon": "こんにちは。",
+    "open": "「連携」タブを開く",
+    "footer": "このメールは、OneShopLab でサイト {siteName} を所有しているため送信されています。",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "APIキー「{keyName}」は {days} 日後に期限切れになります（{siteName}）",
+      "body": "{siteName} のAPIキー「{keyName}」は {date} に期限切れになります。その後はプラグインの同期が停止します。",
+      "action": "それまでに「連携」タブで新しいキーを作成し、プラグインに貼り付けてください。"
+    },
+    "key_expired": {
+      "subject": "APIキー「{keyName}」の有効期限が切れました（{siteName}）",
+      "body": "{siteName} のAPIキー「{keyName}」は {date} に期限切れになりました。プラグインは同期できません。",
+      "action": "「連携」タブで新しいキーを作成し、プラグインに貼り付けてください。"
+    },
+    "token_invalid": {
+      "subject": "要対応：Shopify が {siteName} のトークンを拒否しました",
+      "body": "Shopify が {siteName} のアクセストークンを拒否しました。新しいトークンを保存するまで同期と更新は停止します。",
+      "step1": "1. Shopify 管理画面でカスタムアプリを開き、新しい Admin API アクセストークンを作成します。",
+      "step2": "2. OneShopLab に貼り付けます：サイト → 「連携」タブ。",
+      "step3": "3. 完了 — 次回の実行で同期が再開されます。"
+    },
+    "sync_failed": {
+      "subject": "{siteName} の同期に失敗しました",
+      "body": "{siteName} の前回の同期は完了しませんでした。",
+      "reason_plan_limit": "ご利用のプランは {limit} 商品まで対応しています。残りのカタログはインポートされませんでした。",
+      "reason_unreachable": "ストアに接続できませんでした。自動的に再試行します。",
+      "reason_token_invalid": "ストアのトークンが拒否されました。「連携」タブで新しいトークンを保存してください。",
+      "reason_unknown": "詳細：{error}"
+    }
   }
 }

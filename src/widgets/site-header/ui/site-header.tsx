@@ -33,7 +33,12 @@ export async function SiteHeader() {
     audit_completed: t('notifications.kinds.audit_completed'),
     audit_failed: t('notifications.kinds.audit_failed'),
     bulk_completed: t('notifications.kinds.bulk_completed'),
-    bulk_failed: t('notifications.kinds.bulk_failed')
+    bulk_failed: t('notifications.kinds.bulk_failed'),
+    integration_key_expiring: t('notifications.kinds.integration_key_expiring'),
+    integration_key_expired: t('notifications.kinds.integration_key_expired'),
+    integration_key_revoked: t('notifications.kinds.integration_key_revoked'),
+    integration_token_invalid: t('notifications.kinds.integration_token_invalid'),
+    integration_sync_failed: t('notifications.kinds.integration_sync_failed')
   };
   const notifLabels = {
     panelTitle: t('notifications.title'),

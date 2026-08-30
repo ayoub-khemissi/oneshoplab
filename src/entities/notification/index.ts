@@ -9,3 +9,25 @@ export {
   userIdsForJobs
 } from './api/notifications';
 export type { NotificationInput, NotificationRow } from './api/notifications';
+export {
+  integrationAlertRecipient,
+  integrationsUrl,
+  sendIntegrationAlert
+} from './api/integration-alerts';
+export type {
+  IntegrationAlertInput,
+  IntegrationAlertKind,
+  IntegrationAlertRecipient,
+  IntegrationAlertResult
+} from './api/integration-alerts';
+export {
+  INTEGRATION_EMAIL_KINDS,
+  buildIntegrationEmail,
+  resolveLocale
+} from './lib/integration-email';
+export type {
+  IntegrationAlertParams,
+  IntegrationEmail,
+  IntegrationEmailKind,
+  SyncFailureReason
+} from './lib/integration-email';

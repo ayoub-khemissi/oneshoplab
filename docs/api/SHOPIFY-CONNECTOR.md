@@ -1,6 +1,6 @@
 # Shopify connector (phase 3) — custom-app token, no plugin
 
-Status: spec v1, 2026-08-30 — backend + wizard branch implemented 2026-08-30 (see "Implementation notes"). Shopify has no "plugin": the merchant creates a
+Status: spec v1, 2026-08-30 — backend + wizard branch implemented 2026-08-30; public app (OAuth) + GDPR webhooks backend 2026-08-30 (see "Implementation notes"). Shopify has no "plugin": the merchant creates a
 **custom app** in their admin and gives OSL its Admin API access token. OSL
 then does what the WooCommerce plugin does, from its own side: pull the
 catalog, receive webhooks, and write approved changes back.
@@ -30,8 +30,8 @@ Every mock view for these screens lives in `features/integrations/ui/mocks`.
 - Webhook HMAC (`X-Shopify-Hmac-Sha256`) verified with the app's webhook
   secret (custom apps use the API secret key — stored the same way); replay
   guarded by `X-Shopify-Webhook-Id` idempotency (24 h, same table as v1).
-- Token invalid (401 from Shopify) → status `token_invalid`, merchant notified
-  in the Integrations tab + email; no retries until a new token is saved.
+- Token invalid (401 from Shopify) → status `token_invalid`, merchant notified once per invalidation (bell `integration_token_invalid` + email with the recreate → paste → done steps; `shop_connections.last_alert_*` is the marker, reset by a new token). A full pull that ends in error or hits the plan cap raises `integration_sync_failed` at most once per 24 h per connection.
+  No retries until a new token is saved.
 - Rate limits: Admin GraphQL cost-based; the puller respects
   `throttleStatus` and backs off; full pull uses `products(first: 250)`
   cursor pagination; one pull per project at a time (same advisory lock as
@@ -63,9 +63,52 @@ worker step in `src/worker` (rides the existing tick, every 5 min for applies,
 nightly for pulls). Tests: mapper unit tests from recorded GraphQL fixtures,
 DB tests for connect/validate/disconnect/apply-ack, webhook HMAC tests.
 
+## Public app (OAuth) — 2026-08-30
+Second install path next to the custom-app token (both end in the same
+`shop_connections` row; `auth_mode` = `custom_app` | `oauth`,
+`installed_via_oauth_at`; migration `0029_shop_oauth_wix`).
+
+- Env: `SHOPIFY_APP_CLIENT_ID`, `SHOPIFY_APP_CLIENT_SECRET`,
+  `SHOPIFY_APP_SCOPES` (default `read_products,write_products`);
+  `isShopifyAppConfigured()` (`@/features/shopify-connector`) gates the UI path.
+- `GET /api/integrations/shopify/install?projectId&shop[&locale]` — session +
+  ownership, domain normalised → signed state cookie `osl_shopify_oauth`
+  (HMAC-SHA256 with the client secret over `{projectId, userId, locale, shop,
+  nonce, issuedAt}`, 10 min, `shared/lib/oauth-state.ts`) → 302
+  `https://{shop}/admin/oauth/authorize?client_id&scope&redirect_uri&state`.
+- `GET /api/integrations/shopify/callback` — order of checks: state cookie ↔
+  `state` → query `hmac` (sorted params, hex HMAC of the client secret) →
+  session user = state user → `shop` = state shop → `POST
+  /admin/oauth/access_token` (offline token) → granted scopes ⊇ configured
+  (`write_x` satisfies `read_x`) → `shop { name }` → row saved with the client
+  secret as webhook secret → webhooks `PRODUCTS_UPDATE`, `PRODUCTS_DELETE`,
+  `APP_UNINSTALLED` → pull queued → 302
+  `/{locale}/dashboard/sites/{projectId}?tab=integrations&connected=shopify`
+  (`&warning=webhooks_failed` when registration failed). Any failure → same
+  tab with `?error=` ∈ `not_configured | bad_state | bad_hmac | unauthorized |
+  invalid_domain | exchange_failed | scopes_missing | unreachable | not_found |
+  no_key`.
+- `app/uninstalled` (registered for OAuth installs only) → status `revoked`,
+  ciphertexts wiped, `lastError = "app/uninstalled"`. Pull/apply/webhooks are
+  the custom-app code paths unchanged.
+
+## GDPR webhooks (mandatory for app review)
+`POST /api/webhooks/shopify/gdpr/{customers-data-request | customers-redact | shop-redact}`
+— HMAC (`X-Shopify-Hmac-Sha256`, client secret) or 401. OSL stores no
+customer data: every request is logged in `gdpr_requests` (shopDomain,
+topic, payload, receivedAt) and answered 200; `shop/redact` additionally
+revokes every connection of that shop domain and wipes their ciphertexts.
+
+### App-review checklist (Partner Dashboard)
+- App URL: `https://oneshoplab.com/en/dashboard` (install starts from OSL, not from Shopify).
+- Allowed redirection URL: `https://oneshoplab.com/api/integrations/shopify/callback`.
+- Compliance webhooks: the three GDPR URLs above.
+- Scopes requested: `read_products, write_products`.
+- Privacy policy URL: `https://oneshoplab.com/en/privacy`.
+- Uninstall: `app/uninstalled` is subscribed per install (Admin API), not in the dashboard.
+
 ## Not in scope
-Public Shopify app (OAuth, app store review), billing API, theme edits,
-inventory writes.
+Billing API, theme edits, inventory writes.
 
 ## Implementation notes (2026-08-30, backend)
 - Table `shop_connections` (migration `0027_milky_sunspot`): as above plus

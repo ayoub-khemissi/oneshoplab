@@ -29,8 +29,10 @@ export {
 } from './lib/signature';
 export type { SignatureFailure, SignedRequestParts, VerifySignatureResult } from './lib/signature';
 export {
+  EXPIRY_NOTICE_MS,
   KEY_GRACE_MS,
   KEY_MAX_TTL_MS,
+  claimExpiringKeys,
   createApiKey,
   expireDueKeys,
   listProjectKeys,
@@ -41,6 +43,7 @@ export {
   touchLastUsed,
   verifyApiKey
 } from './api/keys';
+export type { SweptKey } from './api/keys';
 export { DEFAULT_BUCKET, clientIp, withSiteKey } from './api/with-site-key';
 export type { SiteKeyContext, SiteKeyHandler, WithSiteKeyOptions } from './api/with-site-key';
-export { runIntegrationSweeps } from './api/sweeps';
+export { notifyExpiringKeys, runIntegrationSweeps } from './api/sweeps';

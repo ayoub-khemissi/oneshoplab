@@ -3,6 +3,8 @@ import type { ShopConnection } from './types';
 /** Serialisable, secret-free shape of a connection for client props / polling. */
 export interface ShopifyConnectionView {
   status: ShopConnection['status'];
+  platform: ShopConnection['platform'];
+  authMode: ShopConnection['authMode'];
   shopDomain: string;
   shopName: string | null;
   lastPullAtIso: string | null;
@@ -22,6 +24,8 @@ export function toShopifyConnectionView(
   const p = c.pullProgress;
   return {
     status: c.status,
+    platform: c.platform,
+    authMode: c.authMode,
     shopDomain: c.shopDomain,
     shopName: c.shopName ?? null,
     lastPullAtIso: c.lastPullAt?.toISOString() ?? null,
@@ -39,3 +43,10 @@ export function toShopifyConnectionView(
     hasWebhookSecret: c.hasWebhookSecret
   };
 }
+
+/** Same secret-free shape for the Wix card (one connection row per project, either platform). */
+export type WixConnectionView = ShopifyConnectionView;
+export const toWixConnectionView: (
+  c: ShopConnection,
+  productTotal?: number | null
+) => WixConnectionView = toShopifyConnectionView;

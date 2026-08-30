@@ -114,7 +114,12 @@
         "audit_completed": "اكتمل التدقيق",
         "audit_failed": "فشل التدقيق",
         "bulk_completed": "اكتمل الإنشاء بالجملة",
-        "bulk_failed": "فشل الإنشاء بالجملة"
+        "bulk_failed": "فشل الإنشاء بالجملة",
+        "integration_key_expiring": "مفتاح API ينتهي قريبًا",
+        "integration_key_expired": "انتهت صلاحية مفتاح API",
+        "integration_key_revoked": "تم إلغاء مفتاح API (انتهى التدوير)",
+        "integration_token_invalid": "تم رفض رمز المتجر",
+        "integration_sync_failed": "فشلت مزامنة المتجر"
       },
       "fieldLabels": {
         "title": "العنوان",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "تمت الموافقة في {date}",
     "errorGeneric": "حدث خطأ ما. حاول مرة أخرى."
+  },
+  "IntegrationAlerts": {
+    "greeting": "مرحبًا {name}،",
+    "greetingAnon": "مرحبًا،",
+    "open": "فتح تبويب التكاملات",
+    "footer": "تصلك هذه الرسالة لأنك مالك الموقع {siteName} على OneShopLab.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "مفتاح API «{keyName}» ينتهي خلال {days} أيام ({siteName})",
+      "body": "مفتاح API «{keyName}» الخاص بـ {siteName} ينتهي في {date}. بعد هذا التاريخ يتوقف الملحق عن المزامنة.",
+      "action": "أنشئ مفتاحًا جديدًا من تبويب التكاملات والصقه في الملحق قبل هذا التاريخ."
+    },
+    "key_expired": {
+      "subject": "انتهت صلاحية مفتاح API «{keyName}» ({siteName})",
+      "body": "انتهت صلاحية مفتاح API «{keyName}» الخاص بـ {siteName} في {date}. لم يعد الملحق قادرًا على المزامنة.",
+      "action": "أنشئ مفتاحًا جديدًا من تبويب التكاملات والصقه في الملحق."
+    },
+    "token_invalid": {
+      "subject": "إجراء مطلوب: رفضت Shopify رمز {siteName}",
+      "body": "رفضت Shopify رمز الوصول الخاص بـ {siteName}. المزامنة والتحديثات متوقفة حتى تحفظ رمزًا جديدًا.",
+      "step1": "1. في لوحة تحكم Shopify، افتح التطبيق المخصص وأنشئ رمز وصول Admin API جديدًا.",
+      "step2": "2. الصقه في OneShopLab: الموقع ← تبويب التكاملات.",
+      "step3": "3. تم — تُستأنف المزامنة في التشغيل التالي."
+    },
+    "sync_failed": {
+      "subject": "فشلت مزامنة {siteName}",
+      "body": "لم تكتمل آخر مزامنة لـ {siteName}.",
+      "reason_plan_limit": "تغطي خطتك {limit} منتجًا؛ لم يتم استيراد بقية الكتالوج.",
+      "reason_unreachable": "تعذر الوصول إلى المتجر. سنعيد المحاولة تلقائيًا.",
+      "reason_token_invalid": "تم رفض رمز المتجر. احفظ رمزًا جديدًا من تبويب التكاملات.",
+      "reason_unknown": "التفاصيل: {error}"
+    }
   }
 }

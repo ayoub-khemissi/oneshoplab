@@ -114,7 +114,12 @@
         "audit_completed": "Auditoria concluída",
         "audit_failed": "Auditoria falhou",
         "bulk_completed": "Geração em massa concluída",
-        "bulk_failed": "Geração em massa falhou"
+        "bulk_failed": "Geração em massa falhou",
+        "integration_key_expiring": "Chave de API expira em breve",
+        "integration_key_expired": "Chave de API expirada",
+        "integration_key_revoked": "Chave de API revogada (fim da rotação)",
+        "integration_token_invalid": "Token da loja recusado",
+        "integration_sync_failed": "Sincronização da loja falhou"
       },
       "fieldLabels": {
         "title": "Título",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "Aprovado a {date}",
     "errorGeneric": "Algo correu mal. Tente novamente."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Olá {name},",
+    "greetingAnon": "Olá,",
+    "open": "Abrir o separador Integrações",
+    "footer": "Recebe este e-mail porque é proprietário do site {siteName} no OneShopLab.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "A sua chave de API “{keyName}” expira em {days} dias ({siteName})",
+      "body": "A chave de API “{keyName}” de {siteName} expira em {date}. Depois dessa data o seu plugin deixa de sincronizar.",
+      "action": "Crie uma nova chave no separador Integrações e cole-a no seu plugin antes dessa data."
+    },
+    "key_expired": {
+      "subject": "A sua chave de API “{keyName}” expirou ({siteName})",
+      "body": "A chave de API “{keyName}” de {siteName} expirou em {date}. O seu plugin já não consegue sincronizar.",
+      "action": "Crie uma nova chave no separador Integrações e cole-a no seu plugin."
+    },
+    "token_invalid": {
+      "subject": "Ação necessária: a Shopify recusou o token de {siteName}",
+      "body": "A Shopify recusou o token de acesso de {siteName}. As sincronizações e atualizações ficam em pausa até guardar um novo token.",
+      "step1": "1. No admin da Shopify, abra a app personalizada e crie um novo token de acesso Admin API.",
+      "step2": "2. Cole-o no OneShopLab: site → separador Integrações.",
+      "step3": "3. Pronto — a sincronização retoma na próxima execução."
+    },
+    "sync_failed": {
+      "subject": "Sincronização falhou para {siteName}",
+      "body": "A última sincronização de {siteName} não foi concluída.",
+      "reason_plan_limit": "O seu plano cobre {limit} produtos; o resto do catálogo não foi importado.",
+      "reason_unreachable": "Não foi possível contactar a loja. Tentamos novamente automaticamente.",
+      "reason_token_invalid": "O token da loja foi recusado. Guarde um novo token no separador Integrações.",
+      "reason_unknown": "Detalhes: {error}"
+    }
   }
 }

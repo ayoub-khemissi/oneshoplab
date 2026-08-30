@@ -19,6 +19,7 @@ import { db } from '@/shared/db';
 import { projects, users } from '@/shared/db/schema';
 import { mapAdminProduct } from '../lib/map-product';
 import { createAdminClient, ShopifyAdminError, type ShopifyAdminClient } from './admin-client';
+import { alertSyncFailed, alertTokenInvalid, syncFailureReason } from './alerts';
 
 export type PullResult =
   | {
@@ -96,11 +97,12 @@ export async function pullShopifyCatalog(
         },
         { lastPullAt: finishedAt, clearRequest: true }
       );
+      if (truncated) await alertSyncFailed(projectId, { reason: 'plan_limit', limit: max });
       return { ok: true, fetched: products.length, truncated, ...counts };
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       if (e instanceof ShopifyAdminError && e.code === 'token_invalid') {
-        await markTokenInvalid(projectId, message);
+        if (await markTokenInvalid(projectId, message)) await alertTokenInvalid(projectId);
         await setPullProgress(projectId, {
           phase: 'failed',
           fetched: 0,
@@ -114,6 +116,7 @@ export async function pullShopifyCatalog(
         return { ok: false, reason: 'locked' };
       }
       await setPullProgress(projectId, { phase: 'failed', fetched: 0, startedAt, error: message });
+      await alertSyncFailed(projectId, { reason: syncFailureReason(e), error: message });
       return { ok: false, reason: 'error', error: message };
     }
   });

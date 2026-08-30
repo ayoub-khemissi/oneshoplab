@@ -114,7 +114,12 @@
         "audit_completed": "审计已完成",
         "audit_failed": "审计失败",
         "bulk_completed": "批量生成已完成",
-        "bulk_failed": "批量生成失败"
+        "bulk_failed": "批量生成失败",
+        "integration_key_expiring": "API 密钥即将过期",
+        "integration_key_expired": "API 密钥已过期",
+        "integration_key_revoked": "API 密钥已撤销（轮换结束）",
+        "integration_token_invalid": "商店令牌被拒绝",
+        "integration_sync_failed": "商店同步失败"
       },
       "fieldLabels": {
         "title": "标题",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "批准于 {date}",
     "errorGeneric": "出了点问题，请重试。"
+  },
+  "IntegrationAlerts": {
+    "greeting": "{name}，您好：",
+    "greetingAnon": "您好：",
+    "open": "打开“集成”标签页",
+    "footer": "您收到此邮件是因为您是 OneShopLab 上站点 {siteName} 的所有者。",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "您的 API 密钥“{keyName}”将在 {days} 天后过期（{siteName}）",
+      "body": "{siteName} 的 API 密钥“{keyName}”将于 {date} 过期。届时插件将停止同步。",
+      "action": "请在此之前从“集成”标签页创建新密钥并粘贴到插件中。"
+    },
+    "key_expired": {
+      "subject": "您的 API 密钥“{keyName}”已过期（{siteName}）",
+      "body": "{siteName} 的 API 密钥“{keyName}”已于 {date} 过期。插件已无法同步。",
+      "action": "请从“集成”标签页创建新密钥并粘贴到插件中。"
+    },
+    "token_invalid": {
+      "subject": "需要操作：Shopify 拒绝了 {siteName} 的令牌",
+      "body": "Shopify 拒绝了 {siteName} 的访问令牌。在您保存新令牌之前，同步和更新已暂停。",
+      "step1": "1. 在 Shopify 后台打开自定义应用，创建新的 Admin API 访问令牌。",
+      "step2": "2. 将其粘贴到 OneShopLab：站点 → “集成”标签页。",
+      "step3": "3. 完成 — 同步将在下次运行时恢复。"
+    },
+    "sync_failed": {
+      "subject": "{siteName} 同步失败",
+      "body": "{siteName} 的上次同步未完成。",
+      "reason_plan_limit": "您的套餐包含 {limit} 个商品；其余目录未导入。",
+      "reason_unreachable": "无法连接到商店。我们会自动重试。",
+      "reason_token_invalid": "商店令牌被拒绝。请在“集成”标签页保存新令牌。",
+      "reason_unknown": "详情：{error}"
+    }
   }
 }

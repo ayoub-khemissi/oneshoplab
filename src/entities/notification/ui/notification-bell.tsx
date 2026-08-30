@@ -5,7 +5,9 @@ import {
   Bell,
   CheckCircle2,
   ImageIcon,
+  KeyRound,
   Loader2,
+  Plug,
   Sparkles,
   Wand2,
   X
@@ -300,6 +302,7 @@ function NotificationItem({
 
 function kindTone(kind: NotificationKind): string {
   if (kind.endsWith('_completed')) return 'bg-[var(--success)]/15 text-[var(--success)]';
+  if (kind === 'integration_key_expiring') return 'bg-[var(--warning)]/15 text-[var(--warning)]';
   return 'bg-[var(--danger)]/15 text-[var(--danger)]';
 }
 
@@ -311,6 +314,8 @@ function kindIcon(kind: NotificationKind) {
   if (kind === 'audit_completed') return <CheckCircle2 className="size-3.5" aria-hidden />;
   if (kind === 'audit_failed') return <AlertTriangle className="size-3.5" aria-hidden />;
   if (kind === 'bulk_completed') return <Wand2 className="size-3.5" aria-hidden />;
+  if (kind.startsWith('integration_key_')) return <KeyRound className="size-3.5" aria-hidden />;
+  if (kind.startsWith('integration_')) return <Plug className="size-3.5" aria-hidden />;
   return <AlertTriangle className="size-3.5" aria-hidden />;
 }
 
@@ -379,10 +384,22 @@ function kindDetail(
     return { title, sub };
   }
 
+  // Integrations: the key name or the site, whichever identifies the alert.
+  if (row.kind.startsWith('integration_')) {
+    const keyName = typeof payload.keyName === 'string' ? payload.keyName : null;
+    const siteName = typeof payload.siteName === 'string' ? payload.siteName : null;
+    const label = keyName && siteName ? `${keyName} · ${siteName}` : (keyName ?? siteName);
+    if (label) sub = truncate(label, SUB_MAX_LEN);
+    return { title, sub };
+  }
+
   return { title, sub };
 }
 
 function kindHref(row: NotificationRow): string | null {
+  if (row.kind.startsWith('integration_') && row.projectId) {
+    return `/dashboard/sites/${row.projectId}?tab=integrations`;
+  }
   if (row.productId && row.projectId) {
     return `/dashboard/sites/${row.projectId}/products/${row.productId}`;
   }

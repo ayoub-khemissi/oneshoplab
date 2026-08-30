@@ -29,3 +29,10 @@ export {
   listPendingChanges
 } from './api/changes';
 export { runIntegrationSweeps, sweepSyncSessions } from './api/sweeps';
+export { applyPendingChanges, storeFieldValue } from './api/apply-loop';
+export type {
+  ApplyDriver,
+  ApplyFieldSource,
+  ApplyOutcome,
+  ApplyProjectResult
+} from './api/apply-loop';

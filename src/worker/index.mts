@@ -13,6 +13,8 @@ const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-k
 const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
 const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
+const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
+  await import('@/features/wix-connector');
 
 import { writeWorkerHeartbeat } from '@/shared/health';
 
@@ -48,7 +50,9 @@ async function main(): Promise<void> {
         // Shopify connector: write approved changes back (no-op without
         // pending changes) and run pulls queued by connect / "Synchroniser".
         runShopifyApplies().catch((e) => console.error('[worker] shopify-apply failed', e)),
-        runShopifyRequestedPulls().catch((e) => console.error('[worker] shopify-pull failed', e))
+        runShopifyRequestedPulls().catch((e) => console.error('[worker] shopify-pull failed', e)),
+        runWixApplies().catch((e) => console.error('[worker] wix-apply failed', e)),
+        runWixRequestedPulls().catch((e) => console.error('[worker] wix-pull failed', e))
       ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
@@ -68,6 +72,9 @@ async function main(): Promise<void> {
           runShopifyNightlyPulls().catch((e) =>
             console.error('[worker] shopify-nightly-pull failed', e)
           )
+        );
+        tasks.push(
+          runWixNightlyPulls().catch((e) => console.error('[worker] wix-nightly-pull failed', e))
         );
       }
       await Promise.allSettled(tasks);

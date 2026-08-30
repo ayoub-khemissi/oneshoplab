@@ -63,7 +63,13 @@ export const NOTIFICATION_KINDS = [
   'audit_completed',
   'audit_failed',
   'bulk_completed',
-  'bulk_failed'
+  'bulk_failed',
+  // Integration alerts (bell + email, see entities/notification/api/integration-alerts.ts)
+  'integration_key_expiring',
+  'integration_key_expired',
+  'integration_key_revoked',
+  'integration_token_invalid',
+  'integration_sync_failed'
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
@@ -771,7 +777,9 @@ export const API_KEY_EVENT_KINDS = [
   'rotated',
   'revoked',
   'expired',
-  'auth_failed'
+  'auth_failed',
+  /** J-7 expiry email sent — one per key, the idempotency marker. */
+  'expiry_notice'
 ] as const;
 export type ApiKeyEventKind = (typeof API_KEY_EVENT_KINDS)[number];
 export const PRODUCT_CHANGE_STATUSES = [
@@ -928,10 +936,15 @@ export const productChanges = mysqlTable(
 // never touches a column or a log line.
 // ============================================================================
 
-export const SHOP_CONNECTION_PLATFORMS = ['shopify'] as const;
+export const SHOP_CONNECTION_PLATFORMS = ['shopify', 'wix'] as const;
 export type ShopConnectionPlatform = (typeof SHOP_CONNECTION_PLATFORMS)[number];
 export const SHOP_CONNECTION_STATUSES = ['connected', 'token_invalid', 'revoked'] as const;
 export type ShopConnectionStatus = (typeof SHOP_CONNECTION_STATUSES)[number];
+/** `custom_app` = merchant pasted a custom-app token; `oauth` = installed our public app. */
+export const SHOP_CONNECTION_AUTH_MODES = ['custom_app', 'oauth'] as const;
+export type ShopConnectionAuthMode = (typeof SHOP_CONNECTION_AUTH_MODES)[number];
+export const GDPR_TOPICS = ['customers/data_request', 'customers/redact', 'shop/redact'] as const;
+export type GdprTopic = (typeof GDPR_TOPICS)[number];
 
 /** Progress of the last full pull, shown on the Integrations card. */
 export interface ShopPullProgress {
@@ -958,6 +971,12 @@ export const shopConnections = mysqlTable(
     keyId: varchar('key_id', { length: 16 }).notNull().default('v1'),
     scopes: json('scopes').$type<string[]>().notNull(),
     apiVersion: varchar('api_version', { length: 16 }).notNull(),
+    authMode: mysqlEnum('auth_mode', SHOP_CONNECTION_AUTH_MODES).notNull().default('custom_app'),
+    installedViaOauthAt: timestamp('installed_via_oauth_at'),
+    /** Wix only: app instance id (webhooks carry it; one per site install). */
+    instanceId: varchar('instance_id', { length: 64 }),
+    /** Wix only: permanent refresh token, sealed; the 5-min access tokens are never stored. */
+    refreshTokenCiphertext: text('refresh_token_ciphertext'),
     /** Custom-app "API secret key", sealed like the token. NULL = the
      *  merchant did not paste it: webhooks are not registered, only pulls run. */
     webhookSecretCiphertext: text('webhook_secret_ciphertext'),
@@ -970,12 +989,32 @@ export const shopConnections = mysqlTable(
     pullProgress: json('pull_progress').$type<ShopPullProgress | null>(),
     lastWebhookAt: timestamp('last_webhook_at'),
     lastError: text('last_error'),
+    /** Last integration alert (bell + email) sent for this connection and
+     *  when — the idempotency marker: token_invalid fires once per
+     *  invalidation, sync_failed at most once per 24 h. */
+    lastAlertKind: varchar('last_alert_kind', { length: 40 }),
+    lastAlertAt: timestamp('last_alert_at'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
     revokedAt: timestamp('revoked_at')
   },
   (t) => ({
     uniqProject: uniqueIndex('uniq_shop_connections_project').on(t.projectId),
-    idxStatus: index('idx_shop_connections_status').on(t.status)
+    idxStatus: index('idx_shop_connections_status').on(t.status),
+    idxShopDomain: index('idx_shop_connections_shop_domain').on(t.shopDomain),
+    idxInstance: index('idx_shop_connections_instance').on(t.instanceId)
   })
+);
+
+/** Shopify mandatory compliance webhooks, kept as an audit trail (app review). */
+export const gdprRequests = mysqlTable(
+  'gdpr_requests',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    shopDomain: varchar('shop_domain', { length: 255 }).notNull(),
+    topic: mysqlEnum('topic', GDPR_TOPICS).notNull(),
+    payload: json('payload').$type<Record<string, unknown>>().notNull(),
+    receivedAt: timestamp('received_at').notNull().defaultNow()
+  },
+  (t) => ({ idxShop: index('idx_gdpr_requests_shop').on(t.shopDomain) })
 );

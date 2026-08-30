@@ -114,7 +114,12 @@
         "audit_completed": "Audit completed",
         "audit_failed": "Audit failed",
         "bulk_completed": "Bulk generation completed",
-        "bulk_failed": "Bulk generation failed"
+        "bulk_failed": "Bulk generation failed",
+        "integration_key_expiring": "API key expires soon",
+        "integration_key_expired": "API key expired",
+        "integration_key_revoked": "API key revoked (rotation ended)",
+        "integration_token_invalid": "Store token refused",
+        "integration_sync_failed": "Store sync failed"
       },
       "fieldLabels": {
         "title": "Title",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "Approved {date}",
     "errorGeneric": "Something went wrong. Try again."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Hi {name},",
+    "greetingAnon": "Hello,",
+    "open": "Open the Integrations tab",
+    "footer": "You receive this email because you own the site {siteName} on OneShopLab.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "Your API key “{keyName}” expires in {days} days ({siteName})",
+      "body": "The API key “{keyName}” of {siteName} expires on {date}. After that date your plugin stops syncing.",
+      "action": "Create a new key from the Integrations tab and paste it in your plugin before then."
+    },
+    "key_expired": {
+      "subject": "Your API key “{keyName}” has expired ({siteName})",
+      "body": "The API key “{keyName}” of {siteName} expired on {date}. Your plugin can no longer sync.",
+      "action": "Create a new key from the Integrations tab and paste it in your plugin."
+    },
+    "token_invalid": {
+      "subject": "Action needed: Shopify refused the token of {siteName}",
+      "body": "Shopify refused the access token of {siteName}. Syncs and updates are paused until you save a new token.",
+      "step1": "1. In your Shopify admin, open the custom app and create a new Admin API access token.",
+      "step2": "2. Paste it in OneShopLab: site → Integrations tab.",
+      "step3": "3. Done — the sync resumes on the next run."
+    },
+    "sync_failed": {
+      "subject": "Sync failed for {siteName}",
+      "body": "The last sync of {siteName} did not complete.",
+      "reason_plan_limit": "Your plan covers {limit} products; the rest of the catalog was not imported.",
+      "reason_unreachable": "The store could not be reached. We retry automatically.",
+      "reason_token_invalid": "The store token was refused. Save a new token from the Integrations tab.",
+      "reason_unknown": "Details: {error}"
+    }
   }
 }

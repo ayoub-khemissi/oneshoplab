@@ -1,0 +1,4 @@
+ALTER TABLE `api_key_events` MODIFY COLUMN `kind` enum('created','rotated','revoked','expired','auth_failed','expiry_notice') NOT NULL;--> statement-breakpoint
+ALTER TABLE `notifications` MODIFY COLUMN `kind` enum('chat_completed','chat_failed','image_completed','image_failed','audit_completed','audit_failed','bulk_completed','bulk_failed','integration_key_expiring','integration_key_expired','integration_key_revoked','integration_token_invalid','integration_sync_failed') NOT NULL;--> statement-breakpoint
+ALTER TABLE `shop_connections` ADD `last_alert_kind` varchar(40);--> statement-breakpoint
+ALTER TABLE `shop_connections` ADD `last_alert_at` timestamp;

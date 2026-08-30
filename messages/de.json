@@ -114,7 +114,12 @@
         "audit_completed": "Audit abgeschlossen",
         "audit_failed": "Audit fehlgeschlagen",
         "bulk_completed": "Massengenerierung abgeschlossen",
-        "bulk_failed": "Massengenerierung fehlgeschlagen"
+        "bulk_failed": "Massengenerierung fehlgeschlagen",
+        "integration_key_expiring": "API-Schlüssel läuft bald ab",
+        "integration_key_expired": "API-Schlüssel abgelaufen",
+        "integration_key_revoked": "API-Schlüssel widerrufen (Rotation beendet)",
+        "integration_token_invalid": "Shop-Token abgelehnt",
+        "integration_sync_failed": "Shop-Synchronisierung fehlgeschlagen"
       },
       "fieldLabels": {
         "title": "Titel",
@@ -1314,5 +1319,37 @@
     },
     "approvedOn": "Freigegeben am {date}",
     "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal."
+  },
+  "IntegrationAlerts": {
+    "greeting": "Hallo {name},",
+    "greetingAnon": "Hallo,",
+    "open": "Tab „Integrationen“ öffnen",
+    "footer": "Du erhältst diese E-Mail, weil dir die Website {siteName} auf OneShopLab gehört.",
+    "signature": "— OneShopLab",
+    "key_expiring": {
+      "subject": "Dein API-Schlüssel „{keyName}“ läuft in {days} Tagen ab ({siteName})",
+      "body": "Der API-Schlüssel „{keyName}“ von {siteName} läuft am {date} ab. Danach synchronisiert dein Plugin nicht mehr.",
+      "action": "Erstelle vorher im Tab „Integrationen“ einen neuen Schlüssel und füge ihn in dein Plugin ein."
+    },
+    "key_expired": {
+      "subject": "Dein API-Schlüssel „{keyName}“ ist abgelaufen ({siteName})",
+      "body": "Der API-Schlüssel „{keyName}“ von {siteName} ist am {date} abgelaufen. Dein Plugin kann nicht mehr synchronisieren.",
+      "action": "Erstelle im Tab „Integrationen“ einen neuen Schlüssel und füge ihn in dein Plugin ein."
+    },
+    "token_invalid": {
+      "subject": "Handlung erforderlich: Shopify hat das Token von {siteName} abgelehnt",
+      "body": "Shopify hat das Zugriffstoken von {siteName} abgelehnt. Synchronisierungen und Updates pausieren, bis du ein neues Token speicherst.",
+      "step1": "1. Öffne im Shopify-Admin die Custom App und erstelle ein neues Admin-API-Zugriffstoken.",
+      "step2": "2. Füge es in OneShopLab ein: Website → Tab „Integrationen“.",
+      "step3": "3. Fertig – die Synchronisierung läuft beim nächsten Durchlauf weiter."
+    },
+    "sync_failed": {
+      "subject": "Synchronisierung für {siteName} fehlgeschlagen",
+      "body": "Die letzte Synchronisierung von {siteName} wurde nicht abgeschlossen.",
+      "reason_plan_limit": "Dein Plan umfasst {limit} Produkte; der Rest des Katalogs wurde nicht importiert.",
+      "reason_unreachable": "Der Shop war nicht erreichbar. Wir versuchen es automatisch erneut.",
+      "reason_token_invalid": "Das Shop-Token wurde abgelehnt. Speichere ein neues Token im Tab „Integrationen“.",
+      "reason_unknown": "Details: {error}"
+    }
   }
 }
