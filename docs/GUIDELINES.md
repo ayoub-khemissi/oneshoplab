@@ -133,3 +133,20 @@ fails on any import cycle — it is part of `pnpm check` and CI.
   `pm2 logs oneshoplab-web --nostream --lines 2000 | grep csp-report`. Enforce
   (rename the header) only after a quiet week; a nonce pipeline for Next's
   inline scripts would be the next hardening step.
+
+## E2E smoke (Playwright)
+
+- `pnpm e2e` — 24 browser tests in `e2e/` (public pages incl. share + anonymous
+  audit result, signup/login/forgot-password, dashboard site + product pages,
+  ownership bounce, contact form). Config: `playwright.config.ts`.
+- Local: starts `next dev` on port 3031 (`E2E_PORT` to change) against the
+  `<db>_test` database — the production `.next` is never rebuilt. CI: runs
+  against the build of the workflow with `next start` and the MySQL service.
+- Every external service is pointed at a closed local port (SMTP, Discord,
+  reCAPTCHA off, no AI keys): nothing leaves the box, failures are immediate.
+- Fixtures are seeded by `e2e/global-setup.ts` (`e2e/seed.ts` has the ids);
+  the audit summary is produced by the real scorer on the unit fixtures.
+- Rule of thumb: a smoke test asserts that a page renders its key content
+  and that no `MISSING_MESSAGE` / formatting error leaks — not pixel details.
+  Locators must be visible-scoped (`.filter({ visible: true }).first()`) on
+  pages that also render hidden copies (lightboxes, mobile menus).

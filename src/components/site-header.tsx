@@ -49,9 +49,9 @@ export async function SiteHeader() {
       tags: t('notifications.fieldLabels.tags')
     },
     relativeNow: t('notifications.relativeNow'),
-    relativeMinutes: t('notifications.relativeMinutes'),
-    relativeHours: t('notifications.relativeHours'),
-    relativeDays: t('notifications.relativeDays')
+    relativeMinutes: t.raw('notifications.relativeMinutes'),
+    relativeHours: t.raw('notifications.relativeHours'),
+    relativeDays: t.raw('notifications.relativeDays')
   };
 
   return (

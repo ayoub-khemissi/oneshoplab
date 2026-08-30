@@ -4,9 +4,11 @@
  * refuse to run against anything that isn't a *_test database.
  */
 import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 export function loadDotEnv(): Record<string, string> {
-  const path = new URL('../.env', import.meta.url).pathname;
+  // cwd-based (not import.meta) so both vitest and the Playwright config (CJS) can load it.
+  const path = resolve(process.cwd(), '.env');
   const out: Record<string, string> = {};
   if (!existsSync(path)) return out;
   for (const line of readFileSync(path, 'utf8').split('\n')) {

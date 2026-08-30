@@ -18,3 +18,7 @@ ruvector.db
 # local-only secrets / scratch notes (never commit) + Claude Code worktrees
 access.txt
 .claude/worktrees/
+
+# playwright
+playwright-report/
+test-results/

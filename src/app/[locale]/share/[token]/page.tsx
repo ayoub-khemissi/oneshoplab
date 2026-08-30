@@ -122,7 +122,7 @@ export default async function SharePage({ params }: PageProps) {
                 productsNoAlt: t('detailProductsNoAlt'),
                 worstTitle: t('detailWorstTitle'),
                 worstHint: t('detailWorstHint'),
-                sampledLabel: t('detailSampledLabel'),
+                sampledLabel: t.raw('detailSampledLabel'),
                 charsSuffix: t('detailCharsSuffix'),
                 issuesLabel: t('detailIssuesLabel')
               }}
