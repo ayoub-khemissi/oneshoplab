@@ -96,6 +96,6 @@ export const config = {
   // The previous `.*\\..*` exclusion broke paths like /dashboard/sites/example.com
   // that legitimately contain a dot (the merchant's domain).
   matcher: [
-    '/((?!api|_next|_vercel|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|opengraph-image|twitter-image|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|otf|css|js|map)$).*)'
+    '/((?!api|downloads|_next|_vercel|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|opengraph-image|twitter-image|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|otf|css|js|map)$).*)'
   ]
 };
