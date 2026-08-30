@@ -143,6 +143,7 @@ process managed by PM2.
 sudo apt install -y nginx certbot python3-certbot-nginx mysql-server
 curl -fsSL https://nodejs.org/dist/v20.20.1/node-v20.20.1-linux-x64.tar.xz | \
   sudo tar -xJ -C /usr/local --strip-components=1
+# Node 22 LTS lives in /opt/node22 (see ecosystem.config.cjs); pnpm/pm2 may run on the system node
 npm i -g pnpm@9 pm2
 
 # 2. Database

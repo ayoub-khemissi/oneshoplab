@@ -8,6 +8,12 @@
 # restarts PM2 unless a fresh BUILD_ID exists — "Compiled successfully"
 # followed by a typecheck failure used to leave the site in 502.
 set -euo pipefail
+
+# OneShopLab runs on its own Node 22 LTS (/opt/node22), not the shared system
+# node — see ecosystem.config.cjs. Build with the same runtime we serve with.
+NODE_HOME="${ONESHOPLAB_NODE_HOME:-/opt/node22}"
+[[ -x "$NODE_HOME/bin/node" ]] || { echo "missing $NODE_HOME/bin/node"; exit 1; }
+export PATH="$NODE_HOME/bin:$PATH"
 cd "$(dirname "$0")/.."
 
 PULL=1
@@ -41,7 +47,9 @@ fi
 echo "BUILD_ID=$(cat .next/BUILD_ID)"
 
 log "restart web + worker"
-pm2 restart oneshoplab-web oneshoplab-worker --update-env >/dev/null
+# startOrRestart re-reads ecosystem.config.cjs (interpreter, env) — a plain
+# `pm2 restart` would keep whatever interpreter the process was started with.
+pm2 startOrRestart ecosystem.config.cjs --only oneshoplab-web,oneshoplab-worker --update-env >/dev/null
 sleep 6
 
 log "health check"

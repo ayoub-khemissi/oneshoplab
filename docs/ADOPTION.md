@@ -78,3 +78,15 @@ Point-in-time. Re-verify the numbers when you touch a line; the rules themselves
   (next-auth-bound), `checkoutConsentParams` (next-intl request context),
   the bulk worker tick (`processNextBulkProduct`, needs AI stubs) and the
   dynamic AI audit itself.
+
+## 2026-08-30 — Node 22
+
+- OneShopLab runs on Node 22.23.2 LTS installed under `/opt/node22` (tarball,
+  SHA256-verified). The system `/usr/bin/node` (nodesource 20.x, EOL) is
+  shared by 5 other apps on the box and was left untouched. `ecosystem.config.cjs`
+  pins the interpreter (web) and PATH (worker, via tsx's shebang);
+  `scripts/deploy.sh` builds with the same runtime and uses
+  `pm2 startOrRestart ecosystem.config.cjs` so interpreter changes apply.
+- Gotcha: tsx 4.21 on Node 22.23 dropped named exports of `.ts` modules
+  (worker crash-looped on `loadEnv`); fixed by tsx ≥ 4.23.
+- Upgrade path: drop a new tarball in `/opt/node22`, `bash scripts/deploy.sh`.
