@@ -9,6 +9,14 @@ async function login(page: Page) {
   await page.waitForURL(/\/fr\/dashboard/);
 }
 
+
+async function pickPlatform(page: Page, name: RegExp) {
+  // The wizard routes straight to the detected platform; open the picker first.
+  const change = page.getByTestId('platform-detected').getByRole('button');
+  if (await change.isVisible().catch(() => false)) await change.click();
+  await page.getByRole('radio', { name }).click();
+}
+
 test.describe('integrations', () => {
   test.beforeEach(async ({ page }) => login(page));
 
@@ -18,7 +26,7 @@ test.describe('integrations', () => {
     await expect(page.getByText('Connectez votre boutique').first()).toBeVisible();
 
     // The seeded project is Shopify — switch to WooCommerce to reach the key step.
-    await page.getByRole('radio', { name: /WooCommerce/ }).click();
+    await pickPlatform(page, /WooCommerce/);
     await expect(page.locator('[data-mock]')).toHaveCount(4);
     await expect(page.locator('[data-download-plugin]')).toHaveAttribute(
       'href',
@@ -43,7 +51,7 @@ test.describe('integrations', () => {
   }) => {
     await page.goto(`/fr/dashboard/sites/${SEED.project.id}?tab=integrations`);
     await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
-    await page.getByRole('radio', { name: /Shopify/ }).click();
+    await pickPlatform(page, /Shopify/);
     await expect(page.locator('[data-mock]')).toHaveCount(5);
     await expect(page.getByText('Bientôt disponible')).toHaveCount(0);
     await expect(page.getByText('Collez votre jeton d’accès')).toBeVisible();
@@ -72,7 +80,7 @@ test.describe('integrations', () => {
   }) => {
     // The e2e env has no SHOPIFY_APP_CLIENT_ID: no install card, no "other method" collapsible.
     await page.goto(`/fr/dashboard/sites/${SEED.project.id}?tab=integrations`);
-    await page.getByRole('radio', { name: /Shopify/ }).click();
+    await pickPlatform(page, /Shopify/);
     await expect(page.getByTestId('shopify-install-card')).toHaveCount(0);
     await expect(page.getByTestId('shopify-token-method')).toHaveCount(0);
     await expect(page.getByText('Collez votre jeton d’accès')).toBeVisible();
@@ -82,7 +90,7 @@ test.describe('integrations', () => {
   test('Wix branch shows coming soon while the Wix app is not configured', async ({ page }) => {
     await page.goto(`/fr/dashboard/sites/${SEED.project.id}?tab=integrations`);
     await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
-    await page.getByRole('radio', { name: /Wix/ }).click();
+    await pickPlatform(page, /Wix/);
     await expect(page.getByText('Bientôt disponible')).toBeVisible();
     await expect(page.getByRole('switch')).toBeVisible();
     await expect(page.getByTestId('wix-install')).toHaveCount(0);

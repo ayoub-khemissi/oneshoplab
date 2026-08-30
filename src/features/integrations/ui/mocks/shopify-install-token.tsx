@@ -15,7 +15,7 @@ export function ShopifyInstallToken({ variant }: { variant: 'install' | 'paste' 
       label={variant === 'install' ? t('shopify.installAria') : t('shopify.pasteAria')}
     >
       <div className="flex h-full flex-col gap-2 bg-[#f1f2f4] p-3 text-[#303030]">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-medium">OneShopLab</span>
           <MockButton primary highlight={variant === 'install'} callout={1}>
             {t('shopify.installApp')}

@@ -28,8 +28,8 @@ export function WpPluginsUpload({ variant }: { variant: 'upload' | 'activate' })
           highlight={t('wp.plugins')}
           callout={1}
         />
-        <div className="flex flex-1 flex-col gap-2 bg-[#f0f0f1] p-3 text-[#1d2327]">
-          <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 bg-[#f0f0f1] p-3 text-[#1d2327]">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">{t('wp.addPlugins')}</span>
             <MockButton highlight={variant === 'upload'} callout={2}>
               {t('wp.uploadPlugin')}
@@ -38,7 +38,7 @@ export function WpPluginsUpload({ variant }: { variant: 'upload' | 'activate' })
           {variant === 'upload' ? (
             <div className="flex flex-col items-center gap-2 rounded border border-dashed border-[#8c8f94] bg-white p-3">
               <span className="text-[#50575e]">{t('wp.uploadHint')}</span>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className={`rounded border border-[#8c8f94] px-2 py-1 ${HIGHLIGHT}`}>
                   {t('wp.chooseFile')}
                   <Callout n={3} className="ml-1" />
@@ -52,7 +52,7 @@ export function WpPluginsUpload({ variant }: { variant: 'upload' | 'activate' })
               <span className="font-medium">{t('wp.installing')}</span>
               <span className="text-[#50575e]">{t('wp.unpacking')}</span>
               <span className="text-[#50575e]">{t('wp.installed')}</span>
-              <div className="mt-1 flex gap-2">
+              <div className="mt-1 flex flex-wrap gap-2">
                 <MockButton primary highlight callout={2}>
                   {t('wp.activate')}
                 </MockButton>

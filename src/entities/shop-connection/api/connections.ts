@@ -73,6 +73,16 @@ async function getRow(projectId: string): Promise<ShopConnectionRow | null> {
  * the token against Shopify (features/shopify-connector `validate.ts`); this
  * only checks ownership + domain format, seals the secrets and upserts.
  */
+
+/** A real connection is authoritative about the platform: reflect it on the
+ *  project so detection/scraping guesses never win over a live link. */
+async function adoptProjectSource(projectId: string, source: 'shopify' | 'wix'): Promise<void> {
+  await db
+    .update(projects)
+    .set({ source })
+    .where(and(eq(projects.id, projectId), ne(projects.source, source)));
+}
+
 export async function connectShopify(input: ConnectShopifyInput): Promise<ConnectShopifyResult> {
   const shopDomain = normalizeShopDomain(input.shopDomain);
   if (!shopDomain) return { ok: false, reason: 'invalid_domain' };
@@ -100,6 +110,7 @@ export async function connectShopify(input: ConnectShopifyInput): Promise<Connec
     webhookSecretCiphertext: apiSecret ? sealSecret(apiSecret) : null
   });
   if (!row) return { ok: false, reason: 'not_found' };
+  await adoptProjectSource(input.projectId, 'shopify');
   return { ok: true, connection: toPublic(row) };
 }
 
@@ -166,6 +177,7 @@ async function upsert(projectId: string, values: UpsertValues): Promise<ShopConn
   }
   const row = await getRow(projectId);
   if (row) await emitStatus(projectId, row.platform, 'connected');
+  await adoptProjectSource(projectId, 'wix');
   return row;
 }
 

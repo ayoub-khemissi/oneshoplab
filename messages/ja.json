@@ -1504,7 +1504,9 @@
       "copy": "コピー",
       "copied": "コピーしました",
       "secretSaved": "保存しました"
-    }
+    },
+    "platformLocked": "あなたのショップは {platform} で動いています。",
+    "changePlatform": "プラットフォームを変更"
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

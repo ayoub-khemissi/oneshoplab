@@ -26,7 +26,7 @@ export function ShopifyScopes() {
           <span className="text-[#616161]">{t('shopify.apiCredentials')}</span>
         </div>
         <div className="flex flex-col gap-1.5 rounded-lg border border-[#e3e3e3] bg-white p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="font-medium">{t('shopify.adminApiScopes')}</span>
             <MockButton primary highlight callout={2}>
               {t('shopify.save')}

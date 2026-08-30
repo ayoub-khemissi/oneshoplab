@@ -29,8 +29,8 @@ export function WpOslSettings({ variant }: { variant: 'paste' | 'save' }) {
           highlight={variant === 'paste' ? 'OneShopLab' : undefined}
           callout={1}
         />
-        <div className="flex flex-1 flex-col gap-2 bg-[#f0f0f1] p-3 text-[#1d2327]">
-          <div className="flex items-center justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 bg-[#f0f0f1] p-3 text-[#1d2327]">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-medium">OneShopLab</span>
             <span
               className={`rounded-full px-2 py-0.5 text-[9px] font-medium ${

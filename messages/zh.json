@@ -1504,7 +1504,9 @@
       "copy": "复制",
       "copied": "已复制",
       "secretSaved": "我已保存"
-    }
+    },
+    "platformLocked": "您的商店基于 {platform}。",
+    "changePlatform": "更换平台"
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

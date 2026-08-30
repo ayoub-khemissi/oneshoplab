@@ -1504,7 +1504,9 @@
       "copy": "نسخ",
       "copied": "تم النسخ",
       "secretSaved": "لقد حفظته"
-    }
+    },
+    "platformLocked": "متجرك يعمل على {platform}.",
+    "changePlatform": "تغيير المنصة"
   },
   "ApplyToStore": {
     "apply": "تطبيق في متجري",

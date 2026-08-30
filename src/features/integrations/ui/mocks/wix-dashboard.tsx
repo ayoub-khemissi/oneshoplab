@@ -36,7 +36,7 @@ export function WixDashboard({ variant }: { variant: 'apps' | 'install' | 'conse
           callout={1}
         />
         <div className="relative flex flex-1 flex-col gap-2 p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-medium">{t('manageApps')}</span>
             {variant === 'apps' ? <MockButton>{t('appMarket')}</MockButton> : null}
           </div>
@@ -64,7 +64,7 @@ export function WixDashboard({ variant }: { variant: 'apps' | 'install' | 'conse
                   </li>
                 </ul>
               )}
-              <div className="flex justify-end gap-2">
+              <div className="flex flex-wrap justify-end gap-2">
                 <MockButton>{t('cancel')}</MockButton>
                 <span
                   className={`inline-flex items-center gap-1 rounded-full bg-[#116dff] px-2 py-1 font-medium text-white ${HIGHLIGHT}`}

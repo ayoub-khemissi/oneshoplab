@@ -1504,7 +1504,9 @@
       "copy": "복사",
       "copied": "복사됨",
       "secretSaved": "저장했습니다"
-    }
+    },
+    "platformLocked": "스토어가 {platform}에서 운영되고 있습니다.",
+    "changePlatform": "플랫폼 변경"
   },
   "ApplyToStore": {
     "apply": "내 스토어에 적용",

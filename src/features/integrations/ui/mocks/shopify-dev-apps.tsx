@@ -29,14 +29,14 @@ export function ShopifyDevApps({ variant }: { variant: 'open' | 'create' }) {
           callout={1}
         />
         <div className="relative flex flex-1 flex-col gap-2 p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm font-medium">{t('shopify.appsChannels')}</span>
             <MockButton highlight={variant === 'open'} callout={2}>
               {t('shopify.developApps')}
             </MockButton>
           </div>
           <div className="flex flex-col gap-1.5 rounded-lg border border-[#e3e3e3] bg-white p-3">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-medium">{t('shopify.appDevelopment')}</span>
               <MockButton primary highlight={variant === 'create'} callout={1}>
                 {t('shopify.createApp')}

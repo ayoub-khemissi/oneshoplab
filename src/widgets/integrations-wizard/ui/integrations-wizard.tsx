@@ -72,6 +72,10 @@ export function IntegrationsWizard({
   const t = useTranslations('Integrations');
   const locale = useLocale();
   const [platform, setPlatform] = useState<IntegrationPlatform | null>(detectedPlatform);
+  // The audit already told us the platform: route straight to its guide and
+  // keep the picker one click away ("Changer"). A real connection later
+  // overrides the stored source anyway (server side).
+  const [showPicker, setShowPicker] = useState(detectedPlatform === null);
   const [keys, setKeys] = useState(initialKeys);
   const [revealed, setRevealed] = useState<string | null>(null);
   const [rotatedPlaintext, setRotatedPlaintext] = useState<string | null>(null);
@@ -161,8 +165,24 @@ export function IntegrationsWizard({
 
       <ReturnNotice notice={returnNotice} platform={platform} />
 
-      <Step n={1} title={t('step1Title')} hint={t('step1Hint')}>
-        <PlatformPicker value={platform} detected={detectedPlatform} onChange={choosePlatform} />
+      <Step n={1} title={t('step1Title')} hint={showPicker ? t('step1Hint') : undefined}>
+        {showPicker ? (
+          <PlatformPicker value={platform} detected={detectedPlatform} onChange={choosePlatform} />
+        ) : (
+          <div
+            className="flex flex-wrap items-center gap-3 text-sm"
+            data-testid="platform-detected"
+          >
+            <span>{t('platformLocked', { platform: platform ? platformName(platform) : '' })}</span>
+            <button
+              type="button"
+              onClick={() => setShowPicker(true)}
+              className="text-[var(--accent)] underline-offset-2 hover:underline"
+            >
+              {t('changePlatform')}
+            </button>
+          </div>
+        )}
       </Step>
 
       <Step n={2} title={step2Title}>

@@ -1504,7 +1504,9 @@
       "copy": "Kopyala",
       "copied": "Kopyalandı",
       "secretSaved": "Kaydettim"
-    }
+    },
+    "platformLocked": "Mağazanız {platform} üzerinde çalışıyor.",
+    "changePlatform": "Platformu değiştir"
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",

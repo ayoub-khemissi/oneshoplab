@@ -48,10 +48,11 @@ export function parsePluginPlatform(header: string | null): PluginPlatform | nul
   return (PLUGIN_PLATFORMS as readonly string[]).includes(v ?? '') ? (v as PluginPlatform) : null;
 }
 
-/** `projects.source` is set from the header the first time it is still `unknown`. */
+/** A live plugin is stronger evidence than scraping detection: the declared
+ *  platform becomes the project's source whenever it differs. */
 async function resolvePlatform(project: ProjectRow, header: string | null): Promise<Platform> {
   const declared = parsePluginPlatform(header);
-  if (project.source !== 'unknown' || !declared) return project.source;
+  if (!declared || project.source === declared) return project.source;
   await db.update(projects).set({ source: declared }).where(eq(projects.id, project.id));
   return declared;
 }

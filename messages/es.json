@@ -1504,7 +1504,9 @@
       "copy": "Copiar",
       "copied": "Copiado",
       "secretSaved": "Lo he guardado"
-    }
+    },
+    "platformLocked": "Tu tienda funciona con {platform}.",
+    "changePlatform": "Cambiar de plataforma"
   },
   "ApplyToStore": {
     "apply": "Aplicar en mi tienda",

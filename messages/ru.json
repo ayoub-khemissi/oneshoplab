@@ -1504,7 +1504,9 @@
       "copy": "Копировать",
       "copied": "Скопировано",
       "secretSaved": "Я сохранил(а) его"
-    }
+    },
+    "platformLocked": "Ваш магазин работает на {platform}.",
+    "changePlatform": "Сменить платформу"
   },
   "ApplyToStore": {
     "apply": "Применить в магазине",
