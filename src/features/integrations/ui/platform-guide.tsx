@@ -93,7 +93,7 @@ function GuideStepItem({
         ? GUIDE_VALUES[step.valueKind]
         : null;
   return (
-    <li className="grid gap-3 md:grid-cols-[1fr_260px] md:gap-5">
+    <li className="grid gap-3 md:grid-cols-2 md:items-center md:gap-8">
       <div className="flex gap-3">
         <span className="size-7 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-semibold inline-flex items-center justify-center shrink-0">
           {step.n}
