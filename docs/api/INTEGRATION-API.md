@@ -209,10 +209,10 @@ The Integrations tab of a site is a **wizard**, not a settings form:
 
 1. **Choose your platform** (Shopify / WooCommerce / Wix, auto-selected from
    the audit's detected platform, changeable).
-2. **Numbered steps with a screenshot each**, written in plain language,
+2. **Numbered steps with a mock admin view each**, written in plain language,
    every value the merchant has to copy shown in a box with a Copy button,
    every place they have to click named exactly as in their admin
-   (localised: 13 locales, screenshots in EN with callouts).
+   (localised: 13 locales, the mock views use the admin's own localised labels).
    - WooCommerce: install the OSL plugin (upload the zip → Activate) → open
      *OneShopLab* in the WP menu → paste the site key → Save. Estimated 3 min.
    - Shopify (phase 3 connector): Settings → Apps → *Develop apps* → Create
@@ -234,27 +234,32 @@ The Integrations tab of a site is a **wizard**, not a settings form:
 
 Copy tone: second person, short sentences, no jargon ("clé du site" not
 "API key", "connexion" not "webhook"). Every string lives in
-`messages/*.json` under `Integrations.*`; screenshots in
-`public/integrations/<platform>/step-<n>.png` (placeholders allowed until the
-plugin exists, tracked in docs/ADOPTION.md).
+`messages/*.json` under `Integrations.*` (mock admin labels under
+`Integrations.mocks.*`).
 
 Implemented 2026-08-30 as `features/integrations` (wizard, `?tab=integrations`)
 and `features/apply-to-store` (button on each past generation + the
 "changes to apply" list). The "notify me" toggle is stored in
 `projects.integration_interest` (json `{ shopify?, wix? }`).
 
-### Screenshots to produce (replace the grey placeholders)
+### Mock views (`src/features/integrations/ui/mocks/`)
 
-800×450 PNG, English admin, callout on the element to click, no personal
-data. Path = `public/integrations/<platform>/step-<n>.png`.
+No screenshots: each step renders a small static React mock of the admin
+(`MockFrame` = browser chrome + fake URL bar, `Callout` = numbered marker,
+`role="img"` + `aria-label`, `data-mock="<id>"` for tests). Layout, menu names
+and button labels follow the real admin; the element to click/copy carries a
+ring and a callout. Replaced the grey PNG placeholders on 2026-08-30 (real
+captures would go stale with every admin redesign and cannot be localised).
 
-- [ ] `woocommerce/step-1.png` — Plugins › Add New › Upload Plugin with the zip selected
-- [ ] `woocommerce/step-2.png` — "Activate Plugin" button after install
-- [ ] `woocommerce/step-3.png` — OneShopLab menu entry + the Site key field
-- [ ] `woocommerce/step-4.png` — Save button and the green status inside the plugin
-- [ ] `shopify/step-1.png` — Settings › Apps and sales channels › Develop apps
-- [ ] `shopify/step-2.png` — Create an app dialog with the name filled
-- [ ] `shopify/step-3.png` — Admin API scopes with read_products / write_products ticked
-- [ ] `shopify/step-4.png` — Install app → Reveal token once
-- [ ] `shopify/step-5.png` — OSL token field (ships with the phase-3 connector)
-- Wix: no screenshots until the app exists (phase 5).
+| Step | Component (`variant`) | `data-mock` |
+|---|---|---|
+| WooCommerce 1 | `WpPluginsUpload` (`upload`) — Plugins › Add New › Upload Plugin, zip chosen | `wp-plugins-upload` |
+| WooCommerce 2 | `WpPluginsUpload` (`activate`) — "Activate Plugin" after install | `wp-plugins-activate` |
+| WooCommerce 3 | `WpOslSettings` (`paste`) — OneShopLab menu entry + Site key field | `wp-osl-paste-key` |
+| WooCommerce 4 | `WpOslSettings` (`save`) — Save button + green status pill | `wp-osl-save` |
+| Shopify 1 | `ShopifyDevApps` (`open`) — Settings › Apps and sales channels › Develop apps | `shopify-dev-apps` |
+| Shopify 2 | `ShopifyDevApps` (`create`) — Create an app dialog, name filled | `shopify-create-app` |
+| Shopify 3 | `ShopifyScopes` — Admin API scopes, read_products / write_products ticked | `shopify-scopes` |
+| Shopify 4 | `ShopifyInstallToken` (`install`) — Install app → Reveal token once | `shopify-install-token` |
+| Shopify 5 | `ShopifyInstallToken` (`paste`) — token pasted into OneShopLab | `shopify-paste-token` |
+| Wix | none until the app exists (phase 5) | — |

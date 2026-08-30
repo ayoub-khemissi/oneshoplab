@@ -11,6 +11,8 @@ const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-key');
 const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
+const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
+  await import('@/features/shopify-connector');
 
 import { writeWorkerHeartbeat } from '@/shared/health';
 
@@ -42,7 +44,11 @@ async function main(): Promise<void> {
         // tick to bound tick latency. The function returns quickly when
         // no bulk job is in flight.
         processNextBulkProduct().catch((e) => console.error('[worker] bulk-generator failed', e)),
-        runBulkWatchdog().catch((e) => console.error('[worker] bulk-watchdog failed', e))
+        runBulkWatchdog().catch((e) => console.error('[worker] bulk-watchdog failed', e)),
+        // Shopify connector: write approved changes back (no-op without
+        // pending changes) and run pulls queued by connect / "Synchroniser".
+        runShopifyApplies().catch((e) => console.error('[worker] shopify-apply failed', e)),
+        runShopifyRequestedPulls().catch((e) => console.error('[worker] shopify-pull failed', e))
       ];
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
@@ -56,6 +62,12 @@ async function main(): Promise<void> {
         );
         tasks.push(
           runChangeSweeps().catch((e) => console.error('[worker] product-change sweep failed', e))
+        );
+        // One full Shopify pull per connection per 24 h (gated in listDueNightlyPulls).
+        tasks.push(
+          runShopifyNightlyPulls().catch((e) =>
+            console.error('[worker] shopify-nightly-pull failed', e)
+          )
         );
       }
       await Promise.allSettled(tasks);

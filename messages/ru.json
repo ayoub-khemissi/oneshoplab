@@ -1077,6 +1077,8 @@
     "notifyMe": "Сообщить мне",
     "notifySaved": "Мы сообщим",
     "chooseFirst": "Выберите платформу выше, чтобы увидеть шаги.",
+    "openAdmin": "Открыть",
+    "downloadPlugin": "Скачать плагин",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Консоль",
+        "posts": "Записи",
+        "woocommerce": "WooCommerce",
+        "plugins": "Плагины",
+        "settings": "Настройки",
+        "addPlugins": "Добавить плагины",
+        "uploadPlugin": "Загрузить плагин",
+        "uploadHint": "Если у вас есть плагин в формате .zip, вы можете установить его, загрузив здесь.",
+        "chooseFile": "Выбрать файл",
+        "installNow": "Установить",
+        "installing": "Установка плагина из загруженного файла: oneshoplab.zip",
+        "unpacking": "Распаковка пакета…",
+        "installed": "Плагин успешно установлен.",
+        "activate": "Активировать плагин",
+        "goToPlugins": "Вернуться к установщику плагинов",
+        "uploadAria": "Админка WordPress: Плагины › Добавить новый › Загрузить плагин с выбранным oneshoplab.zip",
+        "activateAria": "Админка WordPress: кнопка «Активировать плагин» после установки",
+        "pasteAria": "Админка WordPress: пункт меню OneShopLab и поле «Ключ сайта»",
+        "saveAria": "Админка WordPress: кнопка «Сохранить» в OneShopLab и зелёный статус «Подключено»",
+        "siteKey": "Ключ сайта",
+        "siteKeyHint": "Вставьте ключ, созданный в панели OneShopLab.",
+        "save": "Сохранить",
+        "statusConnected": "Подключено",
+        "statusWaiting": "Ожидание ключа"
+      },
+      "shopify": {
+        "general": "Общие",
+        "appsChannels": "Приложения и каналы продаж",
+        "payments": "Платежи",
+        "checkout": "Оформление заказа",
+        "developApps": "Разработка приложений",
+        "appDevelopment": "Разработка приложений",
+        "createApp": "Создать приложение",
+        "noApps": "Пользовательских приложений пока нет.",
+        "appName": "Название приложения",
+        "cancel": "Отмена",
+        "openAria": "Админка Shopify: Настройки › Приложения и каналы продаж › Разработка приложений",
+        "createAria": "Админка Shopify: окно «Создать приложение» с именем OneShopLab",
+        "overview": "Обзор",
+        "configuration": "Конфигурация",
+        "apiCredentials": "Учётные данные API",
+        "adminApiScopes": "Области доступа Admin API",
+        "save": "Сохранить",
+        "scopesHint": "Отметьте области, нужные приложению.",
+        "scopesAria": "Админка Shopify: области Admin API с отмеченными read_products и write_products",
+        "installApp": "Установить приложение",
+        "adminApiToken": "Токен доступа Admin API",
+        "tokenOnceHint": "Токен показывается только один раз после установки.",
+        "revealToken": "Показать токен один раз",
+        "tokenField": "Токен доступа",
+        "installAria": "Админка Shopify: Установить приложение, затем Показать токен один раз",
+        "pasteAria": "Админка Shopify: токен доступа вставлен в OneShopLab"
+      }
+    },
     "valueLabel": {
       "adminPath": "Адрес, который нужно открыть в админке WordPress",
       "appName": "Имя приложения",
@@ -1126,7 +1184,6 @@
       "siteKey": "Ваш ключ сайта (создаётся на шаге 3)"
     },
     "siteKeyPending": "Вы получите его на шаге 3 ниже.",
-    "screenshotAlt": "Снимок экрана шага {n}",
     "copy": "Копировать",
     "copied": "Скопировано",
     "step3Title": "Ваш ключ сайта",

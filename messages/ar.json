@@ -1077,6 +1077,8 @@
     "notifyMe": "أخبرني عندما يصبح جاهزًا",
     "notifySaved": "سنخبرك",
     "chooseFirst": "اختر منصتك أعلاه لرؤية الخطوات.",
+    "openAdmin": "فتح",
+    "downloadPlugin": "تنزيل الإضافة",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "لوحة التحكم",
+        "posts": "المقالات",
+        "woocommerce": "WooCommerce",
+        "plugins": "الإضافات",
+        "settings": "الإعدادات",
+        "addPlugins": "إضافة إضافات",
+        "uploadPlugin": "رفع إضافة",
+        "uploadHint": "إذا كانت لديك إضافة بصيغة ‎.zip فيمكنك تثبيتها برفعها هنا.",
+        "chooseFile": "اختيار ملف",
+        "installNow": "التثبيت الآن",
+        "installing": "جارٍ تثبيت الإضافة من الملف المرفوع: oneshoplab.zip",
+        "unpacking": "جارٍ فك ضغط الحزمة…",
+        "installed": "تم تثبيت الإضافة بنجاح.",
+        "activate": "تفعيل الإضافة",
+        "goToPlugins": "العودة إلى مثبّت الإضافات",
+        "uploadAria": "لوحة WordPress: الإضافات › أضف جديد › رفع إضافة مع اختيار oneshoplab.zip",
+        "activateAria": "لوحة WordPress: زر تفعيل الإضافة بعد التثبيت",
+        "pasteAria": "لوحة WordPress: عنصر القائمة OneShopLab وحقل مفتاح الموقع",
+        "saveAria": "لوحة WordPress: زر الحفظ في OneShopLab والحالة الخضراء «متصل»",
+        "siteKey": "مفتاح الموقع",
+        "siteKeyHint": "الصق المفتاح الذي أنشأته في لوحة OneShopLab.",
+        "save": "حفظ",
+        "statusConnected": "متصل",
+        "statusWaiting": "في انتظار مفتاح"
+      },
+      "shopify": {
+        "general": "عام",
+        "appsChannels": "التطبيقات وقنوات البيع",
+        "payments": "المدفوعات",
+        "checkout": "الدفع",
+        "developApps": "تطوير التطبيقات",
+        "appDevelopment": "تطوير التطبيقات",
+        "createApp": "إنشاء تطبيق",
+        "noApps": "لا توجد تطبيقات مخصصة بعد.",
+        "appName": "اسم التطبيق",
+        "cancel": "إلغاء",
+        "openAria": "لوحة Shopify: الإعدادات › التطبيقات وقنوات البيع › تطوير التطبيقات",
+        "createAria": "لوحة Shopify: نافذة إنشاء تطبيق بالاسم OneShopLab",
+        "overview": "نظرة عامة",
+        "configuration": "الإعداد",
+        "apiCredentials": "بيانات اعتماد API",
+        "adminApiScopes": "نطاقات وصول Admin API",
+        "save": "حفظ",
+        "scopesHint": "حدّد النطاقات التي يحتاجها التطبيق.",
+        "scopesAria": "لوحة Shopify: نطاقات Admin API مع تحديد read_products وwrite_products",
+        "installApp": "تثبيت التطبيق",
+        "adminApiToken": "رمز وصول Admin API",
+        "tokenOnceHint": "يُعرض الرمز مرة واحدة فقط بعد التثبيت.",
+        "revealToken": "إظهار الرمز مرة واحدة",
+        "tokenField": "رمز الوصول",
+        "installAria": "لوحة Shopify: تثبيت التطبيق ثم إظهار الرمز مرة واحدة",
+        "pasteAria": "لوحة Shopify: رمز الوصول ملصق في OneShopLab"
+      }
+    },
     "valueLabel": {
       "adminPath": "العنوان الذي تفتحه في لوحة تحكم WordPress",
       "appName": "اسم التطبيق",
@@ -1126,7 +1184,6 @@
       "siteKey": "مفتاح موقعك (يُنشأ في الخطوة 3)"
     },
     "siteKeyPending": "ستحصل عليه في الخطوة 3 أدناه.",
-    "screenshotAlt": "لقطة شاشة للخطوة {n}",
     "copy": "نسخ",
     "copied": "تم النسخ",
     "step3Title": "مفتاح موقعك",

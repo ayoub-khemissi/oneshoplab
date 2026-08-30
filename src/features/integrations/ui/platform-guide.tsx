@@ -1,29 +1,35 @@
 'use client';
 
-import { Clock } from 'lucide-react';
+import { Clock, Download, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { CopyButton } from '@/shared/ui';
 import { setIntegrationInterestAction } from '../api/actions';
 import {
+  buildSteps,
   COMING_SOON,
   ESTIMATED_MINUTES,
-  GUIDE_STEPS,
   GUIDE_VALUES,
-  screenshotPath,
-  type GuideStep
+  type GuideStep,
+  WP_PLUGIN_ZIP_PATH
 } from '../lib/guide-steps';
 import type { IntegrationInterestMap, IntegrationPlatform } from '../model/types';
+import { MOCK_VIEWS } from './mocks';
 import { platformName } from './platform-picker';
 
 export function PlatformGuide({
   projectId,
   platform,
+  domain,
+  pluginVersion,
   siteKeyPlaintext,
   interest
 }: {
   projectId: string;
   platform: IntegrationPlatform | null;
+  /** Project domain or URL — feeds the "Open" links of each step. */
+  domain: string | null;
+  pluginVersion: string | null;
   /** Freshly generated key (step 3) — shown in the "paste it" step while visible. */
   siteKeyPlaintext: string | null;
   interest: IntegrationInterestMap;
@@ -32,7 +38,7 @@ export function PlatformGuide({
   if (!platform) {
     return <p className="text-sm text-[var(--muted)] italic">{t('chooseFirst')}</p>;
   }
-  const steps = GUIDE_STEPS[platform];
+  const steps = buildSteps({ platform, domain });
   return (
     <div className="flex flex-col gap-4">
       {COMING_SOON[platform] ? (
@@ -54,6 +60,7 @@ export function PlatformGuide({
                 key={step.n}
                 platform={platform}
                 step={step}
+                pluginVersion={pluginVersion}
                 siteKeyPlaintext={siteKeyPlaintext}
               />
             ))}
@@ -67,13 +74,16 @@ export function PlatformGuide({
 function GuideStepItem({
   platform,
   step,
+  pluginVersion,
   siteKeyPlaintext
 }: {
   platform: IntegrationPlatform;
   step: GuideStep;
+  pluginVersion: string | null;
   siteKeyPlaintext: string | null;
 }) {
   const t = useTranslations('Integrations');
+  const MockView = MOCK_VIEWS[step.mock];
   const value =
     step.valueKind === 'siteKey'
       ? siteKeyPlaintext
@@ -87,12 +97,38 @@ function GuideStepItem({
           {step.n}
         </span>
         <div className="flex flex-col gap-2 min-w-0">
-          <p className="text-sm font-semibold leading-7">
-            {t(`guide.${platform}.step${step.n}.title`)}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-semibold leading-7">
+              {t(`guide.${platform}.step${step.n}.title`)}
+            </p>
+            {step.openUrl ? (
+              <a
+                href={step.openUrl}
+                target="_blank"
+                rel="noopener"
+                data-open-admin
+                className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] bg-[var(--background)] px-2 py-0.5 text-xs font-medium hover:bg-[var(--default)]/60"
+              >
+                {t('openAdmin')}
+                <ExternalLink className="size-3" aria-hidden />
+              </a>
+            ) : null}
+          </div>
           <p className="text-sm text-[var(--muted)] leading-relaxed">
             {t(`guide.${platform}.step${step.n}.body`)}
           </p>
+          {platform === 'woocommerce' && step.n === 1 ? (
+            <a
+              href={WP_PLUGIN_ZIP_PATH}
+              download
+              data-download-plugin
+              className="inline-flex w-fit items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90"
+            >
+              <Download className="size-4" aria-hidden />
+              {t('downloadPlugin')}
+              {pluginVersion ? <span className="opacity-80">v{pluginVersion}</span> : null}
+            </a>
+          ) : null}
           {step.valueKind ? (
             <div className="flex flex-col gap-1">
               <span className="text-[11px] uppercase tracking-wider text-[var(--muted)]">
@@ -112,14 +148,7 @@ function GuideStepItem({
           ) : null}
         </div>
       </div>
-      <img
-        src={screenshotPath(platform, step.n)}
-        alt={t('screenshotAlt', { n: step.n })}
-        width={800}
-        height={450}
-        loading="lazy"
-        className="w-full rounded-md border border-[var(--border)] bg-[var(--default)]/40"
-      />
+      <MockView />
     </li>
   );
 }

@@ -1077,6 +1077,8 @@
     "notifyMe": "準備ができたら知らせて",
     "notifySaved": "お知らせします",
     "chooseFirst": "上でプラットフォームを選ぶと手順が表示されます。",
+    "openAdmin": "開く",
+    "downloadPlugin": "プラグインをダウンロード",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "ダッシュボード",
+        "posts": "投稿",
+        "woocommerce": "WooCommerce",
+        "plugins": "プラグイン",
+        "settings": "設定",
+        "addPlugins": "プラグインを追加",
+        "uploadPlugin": "プラグインのアップロード",
+        "uploadHint": ".zip 形式のプラグインをお持ちの場合、ここでアップロードしてインストールできます。",
+        "chooseFile": "ファイルを選択",
+        "installNow": "今すぐインストール",
+        "installing": "アップロードしたファイルからプラグインをインストール中: oneshoplab.zip",
+        "unpacking": "パッケージを展開中…",
+        "installed": "プラグインのインストールが完了しました。",
+        "activate": "プラグインを有効化",
+        "goToPlugins": "プラグインインストーラーに戻る",
+        "uploadAria": "WordPress 管理画面: プラグイン › 新規追加 › プラグインのアップロードで oneshoplab.zip を選択",
+        "activateAria": "WordPress 管理画面: インストール後の「プラグインを有効化」ボタン",
+        "pasteAria": "WordPress 管理画面: メニューの OneShopLab とサイトキー欄",
+        "saveAria": "WordPress 管理画面: OneShopLab の保存ボタンと緑色の「接続済み」ステータス",
+        "siteKey": "サイトキー",
+        "siteKeyHint": "OneShopLab ダッシュボードで作成したキーを貼り付けてください。",
+        "save": "保存",
+        "statusConnected": "接続済み",
+        "statusWaiting": "キー待ち"
+      },
+      "shopify": {
+        "general": "一般",
+        "appsChannels": "アプリと販売チャネル",
+        "payments": "決済",
+        "checkout": "チェックアウト",
+        "developApps": "アプリを開発",
+        "appDevelopment": "アプリ開発",
+        "createApp": "アプリを作成",
+        "noApps": "カスタムアプリはまだありません。",
+        "appName": "アプリ名",
+        "cancel": "キャンセル",
+        "openAria": "Shopify 管理画面: 設定 › アプリと販売チャネル › アプリを開発",
+        "createAria": "Shopify 管理画面: アプリ名 OneShopLab を入力した「アプリを作成」ダイアログ",
+        "overview": "概要",
+        "configuration": "設定",
+        "apiCredentials": "API 資格情報",
+        "adminApiScopes": "Admin API アクセススコープ",
+        "save": "保存",
+        "scopesHint": "アプリに必要なスコープにチェックを入れます。",
+        "scopesAria": "Shopify 管理画面: read_products と write_products にチェックした Admin API スコープ",
+        "installApp": "アプリをインストール",
+        "adminApiToken": "Admin API アクセストークン",
+        "tokenOnceHint": "トークンはインストール後に一度だけ表示されます。",
+        "revealToken": "トークンを一度だけ表示",
+        "tokenField": "アクセストークン",
+        "installAria": "Shopify 管理画面: アプリをインストール、次にトークンを一度だけ表示",
+        "pasteAria": "Shopify 管理画面: OneShopLab に貼り付けたアクセストークン"
+      }
+    },
     "valueLabel": {
       "adminPath": "WordPress 管理画面で開くアドレス",
       "appName": "アプリ名",
@@ -1126,7 +1184,6 @@
       "siteKey": "サイトキー（ステップ3で作成）"
     },
     "siteKeyPending": "下のステップ3で取得できます。",
-    "screenshotAlt": "ステップ {n} のスクリーンショット",
     "copy": "コピー",
     "copied": "コピーしました",
     "step3Title": "サイトキー",

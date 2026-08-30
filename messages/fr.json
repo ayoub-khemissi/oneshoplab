@@ -1077,6 +1077,8 @@
     "notifyMe": "Me prévenir",
     "notifySaved": "Nous vous préviendrons",
     "chooseFirst": "Choisissez votre plateforme ci-dessus pour voir les étapes.",
+    "openAdmin": "Ouvrir",
+    "downloadPlugin": "Télécharger l’extension",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Tableau de bord",
+        "posts": "Articles",
+        "woocommerce": "WooCommerce",
+        "plugins": "Extensions",
+        "settings": "Réglages",
+        "addPlugins": "Ajouter des extensions",
+        "uploadPlugin": "Téléverser une extension",
+        "uploadHint": "Si vous avez une extension au format .zip, vous pouvez l’installer en la téléversant ici.",
+        "chooseFile": "Choisir un fichier",
+        "installNow": "Installer maintenant",
+        "installing": "Installation de l’extension depuis le fichier téléversé : oneshoplab.zip",
+        "unpacking": "Décompression du paquet…",
+        "installed": "Extension installée avec succès.",
+        "activate": "Activer l’extension",
+        "goToPlugins": "Retourner à l’installateur",
+        "uploadAria": "Admin WordPress : Extensions › Ajouter › Téléverser une extension avec oneshoplab.zip sélectionné",
+        "activateAria": "Admin WordPress : le bouton Activer l’extension après l’installation",
+        "pasteAria": "Admin WordPress : l’entrée OneShopLab du menu et sa case Clé du site",
+        "saveAria": "Admin WordPress : le bouton Enregistrer de OneShopLab et le statut Connecté en vert",
+        "siteKey": "Clé du site",
+        "siteKeyHint": "Collez la clé créée dans votre tableau de bord OneShopLab.",
+        "save": "Enregistrer",
+        "statusConnected": "Connecté",
+        "statusWaiting": "En attente d’une clé"
+      },
+      "shopify": {
+        "general": "Général",
+        "appsChannels": "Applications et canaux de vente",
+        "payments": "Paiements",
+        "checkout": "Paiement",
+        "developApps": "Développer des applications",
+        "appDevelopment": "Développement d’applications",
+        "createApp": "Créer une application",
+        "noApps": "Aucune application personnalisée pour l’instant.",
+        "appName": "Nom de l’application",
+        "cancel": "Annuler",
+        "openAria": "Admin Shopify : Paramètres › Applications et canaux de vente › Développer des applications",
+        "createAria": "Admin Shopify : la fenêtre Créer une application avec le nom OneShopLab",
+        "overview": "Aperçu",
+        "configuration": "Configuration",
+        "apiCredentials": "Identifiants API",
+        "adminApiScopes": "Autorisations de l’API Admin",
+        "save": "Enregistrer",
+        "scopesHint": "Cochez les autorisations dont l’application a besoin.",
+        "scopesAria": "Admin Shopify : autorisations de l’API Admin avec read_products et write_products cochées",
+        "installApp": "Installer l’application",
+        "adminApiToken": "Jeton d’accès à l’API Admin",
+        "tokenOnceHint": "Le jeton n’est affiché qu’une seule fois après l’installation.",
+        "revealToken": "Révéler le jeton une fois",
+        "tokenField": "Jeton d’accès",
+        "installAria": "Admin Shopify : Installer l’application puis Révéler le jeton une fois",
+        "pasteAria": "Admin Shopify : le jeton d’accès collé dans OneShopLab"
+      }
+    },
     "valueLabel": {
       "adminPath": "Adresse à ouvrir dans votre admin WordPress",
       "appName": "Nom de l’application",
@@ -1126,7 +1184,6 @@
       "siteKey": "Votre clé du site (créée à l’étape 3)"
     },
     "siteKeyPending": "Vous l’obtiendrez à l’étape 3 ci-dessous.",
-    "screenshotAlt": "Capture d’écran de l’étape {n}",
     "copy": "Copier",
     "copied": "Copié",
     "step3Title": "Votre clé du site",

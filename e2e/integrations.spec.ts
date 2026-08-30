@@ -19,6 +19,11 @@ test.describe('integrations', () => {
 
     // The seeded project is Shopify (coming soon) — switch to WooCommerce to reach the key step.
     await page.getByRole('radio', { name: /WooCommerce/ }).click();
+    await expect(page.locator('[data-mock]')).toHaveCount(4);
+    await expect(page.locator('[data-download-plugin]')).toHaveAttribute(
+      'href',
+      '/downloads/oneshoplab-wp-plugin.zip'
+    );
     await page.getByRole('button', { name: 'Créer ma clé du site' }).click();
 
     const plaintext = page.getByTestId('site-key-plaintext');

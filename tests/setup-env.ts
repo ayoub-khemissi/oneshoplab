@@ -10,5 +10,7 @@ process.env.STRIPE_SECRET_KEY = 'sk_test_placeholder';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_placeholder';
 process.env.OPENROUTER_API_KEY = 'or-test-key';
 process.env.KIE_API_KEY = 'kie-test-key';
+// Fixed test key for src/shared/lib/secret-box.ts (32 zero bytes, base64).
+process.env.INTEGRATION_ENCRYPTION_KEY = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
 delete process.env.DISCORD_BOT_API_URL;
 delete process.env.DISCORD_BOT_API_KEY;

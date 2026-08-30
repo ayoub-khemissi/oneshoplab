@@ -1077,6 +1077,8 @@
     "notifyMe": "Avvisami quando è pronta",
     "notifySaved": "Ti avviseremo",
     "chooseFirst": "Scegli la piattaforma qui sopra per vedere i passaggi.",
+    "openAdmin": "Apri",
+    "downloadPlugin": "Scarica il plugin",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Bacheca",
+        "posts": "Articoli",
+        "woocommerce": "WooCommerce",
+        "plugins": "Plugin",
+        "settings": "Impostazioni",
+        "addPlugins": "Aggiungi plugin",
+        "uploadPlugin": "Carica plugin",
+        "uploadHint": "Se hai un plugin in formato .zip, puoi installarlo caricandolo qui.",
+        "chooseFile": "Scegli file",
+        "installNow": "Installa ora",
+        "installing": "Installazione del plugin dal file caricato: oneshoplab.zip",
+        "unpacking": "Estrazione del pacchetto…",
+        "installed": "Plugin installato con successo.",
+        "activate": "Attiva plugin",
+        "goToPlugins": "Torna all’installazione plugin",
+        "uploadAria": "Admin WordPress: Plugin › Aggiungi nuovo › Carica plugin con oneshoplab.zip selezionato",
+        "activateAria": "Admin WordPress: il pulsante Attiva plugin dopo l’installazione",
+        "pasteAria": "Admin WordPress: la voce di menu OneShopLab e il campo Chiave del sito",
+        "saveAria": "Admin WordPress: il pulsante Salva di OneShopLab e lo stato Connesso in verde",
+        "siteKey": "Chiave del sito",
+        "siteKeyHint": "Incolla la chiave creata nella tua dashboard OneShopLab.",
+        "save": "Salva",
+        "statusConnected": "Connesso",
+        "statusWaiting": "In attesa di una chiave"
+      },
+      "shopify": {
+        "general": "Generale",
+        "appsChannels": "App e canali di vendita",
+        "payments": "Pagamenti",
+        "checkout": "Check-out",
+        "developApps": "Sviluppa app",
+        "appDevelopment": "Sviluppo app",
+        "createApp": "Crea un’app",
+        "noApps": "Nessuna app personalizzata.",
+        "appName": "Nome app",
+        "cancel": "Annulla",
+        "openAria": "Admin Shopify: Impostazioni › App e canali di vendita › Sviluppa app",
+        "createAria": "Admin Shopify: la finestra Crea un’app con il nome OneShopLab",
+        "overview": "Panoramica",
+        "configuration": "Configurazione",
+        "apiCredentials": "Credenziali API",
+        "adminApiScopes": "Ambiti di accesso API Admin",
+        "save": "Salva",
+        "scopesHint": "Spunta gli ambiti necessari all’app.",
+        "scopesAria": "Admin Shopify: ambiti API Admin con read_products e write_products spuntati",
+        "installApp": "Installa app",
+        "adminApiToken": "Token di accesso API Admin",
+        "tokenOnceHint": "Il token viene mostrato una sola volta dopo l’installazione.",
+        "revealToken": "Mostra il token una volta",
+        "tokenField": "Token di accesso",
+        "installAria": "Admin Shopify: Installa app, poi Mostra il token una volta",
+        "pasteAria": "Admin Shopify: il token di accesso incollato in OneShopLab"
+      }
+    },
     "valueLabel": {
       "adminPath": "Indirizzo da aprire nell’admin di WordPress",
       "appName": "Nome dell’app",
@@ -1126,7 +1184,6 @@
       "siteKey": "La tua chiave del sito (creata al passaggio 3)"
     },
     "siteKeyPending": "La otterrai al passaggio 3 qui sotto.",
-    "screenshotAlt": "Schermata del passaggio {n}",
     "copy": "Copia",
     "copied": "Copiato",
     "step3Title": "La tua chiave del sito",

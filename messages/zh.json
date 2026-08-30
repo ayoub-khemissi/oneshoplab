@@ -1077,6 +1077,8 @@
     "notifyMe": "就绪时通知我",
     "notifySaved": "我们会通知你",
     "chooseFirst": "在上方选择平台以查看步骤。",
+    "openAdmin": "打开",
+    "downloadPlugin": "下载插件",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "仪表盘",
+        "posts": "文章",
+        "woocommerce": "WooCommerce",
+        "plugins": "插件",
+        "settings": "设置",
+        "addPlugins": "添加插件",
+        "uploadPlugin": "上传插件",
+        "uploadHint": "如果您有 .zip 格式的插件，可以在此上传安装。",
+        "chooseFile": "选择文件",
+        "installNow": "立即安装",
+        "installing": "正在从上传的文件安装插件：oneshoplab.zip",
+        "unpacking": "正在解压安装包…",
+        "installed": "插件安装成功。",
+        "activate": "启用插件",
+        "goToPlugins": "返回插件安装器",
+        "uploadAria": "WordPress 后台：插件 › 安装插件 › 上传插件，已选择 oneshoplab.zip",
+        "activateAria": "WordPress 后台：安装完成后的“启用插件”按钮",
+        "pasteAria": "WordPress 后台：菜单中的 OneShopLab 入口及站点密钥字段",
+        "saveAria": "WordPress 后台：OneShopLab 的保存按钮及绿色“已连接”状态",
+        "siteKey": "站点密钥",
+        "siteKeyHint": "粘贴您在 OneShopLab 控制台创建的密钥。",
+        "save": "保存",
+        "statusConnected": "已连接",
+        "statusWaiting": "等待密钥"
+      },
+      "shopify": {
+        "general": "常规",
+        "appsChannels": "应用和销售渠道",
+        "payments": "收款",
+        "checkout": "结账",
+        "developApps": "开发应用",
+        "appDevelopment": "应用开发",
+        "createApp": "创建应用",
+        "noApps": "暂无自定义应用。",
+        "appName": "应用名称",
+        "cancel": "取消",
+        "openAria": "Shopify 后台：设置 › 应用和销售渠道 › 开发应用",
+        "createAria": "Shopify 后台：填写了名称 OneShopLab 的“创建应用”对话框",
+        "overview": "概览",
+        "configuration": "配置",
+        "apiCredentials": "API 凭据",
+        "adminApiScopes": "Admin API 访问范围",
+        "save": "保存",
+        "scopesHint": "勾选应用所需的范围。",
+        "scopesAria": "Shopify 后台：已勾选 read_products 和 write_products 的 Admin API 范围",
+        "installApp": "安装应用",
+        "adminApiToken": "Admin API 访问令牌",
+        "tokenOnceHint": "令牌在安装后仅显示一次。",
+        "revealToken": "显示令牌一次",
+        "tokenField": "访问令牌",
+        "installAria": "Shopify 后台：安装应用，然后显示令牌一次",
+        "pasteAria": "Shopify 后台：粘贴到 OneShopLab 的访问令牌"
+      }
+    },
     "valueLabel": {
       "adminPath": "在 WordPress 后台打开的地址",
       "appName": "应用名称",
@@ -1126,7 +1184,6 @@
       "siteKey": "你的站点密钥（在第 3 步创建）"
     },
     "siteKeyPending": "你会在下方第 3 步获得。",
-    "screenshotAlt": "第 {n} 步截图",
     "copy": "复制",
     "copied": "已复制",
     "step3Title": "你的站点密钥",

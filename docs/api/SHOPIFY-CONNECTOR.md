@@ -1,6 +1,6 @@
 # Shopify connector (phase 3) — custom-app token, no plugin
 
-Status: spec v1, 2026-08-30. Shopify has no "plugin": the merchant creates a
+Status: spec v1, 2026-08-30 — backend implemented 2026-08-30 (see "Implementation notes"). Shopify has no "plugin": the merchant creates a
 **custom app** in their admin and gives OSL its Admin API access token. OSL
 then does what the WooCommerce plugin does, from its own side: pull the
 catalog, receive webhooks, and write approved changes back.
@@ -66,3 +66,27 @@ DB tests for connect/validate/disconnect/apply-ack, webhook HMAC tests.
 ## Not in scope
 Public Shopify app (OAuth, app store review), billing API, theme edits,
 inventory writes.
+
+## Implementation notes (2026-08-30, backend)
+- Table `shop_connections` (migration `0027_milky_sunspot`): as above plus
+  `shop_name`, `webhook_ids` (subscription ids deleted on disconnect),
+  `pull_requested_at` (connect / "Synchroniser" queue a pull; the worker
+  runs it on its next tick) and `pull_progress` json
+  (`{ phase, fetched, startedAt, finishedAt?, error? }`) for the card.
+  Both secrets live as `*_ciphertext` (`v1:<iv>:<tag>:<data>`, key id `v1`).
+- **API secret key is optional.** Without it the HMAC cannot be verified, so
+  no webhook is registered and the connection lives on pulls (nightly +
+  manual). With it, `products/update` + `products/delete` are registered at
+  connect time.
+- Page size is `products(first: 20)` with 10 variants + 10 media per
+  product: Shopify caps a single query at 1 000 requested cost points and
+  `first: 250` with nested connections is refused outright. The client
+  waits on `throttleStatus` between pages and retries `THROTTLED`.
+- Plan limit on a pull: the pull stops at `maxProductsForPlan` and records
+  `pullProgress.error = "plan_limit:<n>"` (a plugin batch is rejected
+  instead — a pull has no caller to answer).
+- `token_invalid` is set on any 401/403 (pull, apply, webhook re-read); the
+  merchant is not emailed yet — the Integrations card reads `status`.
+- Entry points for the wizard: `connectShopifyStore`, `disconnectShopifyStore`,
+  `requestShopifyPull` (`@/features/shopify-connector`), `getConnectionForUser`
+  (`@/entities/shop-connection`).

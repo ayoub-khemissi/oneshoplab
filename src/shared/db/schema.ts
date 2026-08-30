@@ -920,3 +920,62 @@ export const productChanges = mysqlTable(
     idxProduct: index('idx_product_changes_product').on(t.productId)
   })
 );
+
+// ============================================================================
+// SHOPIFY CONNECTOR — custom-app Admin token held by OSL
+// (docs/api/SHOPIFY-CONNECTOR.md). Secrets are sealed with
+// INTEGRATION_ENCRYPTION_KEY (src/shared/lib/secret-box.ts); the plaintext
+// never touches a column or a log line.
+// ============================================================================
+
+export const SHOP_CONNECTION_PLATFORMS = ['shopify'] as const;
+export type ShopConnectionPlatform = (typeof SHOP_CONNECTION_PLATFORMS)[number];
+export const SHOP_CONNECTION_STATUSES = ['connected', 'token_invalid', 'revoked'] as const;
+export type ShopConnectionStatus = (typeof SHOP_CONNECTION_STATUSES)[number];
+
+/** Progress of the last full pull, shown on the Integrations card. */
+export interface ShopPullProgress {
+  phase: 'running' | 'done' | 'failed';
+  fetched: number;
+  startedAt: string;
+  finishedAt?: string;
+  error?: string;
+}
+
+export const shopConnections = mysqlTable(
+  'shop_connections',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    platform: mysqlEnum('platform', SHOP_CONNECTION_PLATFORMS).notNull().default('shopify'),
+    shopDomain: varchar('shop_domain', { length: 255 }).notNull(),
+    shopName: varchar('shop_name', { length: 255 }),
+    /** `v1:<iv>:<tag>:<data>` — empty string once revoked. */
+    accessTokenCiphertext: text('access_token_ciphertext').notNull(),
+    /** Key id the ciphertext was sealed with — allows a key rotation. */
+    keyId: varchar('key_id', { length: 16 }).notNull().default('v1'),
+    scopes: json('scopes').$type<string[]>().notNull(),
+    apiVersion: varchar('api_version', { length: 16 }).notNull(),
+    /** Custom-app "API secret key", sealed like the token. NULL = the
+     *  merchant did not paste it: webhooks are not registered, only pulls run. */
+    webhookSecretCiphertext: text('webhook_secret_ciphertext'),
+    /** Shopify webhookSubscription ids we created, deleted on disconnect. */
+    webhookIds: json('webhook_ids').$type<string[]>(),
+    status: mysqlEnum('status', SHOP_CONNECTION_STATUSES).notNull().default('connected'),
+    lastPullAt: timestamp('last_pull_at'),
+    /** Set by the connect flow / "Synchroniser"; the worker pulls on its next tick. */
+    pullRequestedAt: timestamp('pull_requested_at'),
+    pullProgress: json('pull_progress').$type<ShopPullProgress | null>(),
+    lastWebhookAt: timestamp('last_webhook_at'),
+    lastError: text('last_error'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
+    revokedAt: timestamp('revoked_at')
+  },
+  (t) => ({
+    uniqProject: uniqueIndex('uniq_shop_connections_project').on(t.projectId),
+    idxStatus: index('idx_shop_connections_status').on(t.status)
+  })
+);

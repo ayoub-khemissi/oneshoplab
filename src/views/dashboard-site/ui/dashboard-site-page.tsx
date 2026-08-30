@@ -30,6 +30,7 @@ import { listPendingChangesForSite, PendingChangesList } from '@/features/apply-
 import {
   INTEGRATION_PLATFORMS,
   isUsableKey,
+  readWpPluginVersion,
   IntegrationsWizard,
   toSiteKeySummary,
   type IntegrationPlatform
@@ -464,6 +465,8 @@ export async function DashboardSitePage({
         <div className="flex flex-col gap-4">
           <IntegrationsWizard
             projectId={project.id}
+            domain={project.domain ?? project.url ?? null}
+            pluginVersion={readWpPluginVersion()}
             detectedPlatform={detectedPlatform}
             initialKeys={siteKeys.map((k) => toSiteKeySummary(k))}
             initialStatus={{

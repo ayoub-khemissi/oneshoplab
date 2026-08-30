@@ -1077,6 +1077,8 @@
     "notifyMe": "Powiadom mnie",
     "notifySaved": "Damy znać",
     "chooseFirst": "Wybierz platformę powyżej, aby zobaczyć kroki.",
+    "openAdmin": "Otwórz",
+    "downloadPlugin": "Pobierz wtyczkę",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Kokpit",
+        "posts": "Wpisy",
+        "woocommerce": "WooCommerce",
+        "plugins": "Wtyczki",
+        "settings": "Ustawienia",
+        "addPlugins": "Dodaj wtyczki",
+        "uploadPlugin": "Wyślij wtyczkę na serwer",
+        "uploadHint": "Jeśli masz wtyczkę w formacie .zip, możesz ją zainstalować, przesyłając ją tutaj.",
+        "chooseFile": "Wybierz plik",
+        "installNow": "Zainstaluj teraz",
+        "installing": "Instalowanie wtyczki z przesłanego pliku: oneshoplab.zip",
+        "unpacking": "Rozpakowywanie pakietu…",
+        "installed": "Wtyczka została zainstalowana.",
+        "activate": "Włącz wtyczkę",
+        "goToPlugins": "Wróć do instalatora wtyczek",
+        "uploadAria": "Panel WordPress: Wtyczki › Dodaj nową › Wyślij wtyczkę z wybranym plikiem oneshoplab.zip",
+        "activateAria": "Panel WordPress: przycisk Włącz wtyczkę po instalacji",
+        "pasteAria": "Panel WordPress: pozycja menu OneShopLab i pole Klucz witryny",
+        "saveAria": "Panel WordPress: przycisk Zapisz w OneShopLab i zielony status Połączono",
+        "siteKey": "Klucz witryny",
+        "siteKeyHint": "Wklej klucz utworzony w panelu OneShopLab.",
+        "save": "Zapisz",
+        "statusConnected": "Połączono",
+        "statusWaiting": "Oczekiwanie na klucz"
+      },
+      "shopify": {
+        "general": "Ogólne",
+        "appsChannels": "Aplikacje i kanały sprzedaży",
+        "payments": "Płatności",
+        "checkout": "Realizacja zakupu",
+        "developApps": "Twórz aplikacje",
+        "appDevelopment": "Tworzenie aplikacji",
+        "createApp": "Utwórz aplikację",
+        "noApps": "Brak własnych aplikacji.",
+        "appName": "Nazwa aplikacji",
+        "cancel": "Anuluj",
+        "openAria": "Panel Shopify: Ustawienia › Aplikacje i kanały sprzedaży › Twórz aplikacje",
+        "createAria": "Panel Shopify: okno Utwórz aplikację z nazwą OneShopLab",
+        "overview": "Przegląd",
+        "configuration": "Konfiguracja",
+        "apiCredentials": "Dane uwierzytelniające API",
+        "adminApiScopes": "Zakresy dostępu Admin API",
+        "save": "Zapisz",
+        "scopesHint": "Zaznacz zakresy potrzebne aplikacji.",
+        "scopesAria": "Panel Shopify: zakresy Admin API z zaznaczonymi read_products i write_products",
+        "installApp": "Zainstaluj aplikację",
+        "adminApiToken": "Token dostępu Admin API",
+        "tokenOnceHint": "Token jest wyświetlany tylko raz po instalacji.",
+        "revealToken": "Pokaż token jednorazowo",
+        "tokenField": "Token dostępu",
+        "installAria": "Panel Shopify: Zainstaluj aplikację, potem Pokaż token jednorazowo",
+        "pasteAria": "Panel Shopify: token dostępu wklejony w OneShopLab"
+      }
+    },
     "valueLabel": {
       "adminPath": "Adres do otwarcia w panelu WordPress",
       "appName": "Nazwa aplikacji",
@@ -1126,7 +1184,6 @@
       "siteKey": "Twój klucz sklepu (tworzony w kroku 3)"
     },
     "siteKeyPending": "Otrzymasz go w kroku 3 poniżej.",
-    "screenshotAlt": "Zrzut ekranu kroku {n}",
     "copy": "Kopiuj",
     "copied": "Skopiowano",
     "step3Title": "Twój klucz sklepu",

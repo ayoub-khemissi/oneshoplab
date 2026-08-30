@@ -2,15 +2,17 @@
  * `POST /api/v1/products/sync` business logic (spec §3). Throws `ApiError`
  * for every refusal so the route stays a parse → call → respond shim.
  */
-import { sql } from 'drizzle-orm';
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
 import type { ProjectRow } from '@/entities/api-key';
 import {
+  ProjectSyncLocked,
+  SYNC_LOCK_TIMEOUT_SEC,
   archiveProductsNotSeen,
   countActiveProducts,
   existingSourceIds,
-  syncProjectProducts
+  syncProjectProducts,
+  withProjectSyncLock
 } from '@/entities/product';
 import { ApiError } from '@/shared/api';
 import { db } from '@/shared/db';
@@ -19,7 +21,7 @@ import { toNormalizedProduct } from '../lib/normalize';
 import type { SyncBody } from '../lib/schema';
 import { addSeenSourceIds, closeSession, resumeSession, startSession } from './sessions';
 
-export const SYNC_LOCK_TIMEOUT_SEC = 5;
+export { SYNC_LOCK_TIMEOUT_SEC };
 /** Platforms a plugin may declare through `X-OSL-Platform`. */
 export const PLUGIN_PLATFORMS = ['shopify', 'woocommerce', 'wix'] as const;
 export type PluginPlatform = (typeof PLUGIN_PLATFORMS)[number];
@@ -77,27 +79,18 @@ async function assertPlanLimit(project: ProjectRow, sourceIds: string[]): Promis
   }
 }
 
-/**
- * Advisory lock around `fn`. GET_LOCK is per connection, so both calls run
- * inside one transaction (one pinned connection) while `fn` itself uses
- * the pool: the lock only serialises batches, it is not the write txn.
- */
+/** `423 locked` when another writer (plugin batch or Shopify pull) holds the project. */
 async function withProjectLock<T>(projectId: string, fn: () => Promise<T>): Promise<T> {
-  const name = `osl:sync:${projectId}`;
-  return db.transaction(async (tx) => {
-    const [rows] = await tx.execute(sql`SELECT GET_LOCK(${name}, ${SYNC_LOCK_TIMEOUT_SEC}) AS ok`);
-    const ok = Array.isArray(rows) ? (rows[0] as { ok: number | null } | undefined)?.ok : null;
-    if (ok !== 1) {
+  try {
+    return await withProjectSyncLock(projectId, fn);
+  } catch (e) {
+    if (e instanceof ProjectSyncLocked) {
       throw new ApiError('locked', 'Another sync batch holds the project lock', 423, {
         retryAfterSec: SYNC_LOCK_TIMEOUT_SEC
       });
     }
-    try {
-      return await fn();
-    } finally {
-      await tx.execute(sql`SELECT RELEASE_LOCK(${name})`);
-    }
-  });
+    throw e;
+  }
 }
 
 export async function syncCatalog(input: SyncInput): Promise<SyncResponse> {

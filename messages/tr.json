@@ -1077,6 +1077,8 @@
     "notifyMe": "Hazır olunca haber ver",
     "notifySaved": "Haber vereceğiz",
     "chooseFirst": "Adımları görmek için yukarıdan platformunuzu seçin.",
+    "openAdmin": "Aç",
+    "downloadPlugin": "Eklentiyi indir",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Panel",
+        "posts": "Yazılar",
+        "woocommerce": "WooCommerce",
+        "plugins": "Eklentiler",
+        "settings": "Ayarlar",
+        "addPlugins": "Eklenti ekle",
+        "uploadPlugin": "Eklenti yükle",
+        "uploadHint": "Elinizde .zip biçiminde bir eklenti varsa buradan yükleyerek kurabilirsiniz.",
+        "chooseFile": "Dosya seç",
+        "installNow": "Şimdi kur",
+        "installing": "Yüklenen dosyadan eklenti kuruluyor: oneshoplab.zip",
+        "unpacking": "Paket açılıyor…",
+        "installed": "Eklenti başarıyla kuruldu.",
+        "activate": "Eklentiyi etkinleştir",
+        "goToPlugins": "Eklenti yükleyicisine dön",
+        "uploadAria": "WordPress yönetimi: Eklentiler › Yeni ekle › Eklenti yükle, oneshoplab.zip seçili",
+        "activateAria": "WordPress yönetimi: kurulumdan sonraki Eklentiyi etkinleştir düğmesi",
+        "pasteAria": "WordPress yönetimi: OneShopLab menü girişi ve Site anahtarı alanı",
+        "saveAria": "WordPress yönetimi: OneShopLab Kaydet düğmesi ve yeşil Bağlı durumu",
+        "siteKey": "Site anahtarı",
+        "siteKeyHint": "OneShopLab panelinde oluşturduğunuz anahtarı yapıştırın.",
+        "save": "Kaydet",
+        "statusConnected": "Bağlı",
+        "statusWaiting": "Anahtar bekleniyor"
+      },
+      "shopify": {
+        "general": "Genel",
+        "appsChannels": "Uygulamalar ve satış kanalları",
+        "payments": "Ödemeler",
+        "checkout": "Ödeme sayfası",
+        "developApps": "Uygulama geliştir",
+        "appDevelopment": "Uygulama geliştirme",
+        "createApp": "Uygulama oluştur",
+        "noApps": "Henüz özel uygulama yok.",
+        "appName": "Uygulama adı",
+        "cancel": "İptal",
+        "openAria": "Shopify yönetimi: Ayarlar › Uygulamalar ve satış kanalları › Uygulama geliştir",
+        "createAria": "Shopify yönetimi: OneShopLab adıyla Uygulama oluştur penceresi",
+        "overview": "Genel bakış",
+        "configuration": "Yapılandırma",
+        "apiCredentials": "API kimlik bilgileri",
+        "adminApiScopes": "Admin API erişim kapsamları",
+        "save": "Kaydet",
+        "scopesHint": "Uygulamanın ihtiyaç duyduğu kapsamları işaretleyin.",
+        "scopesAria": "Shopify yönetimi: read_products ve write_products işaretli Admin API kapsamları",
+        "installApp": "Uygulamayı yükle",
+        "adminApiToken": "Admin API erişim belirteci",
+        "tokenOnceHint": "Belirteç kurulumdan sonra yalnızca bir kez gösterilir.",
+        "revealToken": "Belirteci bir kez göster",
+        "tokenField": "Erişim belirteci",
+        "installAria": "Shopify yönetimi: Uygulamayı yükle, ardından Belirteci bir kez göster",
+        "pasteAria": "Shopify yönetimi: OneShopLab’a yapıştırılan erişim belirteci"
+      }
+    },
     "valueLabel": {
       "adminPath": "WordPress panelinde açılacak adres",
       "appName": "Uygulama adı",
@@ -1126,7 +1184,6 @@
       "siteKey": "Site anahtarınız (3. adımda oluşturulur)"
     },
     "siteKeyPending": "Aşağıdaki 3. adımda alacaksınız.",
-    "screenshotAlt": "{n}. adımın ekran görüntüsü",
     "copy": "Kopyala",
     "copied": "Kopyalandı",
     "step3Title": "Site anahtarınız",

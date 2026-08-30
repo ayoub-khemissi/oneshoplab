@@ -25,12 +25,18 @@ import { setPlatformAction } from '../api/actions';
  */
 export function IntegrationsWizard({
   projectId,
+  domain,
+  pluginVersion,
   detectedPlatform,
   initialKeys,
   initialStatus,
   interest
 }: {
   projectId: string;
+  /** Project domain or URL used to build the "Open" links of the guide. */
+  domain: string | null;
+  /** Version of the served WordPress plugin zip (null when unknown). */
+  pluginVersion: string | null;
   detectedPlatform: IntegrationPlatform | null;
   initialKeys: SiteKeySummary[];
   initialStatus: ConnectionStatus;
@@ -82,6 +88,8 @@ export function IntegrationsWizard({
         <PlatformGuide
           projectId={projectId}
           platform={platform}
+          domain={domain}
+          pluginVersion={pluginVersion}
           siteKeyPlaintext={revealed}
           interest={interest}
         />

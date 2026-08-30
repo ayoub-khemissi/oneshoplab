@@ -1077,6 +1077,8 @@
     "notifyMe": "Benachrichtige mich",
     "notifySaved": "Wir sagen Bescheid",
     "chooseFirst": "Wähle oben deine Plattform, um die Schritte zu sehen.",
+    "openAdmin": "Öffnen",
+    "downloadPlugin": "Plugin herunterladen",
     "guide": {
       "woocommerce": {
         "step1": {
@@ -1119,6 +1121,62 @@
         }
       }
     },
+    "mocks": {
+      "wp": {
+        "dashboard": "Dashboard",
+        "posts": "Beiträge",
+        "woocommerce": "WooCommerce",
+        "plugins": "Plugins",
+        "settings": "Einstellungen",
+        "addPlugins": "Plugins hinzufügen",
+        "uploadPlugin": "Plugin hochladen",
+        "uploadHint": "Wenn du ein Plugin im .zip-Format hast, kannst du es hier hochladen und installieren.",
+        "chooseFile": "Datei auswählen",
+        "installNow": "Jetzt installieren",
+        "installing": "Plugin wird aus der hochgeladenen Datei installiert: oneshoplab.zip",
+        "unpacking": "Paket wird entpackt…",
+        "installed": "Plugin erfolgreich installiert.",
+        "activate": "Plugin aktivieren",
+        "goToPlugins": "Zurück zur Plugin-Installation",
+        "uploadAria": "WordPress-Admin: Plugins › Installieren › Plugin hochladen mit ausgewählter oneshoplab.zip",
+        "activateAria": "WordPress-Admin: der Button „Plugin aktivieren“ nach der Installation",
+        "pasteAria": "WordPress-Admin: der Menüeintrag OneShopLab und das Feld Site-Schlüssel",
+        "saveAria": "WordPress-Admin: der Speichern-Button von OneShopLab und der grüne Status „Verbunden“",
+        "siteKey": "Site-Schlüssel",
+        "siteKeyHint": "Füge den in deinem OneShopLab-Dashboard erstellten Schlüssel ein.",
+        "save": "Speichern",
+        "statusConnected": "Verbunden",
+        "statusWaiting": "Wartet auf einen Schlüssel"
+      },
+      "shopify": {
+        "general": "Allgemein",
+        "appsChannels": "Apps und Vertriebskanäle",
+        "payments": "Zahlungen",
+        "checkout": "Checkout",
+        "developApps": "Apps entwickeln",
+        "appDevelopment": "App-Entwicklung",
+        "createApp": "App erstellen",
+        "noApps": "Noch keine eigenen Apps.",
+        "appName": "App-Name",
+        "cancel": "Abbrechen",
+        "openAria": "Shopify-Admin: Einstellungen › Apps und Vertriebskanäle › Apps entwickeln",
+        "createAria": "Shopify-Admin: der Dialog „App erstellen“ mit dem Namen OneShopLab",
+        "overview": "Übersicht",
+        "configuration": "Konfiguration",
+        "apiCredentials": "API-Anmeldedaten",
+        "adminApiScopes": "Admin-API-Zugriffsbereiche",
+        "save": "Speichern",
+        "scopesHint": "Wähle die Bereiche, die die App braucht.",
+        "scopesAria": "Shopify-Admin: Admin-API-Bereiche mit angehakten read_products und write_products",
+        "installApp": "App installieren",
+        "adminApiToken": "Admin-API-Zugriffstoken",
+        "tokenOnceHint": "Der Token wird nach der Installation nur einmal angezeigt.",
+        "revealToken": "Token einmalig anzeigen",
+        "tokenField": "Zugriffstoken",
+        "installAria": "Shopify-Admin: App installieren, dann Token einmalig anzeigen",
+        "pasteAria": "Shopify-Admin: der Zugriffstoken in OneShopLab eingefügt"
+      }
+    },
     "valueLabel": {
       "adminPath": "Adresse im WordPress-Admin öffnen",
       "appName": "App-Name",
@@ -1126,7 +1184,6 @@
       "siteKey": "Dein Site-Schlüssel (in Schritt 3 erstellt)"
     },
     "siteKeyPending": "Du bekommst ihn in Schritt 3 unten.",
-    "screenshotAlt": "Screenshot von Schritt {n}",
     "copy": "Kopieren",
     "copied": "Kopiert",
     "step3Title": "Dein Site-Schlüssel",
