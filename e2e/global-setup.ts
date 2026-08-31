@@ -153,6 +153,73 @@ export default async function globalSetup(): Promise<void> {
       }
     });
 
+    // A third store whose changes are still waiting: the banner + recap modal
+    // need one pending change per field and one the store refused.
+    const { hashValue } = await import('@/entities/product-change/lib/hash');
+    await db.insert(schema.projects).values({
+      id: SEED.pendingProject.id,
+      userId,
+      name: SEED.pendingProject.domain,
+      domain: SEED.pendingProject.domain,
+      url: `https://${SEED.pendingProject.domain}`,
+      source: 'woocommerce'
+    });
+    await db.insert(schema.products).values({
+      id: SEED.pendingProduct.id,
+      projectId: SEED.pendingProject.id,
+      source: 'woocommerce',
+      sourceId: SEED.pendingProduct.sourceId,
+      handle: 'waiting-mug',
+      title: 'Waiting stoneware mug',
+      descriptionHtml: '<p>An old description.</p>',
+      images: [{ src: 'https://cdn.test/waiting.jpg', alt: null, width: 800, height: 800, position: 0 }],
+      tags: ['mug'],
+      status: 'active'
+    });
+    await db.insert(schema.jobs).values({
+      id: SEED.pendingChanges.failedJobId,
+      projectId: SEED.pendingProject.id,
+      productId: SEED.pendingProduct.id,
+      kind: 'kie_tags',
+      status: 'completed',
+      inputPayload: { productSourceId: SEED.pendingProduct.sourceId },
+      result: { output: ['stoneware', 'handmade'] }
+    });
+    const change = (
+      id: string,
+      field: 'title' | 'description' | 'tags',
+      value: unknown,
+      prior: unknown,
+      extra: Record<string, unknown> = {}
+    ) => ({
+      id,
+      projectId: SEED.pendingProject.id,
+      productId: SEED.pendingProduct.id,
+      productSourceId: SEED.pendingProduct.sourceId,
+      field,
+      value,
+      valueHash: hashValue(value),
+      priorValueHash: hashValue(prior),
+      priorValue: prior,
+      approvedBy: userId,
+      ...extra
+    });
+    await db.insert(schema.productChanges).values([
+      change(SEED.pendingChanges.title, 'title', 'Hand-thrown stoneware mug', 'Waiting stoneware mug'),
+      change(
+        SEED.pendingChanges.description,
+        'description',
+        '<p>A new description.</p>',
+        '<p>An old description.</p>'
+      ),
+      change(SEED.pendingChanges.failedTags, 'tags', ['stoneware', 'handmade'], ['mug'], {
+        sourceJobId: SEED.pendingChanges.failedJobId,
+        status: 'failed',
+        ackedAt: new Date(),
+        ackPayload: { status: 'failed', error: 'HTTP 500' }
+      })
+    ]);
+
     await db.insert(schema.shareLinks).values([
       { id: SEED.shareLinkId, userId, projectId: SEED.project.id, productSourceIds: ['p1', 'p2'], label: 'E2E', showOnHome: true },
       { id: SEED.revokedShareLinkId, userId, projectId: SEED.project.id, productSourceIds: ['p1', 'p2'], label: 'Revoked', revokedAt: new Date() }

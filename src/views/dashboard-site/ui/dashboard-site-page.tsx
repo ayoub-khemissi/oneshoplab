@@ -26,7 +26,12 @@ import { ShareLinksCard } from '@/widgets/share-links-card';
 import { isAdminEmail } from '@/entities/user';
 import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/share-link';
 import { listProjectKeys } from '@/entities/api-key';
-import { listPendingChangesForSite, PendingChangesList } from '@/features/apply-to-store';
+import {
+  listPendingChangesForSite,
+  listPendingSummaryForSite,
+  PendingChangesBanner,
+  PendingChangesList
+} from '@/features/apply-to-store';
 import {
   buildPlatformRequirements,
   INTEGRATION_PLATFORMS,
@@ -393,6 +398,9 @@ export async function DashboardSitePage({
           getConnectionForUser(project.id, session.user.id)
         ])
       : [[], [], null];
+  // The store-wide "changes are waiting" banner sits above the tabs, so it is
+  // loaded on every tab — one indexed read on (project_id, status, id).
+  const pendingSummary = await listPendingSummaryForSite(project.id, session.user.id);
   const activeProductCount = productRows.filter((p) => p.status === 'active').length;
   // Prefer the stored source; fall back to the latest audit's detection so a
   // project created before source persistence still routes to its platform.
@@ -432,6 +440,12 @@ export async function DashboardSitePage({
         {project.source === 'manual' ? null : (
           <StatusLine status={effectiveStatus} error={effectiveError} />
         )}
+        <PendingChangesBanner
+          projectId={project.id}
+          counts={pendingSummary.counts}
+          items={pendingSummary.items}
+          scope="site"
+        />
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
 

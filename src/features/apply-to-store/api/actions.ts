@@ -15,7 +15,12 @@ import {
   type ProductChangeField
 } from '@/shared/db/schema';
 import { toChangeSummary } from '../lib/summary';
-import type { ApproveResult, UndoResult } from '../model/types';
+import type {
+  ApplySelectionResult,
+  ApproveResult,
+  PendingChangeStatus,
+  UndoResult
+} from '../model/types';
 
 const uuid = z.string().uuid();
 const ulidSchema = z.string().regex(/^[0-9A-HJKMNP-TV-Z]{26}$/);
@@ -131,6 +136,68 @@ export async function undoChangeAction(formData: FormData): Promise<UndoResult> 
   if (!res.ok) return { ok: false, error: res.reason };
   revalidatePath(`/dashboard/sites/${projectId.data}`);
   return { ok: true, change: toChangeSummary(res.change) };
+}
+
+const MAX_APPLY_SELECTION = 100;
+const OPEN_STATUSES: readonly PendingChangeStatus[] = ['pending', 'conflict', 'failed'];
+
+/**
+ * "Apply the selection" in the pending-changes modal. Nothing new is decided
+ * here: a change already `pending` is on its way (the plugin polls, the
+ * connectors push on their tick), and a `conflict` / `failed` one is sent
+ * again through `approveGenerationAction` — the very path the per-generation
+ * button uses, idempotent per source job. A change with no source job (an
+ * image-editor queue, a reverse change) has nothing to replay, so it is
+ * reported back rather than silently counted as sent.
+ */
+export async function applyPendingChangesAction(
+  projectId: string,
+  changeIds: string[]
+): Promise<ApplySelectionResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
+  const project = uuid.safeParse(projectId);
+  const ids = z.array(ulidSchema).min(1).max(MAX_APPLY_SELECTION).safeParse(changeIds);
+  if (!project.success || !ids.success) return { ok: false, error: 'bad_request' };
+
+  const [owned] = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(and(eq(projects.id, project.data), eq(projects.userId, session.user.id)));
+  if (!owned) return { ok: false, error: 'not_found' };
+
+  const rows = await db
+    .select()
+    .from(productChanges)
+    .where(
+      and(
+        eq(productChanges.projectId, project.data),
+        inArray(productChanges.id, ids.data),
+        inArray(productChanges.status, [...OPEN_STATUSES])
+      )
+    );
+
+  let queued = 0;
+  let conflict = 0;
+  let failed = 0;
+  for (const change of rows) {
+    if (change.status === 'pending') {
+      queued += 1;
+      continue;
+    }
+    if (change.sourceJobId) {
+      const fd = new FormData();
+      fd.set('jobId', change.sourceJobId);
+      if ((await approveGenerationAction(fd)).ok) {
+        queued += 1;
+        continue;
+      }
+    }
+    if (change.status === 'conflict') conflict += 1;
+    else failed += 1;
+  }
+  revalidatePath(`/dashboard/sites/${project.data}`);
+  return { ok: true, queued, conflict, failed };
 }
 
 export async function cancelChangeAction(

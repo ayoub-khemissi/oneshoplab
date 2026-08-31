@@ -1,10 +1,27 @@
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '@/shared/db';
-import { productChanges, products } from '@/shared/db/schema';
+import { productChanges, products, projects } from '@/shared/db/schema';
+import {
+  addCounts,
+  buildPendingDetail,
+  countPending,
+  dropSuperseded
+} from '../lib/pending-summary';
 import { toChangeSummary } from '../lib/summary';
-import type { ChangeSummary, PendingChangeSummary } from '../model/types';
+import type {
+  ChangeSummary,
+  PendingChangeItem,
+  PendingChangeStatus,
+  PendingChangeSummary,
+  PendingSiteCount,
+  PendingSummary,
+  PendingUserSummary
+} from '../model/types';
 
 const PENDING_LIST_LIMIT = 100;
+
+/** The three statuses a merchant still has to act on (see PendingChangeStatus). */
+const OPEN_STATUSES: readonly PendingChangeStatus[] = ['pending', 'conflict', 'failed'];
 
 /** Latest change per source job — drives the Apply button state on the product page. */
 export async function listChangesForJobs(
@@ -37,7 +54,7 @@ export async function listPendingChangesForSite(
     .where(
       and(
         eq(productChanges.projectId, projectId),
-        inArray(productChanges.status, ['pending', 'conflict', 'failed'])
+        inArray(productChanges.status, [...OPEN_STATUSES])
       )
     )
     .orderBy(desc(productChanges.id))
@@ -48,4 +65,138 @@ export async function listPendingChangesForSite(
     productTitle: r.productTitle,
     field: r.change.field
   }));
+}
+
+// ============================================================================
+// "Changes waiting for your store" — banner counters + modal rows
+// ============================================================================
+
+type ChangeRow = typeof productChanges.$inferSelect;
+
+function toItem(change: ChangeRow, productTitle: string): PendingChangeItem {
+  return {
+    id: change.id,
+    projectId: change.projectId,
+    productId: change.productId,
+    productTitle,
+    field: change.field,
+    status: change.status as PendingChangeStatus,
+    approvedAtIso: change.approvedAt.toISOString(),
+    error: change.ackPayload?.error ?? null,
+    retryable: change.sourceJobId !== null,
+    detail: buildPendingDetail(change.field, change.value, change.priorValue)
+  };
+}
+
+const itemColumns = {
+  change: productChanges,
+  productTitle: products.title
+};
+
+/** Newest-first rows → the modal's items, minus the ones already re-sent. */
+function toItems(rows: Array<{ change: ChangeRow; productTitle: string }>): PendingChangeItem[] {
+  return dropSuperseded(rows.map((r) => toItem(r.change, r.productTitle)));
+}
+
+/** Newest first: the modal reads as "what just happened", not as a backlog. */
+export async function listPendingSummaryForSite(
+  projectId: string,
+  userId: string
+): Promise<PendingSummary> {
+  const rows = await db
+    .select(itemColumns)
+    .from(productChanges)
+    .innerJoin(products, eq(products.id, productChanges.productId))
+    .innerJoin(projects, eq(projects.id, productChanges.projectId))
+    .where(
+      and(
+        eq(productChanges.projectId, projectId),
+        eq(projects.userId, userId),
+        inArray(productChanges.status, [...OPEN_STATUSES])
+      )
+    )
+    .orderBy(desc(productChanges.id))
+    .limit(PENDING_LIST_LIMIT);
+  const items = toItems(rows);
+  return { counts: countPending(items), items };
+}
+
+/** The product page's own banner — one product, its owner only. */
+export async function listPendingSummaryForProduct(
+  productId: string,
+  userId: string
+): Promise<PendingSummary> {
+  const rows = await db
+    .select(itemColumns)
+    .from(productChanges)
+    .innerJoin(products, eq(products.id, productChanges.productId))
+    .innerJoin(projects, eq(projects.id, productChanges.projectId))
+    .where(
+      and(
+        eq(productChanges.productId, productId),
+        eq(projects.userId, userId),
+        inArray(productChanges.status, [...OPEN_STATUSES])
+      )
+    )
+    .orderBy(desc(productChanges.id))
+    .limit(PENDING_LIST_LIMIT);
+  const items = toItems(rows);
+  return { counts: countPending(items), items };
+}
+
+/**
+ * One grouped aggregate for every store of the account — what the dashboard
+ * home puts on each site card. Not a SQL GROUP BY: the same "already re-sent"
+ * rule as the modal has to run over the rows, or a card would count a failure
+ * the list no longer shows. The open set is small — they get applied.
+ */
+export async function countPendingByProject(userId: string): Promise<PendingSiteCount[]> {
+  const rows = await db
+    .select({
+      projectId: productChanges.projectId,
+      projectName: projects.name,
+      productId: productChanges.productId,
+      field: productChanges.field,
+      status: productChanges.status
+    })
+    .from(productChanges)
+    .innerJoin(projects, eq(projects.id, productChanges.projectId))
+    .where(and(eq(projects.userId, userId), inArray(productChanges.status, [...OPEN_STATUSES])))
+    .orderBy(desc(productChanges.id));
+
+  const bySite = new Map<string, PendingSiteCount>();
+  for (const row of dropSuperseded(
+    rows.map((r) => ({ ...r, status: r.status as PendingChangeStatus }))
+  )) {
+    const entry = bySite.get(row.projectId) ?? {
+      projectId: row.projectId,
+      projectName: row.projectName,
+      total: 0,
+      pending: 0,
+      conflict: 0,
+      failed: 0
+    };
+    entry.total += 1;
+    entry[row.status] += 1;
+    bySite.set(row.projectId, entry);
+  }
+  return [...bySite.values()];
+}
+
+/** Account-wide recap: the per-site counters plus the newest rows for a modal. */
+export async function listPendingSummaryForUser(userId: string): Promise<PendingUserSummary> {
+  const [sites, rows] = await Promise.all([
+    countPendingByProject(userId),
+    db
+      .select(itemColumns)
+      .from(productChanges)
+      .innerJoin(products, eq(products.id, productChanges.productId))
+      .innerJoin(projects, eq(projects.id, productChanges.projectId))
+      .where(and(eq(projects.userId, userId), inArray(productChanges.status, [...OPEN_STATUSES])))
+      .orderBy(desc(productChanges.id))
+      .limit(PENDING_LIST_LIMIT)
+  ]);
+  const items = toItems(rows);
+  const counts = sites.reduce(addCounts, { total: 0, pending: 0, conflict: 0, failed: 0 });
+  return { counts, items, sites };
 }

@@ -6,6 +6,8 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { DeleteSiteButton } from '@/features/manage-project';
+import { countPendingByProject, PendingChangesPill } from '@/features/apply-to-store';
+import type { PendingCounts } from '@/features/apply-to-store';
 import { SiteFavicon } from '@/shared/ui';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
@@ -24,6 +26,8 @@ interface SiteCardData {
   productsCount: number | null;
   lastUpdatedRelative: string | null;
   auditStatus: AuditStatus | null;
+  /** Changes still waiting for this store — null when there is none. */
+  pending: PendingCounts | null;
 }
 
 export async function DashboardHomePage() {
@@ -69,6 +73,12 @@ export async function DashboardHomePage() {
     }
   }
 
+  // One grouped aggregate for the whole account — the site cards say, without
+  // opening anything, which store still has work waiting for it.
+  const pendingBySite = new Map(
+    (await countPendingByProject(session.user.id)).map((s) => [s.projectId, s])
+  );
+
   const sites: SiteCardData[] = userProjects.map((p) => {
     const latest = latestAuditByProject.get(p.id);
     const scores = (latest?.scores ?? null) as ScoresShape | null;
@@ -90,7 +100,8 @@ export async function DashboardHomePage() {
       overallScore: scores?.overall ?? null,
       productsCount,
       lastUpdatedRelative: lastUpdatedAt ? formatRelative(lastUpdatedAt, relTimeFormat) : null,
-      auditStatus
+      auditStatus,
+      pending: pendingBySite.get(p.id) ?? null
     };
   });
 
@@ -190,11 +201,11 @@ function EmptyState() {
 function SiteCard({ site }: { site: SiteCardData }) {
   const t = useTranslations('Dashboard');
   const href = `/dashboard/sites/${site.projectId}`;
+  // The card is one big link with an overlay rather than a wrapping <a>: the
+  // delete button and the pending-changes pill are interactive too, and an
+  // anchor inside an anchor is invalid HTML (React warns, hydration diverges).
   return (
-    <Link
-      href={href}
-      className="group rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4"
-    >
+    <div className="group relative rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4">
       <div className="flex items-center gap-3 min-w-0">
         <SiteFavicon domain={site.domain} size={28} className="rounded shrink-0" />
         <div className="flex flex-col min-w-0 flex-1">
@@ -208,9 +219,17 @@ function SiteCard({ site }: { site: SiteCardData }) {
               —
             </span>
           )}
-          <DeleteSiteButton projectId={site.projectId} domain={site.domain} />
+          <span className="relative z-10">
+            <DeleteSiteButton projectId={site.projectId} domain={site.domain} />
+          </span>
         </div>
       </div>
+
+      {site.pending ? (
+        <span className="relative z-10 w-fit">
+          <PendingChangesPill projectId={site.projectId} counts={site.pending} />
+        </span>
+      ) : null}
 
       <SiteCardStatus
         status={site.auditStatus}
@@ -229,7 +248,9 @@ function SiteCard({ site }: { site: SiteCardData }) {
         {t('siteCardOpen')}
         <ArrowRight className="size-3.5" />
       </div>
-    </Link>
+
+      <Link href={href} aria-label={site.domain} className="absolute inset-0 rounded-lg" />
+    </div>
   );
 }
 

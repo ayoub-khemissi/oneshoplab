@@ -25,7 +25,12 @@ import {
 import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
-import { listChangesForJobs, ProductImageEditor } from '@/features/apply-to-store';
+import {
+  listChangesForJobs,
+  listPendingSummaryForProduct,
+  PendingChangesBanner,
+  ProductImageEditor
+} from '@/features/apply-to-store';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
@@ -147,13 +152,14 @@ export async function DashboardProductPage({
   // Apply-to-store state per past generation + whether a plugin can pick it up.
   // `capabilities` decides whether applying images replaces the whole gallery
   // (docs/api/IMAGE-OPS.md §5) — the merchant confirms that in plain words.
-  const [changeByJobId, siteKeys, capabilities] = await Promise.all([
+  const [changeByJobId, siteKeys, capabilities, pendingSummary] = await Promise.all([
     listChangesForJobs(
       projectId,
       pastGenPage.items.map((h) => h.jobId)
     ),
     listProjectKeys({ projectId, userId: session.user.id }),
-    getProjectCapabilities(projectId)
+    getProjectCapabilities(projectId),
+    listPendingSummaryForProduct(productId, session.user.id)
   ]);
   const hasSiteKey = siteKeys.some((k) => isUsableKey(k));
 
@@ -195,6 +201,13 @@ export async function DashboardProductPage({
           </h1>
         )}
       </div>
+
+      <PendingChangesBanner
+        projectId={projectId}
+        counts={pendingSummary.counts}
+        items={pendingSummary.items}
+        scope="product"
+      />
 
       {archived ? (
         <div

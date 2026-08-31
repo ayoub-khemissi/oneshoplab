@@ -1,3 +1,4 @@
+import type { ImageOp } from '@/entities/product-change/client';
 import type { ProductChangeField, ProductChangeStatus } from '@/shared/db/schema';
 
 /** What the product page needs to render one generation's Apply button. */
@@ -14,6 +15,76 @@ export interface PendingChangeSummary extends ChangeSummary {
   productTitle: string;
   field: ProductChangeField;
 }
+
+// ============================================================================
+// "Changes waiting for your store" — the banner + its recap modal
+// ============================================================================
+
+/** The three statuses a merchant still has to do something about. */
+export type PendingChangeStatus = Extract<ProductChangeStatus, 'pending' | 'conflict' | 'failed'>;
+
+export interface PendingCounts {
+  total: number;
+  pending: number;
+  conflict: number;
+  failed: number;
+}
+
+/**
+ * What the modal shows about one change, in the merchant's own words. Images
+ * carry their ops rather than a value: only the client knows how to name a
+ * photo ("Photo 3"), so `describeOp` runs there.
+ */
+export type PendingChangeDetail =
+  | { kind: 'text'; before: string | null; after: string | null }
+  | { kind: 'imageOps'; ops: ImageOp[]; prior: Array<{ ref: string; src: string }> }
+  | { kind: 'imageReplaceAll'; before: number; after: number };
+
+export interface PendingChangeItem {
+  id: string;
+  projectId: string;
+  productId: string;
+  productTitle: string;
+  field: ProductChangeField;
+  status: PendingChangeStatus;
+  approvedAtIso: string;
+  /** Plugin/connector-reported reason when the change failed. */
+  error: string | null;
+  /** A change born from a generation can be sent again; an image-editor
+   *  queue or a reverse change cannot (there is no job to replay). */
+  retryable: boolean;
+  detail: PendingChangeDetail;
+}
+
+export interface PendingSummary {
+  counts: PendingCounts;
+  items: PendingChangeItem[];
+}
+
+/** One site's counter, for the dashboard-home cards. */
+export interface PendingSiteCount extends PendingCounts {
+  projectId: string;
+  projectName: string;
+}
+
+export interface PendingUserSummary extends PendingSummary {
+  sites: PendingSiteCount[];
+}
+
+/**
+ * Outcome of "Apply the selection": a change that is (or has just become)
+ * pending is on its way to the store; the other two could not be re-sent and
+ * still need the merchant.
+ */
+export interface ApplySelectionCounts {
+  queued: number;
+  conflict: number;
+  failed: number;
+}
+
+export type ApplySelectionResult =
+  | ({ ok: true } & ApplySelectionCounts)
+  | { ok: false; error: 'unauthorized' | 'bad_request' | 'not_found' };
 
 export type ApproveResult =
   | { ok: true; change: ChangeSummary }
