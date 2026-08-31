@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "安装应用",
-          "body": "点击 安装应用，然后点击一次 显示令牌。复制令牌——Shopify 只显示一次。"
+          "body": "点击「安装应用」，再点击「显示令牌（仅一次）」。复制令牌——Shopify 只显示一次。就在下方，API 密钥是可选的：如果希望 Shopify 在每次改动时通知我们，也一并复制。"
         },
         "step5": {
           "title": "把令牌粘贴到 OneShopLab",
@@ -1213,7 +1213,10 @@
         "revealToken": "显示令牌一次",
         "tokenField": "访问令牌",
         "installAria": "Shopify 后台：安装应用，然后显示令牌一次",
-        "pasteAria": "Shopify 后台：粘贴到 OneShopLab 的访问令牌"
+        "pasteAria": "Shopify 后台：粘贴到 OneShopLab 的访问令牌",
+        "apiSecret": "API 密钥",
+        "apiSecretHint": "就在令牌下方，同一页面。可选。",
+        "revealSecret": "显示"
       },
       "wix": {
         "home": "首页",
@@ -1303,7 +1306,7 @@
       "tokenHint": "以 shpat_ 开头。Shopify 只显示一次——如已丢失，请卸载并重新安装应用。",
       "secretLabel": "API 密钥",
       "optional": "可选",
-      "secretHint": "让我们能实时收到更新。没有它，我们每晚同步一次，或在您点击“立即同步”时同步。",
+      "secretHint": "在 Shopify 中，与令牌同一页面（API 凭据）里，点击「API 密钥」旁的「显示」。有了它，Shopify 会在每次改动时通知我们；没有它则每晚同步一次，或在你点击「立即同步」时同步。",
       "connect": "连接我的店铺",
       "connecting": "正在检查…",
       "connectSuccess": "店铺已连接。首次同步已排队——见第 4 步。",

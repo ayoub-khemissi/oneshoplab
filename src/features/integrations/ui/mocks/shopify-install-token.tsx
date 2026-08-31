@@ -2,9 +2,10 @@ import { useTranslations } from 'next-intl';
 import { Callout, HIGHLIGHT, MockButton, MockField, MockFrame } from './mock-frame';
 
 /**
- * Shopify app › API credentials. `install` highlights "Install app" and the
- * one-time "Reveal token once" (step 4); `paste` shows the revealed token
- * being copied into OneShopLab (step 5).
+ * Shopify app › API credentials. `install` highlights "Install app", the
+ * one-time "Reveal token once" and — right under it, where it actually sits —
+ * the optional API secret key (step 4); `paste` shows the revealed token being
+ * copied into OneShopLab (step 5).
  */
 export function ShopifyInstallToken({ variant }: { variant: 'install' | 'paste' }) {
   const t = useTranslations('Integrations.mocks');
@@ -43,6 +44,20 @@ export function ShopifyInstallToken({ variant }: { variant: 'install' | 'paste' 
             />
           )}
         </div>
+        {variant === 'install' ? (
+          // The API secret lives right under the token, on the same page — the
+          // merchants who want live updates were left hunting for it.
+          <div className="flex flex-col gap-1.5 rounded-lg border border-[#e3e3e3] bg-white p-3">
+            <span className="font-medium">{t('shopify.apiSecret')}</span>
+            <span className="text-[#616161]">{t('shopify.apiSecretHint')}</span>
+            <span
+              className={`inline-flex w-fit items-center gap-1 rounded border border-[#8a8a8a] px-2 py-1 font-medium ${HIGHLIGHT}`}
+            >
+              {t('shopify.revealSecret')}
+              <Callout n={3} />
+            </span>
+          </div>
+        ) : null}
         {variant === 'paste' ? (
           <div className="flex items-center gap-2 rounded-lg border border-[var(--accent)]/40 bg-[var(--background)] p-2 text-[var(--foreground)]">
             <span className="font-medium">OneShopLab</span>

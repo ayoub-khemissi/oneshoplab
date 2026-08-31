@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "Install the app",
-          "body": "Click Install app, then Reveal token once. Copy the token — Shopify shows it only once."
+          "body": "Click Install app, then Reveal token once. Copy the token — Shopify shows it only once. Right below it, the API secret key is optional: copy it too if you want Shopify to notify us on every change."
         },
         "step5": {
           "title": "Paste the token in OneShopLab",
@@ -1213,7 +1213,10 @@
         "revealToken": "Reveal token once",
         "tokenField": "Access token",
         "installAria": "Shopify admin: Install app then Reveal token once",
-        "pasteAria": "Shopify admin: the access token copied into OneShopLab"
+        "pasteAria": "Shopify admin: the access token copied into OneShopLab",
+        "apiSecret": "API secret key",
+        "apiSecretHint": "Below the token, on the same page. Optional.",
+        "revealSecret": "Reveal"
       },
       "wix": {
         "home": "Home",
@@ -1303,7 +1306,7 @@
       "tokenHint": "Starts with shpat_. Shopify shows it only once — if you lost it, uninstall and reinstall the app.",
       "secretLabel": "API secret key",
       "optional": "optional",
-      "secretHint": "Lets us receive updates in real time. Without it, we sync every night and when you press Sync now.",
+      "secretHint": "In Shopify, on the same page as the token (API credentials), click Reveal next to “API secret key”. It lets Shopify notify us on every change; without it, syncing happens nightly and when you click Sync now.",
       "connect": "Connect my store",
       "connecting": "Checking…",
       "connectSuccess": "Store connected. The first sync is queued — see step 4.",

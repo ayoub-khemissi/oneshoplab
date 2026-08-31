@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "Installez l’application",
-          "body": "Cliquez sur Installer l’application, puis Révéler le jeton une fois. Copiez le jeton — Shopify ne le montre qu’une fois."
+          "body": "Cliquez sur Installer l’application, puis sur Révéler le jeton une fois. Copiez le jeton — Shopify ne le montre qu’une fois. Juste en dessous, la Clé secrète de l’API est facultative : copiez-la aussi si vous voulez que Shopify nous prévienne à chaque changement."
         },
         "step5": {
           "title": "Collez le jeton dans OneShopLab",
@@ -1213,7 +1213,10 @@
         "revealToken": "Révéler le jeton une fois",
         "tokenField": "Jeton d’accès",
         "installAria": "Admin Shopify : Installer l’application puis Révéler le jeton une fois",
-        "pasteAria": "Admin Shopify : le jeton d’accès collé dans OneShopLab"
+        "pasteAria": "Admin Shopify : le jeton d’accès collé dans OneShopLab",
+        "apiSecret": "Clé secrète de l’API",
+        "apiSecretHint": "Sous le jeton, sur la même page. Facultative.",
+        "revealSecret": "Révéler"
       },
       "wix": {
         "home": "Accueil",
@@ -1303,7 +1306,7 @@
       "tokenHint": "Commence par shpat_. Shopify ne le montre qu’une fois — si vous l’avez perdu, désinstallez puis réinstallez l’application.",
       "secretLabel": "Clé secrète de l’API",
       "optional": "facultatif",
-      "secretHint": "Permet de recevoir les mises à jour en temps réel. Sans elle, synchronisation chaque nuit et quand vous cliquez sur Synchroniser maintenant.",
+      "secretHint": "Dans Shopify, sur la même page que le jeton (Identifiants API), cliquez sur Révéler à côté de « Clé secrète de l’API ». Elle permet à Shopify de nous prévenir à chaque changement ; sans elle, synchronisation chaque nuit et quand vous cliquez sur Synchroniser maintenant.",
       "connect": "Connecter ma boutique",
       "connecting": "Vérification…",
       "connectSuccess": "Boutique connectée. La première synchronisation est lancée — voir l’étape 4.",

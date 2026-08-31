@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "Zainstaluj aplikację",
-          "body": "Kliknij Zainstaluj aplikację, potem Pokaż token raz. Skopiuj token — Shopify pokazuje go tylko raz."
+          "body": "Kliknij Zainstaluj aplikację, a potem Pokaż token jeden raz. Skopiuj token — Shopify pokazuje go tylko raz. Tuż pod nim tajny klucz API jest opcjonalny: skopiuj go, jeśli chcesz, aby Shopify powiadamiał nas o każdej zmianie."
         },
         "step5": {
           "title": "Wklej token w OneShopLab",
@@ -1213,7 +1213,10 @@
         "revealToken": "Pokaż token jednorazowo",
         "tokenField": "Token dostępu",
         "installAria": "Panel Shopify: Zainstaluj aplikację, potem Pokaż token jednorazowo",
-        "pasteAria": "Panel Shopify: token dostępu wklejony w OneShopLab"
+        "pasteAria": "Panel Shopify: token dostępu wklejony w OneShopLab",
+        "apiSecret": "Tajny klucz API",
+        "apiSecretHint": "Pod tokenem, na tej samej stronie. Opcjonalny.",
+        "revealSecret": "Pokaż"
       },
       "wix": {
         "home": "Strona główna",
@@ -1303,7 +1306,7 @@
       "tokenHint": "Zaczyna się od shpat_. Shopify pokazuje go tylko raz — jeśli go zgubisz, odinstaluj i zainstaluj aplikację ponownie.",
       "secretLabel": "Tajny klucz API",
       "optional": "opcjonalnie",
-      "secretHint": "Pozwala odbierać zmiany na bieżąco. Bez niego synchronizujemy co noc i po kliknięciu Synchronizuj teraz.",
+      "secretHint": "W Shopify, na tej samej stronie co token (Dane uwierzytelniające API), kliknij Pokaż obok „Tajny klucz API”. Dzięki niemu Shopify powiadamia nas o każdej zmianie; bez niego synchronizacja odbywa się nocą i po kliknięciu Synchronizuj teraz.",
       "connect": "Połącz mój sklep",
       "connecting": "Sprawdzanie…",
       "connectSuccess": "Sklep połączony. Pierwsza synchronizacja jest w kolejce — zobacz krok 4.",

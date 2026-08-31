@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "앱 설치",
-          "body": "앱 설치를 클릭한 뒤 토큰 한 번 표시를 클릭합니다. 토큰을 복사하세요. Shopify는 한 번만 보여줍니다."
+          "body": "「앱 설치」를 누른 뒤 「토큰 한 번 표시」를 누르세요. 토큰을 복사하세요. Shopify는 한 번만 보여 줍니다. 바로 아래의 API 비밀 키는 선택 사항입니다. 변경될 때마다 Shopify가 알려 주길 원하면 함께 복사하세요."
         },
         "step5": {
           "title": "OneShopLab에 토큰 붙여넣기",
@@ -1213,7 +1213,10 @@
         "revealToken": "토큰 한 번 표시",
         "tokenField": "액세스 토큰",
         "installAria": "Shopify 관리자: 앱 설치 후 토큰 한 번 표시",
-        "pasteAria": "Shopify 관리자: OneShopLab에 붙여넣은 액세스 토큰"
+        "pasteAria": "Shopify 관리자: OneShopLab에 붙여넣은 액세스 토큰",
+        "apiSecret": "API 비밀 키",
+        "apiSecretHint": "같은 페이지에서 토큰 바로 아래에 있습니다. 선택 사항입니다.",
+        "revealSecret": "표시"
       },
       "wix": {
         "home": "홈",
@@ -1303,7 +1306,7 @@
       "tokenHint": "shpat_로 시작합니다. Shopify는 한 번만 보여줍니다. 잃어버렸다면 앱을 삭제하고 다시 설치하세요.",
       "secretLabel": "API 비밀 키",
       "optional": "선택",
-      "secretHint": "업데이트를 실시간으로 받을 수 있습니다. 없으면 매일 밤과 지금 동기화를 누를 때 동기화합니다.",
+      "secretHint": "Shopify에서 토큰과 같은 페이지(API 자격 증명)에서 「API 비밀 키」 옆의 「표시」를 누르세요. 이 키가 있으면 Shopify가 변경될 때마다 알려 줍니다. 없으면 매일 밤과 「지금 동기화」를 누를 때 동기화됩니다.",
       "connect": "내 스토어 연결",
       "connecting": "확인 중…",
       "connectSuccess": "스토어가 연결되었습니다. 첫 동기화가 예약되었습니다. 4단계를 보세요.",

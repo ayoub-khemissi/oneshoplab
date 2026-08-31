@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "Uygulamayı kurun",
-          "body": "Uygulamayı kur’a, sonra bir kez Belirteci göster’e tıklayın. Belirteci kopyalayın — Shopify yalnızca bir kez gösterir."
+          "body": "Uygulamayı kur'a, ardından Jetonu bir kez göster'e tıkla. Jetonu kopyala — Shopify bunu yalnızca bir kez gösterir. Hemen altındaki API gizli anahtarı isteğe bağlıdır: her değişiklikte Shopify'ın bize haber vermesini istiyorsan onu da kopyala."
         },
         "step5": {
           "title": "Belirteci OneShopLab’a yapıştırın",
@@ -1213,7 +1213,10 @@
         "revealToken": "Belirteci bir kez göster",
         "tokenField": "Erişim belirteci",
         "installAria": "Shopify yönetimi: Uygulamayı yükle, ardından Belirteci bir kez göster",
-        "pasteAria": "Shopify yönetimi: OneShopLab’a yapıştırılan erişim belirteci"
+        "pasteAria": "Shopify yönetimi: OneShopLab’a yapıştırılan erişim belirteci",
+        "apiSecret": "API gizli anahtarı",
+        "apiSecretHint": "Aynı sayfada, jetonun hemen altında. İsteğe bağlı.",
+        "revealSecret": "Göster"
       },
       "wix": {
         "home": "Ana Sayfa",
@@ -1303,7 +1306,7 @@
       "tokenHint": "shpat_ ile başlar. Shopify yalnızca bir kez gösterir — kaybettiyseniz uygulamayı kaldırıp yeniden yükleyin.",
       "secretLabel": "API gizli anahtarı",
       "optional": "isteğe bağlı",
-      "secretHint": "Güncellemeleri anında almamızı sağlar. Onsuz her gece ve Şimdi eşitle’ye bastığınızda eşitleriz.",
+      "secretHint": "Shopify'da, jetonla aynı sayfada (API kimlik bilgileri), «API gizli anahtarı» yanındaki Göster'e tıkla. Bu sayede Shopify her değişikliği bize bildirir; olmadan eşitleme her gece ve Şimdi eşitle'ye bastığında yapılır.",
       "connect": "Mağazamı bağla",
       "connecting": "Kontrol ediliyor…",
       "connectSuccess": "Mağaza bağlandı. İlk eşitleme sıraya alındı — 4. adıma bakın.",

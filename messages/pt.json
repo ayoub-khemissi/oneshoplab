@@ -1138,7 +1138,7 @@
         },
         "step4": {
           "title": "Instale a app",
-          "body": "Clique em Instalar app e depois em Revelar token uma vez. Copie o token — o Shopify só o mostra uma vez."
+          "body": "Clique em Instalar aplicação e depois em Mostrar o token uma vez. Copie o token — o Shopify mostra-o apenas uma vez. Logo abaixo, a chave secreta da API é opcional: copie-a também se quiser que o Shopify nos avise a cada alteração."
         },
         "step5": {
           "title": "Cole o token no OneShopLab",
@@ -1213,7 +1213,10 @@
         "revealToken": "Revelar token uma vez",
         "tokenField": "Token de acesso",
         "installAria": "Admin da Shopify: Instalar app e depois Revelar token uma vez",
-        "pasteAria": "Admin da Shopify: o token de acesso colado no OneShopLab"
+        "pasteAria": "Admin da Shopify: o token de acesso colado no OneShopLab",
+        "apiSecret": "Chave secreta da API",
+        "apiSecretHint": "Por baixo do token, na mesma página. Opcional.",
+        "revealSecret": "Mostrar"
       },
       "wix": {
         "home": "Início",
@@ -1303,7 +1306,7 @@
       "tokenHint": "Começa por shpat_. O Shopify só o mostra uma vez — se o perdeu, desinstale e reinstale a aplicação.",
       "secretLabel": "Chave secreta da API",
       "optional": "opcional",
-      "secretHint": "Permite receber as atualizações em tempo real. Sem ela, sincronizamos todas as noites e quando carrega em Sincronizar agora.",
+      "secretHint": "No Shopify, na mesma página do token (Credenciais da API), clique em Mostrar ao lado de «Chave secreta da API». Permite que o Shopify nos avise a cada alteração; sem ela, a sincronização é noturna e quando clica em Sincronizar agora.",
       "connect": "Ligar a minha loja",
       "connecting": "A verificar…",
       "connectSuccess": "Loja ligada. A primeira sincronização está agendada — veja o passo 4.",
