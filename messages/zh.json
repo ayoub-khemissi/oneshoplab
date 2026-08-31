@@ -276,7 +276,7 @@
     "addSiteCardTitle": "添加店铺",
     "addSiteCardSubtitle": "连接另一个 Shopify、WooCommerce 或 Wix 店铺。",
     "addSitePageTitle": "添加新店铺",
-    "addSitePageSubtitle": "粘贴店铺 URL——我们识别平台、抓取目录并启动分析。费用: {credits} 积分。",
+    "addSitePageSubtitle": "输入你的店铺网址：我们会识别平台、读取商品目录并开始分析。分析免费，账户里只需有 {credits} 个积分即可。",
     "addSiteUrlLabel": "店铺 URL",
     "addSiteUrlPlaceholder": "yourshop.com",
     "addSiteSubmit": "分析店铺",

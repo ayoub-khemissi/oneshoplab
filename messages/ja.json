@@ -276,7 +276,7 @@
     "addSiteCardTitle": "ストアを追加",
     "addSiteCardSubtitle": "別のShopify・WooCommerce・Wixストアを接続。",
     "addSitePageTitle": "新しいストアを追加",
-    "addSitePageSubtitle": "ストアのURLを貼り付け——プラットフォームを検出し、カタログを取得して分析を開始します。コスト: {credits} クレジット。",
+    "addSitePageSubtitle": "ショップの URL を入力してください。プラットフォームを判別し、カタログを読み取って分析を始めます。分析は無料で、アカウントに {credits} クレジットがあれば実行できます。",
     "addSiteUrlLabel": "ストアのURL",
     "addSiteUrlPlaceholder": "yourstore.com",
     "addSiteSubmit": "ストアを分析",

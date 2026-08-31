@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Добавить магазин",
     "addSiteCardSubtitle": "Подключите ещё один Shopify-, WooCommerce- или Wix-магазин.",
     "addSitePageTitle": "Добавить новый магазин",
-    "addSitePageSubtitle": "Вставьте URL магазина — мы определим платформу, заберём каталог и запустим аудит. Стоимость: {credits} кредитов.",
+    "addSitePageSubtitle": "Укажите адрес магазина: мы распознаём платформу, читаем каталог и запускаем анализ. Он бесплатный — на счету просто должно быть {credits} кредитов.",
     "addSiteUrlLabel": "URL магазина",
     "addSiteUrlPlaceholder": "vasmagazin.com",
     "addSiteSubmit": "Анализировать магазин",

@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Aggiungi un negozio",
     "addSiteCardSubtitle": "Collega un altro store Shopify, WooCommerce o Wix.",
     "addSitePageTitle": "Aggiungi un nuovo negozio",
-    "addSitePageSubtitle": "Incolla l'URL del tuo store — rileveremo la piattaforma, scaricheremo il catalogo e lanceremo l'analisi. Costo: {credits} crediti.",
+    "addSitePageSubtitle": "Inserisci l'URL del tuo negozio: riconosciamo la piattaforma, leggiamo il catalogo e avviamo l'analisi. È gratuita, il tuo account deve solo avere {credits} crediti.",
     "addSiteUrlLabel": "URL del negozio",
     "addSiteUrlPlaceholder": "iltuostore.com",
     "addSiteSubmit": "Analizza store",

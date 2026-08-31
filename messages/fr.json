@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Ajouter un site",
     "addSiteCardSubtitle": "Connectez une autre boutique Shopify, WooCommerce ou Wix.",
     "addSitePageTitle": "Ajouter un nouveau site",
-    "addSitePageSubtitle": "Saisissez l'URL de votre boutique — nous détectons la plateforme, scrapons le catalogue et lançons l'analyse. Coût : {credits} crédits.",
+    "addSitePageSubtitle": "Saisissez l'URL de votre boutique : nous reconnaissons la plateforme, lisons votre catalogue et lançons l'analyse. Elle est gratuite — votre compte doit simplement disposer de {credits} crédits.",
     "addSiteUrlLabel": "URL de la boutique",
     "addSiteUrlPlaceholder": "votreboutique.com",
     "addSiteSubmit": "Analyser la boutique",

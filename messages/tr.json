@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Mağaza ekle",
     "addSiteCardSubtitle": "Başka bir Shopify, WooCommerce veya Wix mağazasını bağla.",
     "addSitePageTitle": "Yeni mağaza ekle",
-    "addSitePageSubtitle": "Mağaza URL'sini yapıştır — platformu algılar, kataloğu çeker ve analizi çalıştırırız. Maliyet: {credits} kredi.",
+    "addSitePageSubtitle": "Mağazanın adresini yaz: platformu tanır, kataloğunu okur ve analizi başlatırız. Analiz ücretsizdir; hesabında yalnızca {credits} kredi bulunması gerekir.",
     "addSiteUrlLabel": "Mağaza URL'si",
     "addSiteUrlPlaceholder": "magazaniz.com",
     "addSiteSubmit": "Mağazayı analiz et",

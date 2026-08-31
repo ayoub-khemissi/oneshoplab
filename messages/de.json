@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Shop hinzufügen",
     "addSiteCardSubtitle": "Verbinde einen weiteren Shopify-, WooCommerce- oder Wix-Shop.",
     "addSitePageTitle": "Neuen Shop hinzufügen",
-    "addSitePageSubtitle": "Shop-URL einfügen — wir erkennen die Plattform, lesen den Katalog und starten die Analyse. Kosten: {credits} Credits.",
+    "addSitePageSubtitle": "Gib die URL deines Shops ein: Wir erkennen die Plattform, lesen deinen Katalog und starten die Analyse. Sie ist kostenlos — dein Konto muss lediglich {credits} Credits haben.",
     "addSiteUrlLabel": "Shop-URL",
     "addSiteUrlPlaceholder": "deinshop.de",
     "addSiteSubmit": "Shop analysieren",

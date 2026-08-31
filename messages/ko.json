@@ -276,7 +276,7 @@
     "addSiteCardTitle": "스토어 추가",
     "addSiteCardSubtitle": "다른 Shopify, WooCommerce 또는 Wix 스토어 연결.",
     "addSitePageTitle": "새 스토어 추가",
-    "addSitePageSubtitle": "스토어 URL을 붙여넣으세요 — 플랫폼을 감지하고 카탈로그를 가져와 분석을 시작합니다. 비용: {credits} 크레딧.",
+    "addSitePageSubtitle": "쇼핑몰 주소를 입력하세요. 플랫폼을 인식하고 카탈로그를 읽어 분석을 시작합니다. 분석은 무료이며, 계정에 {credits} 크레딧만 있으면 됩니다.",
     "addSiteUrlLabel": "스토어 URL",
     "addSiteUrlPlaceholder": "yourstore.com",
     "addSiteSubmit": "스토어 분석",

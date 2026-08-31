@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Add a site",
     "addSiteCardSubtitle": "Connect another Shopify, WooCommerce or Wix store.",
     "addSitePageTitle": "Add a new site",
-    "addSitePageSubtitle": "Paste your store URL — we'll detect the platform, scrape the catalog and run the analysis. Costs {credits} credits.",
+    "addSitePageSubtitle": "Enter your store's URL: we recognise the platform, read your catalog and run the analysis. It is free — your account only needs to hold {credits} credits.",
     "addSiteUrlLabel": "Store URL",
     "addSiteUrlPlaceholder": "yourstore.com",
     "addSiteSubmit": "Analyze store",

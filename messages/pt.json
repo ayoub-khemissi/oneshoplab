@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Adicionar uma loja",
     "addSiteCardSubtitle": "Ligue outra loja Shopify, WooCommerce ou Wix.",
     "addSitePageTitle": "Adicionar uma nova loja",
-    "addSitePageSubtitle": "Cole o URL da sua loja — detetamos a plataforma, recolhemos o catálogo e lançamos a análise. Custo: {credits} créditos.",
+    "addSitePageSubtitle": "Escreva o URL da sua loja: reconhecemos a plataforma, lemos o seu catálogo e lançamos a análise. É gratuita — a sua conta só precisa de ter {credits} créditos.",
     "addSiteUrlLabel": "URL da loja",
     "addSiteUrlPlaceholder": "asualoja.com",
     "addSiteSubmit": "Analisar loja",

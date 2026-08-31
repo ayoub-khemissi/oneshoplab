@@ -276,7 +276,7 @@
     "addSiteCardTitle": "Añadir una tienda",
     "addSiteCardSubtitle": "Conecta otra tienda Shopify, WooCommerce o Wix.",
     "addSitePageTitle": "Añadir nueva tienda",
-    "addSitePageSubtitle": "Pega la URL de tu tienda — detectaremos la plataforma, scrapearemos el catálogo y lanzaremos el análisis. Coste: {credits} créditos.",
+    "addSitePageSubtitle": "Escribe la URL de tu tienda: reconocemos la plataforma, leemos tu catálogo y lanzamos el análisis. Es gratuito; tu cuenta solo necesita tener {credits} créditos.",
     "addSiteUrlLabel": "URL de la tienda",
     "addSiteUrlPlaceholder": "tutienda.com",
     "addSiteSubmit": "Analizar tienda",
