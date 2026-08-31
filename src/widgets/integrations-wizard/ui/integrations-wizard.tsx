@@ -1,5 +1,6 @@
 'use client';
 
+import { PlatformLogo } from '@/shared/ui';
 import { Card } from '@heroui/react';
 import { ChevronDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -173,6 +174,7 @@ export function IntegrationsWizard({
             className="flex flex-wrap items-center gap-3 text-sm"
             data-testid="platform-detected"
           >
+            {platform ? <PlatformLogo platform={platform} className="size-6 shrink-0" /> : null}
             <span>{t('platformLocked', { platform: platform ? platformName(platform) : '' })}</span>
             <button
               type="button"

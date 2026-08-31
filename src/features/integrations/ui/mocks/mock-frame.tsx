@@ -26,7 +26,7 @@ export function MockFrame({
       // `zoom` scales the whole mock uniformly on wider screens (text, chrome,
       // spacing) so the "screenshot" genuinely fills its half of the row; the
       // frame simply gets taller. Percent widths keep fitting under zoom.
-      className="w-full overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background)] text-[10px] leading-tight select-none md:[zoom:1.35] xl:[zoom:1.55]"
+      className="w-full overflow-hidden rounded-md border border-[var(--border)] bg-[var(--background)] text-[10px] leading-tight select-none md:[zoom:1.15] xl:[zoom:1.3]"
     >
       <div className="flex items-center gap-2 border-b border-[var(--border)] bg-[var(--default)]/60 px-2 py-1.5">
         <span className="flex gap-1" aria-hidden>
