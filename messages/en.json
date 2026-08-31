@@ -1753,6 +1753,10 @@
     "stepApply": "First change applied",
     "ctaConnect": "Connect my store",
     "ctaApply": "See my products",
-    "cardConnect": "To connect"
+    "cardConnect": "To connect",
+    "nextStepEyebrow": "Next step",
+    "rescueTitle": "Connect your store so we can read your catalog",
+    "rescueLead": "Your store doesn't expose its product pages to the outside, which is common and harmless. Once it is connected, OneShopLab reads your catalog directly and can apply your fixes to it.",
+    "cardNotReadable": "Catalog not readable from the outside"
   }
 }

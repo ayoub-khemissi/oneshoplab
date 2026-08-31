@@ -1753,6 +1753,10 @@
     "stepApply": "Primer cambio aplicado",
     "ctaConnect": "Conectar mi tienda",
     "ctaApply": "Ver mis productos",
-    "cardConnect": "Por conectar"
+    "cardConnect": "Por conectar",
+    "nextStepEyebrow": "Siguiente paso",
+    "rescueTitle": "Conecta tu tienda para que podamos leer tu catálogo",
+    "rescueLead": "Tu tienda no muestra sus fichas de producto desde fuera, algo habitual y sin importancia. Una vez conectada, OneShopLab lee tu catálogo directamente y puede aplicarle tus correcciones.",
+    "cardNotReadable": "Catálogo no legible desde fuera"
   }
 }

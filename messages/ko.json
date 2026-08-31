@@ -1753,6 +1753,10 @@
     "stepApply": "첫 변경 반영",
     "ctaConnect": "쇼핑몰 연결하기",
     "ctaApply": "내 상품 보기",
-    "cardConnect": "연결 필요"
+    "cardConnect": "연결 필요",
+    "nextStepEyebrow": "다음 단계",
+    "rescueTitle": "카탈로그를 읽을 수 있도록 쇼핑몰을 연결하세요",
+    "rescueLead": "쇼핑몰이 상품 페이지를 외부에 공개하지 않고 있습니다. 흔한 일이고 문제가 되지 않습니다. 연결하면 OneShopLab이 카탈로그를 직접 읽고 수정 사항을 반영할 수 있습니다.",
+    "cardNotReadable": "외부에서 카탈로그를 읽을 수 없음"
   }
 }

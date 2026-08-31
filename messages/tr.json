@@ -1753,6 +1753,10 @@
     "stepApply": "İlk değişiklik uygulandı",
     "ctaConnect": "Mağazamı bağla",
     "ctaApply": "Ürünlerimi gör",
-    "cardConnect": "Bağlanacak"
+    "cardConnect": "Bağlanacak",
+    "nextStepEyebrow": "Sonraki adım",
+    "rescueTitle": "Kataloğunu okuyabilmemiz için mağazanı bağla",
+    "rescueLead": "Mağazan ürün sayfalarını dışarıya açmıyor; bu sık görülen ve sorun olmayan bir durum. Bağlandıktan sonra OneShopLab kataloğunu doğrudan okur ve düzeltmelerini oraya uygulayabilir.",
+    "cardNotReadable": "Katalog dışarıdan okunamıyor"
   }
 }

@@ -1753,6 +1753,10 @@
     "stepApply": "已应用第一处改动",
     "ctaConnect": "连接店铺",
     "ctaApply": "查看我的商品",
-    "cardConnect": "待连接"
+    "cardConnect": "待连接",
+    "nextStepEyebrow": "下一步",
+    "rescueTitle": "连接店铺，我们才能读取你的商品目录",
+    "rescueLead": "你的店铺没有对外公开商品页面，这很常见，也不是问题。连接之后，OneShopLab 会直接读取你的目录，并把你的改动写回去。",
+    "cardNotReadable": "外部无法读取商品目录"
   }
 }

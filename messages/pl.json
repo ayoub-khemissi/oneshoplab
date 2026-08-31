@@ -1753,6 +1753,10 @@
     "stepApply": "Pierwsza zmiana wdrożona",
     "ctaConnect": "Podłącz sklep",
     "ctaApply": "Zobacz produkty",
-    "cardConnect": "Do podłączenia"
+    "cardConnect": "Do podłączenia",
+    "nextStepEyebrow": "Następny krok",
+    "rescueTitle": "Podłącz sklep, żebyśmy mogli odczytać katalog",
+    "rescueLead": "Twój sklep nie pokazuje kart produktów z zewnątrz — to częste i nic złego. Po podłączeniu OneShopLab czyta katalog bezpośrednio i może wprowadzać do niego Twoje poprawki.",
+    "cardNotReadable": "Katalog nieczytelny z zewnątrz"
   }
 }

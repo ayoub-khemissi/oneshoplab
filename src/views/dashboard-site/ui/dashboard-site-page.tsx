@@ -461,8 +461,13 @@ export async function DashboardSitePage({
         />
         {/* StatusLine is scrape-flow specific (queued / running /
             failed). Manual projects skip it entirely — they never go
-            through a fetch-products lifecycle. */}
-        {project.source === 'manual' ? null : (
+            through a fetch-products lifecycle. A scrape that came back
+            empty on a store nobody connected yet is not news either: the
+            storefront simply doesn't expose its catalog, and the setup card
+            below points at the fix instead of teaching the merchant that
+            OneShopLab doesn't work. A connected store still sees the real
+            status — there, a failure means something else went wrong. */}
+        {project.source === 'manual' || (effectiveStatus === 'failed' && !storeConnected) ? null : (
           <StatusLine status={effectiveStatus} error={effectiveError} />
         )}
         <PendingChangesBanner
@@ -477,7 +482,12 @@ export async function DashboardSitePage({
       {/* The path to a store that updates itself. Hidden on the Integrations
           tab: the merchant is already looking at the step it points to. */}
       {activeTab === 'integrations' ? null : (
-        <StoreSetupGuide projectId={project.id} connected={storeConnected} applied={storeApplied} />
+        <StoreSetupGuide
+          projectId={project.id}
+          connected={storeConnected}
+          applied={storeApplied}
+          auditFailed={effectiveStatus === 'failed'}
+        />
       )}
 
       {activeTab === 'overview' ? (

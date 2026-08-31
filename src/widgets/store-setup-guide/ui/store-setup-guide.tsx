@@ -8,6 +8,9 @@ export interface StoreSetupGuideProps {
   connected: boolean;
   /** At least one change has actually landed in the store. */
   applied: boolean;
+  /** The storefront could not be read (blocked scraper, no public catalog).
+   *  The connection is the fix, so the card says that instead of an error. */
+  auditFailed?: boolean;
 }
 
 const TOTAL_STEPS = 3;
@@ -22,10 +25,19 @@ const TOTAL_STEPS = 3;
  * It disappears on its own — no dismiss button, because there is nothing left
  * to dismiss once the last step is ticked.
  */
-export function StoreSetupGuide({ projectId, connected, applied }: StoreSetupGuideProps) {
+export function StoreSetupGuide({
+  projectId,
+  connected,
+  applied,
+  auditFailed = false
+}: StoreSetupGuideProps) {
   const t = useTranslations('Onboarding');
   if (connected && applied) return null;
 
+  // Nothing could be read from the outside: there is no report to comment on,
+  // and calling it a failure only teaches the merchant that we don't work. The
+  // card takes over the whole moment and points at the one thing that fixes it.
+  const rescue = auditFailed && !connected;
   const current = connected ? 3 : 2;
   const href = connected
     ? `/dashboard/sites/${projectId}?tab=products`
@@ -34,7 +46,7 @@ export function StoreSetupGuide({ projectId, connected, applied }: StoreSetupGui
   return (
     <section
       data-testid="store-setup-guide"
-      data-step={current}
+      data-step={rescue ? 'rescue' : current}
       className="flex flex-col gap-4 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-4 md:p-5"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
@@ -44,13 +56,13 @@ export function StoreSetupGuide({ projectId, connected, applied }: StoreSetupGui
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
               <span className="relative inline-flex size-2 rounded-full bg-[var(--accent)]" />
             </span>
-            {t('stepCounter', { n: current, total: TOTAL_STEPS })}
+            {rescue ? t('nextStepEyebrow') : t('stepCounter', { n: current, total: TOTAL_STEPS })}
           </span>
           <h2 className="text-lg font-semibold tracking-tight">
-            {connected ? t('applyTitle') : t('connectTitle')}
+            {rescue ? t('rescueTitle') : connected ? t('applyTitle') : t('connectTitle')}
           </h2>
           <p className="text-sm leading-relaxed text-[var(--muted)]">
-            {connected ? t('applyLead') : t('connectLead')}
+            {rescue ? t('rescueLead') : connected ? t('applyLead') : t('connectLead')}
           </p>
         </div>
         <Link
@@ -67,11 +79,13 @@ export function StoreSetupGuide({ projectId, connected, applied }: StoreSetupGui
         </Link>
       </div>
 
-      <ol className="flex flex-col gap-2 border-t border-[var(--accent)]/20 pt-3 text-sm">
-        <GuideStep label={t('stepAudit')} done />
-        <GuideStep label={t('stepConnect')} done={connected} active={!connected} />
-        <GuideStep label={t('stepApply')} done={applied} active={connected} />
-      </ol>
+      {rescue ? null : (
+        <ol className="flex flex-col gap-2 border-t border-[var(--accent)]/20 pt-3 text-sm">
+          <GuideStep label={t('stepAudit')} done />
+          <GuideStep label={t('stepConnect')} done={connected} active={!connected} />
+          <GuideStep label={t('stepApply')} done={applied} active={connected} />
+        </ol>
+      )}
     </section>
   );
 }

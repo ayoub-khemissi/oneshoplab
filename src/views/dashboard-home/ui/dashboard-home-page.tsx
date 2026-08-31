@@ -251,6 +251,7 @@ function SiteCard({ site }: { site: SiteCardData }) {
 
       <SiteCardStatus
         status={site.auditStatus}
+        needsConnection={site.needsConnection}
         productsCount={site.productsCount}
         lastUpdatedRelative={site.lastUpdatedRelative}
         labels={{
@@ -258,6 +259,7 @@ function SiteCard({ site }: { site: SiteCardData }) {
           updated: (when: string) => t('siteCardLastUpdated', { when }),
           running: t('siteCardAuditRunning'),
           failed: t('siteCardAuditFailed'),
+          notReadable: tOnboarding('cardNotReadable'),
           never: t('siteCardNeverAudited')
         }}
       />
@@ -274,11 +276,13 @@ function SiteCard({ site }: { site: SiteCardData }) {
 
 function SiteCardStatus({
   status,
+  needsConnection,
   productsCount,
   lastUpdatedRelative,
   labels
 }: {
   status: AuditStatus | null;
+  needsConnection: boolean;
   productsCount: number | null;
   lastUpdatedRelative: string | null;
   labels: {
@@ -286,6 +290,7 @@ function SiteCardStatus({
     updated: (when: string) => string;
     running: string;
     failed: string;
+    notReadable: string;
     never: string;
   };
 }) {
@@ -301,7 +306,13 @@ function SiteCardStatus({
     );
   }
   if (status === 'failed') {
-    return <p className="text-xs text-[var(--danger)]">{labels.failed}</p>;
+    // A store we couldn't read from the outside is a store to connect, not a
+    // broken one — the "to connect" pill right above carries the way out.
+    return needsConnection ? (
+      <p className="text-xs text-[var(--muted)]">{labels.notReadable}</p>
+    ) : (
+      <p className="text-xs text-[var(--danger)]">{labels.failed}</p>
+    );
   }
   if (status == null || productsCount == null || lastUpdatedRelative == null) {
     return <p className="text-xs text-[var(--muted)] italic">{labels.never}</p>;
