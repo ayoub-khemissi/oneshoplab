@@ -1078,6 +1078,11 @@
     "platformDetected": "Detectada durante la auditoría",
     "step2Title": "Instala el plugin",
     "estimated": "Unos {minutes} min",
+    "requirements": {
+      "woocommerce": "Requiere WordPress {wordpress} o superior, WooCommerce {woocommerce} o superior, PHP {php}",
+      "shopify": "Compatible con todas las tiendas Shopify (API {api})",
+      "wix": "Tiendas con Wix Stores"
+    },
     "comingSoonTitle": "Próximamente",
     "comingSoonBody": "La conexión con {platform} aún no está lista. Activa el interruptor y te avisaremos por correo.",
     "notifyMe": "Avisarme cuando esté lista",

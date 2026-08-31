@@ -1078,6 +1078,11 @@
     "platformDetected": "审计时检测到",
     "step2Title": "安装插件",
     "estimated": "约 {minutes} 分钟",
+    "requirements": {
+      "woocommerce": "需要 WordPress {wordpress} 或更高版本、WooCommerce {woocommerce} 或更高版本、PHP {php}",
+      "shopify": "兼容所有 Shopify 商店 (API {api})",
+      "wix": "Wix Stores 商店"
+    },
     "comingSoonTitle": "即将推出",
     "comingSoonBody": "{platform} 连接尚未就绪。打开开关，就绪后我们会发邮件通知你。",
     "notifyMe": "就绪时通知我",

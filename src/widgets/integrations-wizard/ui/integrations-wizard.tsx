@@ -23,6 +23,7 @@ import {
   type IntegrationPlatform,
   type IntegrationReturn,
   type KeyActionResult,
+  type PlatformRequirementsMap,
   type SiteKeySummary
 } from '@/features/integrations/client';
 import {
@@ -48,6 +49,7 @@ export function IntegrationsWizard({
   projectId,
   domain,
   pluginVersion,
+  requirements,
   detectedPlatform,
   initialKeys,
   initialStatus,
@@ -61,6 +63,8 @@ export function IntegrationsWizard({
   domain: string | null;
   /** Version of the served WordPress plugin zip (null when unknown). */
   pluginVersion: string | null;
+  /** Minimum versions shown in each tutorial header (`buildPlatformRequirements`). */
+  requirements: PlatformRequirementsMap;
   detectedPlatform: IntegrationPlatform | null;
   initialKeys: SiteKeySummary[];
   initialStatus: ConnectionStatus;
@@ -121,6 +125,7 @@ export function IntegrationsWizard({
       platform={platform}
       domain={domain}
       pluginVersion={pluginVersion}
+      requirements={requirements}
       siteKeyPlaintext={revealed}
       interest={interest}
       comingSoon={comingSoon}

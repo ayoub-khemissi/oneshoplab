@@ -1078,6 +1078,11 @@
     "platformDetected": "감사 중 감지됨",
     "step2Title": "플러그인 설정",
     "estimated": "약 {minutes}분",
+    "requirements": {
+      "woocommerce": "WordPress {wordpress} 이상, WooCommerce {woocommerce} 이상, PHP {php} 필요",
+      "shopify": "모든 Shopify 스토어와 호환 (API {api})",
+      "wix": "Wix Stores 스토어"
+    },
     "comingSoonTitle": "곧 제공",
     "comingSoonBody": "{platform} 연결은 아직 준비 중입니다. 스위치를 켜 두시면 준비되는 대로 이메일로 알려드립니다.",
     "notifyMe": "준비되면 알려주세요",

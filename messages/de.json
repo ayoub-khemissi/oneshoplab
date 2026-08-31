@@ -1078,6 +1078,11 @@
     "platformDetected": "Beim Audit erkannt",
     "step2Title": "Plugin einrichten",
     "estimated": "Etwa {minutes} Min.",
+    "requirements": {
+      "woocommerce": "Erfordert WordPress {wordpress} oder neuer, WooCommerce {woocommerce} oder neuer, PHP {php}",
+      "shopify": "Mit allen Shopify-Shops kompatibel (API {api})",
+      "wix": "Shops mit Wix Stores"
+    },
     "comingSoonTitle": "Bald verfügbar",
     "comingSoonBody": "Die {platform}-Verbindung ist noch nicht fertig. Schalte den Schalter ein und wir benachrichtigen dich per E-Mail.",
     "notifyMe": "Benachrichtige mich",

@@ -28,6 +28,11 @@ test.describe('integrations', () => {
     // The seeded project is Shopify — switch to WooCommerce to reach the key step.
     await pickPlatform(page, /WooCommerce/);
     await expect(page.locator('[data-mock]')).toHaveCount(4);
+    // Versions come from the published plugin manifest (requires.* in
+    // public/downloads/oneshoplab-wp-plugin.json), so only the wording is fixed.
+    await expect(page.getByTestId('platform-requirements')).toHaveText(
+      /^Nécessite WordPress [\d.]+ ou plus, WooCommerce [\d.]+ ou plus, PHP [\d.]+$/
+    );
     await expect(page.locator('[data-download-plugin]')).toHaveAttribute(
       'href',
       '/downloads/oneshoplab-wp-plugin.zip'

@@ -1078,6 +1078,11 @@
     "platformDetected": "Detected during the audit",
     "step2Title": "Set up the plugin",
     "estimated": "About {minutes} min",
+    "requirements": {
+      "woocommerce": "Requires WordPress {wordpress} or later, WooCommerce {woocommerce} or later, PHP {php}",
+      "shopify": "Works with every Shopify store (API {api})",
+      "wix": "Wix Stores shops"
+    },
     "comingSoonTitle": "Coming soon",
     "comingSoonBody": "The {platform} connection is not ready yet. Turn on the switch and we’ll email you when it is.",
     "notifyMe": "Tell me when it’s ready",

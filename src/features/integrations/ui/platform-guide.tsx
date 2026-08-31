@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, Download, ExternalLink } from 'lucide-react';
+import { Check, Clock, Download, ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { CopyButton } from '@/shared/ui';
@@ -12,6 +12,7 @@ import {
   type GuideStep,
   WP_PLUGIN_ZIP_PATH
 } from '../lib/guide-steps';
+import type { PlatformRequirements, PlatformRequirementsMap } from '../lib/requirements';
 import type { IntegrationInterestMap, IntegrationPlatform } from '../model/types';
 import { MOCK_VIEWS } from './mocks';
 import { platformName } from './platform-picker';
@@ -21,6 +22,7 @@ export function PlatformGuide({
   platform,
   domain,
   pluginVersion,
+  requirements,
   siteKeyPlaintext,
   interest,
   comingSoon
@@ -32,6 +34,8 @@ export function PlatformGuide({
   /** Project domain or URL — feeds the "Open" links of each step. */
   domain: string | null;
   pluginVersion: string | null;
+  /** Minimum versions per platform, resolved server-side (`buildPlatformRequirements`). */
+  requirements: PlatformRequirementsMap;
   /** Freshly generated key (step 3) — shown in the "paste it" step while visible. */
   siteKeyPlaintext: string | null;
   interest: IntegrationInterestMap;
@@ -56,6 +60,7 @@ export function PlatformGuide({
             <Clock className="size-3.5" aria-hidden />
             {t('estimated', { minutes: ESTIMATED_MINUTES[platform] })}
           </p>
+          <RequirementsLine requirements={requirements[platform]} />
           <ol className={`flex flex-col gap-5 ${comingSoon ? 'opacity-60' : ''}`}>
             {steps.map((step) => (
               <GuideStepItem
@@ -70,6 +75,30 @@ export function PlatformGuide({
         </>
       ) : null}
     </div>
+  );
+}
+
+function RequirementsLine({ requirements }: { requirements: PlatformRequirements | null }) {
+  const t = useTranslations('Integrations');
+  if (!requirements) return null;
+  const label =
+    requirements.platform === 'woocommerce'
+      ? t('requirements.woocommerce', {
+          wordpress: requirements.wordpress,
+          woocommerce: requirements.woocommerce,
+          php: requirements.php
+        })
+      : requirements.platform === 'shopify'
+        ? t('requirements.shopify', { api: requirements.adminApiVersion })
+        : t('requirements.wix');
+  return (
+    <p
+      data-testid="platform-requirements"
+      className="-mt-2 text-xs text-[var(--muted)] inline-flex items-center gap-1.5"
+    >
+      <Check className="size-3.5 shrink-0" aria-hidden />
+      {label}
+    </p>
   );
 }
 

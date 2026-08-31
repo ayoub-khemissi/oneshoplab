@@ -1078,6 +1078,11 @@
     "platformDetected": "Denetim sırasında algılandı",
     "step2Title": "Eklentiyi kurun",
     "estimated": "Yaklaşık {minutes} dk",
+    "requirements": {
+      "woocommerce": "WordPress {wordpress} veya üzeri, WooCommerce {woocommerce} veya üzeri, PHP {php} gerektirir",
+      "shopify": "Tüm Shopify mağazalarıyla uyumlu (API {api})",
+      "wix": "Wix Stores mağazaları"
+    },
     "comingSoonTitle": "Çok yakında",
     "comingSoonBody": "{platform} bağlantısı henüz hazır değil. Anahtarı açın, hazır olunca e-posta ile haber verelim.",
     "notifyMe": "Hazır olunca haber ver",

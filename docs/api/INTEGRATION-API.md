@@ -237,6 +237,13 @@ The Integrations tab of a site is a **wizard**, not a settings form:
    and the key actions (Rotate / Revoke) behind a confirmation that explains
    what happens to the plugin.
 
+Each tutorial header states its minimum versions under the estimated time
+(`Integrations.requirements.*`): the WooCommerce numbers come from the plugin
+repo's `compat.json`, merged into `public/downloads/oneshoplab-wp-plugin.json`
+by `scripts/ops/sync-wp-plugin.sh`, so they refresh at each plugin release
+(the line hides itself when the json predates those fields); Shopify and Wix
+are static, the Shopify one reading `SHOPIFY_API_VERSION`.
+
 Copy tone: second person, short sentences, no jargon ("clé du site" not
 "API key", "connexion" not "webhook"). Every string lives in
 `messages/*.json` under `Integrations.*` (mock admin labels under

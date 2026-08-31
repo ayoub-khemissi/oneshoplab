@@ -8,6 +8,7 @@ export { ReturnNotice } from './ui/return-notice';
 export { COMING_SOON, isComingSoon, shopifyAdminBase } from './lib/guide-steps';
 export { parseIntegrationReturn, RETURN_PARAM_KEYS } from './lib/return-params';
 export type { IntegrationReturn } from './lib/return-params';
+export type { PlatformRequirements, PlatformRequirementsMap } from './lib/requirements';
 export type {
   ConnectionStatus,
   IntegrationInterestMap,

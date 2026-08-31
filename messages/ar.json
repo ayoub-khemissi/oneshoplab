@@ -1078,6 +1078,11 @@
     "platformDetected": "تم اكتشافها أثناء التدقيق",
     "step2Title": "ثبّت الإضافة",
     "estimated": "حوالي {minutes} دقائق",
+    "requirements": {
+      "woocommerce": "يتطلب WordPress {wordpress} أو أحدث، وWooCommerce {woocommerce} أو أحدث، وPHP {php}",
+      "shopify": "متوافق مع جميع متاجر Shopify (واجهة برمجة التطبيقات {api})",
+      "wix": "متاجر Wix Stores"
+    },
     "comingSoonTitle": "قريبًا",
     "comingSoonBody": "ربط {platform} غير جاهز بعد. فعّل المفتاح وسنراسلك بالبريد عندما يصبح جاهزًا.",
     "notifyMe": "أخبرني عندما يصبح جاهزًا",

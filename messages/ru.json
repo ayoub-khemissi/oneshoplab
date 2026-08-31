@@ -1078,6 +1078,11 @@
     "platformDetected": "Определена при аудите",
     "step2Title": "Установите плагин",
     "estimated": "Около {minutes} мин",
+    "requirements": {
+      "woocommerce": "Требуется WordPress {wordpress} или новее, WooCommerce {woocommerce} или новее, PHP {php}",
+      "shopify": "Совместимо с любым магазином Shopify (API {api})",
+      "wix": "Магазины с Wix Stores"
+    },
     "comingSoonTitle": "Скоро",
     "comingSoonBody": "Подключение {platform} пока не готово. Включите переключатель, и мы напишем вам на почту.",
     "notifyMe": "Сообщить мне",

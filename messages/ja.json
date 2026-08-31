@@ -1078,6 +1078,11 @@
     "platformDetected": "監査で検出",
     "step2Title": "プラグインを設定する",
     "estimated": "約 {minutes} 分",
+    "requirements": {
+      "woocommerce": "WordPress {wordpress} 以上、WooCommerce {woocommerce} 以上、PHP {php} が必要です",
+      "shopify": "すべての Shopify ストアに対応 (API {api})",
+      "wix": "Wix Stores のストア"
+    },
     "comingSoonTitle": "近日公開",
     "comingSoonBody": "{platform} との接続はまだ準備中です。スイッチをオンにすると、準備ができ次第メールでお知らせします。",
     "notifyMe": "準備ができたら知らせて",

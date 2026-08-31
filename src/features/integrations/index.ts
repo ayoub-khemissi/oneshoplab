@@ -26,4 +26,15 @@ export {
   setIntegrationInterestAction,
   setPlatformAction
 } from './api/actions';
-export { readWpPluginVersion } from './lib/plugin-download';
+export { readWpPluginManifest } from './lib/plugin-download';
+export {
+  buildPlatformRequirements,
+  shopifyRequirements,
+  wixRequirements,
+  wooCommerceRequirements
+} from './lib/requirements';
+export type {
+  PlatformRequirements,
+  PlatformRequirementsMap,
+  WpPluginManifest
+} from './lib/requirements';

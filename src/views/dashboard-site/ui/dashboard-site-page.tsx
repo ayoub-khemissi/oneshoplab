@@ -28,14 +28,15 @@ import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/s
 import { listProjectKeys } from '@/entities/api-key';
 import { listPendingChangesForSite, PendingChangesList } from '@/features/apply-to-store';
 import {
+  buildPlatformRequirements,
   INTEGRATION_PLATFORMS,
   isUsableKey,
   parseIntegrationReturn,
-  readWpPluginVersion,
+  readWpPluginManifest,
   toSiteKeySummary,
   type IntegrationPlatform
 } from '@/features/integrations';
-import { isShopifyAppConfigured } from '@/features/shopify-connector';
+import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
 import {
@@ -405,6 +406,10 @@ export async function DashboardSitePage({
   const lastPluginCall = siteKeys
     .map((k) => k.lastUsedAt?.getTime() ?? 0)
     .reduce((max, ts) => Math.max(max, ts), 0);
+  // Composition root for the tutorials' requirements line: the WooCommerce
+  // numbers come from the published plugin manifest, the Shopify one from the
+  // connector's own constant (a feature can't import another feature).
+  const pluginManifest = activeTab === 'integrations' ? readWpPluginManifest() : null;
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
@@ -484,7 +489,11 @@ export async function DashboardSitePage({
           <IntegrationsWizard
             projectId={project.id}
             domain={project.domain ?? project.url ?? null}
-            pluginVersion={readWpPluginVersion()}
+            pluginVersion={pluginManifest?.version ?? null}
+            requirements={buildPlatformRequirements({
+              manifest: pluginManifest,
+              shopifyApiVersion: SHOPIFY_API_VERSION
+            })}
             detectedPlatform={detectedPlatform}
             initialKeys={siteKeys.map((k) => toSiteKeySummary(k))}
             initialStatus={{

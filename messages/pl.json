@@ -1078,6 +1078,11 @@
     "platformDetected": "Wykryta podczas audytu",
     "step2Title": "Zainstaluj wtyczkę",
     "estimated": "Około {minutes} min",
+    "requirements": {
+      "woocommerce": "Wymaga WordPressa {wordpress} lub nowszego, WooCommerce {woocommerce} lub nowszego, PHP {php}",
+      "shopify": "Działa z każdym sklepem Shopify (API {api})",
+      "wix": "Sklepy z Wix Stores"
+    },
     "comingSoonTitle": "Wkrótce",
     "comingSoonBody": "Połączenie {platform} nie jest jeszcze gotowe. Włącz przełącznik, a damy znać e-mailem.",
     "notifyMe": "Powiadom mnie",
