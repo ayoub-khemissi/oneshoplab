@@ -9,6 +9,7 @@ import type {
   AckChangeInput,
   AckChangeResult,
   CancelChangeResult,
+  DismissChangeResult,
   CreateChangeInput,
   CreateChangeResult,
   ListPendingOptions,
@@ -204,6 +205,33 @@ export async function cancelChange(
     cancelledAt: new Date().toISOString()
   });
   return 'cancelled';
+}
+
+/**
+ * "Ignorer" on a failure or a conflict: the merchant has read it and doesn't
+ * want it on their dashboard any more. The row keeps its status and its
+ * `ack_payload` — support can still see why the store refused it — so this is
+ * a display flag, not a state transition. A `pending` row has `cancelChange`.
+ */
+export async function dismissChange(
+  projectId: string,
+  id: string,
+  userId: string
+): Promise<DismissChangeResult> {
+  const [owned] = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)));
+  if (!owned) return 'not_found';
+  const change = await getChange(projectId, id);
+  if (!change) return 'not_found';
+  if (change.status !== 'failed' && change.status !== 'conflict') return 'refused';
+  if (change.dismissedAt) return 'dismissed';
+  await db
+    .update(productChanges)
+    .set({ dismissedAt: new Date() })
+    .where(and(eq(productChanges.id, id), eq(productChanges.projectId, projectId)));
+  return 'dismissed';
 }
 
 /** Worker: pending changes past `expiresAt` become `expired`. */

@@ -1576,6 +1576,8 @@
     "applySelection": "应用所选（{count}）",
     "selectRow": "选择“{field}”的修改",
     "remove": "撤回",
+    "dismiss": "忽略",
+    "dismissHint": "不再显示此项——我们会为客服保留原因。",
     "review": "查看",
     "retry": "重试",
     "approvedOn": "批准于 {date}",

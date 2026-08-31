@@ -1576,6 +1576,8 @@
     "applySelection": "Applica la selezione ({count})",
     "selectRow": "Seleziona la modifica di {field}",
     "remove": "Ritira",
+    "dismiss": "Ignora",
+    "dismissHint": "Non mostrarlo più — conserviamo il motivo per l’assistenza.",
     "review": "Rivedi",
     "retry": "Riprova",
     "approvedOn": "Approvata il {date}",

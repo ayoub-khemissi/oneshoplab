@@ -965,7 +965,11 @@ export const productChanges = mysqlTable(
        *  as `"<index>:<verb>"` — never fatal (IMAGE-OPS.md §2). */
       skippedOps?: string[];
     } | null>(),
-    expiresAt: timestamp('expires_at')
+    expiresAt: timestamp('expires_at'),
+    /** The merchant chose to stop seeing this failure / conflict. The row and
+     *  its `ack_payload` stay for support — only the banners and the recap
+     *  skip it. Never set on a `pending` row (that one is cancelled instead). */
+    dismissedAt: timestamp('dismissed_at')
   },
   (t) => ({
     idxProjectStatusId: index('idx_product_changes_project_status_id').on(

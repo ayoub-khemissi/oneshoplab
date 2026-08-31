@@ -1576,6 +1576,8 @@
     "applySelection": "Auswahl übernehmen ({count})",
     "selectRow": "Änderung an {field} auswählen",
     "remove": "Zurückziehen",
+    "dismiss": "Ausblenden",
+    "dismissHint": "Wird nicht mehr angezeigt — den Grund behalten wir für den Support.",
     "review": "Ansehen",
     "retry": "Erneut versuchen",
     "approvedOn": "Freigegeben am {date}",

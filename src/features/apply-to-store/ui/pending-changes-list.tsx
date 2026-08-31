@@ -1,12 +1,12 @@
 'use client';
 
 import { Card } from '@heroui/react';
-import { AlertTriangle, Clock, ListChecks, X } from 'lucide-react';
+import { AlertTriangle, Clock, EyeOff, ListChecks, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
 import { formatDate } from '@/shared/lib';
-import { cancelChangeAction } from '../api/actions';
+import { cancelChangeAction, dismissChangeAction } from '../api/actions';
 import type { PendingChangeSummary } from '../model/types';
 
 export function PendingChangesList({
@@ -17,6 +17,7 @@ export function PendingChangesList({
   initialItems: PendingChangeSummary[];
 }) {
   const t = useTranslations('ApplyToStore');
+  const tPending = useTranslations('PendingChanges');
   const [items, setItems] = useState(initialItems);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
@@ -28,6 +29,18 @@ export function PendingChangesList({
     setBusyId(changeId);
     startTransition(async () => {
       const res = await cancelChangeAction(fd);
+      if (res.ok) setItems((prev) => prev.filter((c) => c.id !== changeId));
+      setBusyId(null);
+    });
+  }
+
+  function dismiss(changeId: string) {
+    const fd = new FormData();
+    fd.set('projectId', siteId);
+    fd.set('changeId', changeId);
+    setBusyId(changeId);
+    startTransition(async () => {
+      const res = await dismissChangeAction(fd);
       if (res.ok) setItems((prev) => prev.filter((c) => c.id !== changeId));
       setBusyId(null);
     });
@@ -77,6 +90,18 @@ export function PendingChangesList({
                       ? t('failed', { error: c.error ? ` — ${c.error}` : '' })
                       : t('approvedOn', { date: formatDate(c.approvedAtIso) })}
                 </span>
+                {c.status === 'failed' || c.status === 'conflict' ? (
+                  <button
+                    type="button"
+                    onClick={() => dismiss(c.id)}
+                    disabled={busyId === c.id}
+                    aria-label={tPending('dismiss')}
+                    title={tPending('dismissHint')}
+                    className="size-7 shrink-0 rounded-md text-[var(--muted)] hover:bg-[var(--default)] hover:text-[var(--foreground)] inline-flex items-center justify-center disabled:opacity-50"
+                  >
+                    <EyeOff className="size-3.5" />
+                  </button>
+                ) : null}
                 {c.status === 'pending' ? (
                   <button
                     type="button"

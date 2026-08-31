@@ -1,0 +1,1 @@
+ALTER TABLE `product_changes` ADD `dismissed_at` timestamp;

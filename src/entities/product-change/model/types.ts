@@ -47,6 +47,9 @@ export interface PendingChangesPage {
 
 export type CancelChangeResult = 'cancelled' | 'not_found' | 'refused';
 
+/** `dismissChange`: only a failed / conflict row can be dismissed. */
+export type DismissChangeResult = 'dismissed' | 'not_found' | 'refused';
+
 /**
  * "Annuler" on an applied change. `conflict` = the product moved in the store
  * since (OSL's copy matches neither what we wrote nor what was there before),

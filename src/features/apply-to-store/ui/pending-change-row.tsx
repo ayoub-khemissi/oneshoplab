@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, ArrowRight, Clock, RotateCcw, X, XCircle } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Clock, EyeOff, RotateCcw, X, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { formatDate } from '@/shared/lib';
@@ -63,6 +63,8 @@ export interface PendingChangeRowProps {
   onToggle: () => void;
   onWithdraw: () => void;
   onRetry: () => void;
+  /** Failures and conflicts only: stop showing this one (the row is kept). */
+  onDismiss: () => void;
 }
 
 /**
@@ -77,7 +79,8 @@ export function PendingChangeRow({
   busy,
   onToggle,
   onWithdraw,
-  onRetry
+  onRetry,
+  onDismiss
 }: PendingChangeRowProps) {
   const t = useTranslations('PendingChanges');
   const tField = useTranslations('ApplyToStore');
@@ -155,6 +158,19 @@ export function PendingChangeRow({
             className="inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-2 py-1 text-xs hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50"
           >
             <RotateCcw className="size-3" aria-hidden /> {t('retry')}
+          </button>
+        ) : null}
+        {item.status === 'failed' || item.status === 'conflict' ? (
+          <button
+            type="button"
+            onClick={onDismiss}
+            disabled={busy}
+            data-testid="pending-dismiss"
+            aria-label={t('dismiss')}
+            title={t('dismissHint')}
+            className="inline-flex size-7 items-center justify-center rounded-md text-[var(--muted)] hover:bg-[var(--default)] hover:text-[var(--foreground)] disabled:opacity-50"
+          >
+            <EyeOff className="size-3.5" aria-hidden />
           </button>
         ) : null}
         {item.status === 'pending' ? (

@@ -1576,6 +1576,8 @@
     "applySelection": "Zastosuj wybrane ({count})",
     "selectRow": "Wybierz zmianę pola {field}",
     "remove": "Wycofaj",
+    "dismiss": "Ukryj",
+    "dismissHint": "Nie pokazuj tego więcej — powód zachowujemy dla wsparcia.",
     "review": "Sprawdź",
     "retry": "Spróbuj ponownie",
     "approvedOn": "Zatwierdzono {date}",

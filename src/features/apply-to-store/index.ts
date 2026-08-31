@@ -19,6 +19,7 @@ export {
   applyPendingChangesAction,
   approveGenerationAction,
   cancelChangeAction,
+  dismissChangeAction,
   undoChangeAction
 } from './api/actions';
 export { approveImageOpsAction } from './api/image-ops-actions';

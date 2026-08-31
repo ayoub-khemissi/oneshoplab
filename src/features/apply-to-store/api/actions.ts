@@ -4,7 +4,12 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { imageRetentionDaysForPlan } from '@/entities/ai-model';
-import { cancelChange, createChange, createReverseChange } from '@/entities/product-change';
+import {
+  cancelChange,
+  createChange,
+  createReverseChange,
+  dismissChange
+} from '@/entities/product-change';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import {
@@ -198,6 +203,27 @@ export async function applyPendingChangesAction(
   }
   revalidatePath(`/dashboard/sites/${project.data}`);
   return { ok: true, queued, conflict, failed };
+}
+
+/**
+ * "Ignorer" on a failure or a conflict the merchant doesn't want to see any
+ * more. Nothing is replayed and nothing is deleted — the row keeps the reason
+ * the store gave, only the banners stop counting it.
+ */
+export async function dismissChangeAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: 'unauthorized' | 'bad_request' | 'not_found' | 'refused' }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
+  const projectId = uuid.safeParse(formData.get('projectId'));
+  const changeId = ulidSchema.safeParse(formData.get('changeId'));
+  if (!projectId.success || !changeId.success) return { ok: false, error: 'bad_request' };
+  const res = await dismissChange(projectId.data, changeId.data, session.user.id);
+  if (res === 'dismissed') {
+    revalidatePath(`/dashboard/sites/${projectId.data}`);
+    return { ok: true };
+  }
+  return { ok: false, error: res };
 }
 
 export async function cancelChangeAction(

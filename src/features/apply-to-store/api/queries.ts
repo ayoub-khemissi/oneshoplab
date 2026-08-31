@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNull, or } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { productChanges, products, projects } from '@/shared/db/schema';
 import {
@@ -22,6 +22,24 @@ const PENDING_LIST_LIMIT = 100;
 
 /** The three statuses a merchant still has to act on (see PendingChangeStatus). */
 const OPEN_STATUSES: readonly PendingChangeStatus[] = ['pending', 'conflict', 'failed'];
+
+/** A failure nobody ever dismissed stops nagging on its own after this long. */
+const STALE_FAILURE_DAYS = 30;
+
+/**
+ * "Still worth showing the merchant": an open status, not dismissed by hand,
+ * and — for a failure or a conflict — not older than STALE_FAILURE_DAYS. A
+ * `pending` row never goes stale: it is still queued for the store. The rows
+ * themselves stay in the table either way, so support keeps the ack payload.
+ */
+function stillOpen() {
+  const cutoff = new Date(Date.now() - STALE_FAILURE_DAYS * 24 * 60 * 60 * 1000);
+  return and(
+    inArray(productChanges.status, [...OPEN_STATUSES]),
+    isNull(productChanges.dismissedAt),
+    or(eq(productChanges.status, 'pending'), gt(productChanges.approvedAt, cutoff))
+  );
+}
 
 /** Latest change per source job — drives the Apply button state on the product page. */
 export async function listChangesForJobs(
@@ -51,12 +69,7 @@ export async function listPendingChangesForSite(
     .select({ change: productChanges, productTitle: products.title })
     .from(productChanges)
     .innerJoin(products, eq(products.id, productChanges.productId))
-    .where(
-      and(
-        eq(productChanges.projectId, projectId),
-        inArray(productChanges.status, [...OPEN_STATUSES])
-      )
-    )
+    .where(and(eq(productChanges.projectId, projectId), stillOpen()))
     .orderBy(desc(productChanges.id))
     .limit(PENDING_LIST_LIMIT);
   return rows.map((r) => ({
@@ -108,13 +121,7 @@ export async function listPendingSummaryForSite(
     .from(productChanges)
     .innerJoin(products, eq(products.id, productChanges.productId))
     .innerJoin(projects, eq(projects.id, productChanges.projectId))
-    .where(
-      and(
-        eq(productChanges.projectId, projectId),
-        eq(projects.userId, userId),
-        inArray(productChanges.status, [...OPEN_STATUSES])
-      )
-    )
+    .where(and(eq(productChanges.projectId, projectId), eq(projects.userId, userId), stillOpen()))
     .orderBy(desc(productChanges.id))
     .limit(PENDING_LIST_LIMIT);
   const items = toItems(rows);
@@ -131,13 +138,7 @@ export async function listPendingSummaryForProduct(
     .from(productChanges)
     .innerJoin(products, eq(products.id, productChanges.productId))
     .innerJoin(projects, eq(projects.id, productChanges.projectId))
-    .where(
-      and(
-        eq(productChanges.productId, productId),
-        eq(projects.userId, userId),
-        inArray(productChanges.status, [...OPEN_STATUSES])
-      )
-    )
+    .where(and(eq(productChanges.productId, productId), eq(projects.userId, userId), stillOpen()))
     .orderBy(desc(productChanges.id))
     .limit(PENDING_LIST_LIMIT);
   const items = toItems(rows);
@@ -161,7 +162,7 @@ export async function countPendingByProject(userId: string): Promise<PendingSite
     })
     .from(productChanges)
     .innerJoin(projects, eq(projects.id, productChanges.projectId))
-    .where(and(eq(projects.userId, userId), inArray(productChanges.status, [...OPEN_STATUSES])))
+    .where(and(eq(projects.userId, userId), stillOpen()))
     .orderBy(desc(productChanges.id));
 
   const bySite = new Map<string, PendingSiteCount>();
@@ -192,7 +193,7 @@ export async function listPendingSummaryForUser(userId: string): Promise<Pending
       .from(productChanges)
       .innerJoin(products, eq(products.id, productChanges.productId))
       .innerJoin(projects, eq(projects.id, productChanges.projectId))
-      .where(and(eq(projects.userId, userId), inArray(productChanges.status, [...OPEN_STATUSES])))
+      .where(and(eq(projects.userId, userId), stillOpen()))
       .orderBy(desc(productChanges.id))
       .limit(PENDING_LIST_LIMIT)
   ]);

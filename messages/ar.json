@@ -1576,6 +1576,8 @@
     "applySelection": "تطبيق المحدَّد ({count})",
     "selectRow": "تحديد تعديل {field}",
     "remove": "سحب",
+    "dismiss": "تجاهل",
+    "dismissHint": "لا تعرض هذا مرة أخرى — نحتفظ بالسبب للدعم.",
     "review": "مراجعة",
     "retry": "إعادة المحاولة",
     "approvedOn": "تمت الموافقة في {date}",

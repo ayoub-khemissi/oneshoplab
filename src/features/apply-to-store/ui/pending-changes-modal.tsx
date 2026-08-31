@@ -5,7 +5,7 @@ import { AlertTriangle, Check, ListChecks, Store, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { applyPendingChangesAction, cancelChangeAction } from '../api/actions';
+import { applyPendingChangesAction, cancelChangeAction, dismissChangeAction } from '../api/actions';
 import { groupByProduct, resultParts } from '../lib/pending-summary';
 import type { ApplySelectionCounts, PendingChangeItem } from '../model/types';
 import { PendingChangeRow } from './pending-change-row';
@@ -88,6 +88,19 @@ export function PendingChangesModal({
     });
   }
 
+  function dismiss(id: string) {
+    const fd = new FormData();
+    fd.set('projectId', projectId);
+    fd.set('changeId', id);
+    setError(null);
+    startTransition(async () => {
+      const res = await dismissChangeAction(fd);
+      if (res.ok) setWithdrawn((prev) => new Set(prev).add(id));
+      else setError(t('errorGeneric'));
+      router.refresh();
+    });
+  }
+
   const parts = result
     ? resultParts(result, {
         queued: (count) => t('resultQueued', { count }),
@@ -148,6 +161,7 @@ export function PendingChangesModal({
                             onToggle={() => toggle(item.id)}
                             onWithdraw={() => withdraw(item.id)}
                             onRetry={() => apply([item.id])}
+                            onDismiss={() => dismiss(item.id)}
                           />
                         ))}
                       </ul>
@@ -175,6 +189,7 @@ export function PendingChangesModal({
                         onToggle={() => toggle(item.id)}
                         onWithdraw={() => withdraw(item.id)}
                         onRetry={() => apply([item.id])}
+                        onDismiss={() => dismiss(item.id)}
                       />
                     ))}
                   </ul>
@@ -198,6 +213,7 @@ export function PendingChangesModal({
                         onToggle={() => toggle(item.id)}
                         onWithdraw={() => withdraw(item.id)}
                         onRetry={() => apply([item.id])}
+                        onDismiss={() => dismiss(item.id)}
                       />
                     ))}
                   </ul>

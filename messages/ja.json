@@ -1576,6 +1576,8 @@
     "applySelection": "選択したものを反映（{count}）",
     "selectRow": "「{field}」の変更を選択",
     "remove": "取り下げる",
+    "dismiss": "非表示にする",
+    "dismissHint": "これを表示しません。理由はサポート用に保管します。",
     "review": "確認する",
     "retry": "もう一度試す",
     "approvedOn": "{date} に承認",

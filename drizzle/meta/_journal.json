@@ -225,6 +225,13 @@
       "when": 1788159741407,
       "tag": "0031_image_ops_capabilities",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1788189167590,
+      "tag": "0032_tiresome_argent",
+      "breakpoints": true
     }
   ]
 }

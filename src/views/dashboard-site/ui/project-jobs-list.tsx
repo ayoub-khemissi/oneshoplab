@@ -88,14 +88,16 @@ export function ProjectJobsList({
                         </span>
                       )}
                     </span>
-                    {j.creditsCost > 0 ? (
-                      <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0 inline-flex items-center gap-1">
-                        <Coins className="size-3" aria-hidden />
-                        {j.creditsCost}
-                      </span>
-                    ) : null}
-                    <ProjectJobStatusBadge status={j.status as JobStatus} />
-                    <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
+                    <span className="ml-auto flex shrink-0 items-center gap-3">
+                      {j.creditsCost > 0 ? (
+                        <span className="text-xs text-[var(--muted)] font-mono tabular-nums shrink-0 inline-flex items-center gap-1">
+                          <Coins className="size-3" aria-hidden />
+                          {j.creditsCost}
+                        </span>
+                      ) : null}
+                      <ProjectJobStatusBadge status={j.status as JobStatus} />
+                      <Accordion.Indicator className="size-3.5 text-[var(--muted)] shrink-0" />
+                    </span>
                   </Accordion.Trigger>
                 </Accordion.Heading>
                 <Accordion.Panel>
