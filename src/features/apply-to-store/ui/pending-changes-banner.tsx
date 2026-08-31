@@ -57,10 +57,10 @@ export function PendingChangesBanner({
         )}
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="inline-flex flex-wrap items-center gap-1.5 text-sm font-medium">
+          <span className="text-sm font-medium">
             {scope === 'product'
               ? t('bannerProduct', { count: counts.total })
-              : t('bannerSite', { count: counts.total })}
+              : t('bannerSite', { count: counts.total })}{' '}
             <InfoHint topic="pendingSync" label={t('open')} />
           </span>
           {counts.failed > 0 || counts.conflict > 0 ? (

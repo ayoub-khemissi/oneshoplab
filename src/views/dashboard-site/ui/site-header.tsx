@@ -162,7 +162,7 @@ export function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
   const t = useTranslations('Dashboard');
   const tIntegrations = useTranslations('Integrations');
   return (
-    <nav className="border-b border-[var(--border)] flex gap-1 -mt-2 overflow-x-auto">
+    <nav className="border-b border-[var(--border)] flex flex-wrap gap-1 -mt-2 sm:flex-nowrap sm:overflow-x-auto">
       <TabLink
         href={`/dashboard/sites/${siteId}`}
         active={active === 'overview'}
