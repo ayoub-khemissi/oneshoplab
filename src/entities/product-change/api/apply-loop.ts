@@ -9,6 +9,7 @@
 import type { ProductChangeField } from '@/shared/db/schema';
 import { db } from '@/shared/db';
 import { hashValue } from '../lib/hash';
+import { imageOpsPayloadSchema, type ImageOp } from '../lib/image-ops';
 import type { ProductChangeRow } from '../model/types';
 import { ackChange, listPendingChanges } from './changes';
 import { transitionChange } from './transitions';
@@ -25,7 +26,19 @@ export interface ApplyFieldSource {
   title: string;
   descriptionHtml: string | null;
   tags: string[] | null;
-  images: Array<{ src: string; alt: string | null }>;
+  images: Array<{ src: string; alt: string | null; sourceImageId?: string | null }>;
+}
+
+/**
+ * One provider = one executor (docs/api/IMAGE-OPS.md §7). The WooCommerce
+ * plugin implements it in PHP behind `/changes` + ack; the OSL-driven
+ * connectors implement it here, in TypeScript, behind this loop.
+ */
+export interface ImageOpsExecutor {
+  /** Store-side gallery with its `sourceImageId`s — for prior_value + conflict. */
+  readImages(productSourceId: string): Promise<ApplyFieldSource['images']>;
+  /** Never throws on a stale target: it comes back in `skippedOps` (`"<i>:<verb>"`). */
+  applyOps(productSourceId: string, ops: ImageOp[]): Promise<{ skippedOps: string[] }>;
 }
 
 export interface ApplyDriver {
@@ -34,6 +47,8 @@ export interface ApplyDriver {
   writeChange(change: ProductChangeRow): Promise<void>;
   /** True for a 401/403-class error: the loop stops and reports `token_invalid`. */
   isAuthError(e: unknown): boolean;
+  /** Present = the provider speaks ops; absent = replace-all only (§5). */
+  imageOps?: ImageOpsExecutor;
 }
 
 /** Same shape as `currentFieldValue` in ./changes — the hash contract. */
@@ -70,8 +85,15 @@ async function applyOne(
     await ackChange(change.projectId, change.id, { status: 'applied', storeValueHash });
     return { outcome: 'conflict' };
   }
+  let skippedOps: string[] | undefined;
   try {
-    await driver.writeChange(change);
+    const executor = change.field === 'images' ? driver.imageOps : undefined;
+    const ops = executor ? opsOf(change) : null;
+    if (executor && ops) {
+      skippedOps = (await executor.applyOps(change.productSourceId, ops)).skippedOps;
+    } else {
+      await driver.writeChange(change);
+    }
   } catch (e) {
     if (driver.isAuthError(e)) throw e;
     const error = e instanceof Error ? e.message : String(e);
@@ -81,9 +103,16 @@ async function applyOne(
   await ackChange(change.projectId, change.id, {
     status: 'applied',
     storeValueHash,
-    storeUpdatedAt: now.toISOString()
+    storeUpdatedAt: now.toISOString(),
+    ...(skippedOps ? { skippedOps } : {})
   });
   return { outcome: 'applied' };
+}
+
+/** Ops payload, or null when the value is the plain replace-all array (§2). */
+function opsOf(change: ProductChangeRow): ImageOp[] | null {
+  const parsed = imageOpsPayloadSchema.safeParse(change.value);
+  return parsed.success ? parsed.data.ops : null;
 }
 
 /**

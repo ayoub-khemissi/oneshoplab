@@ -1535,7 +1535,18 @@
       "images": "图片"
     },
     "approvedOn": "批准于 {date}",
-    "errorGeneric": "出了点问题，请重试。"
+    "errorGeneric": "出了点问题，请重试。",
+    "replaceAllTitle": "替换所有照片？",
+    "replaceAllBody": "您当前的 {current} 张照片将从商品中移除，并由 {generated} 张生成的图片替换。它们仍会保留在您的媒体库中。",
+    "replaceAllConfirm": "替换照片",
+    "replaceAllCancel": "取消",
+    "undo": "撤销",
+    "undoTitle": "撤销此更改？",
+    "undoBody": "下一次同步时，之前的内容将在您的商店中恢复。",
+    "undoConfirm": "恢复上一个版本",
+    "undoQueued": "撤销待处理",
+    "undoBlocked": "无法撤销：此商品此后在您的商店中已发生更改。",
+    "undoUnavailable": "此更改无法撤销。"
   },
   "IntegrationAlerts": {
     "greeting": "{name}，您好：",

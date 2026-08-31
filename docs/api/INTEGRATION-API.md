@@ -73,7 +73,7 @@ Upsert a batch. Body:
   "products": [ NormalizedProduct… max 200 ] }
 ```
 `NormalizedProduct` is the OSL shape (`sourceId` required, `title` required,
-`descriptionHtml`, `images[{src,alt,width,height,position}]`, `tags[]`,
+`descriptionHtml`, `images[{src,alt,width,height,position,sourceImageId}]`, `tags[]`,
 `variants[]`, `vendor`, `productType`, `priceMin/Max`, `currency`, `sku`,
 `sourceUrl`, `handle`, `sourceUpdatedAt`).
 - **partial**: upsert only; nothing archived.
@@ -95,6 +95,15 @@ Upsert a batch. Body:
 - Concurrency: a MySQL advisory lock per project (`GET_LOCK('osl:sync:<id>', 5)`)
   serialises batches; `423 locked` if it cannot be acquired in 5 s.
 - Response: `{ inserted, updated, archived, unchanged, session?, errors: [{index, sourceId, code}] }`.
+- `images[].sourceImageId` (optional): the store's own id for that image (WP
+  attachment id). Sending it is what unlocks precise image ops instead of the
+  replace-all fallback (`docs/api/IMAGE-OPS.md` §1). Absent → stored as null,
+  never inferred.
+- `capabilities` (optional, top level): what this plugin build can do —
+  `{ stableImageIds, imageOps[], maxImages, altEditable, fields[] }`, see
+  IMAGE-OPS.md §7. Re-sent on every call (the plugin knows its own version),
+  persisted per project in `connection_capabilities`; missing fields fall back
+  to the safe minimum, and `imageOps` is ignored without `stableImageIds`.
 - Side effects: `projects.source` set from `X-OSL-Platform` on first sync
   when unknown; no audit is launched automatically (the plugin or the
   merchant triggers it — audits cost worker time).
@@ -116,12 +125,27 @@ Approved changes not yet acknowledged, oldest first:
 - Image values are R2 CDN URLs valid until `expiresAt` (plan retention);
   the plugin must copy the file, never hot-link.
 - A change stays listed until acked, cancelled by the merchant, or expired.
+- **`field: "images"` has two shapes** (`docs/api/IMAGE-OPS.md` §2), served
+  as-is: the historical plain array `[{src, alt}]` = *replace the whole
+  gallery*, and `{ "v": 1, "ops": [...] }` = an ordered operation list
+  (`set_featured` / `append` / `replace` / `remove` / `set_alt` / `reorder`).
+  OSL only sends ops to a connection that reported `stableImageIds`, so a
+  plugin older than the ops release keeps receiving arrays and needs no change.
+  Ops apply in order; `new:<n>` refers to the n-th image introduced earlier in
+  the same list; an op whose `target` is gone from the store is **skipped, not
+  fatal**; `remove` detaches, it never deletes the media file; a change never
+  leaves the product with zero images (OSL rejects that at creation).
 
 ### `POST /changes/{id}/ack` — `changes:ack`
 ```json
 { "status": "applied" | "failed" | "skipped", "error"?: string,
-  "storeUpdatedAt"?: iso, "storeValueHash"?: sha256 }
+  "storeUpdatedAt"?: iso, "storeValueHash"?: sha256,
+  "skippedOps"?: ["2:remove", "3:set_alt"] }
 ```
+- `skippedOps` (ops payloads only): the ops the store could not carry out, as
+  `"<index>:<verb>"` — a target that vanished, or a verb this store does not
+  support. The change still acks `applied`; OSL keeps the list in the ack
+  payload so the merchant can be told what did not happen.
 - Idempotent: acking an already-acked change with the same status → 200; a
   different status → `409 already_acked`.
 - **Conflict detection**: if the plugin reports `storeValueHash` of the field
@@ -151,7 +175,8 @@ over the pathname, `Idempotency-Key` on sync).
 - `api_key_events`: id, apiKeyId, kind (created|rotated|revoked|expired|auth_failed|expiry_notice), ip, at, meta json.
 - `api_idempotency`: key (pk: sha256(apiKeyId + idemKey)), bodyHash, status, responseJson, createdAt (TTL 24 h, swept by the worker).
 - `catalog_sync_sessions`: id, projectId, seenSourceIds json, startedAt, expiresAt, closedAt.
-- `product_changes`: id (ULID), projectId, productId, productSourceId, field, value json, valueHash (sha256 of the new value), **priorValueHash** (sha256 of the store field at approval time — what `storeValueHash` is compared against), sourceJobId, status (pending|applied|failed|skipped|conflict|cancelled|expired), approvedBy, approvedAt, ackedAt, ackPayload json, expiresAt.
+- `product_changes`: id (ULID), projectId, productId, productSourceId, field, value json, valueHash (sha256 of the new value), **priorValueHash** (sha256 of the store field at approval time — what `storeValueHash` is compared against), **priorValue** json (the field's whole value before applying — for images the ordered list with its `sourceImageId`s; powers "Annuler", which queues a *reverse change* rather than rewriting history), sourceJobId, status (pending|applied|failed|skipped|conflict|cancelled|expired), approvedBy, approvedAt, ackedAt, ackPayload json (incl. `skippedOps`), expiresAt.
+- `connection_capabilities`: projectId (pk, FK cascade), platform, capabilities json, reportedAt. One row per project — capabilities describe the store link, not a credential, so a site-key rotation never loses them.
 
 "Approved change" is new product behaviour: on the product page the merchant
 clicks **Apply to store** on a generation → `product_changes` row (feature
@@ -181,7 +206,12 @@ listing is index-only. Nothing in the hot path calls the AI providers.
 - `entities/api-key`: key generation, hashing, verification, signature,
   lifecycle (rotate/revoke/expire), events.
 - `entities/product-change`: table + guarded status transitions (same
-  pattern as `generation-job` transitions).
+  pattern as `generation-job` transitions), the image-ops payload (zod +
+  the "cannot remove the last image" rule), the reverse-change builder, and
+  the `ImageOpsExecutor` seam the connectors implement.
+- `entities/connection-capability`: `getProjectCapabilities(projectId)` — the
+  one resolver every caller uses; static declarations for the connectors OSL
+  drives, `connection_capabilities` for the plugins that drive themselves.
 - `shared/api`: error envelope, rate limit, idempotency, zod body parsing;
   `withSiteKey()` (auth + signature + rate limit + permission) lives in
   `entities/api-key` because `shared` may not import entities.

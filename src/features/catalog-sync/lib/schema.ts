@@ -5,6 +5,7 @@
  * strips them); a duplicate `sourceId` is reported with its index.
  */
 import { z } from 'zod';
+import { capabilitiesSchema } from '@/entities/connection-capability';
 
 export const SYNC_BATCH_SIZE = 200;
 export const MAX_IMAGES_PER_PRODUCT = 30;
@@ -12,6 +13,8 @@ export const MAX_TAGS = 50;
 export const MAX_TAG_LENGTH = 64;
 export const MAX_TITLE_LENGTH = 512;
 export const MAX_DESCRIPTION_BYTES = 64 * 1024;
+/** One entry per op at most (`MAX_IMAGE_OPS` in entities/product-change). */
+export const MAX_SKIPPED_OPS = 60;
 
 const nullableStr = (max: number) => z.string().max(max).nullish();
 
@@ -20,7 +23,10 @@ export const syncImageSchema = z.object({
   alt: nullableStr(1024),
   width: z.number().int().nonnegative().nullish(),
   height: z.number().int().nonnegative().nullish(),
-  position: z.number().int().nonnegative().optional()
+  position: z.number().int().nonnegative().optional(),
+  /** Store-owned id (WP attachment id…) — what image ops target. Absent =
+   *  this store cannot be addressed precisely (docs/api/IMAGE-OPS.md §1). */
+  sourceImageId: nullableStr(255)
 });
 
 export const syncVariantSchema = z.object({
@@ -61,7 +67,10 @@ export const syncBodySchema = z
     mode: z.enum(['partial', 'full']),
     session: z.string().min(1).max(64).optional(),
     final: z.boolean().optional(),
-    products: z.array(syncProductSchema).max(SYNC_BATCH_SIZE)
+    products: z.array(syncProductSchema).max(SYNC_BATCH_SIZE),
+    /** What this plugin build can do (IMAGE-OPS.md §7). A plugin older than
+     *  the ops release sends nothing → the connection keeps the safe minimum. */
+    capabilities: capabilitiesSchema.optional()
   })
   .superRefine((body, ctx) => {
     const seen = new Set<string>();
@@ -88,7 +97,9 @@ export const ackBodySchema = z.object({
   storeValueHash: z
     .string()
     .regex(/^[0-9a-f]{64}$/i, 'sha256 hex expected')
-    .optional()
+    .optional(),
+  /** Ops the store could not carry out, `"<index>:<verb>"` — never fatal (§2). */
+  skippedOps: z.array(z.string().min(1).max(64)).max(MAX_SKIPPED_OPS).optional()
 });
 export type AckBody = z.infer<typeof ackBodySchema>;
 

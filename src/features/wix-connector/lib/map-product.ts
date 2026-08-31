@@ -73,7 +73,10 @@ export function mapWixProduct(p: WixProduct, ctx: WixMapContext): NormalizedProd
       alt: m.title || null,
       width: m.image.width ?? null,
       height: m.image.height ?? null,
-      position: images.length
+      position: images.length,
+      // Wix media id — what the remove call targets (IMAGE-OPS.md §1). Some
+      // legacy items come back without one: null, never invented.
+      sourceImageId: m.id ?? null
     });
   }
   const priceMin = p.priceRange?.minValue ?? p.priceData?.price ?? null;

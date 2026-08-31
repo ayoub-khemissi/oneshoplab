@@ -1535,7 +1535,18 @@
       "images": "Bilder"
     },
     "approvedOn": "Freigegeben am {date}",
-    "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal."
+    "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal.",
+    "replaceAllTitle": "Alle Fotos ersetzen?",
+    "replaceAllBody": "Ihre {current} aktuellen Fotos werden vom Produkt entfernt und durch die {generated} generierten Visuals ersetzt. Sie bleiben in Ihrer Mediathek.",
+    "replaceAllConfirm": "Fotos ersetzen",
+    "replaceAllCancel": "Abbrechen",
+    "undo": "Rückgängig",
+    "undoTitle": "Diese Änderung rückgängig machen?",
+    "undoBody": "Der vorherige Inhalt wird beim nächsten Durchlauf in Ihrem Shop wiederhergestellt.",
+    "undoConfirm": "Vorherige Version wiederherstellen",
+    "undoQueued": "Rücknahme ausstehend",
+    "undoBlocked": "Rückgängig machen nicht möglich: Dieses Produkt hat sich seitdem in Ihrem Shop geändert.",
+    "undoUnavailable": "Diese Änderung kann nicht rückgängig gemacht werden."
   },
   "IntegrationAlerts": {
     "greeting": "Hallo {name},",

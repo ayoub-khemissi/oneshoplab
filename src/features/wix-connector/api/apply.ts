@@ -8,6 +8,7 @@ import { listForApply } from '@/entities/shop-connection';
 import { mapWixProduct, WIX_RIBBON_MAX } from '../lib/map-product';
 import { isWixAuthError } from './alerts';
 import { createWixClient, type WixClient } from './client';
+import { createWixImageOps } from './image-ops';
 import { flagTokenInvalid, withWixClient } from './shared';
 
 export const WIX_APPLY_BATCH = 25;
@@ -56,7 +57,8 @@ export async function applyWixChanges(
           return p ? mapWixProduct(p, { collections: new Map() }) : null;
         },
         writeChange: (change) => writeChange(client, change),
-        isAuthError: isWixAuthError
+        isAuthError: isWixAuthError,
+        imageOps: createWixImageOps(client)
       },
       { limit: WIX_APPLY_BATCH, onAuthError: (m) => flagTokenInvalid(projectId, m) }
     )

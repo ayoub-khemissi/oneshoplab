@@ -1535,7 +1535,18 @@
       "images": "Images"
     },
     "approvedOn": "Validé le {date}",
-    "errorGeneric": "Une erreur est survenue. Réessayez."
+    "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "replaceAllTitle": "Remplacer toutes les photos ?",
+    "replaceAllBody": "Vos {current} photos actuelles seront retirées du produit et remplacées par les {generated} visuels générés. Elles resteront dans votre médiathèque.",
+    "replaceAllConfirm": "Remplacer les photos",
+    "replaceAllCancel": "Annuler",
+    "undo": "Annuler",
+    "undoTitle": "Annuler ce changement ?",
+    "undoBody": "Le contenu précédent sera rétabli dans votre boutique au prochain passage.",
+    "undoConfirm": "Rétablir la version précédente",
+    "undoQueued": "Annulation en attente",
+    "undoBlocked": "Impossible d’annuler : ce produit a changé dans votre boutique depuis.",
+    "undoUnavailable": "Ce changement ne peut pas être annulé."
   },
   "IntegrationAlerts": {
     "greeting": "Bonjour {name},",

@@ -1,6 +1,13 @@
+---
+status: acted
+implemented: partial
+last-verified: 2026-08-31
+---
+
 # Product image operations (v1.1 of the changes protocol)
 
-Status: spec, 2026-08-31. Fixes a real hazard found during the WooCommerce QA:
+Status: steps 1 (guardrail) and 2 (protocol) shipped 2026-08-31; step 3 (the
+editor grid) is not built. Fixes a real hazard found during the WooCommerce QA:
 applying an `images` change **replaces the merchant's whole gallery**
 (`set_image_id` + `set_gallery_image_ids`), and the OSL UI offers no way to say
 "just the main photo" or "add this one". A merchant with six curated photos who
@@ -93,6 +100,29 @@ No silent replace-all, ever — this guardrail ships first, before the ops.
 
 Each step ships independently; step 1 is safe on its own, step 2 keeps old
 plugins working, step 3 is pure UI on top of the protocol.
+
+### As built (steps 1–2, 2026-08-31)
+
+- `set_featured` accepts `image` **or** `target` (exactly one). §2 only showed
+  the new-image form, but §4's "Définir comme principale" on a store photo
+  needs the target form, and adding it later would have been a payload change.
+- `skippedOps` entries are `"<index>:<verb>"` (e.g. `"2:remove"`) — an op's
+  position in its own list is the only identity it has.
+- Capabilities live in `connection_capabilities`, one row per project, not on
+  `api_keys`: keys rotate (24 h grace, several live rows per project) and a
+  rotation must not drop what the plugin reported. The connectors OSL drives
+  declare theirs in `entities/connection-capability` and re-export the entry as
+  their own `CAPABILITIES` const — a feature cannot import another feature, and
+  the resolver must answer for every platform from one place.
+- Declared honestly: Shopify has no `set_alt` (editing an existing MediaImage's
+  alt needs `fileUpdate` + the `write_files` scope we do not request; alt on a
+  *new* image still works through `productCreateMedia`), Wix has neither
+  `reorder` nor `set_featured` nor `set_alt` (Stores v1 exposes add and remove
+  only).
+- "Annuler" restores `prior_value` exactly on the replace-all path. On the ops
+  path it restores order and alt and re-attaches what was detached, but images
+  the change *added* have no id at approval time and survive the undo — the
+  editor (step 3) is where they get removed.
 
 ## 7. Provider-agnostic contract (WooCommerce, Shopify, Wix, and the next ones)
 

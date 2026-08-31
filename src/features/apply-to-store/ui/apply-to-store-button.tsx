@@ -1,24 +1,36 @@
 'use client';
 
 import { Spinner } from '@heroui/react';
-import { AlertTriangle, Check, Clock, Store, X } from 'lucide-react';
+import { AlertTriangle, Check, Clock, RotateCcw, Store, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
-import { approveGenerationAction, cancelChangeAction } from '../api/actions';
+import { ConfirmDialog } from '@/shared/ui';
+import { approveGenerationAction, cancelChangeAction, undoChangeAction } from '../api/actions';
 import type { ChangeSummary } from '../model/types';
+
+type Dialog = 'replace_all' | 'undo' | null;
 
 /**
  * Per-generation "Apply to store" control. idle → pending (plugin picks it
  * up) → applied / conflict / failed. Without a site key the button is
  * replaced by a hint pointing at the Integrations tab.
+ *
+ * Images on a store OSL cannot address image by image go through the
+ * replace-all path (docs/api/IMAGE-OPS.md §5): the merchant is told, in their
+ * own words and with the real counts, exactly which photos leave the product
+ * before anything is queued. Cancel is the default answer.
  */
 export function ApplyToStoreButton({
   jobId,
   siteId,
   initialChange,
   hasSiteKey,
-  disabled = false
+  disabled = false,
+  field,
+  replaceAllImages = false,
+  currentImageCount = 0,
+  generatedImageCount = 0
 }: {
   jobId: string;
   siteId: string;
@@ -26,11 +38,23 @@ export function ApplyToStoreButton({
   hasSiteKey: boolean;
   /** Archived products cannot be written back. */
   disabled?: boolean;
+  /** Which field this generation rewrites — only `images` can replace a gallery. */
+  field?: 'title' | 'description' | 'tags' | 'images';
+  /** The connection reported no stable image ids → applying replaces the gallery. */
+  replaceAllImages?: boolean;
+  /** Photos currently on the product, and generated visuals about to replace them. */
+  currentImageCount?: number;
+  generatedImageCount?: number;
 }) {
   const t = useTranslations('ApplyToStore');
   const [change, setChange] = useState<ChangeSummary | null>(initialChange);
   const [error, setError] = useState<string | null>(null);
+  const [undone, setUndone] = useState(false);
+  const [dialog, setDialog] = useState<Dialog>(null);
   const [pending, startTransition] = useTransition();
+
+  const needsReplaceAllConfirm =
+    field === 'images' && replaceAllImages && currentImageCount > 0 && change?.status !== 'pending';
 
   function approve() {
     const fd = new FormData();
@@ -40,6 +64,7 @@ export function ApplyToStoreButton({
       const res = await approveGenerationAction(fd);
       if (res.ok) setChange(res.change);
       else setError(t('errorGeneric'));
+      setDialog(null);
     });
   }
 
@@ -52,6 +77,20 @@ export function ApplyToStoreButton({
       const res = await cancelChangeAction(fd);
       if (res.ok) setChange(null);
       else setError(t('errorGeneric'));
+    });
+  }
+
+  function undo() {
+    if (!change) return;
+    const fd = new FormData();
+    fd.set('projectId', siteId);
+    fd.set('changeId', change.id);
+    setError(null);
+    startTransition(async () => {
+      const res = await undoChangeAction(fd);
+      if (res.ok) setUndone(true);
+      else setError(res.error === 'conflict' ? t('undoBlocked') : t('undoUnavailable'));
+      setDialog(null);
     });
   }
 
@@ -91,9 +130,23 @@ export function ApplyToStoreButton({
           </button>
         </>
       ) : status === 'applied' ? (
-        <span className="inline-flex items-center gap-1.5 text-[var(--success)] font-medium">
-          <Check className="size-3.5" aria-hidden /> {t('applied')}
-        </span>
+        <>
+          <span className="inline-flex items-center gap-1.5 text-[var(--success)] font-medium">
+            <Check className="size-3.5" aria-hidden /> {t('applied')}
+          </span>
+          {undone ? (
+            <span className="text-[var(--muted)]">{t('undoQueued')}</span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setDialog('undo')}
+              disabled={pending || disabled}
+              className="inline-flex items-center gap-1 text-[var(--muted)] hover:text-[var(--foreground)] underline underline-offset-2 disabled:opacity-50"
+            >
+              <RotateCcw className="size-3" aria-hidden /> {t('undo')}
+            </button>
+          )}
+        </>
       ) : status === 'conflict' ? (
         <span className="inline-flex items-start gap-1.5 text-[var(--warning,var(--danger))]">
           <AlertTriangle className="size-3.5 mt-0.5 shrink-0" aria-hidden />
@@ -114,7 +167,7 @@ export function ApplyToStoreButton({
           ) : null}
           <button
             type="button"
-            onClick={approve}
+            onClick={() => (needsReplaceAllConfirm ? setDialog('replace_all') : approve())}
             disabled={pending || disabled}
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -128,6 +181,31 @@ export function ApplyToStoreButton({
           {error}
         </span>
       ) : null}
+
+      <ConfirmDialog
+        isOpen={dialog === 'replace_all'}
+        onOpenChange={(open) => setDialog(open ? 'replace_all' : null)}
+        title={t('replaceAllTitle')}
+        description={t('replaceAllBody', {
+          current: currentImageCount,
+          generated: generatedImageCount
+        })}
+        confirmLabel={t('replaceAllConfirm')}
+        cancelLabel={t('replaceAllCancel')}
+        isPending={pending}
+        onConfirm={approve}
+      />
+      <ConfirmDialog
+        isOpen={dialog === 'undo'}
+        onOpenChange={(open) => setDialog(open ? 'undo' : null)}
+        title={t('undoTitle')}
+        description={t('undoBody')}
+        confirmLabel={t('undoConfirm')}
+        cancelLabel={t('replaceAllCancel')}
+        destructive={false}
+        isPending={pending}
+        onConfirm={undo}
+      />
     </div>
   );
 }

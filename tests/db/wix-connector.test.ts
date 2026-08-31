@@ -215,6 +215,70 @@ describe('pull / apply / disconnect / actions', () => {
     ]);
     expect((await getConnection(projectId))!.status).toBe('token_invalid');
   });
+  it('images ops: append + replace run, the verbs Wix has no API for are skipped', async () => {
+    await connect();
+    const product = await createProduct(projectId, { sourceId: 'w-1', title: 'Old title' });
+    const mapped = mapWixProduct(fake.products.get('w-1')!, { collections: new Map() });
+    // The fixture has one image (media id `m1`); a second one makes the ops
+    // legal at creation (removing one never empties the gallery).
+    const images = [
+      ...mapped.images,
+      {
+        src: 'https://static.wixstatic.com/media/2.jpg',
+        alt: null,
+        width: null,
+        height: null,
+        position: 1,
+        sourceImageId: 'm2'
+      }
+    ];
+    fake.products.get('w-1')!.media = {
+      items: [
+        ...(fake.products.get('w-1')!.media?.items ?? []),
+        { id: 'm2', mediaType: 'image', image: { url: 'https://static.wixstatic.com/media/2.jpg' } }
+      ]
+    };
+    await db
+      .update(products)
+      .set({ descriptionHtml: mapped.descriptionHtml, images })
+      .where(eq(products.id, product.id));
+
+    const res = await createChange({
+      projectId,
+      productId: product.id,
+      productSourceId: 'w-1',
+      field: 'images',
+      value: {
+        v: 1,
+        ops: [
+          { op: 'append', image: { src: 'https://cdn.oneshoplab.com/gen/a.jpg', alt: null } },
+          { op: 'replace', target: 'm2', image: { src: 'https://cdn.oneshoplab.com/gen/b.jpg' } },
+          { op: 'reorder', order: ['m1', 'new:0'] },
+          { op: 'remove', target: 'gone' }
+        ]
+      },
+      approvedBy: userId
+    });
+    if (!res.ok) throw new Error('create failed');
+
+    const out = await applyWixChanges(projectId);
+    expect(out.outcomes.map((o) => o.outcome)).toEqual(['applied']);
+    expect(fake.calls.addMedia).toEqual([
+      { id: 'w-1', urls: ['https://cdn.oneshoplab.com/gen/a.jpg'] },
+      { id: 'w-1', urls: ['https://cdn.oneshoplab.com/gen/b.jpg'] }
+    ]);
+    expect(fake.calls.removeMedia).toEqual([{ id: 'w-1', mediaIds: ['m2'] }]);
+    const [row] = await db
+      .select()
+      .from(productChanges)
+      .where(eq(productChanges.id, res.change.id));
+    // 2 = reorder (Wix Stores v1 has no ordering call), 3 = a target that is gone.
+    expect(row.ackPayload).toMatchObject({
+      status: 'applied',
+      skippedOps: ['2:reorder', '3:remove']
+    });
+  });
+
   it('actions: view, pull request, disconnect wipes the refresh token', async () => {
     await connect();
     const view = await getWixConnectionAction(form({ projectId }));

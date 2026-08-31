@@ -277,10 +277,20 @@ export const products = mysqlTable(
     handle: varchar('handle', { length: 255 }),
     title: varchar('title', { length: 512 }).notNull(),
     descriptionHtml: text('description_html'),
-    images:
-      json('images').$type<
-        Array<{ src: string; alt: string | null; width: number | null; height: number | null }>
-      >(),
+    images: json('images').$type<
+      Array<{
+        src: string;
+        alt: string | null;
+        width: number | null;
+        height: number | null;
+        position?: number;
+        /** Opaque id owned by the store (WP attachment id, Shopify MediaImage
+         *  gid, Wix media id). Absent on scraped catalogs and on plugins older
+         *  than the image-ops release → the replace-all fallback applies
+         *  (docs/api/IMAGE-OPS.md §1 and §5). */
+        sourceImageId?: string | null;
+      }>
+    >(),
     tags: json('tags').$type<string[]>(),
     variants: json('variants').$type<
       Array<{
@@ -801,6 +811,30 @@ export type ProductChangeStatus = (typeof PRODUCT_CHANGE_STATUSES)[number];
 export const PRODUCT_CHANGE_FIELDS = ['title', 'description', 'tags', 'images'] as const;
 export type ProductChangeField = (typeof PRODUCT_CHANGE_FIELDS)[number];
 
+/** Image verbs of the v1.1 changes protocol (docs/api/IMAGE-OPS.md §2). */
+export const IMAGE_OP_VERBS = [
+  'set_featured',
+  'append',
+  'replace',
+  'remove',
+  'set_alt',
+  'reorder'
+] as const;
+export type ImageOpVerb = (typeof IMAGE_OP_VERBS)[number];
+
+/**
+ * What one connection can actually do (docs/api/IMAGE-OPS.md §7). Declared by
+ * the provider — never inferred: an unknown provider gets the safe minimum
+ * (`stableImageIds: false`, no ops → replace-all only).
+ */
+export interface ConnectionCapabilities {
+  stableImageIds: boolean;
+  imageOps: ImageOpVerb[];
+  maxImages: number;
+  altEditable: boolean;
+  fields: ProductChangeField[];
+}
+
 export const apiKeys = mysqlTable(
   'api_keys',
   {
@@ -908,6 +942,11 @@ export const productChanges = mysqlTable(
      *  time; compared to the plugin's `storeValueHash` for conflict
      *  detection. NULL = unknown (no conflict detection possible). */
     priorValueHash: varchar('prior_value_hash', { length: 64 }),
+    /** The field's value BEFORE applying, captured at approval time — for
+     *  images the full ordered list with `sourceImageId`s. Powers "Annuler"
+     *  (reverse change) and the before/after preview (IMAGE-OPS.md §3).
+     *  NULL only for rows created before the column existed. */
+    priorValue: json('prior_value'),
     sourceJobId: varchar('source_job_id', { length: 36 }).references(() => jobs.id, {
       onDelete: 'set null'
     }),
@@ -922,6 +961,9 @@ export const productChanges = mysqlTable(
       error?: string;
       storeUpdatedAt?: string;
       storeValueHash?: string;
+      /** Ops the executor could not carry out (target gone, verb unsupported),
+       *  as `"<index>:<verb>"` — never fatal (IMAGE-OPS.md §2). */
+      skippedOps?: string[];
     } | null>(),
     expiresAt: timestamp('expires_at')
   },
@@ -934,6 +976,25 @@ export const productChanges = mysqlTable(
     idxProduct: index('idx_product_changes_product').on(t.productId)
   })
 );
+
+/**
+ * What the store connected to a project declares it can do (IMAGE-OPS.md §7).
+ * One row per project — capabilities describe the *store link*, not a
+ * credential: site keys rotate every time the merchant clicks "Rotate" (24 h
+ * grace, several live rows per project), and a rotation must not lose what the
+ * plugin reported. Written by `POST /products/sync` (optional `capabilities`
+ * body field, WooCommerce plugin ≥ the ops release); OSL-driven connectors
+ * (Shopify, Wix) declare theirs statically in code instead.
+ */
+export const connectionCapabilities = mysqlTable('connection_capabilities', {
+  projectId: varchar('project_id', { length: 36 })
+    .primaryKey()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  /** Platform that reported them — `projects.source` at reporting time. */
+  platform: varchar('platform', { length: 32 }).notNull(),
+  capabilities: json('capabilities').$type<ConnectionCapabilities>().notNull(),
+  reportedAt: timestamp('reported_at').notNull().defaultNow().onUpdateNow()
+});
 
 // ============================================================================
 // SHOPIFY CONNECTOR — custom-app Admin token held by OSL

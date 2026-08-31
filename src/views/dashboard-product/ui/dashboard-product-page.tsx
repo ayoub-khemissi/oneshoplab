@@ -24,6 +24,7 @@ import {
 } from '@/entities/generation-job';
 import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
+import { getProjectCapabilities } from '@/entities/connection-capability';
 import { listChangesForJobs } from '@/features/apply-to-store';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
@@ -137,12 +138,15 @@ export async function DashboardProductPage({
   const { inFlightChatJobs, recentFailedChatJobs } = await loadRecentChatJobs(productId);
 
   // Apply-to-store state per past generation + whether a plugin can pick it up.
-  const [changeByJobId, siteKeys] = await Promise.all([
+  // `capabilities` decides whether applying images replaces the whole gallery
+  // (docs/api/IMAGE-OPS.md §5) — the merchant confirms that in plain words.
+  const [changeByJobId, siteKeys, capabilities] = await Promise.all([
     listChangesForJobs(
       projectId,
       pastGenPage.items.map((h) => h.jobId)
     ),
-    listProjectKeys({ projectId, userId: session.user.id })
+    listProjectKeys({ projectId, userId: session.user.id }),
+    getProjectCapabilities(projectId)
   ]);
   const hasSiteKey = siteKeys.some((k) => isUsableKey(k));
 
@@ -252,6 +256,8 @@ export async function DashboardProductPage({
         archived={archived}
         hasSiteKey={hasSiteKey}
         changeByJobId={changeByJobId}
+        replaceAllImages={!capabilities.stableImageIds}
+        currentImageCount={product.images.length}
       />
     </main>
   );

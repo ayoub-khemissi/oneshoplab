@@ -20,7 +20,9 @@ export function PastGenerationsSection({
   siteId,
   archived,
   hasSiteKey,
-  changeByJobId
+  changeByJobId,
+  replaceAllImages,
+  currentImageCount
 }: {
   title: string;
   emptyText: string;
@@ -35,6 +37,11 @@ export function PastGenerationsSection({
   /** A usable site key exists — otherwise the row shows a link to set one up. */
   hasSiteKey: boolean;
   changeByJobId: Record<string, ChangeSummary>;
+  /** The store cannot be addressed image by image → applying replaces the
+   *  whole gallery, which the merchant must confirm (IMAGE-OPS.md §5). */
+  replaceAllImages: boolean;
+  /** Photos currently on the product — the "n" of the confirmation sentence. */
+  currentImageCount: number;
 }) {
   const tDash = useTranslations('Dashboard');
   if (items.length === 0) {
@@ -94,6 +101,10 @@ export function PastGenerationsSection({
                       initialChange={changeByJobId[h.jobId] ?? null}
                       hasSiteKey={hasSiteKey}
                       disabled={archived}
+                      field={h.field}
+                      replaceAllImages={replaceAllImages}
+                      currentImageCount={currentImageCount}
+                      generatedImageCount={generatedImageCount(h)}
                     />
                   )}
                 </Accordion.Body>
@@ -110,6 +121,12 @@ export function PastGenerationsSection({
       />
     </section>
   );
+}
+
+/** The "m" of the replace-all confirmation: visuals this generation delivered. */
+function generatedImageCount(item: OptimHistoryItem): number {
+  if (item.field !== 'images' || !Array.isArray(item.output)) return 0;
+  return item.output.filter((u) => typeof u === 'string' && u.length > 0).length;
 }
 
 function pastGenLabelKey(field: OptimHistoryItem['field']): string {

@@ -49,14 +49,16 @@ describe('mapAdminProduct (Admin GraphQL 2025-07 → NormalizedProduct)', () => 
         alt: 'Front view',
         width: 1200,
         height: 1600,
-        position: 0
+        position: 0,
+        sourceImageId: 'gid://shopify/MediaImage/31000000000001'
       },
       {
         src: 'https://cdn.shopify.com/s/files/1/0001/back.jpg',
         alt: null,
         width: null,
         height: null,
-        position: 1
+        position: 1,
+        sourceImageId: 'gid://shopify/MediaImage/31000000000002'
       }
     ]);
   });

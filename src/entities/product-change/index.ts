@@ -7,9 +7,34 @@ export type {
   CreateChangeResult,
   ListPendingOptions,
   PendingChangesPage,
-  ProductChangeRow
+  ProductChangeRow,
+  ReverseChangeResult
 } from './model/types';
 export { canonicalJson, hashValue } from './lib/hash';
+export {
+  IMAGE_OPS_VERSION,
+  MAX_IMAGE_OPS,
+  checkImageChangeValue,
+  expectedImagesAfter,
+  imageArraySchema,
+  imageOpSchema,
+  imageOpsPayloadSchema,
+  isImageOpsPayload,
+  opRef,
+  simulateImageOps
+} from './lib/image-ops';
+export type {
+  ImageArrayValue,
+  ImageOp,
+  ImageOpsPayload,
+  ImageOpsSimulation,
+  ImageValueCheck,
+  ImageValueRejection,
+  PriorImageRef,
+  SimulatedImage
+} from './lib/image-ops';
+export { buildReverseValue, parsePriorImages } from './lib/reverse';
+export type { PriorImage, ReverseValue } from './lib/reverse';
 export {
   CHANGE_TRANSITIONS,
   ChangeNotFound,
@@ -27,13 +52,16 @@ export {
   createChange,
   currentFieldValue,
   expireDueChanges,
-  listPendingChanges
+  listPendingChanges,
+  priorFieldValue
 } from './api/changes';
+export { createReverseChange } from './api/reverse';
 export { runIntegrationSweeps, sweepSyncSessions } from './api/sweeps';
 export { applyPendingChanges, storeFieldValue } from './api/apply-loop';
 export type {
   ApplyDriver,
   ApplyFieldSource,
   ApplyOutcome,
-  ApplyProjectResult
+  ApplyProjectResult,
+  ImageOpsExecutor
 } from './api/apply-loop';

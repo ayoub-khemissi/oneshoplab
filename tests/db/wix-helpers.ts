@@ -10,6 +10,7 @@ export interface FakeWixClient extends WixClient {
   calls: {
     productUpdate: Array<Record<string, unknown>>;
     addMedia: Array<{ id: string; urls: string[] }>;
+    removeMedia: Array<{ id: string; mediaIds: string[] }>;
     productById: string[];
   };
 }
@@ -18,11 +19,19 @@ export const REFRESH_TOKEN = 'wix-refresh-' + 'x'.repeat(40);
 export const INSTANCE_ID = 'inst-0000-1111';
 
 export function fakeWixProduct(id: string, patch: Partial<WixProduct> = {}): WixProduct {
-  return { ...wixProductFixture, id, slug: `p-${id}`, ...patch };
+  return {
+    ...wixProductFixture,
+    id,
+    slug: `p-${id}`,
+    // Media is mutated by the media calls below — never share the fixture array.
+    media: { items: (wixProductFixture.media?.items ?? []).map((m) => ({ ...m })) },
+    ...patch
+  };
 }
 
 export function createFakeWixClient(products: WixProduct[] = []): FakeWixClient {
   const map = new Map(products.map((p) => [p.id, p]));
+  let nextMedia = 1;
   const guard = () => {
     if (client.tokenInvalid)
       throw new WixClientError('token_invalid', 'Wix refused the token (401)', 401);
@@ -31,7 +40,7 @@ export function createFakeWixClient(products: WixProduct[] = []): FakeWixClient 
     products: map,
     tokenInvalid: false,
     lastOptions: null,
-    calls: { productUpdate: [], addMedia: [], productById: [] },
+    calls: { productUpdate: [], addMedia: [], removeMedia: [], productById: [] },
     async request() {
       throw new Error('raw request not supported by the fake');
     },
@@ -62,6 +71,21 @@ export function createFakeWixClient(products: WixProduct[] = []): FakeWixClient 
     async productAddMedia(id, urls) {
       guard();
       client.calls.addMedia.push({ id, urls });
+      const p = map.get(id);
+      if (!p) return;
+      const items = (p.media ??= {}).items ?? [];
+      for (const url of urls) {
+        items.push({ id: `media-${nextMedia++}`, mediaType: 'image', image: { url } });
+      }
+      p.media.items = items;
+    },
+    async productRemoveMedia(id, mediaIds) {
+      guard();
+      client.calls.removeMedia.push({ id, mediaIds });
+      const p = map.get(id);
+      if (p?.media?.items) {
+        p.media.items = p.media.items.filter((m) => !m.id || !mediaIds.includes(m.id));
+      }
     },
     async collections() {
       guard();

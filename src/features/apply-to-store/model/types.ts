@@ -17,4 +17,22 @@ export interface PendingChangeSummary extends ChangeSummary {
 
 export type ApproveResult =
   | { ok: true; change: ChangeSummary }
-  | { ok: false; error: 'unauthorized' | 'bad_request' | 'not_found' | 'unsupported' };
+  | {
+      ok: false;
+      error: 'unauthorized' | 'bad_request' | 'not_found' | 'unsupported' | 'invalid_value';
+    };
+
+/** "Annuler" on an applied change → a reverse change (docs/api/IMAGE-OPS.md §3). */
+export type UndoResult =
+  | { ok: true; change: ChangeSummary }
+  | {
+      ok: false;
+      error:
+        | 'unauthorized'
+        | 'bad_request'
+        | 'not_found'
+        | 'not_applied'
+        | 'no_prior'
+        | 'not_reversible'
+        | 'conflict';
+    };

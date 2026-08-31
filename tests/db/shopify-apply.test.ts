@@ -1,5 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  getProjectCapabilities,
+  PLATFORM_CAPABILITIES,
+  saveReportedCapabilities
+} from '@/entities/connection-capability';
 import { createChange, hashValue } from '@/entities/product-change';
 import { getConnection, listForApply } from '@/entities/shop-connection';
 import {
@@ -120,6 +125,91 @@ describe('apply step', () => {
     ]);
     expect((await status(live)).status).toBe('applied');
     expect((await status(stale)).status).toBe('expired');
+  });
+
+  it('a live connection is what getProjectCapabilities answers with', async () => {
+    // A plugin report on the same project must not win over the connector that
+    // will actually execute the ops.
+    await saveReportedCapabilities(projectId, 'woocommerce', { stableImageIds: false });
+    expect(await getProjectCapabilities(projectId)).toEqual(PLATFORM_CAPABILITIES.shopify);
+  });
+
+  it('images ops: media created, detached and reordered; unsupported ops come back in skippedOps', async () => {
+    // The fixture product carries two MediaImages: 31000000000001 / …002.
+    const id = await change('images', {
+      v: 1,
+      ops: [
+        { op: 'append', image: { src: 'https://cdn.oneshoplab.com/gen/a.jpg', alt: 'A' } },
+        { op: 'reorder', order: ['new:0', 'gid://shopify/MediaImage/31000000000001'] },
+        { op: 'remove', target: 'gid://shopify/MediaImage/31000000000002' },
+        { op: 'remove', target: 'gid://shopify/MediaImage/does-not-exist' },
+        { op: 'set_alt', target: 'gid://shopify/MediaImage/31000000000001', alt: 'Grès' }
+      ]
+    });
+    const res = await applyShopifyChanges(projectId);
+    expect(res.outcomes.map((o) => o.outcome)).toEqual(['applied']);
+    expect(fake.calls.productCreateMedia).toEqual([
+      { id: '77', media: [{ originalSource: 'https://cdn.oneshoplab.com/gen/a.jpg', alt: 'A' }] }
+    ]);
+    expect(fake.calls.productDeleteMedia).toEqual([
+      { id: '77', mediaIds: ['gid://shopify/MediaImage/31000000000002'] }
+    ]);
+    expect(fake.calls.productReorderMedia).toHaveLength(1);
+    const row = await status(id);
+    expect(row.status).toBe('applied');
+    // 3 = a target the store no longer has, 4 = set_alt, which Shopify's
+    // scopes do not allow us to run. Reported, never fatal.
+    expect(row.ackPayload).toMatchObject({ skippedOps: ['3:remove', '4:set_alt'] });
+  });
+
+  it('images ops: the last image in the store is never removed', async () => {
+    // The change is legal against OSL's view (two images, one removed), but the
+    // merchant already deleted the other one in Shopify: the executor refuses
+    // rather than leaving the product with a placeholder.
+    const id = await change('images', {
+      v: 1,
+      ops: [{ op: 'remove', target: 'gid://shopify/MediaImage/31000000000001' }]
+    });
+    fake.products.get('77')!.media.nodes = [
+      {
+        id: 'gid://shopify/MediaImage/31000000000001',
+        alt: null,
+        image: {
+          url: 'https://cdn.shopify.com/s/files/1/0001/front.jpg',
+          width: 1200,
+          height: 1600
+        }
+      }
+    ];
+    // OSL's hash is computed from that same single image so the loop does not
+    // stop at the conflict check — the guard under test is the executor's.
+    await db
+      .update(products)
+      .set({
+        images: [
+          {
+            src: 'https://cdn.shopify.com/s/files/1/0001/front.jpg',
+            alt: null,
+            width: 1200,
+            height: 1600,
+            sourceImageId: 'gid://shopify/MediaImage/31000000000001'
+          }
+        ]
+      })
+      .where(eq(products.id, product.id));
+    await db
+      .update(productChanges)
+      .set({
+        priorValueHash: hashValue([
+          { src: 'https://cdn.shopify.com/s/files/1/0001/front.jpg', alt: null }
+        ])
+      })
+      .where(eq(productChanges.id, id));
+
+    const res = await applyShopifyChanges(projectId);
+    expect(res.outcomes.map((o) => o.outcome)).toEqual(['applied']);
+    expect(fake.calls.productDeleteMedia).toEqual([]);
+    expect((await status(id)).ackPayload).toMatchObject({ skippedOps: ['0:remove'] });
   });
 
   it('failed: a Shopify userError acks failed with the message; a missing product too', async () => {

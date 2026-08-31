@@ -15,6 +15,7 @@ import {
   withProjectSyncLock
 } from '@/entities/product';
 import { emitProjectEvent } from '@/entities/outbound-webhook';
+import { saveReportedCapabilities } from '@/entities/connection-capability';
 import { ApiError } from '@/shared/api';
 import { db } from '@/shared/db';
 import { projects, users, type Platform } from '@/shared/db/schema';
@@ -139,6 +140,11 @@ async function runSync(
   return withProjectLock(project.id, async () => {
     await assertPlanLimit(project, sourceIds);
     const platform = await resolvePlatform(project, input.platformHeader);
+    // The plugin knows its own version: every call re-states what it can do,
+    // so an upgrade (or a downgrade) takes effect on the next sync.
+    if (body.capabilities) {
+      await saveReportedCapabilities(project.id, platform, body.capabilities);
+    }
     const normalized = body.products.map((p) => toNormalizedProduct(p, platform));
     const counts = await syncProjectProducts(project.id, platform, normalized, {
       archiveMissing: false

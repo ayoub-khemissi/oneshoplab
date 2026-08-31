@@ -6,6 +6,14 @@ export interface ProductImage {
   width: number | null;
   height: number | null;
   position: number;
+  /**
+   * Opaque, stable id owned by the store (WooCommerce attachment id, Shopify
+   * `gid://shopify/MediaImage/…`, Wix media id). It is what image ops target
+   * (docs/api/IMAGE-OPS.md §1). Absent/null = the store cannot be addressed
+   * precisely for this image → the replace-all fallback (§5). Never invented:
+   * a source that does not expose one leaves it null.
+   */
+  sourceImageId?: string | null;
 }
 
 export interface ProductVariant {

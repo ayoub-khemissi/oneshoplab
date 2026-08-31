@@ -19,6 +19,7 @@ import {
   type ShopifyAdminClient
 } from './admin-client';
 import { alertTokenInvalid } from './alerts';
+import { createShopifyImageOps } from './image-ops';
 
 export type { ApplyOutcome, ApplyProjectResult };
 
@@ -51,7 +52,8 @@ async function writeChange(client: ShopifyAdminClient, change: ProductChangeRow)
       if (!isStringArray(change.value)) throw new Error('tags value must be a string[]');
       return client.productUpdate({ id, tags: change.value });
     case 'images':
-      return client.productCreateMedia(id, imageInputs(change.value));
+      await client.productCreateMedia(id, imageInputs(change.value));
+      return;
   }
 }
 
@@ -75,7 +77,8 @@ export async function applyShopifyChanges(
             : null;
         },
         writeChange: (change) => writeChange(client, change),
-        isAuthError: (e) => e instanceof ShopifyAdminError && e.code === 'token_invalid'
+        isAuthError: (e) => e instanceof ShopifyAdminError && e.code === 'token_invalid',
+        imageOps: createShopifyImageOps(client, secrets.shopDomain)
       },
       {
         limit: APPLY_BATCH,

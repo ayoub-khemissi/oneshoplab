@@ -16,7 +16,8 @@ export function toNormalizedProduct(p: SyncProductInput, platform: Platform): No
       alt: img.alt ?? null,
       width: img.width ?? null,
       height: img.height ?? null,
-      position: img.position ?? i
+      position: img.position ?? i,
+      sourceImageId: img.sourceImageId ?? null
     })),
     tags: p.tags ?? [],
     variants: (p.variants ?? []).map((v) => ({

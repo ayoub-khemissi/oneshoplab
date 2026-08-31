@@ -1535,7 +1535,18 @@
       "images": "Zdjęcia"
     },
     "approvedOn": "Zatwierdzono {date}",
-    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
+    "replaceAllTitle": "Zastąpić wszystkie zdjęcia?",
+    "replaceAllBody": "Twoje obecne zdjęcia ({current}) zostaną usunięte z produktu i zastąpione wygenerowanymi wizualizacjami ({generated}). Pozostaną w Twojej bibliotece multimediów.",
+    "replaceAllConfirm": "Zastąp zdjęcia",
+    "replaceAllCancel": "Anuluj",
+    "undo": "Cofnij",
+    "undoTitle": "Cofnąć tę zmianę?",
+    "undoBody": "Poprzednia treść zostanie przywrócona w Twoim sklepie przy następnym przebiegu.",
+    "undoConfirm": "Przywróć poprzednią wersję",
+    "undoQueued": "Cofnięcie oczekuje",
+    "undoBlocked": "Nie można cofnąć: ten produkt zmienił się od tego czasu w Twoim sklepie.",
+    "undoUnavailable": "Tej zmiany nie można cofnąć."
   },
   "IntegrationAlerts": {
     "greeting": "Cześć {name},",

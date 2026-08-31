@@ -52,6 +52,20 @@ describe('sync body schema (spec §3 caps)', () => {
     expect(r.success).toBe(false);
     expect(!r.success && r.error.issues[0].path).toEqual(['products', 2, 'sourceId']);
   });
+  it('accepts sourceImageId on an image and a capabilities object (IMAGE-OPS §1, §7)', () => {
+    const r = syncBodySchema.safeParse(
+      body([product('a', { images: [{ src: 'https://x.test/a.jpg', sourceImageId: '4711' }] })], {
+        capabilities: { stableImageIds: true, imageOps: ['append', 'remove'], maxImages: 10 }
+      })
+    );
+    expect(r.success).toBe(true);
+    expect(r.success && r.data.products[0].images?.[0].sourceImageId).toBe('4711');
+    expect(r.success && r.data.capabilities?.imageOps).toEqual(['append', 'remove']);
+    // Both are optional — an older plugin sends neither.
+    expect(fails(body([product('a', { images: [{ src: 'https://x.test/a.jpg' }] })]))).toBe(false);
+    expect(fails(body([product('a')], { capabilities: { imageOps: ['teleport'] } }))).toBe(true);
+  });
+
   it('requires mode, sourceId and title', () => {
     expect(fails({ products: [] })).toBe(true);
     expect(fails(body([{ title: 'x' }]))).toBe(true);

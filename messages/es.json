@@ -1535,7 +1535,18 @@
       "images": "Imágenes"
     },
     "approvedOn": "Aprobado el {date}",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
+    "replaceAllTitle": "¿Sustituir todas las fotos?",
+    "replaceAllBody": "Tus {current} fotos actuales se quitarán del producto y se sustituirán por las {generated} imágenes generadas. Seguirán en tu biblioteca de medios.",
+    "replaceAllConfirm": "Sustituir las fotos",
+    "replaceAllCancel": "Cancelar",
+    "undo": "Deshacer",
+    "undoTitle": "¿Deshacer este cambio?",
+    "undoBody": "El contenido anterior se restaurará en tu tienda en la próxima pasada.",
+    "undoConfirm": "Restaurar la versión anterior",
+    "undoQueued": "Deshacer pendiente",
+    "undoBlocked": "No se puede deshacer: este producto ha cambiado en tu tienda desde entonces.",
+    "undoUnavailable": "Este cambio no se puede deshacer."
   },
   "IntegrationAlerts": {
     "greeting": "Hola {name},",

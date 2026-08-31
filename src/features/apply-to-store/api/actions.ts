@@ -4,7 +4,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { imageRetentionDaysForPlan } from '@/entities/ai-model';
-import { cancelChange, createChange } from '@/entities/product-change';
+import { cancelChange, createChange, createReverseChange } from '@/entities/product-change';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import {
@@ -15,7 +15,7 @@ import {
   type ProductChangeField
 } from '@/shared/db/schema';
 import { toChangeSummary } from '../lib/summary';
-import type { ApproveResult } from '../model/types';
+import type { ApproveResult, UndoResult } from '../model/types';
 
 const uuid = z.string().uuid();
 const ulidSchema = z.string().regex(/^[0-9A-HJKMNP-TV-Z]{26}$/);
@@ -108,9 +108,29 @@ export async function approveGenerationAction(formData: FormData): Promise<Appro
     approvedBy: session.user.id,
     expiresAt
   });
-  if (!created.ok) return { ok: false, error: 'not_found' };
+  if (!created.ok) {
+    return { ok: false, error: created.reason === 'not_found' ? 'not_found' : 'invalid_value' };
+  }
   revalidatePath(`/dashboard/sites/${job.projectId}`);
   return { ok: true, change: toChangeSummary(created.change) };
+}
+
+/**
+ * "Annuler" on an applied change: queues the reverse change (IMAGE-OPS.md §3).
+ * Refused with `conflict` when the product moved in the store since — the UI
+ * says so instead of silently overwriting the merchant's own edit.
+ */
+export async function undoChangeAction(formData: FormData): Promise<UndoResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
+  const projectId = uuid.safeParse(formData.get('projectId'));
+  const changeId = ulidSchema.safeParse(formData.get('changeId'));
+  if (!projectId.success || !changeId.success) return { ok: false, error: 'bad_request' };
+
+  const res = await createReverseChange(projectId.data, changeId.data, session.user.id);
+  if (!res.ok) return { ok: false, error: res.reason };
+  revalidatePath(`/dashboard/sites/${projectId.data}`);
+  return { ok: true, change: toChangeSummary(res.change) };
 }
 
 export async function cancelChangeAction(

@@ -16,6 +16,7 @@ export type {
 } from './api/client';
 export { pullWixCatalog, runWixNightlyPulls, runWixRequestedPulls } from './api/pull';
 export type { WixPullResult } from './api/pull';
+export { CAPABILITIES, createWixImageOps } from './api/image-ops';
 export { WIX_APPLY_BATCH, applyWixChanges, runWixApplies } from './api/apply';
 export { handleWixWebhook } from './api/webhooks';
 export type { WixWebhookOutcome } from './api/webhooks';

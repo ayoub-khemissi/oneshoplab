@@ -1535,7 +1535,18 @@
       "images": "Görseller"
     },
     "approvedOn": "{date} tarihinde onaylandı",
-    "errorGeneric": "Bir sorun oluştu. Tekrar deneyin."
+    "errorGeneric": "Bir sorun oluştu. Tekrar deneyin.",
+    "replaceAllTitle": "Tüm fotoğraflar değiştirilsin mi?",
+    "replaceAllBody": "Mevcut {current} fotoğrafınız üründen kaldırılacak ve oluşturulan {generated} görselle değiştirilecek. Medya kitaplığınızda kalmaya devam edecekler.",
+    "replaceAllConfirm": "Fotoğrafları değiştir",
+    "replaceAllCancel": "Vazgeç",
+    "undo": "Geri al",
+    "undoTitle": "Bu değişiklik geri alınsın mı?",
+    "undoBody": "Önceki içerik bir sonraki geçişte mağazanıza geri yüklenecek.",
+    "undoConfirm": "Önceki sürümü geri yükle",
+    "undoQueued": "Geri alma bekliyor",
+    "undoBlocked": "Geri alınamıyor: bu ürün o zamandan beri mağazanızda değişti.",
+    "undoUnavailable": "Bu değişiklik geri alınamaz."
   },
   "IntegrationAlerts": {
     "greeting": "Merhaba {name},",

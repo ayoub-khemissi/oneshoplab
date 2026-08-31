@@ -54,6 +54,8 @@ export interface WixClient {
   productUpdate(input: WixProductUpdateInput): Promise<void>;
   /** External URLs (R2): Wix downloads them. */
   productAddMedia(id: string, urls: string[]): Promise<void>;
+  /** Detaches media from the product; the files stay in the Wix media manager. */
+  productRemoveMedia(id: string, mediaIds: string[]): Promise<void>;
   /** id → name, every collection of the store (one call per pull). */
   collections(): Promise<Map<string, string>>;
 }
@@ -167,6 +169,12 @@ export function createWixClient(opts: WixClientOptions): WixClient {
       await request(`/stores/v1/products/${encodeURIComponent(id)}/media`, {
         method: 'POST',
         body: { media: urls.map((url) => ({ url })) }
+      });
+    },
+    async productRemoveMedia(id, mediaIds) {
+      await request(`/stores/v1/products/${encodeURIComponent(id)}/media/delete`, {
+        method: 'POST',
+        body: { mediaIds }
       });
     },
     async collections() {

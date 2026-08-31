@@ -1535,7 +1535,18 @@
       "images": "이미지"
     },
     "approvedOn": "{date} 승인",
-    "errorGeneric": "문제가 발생했습니다. 다시 시도하세요."
+    "errorGeneric": "문제가 발생했습니다. 다시 시도하세요.",
+    "replaceAllTitle": "모든 사진을 교체할까요?",
+    "replaceAllBody": "현재 사진 {current}장이 상품에서 제거되고 생성된 비주얼 {generated}장으로 교체됩니다. 사진은 미디어 라이브러리에 그대로 남습니다.",
+    "replaceAllConfirm": "사진 교체",
+    "replaceAllCancel": "취소",
+    "undo": "실행 취소",
+    "undoTitle": "이 변경을 취소할까요?",
+    "undoBody": "다음 반영 시 이전 내용이 스토어에 복원됩니다.",
+    "undoConfirm": "이전 버전 복원",
+    "undoQueued": "취소 대기 중",
+    "undoBlocked": "취소할 수 없습니다: 이후 이 상품이 스토어에서 변경되었습니다.",
+    "undoUnavailable": "이 변경은 취소할 수 없습니다."
   },
   "IntegrationAlerts": {
     "greeting": "{name}님, 안녕하세요.",

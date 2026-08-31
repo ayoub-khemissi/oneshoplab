@@ -27,7 +27,8 @@ describe('mapWixProduct', () => {
         alt: 'Linen shirt front',
         width: 1200,
         height: 1600,
-        position: 0
+        position: 0,
+        sourceImageId: 'm1'
       }
     ]);
     expect(p.variants.map((v) => [v.title, v.sku, v.price, v.available])).toEqual([

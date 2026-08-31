@@ -103,7 +103,10 @@ export function mapAdminProduct(p: AdminProduct, ctx: MapContext): NormalizedPro
       alt: m.alt || null,
       width: m.image.width ?? null,
       height: m.image.height ?? null,
-      position: images.length
+      position: images.length,
+      // The MediaImage gid, kept whole: it is what productDeleteMedia /
+      // productReorderMedia take (IMAGE-OPS.md §1).
+      sourceImageId: m.id
     });
   }
 

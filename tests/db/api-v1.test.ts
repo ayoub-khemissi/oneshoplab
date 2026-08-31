@@ -15,7 +15,15 @@ import { buildSignatureHeader, createApiKey, revokeApiKey } from '@/entities/api
 import { createChange, hashValue } from '@/entities/product-change';
 import { resetRateLimits } from '@/shared/api';
 import { db } from '@/shared/db';
-import { catalogSyncSessions, products, projects, type ApiKeyPermission } from '@/shared/db/schema';
+import {
+  catalogSyncSessions,
+  connectionCapabilities,
+  productChanges,
+  products,
+  projects,
+  type ApiKeyPermission
+} from '@/shared/db/schema';
+import { getProjectCapabilities, MINIMUM_CAPABILITIES } from '@/entities/connection-capability';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
 import { createProject } from './site-helpers';
@@ -248,6 +256,43 @@ describe('POST /products/sync', () => {
     expect((await sync({ mode: 'partial', products: [product('p0', 'x')] })).status).toBe(200);
   });
 
+  it('stores the reported capabilities and the images sourceImageId (IMAGE-OPS §1, §7)', async () => {
+    expect(await getProjectCapabilities(projectId)).toEqual(MINIMUM_CAPABILITIES);
+    const r = await sync({
+      mode: 'partial',
+      products: [
+        {
+          sourceId: 'a',
+          title: 'T',
+          images: [{ src: 'https://x.test/a.jpg', sourceImageId: '4711' }]
+        }
+      ],
+      capabilities: { stableImageIds: true, imageOps: ['append', 'remove'], maxImages: 12 }
+    });
+    expect(r.status).toBe(200);
+    const [row] = await db.select().from(products).where(eq(products.sourceId, 'a'));
+    expect(row.images?.[0]).toMatchObject({ src: 'https://x.test/a.jpg', sourceImageId: '4711' });
+    expect(await getProjectCapabilities(projectId)).toEqual({
+      ...MINIMUM_CAPABILITIES,
+      stableImageIds: true,
+      imageOps: ['append', 'remove'],
+      maxImages: 12
+    });
+    const [stored] = await db.select().from(connectionCapabilities);
+    expect(stored.projectId).toBe(projectId);
+
+    // A downgraded plugin re-states less on its next call.
+    await sync({ mode: 'partial', products: [], capabilities: {} });
+    expect(await getProjectCapabilities(projectId)).toEqual(MINIMUM_CAPABILITIES);
+    // An image without an id stays null — never inferred.
+    await sync({
+      mode: 'partial',
+      products: [{ sourceId: 'b', title: 'T', images: [{ src: 'https://x.test/b.jpg' }] }]
+    });
+    const [plain] = await db.select().from(products).where(eq(products.sourceId, 'b'));
+    expect(plain.images?.[0].sourceImageId).toBeNull();
+  });
+
   it('idempotency: replay returns the cached body, a different body is 409', async () => {
     const headers = { 'idempotency-key': 'k1' };
     const body = { mode: 'partial', products: [product('a')] };
@@ -291,6 +336,47 @@ describe('changes', () => {
     if (!res.ok) throw new Error('change');
     return res.change.id;
   }
+
+  it('serves an images ops payload as-is and records skippedOps on the ack', async () => {
+    const p = await createProduct(projectId, {
+      sourceId: 'ops',
+      images: [
+        { src: 'https://x.test/1.jpg', alt: null, width: null, height: null, sourceImageId: 'm1' },
+        { src: 'https://x.test/2.jpg', alt: null, width: null, height: null, sourceImageId: 'm2' }
+      ]
+    });
+    const value = {
+      v: 1,
+      ops: [
+        { op: 'set_alt', target: 'm1', alt: 'Mug en grès' },
+        { op: 'append', image: { src: 'https://x.test/gen.jpg', alt: null } },
+        { op: 'remove', target: 'm2' }
+      ]
+    };
+    const res = await createChange({
+      projectId,
+      productId: p.id,
+      productSourceId: 'ops',
+      field: 'images',
+      value,
+      approvedBy: userId
+    });
+    if (!res.ok) throw new Error('change');
+
+    const page = await changes();
+    expect(page.status).toBe(200);
+    expect(page.body.changes[0]).toMatchObject({ field: 'images', value });
+
+    const acked = await ack(res.change.id, { status: 'applied', skippedOps: ['2:remove'] });
+    expect(acked.body).toEqual({ status: 'applied' });
+    const [row] = await db
+      .select()
+      .from(productChanges)
+      .where(eq(productChanges.id, res.change.id));
+    expect(row.ackPayload).toMatchObject({ status: 'applied', skippedOps: ['2:remove'] });
+    // Still validated: 60 entries max, non-empty strings.
+    expect((await ack(res.change.id, { status: 'applied', skippedOps: [''] })).status).toBe(422);
+  });
 
   it('lists oldest first with cursor + limit', async () => {
     const ids = [await makeChange('a'), await makeChange('b'), await makeChange('c')];

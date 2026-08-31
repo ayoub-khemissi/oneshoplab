@@ -1,11 +1,13 @@
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/shared/db';
-import { productChanges } from '@/shared/db/schema';
+import { productChanges, products } from '@/shared/db/schema';
 import {
   ackChange,
   cancelChange,
   createChange,
+  createReverseChange,
+  currentFieldValue,
   expireDueChanges,
   hashValue,
   listPendingChanges,
@@ -122,6 +124,141 @@ describe('product changes', () => {
     expect(await cancelChange(projectId, c.id, userId)).toBe('cancelled');
     expect(await cancelChange(projectId, c.id, userId)).toBe('refused');
     expect((await ackChange(projectId, c.id, { status: 'applied' })).kind).toBe('already_acked');
+  });
+
+  it('captures prior_value whole, with the image ids (IMAGE-OPS §3)', async () => {
+    const c = await make();
+    expect(c.priorValue).toBe('Old title');
+
+    const withImages = await createProduct(projectId, {
+      sourceId: 'imgs',
+      images: [
+        {
+          src: 'https://cdn.test/1.jpg',
+          alt: 'One',
+          width: null,
+          height: null,
+          sourceImageId: 'm1'
+        }
+      ]
+    });
+    const res = await createChange({
+      projectId,
+      productId: withImages.id,
+      productSourceId: withImages.sourceId,
+      field: 'images',
+      value: [{ src: 'https://cdn.test/gen.jpg', alt: null }],
+      approvedBy: userId
+    });
+    expect(res.ok && res.change.priorValue).toEqual([
+      { src: 'https://cdn.test/1.jpg', alt: 'One', sourceImageId: 'm1', position: 0 }
+    ]);
+    // The hash keeps its reduced, plugin-facing shape.
+    expect(res.ok && res.change.priorValueHash).toBe(
+      hashValue([{ src: 'https://cdn.test/1.jpg', alt: 'One' }])
+    );
+  });
+
+  it('rejects an images value that is malformed or empties the gallery', async () => {
+    const p = await createProduct(projectId, {
+      sourceId: 'guard',
+      images: [
+        { src: 'https://cdn.test/1.jpg', alt: null, width: null, height: null, sourceImageId: 'm1' }
+      ]
+    });
+    const create = (value: unknown) =>
+      createChange({
+        projectId,
+        productId: p.id,
+        productSourceId: p.sourceId,
+        field: 'images',
+        value,
+        approvedBy: userId
+      });
+    expect(await create([])).toEqual({
+      ok: false,
+      reason: 'invalid_value',
+      rejection: { code: 'removes_last_image' }
+    });
+    expect(await create({ v: 1, ops: [{ op: 'remove', target: 'm1' }] })).toEqual({
+      ok: false,
+      reason: 'invalid_value',
+      rejection: { code: 'removes_last_image' }
+    });
+    const bad = await create({ v: 1, ops: [{ op: 'reorder', order: ['new:0'] }] });
+    expect(bad.ok).toBe(false);
+    expect(!bad.ok && bad.reason === 'invalid_value' && bad.rejection.code).toBe(
+      'unknown_image_ref'
+    );
+    expect((await create({ v: 1, ops: [{ op: 'set_alt', target: 'm1', alt: 'Alt' }] })).ok).toBe(
+      true
+    );
+  });
+
+  it('undo of an applied change queues the reverse change; a moved product is a conflict', async () => {
+    const applied = await make('New title');
+    expect(await createReverseChange(projectId, applied.id, userId)).toEqual({
+      ok: false,
+      reason: 'not_applied'
+    });
+    await ackChange(projectId, applied.id, { status: 'applied' });
+    expect(await createReverseChange(projectId, applied.id, await createUser())).toEqual({
+      ok: false,
+      reason: 'not_found'
+    });
+
+    const undo = await createReverseChange(projectId, applied.id, userId);
+    expect(undo.ok && undo.change.value).toBe('Old title');
+    expect(undo.ok && undo.change.status).toBe('pending');
+    // The reverse change is itself undoable: it captured its own prior value.
+    expect(undo.ok && undo.change.priorValue).toBe('Old title');
+
+    // Store re-synced with the applied value → still undoable.
+    await db.update(products).set({ title: 'New title' }).where(eq(products.id, product.id));
+    expect((await createReverseChange(projectId, applied.id, userId)).ok).toBe(true);
+    // Merchant edited it since → refused, nothing queued.
+    await db.update(products).set({ title: 'Their own edit' }).where(eq(products.id, product.id));
+    expect(await createReverseChange(projectId, applied.id, userId)).toEqual({
+      ok: false,
+      reason: 'conflict'
+    });
+  });
+
+  it('undo of an images change restores the prior gallery', async () => {
+    const p = await createProduct(projectId, {
+      sourceId: 'gallery',
+      images: [
+        {
+          src: 'https://cdn.test/1.jpg',
+          alt: 'One',
+          width: null,
+          height: null,
+          sourceImageId: 'm1'
+        },
+        { src: 'https://cdn.test/2.jpg', alt: null, width: null, height: null, sourceImageId: 'm2' }
+      ]
+    });
+    const res = await createChange({
+      projectId,
+      productId: p.id,
+      productSourceId: p.sourceId,
+      field: 'images',
+      value: [{ src: 'https://cdn.test/gen.jpg', alt: 'Gen' }],
+      approvedBy: userId
+    });
+    if (!res.ok) throw new Error('create failed');
+    await ackChange(projectId, res.change.id, { status: 'applied' });
+    const undo = await createReverseChange(projectId, res.change.id, userId);
+    expect(undo.ok && undo.change.value).toEqual([
+      { src: 'https://cdn.test/1.jpg', alt: 'One' },
+      { src: 'https://cdn.test/2.jpg', alt: null }
+    ]);
+    expect(undo.ok && undo.change.field).toBe('images');
+    // Applying the reverse restores exactly what the product had.
+    const before = await db.select().from(products).where(eq(products.id, p.id));
+    expect(undo.ok && hashValue(undo.change.value)).toBe(
+      hashValue(currentFieldValue(before[0], 'images'))
+    );
   });
 
   it('expires pending changes past expiresAt', async () => {

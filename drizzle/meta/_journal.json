@@ -218,6 +218,13 @@
       "when": 1788092279186,
       "tag": "0030_outbound_webhooks",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "5",
+      "when": 1788159741407,
+      "tag": "0031_image_ops_capabilities",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,7 @@ import { db } from '@/shared/db';
 import { productChanges, products, projects, type ProductChangeField } from '@/shared/db/schema';
 import { ulid } from '@/shared/lib';
 import { hashValue } from '../lib/hash';
+import { checkImageChangeValue } from '../lib/image-ops';
 import type {
   AckChangeInput,
   AckChangeResult,
@@ -35,6 +36,22 @@ export function currentFieldValue(product: ProductFieldSource, field: ProductCha
     case 'images':
       return (product.images ?? []).map((i) => ({ src: i.src, alt: i.alt ?? null }));
   }
+}
+
+/**
+ * The field as OSL knows it, kept whole in `prior_value` for "Annuler" and the
+ * before/after preview. Images keep their `sourceImageId` and order — that is
+ * the difference with `currentFieldValue`, whose reduced shape is frozen by the
+ * hash contract shared with the plugins.
+ */
+export function priorFieldValue(product: ProductFieldSource, field: ProductChangeField): unknown {
+  if (field !== 'images') return currentFieldValue(product, field);
+  return (product.images ?? []).map((img, i) => ({
+    src: img.src,
+    alt: img.alt ?? null,
+    sourceImageId: img.sourceImageId ?? null,
+    position: img.position ?? i
+  }));
 }
 
 /** Wire shape of `GET /changes` — also the `change.approved` webhook payload. */
@@ -71,6 +88,12 @@ export async function createChange(input: CreateChangeInput): Promise<CreateChan
     .where(and(eq(products.id, input.productId), eq(products.projectId, input.projectId)));
   if (!product) return { ok: false, reason: 'not_found' };
 
+  const priorValue = priorFieldValue(product, input.field);
+  if (input.field === 'images') {
+    const check = checkImageChangeValue(input.value, product.images ?? []);
+    if (!check.ok) return { ok: false, reason: 'invalid_value', rejection: check.rejection };
+  }
+
   const id = ulid();
   await db.insert(productChanges).values({
     id,
@@ -81,6 +104,7 @@ export async function createChange(input: CreateChangeInput): Promise<CreateChan
     value: input.value,
     valueHash: hashValue(input.value),
     priorValueHash: hashValue(currentFieldValue(product, input.field)),
+    priorValue,
     sourceJobId: input.sourceJobId ?? null,
     approvedBy: input.approvedBy,
     expiresAt: input.expiresAt ?? null
@@ -137,7 +161,8 @@ export async function ackChange(
     status: payload.status,
     ...(payload.error !== undefined ? { error: payload.error } : {}),
     ...(payload.storeUpdatedAt !== undefined ? { storeUpdatedAt: payload.storeUpdatedAt } : {}),
-    ...(payload.storeValueHash !== undefined ? { storeValueHash: payload.storeValueHash } : {})
+    ...(payload.storeValueHash !== undefined ? { storeValueHash: payload.storeValueHash } : {}),
+    ...(payload.skippedOps !== undefined ? { skippedOps: payload.skippedOps } : {})
   };
   const result = await transitionChange(
     db,

@@ -1535,7 +1535,18 @@
       "images": "Images"
     },
     "approvedOn": "Approved {date}",
-    "errorGeneric": "Something went wrong. Try again."
+    "errorGeneric": "Something went wrong. Try again.",
+    "replaceAllTitle": "Replace all the photos?",
+    "replaceAllBody": "Your {current} current photos will be removed from the product and replaced by the {generated} generated visuals. They will stay in your media library.",
+    "replaceAllConfirm": "Replace the photos",
+    "replaceAllCancel": "Cancel",
+    "undo": "Undo",
+    "undoTitle": "Undo this change?",
+    "undoBody": "The previous content will be restored on your store on the next pass.",
+    "undoConfirm": "Restore the previous version",
+    "undoQueued": "Undo pending",
+    "undoBlocked": "Cannot undo: this product has changed in your store since.",
+    "undoUnavailable": "This change cannot be undone."
   },
   "IntegrationAlerts": {
     "greeting": "Hi {name},",

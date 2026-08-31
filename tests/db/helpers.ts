@@ -14,6 +14,7 @@ export async function resetTables(): Promise<void> {
     'api_keys',
     'api_idempotency',
     'catalog_sync_sessions',
+    'connection_capabilities',
     'product_changes',
     'credit_transactions',
     'legal_consents',

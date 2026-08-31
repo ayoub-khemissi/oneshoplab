@@ -62,6 +62,12 @@ export interface CreateMediaInput {
   alt: string | null;
 }
 
+/** `productReorderMedia` move: the media ends up at `newPosition` (0-based). */
+export interface MediaMove {
+  id: string;
+  newPosition: number;
+}
+
 export type WebhookTopic = 'PRODUCTS_UPDATE' | 'PRODUCTS_DELETE' | 'APP_UNINSTALLED';
 
 interface GraphQLError {
@@ -92,7 +98,12 @@ export interface ShopifyAdminClient {
   productsPage(cursor: string | null): Promise<ProductsPage>;
   productById(sourceIdOrGid: string): Promise<AdminProduct | null>;
   productUpdate(input: ProductUpdateInput): Promise<void>;
-  productCreateMedia(sourceIdOrGid: string, media: CreateMediaInput[]): Promise<void>;
+  /** Returns the created MediaImage gids, in the order they were submitted. */
+  productCreateMedia(sourceIdOrGid: string, media: CreateMediaInput[]): Promise<string[]>;
+  /** Detaches media from the product; the files stay in Files (IMAGE-OPS §2). */
+  productDeleteMedia(sourceIdOrGid: string, mediaIds: string[]): Promise<void>;
+  /** Position 0 is the featured image — that is how `set_featured` is done. */
+  productReorderMedia(sourceIdOrGid: string, moves: MediaMove[]): Promise<void>;
   webhookSubscriptionCreate(topic: WebhookTopic, callbackUrl: string): Promise<string>;
   webhookSubscriptionDelete(id: string): Promise<void>;
   /** Last throttle status seen (tests + progress UI). */
@@ -242,7 +253,9 @@ query OslProduct($id: ID!) { product(id: $id) { ...OslProduct } }`,
     },
 
     async productCreateMedia(id, media) {
-      const data = await request<{ productCreateMedia: { mediaUserErrors: UserError[] } }>(
+      const data = await request<{
+        productCreateMedia: { media: Array<{ id: string }>; mediaUserErrors: UserError[] };
+      }>(
         `mutation OslProductCreateMedia($productId: ID!, $media: [CreateMediaInput!]!) {
   productCreateMedia(productId: $productId, media: $media) {
     media { id } mediaUserErrors { field message }
@@ -258,6 +271,32 @@ query OslProduct($id: ID!) { product(id: $id) { ...OslProduct } }`,
         }
       );
       assertNoUserErrors(data.productCreateMedia.mediaUserErrors, 'productCreateMedia');
+      return (data.productCreateMedia.media ?? []).map((m) => m.id);
+    },
+
+    async productDeleteMedia(id, mediaIds) {
+      const data = await request<{ productDeleteMedia: { mediaUserErrors: UserError[] } }>(
+        `mutation OslProductDeleteMedia($productId: ID!, $mediaIds: [ID!]!) {
+  productDeleteMedia(productId: $productId, mediaIds: $mediaIds) {
+    deletedMediaIds mediaUserErrors { field message }
+  }
+}`,
+        { productId: productGid(id), mediaIds }
+      );
+      assertNoUserErrors(data.productDeleteMedia.mediaUserErrors, 'productDeleteMedia');
+    },
+
+    async productReorderMedia(id, moves) {
+      const data = await request<{ productReorderMedia: { mediaUserErrors: UserError[] } }>(
+        `mutation OslProductReorderMedia($id: ID!, $moves: [MoveInput!]!) {
+  productReorderMedia(id: $id, moves: $moves) { job { id } mediaUserErrors { field message } }
+}`,
+        {
+          id: productGid(id),
+          moves: moves.map((m) => ({ id: m.id, newPosition: String(m.newPosition) }))
+        }
+      );
+      assertNoUserErrors(data.productReorderMedia.mediaUserErrors, 'productReorderMedia');
     },
 
     async webhookSubscriptionCreate(topic, callbackUrl) {

@@ -3,6 +3,7 @@ export { SHOPIFY_API_VERSION, ShopifyAdminError, createAdminClient } from './api
 export type {
   AdminClientOptions,
   CreateMediaInput,
+  MediaMove,
   ProductUpdateInput,
   ProductsPage,
   ShopInfo,
@@ -34,6 +35,7 @@ export {
   webhookCallbackUrl
 } from './api/webhooks';
 export type { WebhookOutcome, WebhookRequest } from './api/webhooks';
+export { CAPABILITIES, createShopifyImageOps } from './api/image-ops';
 export { APPLY_BATCH, applyShopifyChanges, runShopifyApplies } from './api/apply';
 export type { ApplyOutcome, ApplyProjectResult } from './api/apply';
 export { connectShopifyStore, disconnectShopifyStore, requestShopifyPull } from './api/validate';

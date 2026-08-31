@@ -9,6 +9,7 @@ import {
   ShopifyAdminError,
   type AdminClientOptions,
   type AdminProduct,
+  type MediaMove,
   type ShopInfo,
   type ShopifyAdminClient
 } from '@/features/shopify-connector';
@@ -20,6 +21,8 @@ export interface FakeAdminClient extends ShopifyAdminClient {
   calls: {
     productUpdate: Array<Record<string, unknown>>;
     productCreateMedia: Array<{ id: string; media: unknown[] }>;
+    productDeleteMedia: Array<{ id: string; mediaIds: string[] }>;
+    productReorderMedia: Array<{ id: string; moves: MediaMove[] }>;
     webhookCreate: Array<{ topic: string; url: string }>;
     webhookDelete: string[];
     productById: string[];
@@ -40,6 +43,9 @@ export function fakeProduct(id: string, patch: Partial<AdminProduct> = {}): Admi
     id: `gid://shopify/Product/${id}`,
     handle: `p-${id}`,
     onlineStoreUrl: null,
+    // The media list is mutated by the media mutations below — never share the
+    // fixture's array between two fake products.
+    media: { nodes: adminProductFixture.media.nodes.map((n) => ({ ...n })) },
     ...patch
   };
 }
@@ -47,6 +53,7 @@ export function fakeProduct(id: string, patch: Partial<AdminProduct> = {}): Admi
 export function createFakeClient(products: AdminProduct[] = []): FakeAdminClient {
   const map = new Map(products.map((p) => [p.id.split('/').pop() ?? p.id, p]));
   let nextWebhook = 1;
+  let nextMedia = 90000000000001;
   const guard = () => {
     if (client.tokenInvalid)
       throw new ShopifyAdminError('token_invalid', 'Shopify refused the token (401)', 401);
@@ -58,6 +65,8 @@ export function createFakeClient(products: AdminProduct[] = []): FakeAdminClient
     calls: {
       productUpdate: [],
       productCreateMedia: [],
+      productDeleteMedia: [],
+      productReorderMedia: [],
       webhookCreate: [],
       webhookDelete: [],
       productById: []
@@ -98,6 +107,38 @@ export function createFakeClient(products: AdminProduct[] = []): FakeAdminClient
     async productCreateMedia(id, media) {
       guard();
       client.calls.productCreateMedia.push({ id, media });
+      const nodes = map.get(id.split('/').pop() ?? id)?.media.nodes;
+      return media.map((m) => {
+        const gid = `gid://shopify/MediaImage/${nextMedia++}`;
+        nodes?.push({
+          id: gid,
+          alt: m.alt,
+          image: { url: m.originalSource, width: null, height: null }
+        });
+        return gid;
+      });
+    },
+    async productDeleteMedia(id, mediaIds) {
+      guard();
+      client.calls.productDeleteMedia.push({ id, mediaIds });
+      const p = map.get(id.split('/').pop() ?? id);
+      if (p) {
+        p.media.nodes = p.media.nodes.filter(
+          (n) => !('id' in n && typeof n.id === 'string' && mediaIds.includes(n.id))
+        );
+      }
+    },
+    async productReorderMedia(id, moves) {
+      guard();
+      client.calls.productReorderMedia.push({ id, moves });
+      const p = map.get(id.split('/').pop() ?? id);
+      if (!p) return;
+      const rank = new Map(moves.map((m) => [m.id, m.newPosition]));
+      p.media.nodes = [...p.media.nodes].sort(
+        (a, b) =>
+          (rank.get('id' in a ? String(a.id) : '') ?? Number.MAX_SAFE_INTEGER) -
+          (rank.get('id' in b ? String(b.id) : '') ?? Number.MAX_SAFE_INTEGER)
+      );
     },
     async webhookSubscriptionCreate(topic, url) {
       guard();

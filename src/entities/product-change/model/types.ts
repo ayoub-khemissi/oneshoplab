@@ -1,4 +1,5 @@
 import type { productChanges, ProductChangeField } from '@/shared/db/schema';
+import type { ImageValueRejection } from '../lib/image-ops';
 
 export type ProductChangeRow = typeof productChanges.$inferSelect;
 export type AckStatus = 'applied' | 'failed' | 'skipped';
@@ -15,13 +16,17 @@ export interface CreateChangeInput {
 }
 
 export type CreateChangeResult =
-  { ok: true; change: ProductChangeRow } | { ok: false; reason: 'not_found' };
+  | { ok: true; change: ProductChangeRow }
+  | { ok: false; reason: 'not_found' }
+  | { ok: false; reason: 'invalid_value'; rejection: ImageValueRejection };
 
 export interface AckChangeInput {
   status: AckStatus;
   error?: string;
   storeUpdatedAt?: string;
   storeValueHash?: string;
+  /** Ops the executor could not carry out, `"<index>:<verb>"` (IMAGE-OPS §2). */
+  skippedOps?: string[];
 }
 
 export type AckChangeResult =
@@ -41,3 +46,15 @@ export interface PendingChangesPage {
 }
 
 export type CancelChangeResult = 'cancelled' | 'not_found' | 'refused';
+
+/**
+ * "Annuler" on an applied change. `conflict` = the product moved in the store
+ * since (OSL's copy matches neither what we wrote nor what was there before),
+ * so restoring blindly would overwrite the merchant's own edit.
+ */
+export type ReverseChangeResult =
+  | { ok: true; change: ProductChangeRow }
+  | {
+      ok: false;
+      reason: 'not_found' | 'not_applied' | 'no_prior' | 'not_reversible' | 'conflict';
+    };
