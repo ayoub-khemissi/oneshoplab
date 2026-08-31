@@ -1,12 +1,4 @@
-import { and, eq } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
-import { applyCreditTransaction } from '@/entities/credit';
-import { db } from '@/shared/db';
-import { jobs, products, type JobKind } from '@/shared/db/schema';
-import { transitionJob } from './transitions';
 import { languageNameForPrompt } from '@/shared/i18n';
-import { notify } from '@/entities/notification';
-import { chatCompletion } from '@/entities/ai-provider';
 import type { ChatMessage } from '@/entities/ai-provider';
 import {
   estimateChatCredits,
@@ -14,19 +6,21 @@ import {
   outputTokenCapFor,
   type ChatModelId
 } from '@/entities/ai-model';
+import type { JobKind } from '@/shared/db/schema';
 import {
   buildDescriptionRewritePrompt,
   buildTagSuggestionPrompt,
   buildTitleRewritePrompt,
   type ProductContext
 } from '../lib/prompts';
-import type { ChatOptimField } from '../model/types';
+import type { CopyOptimField } from '../model/types';
+import { runChatJob } from './chat-job';
 
 export interface ChatOptimRequest {
   userId: string;
   projectId: string;
   productSourceId: string;
-  field: ChatOptimField;
+  field: CopyOptimField;
   /** The prompt the user picked from suggestions or typed themselves. */
   userPrompt: string;
   product: ProductContext;
@@ -38,24 +32,23 @@ export interface ChatOptimRequest {
 
 export interface ChatOptimResult {
   jobId: string;
-  field: ChatOptimField;
+  field: CopyOptimField;
   /** string for title/description (HTML for description), string[] for tags. */
   output: string | string[];
   creditsConsumed: number;
 }
 
-const KIND_BY_FIELD: Record<ChatOptimField, JobKind> = {
+const KIND_BY_FIELD: Record<CopyOptimField, JobKind> = {
   title: 'kie_title',
   description: 'kie_description',
   tags: 'kie_tags'
 };
 
 /**
- * Run a synchronous Claude generation for one of the chat-driven fields.
- * Pricing is deterministic: the call is hard-capped at outputTokenCapFor()
- * so kie can never bill us more than what we already quoted the user, and
- * we debit exactly the quoted amount (estimateChatCredits) — no surprise
- * tail debits if the LLM ran a bit long.
+ * Run a synchronous generation for one of the chat-driven fields. Pricing is
+ * deterministic: the call is hard-capped and we debit exactly the quoted
+ * amount (estimateChatCredits) — no surprise tail debits if the LLM ran long.
+ * The job lifecycle and the ledger call live in runChatJob.
  */
 export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimResult> {
   const languageName = languageNameForPrompt(opts.languageCode);
@@ -68,142 +61,49 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
         : buildTagSuggestionPrompt(opts.product, opts.userPrompt, languageName);
 
   const messages: ChatMessage[] = [{ role: 'user', content: built.user }];
-
   const model = getChatModel(opts.chatModelId);
 
-  // Decouple the kie max_tokens from the pricing cap. pricing.json's
-  // outputTokens drives what we CHARGE the user (deterministic), but
-  // we send a much larger ceiling to kie so the prompt's length
-  // instruction is the real constraint and the output never gets cut
-  // mid-word / mid-sentence. The 2.5x multiplier leaves a generous
-  // headroom (e.g. a description priced for 600 tokens has a 1500
-  // safety cap — a hard upper bound the model never reaches when it
-  // follows the "180-220 words" prompt instruction). Worst-case
-  // margin is still ~35% on Opus, ~50% on Sonnet, so a verbose
-  // generation doesn't push us into the red.
+  // Decouple the provider's max_tokens from the pricing cap. pricing.json's
+  // outputTokens drives what we CHARGE the user (deterministic), but we send a
+  // much larger ceiling so the prompt's length instruction is the real
+  // constraint and the output never gets cut mid-word. The 2.5x multiplier
+  // leaves generous headroom (a description priced for 600 tokens has a 1500
+  // safety cap — an upper bound the model never reaches when it follows the
+  // "180-220 words" instruction). Worst-case margin is still ~35% on Opus,
+  // ~50% on Sonnet, so a verbose generation doesn't push us into the red.
   const SAFETY_MULTIPLIER = 2.5;
-  const safetyMaxTokens = Math.ceil(outputTokenCapFor(opts.field) * SAFETY_MULTIPLIER);
 
-  // Resolve the product UUID from (projectId, sourceId) so we can
-  // populate the FK column — the past-generations strip and the
-  // site Activity tab both pull the product link via the `product`
-  // relation on jobs, which joins on jobs.product_id.
-  const productRow = await db.query.products.findFirst({
-    where: and(eq(products.projectId, opts.projectId), eq(products.sourceId, opts.productSourceId)),
-    columns: { id: true }
-  });
-
-  // Insert the job row in 'running' BEFORE calling kie so the product
-  // page can detect an in-flight chat after an F5 (chat is sync ~30s,
-  // and the original client fetch is aborted on reload). The row
-  // becomes the persistent "I'm generating X" marker the UI restores
-  // from on remount.
-  const jobId = randomUUID();
-  const startedAt = new Date();
-  await db.insert(jobs).values({
-    id: jobId,
-    projectId: opts.projectId,
-    productId: productRow?.id ?? null,
-    kind: KIND_BY_FIELD[opts.field],
-    status: 'running',
-    inputPayload: {
-      productSourceId: opts.productSourceId,
-      field: opts.field,
-      userPrompt: opts.userPrompt,
-      chatModelId: model.id
-    },
-    startedAt
-  });
-
-  let response;
-  try {
-    response = await chatCompletion({
-      model,
-      system: built.system,
-      messages,
-      max_tokens: safetyMaxTokens
-    });
-  } catch (e) {
-    // Flip the marker out of 'running' so the UI's poll loop stops
-    // spinning forever and the user sees the failure state on next
-    // refresh. Error message stays raw in the DB for ops debugging;
-    // the user-facing layer sanitises before display.
-    await transitionJob(db, jobId, 'failed', { error: (e as Error).message });
-    // Log the failure to the notification stream. isRead=false because
-    // we don't know yet whether the user sees a toast — if the route
-    // handler returns to a still-mounted client the toast WILL fire
-    // and the client will mark this read; if not (F5'd away), the
-    // bell badge ticks up so the merchant sees it on their next visit.
-    await notify({
-      userId: opts.userId,
-      kind: 'chat_failed',
-      jobId,
-      productId: productRow?.id ?? null,
-      projectId: opts.projectId,
-      payload: { field: opts.field, errorMessage: (e as Error).message }
-    });
-    throw e;
-  }
-
-  const text = response.text;
-  const output: string | string[] = opts.field === 'tags' ? parseTags(text) : text;
-
-  // Quoted = debited. The user paid for the cap; whether kie's actual
-  // credits_consumed lands a bit under the cap is our buffer/upside.
-  const debit = estimateChatCredits(model.id, opts.field);
-  const now = new Date();
-
-  await transitionJob(db, jobId, 'completed', {
-    result: {
-      output,
-      raw: text,
-      providerUnitsConsumed: response.creditsConsumed,
-      provider: response.provider,
-      providerModel: response.model
-    },
-    creditsCost: debit,
-    finishedAt: now
-  });
-
-  if (debit > 0) {
-    await applyCreditTransaction({
-      userId: opts.userId,
-      delta: -debit,
-      reason: KIND_BY_FIELD[opts.field],
-      jobId,
-      idempotencyKey: `job-${jobId}`
-    });
-  }
-
-  // Log the success to the notification stream. Same isRead=false
-  // default as the failure path — the client decides whether to flip
-  // it after firing the success toast. Preview = first ~80 chars of
-  // the generated output (HTML stripped on description, comma-joined
-  // top-5 on tags), so the bell dropdown renders "Titre : Tee-Shirt
-  // Orange et Blanc" rather than the bare field name.
-  await notify({
+  const run = await runChatJob<string | string[]>({
     userId: opts.userId,
-    kind: 'chat_completed',
-    jobId,
-    productId: productRow?.id ?? null,
     projectId: opts.projectId,
-    payload: { field: opts.field, preview: previewFor(opts.field, output) }
+    productSourceId: opts.productSourceId,
+    kind: KIND_BY_FIELD[opts.field],
+    inputPayload: { field: opts.field, userPrompt: opts.userPrompt },
+    model,
+    system: built.system,
+    messages,
+    maxTokens: Math.ceil(outputTokenCapFor(opts.field) * SAFETY_MULTIPLIER),
+    debit: estimateChatCredits(model.id, opts.field),
+    parse: (text) => (opts.field === 'tags' ? parseTags(text) : text),
+    notifications: {
+      field: opts.field,
+      preview: (output) => previewFor(opts.field, output as string | string[])
+    }
   });
 
   return {
-    jobId,
+    jobId: run.jobId,
     field: opts.field,
-    output,
-    creditsConsumed: debit
+    output: run.output,
+    creditsConsumed: run.creditsConsumed
   };
 }
 
-/** Build the short preview string the notification dropdown shows
- *  next to the field label. ~80-char cap; strips HTML on the
- *  description field so a freshly-generated <p><strong>… doesn't end
- *  up as literal markup in the bell. Tags get a comma-joined top-5
- *  truncation. */
-function previewFor(field: ChatOptimField, output: string | string[]): string {
+/** Build the short preview string the notification dropdown shows next to the
+ *  field label. ~80-char cap; strips HTML on the description field so a
+ *  freshly-generated <p><strong>… doesn't end up as literal markup in the
+ *  bell. Tags get a comma-joined top-5 truncation. */
+function previewFor(field: CopyOptimField, output: string | string[]): string {
   if (field === 'tags') {
     const arr = Array.isArray(output) ? output : [];
     return arr.slice(0, 5).join(', ');

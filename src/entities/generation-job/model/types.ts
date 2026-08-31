@@ -20,5 +20,21 @@ export interface ImageJobRow {
   creditsCost: number;
 }
 
-/** Which product field a chat generation targets. */
-export type ChatOptimField = 'title' | 'description' | 'tags';
+/** Which product field a chat generation targets. `alt` is per-IMAGE (the
+ *  image editor and the site-wide "missing alt text" batch), the other three
+ *  are per-product — see CopyOptimField for the per-product subset. */
+export type ChatOptimField = 'title' | 'description' | 'tags' | 'alt';
+
+/** The per-product copy fields: what the AI panel generates, what the past-
+ *  generations strip lists, what "Apply to store" maps to a product field.
+ *  `alt` is deliberately outside — it targets one image, not the product. */
+export type CopyOptimField = Exclude<ChatOptimField, 'alt'>;
+
+/** Pure-data result of one alt-text generation, shared by the entity, the
+ *  server actions that expose it and the client components that render it. */
+export interface AltTextResult {
+  /** The sentence, already sanitised and capped at ALT_TEXT_MAX_CHARS. */
+  alt: string;
+  jobId: string;
+  creditsConsumed: number;
+}

@@ -119,6 +119,31 @@ test.describe('product images', () => {
     await expect(editor.getByTestId('tile-set-featured')).toHaveCount(0);
     await expect(editor.getByTestId('tile-remove')).toHaveCount(0);
     await expect(editor.getByTestId('tile-alt')).toHaveCount(0);
+    await expect(editor.getByTestId('tile-generate-alt')).toHaveCount(0);
     await expect(page.getByTestId('pending-ops')).toHaveCount(0);
+  });
+
+  test('offers "Générer le texte alternatif" per photo and survives a failed generation', async ({
+    page
+  }) => {
+    await page.goto(editorUrl);
+    const editor = page.getByTestId('image-editor');
+    await expect(editor).toBeVisible();
+
+    // One button per store photo — the connection declared set_alt + altEditable.
+    const generate = editor.getByTestId('tile-generate-alt');
+    await expect(generate).toHaveCount(3);
+    await expect(generate.first()).toContainText('Générer le texte alternatif');
+
+    // This environment has no AI keys on purpose (playwright.config E2E_ENV):
+    // the provider is never reached, and the merchant gets a sentence instead
+    // of a crash. Nothing is queued behind their back.
+    const tile = editor.locator('[data-ref="m2"]');
+    await tile.getByTestId('tile-generate-alt').click();
+    await expect(tile.getByRole('alert')).toContainText('Une erreur est survenue', {
+      timeout: 20_000
+    });
+    await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
+    await expect(page.getByTestId('pending-ops')).toHaveAttribute('data-count', '0');
   });
 });

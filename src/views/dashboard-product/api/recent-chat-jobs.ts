@@ -1,11 +1,11 @@
 import { and, desc, eq, gt, inArray } from 'drizzle-orm';
-import type { ChatOptimField } from '@/entities/generation-job';
+import type { CopyOptimField } from '@/entities/generation-job';
 import { db } from '@/shared/db';
 import { jobs } from '@/shared/db/schema';
 
 export interface RecentChatJobs {
-  inFlightChatJobs: Array<{ field: ChatOptimField; startedAtMs: number }>;
-  recentFailedChatJobs: Array<{ jobId: string; field: ChatOptimField; error: string }>;
+  inFlightChatJobs: Array<{ field: CopyOptimField; startedAtMs: number }>;
+  recentFailedChatJobs: Array<{ jobId: string; field: CopyOptimField; error: string }>;
 }
 
 // Chat-job recovery window for F5: pull the last 5 min of chat job
@@ -37,7 +37,7 @@ export async function loadRecentChatJobs(productId: string): Promise<RecentChatJ
     )
     .orderBy(desc(jobs.startedAt));
 
-  const kindToField = (kind: string): ChatOptimField | null =>
+  const kindToField = (kind: string): CopyOptimField | null =>
     kind === 'kie_title'
       ? 'title'
       : kind === 'kie_description'
@@ -50,9 +50,9 @@ export async function loadRecentChatJobs(productId: string): Promise<RecentChatJ
   // ordered desc by startedAt). That row tells us the current state:
   // running → restore spinner; failed → surface a toast; completed →
   // nothing to do (the new content is already in the product).
-  const seenFields = new Set<ChatOptimField>();
-  const inFlightChatJobs: Array<{ field: ChatOptimField; startedAtMs: number }> = [];
-  const recentFailedChatJobs: Array<{ jobId: string; field: ChatOptimField; error: string }> = [];
+  const seenFields = new Set<CopyOptimField>();
+  const inFlightChatJobs: Array<{ field: CopyOptimField; startedAtMs: number }> = [];
+  const recentFailedChatJobs: Array<{ jobId: string; field: CopyOptimField; error: string }> = [];
   for (const row of recentChatJobs) {
     const field = kindToField(row.kind);
     if (!field || seenFields.has(field)) continue;

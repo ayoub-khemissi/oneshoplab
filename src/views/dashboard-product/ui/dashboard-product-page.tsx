@@ -31,6 +31,7 @@ import {
   PendingChangesBanner,
   ProductImageEditor
 } from '@/features/apply-to-store';
+import { generateAltTextAction } from '@/features/generate-alt-text/actions';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
@@ -277,6 +278,7 @@ export async function DashboardProductPage({
         )}
         capabilities={capabilities}
         archived={archived}
+        generateAlt={generateAltTextAction}
       />
 
       <PastGenerationsSection

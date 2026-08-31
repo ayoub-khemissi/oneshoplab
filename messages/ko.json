@@ -1688,5 +1688,22 @@
     "errorUnsupported": "상점이 이 변경을 지원하지 않습니다.",
     "errorArchived": "이 상품은 더 이상 상점에 없습니다.",
     "errorGeneric": "오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  "AltText": {
+    "title": "누락된 대체 텍스트",
+    "intro": "대체 텍스트(구글과 화면 읽기 프로그램이 읽습니다)는 각 사진에 무엇이 담겼는지 설명합니다. 저희가 대신 작성해 드리며, 확인 전에는 스토어에 반영되지 않습니다.",
+    "bulkAction": "누락된 대체 텍스트 생성 ({count})",
+    "progress": "생성 중… 상품 {done}/{total}",
+    "summary": "텍스트 {generated}개 생성, 대기 중인 변경 {changes}개",
+    "summaryFailed": "상품 {count}개를 처리하지 못했습니다.",
+    "summaryRemaining": "아직 대체 텍스트가 없는 사진이 {count}장 있습니다. 계속하려면 다시 실행하세요.",
+    "generateTile": "대체 텍스트 생성",
+    "generating": "생성 중…",
+    "generatedNotice": "제안된 문구입니다. 필요하면 수정한 뒤 저장하세요.",
+    "errorUnsupported": "현재 스토어에서는 OneShopLab이 사진의 대체 텍스트를 수정할 수 없습니다.",
+    "errorInsufficientCredits": "이 대체 텍스트를 생성하기에 크레딧이 부족합니다.",
+    "errorNothingMissing": "모든 사진에 이미 대체 텍스트가 있습니다.",
+    "errorArchived": "이 상품은 더 이상 스토어에 없습니다.",
+    "errorGeneric": "오류가 발생했습니다. 다시 시도해 주세요."
   }
 }

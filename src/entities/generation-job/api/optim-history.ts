@@ -1,11 +1,11 @@
 import { and, count, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { jobs, type JobKind } from '@/shared/db/schema';
-import type { ChatOptimField } from '../model/types';
+import type { CopyOptimField } from '../model/types';
 
 export interface OptimHistoryItem {
   jobId: string;
-  field: ChatOptimField | 'images';
+  field: CopyOptimField | 'images';
   userPrompt: string;
   output: string | string[];
   createdAt: Date;
@@ -26,7 +26,7 @@ export interface OptimHistoryItem {
 export async function listOptimHistory(
   projectId: string,
   productSourceId: string,
-  field: ChatOptimField | 'images'
+  field: CopyOptimField | 'images'
 ): Promise<OptimHistoryItem[]> {
   const kind: JobKind | null =
     field === 'title'
@@ -89,7 +89,7 @@ const HISTORY_KINDS: JobKind[] = ['kie_title', 'kie_description', 'kie_tags', 'k
 
 /** Field for a given kie_* kind. Inverse of KIND_BY_FIELD plus
  *  the image entry which the chat map doesn't carry. */
-function fieldFromKind(kind: JobKind): ChatOptimField | 'images' | null {
+function fieldFromKind(kind: JobKind): CopyOptimField | 'images' | null {
   if (kind === 'kie_title') return 'title';
   if (kind === 'kie_description') return 'description';
   if (kind === 'kie_tags') return 'tags';

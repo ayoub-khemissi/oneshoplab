@@ -1688,5 +1688,22 @@
     "errorUnsupported": "Your store does not support this change.",
     "errorArchived": "This product is no longer in your store.",
     "errorGeneric": "Something went wrong. Please try again."
+  },
+  "AltText": {
+    "title": "Missing alternative text",
+    "intro": "Alternative text (read by Google and by screen readers) describes what each photo shows. We write it for you — nothing reaches your store until you approve it.",
+    "bulkAction": "Generate the missing alternative texts ({count})",
+    "progress": "Generating… {done}/{total} products",
+    "summary": "{generated} texts generated, {changes} pending changes",
+    "summaryFailed": "{count} products could not be processed.",
+    "summaryRemaining": "{count} photos still have no alternative text — run it again to continue.",
+    "generateTile": "Generate the alternative text",
+    "generating": "Generating…",
+    "generatedNotice": "Suggested text — edit it if you like, then save.",
+    "errorUnsupported": "Your store does not let OneShopLab edit the alternative text of your photos yet.",
+    "errorInsufficientCredits": "Not enough credits to generate these alternative texts.",
+    "errorNothingMissing": "All your photos already have an alternative text.",
+    "errorArchived": "This product is no longer in your store.",
+    "errorGeneric": "Something went wrong. Please try again."
   }
 }

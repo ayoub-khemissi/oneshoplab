@@ -10,6 +10,7 @@ export type {
   EditorStoreImage
 } from './ui/image-editor/product-image-editor';
 export type {
+  AltTextGenerator,
   PendingChangeDetail,
   PendingChangeItem,
   PendingCounts,

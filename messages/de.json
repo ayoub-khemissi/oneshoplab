@@ -1688,5 +1688,22 @@
     "errorUnsupported": "Ihr Shop unterstützt diese Änderung nicht.",
     "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
     "errorGeneric": "Ein Fehler ist aufgetreten. Bitte erneut versuchen."
+  },
+  "AltText": {
+    "title": "Fehlende Alternativtexte",
+    "intro": "Der Alternativtext (von Google und von Screenreadern gelesen) beschreibt, was auf jedem Foto zu sehen ist. Wir schreiben ihn für Sie – nichts geht an Ihren Shop, bevor Sie es freigeben.",
+    "bulkAction": "Fehlende Alternativtexte erzeugen ({count})",
+    "progress": "Wird erstellt… {done}/{total} Produkte",
+    "summary": "{generated} Texte erstellt, {changes} ausstehende Änderungen",
+    "summaryFailed": "{count} Produkte konnten nicht verarbeitet werden.",
+    "summaryRemaining": "{count} Fotos haben weiterhin keinen Alternativtext – starten Sie erneut, um fortzufahren.",
+    "generateTile": "Alternativtext erzeugen",
+    "generating": "Wird erstellt…",
+    "generatedNotice": "Vorgeschlagener Text – passen Sie ihn an und speichern Sie.",
+    "errorUnsupported": "Ihr Shop erlaubt OneShopLab noch nicht, den Alternativtext Ihrer Fotos zu ändern.",
+    "errorInsufficientCredits": "Nicht genügend Credits für diese Alternativtexte.",
+    "errorNothingMissing": "Alle Ihre Fotos haben bereits einen Alternativtext.",
+    "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
   }
 }

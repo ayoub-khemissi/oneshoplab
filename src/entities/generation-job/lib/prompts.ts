@@ -1,3 +1,4 @@
+import type { ChatContentBlock } from '@/entities/ai-provider';
 import type { ProductField } from '@/shared/db/schema';
 
 export interface ProductContext {
@@ -121,6 +122,81 @@ Product:
 - Description: ${p.descriptionText.slice(0, 400)}
 ${p.tags.length > 0 ? `\nExisting tags (suggest different ones): ${p.tags.slice(0, 15).join(', ')}` : ''}`
   };
+}
+
+// ============================================================================
+// Alt text (vision)
+// ============================================================================
+
+/** Screen readers and search engines both stop reading past ~125 characters,
+ *  and the store fields are short. Same ceiling as the editor's input
+ *  (`ALT_MAX` in ui/image-editor/alt-text-field.tsx) and as the `alt`
+ *  outputTokens cap in pricing.json. */
+export const ALT_TEXT_MAX_CHARS = 125;
+
+/**
+ * The one prompt that sends an IMAGE. `user` is a content-block array — the
+ * provider layer maps our `{type:'image'}` block to OpenAI's `image_url`
+ * (chat-provider `toOpenAIContent`), so the same builder feeds OpenRouter and
+ * the kie fallback.
+ *
+ * The model must describe what it SEES, not restate the catalog: an alt text
+ * built from the title is exactly what the audit already penalises. The
+ * product context is there to name the object correctly (a "grès" mug, a
+ * brand), never to be repeated verbatim.
+ */
+export function buildAltTextPrompt(
+  p: ProductContext,
+  imageUrl: string,
+  languageName: string
+): { system: string; user: ChatContentBlock[] } {
+  const tagLine = p.tags.length > 0 ? `Existing tags: ${p.tags.slice(0, 10).join(', ')}` : '';
+  return {
+    system: `You write alternative text (the HTML "alt" attribute) for e-commerce product photos. You are given the photo itself and some context about the product it belongs to.
+
+Rules, all mandatory:
+1. Describe what is ACTUALLY VISIBLE in the photo — the object, its material, colour, shape, and the setting it sits in. If the photo shows a detail, a packaging or a person using the product, say that.
+2. HARD LIMIT: ${ALT_TEXT_MAX_CHARS} characters maximum, including spaces. Shorter is better. One plain sentence or noun phrase.
+3. Never start with "photo of", "image of", "picture of", "a photo showing" or their equivalent in any language — a screen reader already announces that it is an image.
+4. No keyword stuffing, no comma-separated keyword list, no brand slogan, no call to action, no price, no SEO padding.
+5. Do not repeat the product title word for word. Do not invent anything the photo does not show.
+6. Output the sentence ALONE: no quotes, no markdown, no bullet, no "Alt:" prefix, no trailing commentary, no closing period is required.
+7. Write it in ${languageName}.`,
+    user: [
+      { type: 'image', source: { type: 'url', url: imageUrl } },
+      {
+        type: 'text',
+        text: `Write the alternative text for the photo above.
+
+Product context (for naming things correctly — do not copy it):
+- Title: ${p.title}
+- Type: ${p.productType ?? '(none)'}
+- Vendor: ${p.vendor ?? '(none)'}
+${tagLine}`
+      }
+    ]
+  };
+}
+
+/**
+ * Models add quotes, a "Alt:" label or a markdown wrapper despite rule 6 often
+ * enough that trusting the raw string would put `"Mug en grès."` in the
+ * merchant's store. Everything here is a shape fix, never a rewrite: what
+ * survives is the model's own sentence, truncated on a word boundary.
+ */
+export function sanitizeAltText(raw: string): string {
+  let text = raw.replace(/\r/g, '').trim();
+  // Keep the first non-empty line: a chatty model puts its commentary after.
+  text = (text.split('\n').find((l) => l.trim().length > 0) ?? '').trim();
+  text = text.replace(/^(?:alt(?:\s*text)?|texte\s*alternatif)\s*[:：-]\s*/i, '');
+  text = text.replace(/^[*_`]+|[*_`]+$/g, '').trim();
+  // Straight and typographic quotes, plus the French guillemets.
+  text = text.replace(/^["'“”«»‘’]+|["'“”«»‘’]+$/g, '').trim();
+  text = text.replace(/\s+/g, ' ').replace(/\.$/, '').trim();
+  if (text.length <= ALT_TEXT_MAX_CHARS) return text;
+  const cut = text.slice(0, ALT_TEXT_MAX_CHARS);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > ALT_TEXT_MAX_CHARS * 0.6 ? cut.slice(0, lastSpace) : cut).trim();
 }
 
 /** Build prompt for title rewriting: returns plain text title (single line). */

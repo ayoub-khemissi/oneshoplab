@@ -56,6 +56,7 @@ exports[`credit costs (snapshot — update deliberately) > plans and packs 2`] =
 exports[`credit costs (snapshot — update deliberately) > text generation per model × field 1`] = `
 {
   "haiku-4-5": {
+    "alt": 1,
     "description": 2,
     "fullAudit": 5,
     "social": 3,
@@ -63,6 +64,7 @@ exports[`credit costs (snapshot — update deliberately) > text generation per m
     "title": 1,
   },
   "opus-5": {
+    "alt": 4,
     "description": 9,
     "fullAudit": 24,
     "social": 11,
@@ -70,6 +72,7 @@ exports[`credit costs (snapshot — update deliberately) > text generation per m
     "title": 4,
   },
   "sonnet-5": {
+    "alt": 2,
     "description": 4,
     "fullAudit": 10,
     "social": 5,

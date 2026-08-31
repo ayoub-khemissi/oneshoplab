@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 /** Alt text is capped at 125 characters: screen readers and search engines
- *  both stop reading long alternatives, and the store fields are short. */
+ *  both stop reading long alternatives, and the store fields are short. Same
+ *  ceiling as `ALT_TEXT_MAX_CHARS` in entities/generation-job (the AI prompt
+ *  and the `alt` output cap in pricing.json) — kept literal here so this leaf
+ *  component pulls no server graph in. */
 const ALT_MAX = 125;
 
 /**
@@ -16,12 +19,16 @@ const ALT_MAX = 125;
 export function AltTextField({
   value,
   label,
+  hint,
   onSave,
   onCancel
 }: {
   value: string | null;
   /** Photo name, for the field's accessible label ("Photo 2"). */
   label: string;
+  /** Replaces the default explanation — used to say the text was proposed by
+   *  the AI and is there to be edited. */
+  hint?: string;
   onSave: (alt: string) => void;
   onCancel: () => void;
 }) {
@@ -50,7 +57,7 @@ export function AltTextField({
           className="w-full rounded-md border border-[var(--border)] bg-[var(--background)] px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
         />
       </label>
-      <p className="text-[10px] leading-snug text-[var(--muted)]">{t('altHint')}</p>
+      <p className="text-[10px] leading-snug text-[var(--muted)]">{hint ?? t('altHint')}</p>
       <div className="flex items-center gap-1.5">
         <button
           type="submit"

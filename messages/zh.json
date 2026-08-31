@@ -1688,5 +1688,22 @@
     "errorUnsupported": "您的店铺不支持这项修改。",
     "errorArchived": "该商品已不在您的店铺中。",
     "errorGeneric": "出错了，请重试。"
+  },
+  "AltText": {
+    "title": "缺失的替代文字",
+    "intro": "替代文字（Google 和屏幕阅读器都会读取）用来描述每张照片的内容。我们替您撰写，未经您确认不会发送到您的店铺。",
+    "bulkAction": "生成缺失的替代文字（{count}）",
+    "progress": "正在生成…… {done}/{total} 个商品",
+    "summary": "已生成 {generated} 条文字，{changes} 项修改待确认",
+    "summaryFailed": "有 {count} 个商品无法处理。",
+    "summaryRemaining": "还有 {count} 张照片没有替代文字，请再次运行以继续。",
+    "generateTile": "生成替代文字",
+    "generating": "生成中……",
+    "generatedNotice": "建议文字，可修改后保存。",
+    "errorUnsupported": "您的店铺暂时不支持由 OneShopLab 修改照片的替代文字。",
+    "errorInsufficientCredits": "积分不足，无法生成这些替代文字。",
+    "errorNothingMissing": "您的所有照片都已有替代文字。",
+    "errorArchived": "该商品已不在您的店铺中。",
+    "errorGeneric": "出现错误，请重试。"
   }
 }

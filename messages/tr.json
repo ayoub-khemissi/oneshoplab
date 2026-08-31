@@ -1688,5 +1688,22 @@
     "errorUnsupported": "Mağazanız bu değişikliği desteklemiyor.",
     "errorArchived": "Bu ürün artık mağazanızda değil.",
     "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin."
+  },
+  "AltText": {
+    "title": "Eksik alternatif metinler",
+    "intro": "Alternatif metin (Google ve ekran okuyucular tarafından okunur) her fotoğrafta neyin göründüğünü anlatır. Sizin için yazıyoruz; siz onaylamadan mağazanıza hiçbir şey gitmez.",
+    "bulkAction": "Eksik alternatif metinleri oluştur ({count})",
+    "progress": "Oluşturuluyor… {done}/{total} ürün",
+    "summary": "{generated} metin oluşturuldu, {changes} değişiklik onay bekliyor",
+    "summaryFailed": "{count} ürün işlenemedi.",
+    "summaryRemaining": "{count} fotoğrafın hâlâ alternatif metni yok — devam etmek için yeniden başlatın.",
+    "generateTile": "Alternatif metni oluştur",
+    "generating": "Oluşturuluyor…",
+    "generatedNotice": "Önerilen metin — isterseniz düzenleyip kaydedin.",
+    "errorUnsupported": "Mağazanız OneShopLab’in fotoğraflarınızın alternatif metnini değiştirmesine henüz izin vermiyor.",
+    "errorInsufficientCredits": "Bu alternatif metinleri oluşturmak için krediniz yetersiz.",
+    "errorNothingMissing": "Tüm fotoğraflarınızın zaten bir alternatif metni var.",
+    "errorArchived": "Bu ürün artık mağazanızda değil.",
+    "errorGeneric": "Bir hata oluştu. Tekrar deneyin."
   }
 }

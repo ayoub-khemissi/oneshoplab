@@ -126,6 +126,8 @@ export interface ChatModelInfo extends ChatModelRef {
   displayName: string;
   provider: 'OpenAI' | 'Anthropic' | 'Google';
   tier: 'budget' | 'balanced' | 'premium';
+  /** Accepts `image` content blocks — required for alt-text generation. */
+  vision: boolean;
   /** Provider rates per million tokens, in provider units (see pricing.json). */
   inputPerM: number;
   outputPerM: number;
@@ -156,6 +158,50 @@ export function getChatModel(id: ChatModelId | string | null | undefined): ChatM
  *  'quality' for the dynamic audit / structured rewrites. */
 export const SYSTEM_CHAT_MODELS: Record<SystemChatRole, ChatModelRef> = PRICING.systemChatModels;
 
+/**
+ * The catalog entry a system role points at. The roles carry provider ids, not
+ * catalog ids, but a debited call needs a catalog entry (its rates ARE the
+ * price). Matching on `openrouterId` keeps the single source of truth: a role
+ * pointed at a model we don't sell falls back to the default rather than
+ * inventing a rate.
+ */
+export function systemChatModel(role: SystemChatRole): ChatModelInfo {
+  const ref = SYSTEM_CHAT_MODELS[role];
+  return (
+    Object.values(CHAT_MODEL_REGISTRY).find((m) => m.openrouterId === ref.openrouterId) ??
+    CHAT_MODEL_REGISTRY[DEFAULT_CHAT_MODEL]
+  );
+}
+
+/**
+ * Picks a model that can actually read an image. Pure so the fallback order is
+ * unit-tested without the real catalog: preferred if it sees, otherwise the
+ * cheapest vision model available (input rate first — an alt text is one small
+ * image and ~60 output tokens, so the input rate dominates the bill).
+ */
+export function pickVisionModel(
+  preferred: ChatModelInfo,
+  candidates: readonly ChatModelInfo[]
+): ChatModelInfo | null {
+  if (preferred.vision) return preferred;
+  const seeing = candidates.filter((m) => m.vision);
+  if (seeing.length === 0) return null;
+  return seeing.reduce((best, m) => (m.inputPerM < best.inputPerM ? m : best));
+}
+
+/**
+ * The model an alt-text generation runs on: the caller's pick when they made
+ * one, the 'fast' system model otherwise — swapped for a vision-capable model
+ * when that pick cannot read images. Throws when the catalog has none: asking
+ * a blind model to describe a photo would bill the merchant for a hallucination.
+ */
+export function visionChatModel(preferredId?: ChatModelId | null): ChatModelInfo {
+  const preferred = preferredId ? getChatModel(preferredId) : systemChatModel('fast');
+  const picked = pickVisionModel(preferred, Object.values(CHAT_MODEL_REGISTRY));
+  if (!picked) throw new Error('[pricing] no vision-capable chat model in the catalog');
+  return picked;
+}
+
 // ---------------------------------------------------------------------------
 // Per-field deterministic costs
 // ---------------------------------------------------------------------------
@@ -165,6 +211,15 @@ export interface ChatTokenEstimate {
   outputTokens: number;
 }
 
+/**
+ * Origin of the `alt` caps in pricing.json (the only ones not derived from a
+ * word budget): the input is ONE product photo plus a short context block —
+ * a 1024²-ish image bills ~1.1-1.3K tokens on Anthropic's tiling, the title /
+ * type / vendor / tags block another ~200, hence 1500. The output is capped by
+ * the prompt at 125 characters — ~40 tokens in Latin scripts, ~55 in the
+ * densest of our 13 locales — hence 60. Keep both in sync with
+ * `buildAltTextPrompt`'s length rule and with ALT_MAX in the editor.
+ */
 export const FIELD_TOKEN_ESTIMATES: Record<PricingFieldId, ChatTokenEstimate> = Object.fromEntries(
   FIELD_IDS.map((id) => [
     id,

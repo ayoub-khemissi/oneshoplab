@@ -14,7 +14,7 @@ import {
 } from '@/entities/ai-model';
 import { runChatOptim, type ProductContext } from '@/entities/generation-job';
 import { startImageOptim } from '@/entities/generation-job';
-import type { ChatOptimField } from '@/entities/generation-job';
+import type { CopyOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/entities/user';
 import { sanitizeUserFacingError } from '@/shared/lib';
@@ -34,7 +34,7 @@ const IMAGE_ANGLE_PROMPTS: Record<ImageAngle, string> = {
     'A candid lifestyle scene of someone naturally using or wearing this product in an everyday context, authentic and human, warm tones. The product is identical to the source.'
 };
 
-const FIELD_DEFAULT_PROMPT: Record<ChatOptimField, string> = {
+const FIELD_DEFAULT_PROMPT: Record<CopyOptimField, string> = {
   title:
     'Rewrite this title to be SEO-optimised, keyword-front-loaded and more compelling. Stay factually consistent with the product.',
   description:
@@ -74,7 +74,7 @@ interface SummaryShape {
   allProducts?: ProductSnapshot[];
 }
 
-function effectiveChatPrompt(field: ChatOptimField, custom: string): string {
+function effectiveChatPrompt(field: CopyOptimField, custom: string): string {
   const trimmed = custom.trim();
   return trimmed
     ? `${FIELD_DEFAULT_PROMPT[field]}\n\nAdditional instructions from the merchant:\n${trimmed}`

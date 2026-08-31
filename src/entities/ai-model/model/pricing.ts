@@ -47,6 +47,9 @@ const ChatModelSchema = z.object({
   openrouterId: z.string().min(1),
   /** Model id on kie.ai (fallback text provider). */
   kieModelId: z.string().min(1),
+  /** Accepts `image` content blocks. Only a vision model can be asked for
+   *  alt text; a non-vision pick is swapped for one (see visionChatModel). */
+  vision: z.boolean(),
   inputPerM: PositiveNum,
   outputPerM: PositiveNum
 });
@@ -82,7 +85,7 @@ export type SystemChatRole = (typeof SYSTEM_CHAT_ROLES)[number];
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
 export type PricingImageQualityId = (typeof IMAGE_QUALITY_IDS)[number];
 
-export const FIELD_IDS = ['title', 'description', 'tags', 'social', 'fullAudit'] as const;
+export const FIELD_IDS = ['title', 'description', 'tags', 'alt', 'social', 'fullAudit'] as const;
 export type PricingFieldId = (typeof FIELD_IDS)[number];
 
 export const CREDIT_PACK_IDS = ['boost', 'power', 'mega'] as const;

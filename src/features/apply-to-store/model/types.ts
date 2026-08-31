@@ -114,6 +114,17 @@ export type ImageOpsResult =
         | 'last_image';
     };
 
+/**
+ * "Générer le texte alternatif" on one tile. Structural on purpose: the
+ * generation lives in `features/generate-alt-text` and a feature never imports
+ * another feature — the page wires its server action in (see
+ * `views/dashboard-product`). Absent = the button is not offered.
+ */
+export type AltTextGenerator = (
+  productId: string,
+  src: string
+) => Promise<{ ok: true; alt: string; creditsConsumed: number } | { ok: false; error: string }>;
+
 /** "Annuler" on an applied change → a reverse change (docs/api/IMAGE-OPS.md §3). */
 export type UndoResult =
   | { ok: true; change: ChangeSummary }

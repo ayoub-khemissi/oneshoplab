@@ -1,4 +1,5 @@
 export type {
+  AltTextGenerator,
   ApplySelectionCounts,
   ApplySelectionResult,
   ApproveResult,

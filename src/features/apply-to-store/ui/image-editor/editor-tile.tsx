@@ -2,9 +2,11 @@
 
 import { ArrowLeft, ArrowRight, ImagePlus, Repeat, Star, Tag, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import type { TileActions } from '../../lib/image-editor';
+import { AltGenerateButton } from './alt-generate-button';
 import { AltTextField } from './alt-text-field';
+import { TileButton } from './tile-button';
 
 export interface TileHandlers {
   setFeatured: () => void;
@@ -14,6 +16,8 @@ export interface TileHandlers {
   saveAlt: (alt: string) => void;
   move: (delta: -1 | 1) => void;
   pick: () => void;
+  /** Absent when the page wired no generator in — the button is not shown. */
+  generateAlt?: () => Promise<{ ok: true; alt: string } | { ok: false; error: string }>;
 }
 
 export interface EditorTileProps {
@@ -41,8 +45,13 @@ export interface EditorTileProps {
 
 export function EditorTile(props: EditorTileProps) {
   const t = useTranslations('ProductImages');
+  const tAlt = useTranslations('AltText');
   const { actions, on, kind, label } = props;
   const [editingAlt, setEditingAlt] = useState(false);
+  // The generated sentence is a PROPOSAL: it opens the same field the merchant
+  // types in, and nothing is queued until they save it (IMAGE-OPS.md §4 — alt
+  // text never touches their visuals, but it does go on their store).
+  const [proposedAlt, setProposedAlt] = useState<string | null>(null);
   const draggable = actions.move;
 
   return (
@@ -101,13 +110,18 @@ export function EditorTile(props: EditorTileProps) {
 
       {editingAlt ? (
         <AltTextField
-          value={props.alt}
+          value={proposedAlt ?? props.alt}
           label={label}
+          hint={proposedAlt !== null ? tAlt('generatedNotice') : undefined}
           onSave={(alt) => {
             on.saveAlt(alt);
+            setProposedAlt(null);
             setEditingAlt(false);
           }}
-          onCancel={() => setEditingAlt(false)}
+          onCancel={() => {
+            setProposedAlt(null);
+            setEditingAlt(false);
+          }}
         />
       ) : (
         <p className="line-clamp-2 text-[11px] text-[var(--muted)]">
@@ -162,6 +176,15 @@ export function EditorTile(props: EditorTileProps) {
               {t('actionAlt')}
             </TileButton>
           ) : null}
+          {actions.setAlt && !editingAlt && on.generateAlt ? (
+            <AltGenerateButton
+              generate={on.generateAlt}
+              onGenerated={(alt) => {
+                setProposedAlt(alt);
+                setEditingAlt(true);
+              }}
+            />
+          ) : null}
           {actions.remove ? (
             <TileButton
               onClick={on.remove}
@@ -198,42 +221,5 @@ export function EditorTile(props: EditorTileProps) {
         </div>
       )}
     </div>
-  );
-}
-
-function TileButton({
-  onClick,
-  testId,
-  icon,
-  children,
-  danger = false,
-  disabled = false,
-  ariaLabel
-}: {
-  onClick: () => void;
-  testId: string;
-  icon: ReactNode;
-  children?: ReactNode;
-  danger?: boolean;
-  disabled?: boolean;
-  ariaLabel?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      data-testid={testId}
-      aria-label={ariaLabel}
-      title={ariaLabel}
-      className={`inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-1.5 py-1 text-[11px] disabled:opacity-40 ${
-        danger
-          ? 'hover:border-[var(--danger)] hover:text-[var(--danger)]'
-          : 'hover:border-[var(--accent)] hover:text-[var(--accent)]'
-      }`}
-    >
-      {icon}
-      {children}
-    </button>
   );
 }

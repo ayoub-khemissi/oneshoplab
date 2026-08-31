@@ -151,6 +151,35 @@ the product view composes it. Decisions the code cannot state on its own:
   `unresolved` cannot be used: it also fires for a target an earlier op in the
   same queue legitimately removed.
 
+### As built (AI alt text, 2026-08-31)
+
+§4's "Alt text is a first-class action" now has a generator:
+`entities/generation-job/api/alt-text.ts` (`runAltTextOptim`) behind
+`features/generate-alt-text` (per-photo action + the site-wide batch), with the
+tile button wired into the editor as a prop — a feature never imports another
+feature, so the product view supplies the action. Decisions the code cannot
+state on its own:
+
+- **It is the only generation that sends an image.** The prompt's user message
+  is a content-block array whose first block is the photo; the chat provider
+  already maps it to OpenAI's `image_url`. Hence `vision` on every entry of
+  `pricing.json` `chatModels` and `visionChatModel()`: a pick that cannot see
+  is swapped for the cheapest one that can, rather than billing a
+  hallucination. All three Claude models see, so the swap is a guard, not a
+  routine path.
+- **Generating never queues.** The per-tile button fills the alt field and
+  stops; saving is what queues the `set_alt` op. The batch is the exception and
+  says so — it queues one `images` change per product carrying *only*
+  `set_alt`, so it lands in the same pending-changes review as everything else
+  and never touches a merchant's visuals.
+- **25 photos per run** (`ALT_BATCH_MAX_IMAGES`), driven one product per server
+  call from the client so the progress bar reports work that happened. The
+  whole run is priced and refused up front: eight alt texts followed by
+  "insufficient credits" is worse than a refusal.
+- **No bell notification.** One click fans out to 25 generations; 25
+  notifications would bury the merchant's real events. Both callers report the
+  outcome in place.
+
 ## 7. Provider-agnostic contract (WooCommerce, Shopify, Wix, and the next ones)
 
 Nothing in §2 names a platform: `sourceImageId` is an opaque string owned by the

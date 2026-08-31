@@ -26,6 +26,7 @@ import { ShareLinksCard } from '@/widgets/share-links-card';
 import { isAdminEmail } from '@/entities/user';
 import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/share-link';
 import { listProjectKeys } from '@/entities/api-key';
+import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
   listPendingChangesForSite,
   listPendingSummaryForSite,
@@ -41,6 +42,8 @@ import {
   toSiteKeySummary,
   type IntegrationPlatform
 } from '@/features/integrations';
+import { canRunAltBatch, countMissingAltFromIssues } from '@/features/generate-alt-text';
+import { BulkAltTextCard } from '@/features/generate-alt-text/client';
 import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
@@ -398,6 +401,18 @@ export async function DashboardSitePage({
           getConnectionForUser(project.id, session.user.id)
         ])
       : [[], [], null];
+  // "Generate the missing alt texts": offered on the products tab only, and
+  // only when the connection declared it can carry a `set_alt` — a button that
+  // would silently do nothing is never shown (IMAGE-OPS.md §7). The count is
+  // the audit's own `missing_alt_text` tally, so the number on the button is
+  // the number in the merchant's report; the action recounts before spending.
+  const altCapabilities =
+    activeTab === 'products' ? await getProjectCapabilities(project.id) : null;
+  const missingAltCount =
+    altCapabilities && canRunAltBatch(altCapabilities)
+      ? countMissingAltFromIssues(summary.allProducts ?? [])
+      : 0;
+
   // The store-wide "changes are waiting" banner sits above the tabs, so it is
   // loaded on every tab — one indexed read on (project_id, status, id).
   const pendingSummary = await listPendingSummaryForSite(project.id, session.user.id);
@@ -478,6 +493,9 @@ export async function DashboardSitePage({
             initialChatModel={bulkChatModel}
             initialImageQuality={bulkImageQuality}
           />
+          {missingAltCount > 0 ? (
+            <BulkAltTextCard projectId={project.id} missingCount={missingAltCount} />
+          ) : null}
           <PaginatedProductsList
             siteId={siteId}
             products={productsSlice}

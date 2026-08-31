@@ -1688,5 +1688,22 @@
     "errorUnsupported": "お使いのショップはこの変更に対応していません。",
     "errorArchived": "この商品はショップにありません。",
     "errorGeneric": "エラーが発生しました。もう一度お試しください。"
+  },
+  "AltText": {
+    "title": "不足している代替テキスト",
+    "intro": "代替テキスト（Google と読み上げソフトが読み取ります）は、各写真に何が写っているかを説明します。こちらで作成しますので、ご確認いただくまでストアには反映されません。",
+    "bulkAction": "不足している代替テキストを生成（{count}）",
+    "progress": "生成中… {done}/{total} 件の商品",
+    "summary": "{generated} 件のテキストを生成、{changes} 件の変更が承認待ちです",
+    "summaryFailed": "{count} 件の商品を処理できませんでした。",
+    "summaryRemaining": "代替テキストのない写真がまだ {count} 枚あります。続けるにはもう一度実行してください。",
+    "generateTile": "代替テキストを生成",
+    "generating": "生成中…",
+    "generatedNotice": "提案されたテキストです。必要に応じて修正して保存してください。",
+    "errorUnsupported": "お使いのストアでは、OneShopLab から写真の代替テキストを変更できません。",
+    "errorInsufficientCredits": "これらの代替テキストを生成するにはクレジットが足りません。",
+    "errorNothingMissing": "すべての写真にすでに代替テキストがあります。",
+    "errorArchived": "この商品はストアにありません。",
+    "errorGeneric": "エラーが発生しました。もう一度お試しください。"
   }
 }

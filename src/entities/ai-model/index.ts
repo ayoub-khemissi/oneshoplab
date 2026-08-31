@@ -50,8 +50,11 @@ export {
   maxProductsForPlan,
   modelNamesForCopy,
   outputTokenCapFor,
+  pickVisionModel,
   resolveChatModelId,
   siteLimitForPlan,
+  systemChatModel,
+  visionChatModel,
   yearlyMonthlyEquivalent,
   yearlyPriceEur
 } from './model/models';

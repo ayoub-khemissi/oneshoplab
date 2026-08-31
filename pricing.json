@@ -48,6 +48,10 @@
       "inputTokens": 1500,
       "outputTokens": 120
     },
+    "alt": {
+      "inputTokens": 1500,
+      "outputTokens": 60
+    },
     "social": {
       "inputTokens": 1500,
       "outputTokens": 800
@@ -65,6 +69,7 @@
       "tagline": "Fast and economical — great for bulk runs.",
       "openrouterId": "anthropic/claude-haiku-4.5",
       "kieModelId": "claude-haiku-4-5",
+      "vision": true,
       "inputPerM": 200,
       "outputPerM": 1000
     },
@@ -75,6 +80,7 @@
       "tagline": "Best price / quality balance for product copy.",
       "openrouterId": "anthropic/claude-sonnet-5",
       "kieModelId": "claude-sonnet-4-6",
+      "vision": true,
       "inputPerM": 400,
       "outputPerM": 2000
     },
@@ -85,6 +91,7 @@
       "tagline": "Top-tier reasoning — premium tone and edge cases.",
       "openrouterId": "anthropic/claude-opus-5",
       "kieModelId": "claude-opus-4-6",
+      "vision": true,
       "inputPerM": 1000,
       "outputPerM": 5000
     }

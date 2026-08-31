@@ -1688,5 +1688,22 @@
     "errorUnsupported": "Votre boutique ne gère pas cette modification.",
     "errorArchived": "Ce produit n’est plus dans votre boutique.",
     "errorGeneric": "Une erreur est survenue. Réessayez."
+  },
+  "AltText": {
+    "title": "Textes alternatifs manquants",
+    "intro": "Le texte alternatif (lu par Google et les lecteurs d’écran) décrit ce que montre chaque photo. Nous le rédigeons pour vous : rien n’est envoyé à votre boutique avant votre validation.",
+    "bulkAction": "Générer les textes alternatifs manquants ({count})",
+    "progress": "Génération en cours… {done}/{total} produits",
+    "summary": "{generated} textes générés, {changes} modifications en attente",
+    "summaryFailed": "{count} produits n’ont pas pu être traités.",
+    "summaryRemaining": "{count} photos n’ont toujours pas de texte alternatif : relancez pour continuer.",
+    "generateTile": "Générer le texte alternatif",
+    "generating": "Génération…",
+    "generatedNotice": "Texte proposé : modifiez-le si besoin, puis enregistrez.",
+    "errorUnsupported": "Votre boutique ne permet pas encore à OneShopLab de modifier le texte alternatif de vos photos.",
+    "errorInsufficientCredits": "Crédits insuffisants pour générer ces textes alternatifs.",
+    "errorNothingMissing": "Toutes vos photos ont déjà un texte alternatif.",
+    "errorArchived": "Ce produit n’est plus dans votre boutique.",
+    "errorGeneric": "Une erreur est survenue. Réessayez."
   }
 }

@@ -1688,5 +1688,22 @@
     "errorUnsupported": "Twój sklep nie obsługuje tej zmiany.",
     "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
     "errorGeneric": "Wystąpił błąd. Spróbuj ponownie."
+  },
+  "AltText": {
+    "title": "Brakujące teksty alternatywne",
+    "intro": "Tekst alternatywny (czytany przez Google i czytniki ekranu) opisuje, co widać na każdym zdjęciu. Napiszemy go za Ciebie — nic nie trafi do Twojego sklepu bez Twojej zgody.",
+    "bulkAction": "Wygeneruj brakujące teksty alternatywne ({count})",
+    "progress": "Generowanie… {done}/{total} produktów",
+    "summary": "Wygenerowano tekstów: {generated}, oczekujących zmian: {changes}",
+    "summaryFailed": "Nie udało się przetworzyć produktów: {count}.",
+    "summaryRemaining": "Bez tekstu alternatywnego pozostaje {count} zdjęć — uruchom ponownie, aby kontynuować.",
+    "generateTile": "Wygeneruj tekst alternatywny",
+    "generating": "Generowanie…",
+    "generatedNotice": "Proponowany tekst — zmień go w razie potrzeby i zapisz.",
+    "errorUnsupported": "Twój sklep nie pozwala jeszcze OneShopLab zmieniać tekstu alternatywnego zdjęć.",
+    "errorInsufficientCredits": "Za mało kredytów, aby wygenerować te teksty alternatywne.",
+    "errorNothingMissing": "Wszystkie Twoje zdjęcia mają już tekst alternatywny.",
+    "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
   }
 }

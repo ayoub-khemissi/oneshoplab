@@ -25,7 +25,7 @@ import {
   type GridGeneratedImage,
   type GridStoreImage
 } from '../../lib/image-editor-grid';
-import type { ImageOpsResult } from '../../model/types';
+import type { AltTextGenerator, ImageOpsResult } from '../../model/types';
 import { EditorGrid } from './editor-grid';
 import { PendingOpsPanel } from './pending-ops-panel';
 
@@ -60,13 +60,17 @@ export function ProductImageEditor({
   storeImages,
   generated,
   capabilities,
-  archived = false
+  archived = false,
+  generateAlt
 }: {
   productId: string;
   storeImages: EditorStoreImage[];
   generated: EditorGeneratedImage[];
   capabilities: ConnectionCapabilities;
   archived?: boolean;
+  /** Server action that writes an alt text for one photo. Wired by the page;
+   *  absent = no "generate" button (see AltTextGenerator). */
+  generateAlt?: AltTextGenerator;
 }) {
   const t = useTranslations('ProductImages');
   const router = useRouter();
@@ -229,7 +233,10 @@ export function ProductImageEditor({
               }
               setAltDrafts((d) => ({ ...d, [tile.src]: alt }));
               setQueue((q) => withAltForSrc(q, tile.src, alt));
-            }
+            },
+            // The generation is never queued on its own: it fills the field,
+            // the merchant reads it, saving is what queues the op.
+            generateAlt: generateAlt ? () => generateAlt(productId, tile.src) : undefined
           })}
         />
       )}
