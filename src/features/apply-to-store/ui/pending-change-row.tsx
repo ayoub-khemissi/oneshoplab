@@ -38,13 +38,13 @@ function ChangeDetail({ detail }: { detail: PendingChangeDetail }) {
 
   return (
     <div className="flex flex-col gap-1 text-sm">
-      <p className="text-[var(--muted)] line-through decoration-[var(--muted)]/50">
+      <p className="break-words text-[var(--muted)] line-through decoration-[var(--muted)]/50">
         <span className="mr-1.5 text-[11px] uppercase tracking-wider no-underline">
           {t('before')}
         </span>
         {detail.before ?? t('emptyValue')}
       </p>
-      <p className="text-[var(--foreground)]">
+      <p className="break-words text-[var(--foreground)]">
         <span className="mr-1.5 text-[11px] uppercase tracking-wider text-[var(--muted)]">
           {t('after')}
         </span>
@@ -93,49 +93,51 @@ export function PendingChangeRow({
       data-testid="pending-change-row"
       data-status={item.status}
       data-change-id={item.id}
-      className={`flex items-start gap-3 rounded-md border p-3 ${tone}`}
+      className={`flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-start sm:gap-3 ${tone}`}
     >
-      {selectable ? (
-        <input
-          type="checkbox"
-          checked={selected}
-          onChange={onToggle}
-          disabled={busy}
-          aria-label={t('selectRow', { field: tField(`field.${item.field}`) })}
-          className="mt-1 size-4 shrink-0 accent-[var(--accent)]"
-        />
-      ) : null}
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {selectable ? (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onToggle}
+            disabled={busy}
+            aria-label={t('selectRow', { field: tField(`field.${item.field}`) })}
+            className="mt-1 size-4 shrink-0 accent-[var(--accent)]"
+          />
+        ) : null}
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--muted)]">
-            {tField(`field.${item.field}`)}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[11px] text-[var(--muted)]">
-            {item.status === 'pending' ? (
-              <Clock className="size-3" aria-hidden />
-            ) : item.status === 'conflict' ? (
-              <AlertTriangle className="size-3 text-[var(--warning,var(--danger))]" aria-hidden />
-            ) : (
-              <XCircle className="size-3 text-[var(--danger)]" aria-hidden />
-            )}
-            {t('approvedOn', { date: formatDate(item.approvedAtIso) })}
-          </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--muted)]">
+              {tField(`field.${item.field}`)}
+            </span>
+            <span className="inline-flex items-center gap-1 text-[11px] text-[var(--muted)]">
+              {item.status === 'pending' ? (
+                <Clock className="size-3" aria-hidden />
+              ) : item.status === 'conflict' ? (
+                <AlertTriangle className="size-3 text-[var(--warning,var(--danger))]" aria-hidden />
+              ) : (
+                <XCircle className="size-3 text-[var(--danger)]" aria-hidden />
+              )}
+              {t('approvedOn', { date: formatDate(item.approvedAtIso) })}
+            </span>
+          </div>
+
+          <ChangeDetail detail={item.detail} />
+
+          {item.status === 'conflict' ? (
+            <p className="text-xs text-[var(--muted)]">{t('conflictHint')}</p>
+          ) : null}
+          {item.status === 'failed' ? (
+            <p className="text-xs text-[var(--danger)]">
+              {item.error ? t('failureError', { error: item.error }) : t('failureNoError')}
+            </p>
+          ) : null}
         </div>
-
-        <ChangeDetail detail={item.detail} />
-
-        {item.status === 'conflict' ? (
-          <p className="text-xs text-[var(--muted)]">{t('conflictHint')}</p>
-        ) : null}
-        {item.status === 'failed' ? (
-          <p className="text-xs text-[var(--danger)]">
-            {item.error ? t('failureError', { error: item.error }) : t('failureNoError')}
-          </p>
-        ) : null}
       </div>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center justify-end gap-1">
         {item.status === 'conflict' ? (
           <Link
             href={`/dashboard/sites/${item.projectId}/products/${item.productId}`}

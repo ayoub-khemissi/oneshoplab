@@ -48,41 +48,48 @@ export function PendingChangesList({
           {items.map((c) => (
             <li
               key={c.id}
-              className="flex items-center gap-3 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)] text-sm"
+              className="flex flex-col gap-2 p-3 rounded-md bg-[var(--default)]/40 border border-[var(--border)] text-sm sm:flex-row sm:items-center sm:gap-3"
             >
-              <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium shrink-0 min-w-[5.5rem]">
-                {t(`field.${c.field}`)}
-              </span>
-              <Link
-                href={`/dashboard/sites/${siteId}/products/${c.productId}`}
-                className="flex-1 truncate hover:text-[var(--accent)]"
-              >
-                {c.productTitle}
-              </Link>
-              <span className="text-[11px] text-[var(--muted)] shrink-0 inline-flex items-center gap-1">
-                {c.status === 'conflict' || c.status === 'failed' ? (
-                  <AlertTriangle className="size-3 text-[var(--danger)]" aria-hidden />
-                ) : (
-                  <Clock className="size-3" aria-hidden />
-                )}
-                {c.status === 'conflict'
-                  ? t('conflict')
-                  : c.status === 'failed'
-                    ? t('failed', { error: c.error ? ` — ${c.error}` : '' })
-                    : t('approvedOn', { date: formatDate(c.approvedAtIso) })}
-              </span>
-              {c.status === 'pending' ? (
-                <button
-                  type="button"
-                  onClick={() => withdraw(c.id)}
-                  disabled={busyId === c.id}
-                  aria-label={t('cancel')}
-                  title={t('cancel')}
-                  className="size-7 rounded-md hover:bg-[var(--default)] hover:text-[var(--danger)] inline-flex items-center justify-center disabled:opacity-50"
+              <div className="flex min-w-0 items-center gap-3 sm:flex-1">
+                <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium shrink-0 min-w-[5.5rem]">
+                  {t(`field.${c.field}`)}
+                </span>
+                <Link
+                  href={`/dashboard/sites/${siteId}/products/${c.productId}`}
+                  className="min-w-0 flex-1 truncate hover:text-[var(--accent)]"
                 >
-                  <X className="size-3.5" />
-                </button>
-              ) : null}
+                  {c.productTitle}
+                </Link>
+              </div>
+              <div className="flex min-w-0 items-start gap-2 sm:shrink-0">
+                <span className="text-[11px] text-[var(--muted)] inline-flex min-w-0 items-start gap-1 break-words sm:max-w-[18rem]">
+                  {c.status === 'conflict' || c.status === 'failed' ? (
+                    <AlertTriangle
+                      className="size-3 shrink-0 translate-y-0.5 text-[var(--danger)]"
+                      aria-hidden
+                    />
+                  ) : (
+                    <Clock className="size-3 shrink-0 translate-y-0.5" aria-hidden />
+                  )}
+                  {c.status === 'conflict'
+                    ? t('conflict')
+                    : c.status === 'failed'
+                      ? t('failed', { error: c.error ? ` — ${c.error}` : '' })
+                      : t('approvedOn', { date: formatDate(c.approvedAtIso) })}
+                </span>
+                {c.status === 'pending' ? (
+                  <button
+                    type="button"
+                    onClick={() => withdraw(c.id)}
+                    disabled={busyId === c.id}
+                    aria-label={t('cancel')}
+                    title={t('cancel')}
+                    className="size-7 shrink-0 rounded-md hover:bg-[var(--default)] hover:text-[var(--danger)] inline-flex items-center justify-center disabled:opacity-50"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>

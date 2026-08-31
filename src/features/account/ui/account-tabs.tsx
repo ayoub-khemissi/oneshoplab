@@ -42,7 +42,7 @@ export function AccountTabs({ labels }: AccountTabsProps) {
       {TABS.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
         const base =
-          'px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap flex items-center gap-2 transition-[padding,font-size,line-height] duration-200 group-data-[compact=true]/sticky:px-2.5 group-data-[compact=true]/sticky:py-1.5 group-data-[compact=true]/sticky:text-xs';
+          'px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap flex grow shrink-0 items-center justify-center gap-2 text-center transition-[padding,font-size,line-height] duration-200 group-data-[compact=true]/sticky:px-2.5 group-data-[compact=true]/sticky:py-1.5 group-data-[compact=true]/sticky:text-xs';
         const state = active
           ? 'border-[var(--accent)] text-[var(--foreground)]'
           : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)]';

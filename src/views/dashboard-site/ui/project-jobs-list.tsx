@@ -45,11 +45,11 @@ export function ProjectJobsList({
                     inside a single Accordion.Trigger so a click
                     anywhere on the row toggles the detail. */}
                 <Accordion.Heading>
-                  <Accordion.Trigger className="w-full px-4 py-3 flex items-center gap-3 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
+                  <Accordion.Trigger className="w-full px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-left hover:bg-[var(--default)]/40 transition-colors">
                     <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-medium shrink-0 min-w-[7rem]">
                       {t(jobKindLabel(j.kind as never))}
                     </span>
-                    <span className="flex-1 truncate text-[var(--muted)] inline-flex items-center gap-1.5 min-w-0">
+                    <span className="order-last basis-full flex-1 truncate text-[var(--muted)] inline-flex items-center gap-1.5 min-w-0 sm:order-none sm:basis-auto">
                       {j.product ? (
                         <>
                           {j.product.status === 'archived' ? (
