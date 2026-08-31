@@ -1526,7 +1526,9 @@
       "secretBody": "Cole na sua ferramenta: toda mensagem que enviamos é assinada com ele, para que sua ferramenta confirme que ela veio mesmo do OneShopLab.",
       "copy": "Copiar",
       "copied": "Copiado",
-      "secretSaved": "Eu guardei"
+      "secretSaved": "Eu guardei",
+      "logShowMore": "{count, plural, =1 {Mostrar 1 envio anterior} other {Mostrar # envios anteriores}}",
+      "logShowLess": "Mostrar menos"
     },
     "platformLocked": "A sua loja funciona com {platform}.",
     "changePlatform": "Mudar de plataforma",
@@ -1554,7 +1556,9 @@
         "keysDead": "Nenhuma chave ativa: as desta loja foram revogadas ou expiraram. Crie uma nova e cole-a no plugin.",
         "keyGraceOnly": "A sua chave anterior está no período de tolerância e deixará de funcionar em breve. Cole a nova chave no plugin."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, =1 {1 chave revogada ou expirada} other {# chaves revogadas ou expiradas}}",
+    "keysPastMore": "{count, plural, =1 {1 chave mais antiga não é mostrada} other {# chaves mais antigas não são mostradas}}"
   },
   "ApplyToStore": {
     "apply": "Aplicar na minha loja",

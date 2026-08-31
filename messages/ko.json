@@ -1526,7 +1526,9 @@
       "secretBody": "사용 중인 도구에 붙여넣으세요. 저희가 보내는 모든 메시지는 이 시크릿으로 서명되어, 도구에서 실제로 OneShopLab에서 온 것인지 확인할 수 있습니다.",
       "copy": "복사",
       "copied": "복사됨",
-      "secretSaved": "저장했습니다"
+      "secretSaved": "저장했습니다",
+      "logShowMore": "{count, plural, other {이전 전송 #건 보기}}",
+      "logShowLess": "간략히 보기"
     },
     "platformLocked": "스토어가 {platform}에서 운영되고 있습니다.",
     "changePlatform": "플랫폼 변경",
@@ -1554,7 +1556,9 @@
         "keysDead": "활성 키가 없습니다. 이 쇼핑몰의 키가 취소되었거나 만료되었습니다. 새 키를 만들어 플러그인에 붙여 넣으세요.",
         "keyGraceOnly": "이전 키가 유예 기간에 있으며 곧 작동을 멈춥니다. 새 키를 플러그인에 붙여 넣으세요."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, other {취소되었거나 만료된 키 #개}}",
+    "keysPastMore": "{count, plural, other {더 오래된 키 #개는 표시하지 않았습니다}}"
   },
   "ApplyToStore": {
     "apply": "내 스토어에 적용",

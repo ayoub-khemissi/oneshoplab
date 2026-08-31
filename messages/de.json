@@ -1526,7 +1526,9 @@
       "secretBody": "Füge es in dein Tool ein: Jede Nachricht, die wir senden, wird damit signiert, damit dein Tool prüfen kann, dass sie wirklich von OneShopLab stammt.",
       "copy": "Kopieren",
       "copied": "Kopiert",
-      "secretSaved": "Ich habe es gespeichert"
+      "secretSaved": "Ich habe es gespeichert",
+      "logShowMore": "{count, plural, =1 {1 ältere Zustellung anzeigen} other {# ältere Zustellungen anzeigen}}",
+      "logShowLess": "Weniger anzeigen"
     },
     "platformLocked": "Dein Shop läuft auf {platform}.",
     "changePlatform": "Plattform ändern",
@@ -1554,7 +1556,9 @@
         "keysDead": "Kein aktiver Schlüssel: die dieses Shops wurden widerrufen oder sind abgelaufen. Erstelle einen neuen und füge ihn im Plugin ein.",
         "keyGraceOnly": "Dein alter Schlüssel ist in der Übergangsfrist und funktioniert bald nicht mehr. Füge den neuen Schlüssel im Plugin ein."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, =1 {1 widerrufener oder abgelaufener Schlüssel} other {# widerrufene oder abgelaufene Schlüssel}}",
+    "keysPastMore": "{count, plural, =1 {1 älterer Schlüssel wird nicht angezeigt} other {# ältere Schlüssel werden nicht angezeigt}}"
   },
   "ApplyToStore": {
     "apply": "In meinem Shop anwenden",

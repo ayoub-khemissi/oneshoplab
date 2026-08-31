@@ -1526,7 +1526,9 @@
       "secretBody": "Paste it in your tool: every message we send is signed with it so your tool can check it really comes from OneShopLab.",
       "copy": "Copy",
       "copied": "Copied",
-      "secretSaved": "I saved it"
+      "secretSaved": "I saved it",
+      "logShowMore": "{count, plural, =1 {Show 1 older delivery} other {Show # older deliveries}}",
+      "logShowLess": "Show less"
     },
     "platformLocked": "Your store runs on {platform}.",
     "changePlatform": "Change platform",
@@ -1554,7 +1556,9 @@
         "keysDead": "No active key: this store's keys were revoked or expired. Create a new one and paste it into the plugin.",
         "keyGraceOnly": "Your previous key is in its grace period and will stop working shortly. Paste the new key into the plugin."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, =1 {1 revoked or expired key} other {# revoked or expired keys}}",
+    "keysPastMore": "{count, plural, =1 {1 older key is not shown} other {# older keys are not shown}}"
   },
   "ApplyToStore": {
     "apply": "Apply to my store",

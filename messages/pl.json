@@ -1526,7 +1526,9 @@
       "secretBody": "Wklej go w swoim narzędziu: każda wysyłana przez nas wiadomość jest nim podpisana, dzięki czemu twoje narzędzie może sprawdzić, że naprawdę pochodzi od OneShopLab.",
       "copy": "Kopiuj",
       "copied": "Skopiowano",
-      "secretSaved": "Zapisałem/-am go"
+      "secretSaved": "Zapisałem/-am go",
+      "logShowMore": "{count, plural, one {Pokaż # starszą wysyłkę} few {Pokaż # starsze wysyłki} other {Pokaż # starszych wysyłek}}",
+      "logShowLess": "Pokaż mniej"
     },
     "platformLocked": "Twój sklep działa na {platform}.",
     "changePlatform": "Zmień platformę",
@@ -1554,7 +1556,9 @@
         "keysDead": "Brak aktywnego klucza: klucze tego sklepu cofnięto lub wygasły. Utwórz nowy i wklej go we wtyczce.",
         "keyGraceOnly": "Poprzedni klucz działa w okresie przejściowym i wkrótce przestanie. Wklej nowy klucz we wtyczce."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, one {# cofnięty lub wygasły klucz} few {# cofnięte lub wygasłe klucze} other {# cofniętych lub wygasłych kluczy}}",
+    "keysPastMore": "{count, plural, one {# starszy klucz nie jest pokazany} few {# starsze klucze nie są pokazane} other {# starszych kluczy nie jest pokazanych}}"
   },
   "ApplyToStore": {
     "apply": "Zastosuj w sklepie",

@@ -1526,7 +1526,9 @@
       "secretBody": "الصقه في أداتك: كل رسالة نرسلها موقّعة به، ليتمكن أداتك من التحقق من أنها تأتي فعلًا من OneShopLab.",
       "copy": "نسخ",
       "copied": "تم النسخ",
-      "secretSaved": "لقد حفظته"
+      "secretSaved": "لقد حفظته",
+      "logShowMore": "{count, plural, other {عرض # إرسالًا أقدم}}",
+      "logShowLess": "عرض أقل"
     },
     "platformLocked": "متجرك يعمل على {platform}.",
     "changePlatform": "تغيير المنصة",
@@ -1554,7 +1556,9 @@
         "keysDead": "لا يوجد مفتاح نشط: مفاتيح هذا المتجر أُلغيت أو انتهت صلاحيتها. أنشئ مفتاحًا جديدًا والصقه في الإضافة.",
         "keyGraceOnly": "مفتاحك السابق في فترة سماح وسيتوقف قريبًا. الصق المفتاح الجديد في الإضافة."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, other {# مفتاح ملغى أو منتهي الصلاحية}}",
+    "keysPastMore": "{count, plural, other {# مفتاح أقدم غير معروض}}"
   },
   "ApplyToStore": {
     "apply": "تطبيق في متجري",

@@ -1526,7 +1526,9 @@
       "secretBody": "请将其粘贴到您的工具中：我们发送的每条消息都会用它签名，以便您的工具核实消息确实来自 OneShopLab。",
       "copy": "复制",
       "copied": "已复制",
-      "secretSaved": "我已保存"
+      "secretSaved": "我已保存",
+      "logShowMore": "{count, plural, other {显示更早的 # 条发送记录}}",
+      "logShowLess": "收起"
     },
     "platformLocked": "您的商店基于 {platform}。",
     "changePlatform": "更换平台",
@@ -1554,7 +1556,9 @@
         "keysDead": "没有可用密钥：该店铺的密钥已被撤销或过期。请新建一个并粘贴到插件中。",
         "keyGraceOnly": "旧密钥处于宽限期，很快将失效。请把新密钥粘贴到插件中。"
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, other {# 个已撤销或过期的密钥}}",
+    "keysPastMore": "{count, plural, other {另有 # 个更早的密钥未显示}}"
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

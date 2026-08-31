@@ -1526,7 +1526,9 @@
       "secretBody": "Collez-le dans votre outil : chaque message que nous envoyons est signé avec, pour que votre outil vérifie qu’il vient bien de OneShopLab.",
       "copy": "Copier",
       "copied": "Copié",
-      "secretSaved": "Je l’ai enregistré"
+      "secretSaved": "Je l’ai enregistré",
+      "logShowMore": "{count, plural, =1 {Afficher 1 envoi plus ancien} other {Afficher # envois plus anciens}}",
+      "logShowLess": "Afficher moins"
     },
     "platformLocked": "Votre boutique est sur {platform}.",
     "changePlatform": "Changer de plateforme",
@@ -1554,7 +1556,9 @@
         "keysDead": "Aucune clé active : celles de cette boutique ont été révoquées ou ont expiré. Créez-en une nouvelle et collez-la dans l'extension.",
         "keyGraceOnly": "Votre ancienne clé est en période de grâce et cessera bientôt de fonctionner. Collez la nouvelle clé dans l'extension."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, =1 {1 clé révoquée ou expirée} other {# clés révoquées ou expirées}}",
+    "keysPastMore": "{count, plural, =1 {1 clé plus ancienne n’est pas affichée} other {# clés plus anciennes ne sont pas affichées}}"
   },
   "ApplyToStore": {
     "apply": "Appliquer sur la boutique",

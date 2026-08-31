@@ -1526,7 +1526,9 @@
       "secretBody": "お使いのツールに貼り付けてください。当社が送信するすべてのメッセージにはこれで署名されており、確かにOneShopLabから送られたものか確認できます。",
       "copy": "コピー",
       "copied": "コピーしました",
-      "secretSaved": "保存しました"
+      "secretSaved": "保存しました",
+      "logShowMore": "{count, plural, other {古い送信 # 件を表示}}",
+      "logShowLess": "表示を減らす"
     },
     "platformLocked": "あなたのショップは {platform} で動いています。",
     "changePlatform": "プラットフォームを変更",
@@ -1554,7 +1556,9 @@
         "keysDead": "有効なキーがありません。このショップのキーは取り消されたか期限切れです。新しいキーを作成してプラグインに貼り付けてください。",
         "keyGraceOnly": "以前のキーは猶予期間中で、まもなく使えなくなります。新しいキーをプラグインに貼り付けてください。"
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, other {取り消し済み・期限切れのキー # 件}}",
+    "keysPastMore": "{count, plural, other {さらに古いキー # 件は表示していません}}"
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

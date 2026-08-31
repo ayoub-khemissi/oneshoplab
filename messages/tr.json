@@ -1526,7 +1526,9 @@
       "secretBody": "Aracınıza yapıştırın: gönderdiğimiz her mesaj bununla imzalanır, böylece aracınız mesajın gerçekten OneShopLab'dan geldiğini kontrol edebilir.",
       "copy": "Kopyala",
       "copied": "Kopyalandı",
-      "secretSaved": "Kaydettim"
+      "secretSaved": "Kaydettim",
+      "logShowMore": "{count, plural, other {# daha eski gönderimi göster}}",
+      "logShowLess": "Daha az göster"
     },
     "platformLocked": "Mağazanız {platform} üzerinde çalışıyor.",
     "changePlatform": "Platformu değiştir",
@@ -1554,7 +1556,9 @@
         "keysDead": "Etkin anahtar yok: bu mağazanınkiler iptal edilmiş ya da süresi dolmuş. Yeni bir tane oluştur ve eklentiye yapıştır.",
         "keyGraceOnly": "Eski anahtarın ek süre içinde ve yakında çalışmayı bırakacak. Yeni anahtarı eklentiye yapıştır."
       }
-    }
+    },
+    "keysPastToggle": "{count, plural, other {# iptal edilmiş veya süresi dolmuş anahtar}}",
+    "keysPastMore": "{count, plural, other {# daha eski anahtar gösterilmiyor}}"
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",
