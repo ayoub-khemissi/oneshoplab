@@ -276,12 +276,12 @@ export default async function HomePage({ searchParams }: PageProps) {
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <FeatureCard number="01" title={t('step1Title')} description={t('step1Description')} />
+          <FeatureCard number="02" title={t('step2Title')} description={t('step2Description')} />
           <FeatureCard
-            number="02"
-            title={t('step2Title')}
-            description={t('step2Description', modelNamesForCopy())}
+            number="03"
+            title={t('step3Title')}
+            description={t('step3Description', modelNamesForCopy())}
           />
-          <FeatureCard number="03" title={t('step3Title')} description={t('step3Description')} />
         </div>
       </section>
 

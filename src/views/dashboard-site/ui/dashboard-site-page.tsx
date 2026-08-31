@@ -28,6 +28,7 @@ import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/s
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
+  hasAppliedChange,
   listPendingChangesForSite,
   listPendingSummaryForSite,
   PendingChangesBanner,
@@ -36,6 +37,7 @@ import {
 import {
   buildPlatformRequirements,
   INTEGRATION_PLATFORMS,
+  isProjectConnected,
   isUsableKey,
   parseIntegrationReturn,
   readWpPluginManifest,
@@ -47,6 +49,7 @@ import { BulkAltTextCard } from '@/features/generate-alt-text/client';
 import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
+import { StoreSetupGuide } from '@/widgets/store-setup-guide';
 import {
   getConnectionForUser,
   toShopifyConnectionView,
@@ -416,6 +419,13 @@ export async function DashboardSitePage({
   // The store-wide "changes are waiting" banner sits above the tabs, so it is
   // loaded on every tab — one indexed read on (project_id, status, id).
   const pendingSummary = await listPendingSummaryForSite(project.id, session.user.id);
+  // Onboarding: where this store stands on the connect-then-apply path. Both
+  // are indexed existence checks, and they stop being read as soon as the
+  // guide has nothing left to say.
+  const [storeConnected, storeApplied] = await Promise.all([
+    isProjectConnected(project.id),
+    hasAppliedChange(project.id)
+  ]);
   const activeProductCount = productRows.filter((p) => p.status === 'active').length;
   // Prefer the stored source; fall back to the latest audit's detection so a
   // project created before source persistence still routes to its platform.
@@ -463,6 +473,12 @@ export async function DashboardSitePage({
         />
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
+
+      {/* The path to a store that updates itself. Hidden on the Integrations
+          tab: the merchant is already looking at the step it points to. */}
+      {activeTab === 'integrations' ? null : (
+        <StoreSetupGuide projectId={project.id} connected={storeConnected} applied={storeApplied} />
+      )}
 
       {activeTab === 'overview' ? (
         auditLoading ? (

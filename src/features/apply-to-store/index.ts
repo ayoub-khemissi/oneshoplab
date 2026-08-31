@@ -25,6 +25,7 @@ export {
 export { approveImageOpsAction } from './api/image-ops-actions';
 export {
   countPendingByProject,
+  hasAppliedChange,
   listChangesForJobs,
   listPendingChangesForSite,
   listPendingSummaryForProduct,

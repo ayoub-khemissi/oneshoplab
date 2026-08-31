@@ -80,6 +80,16 @@ export async function listPendingChangesForSite(
   }));
 }
 
+/** Onboarding: has this store ever received a change? One indexed read. */
+export async function hasAppliedChange(projectId: string): Promise<boolean> {
+  const [row] = await db
+    .select({ id: productChanges.id })
+    .from(productChanges)
+    .where(and(eq(productChanges.projectId, projectId), eq(productChanges.status, 'applied')))
+    .limit(1);
+  return Boolean(row);
+}
+
 // ============================================================================
 // "Changes waiting for your store" — banner counters + modal rows
 // ============================================================================

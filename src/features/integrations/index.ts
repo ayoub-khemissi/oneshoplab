@@ -26,6 +26,11 @@ export {
   setIntegrationInterestAction,
   setPlatformAction
 } from './api/actions';
+export {
+  SITE_KEY_ACTIVE_FOR_MS,
+  isProjectConnected,
+  listConnectedProjectIds
+} from './api/connection-state';
 export { readWpPluginManifest } from './lib/plugin-download';
 export {
   buildPlatformRequirements,

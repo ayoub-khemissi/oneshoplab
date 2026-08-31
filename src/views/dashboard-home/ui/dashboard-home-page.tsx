@@ -1,12 +1,13 @@
 import { Card } from '@heroui/react';
 import { desc, eq, inArray } from 'drizzle-orm';
-import { ArrowRight, Coins, Plus, Sparkles } from 'lucide-react';
+import { ArrowRight, Coins, Plug, Plus, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { DeleteSiteButton } from '@/features/manage-project';
 import { countPendingByProject, PendingChangesPill } from '@/features/apply-to-store';
+import { listConnectedProjectIds } from '@/features/integrations';
 import type { PendingCounts } from '@/features/apply-to-store';
 import { SiteFavicon } from '@/shared/ui';
 import { siteLimitForPlan } from '@/entities/ai-model';
@@ -28,6 +29,8 @@ interface SiteCardData {
   auditStatus: AuditStatus | null;
   /** Changes still waiting for this store — null when there is none. */
   pending: PendingCounts | null;
+  /** No plugin and no app talking to this store yet. */
+  needsConnection: boolean;
 }
 
 export async function DashboardHomePage() {
@@ -75,9 +78,11 @@ export async function DashboardHomePage() {
 
   // One grouped aggregate for the whole account — the site cards say, without
   // opening anything, which store still has work waiting for it.
-  const pendingBySite = new Map(
-    (await countPendingByProject(session.user.id)).map((s) => [s.projectId, s])
-  );
+  const [pendingRows, connectedIds] = await Promise.all([
+    countPendingByProject(session.user.id),
+    listConnectedProjectIds(session.user.id)
+  ]);
+  const pendingBySite = new Map(pendingRows.map((s) => [s.projectId, s]));
 
   const sites: SiteCardData[] = userProjects.map((p) => {
     const latest = latestAuditByProject.get(p.id);
@@ -101,7 +106,8 @@ export async function DashboardHomePage() {
       productsCount,
       lastUpdatedRelative: lastUpdatedAt ? formatRelative(lastUpdatedAt, relTimeFormat) : null,
       auditStatus,
-      pending: pendingBySite.get(p.id) ?? null
+      pending: pendingBySite.get(p.id) ?? null,
+      needsConnection: !connectedIds.has(p.id)
     };
   });
 
@@ -200,6 +206,7 @@ function EmptyState() {
 
 function SiteCard({ site }: { site: SiteCardData }) {
   const t = useTranslations('Dashboard');
+  const tOnboarding = useTranslations('Onboarding');
   const href = `/dashboard/sites/${site.projectId}`;
   // The card is one big link with an overlay rather than a wrapping <a>: the
   // delete button and the pending-changes pill are interactive too, and an
@@ -229,6 +236,17 @@ function SiteCard({ site }: { site: SiteCardData }) {
         <span className="relative z-10 w-fit">
           <PendingChangesPill projectId={site.projectId} counts={site.pending} />
         </span>
+      ) : null}
+
+      {site.needsConnection ? (
+        <Link
+          href={`/dashboard/sites/${site.projectId}?tab=integrations`}
+          data-testid="site-card-connect"
+          className="relative z-10 inline-flex w-fit items-center gap-1.5 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/5 px-2.5 py-1 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent)]/10"
+        >
+          <Plug className="size-3" aria-hidden />
+          {tOnboarding('cardConnect')}
+        </Link>
       ) : null}
 
       <SiteCardStatus
