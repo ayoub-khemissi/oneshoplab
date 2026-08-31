@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { siteLimitForPlan } from '@/entities/ai-model';
-import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
+import { launchAuditForUser, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
@@ -25,10 +25,6 @@ async function addSiteAction(formData: FormData): Promise<void> {
   const norm = normalizeUrl(raw);
   if (!norm) {
     redirect('/dashboard/sites/new?error=invalid_url');
-  }
-
-  if ((session.user.creditsBalance ?? 0) < MIN_AUDIT_CREDITS) {
-    redirect('/pricing?error=insufficient_credits');
   }
 
   // Quota check — re-auditing an existing domain reuses the project, so it
@@ -59,11 +55,9 @@ export default async function AddSitePage({ searchParams }: PageProps) {
   const errorMessage =
     params.error === 'invalid_url'
       ? t('addSiteErrorInvalidUrl')
-      : params.error === 'insufficient_credits'
-        ? t('addSiteErrorInsufficientCredits')
-        : params.error === 'site_limit_reached'
-          ? t('addSiteErrorQuotaReached')
-          : null;
+      : params.error === 'site_limit_reached'
+        ? t('addSiteErrorQuotaReached')
+        : null;
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-2xl w-full mx-auto flex flex-col gap-6 md:gap-8">
@@ -78,7 +72,7 @@ export default async function AddSitePage({ searchParams }: PageProps) {
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t('addSitePageTitle')}</h1>
         <p className="text-sm md:text-base text-[var(--muted)] leading-relaxed">
-          {t('addSitePageSubtitle', { credits: MIN_AUDIT_CREDITS })}
+          {t('addSitePageSubtitle')}
         </p>
       </header>
 

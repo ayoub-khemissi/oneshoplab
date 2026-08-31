@@ -23,12 +23,7 @@ export type {
   AuditSourceReason,
   CatalogConnector
 } from './lib/source-decision';
-export {
-  launchAuditForUser,
-  launchAnonymousAudit,
-  normalizeUrl,
-  MIN_AUDIT_CREDITS
-} from './api/launch';
+export { launchAuditForUser, launchAnonymousAudit, normalizeUrl } from './api/launch';
 export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from './api/refresh';
 export { regenerateProductSection, runDynamicAuditForProduct } from './api/dynamic-audit';
 export type {

@@ -5,10 +5,6 @@ import { db } from '@/shared/db';
 import { audits, projects } from '@/shared/db/schema';
 import { processAudit } from './process';
 
-/** Minimum credit balance required to launch an audit (one full dynamic
- *  audit across 3 products consumes ~150 credits at default settings). */
-export const MIN_AUDIT_CREDITS = 50;
-
 /**
  * Parse a free-form URL into a canonical { url, domain } pair. Returns null
  * if the input doesn't look like a valid hostname. Used by every audit-launch

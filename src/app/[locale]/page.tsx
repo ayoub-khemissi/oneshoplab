@@ -10,7 +10,7 @@ import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/shared/ui';
 import { ShowcaseSection } from '@/widgets/showcase-section';
 import { getStripePriceId, PricingCards } from '@/features/billing';
 import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/entities/ai-model';
-import { launchAuditForUser, MIN_AUDIT_CREDITS, normalizeUrl } from '@/features/run-audit';
+import { launchAuditForUser, normalizeUrl } from '@/features/run-audit';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects, subscriptions } from '@/shared/db/schema';
@@ -61,10 +61,6 @@ async function startAuditAction(formData: FormData) {
     redirect(`/login?audit=${encodeURIComponent(norm.url)}`);
   }
 
-  if ((session.user.creditsBalance ?? 0) < MIN_AUDIT_CREDITS) {
-    redirect('/pricing?error=insufficient_credits');
-  }
-
   // Check site quota before allowing a new project. Re-auditing an existing
   // domain doesn't count — only NEW projects do.
   const userProjects = await db.query.projects.findMany({
@@ -100,9 +96,6 @@ export default async function HomePage({ searchParams }: PageProps) {
     if (session?.user?.id) {
       const norm = normalizeUrl(decodeURIComponent(params.audit));
       if (norm) {
-        if ((session.user.creditsBalance ?? 0) < MIN_AUDIT_CREDITS) {
-          redirect('/pricing?error=insufficient_credits');
-        }
         const { projectId } = await launchAuditForUser(session.user.id, norm);
         redirect(projectId ? `/dashboard/sites/${projectId}` : '/dashboard');
       }
