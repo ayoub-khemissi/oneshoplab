@@ -1531,7 +1531,11 @@
       "connectedTitle": "Shop verbunden",
       "connectedLead": "Alles steht: Freigegebene Änderungen gehen in deinen Shop, und dein Katalog bleibt aktuell.",
       "partialTitle": "Verbindung läuft",
-      "partialLead": "Ein Schritt fehlt noch, bevor deine Änderungen den Shop erreichen können.",
+      "partialLead": {
+        "platform": "Sag uns zuerst, auf welcher Plattform dein Shop läuft.",
+        "credential": "Dein Shop muss uns noch autorisieren, damit deine Änderungen ihn erreichen.",
+        "sync": "Dein Shop ist autorisiert — es fehlt nur noch die erste Katalog-Synchronisierung."
+      },
       "idleTitle": "Shop nicht verbunden",
       "idleLead": "Folge den drei Schritten unten: zwei Minuten, und freigegebene Änderungen gehen direkt in deinen Shop.",
       "attentionTitle": "Verbindung unterbrochen",

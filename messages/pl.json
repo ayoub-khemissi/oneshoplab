@@ -1531,7 +1531,11 @@
       "connectedTitle": "Sklep podłączony",
       "connectedLead": "Wszystko gotowe: zatwierdzone zmiany trafiają do sklepu, a katalog pozostaje aktualny.",
       "partialTitle": "Podłączanie w toku",
-      "partialLead": "Został jeden krok, zanim zmiany będą mogły trafiać do sklepu.",
+      "partialLead": {
+        "platform": "Zacznij od wskazania, na jakiej platformie działa Twój sklep.",
+        "credential": "Zostaje autoryzacja sklepu, żeby zmiany mogły do niego trafiać.",
+        "sync": "Sklep jest autoryzowany — brakuje już tylko pierwszej synchronizacji katalogu."
+      },
       "idleTitle": "Sklep niepodłączony",
       "idleLead": "Wykonaj trzy kroki poniżej: dwie minuty i zatwierdzone zmiany trafią prosto do Twojego sklepu.",
       "attentionTitle": "Połączenie przerwane",

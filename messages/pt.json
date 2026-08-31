@@ -1531,7 +1531,11 @@
       "connectedTitle": "Loja ligada",
       "connectedLead": "Está tudo pronto: as alterações que aprova vão para a sua loja e o catálogo mantém-se atualizado.",
       "partialTitle": "Ligação em curso",
-      "partialLead": "Falta um passo para que as suas alterações cheguem à loja.",
+      "partialLead": {
+        "platform": "Comece por indicar em que plataforma funciona a sua loja.",
+        "credential": "Falta a sua loja autorizar-nos, para que as suas alterações possam chegar lá.",
+        "sync": "A sua loja está autorizada: só falta a primeira sincronização do catálogo."
+      },
       "idleTitle": "Loja não ligada",
       "idleLead": "Siga os três passos abaixo: dois minutos e as alterações aprovadas vão direto para a sua loja.",
       "attentionTitle": "Ligação interrompida",

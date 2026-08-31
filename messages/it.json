@@ -1531,7 +1531,11 @@
       "connectedTitle": "Negozio collegato",
       "connectedLead": "Tutto a posto: le modifiche che approvi arrivano nel tuo negozio e il catalogo resta aggiornato.",
       "partialTitle": "Collegamento in corso",
-      "partialLead": "Manca un passaggio prima che le tue modifiche possano arrivare nel negozio.",
+      "partialLead": {
+        "platform": "Inizia indicando su quale piattaforma gira il tuo negozio.",
+        "credential": "Manca l'autorizzazione del tuo negozio perché le modifiche possano arrivarci.",
+        "sync": "Il tuo negozio è autorizzato: manca solo la prima sincronizzazione del catalogo."
+      },
       "idleTitle": "Negozio non collegato",
       "idleLead": "Segui i tre passaggi qui sotto: due minuti e le modifiche approvate andranno direttamente nel tuo negozio.",
       "attentionTitle": "Collegamento interrotto",

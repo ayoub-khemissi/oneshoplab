@@ -1531,7 +1531,11 @@
       "connectedTitle": "Mağaza bağlı",
       "connectedLead": "Her şey yerinde: onayladığın değişiklikler mağazana gidiyor, kataloğun güncel kalıyor.",
       "partialTitle": "Bağlantı sürüyor",
-      "partialLead": "Değişikliklerinin mağazana ulaşabilmesi için bir adım kaldı.",
+      "partialLead": {
+        "platform": "Önce mağazanın hangi platformda çalıştığını belirt.",
+        "credential": "Değişikliklerin mağazana ulaşabilmesi için mağazanın bize izin vermesi gerekiyor.",
+        "sync": "Mağazan yetkilendirildi; geriye yalnızca ilk katalog eşitlemesi kaldı."
+      },
       "idleTitle": "Mağaza bağlı değil",
       "idleLead": "Aşağıdaki üç adımı izle: iki dakika, ve onayladığın değişiklikler doğrudan mağazana gidecek.",
       "attentionTitle": "Bağlantı koptu",

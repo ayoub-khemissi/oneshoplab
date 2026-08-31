@@ -1531,7 +1531,11 @@
       "connectedTitle": "Boutique connectée",
       "connectedLead": "Tout est en place : vos modifications validées partent dans votre boutique et votre catalogue reste à jour.",
       "partialTitle": "Connexion en cours",
-      "partialLead": "Il reste une étape avant que vos modifications puissent partir dans votre boutique.",
+      "partialLead": {
+        "platform": "Commencez par indiquer sur quelle plateforme tourne votre boutique.",
+        "credential": "Il reste à autoriser votre boutique, pour que vos modifications puissent y partir.",
+        "sync": "Votre boutique est autorisée : il ne manque plus que la première synchronisation de votre catalogue."
+      },
       "idleTitle": "Boutique non connectée",
       "idleLead": "Suivez les trois étapes ci-dessous : deux minutes, et vos modifications validées partiront directement dans votre boutique.",
       "attentionTitle": "Connexion interrompue",

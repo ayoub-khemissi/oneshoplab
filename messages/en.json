@@ -1531,7 +1531,11 @@
       "connectedTitle": "Store connected",
       "connectedLead": "Everything is in place: the changes you approve go to your store, and your catalog stays up to date.",
       "partialTitle": "Connection in progress",
-      "partialLead": "One step is left before your changes can reach your store.",
+      "partialLead": {
+        "platform": "Start by telling us which platform your store runs on.",
+        "credential": "Your store still has to authorise us before your changes can reach it.",
+        "sync": "Your store is authorised — only the first catalog sync is missing."
+      },
       "idleTitle": "Store not connected",
       "idleLead": "Follow the three steps below: two minutes, and the changes you approve will go straight to your store.",
       "attentionTitle": "Connection interrupted",

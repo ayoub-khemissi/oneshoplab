@@ -1531,7 +1531,11 @@
       "connectedTitle": "Tienda conectada",
       "connectedLead": "Todo está listo: los cambios que apruebas llegan a tu tienda y tu catálogo se mantiene al día.",
       "partialTitle": "Conexión en curso",
-      "partialLead": "Queda un paso para que tus cambios puedan llegar a tu tienda.",
+      "partialLead": {
+        "platform": "Empieza indicando en qué plataforma funciona tu tienda.",
+        "credential": "Falta que tu tienda nos autorice para que tus cambios puedan llegar a ella.",
+        "sync": "Tu tienda está autorizada: solo falta la primera sincronización del catálogo."
+      },
       "idleTitle": "Tienda no conectada",
       "idleLead": "Sigue los tres pasos de abajo: dos minutos y los cambios que apruebes irán directamente a tu tienda.",
       "attentionTitle": "Conexión interrumpida",

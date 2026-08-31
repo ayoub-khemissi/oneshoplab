@@ -25,7 +25,7 @@ const TONE_TEXT: Record<ConnectionSummaryView['tone'], string> = {
  */
 export function ConnectionSummaryCard({ summary }: { summary: ConnectionSummaryView }) {
   const t = useTranslations('Integrations');
-  const { tone, state, steps, problem } = summary;
+  const { tone, state, steps, problem, next } = summary;
 
   const Icon =
     tone === 'ok' ? Check : tone === 'danger' ? XCircle : tone === 'warn' ? AlertTriangle : Plug;
@@ -42,7 +42,11 @@ export function ConnectionSummaryCard({ summary }: { summary: ConnectionSummaryV
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="text-base font-semibold tracking-tight">{t(`summary.${state}Title`)}</h2>
           <p className="text-sm leading-relaxed text-[var(--muted)]">
-            {problem ? t(`summary.problem.${problem}`) : t(`summary.${state}Lead`)}
+            {problem
+              ? t(`summary.problem.${problem}`)
+              : state === 'partial' && next
+                ? t(`summary.partialLead.${next}`)
+                : t(`summary.${state}Lead`)}
           </p>
         </div>
       </div>

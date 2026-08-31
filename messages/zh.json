@@ -1531,7 +1531,11 @@
       "connectedTitle": "店铺已连接",
       "connectedLead": "一切就绪：你确认的改动会写回店铺，商品目录也保持最新。",
       "partialTitle": "连接进行中",
-      "partialLead": "还差一步，你的改动才能写回店铺。",
+      "partialLead": {
+        "platform": "先告诉我们你的店铺用的是哪个平台。",
+        "credential": "还需要店铺授权，你的改动才能写回去。",
+        "sync": "店铺已授权，只差第一次目录同步。"
+      },
       "idleTitle": "店铺未连接",
       "idleLead": "按下面三步操作：两分钟，你确认的改动就会直接写回店铺。",
       "attentionTitle": "连接已中断",
