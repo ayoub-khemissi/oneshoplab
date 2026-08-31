@@ -1705,5 +1705,39 @@
     "errorNothingMissing": "All your photos already have an alternative text.",
     "errorArchived": "This product is no longer in your store.",
     "errorGeneric": "Something went wrong. Please try again."
+  },
+  "FieldHelp": {
+    "trigger": "Why it matters: {topic}",
+    "triggerGeneric": "Why it matters",
+    "title": "30 to 70 characters: precise enough for Google to understand your product, short enough not to be cut off in the results.",
+    "description": "A detailed description answers the questions buyers ask before ordering, which cuts hesitation and returns. Full marks at 600 characters, with a few subheadings or lists.",
+    "tags": "Tags file the product on the right shelves and feed your store’s own search and filters. Five tags or more scores full marks.",
+    "images": "Several angles reassure the buyer — the material, the size, how it is used — and fewer parcels come back. Four photos or more scores full marks.",
+    "altText": "One sentence describing the photo: it shows if the image fails to load, screen readers read it aloud, and it gives your visuals meaning in image search. One plain sentence per photo is enough.",
+    "imageCount": "The number of photos per product weighs the most in the visual score. Below four, an angle or a real-life shot is almost always missing — often the one that closes the sale.",
+    "imageResolution": "Below 800 px wide a photo turns blurry as soon as it is enlarged on a phone, and doubt sets in. We flag every product whose smallest photo falls under that mark.",
+    "credits": "Credits pay for each generation: text costs less than an image, and the price is shown on every button before you start. A generation that fails is never charged.",
+    "pendingSync": "These changes are ready but are not on your store yet: until they are sent, your visitors still see the old version. Open the recap to send them.",
+    "customInstructions": "Say in one sentence what makes your brand yours (tone, audience, words to avoid) and the generated text will sound like you. It saves rewriting everything afterwards.",
+    "chatModel": "Chooses who writes your titles, descriptions and tags. Fuller models write with more nuance and cost more credits — the estimate is shown on each choice.",
+    "imageQuality": "Sets how much detail the generated visuals carry. More detail stays sharp when a buyer zooms in on a phone, and costs more credits.",
+    "score": {
+      "overall": "The average of the four axes below, out of 100. It is the number to watch over time: every product page you complete pushes it up.",
+      "catalogCompleteness": "The share of your products that have at least one photo AND a description. An empty product page has nothing to sell with, and nothing to show a first-time visitor.",
+      "copyQuality": "How well your selling text does its job: useful length and readable layout. A 600-character description broken up with lists or subheadings scores full marks.",
+      "visualQuality": "How rich your catalog looks. It counts photos per product: four or more is full marks, a single photo leaves the buyer guessing.",
+      "taggingQuality": "How well your catalog is filed. From five tags per product, shoppers land on the right item through your store’s search and filters."
+    },
+    "issue": {
+      "no_image": "With no photo there is nothing to look at, and the purchase stops there. It is also what weighs the most in this product’s score.",
+      "single_image": "A single photo leaves the material, the scale and the use to guesswork, and doubt makes people leave. Three more angles are enough to settle it.",
+      "no_description": "With no text, nothing answers the questions a buyer has before ordering. Your store’s own search has nothing to work with either.",
+      "short_description": "Too short to lift objections: material, size, care and delivery are all left hanging. That is usually where the sale is lost.",
+      "unstructured_description": "A solid block of text gets skimmed rather than read, especially on a phone. A few lists and subheadings, and the facts are found at a glance.",
+      "short_title": "A short title says nothing about material, size or use, so the buyer cannot tell they are in the right place. It reads poorly in your store’s own search results too.",
+      "no_tags": "With no tag the product shows up in no filter and in no automatic collection. Only shoppers who stumble on it will ever see it.",
+      "missing_alt_text": "Without alternative text these photos are silent to screen readers and invisible in image search. One sentence per photo settles it.",
+      "low_resolution_image": "This photo turns blurry as soon as it is enlarged, and a blurry image makes buyers doubt the product itself. Aim for at least 800 px wide."
+    }
   }
 }

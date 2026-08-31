@@ -3,6 +3,7 @@
 import { ArrowLeft, ArrowRight, ImagePlus, Repeat, Star, Tag, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { InfoHint } from '@/shared/ui';
 import type { TileActions } from '../../lib/image-editor';
 import { AltGenerateButton } from './alt-generate-button';
 import { AltTextField } from './alt-text-field';
@@ -124,8 +125,13 @@ export function EditorTile(props: EditorTileProps) {
           }}
         />
       ) : (
-        <p className="line-clamp-2 text-[11px] text-[var(--muted)]">
-          {props.alt ? props.alt : t('altMissing')}
+        <p className="flex items-start gap-1 text-[11px] text-[var(--muted)]">
+          <span className="line-clamp-2 min-w-0">{props.alt ? props.alt : t('altMissing')}</span>
+          <InfoHint
+            topic="altText"
+            label={t('altFieldLabel', { photo: label })}
+            className="mt-px"
+          />
         </p>
       )}
 

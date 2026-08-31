@@ -19,6 +19,8 @@ export {
   useFieldView
 } from './field-swap';
 export { ImageZoom } from './image-zoom';
+export type { InfoHintProps, InfoHintTopic } from './info-hint';
+export { InfoHint } from './info-hint';
 export { LocalePicker } from './locale-picker';
 export { LocaleSwitcher } from './locale-switcher';
 export { ProductImageGallery } from './product-image-gallery';

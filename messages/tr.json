@@ -1705,5 +1705,39 @@
     "errorNothingMissing": "Tüm fotoğraflarınızın zaten bir alternatif metni var.",
     "errorArchived": "Bu ürün artık mağazanızda değil.",
     "errorGeneric": "Bir hata oluştu. Tekrar deneyin."
+  },
+  "FieldHelp": {
+    "trigger": "Bu neden önemli: {topic}",
+    "triggerGeneric": "Bu neden önemli",
+    "title": "30 ila 70 karakter: Google’ın ürününüzü anlamasına yetecek kadar açık, arama sonuçlarında kesilmeyecek kadar kısa.",
+    "description": "Ayrıntılı bir açıklama satın almadan önceki soruları yanıtlar; tereddüdü ve iadeleri azaltır. Tam puan 600 karakterden ve birkaç ara başlık ya da listeden geçer.",
+    "tags": "Etiketler ürünü doğru rafa yerleştirir ve mağazanızın kendi aramasını ve filtrelerini besler. 5 etiketten itibaren puan tamdır.",
+    "images": "Birkaç farklı açı alıcıyı rahatlatır — malzeme, ölçü, kullanım — ve daha az kargo geri döner. 4 fotoğraftan itibaren puan tamdır.",
+    "altText": "Fotoğrafı anlatan bir cümle: görsel yüklenmezse görünür, ekran okuyucular sesli okur ve görsel aramada fotoğraflarınıza anlam kazandırır. Fotoğraf başına yalın bir cümle yeter.",
+    "imageCount": "Ürün başına fotoğraf sayısı görsel puanda en ağır basan ölçüdür. 4’ün altında neredeyse her zaman bir açı ya da kullanım karesi eksiktir — çoğu zaman satışı kapatan kare.",
+    "imageResolution": "800 pikselin altındaki genişlikte fotoğraf telefonda büyütülür büyütülmez bulanıklaşır ve şüphe başlar. En küçük fotoğrafı bu eşiğin altında kalan her ürünü işaretliyoruz.",
+    "credits": "Krediler her üretimin bedelidir: metin bir görselden daha ucuza gelir ve fiyat başlamadan önce her düğmede yazar. Başarısız bir üretimden asla kredi düşülmez.",
+    "pendingSync": "Bu değişiklikler hazır ama henüz mağazanızda değil: bekledikleri sürece ziyaretçiler eski sürümü görür. Göndermek için özeti açın.",
+    "customInstructions": "Markanızı ayıran şeyi tek cümleyle söyleyin (ton, hedef kitle, kaçınılacak sözcükler); üretilen metinler sizin gibi konuşsun. Sonradan her şeyi yeniden yazmaktan kurtulursunuz.",
+    "chatModel": "Başlıklarınızı, açıklamalarınızı ve etiketlerinizi kimin yazacağını seçer. Daha güçlü modeller daha ince yazar ve daha çok krediye mal olur — tahmini maliyet her seçenekte yazar.",
+    "imageQuality": "Üretilen görsellerin ne kadar ayrıntı taşıyacağını belirler. Daha çok ayrıntı, telefonda yakınlaştırıldığında net kalır ve daha çok krediye mal olur.",
+    "score": {
+      "overall": "Aşağıdaki dört eksenin ortalaması, 100 üzerinden. Zaman içinde izlenecek sayı budur: tamamlanan her ürün sayfası onu yukarı çeker.",
+      "catalogCompleteness": "En az bir fotoğrafı VE bir açıklaması olan ürünlerinizin oranı. Boş bir ürün sayfasının satacak bir şeyi de, ilk kez gelen ziyaretçiye gösterecek bir şeyi de yoktur.",
+      "copyQuality": "Satış metinlerinizin işini ne kadar iyi yaptığı: işe yarar uzunluk ve okunur düzen. Listeler veya ara başlıklarla havalandırılmış 600 karakterlik bir açıklama tam puan alır.",
+      "visualQuality": "Kataloğunuzun görsel zenginliği. Ürün başına fotoğrafı sayar: 4 ve üzeri tam puan, tek fotoğraf alıcıyı tahmine bırakır.",
+      "taggingQuality": "Kataloğunuzun ne kadar düzenli olduğu. Ürün başına 5 etiketten itibaren müşterileriniz mağaza araması ve filtreler üzerinden doğru ürüne ulaşır."
+    },
+    "issue": {
+      "no_image": "Fotoğraf yoksa bakacak bir şey de yoktur ve alışveriş orada biter. Üstelik bu ürünün puanında en ağır basan eksik budur.",
+      "single_image": "Tek fotoğrafla malzeme, ölçek ve kullanım tahmine kalır; şüphe de alıcıyı kaçırır. Üç açı daha eklemek yeter.",
+      "no_description": "Metin yoksa, alışveriş öncesi soruları sizin yerinize yanıtlayacak hiçbir şey yoktur. Mağazanızın kendi aramasının da çalışacağı bir şey kalmaz.",
+      "short_description": "İtirazları kaldırmak için fazla kısa: malzeme, ölçü, bakım ve teslimat havada kalır. Satış genellikle tam orada kaybedilir.",
+      "unstructured_description": "Sıkışık bir metin bloğu okunmaz, göz gezdirilir; hele telefonda. Birkaç liste ve ara başlıkla bilgi bir bakışta bulunur.",
+      "short_title": "Kısa bir başlık ne malzemeyi, ne bedeni, ne kullanımı söyler: alıcı doğru yerde olup olmadığını anlayamaz. Mağaza aramasında da kötü okunur.",
+      "no_tags": "Etiketi olmayan ürün hiçbir filtrede ve hiçbir otomatik koleksiyonda görünmez. Onu yalnızca tesadüfen rastlayanlar görür.",
+      "missing_alt_text": "Alternatif metni olmayan bu fotoğraflar ekran okuyucular için sessiz, görsel aramada görünmezdir. Fotoğraf başına bir cümle sorunu kapatır.",
+      "low_resolution_image": "Bu fotoğraf büyütülür büyütülmez bulanıklaşır; bulanık bir görsel ise ürünün kalitesini şüpheli gösterir. En az 800 piksel genişliği hedefleyin."
+    }
   }
 }

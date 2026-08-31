@@ -8,6 +8,7 @@ import {
   statsValueTiers,
   type CommentaryTier
 } from '@/entities/audit';
+import { InfoHint, type InfoHintTopic } from '@/shared/ui';
 import type { ProductInsightLite, Scores, SummaryShape } from '../model/types';
 
 export function OverviewTab({
@@ -264,7 +265,10 @@ function HeroScore({
         </div>
       </div>
       <div className="flex flex-col gap-2 text-center md:text-left">
-        <h2 className="text-2xl font-bold tracking-tight">{t('overallScore')}</h2>
+        <h2 className="inline-flex items-center justify-center gap-2 text-2xl font-bold tracking-tight md:justify-start">
+          {t('overallScore')}
+          <InfoHint topic="score.overall" label={t('overallScore')} size="md" />
+        </h2>
         <p className="text-sm text-[var(--muted)]">{t('overallSubtitle', { platform })}</p>
         <DataSourceLine summary={summary} />
       </div>
@@ -320,16 +324,36 @@ function ScoresGrid({ scores }: { scores: Scores }) {
     <section className="flex flex-col gap-3">
       <h2 className="text-lg font-semibold">{t('scoresSection')}</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <ScoreTile label={t('scoreCatalog')} value={scores.catalogCompleteness} />
-        <ScoreTile label={t('scoreCopy')} value={scores.copyQuality} />
-        <ScoreTile label={t('scoreVisual')} value={scores.visualQuality} />
-        <ScoreTile label={t('scoreTagging')} value={scores.taggingQuality} />
+        <ScoreTile
+          label={t('scoreCatalog')}
+          topic="score.catalogCompleteness"
+          value={scores.catalogCompleteness}
+        />
+        <ScoreTile label={t('scoreCopy')} topic="score.copyQuality" value={scores.copyQuality} />
+        <ScoreTile
+          label={t('scoreVisual')}
+          topic="score.visualQuality"
+          value={scores.visualQuality}
+        />
+        <ScoreTile
+          label={t('scoreTagging')}
+          topic="score.taggingQuality"
+          value={scores.taggingQuality}
+        />
       </div>
     </section>
   );
 }
 
-function ScoreTile({ label, value }: { label: string; value: number }) {
+function ScoreTile({
+  label,
+  topic,
+  value
+}: {
+  label: string;
+  topic: InfoHintTopic;
+  value: number;
+}) {
   const accent =
     value >= 75
       ? 'text-[var(--success)]'
@@ -338,7 +362,10 @@ function ScoreTile({ label, value }: { label: string; value: number }) {
         : 'text-[var(--danger)]';
   return (
     <Card variant="secondary" className="p-4">
-      <div className="text-xs uppercase text-[var(--muted)] tracking-wide">{label}</div>
+      <div className="inline-flex items-center gap-1.5 text-xs uppercase text-[var(--muted)] tracking-wide">
+        {label}
+        <InfoHint topic={topic} label={label} />
+      </div>
       <div className={`text-3xl font-bold mt-1 ${accent}`}>
         {value}
         <span className="text-xs text-[var(--muted)]"> / 100</span>
@@ -354,7 +381,11 @@ function SummaryHints({ summary }: { summary: SummaryShape }) {
       <h2 className="text-lg font-semibold">{t('quickStats')}</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <Stat label={t('avgScore')} value={`${summary.avgProductScore ?? '—'} / 100`} />
-        <Stat label={t('avgImages')} value={String(summary.averages?.imageCount ?? '—')} />
+        <Stat
+          label={t('avgImages')}
+          topic="imageCount"
+          value={String(summary.averages?.imageCount ?? '—')}
+        />
         <Stat
           label={t('avgDescLength')}
           value={`${summary.averages?.descriptionLength ?? '—'} chars`}
@@ -367,10 +398,13 @@ function SummaryHints({ summary }: { summary: SummaryShape }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, topic, value }: { label: string; topic?: InfoHintTopic; value: string }) {
   return (
     <Card variant="secondary" className="p-3">
-      <div className="text-xs uppercase text-[var(--muted)] tracking-wide">{label}</div>
+      <div className="inline-flex items-center gap-1.5 text-xs uppercase text-[var(--muted)] tracking-wide">
+        {label}
+        {topic ? <InfoHint topic={topic} label={label} /> : null}
+      </div>
       <div className="text-lg font-semibold mt-1">{value}</div>
     </Card>
   );

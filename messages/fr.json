@@ -1705,5 +1705,39 @@
     "errorNothingMissing": "Toutes vos photos ont déjà un texte alternatif.",
     "errorArchived": "Ce produit n’est plus dans votre boutique.",
     "errorGeneric": "Une erreur est survenue. Réessayez."
+  },
+  "FieldHelp": {
+    "trigger": "Pourquoi c’est important : {topic}",
+    "triggerGeneric": "Pourquoi c’est important",
+    "title": "30 à 70 caractères : assez précis pour que Google comprenne votre produit, assez court pour ne pas être coupé dans les résultats.",
+    "description": "Une description détaillée répond aux questions d’avant-achat, ce qui limite les hésitations et les retours. La note maximale s’obtient à 600 caractères, avec quelques sous-titres ou listes.",
+    "tags": "Les tags rangent le produit dans les bons rayons et alimentent la recherche et les filtres de votre boutique. À partir de 5 tags, la note est au maximum.",
+    "images": "Plusieurs angles rassurent l’acheteur — la matière, la taille, l’usage — et font revenir moins de colis. À partir de 4 photos, la note est au maximum.",
+    "altText": "Une phrase qui décrit la photo : elle s’affiche si l’image ne charge pas, les lecteurs d’écran la lisent à voix haute, et elle donne du sens à vos visuels dans la recherche d’images. Une phrase simple par photo suffit.",
+    "imageCount": "Le nombre de photos par produit pèse le plus lourd dans la note visuelle. En dessous de 4, il manque presque toujours un angle ou une mise en situation — souvent celle qui déclenche l’achat.",
+    "imageResolution": "En dessous de 800 px de large, la photo devient floue dès qu’on l’agrandit sur mobile, et le doute s’installe. Nous signalons chaque produit dont la plus petite photo passe sous ce seuil.",
+    "credits": "Les crédits paient chaque génération : un texte coûte moins qu’une image, et le prix est indiqué sur chaque bouton avant de lancer. Une génération qui échoue n’est jamais débitée.",
+    "pendingSync": "Ces modifications sont prêtes mais ne sont pas encore sur votre boutique : tant qu’elles attendent, vos visiteurs voient l’ancienne version. Ouvrez le récapitulatif pour les envoyer.",
+    "customInstructions": "Dites en une phrase ce qui distingue votre marque (ton, public, mots à éviter) et les textes générés ressembleront aux vôtres. Cela vous évite de tout réécrire ensuite.",
+    "chatModel": "Choisit qui rédige vos titres, descriptions et tags. Les modèles les plus complets écrivent avec plus de nuance et coûtent plus de crédits — l’estimation est indiquée sur chaque choix.",
+    "imageQuality": "Décide du niveau de détail des visuels générés. Plus de détail reste net quand l’acheteur zoome sur mobile, et coûte plus de crédits.",
+    "score": {
+      "overall": "Moyenne des quatre axes ci-dessous, sur 100. C’est le repère à suivre dans le temps : chaque fiche complétée le fait monter.",
+      "catalogCompleteness": "Part de vos produits qui ont au moins une photo ET une description. Une fiche vide n’a rien pour vendre, et rien à montrer à un visiteur qui arrive pour la première fois.",
+      "copyQuality": "Qualité de vos textes de vente : longueur utile et mise en forme lisible. Une description de 600 caractères, aérée par des listes ou des sous-titres, obtient le maximum.",
+      "visualQuality": "Richesse visuelle de votre catalogue. Compte les photos par produit : 4 et plus, c’est le maximum ; une seule photo laisse l’acheteur deviner.",
+      "taggingQuality": "Finesse du rangement de votre catalogue. À partir de 5 tags par produit, vos clients tombent sur le bon article via la recherche et les filtres de votre boutique."
+    },
+    "issue": {
+      "no_image": "Sans photo, il n’y a rien à regarder et l’achat s’arrête là. C’est aussi ce qui pèse le plus lourd dans la note de ce produit.",
+      "single_image": "Une seule photo laisse deviner la matière, l’échelle et l’usage, et le doute fait renoncer. Trois angles de plus suffisent à lever l’hésitation.",
+      "no_description": "Sans texte, rien ne répond aux questions d’avant-achat à votre place. La recherche de votre boutique n’a rien non plus sur quoi travailler.",
+      "short_description": "Trop court pour lever les objections : matière, dimensions, entretien, livraison restent en suspens. C’est souvent là que la vente se perd.",
+      "unstructured_description": "Un bloc de texte compact se survole sans être lu, surtout sur mobile. Quelques listes et sous-titres, et l’information se trouve en un coup d’œil.",
+      "short_title": "Un titre trop court ne dit ni la matière, ni la taille, ni l’usage : l’acheteur ne sait pas s’il est au bon endroit. Il ressort mal aussi dans la recherche de votre boutique.",
+      "no_tags": "Sans tag, le produit n’apparaît dans aucun filtre ni dans aucune collection automatique. Seuls ceux qui tombent dessus par hasard le voient.",
+      "missing_alt_text": "Sans texte de remplacement, ces photos sont muettes pour les lecteurs d’écran et invisibles dans la recherche d’images. Une phrase par photo, et c’est réglé.",
+      "low_resolution_image": "Cette photo devient floue dès qu’on l’agrandit, et une image floue fait douter de la qualité du produit. Visez au moins 800 px de large."
+    }
   }
 }

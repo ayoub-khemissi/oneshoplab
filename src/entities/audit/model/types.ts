@@ -1,15 +1,23 @@
 import type { NormalizedProduct, ProductImage, ProductVariant } from '@/entities/store-adapter';
 
-export type IssueCode =
-  | 'no_image'
-  | 'single_image'
-  | 'no_description'
-  | 'short_description'
-  | 'unstructured_description'
-  | 'short_title'
-  | 'no_tags'
-  | 'missing_alt_text'
-  | 'low_resolution_image';
+/** Every defect the scorer can report. A runtime list (rather than a bare
+ *  union) so the copy that explains each defect to the merchant —
+ *  `FieldHelp.issue.<code>` in `messages/*.json` — can be asserted complete
+ *  by `tests/unit/field-help.test.ts`. Appending a code without its
+ *  explanation fails that test. */
+export const ISSUE_CODES = [
+  'no_image',
+  'single_image',
+  'no_description',
+  'short_description',
+  'unstructured_description',
+  'short_title',
+  'no_tags',
+  'missing_alt_text',
+  'low_resolution_image'
+] as const;
+
+export type IssueCode = (typeof ISSUE_CODES)[number];
 
 export interface Issue {
   code: IssueCode;

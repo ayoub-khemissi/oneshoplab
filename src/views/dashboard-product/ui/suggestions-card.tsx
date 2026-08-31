@@ -8,6 +8,7 @@ import {
   FieldSwap,
   FieldSwapGroup,
   FieldSwapGroupToggle,
+  InfoHint,
   TagPills
 } from '@/shared/ui';
 import type { ProductSnapshot } from '../api/load-product';
@@ -99,6 +100,7 @@ export async function SuggestionsCard({
                   source: tReport('sourceTitleLabel'),
                   ai: tReport('aiTitle')
                 }}
+                labelHint={<InfoHint topic="title" label={tReport('sourceTitleLabel')} />}
                 sourceLabel={tReport('swapSource')}
                 aiLabel={tReport('swapAi')}
                 aiAction={
@@ -127,6 +129,9 @@ export async function SuggestionsCard({
                   source: tReport('sourceDescriptionLabel'),
                   ai: tReport('aiDescription')
                 }}
+                labelHint={
+                  <InfoHint topic="description" label={tReport('sourceDescriptionLabel')} />
+                }
                 sourceLabel={tReport('swapSource')}
                 aiLabel={tReport('swapAi')}
                 aiAction={
@@ -185,6 +190,7 @@ export async function SuggestionsCard({
                   source: tReport('sourceTagsLabel'),
                   ai: tReport('aiTags')
                 }}
+                labelHint={<InfoHint topic="tags" label={tReport('sourceTagsLabel')} />}
                 sourceLabel={tReport('swapSource')}
                 aiLabel={tReport('swapAi')}
                 source={
@@ -220,6 +226,7 @@ export async function SuggestionsCard({
                   source: tReport('sourceImagesLabel'),
                   ai: tReport('aiImagesLabel')
                 }}
+                labelHint={<InfoHint topic="images" label={tReport('sourceImagesLabel')} />}
                 sourceLabel={tReport('swapSource')}
                 aiLabel={tReport('swapAi')}
                 sourceAction={

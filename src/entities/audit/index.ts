@@ -10,6 +10,7 @@ export type {
   ProductInsight,
   ProductSignals
 } from './model/types';
+export { ISSUE_CODES } from './model/types';
 export { audit } from './lib/score';
 export {
   axesValueTiers,

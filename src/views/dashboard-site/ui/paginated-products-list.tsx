@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Link, useRouter } from '@/i18n/navigation';
-import { DebouncedSearchInput, ServerPagination } from '@/shared/ui';
+import { DebouncedSearchInput, InfoHint, ServerPagination, type InfoHintTopic } from '@/shared/ui';
 import { setProductArchivedAction } from '@/features/archive-product/actions';
 
 export interface PaginatedProduct {
@@ -77,6 +77,7 @@ export function PaginatedProductsList({
 }: PaginatedProductsListProps) {
   const t = useTranslations('Dashboard');
   const tIssues = useTranslations('Issues');
+  const tHelp = useTranslations('FieldHelp');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -232,7 +233,25 @@ export function PaginatedProductsList({
                 {p.issues.length > 0 && (
                   <p className="text-xs text-[var(--muted)]">
                     <strong className="text-[var(--foreground)]">{t('issuesLabel')}:</strong>{' '}
-                    {p.issues.map((i) => translateIssue(tIssues, i)).join(' · ')}
+                    {p.issues.map((issue, index) => {
+                      const text = translateIssue(tIssues, issue);
+                      return (
+                        <span key={`${issue.code}-${index}`}>
+                          {index > 0 ? ' · ' : null}
+                          {text}
+                          {/* A stored audit summary can carry an issue code
+                              this build no longer knows: ask the catalog
+                              rather than keeping a second list of codes. */}
+                          {tHelp.has(`issue.${issue.code}`) ? (
+                            <InfoHint
+                              topic={`issue.${issue.code}` as InfoHintTopic}
+                              label={text}
+                              className="ml-1"
+                            />
+                          ) : null}
+                        </span>
+                      );
+                    })}
                   </p>
                 )}
               </div>

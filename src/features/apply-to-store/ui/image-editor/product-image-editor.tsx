@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useRef, useState, useTransition } from 'react';
 import type { ImageOp } from '@/entities/product-change/client';
 import type { ConnectionCapabilities } from '@/shared/db/schema';
+import { InfoHint } from '@/shared/ui';
 import { approveImageOpsAction } from '../../api/image-ops-actions';
 import {
   EMPTY_QUEUE,
@@ -155,7 +156,10 @@ export function ProductImageEditor({
   return (
     <section data-testid="image-editor" className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">{t('title')}</h2>
+        <h2 className="inline-flex items-center gap-2 text-lg font-semibold">
+          {t('title')}
+          <InfoHint topic="imageResolution" label={t('title')} size="md" />
+        </h2>
         <p className="text-sm leading-relaxed text-[var(--muted)]">{t('intro')}</p>
       </div>
 

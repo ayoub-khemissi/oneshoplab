@@ -159,6 +159,11 @@ interface FieldSwapProps {
    */
   label?: string | { source: string; ai: string };
   /**
+   * Rendered right after the heading — the slot for an <InfoHint>. Kept a
+   * node rather than a topic so `shared/ui` stays free of the app's copy.
+   */
+  labelHint?: React.ReactNode;
+  /**
    * Action(s) rendered just to the LEFT of the Source/AI toggle pill. Only
    * shown when on AI view (e.g. Copy buttons, Download all) since those
    * actions operate on the AI output. Toggles stay right-aligned.
@@ -177,6 +182,7 @@ export function FieldSwap({
   sourceLabel,
   aiLabel,
   label,
+  labelHint,
   aiAction,
   sourceAction
 }: FieldSwapProps) {
@@ -209,8 +215,9 @@ export function FieldSwap({
           the heading on the left and the actions right-aligned. */}
       <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         {heading ? (
-          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)] text-center sm:text-left">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-[var(--muted)] text-center sm:text-left">
             {heading}
+            {labelHint}
           </span>
         ) : (
           <span className="hidden sm:block" />

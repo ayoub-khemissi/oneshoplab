@@ -3,6 +3,7 @@ import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
+import { InfoHint } from '@/shared/ui';
 import { CustomInstructionsField, RetryableGenerateProvider } from '@/features/retryable-generate';
 import { ModelChips } from '@/widgets/model-chips';
 import { AppliedToastOnMount } from '@/features/manual-catalog';
@@ -138,6 +139,7 @@ export async function DashboardProductPage({
     hasHistory.title && hasHistory.description && hasHistory.tags && hasCompletedImages;
 
   const t = await getTranslations('Product');
+  const tCredits = await getTranslations('Credits');
 
   const balance = session.user.creditsBalance ?? 0;
 
@@ -179,6 +181,7 @@ export async function DashboardProductPage({
           <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
             <Coins className="size-3.5" aria-hidden />
             {balance}
+            <InfoHint topic="credits" label={tCredits('balanceLabel')} />
           </span>
         </div>
       </header>

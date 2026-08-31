@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
+import { InfoHint } from '@/shared/ui';
 import { useGenerateContext } from './context';
 
 /**
@@ -22,12 +23,15 @@ export function CustomInstructionsField({
   const { customInstructions, setCustomInstructions } = useGenerateContext();
   return (
     <div className="flex flex-col gap-2">
-      <label
-        htmlFor="custom-instructions"
-        className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]"
-      >
-        {t('customInstructionsLabel')}
-      </label>
+      <span className="inline-flex items-center gap-1.5">
+        <label
+          htmlFor="custom-instructions"
+          className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]"
+        >
+          {t('customInstructionsLabel')}
+        </label>
+        <InfoHint topic="customInstructions" label={t('customInstructionsLabel')} />
+      </span>
       <textarea
         id="custom-instructions"
         name="customInstructions"

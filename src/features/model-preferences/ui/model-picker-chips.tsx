@@ -4,6 +4,7 @@ import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useModelCopy } from './use-model-copy';
 import type { ReactNode } from 'react';
+import { InfoHint, type InfoHintTopic } from '@/shared/ui';
 import {
   CHAT_MODEL_REGISTRY,
   IMAGE_MODEL_REGISTRY,
@@ -39,7 +40,7 @@ export function ModelPickerChips({
 
   return (
     <div className="flex flex-col gap-3">
-      <ChipsRow label={t('chatModelLabel')}>
+      <ChipsRow label={t('chatModelLabel')} topic="chatModel">
         {(
           Object.values(CHAT_MODEL_REGISTRY) as Array<(typeof CHAT_MODEL_REGISTRY)[ChatModelId]>
         ).map((m) => (
@@ -59,6 +60,7 @@ export function ModelPickerChips({
 
       <ChipsRow
         label={t('imageQualityLabel')}
+        topic="imageQuality"
         sublabel={`${imageModelName} · ${imageModelProvider}`}
       >
         {(
@@ -84,18 +86,21 @@ export function ModelPickerChips({
 
 function ChipsRow({
   label,
+  topic,
   sublabel,
   children
 }: {
   label: string;
+  topic: InfoHintTopic;
   sublabel?: string;
   children: ReactNode;
 }) {
   return (
     <div className="flex items-center gap-3 flex-wrap">
       <span className="flex flex-col shrink-0">
-        <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
           {label}
+          <InfoHint topic={topic} label={label} />
         </span>
         {sublabel ? (
           <span className="text-[10px] font-mono text-[var(--muted)]/80">{sublabel}</span>

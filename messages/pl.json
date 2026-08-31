@@ -1705,5 +1705,39 @@
     "errorNothingMissing": "Wszystkie Twoje zdjęcia mają już tekst alternatywny.",
     "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "FieldHelp": {
+    "trigger": "Dlaczego to ma znaczenie: {topic}",
+    "triggerGeneric": "Dlaczego to ma znaczenie",
+    "title": "Od 30 do 70 znaków: dość precyzyjnie, by Google zrozumiał produkt, i dość krótko, by tytuł nie został ucięty w wynikach.",
+    "description": "Szczegółowy opis odpowiada na pytania sprzed zakupu i ogranicza wahanie oraz zwroty. Pełna nota od 600 znaków, z kilkoma śródtytułami lub listami.",
+    "tags": "Tagi układają produkt na właściwej półce i zasilają wyszukiwarkę oraz filtry twojego sklepu. Od 5 tagów nota jest pełna.",
+    "images": "Kilka ujęć uspokaja kupującego — materiał, rozmiar, zastosowanie — i mniej paczek wraca. Od 4 zdjęć nota jest pełna.",
+    "altText": "Zdanie opisujące zdjęcie: pojawia się, gdy obraz się nie wczyta, czytniki ekranu czytają je na głos, a wyszukiwarka grafiki dzięki niemu rozumie twoje zdjęcia. Wystarczy jedno proste zdanie na zdjęcie.",
+    "imageCount": "Liczba zdjęć na produkt waży najwięcej w nocie wizualnej. Poniżej 4 prawie zawsze brakuje ujęcia albo zdjęcia w użyciu — właśnie tego, które domyka sprzedaż.",
+    "imageResolution": "Poniżej 800 px szerokości zdjęcie rozmywa się przy powiększeniu na telefonie i rodzi wątpliwość. Oznaczamy każdy produkt, którego najmniejsze zdjęcie schodzi poniżej tego progu.",
+    "credits": "Kredyty płacą za każdą generację: tekst kosztuje mniej niż obraz, a cena widnieje na każdym przycisku przed startem. Nieudana generacja nigdy nie jest naliczana.",
+    "pendingSync": "Te zmiany są gotowe, ale nie ma ich jeszcze w sklepie: dopóki czekają, odwiedzający widzą starą wersję. Otwórz podsumowanie, aby je wysłać.",
+    "customInstructions": "Powiedz w jednym zdaniu, co wyróżnia twoją markę (ton, odbiorca, słowa do unikania), a wygenerowane teksty zabrzmią jak twoje. Oszczędzisz sobie przepisywania wszystkiego później.",
+    "chatModel": "Wybiera, kto pisze twoje tytuły, opisy i tagi. Mocniejsze modele piszą subtelniej i kosztują więcej kredytów — szacunek widnieje przy każdej opcji.",
+    "imageQuality": "Ustala, ile szczegółu niosą wygenerowane wizualizacje. Więcej szczegółu zostaje ostre, gdy kupujący powiększa na telefonie, i kosztuje więcej kredytów.",
+    "score": {
+      "overall": "Średnia czterech osi poniżej, na 100. To liczba, którą warto śledzić w czasie: każda uzupełniona karta ją podnosi.",
+      "catalogCompleteness": "Udział produktów, które mają co najmniej jedno zdjęcie I opis. Pusta karta nie ma czym sprzedawać ani czego pokazać komuś, kto trafia tu pierwszy raz.",
+      "copyQuality": "Jak dobrze pracują twoje teksty sprzedażowe: użyteczna długość i czytelny układ. Opis na 600 znaków rozbity listami lub śródtytułami dostaje maksimum.",
+      "visualQuality": "Jak bogato wygląda twój katalog. Liczy zdjęcia na produkt: 4 i więcej to maksimum, jedno zdjęcie każe kupującemu zgadywać.",
+      "taggingQuality": "Jak dobrze poukładany jest twój katalog. Od 5 tagów na produkt klienci trafiają na właściwą pozycję przez wyszukiwarkę i filtry sklepu."
+    },
+    "issue": {
+      "no_image": "Bez zdjęcia nie ma na co patrzeć i zakup kończy się w tym miejscu. To także element, który waży najwięcej w nocie produktu.",
+      "single_image": "Przy jednym zdjęciu materiał, skalę i zastosowanie trzeba zgadywać, a wątpliwość odsyła klienta. Wystarczą trzy kolejne ujęcia.",
+      "no_description": "Bez tekstu nic nie odpowie na pytania sprzed zakupu. Wyszukiwarka twojego sklepu też nie ma na czym pracować.",
+      "short_description": "Za krótki, by zdjąć obiekcje: materiał, wymiary, pielęgnacja i dostawa zostają bez odpowiedzi. Zwykle właśnie tam gubi się sprzedaż.",
+      "unstructured_description": "Zbity blok tekstu się przegląda, a nie czyta, zwłaszcza na telefonie. Kilka list i śródtytułów i informacja jest widoczna od razu.",
+      "short_title": "Krótki tytuł nie mówi ani o materiale, ani o rozmiarze, ani o zastosowaniu: kupujący nie wie, czy jest we właściwym miejscu. Źle czyta się też w wynikach twojego sklepu.",
+      "no_tags": "Bez tagu produkt nie pojawia się w żadnym filtrze ani w żadnej automatycznej kolekcji. Zobaczą go tylko ci, którzy trafią na niego przypadkiem.",
+      "missing_alt_text": "Bez tekstu alternatywnego te zdjęcia milczą dla czytników ekranu i są niewidoczne w wyszukiwarce grafiki. Jedno zdanie na zdjęcie załatwia sprawę.",
+      "low_resolution_image": "To zdjęcie rozmywa się przy powiększeniu, a rozmyty obraz każe wątpić w jakość samego produktu. Celuj w co najmniej 800 px szerokości."
+    }
   }
 }

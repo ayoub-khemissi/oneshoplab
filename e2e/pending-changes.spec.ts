@@ -77,4 +77,27 @@ test.describe('changes waiting for the store', () => {
     await expect(modal.locator('[data-status="pending"]')).toHaveCount(3);
     await expect(banner).toHaveAttribute('data-count', '3');
   });
+
+  test('the banner hint opens from the keyboard and is announced, Escape closes it', async ({
+    page
+  }) => {
+    await page.goto(PRODUCT_URL);
+    const banner = page.getByTestId('pending-changes-banner');
+    await expect(banner).toBeVisible();
+
+    const hint = banner.getByTestId('info-hint');
+    await expect(hint).toHaveAttribute('data-topic', 'pendingSync');
+    await expect(hint).toHaveAccessibleName(/Pourquoi c’est important/);
+    await expect(page.getByTestId('info-hint-panel')).toHaveCount(0);
+
+    // Focus alone opens it — no mouse, no tap.
+    await hint.focus();
+    await expect(page.getByRole('tooltip')).toBeVisible();
+    await expect(hint).toHaveAccessibleDescription(/pas encore sur votre boutique/);
+
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('info-hint-panel')).toHaveCount(0);
+    await expect(hint).toBeFocused();
+    await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
+  });
 });

@@ -146,4 +146,28 @@ test.describe('product images', () => {
     await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
     await expect(page.getByTestId('pending-ops')).toHaveAttribute('data-count', '0');
   });
+
+  test('a tap on the circled i explains what the alternative text buys them', async ({ page }) => {
+    await page.goto(editorUrl);
+    const editor = page.getByTestId('image-editor');
+    await expect(editor).toBeVisible();
+
+    // Nothing is open until the merchant asks for it.
+    await expect(page.getByTestId('info-hint-panel')).toHaveCount(0);
+
+    const hint = editor.locator('[data-ref="m2"]').getByTestId('info-hint');
+    await expect(hint).toHaveAttribute('data-topic', 'altText');
+    await hint.click();
+
+    const panel = page.getByRole('tooltip');
+    await expect(panel).toBeVisible();
+    await expect(panel).toContainText('lecteurs d’écran');
+    // The button points at the panel, so the sentence is announced with it.
+    await expect(hint).toHaveAccessibleDescription(/lecteurs d’écran/);
+
+    // A click outside puts it away — the page never got trapped.
+    await page.locator('h1').click();
+    await expect(page.getByTestId('info-hint-panel')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
+  });
 });

@@ -1705,5 +1705,39 @@
     "errorNothingMissing": "Alle Ihre Fotos haben bereits einen Alternativtext.",
     "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
+  },
+  "FieldHelp": {
+    "trigger": "Warum das zählt: {topic}",
+    "triggerGeneric": "Warum das zählt",
+    "title": "30 bis 70 Zeichen: präzise genug, damit Google Ihr Produkt versteht, und kurz genug, um in den Ergebnissen nicht abgeschnitten zu werden.",
+    "description": "Eine ausführliche Beschreibung beantwortet die Fragen vor dem Kauf und senkt Zögern und Retouren. Die volle Punktzahl gibt es ab 600 Zeichen, mit ein paar Zwischentiteln oder Listen.",
+    "tags": "Tags sortieren das Produkt ins richtige Regal und speisen Suche und Filter Ihres Shops. Ab 5 Tags ist die Punktzahl voll.",
+    "images": "Mehrere Blickwinkel geben Sicherheit — Material, Größe, Einsatz — und weniger Pakete kommen zurück. Ab 4 Fotos ist die Punktzahl voll.",
+    "altText": "Ein Satz, der das Foto beschreibt: Er erscheint, wenn das Bild nicht lädt, Screenreader lesen ihn vor, und er gibt Ihren Bildern in der Bildersuche einen Sinn. Ein einfacher Satz pro Foto genügt.",
+    "imageCount": "Die Zahl der Fotos pro Produkt wiegt in der visuellen Note am schwersten. Unter 4 fehlt fast immer ein Blickwinkel oder ein Bild im Einsatz — oft genau das, was den Kauf auslöst.",
+    "imageResolution": "Unter 800 px Breite wird das Foto beim Vergrößern auf dem Handy unscharf, und Zweifel entstehen. Wir markieren jedes Produkt, dessen kleinstes Foto darunter liegt.",
+    "credits": "Credits bezahlen jede Generierung: Text kostet weniger als ein Bild, und der Preis steht vor dem Start auf jeder Schaltfläche. Eine fehlgeschlagene Generierung wird nie berechnet.",
+    "pendingSync": "Diese Änderungen sind fertig, aber noch nicht in Ihrem Shop: Solange sie warten, sehen Besucher die alte Fassung. Öffnen Sie die Übersicht, um sie zu senden.",
+    "customInstructions": "Sagen Sie in einem Satz, was Ihre Marke ausmacht (Tonfall, Zielgruppe, unerwünschte Wörter), dann klingen die Texte nach Ihnen. Das erspart Ihnen das spätere Umschreiben.",
+    "chatModel": "Bestimmt, wer Ihre Titel, Beschreibungen und Tags schreibt. Stärkere Modelle schreiben feiner und kosten mehr Credits — die Schätzung steht an jeder Option.",
+    "imageQuality": "Legt fest, wie viel Detail die erzeugten Bilder tragen. Mehr Detail bleibt scharf, wenn jemand auf dem Handy hineinzoomt, und kostet mehr Credits.",
+    "score": {
+      "overall": "Durchschnitt der vier Achsen unten, von 100. Das ist die Zahl, die Sie über die Zeit verfolgen: Jede vervollständigte Produktseite hebt sie.",
+      "catalogCompleteness": "Anteil Ihrer Produkte mit mindestens einem Foto UND einer Beschreibung. Eine leere Produktseite hat nichts, womit sie verkauft, und nichts, was sie einem neuen Besucher zeigt.",
+      "copyQuality": "Wie gut Ihre Verkaufstexte arbeiten: sinnvolle Länge und lesbare Gliederung. Eine Beschreibung von 600 Zeichen mit Listen oder Zwischentiteln erreicht das Maximum.",
+      "visualQuality": "Wie reichhaltig Ihr Katalog aussieht. Gezählt werden Fotos pro Produkt: 4 und mehr ist das Maximum, ein einziges Foto lässt Käufer raten.",
+      "taggingQuality": "Wie gut Ihr Katalog sortiert ist. Ab 5 Tags pro Produkt landen Kundinnen und Kunden über Suche und Filter beim richtigen Artikel."
+    },
+    "issue": {
+      "no_image": "Ohne Foto gibt es nichts zu sehen, und der Kauf endet hier. Es wiegt außerdem am schwersten in der Note dieses Produkts.",
+      "single_image": "Bei nur einem Foto bleiben Material, Größe und Einsatz Ratespiel, und Zweifel führen zum Absprung. Drei weitere Blickwinkel klären das.",
+      "no_description": "Ohne Text beantwortet nichts die Fragen vor dem Kauf. Auch die Suche Ihres Shops hat nichts, womit sie arbeiten könnte.",
+      "short_description": "Zu kurz, um Einwände auszuräumen: Material, Maße, Pflege und Versand bleiben offen. Genau dort geht der Verkauf meist verloren.",
+      "unstructured_description": "Ein kompakter Textblock wird überflogen statt gelesen, besonders auf dem Handy. Ein paar Listen und Zwischentitel, und alles ist auf einen Blick da.",
+      "short_title": "Ein kurzer Titel nennt weder Material noch Größe noch Einsatz — der Käufer weiß nicht, ob er richtig ist. Auch in der Suche Ihres Shops liest er sich schlecht.",
+      "no_tags": "Ohne Tag taucht das Produkt in keinem Filter und in keiner automatischen Kollektion auf. Es sehen nur die, die zufällig darauf stoßen.",
+      "missing_alt_text": "Ohne Alternativtext sind diese Fotos für Screenreader stumm und in der Bildersuche unsichtbar. Ein Satz pro Foto genügt.",
+      "low_resolution_image": "Dieses Foto wird beim Vergrößern unscharf, und ein unscharfes Bild lässt an der Qualität des Produkts zweifeln. Zielen Sie auf mindestens 800 px Breite."
+    }
   }
 }

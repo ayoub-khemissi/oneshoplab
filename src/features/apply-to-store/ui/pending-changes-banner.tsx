@@ -3,6 +3,7 @@
 import { AlertTriangle, Bell, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { InfoHint } from '@/shared/ui';
 import type { PendingChangeItem, PendingCounts } from '../model/types';
 import { PendingChangesModal } from './pending-changes-modal';
 
@@ -55,10 +56,11 @@ export function PendingChangesBanner({
       )}
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-sm font-medium">
+        <span className="inline-flex items-center gap-1.5 text-sm font-medium">
           {scope === 'product'
             ? t('bannerProduct', { count: counts.total })
             : t('bannerSite', { count: counts.total })}
+          <InfoHint topic="pendingSync" label={t('open')} />
         </span>
         {counts.failed > 0 || counts.conflict > 0 ? (
           <span className="text-xs text-[var(--muted)]">
