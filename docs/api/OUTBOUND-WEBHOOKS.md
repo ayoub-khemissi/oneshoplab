@@ -9,7 +9,7 @@ immediately instead of polling `/changes` every 5 minutes.
   private/loopback ranges — SSRF guard resolved at save time AND at send
   time), secret (sealed, shown once like a site key), events json
   (`change.approved`, `change.cancelled`, `sync.completed`, `sync.failed`,
-  `connection.status_changed`), enabled, createdBy, createdAt, lastDeliveryAt,
+  `sync.requested`, `connection.status_changed`), enabled, createdBy, createdAt, lastDeliveryAt,
   lastStatus, failureStreak, failingSince (start of the current streak — the
   7-day clock), disabledAt (auto-disabled after 50 consecutive failures or
   7 days of failures; the merchant is notified — bell + email kind
@@ -34,6 +34,20 @@ immediately instead of polling `/changes` every 5 minutes.
 - The worker drains due deliveries every tick (batch 50, concurrency 5, per
   host serialised).
 - "Send a test event" button → `ping` event, result shown inline.
+
+## `sync.requested` (added 2026-08-31)
+OSL is about to score this project's catalog (an audit run) and wants it
+fresh: `{ reason: "audit", requestedAt }`. The receiver should push a
+`POST /products/sync` now — the audit waits at most ~20 s, then scores
+whatever the table holds, so a store that stays silent only ever produces a
+slightly older report. Shopify/Wix connections are not concerned (OSL pulls
+them itself through `pullRequestedAt`).
+
+The event list of a webhook is stored at registration time: a plugin that
+registered before this event existed is **not** subscribed to it and hears
+nothing until it re-registers (`PUT /api/v1/webhooks/self`). Adding an event
+needs no migration — `outbound_webhooks.events` is JSON and
+`webhook_deliveries.event` a varchar.
 
 ## Receiver reference (WooCommerce plugin ≥ 1.1)
 `POST /wp-json/oneshoplab/v1/webhook`: verify signature with the stored

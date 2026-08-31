@@ -388,6 +388,7 @@ paths:
                         change.cancelled,
                         sync.completed,
                         sync.failed,
+                        sync.requested,
                         connection.status_changed
                       ]
       responses:

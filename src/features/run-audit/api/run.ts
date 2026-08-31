@@ -1,6 +1,15 @@
 import { detectPlatform, type NormalizedProduct } from '@/entities/store-adapter';
 import type { Platform } from '@/shared/db/schema';
 import { audit, type AuditReport } from '@/entities/audit';
+import type { AuditDataSource, AuditSourceReason } from '../lib/source-decision';
+
+/** Freshness of the stored catalog a connection-sourced audit scored. */
+export interface CatalogFreshness {
+  syncedAt: Date | null;
+  stale: boolean;
+  /** A refresh was asked of the connector before scoring. */
+  refreshRequested: boolean;
+}
 
 export interface RunAuditResult {
   url: string;
@@ -15,7 +24,21 @@ export interface RunAuditResult {
   products: NormalizedProduct[];
   report: AuditReport | null;
   error: string | null;
+  /** 'connection' = scored from the catalog the integration owns; those
+   *  products must never be written back (see `runAuditForProject`). */
+  source: AuditDataSource;
+  sourceReason: AuditSourceReason;
+  /** Null on the storefront path. */
+  catalog: CatalogFreshness | null;
 }
+
+/** `runAudit` only ever scrapes; `runAuditForProject` overwrites the reason
+ *  when it fell back here from a connected project. */
+const STOREFRONT_SOURCE = {
+  source: 'storefront',
+  sourceReason: 'no_connection',
+  catalog: null
+} as const;
 
 /**
  * Full audit pipeline: detect platform from URL → fetch products via the
@@ -46,7 +69,8 @@ export async function runAudit(
       truncated: false,
       products: [],
       report: null,
-      error: 'Could not detect a supported e-commerce platform on this URL.'
+      error: 'Could not detect a supported e-commerce platform on this URL.',
+      ...STOREFRONT_SOURCE
     };
   }
 
@@ -74,6 +98,7 @@ export async function runAudit(
     truncated: products.length === max,
     products,
     report: products.length > 0 ? audit(products) : null,
-    error: fetchError
+    error: fetchError,
+    ...STOREFRONT_SOURCE
   };
 }

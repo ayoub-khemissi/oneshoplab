@@ -116,7 +116,7 @@ export function OverviewTab({
 
   return (
     <>
-      <HeroScore scores={scores} platform={platform} />
+      <HeroScore scores={scores} platform={platform} summary={summary} />
       <ScoreCommentary tier={tiers.overall} content={overallText} />
       <ScoresGrid scores={scores} />
       <ScoreCommentary tier={tiers.axes} items={scoresItems} />
@@ -237,7 +237,15 @@ function ScoreCommentary({
   return <p className={base}>{content}</p>;
 }
 
-function HeroScore({ scores, platform }: { scores: Scores; platform: string }) {
+function HeroScore({
+  scores,
+  platform,
+  summary
+}: {
+  scores: Scores;
+  platform: string;
+  summary: SummaryShape;
+}) {
   const t = useTranslations('Report');
   const ringColor =
     scores.overall >= 75
@@ -258,9 +266,52 @@ function HeroScore({ scores, platform }: { scores: Scores; platform: string }) {
       <div className="flex flex-col gap-2 text-center md:text-left">
         <h2 className="text-2xl font-bold tracking-tight">{t('overallScore')}</h2>
         <p className="text-sm text-[var(--muted)]">{t('overallSubtitle', { platform })}</p>
+        <DataSourceLine summary={summary} />
       </div>
     </Card>
   );
+}
+
+/** Where the score came from. A merchant who connected their store must be
+ *  able to tell at a glance that the report reflects the catalog they synced
+ *  and not a public scrape — and how old that catalog is. */
+function DataSourceLine({ summary }: { summary: SummaryShape }) {
+  const t = useTranslations('Report');
+  if (summary.source !== 'connection') {
+    return <p className="text-xs text-[var(--muted)] opacity-80">{t('dataSource.storefront')}</p>;
+  }
+  const syncedAt = summary.catalogSyncedAt ? new Date(summary.catalogSyncedAt) : null;
+  const label =
+    syncedAt && !Number.isNaN(syncedAt.getTime())
+      ? t('dataSource.connection', { ago: relativeAgo(nowMs() - syncedAt.getTime(), t) })
+      : t('dataSource.connectionNoSync');
+  return <p className="text-xs text-[var(--muted)] opacity-80">{label}</p>;
+}
+
+/** Read outside the render expression so the "how long ago" formatting stays
+ *  a plain function of its inputs. */
+function nowMs(): number {
+  return Date.now();
+}
+
+function relativeAgo(
+  elapsedMs: number,
+  t: (
+    key:
+      | 'dataSource.ago.seconds'
+      | 'dataSource.ago.minutes'
+      | 'dataSource.ago.hours'
+      | 'dataSource.ago.days',
+    v: { n: number }
+  ) => string
+): string {
+  const s = Math.max(0, Math.floor(elapsedMs / 1000));
+  if (s < 60) return t('dataSource.ago.seconds', { n: s });
+  const m = Math.floor(s / 60);
+  if (m < 60) return t('dataSource.ago.minutes', { n: m });
+  const h = Math.floor(m / 60);
+  if (h < 24) return t('dataSource.ago.hours', { n: h });
+  return t('dataSource.ago.days', { n: Math.floor(h / 24) });
 }
 
 function ScoresGrid({ scores }: { scores: Scores }) {

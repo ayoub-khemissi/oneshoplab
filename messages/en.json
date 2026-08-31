@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "The current title, description, tags and images will be replaced with new AI generations. Cost: {cost} credits."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Audited from your connected store · synced {ago}",
+      "connectionNoSync": "Audited from your connected store",
+      "storefront": "Audited from your public storefront",
+      "ago": {
+        "seconds": "{n} s ago",
+        "minutes": "{n} min ago",
+        "hours": "{n} h ago",
+        "days": "{n} d ago"
+      }
+    },
     "queued": "Analysis queued, please wait — this usually takes about two minutes",
     "running": "Analysis in progress, please wait — this usually takes about two minutes",
     "failed": "Analysis failed: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "A sync finished",
-          "failed": "A sync failed"
+          "failed": "A sync failed",
+          "requested": "We ask for a sync"
         },
         "connection": {
           "status_changed": "The store connection changed"

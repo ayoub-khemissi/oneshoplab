@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "Aktualny tytuł, opis, tagi i obrazy zostaną zastąpione nowymi generacjami AI. Koszt: {cost} kredytów."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Zbadano na podstawie połączonego sklepu · synchronizacja {ago}",
+      "connectionNoSync": "Zbadano na podstawie połączonego sklepu",
+      "storefront": "Zbadano na podstawie publicznej witryny",
+      "ago": {
+        "seconds": "{n} s temu",
+        "minutes": "{n} min temu",
+        "hours": "{n} godz. temu",
+        "days": "{n} dni temu"
+      }
+    },
     "queued": "Analiza w kolejce, czekaj — zwykle zajmuje około dwóch minut",
     "running": "Analiza w toku, czekaj — zwykle zajmuje około dwóch minut",
     "failed": "Analiza nie powiodła się: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "Synchronizacja się zakończyła",
-          "failed": "Synchronizacja się nie powiodła"
+          "failed": "Synchronizacja się nie powiodła",
+          "requested": "Prosimy o synchronizację"
         },
         "connection": {
           "status_changed": "Zmieniło się połączenie ze sklepem"

@@ -12,10 +12,21 @@ vi.mock('@/features/run-audit/api/dynamic-audit', () => ({
 }));
 vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 
+import { randomUUID } from 'node:crypto';
 import { launchAnonymousAudit, launchAuditForUser, normalizeUrl } from '@/features/run-audit';
 import { processAudit } from '@/features/run-audit';
 import { db } from '@/shared/db';
-import { audits, notifications, products, projects } from '@/shared/db/schema';
+import {
+  apiKeys,
+  audits,
+  notifications,
+  outboundWebhooks,
+  products,
+  projects,
+  shopConnections,
+  webhookDeliveries,
+  type Platform
+} from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 
 type Store = { products: ReturnType<typeof shopifyProduct>[]; up: boolean };
@@ -183,6 +194,291 @@ describe('launchAuditForUser + processAudit', () => {
     expect(
       (await db.query.audits.findFirst({ where: eq(audits.id, audit.id) }))!.completedAt?.getTime()
     ).toBe(audit.completedAt?.getTime());
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Connected stores: the catalog belongs to the integration, the audit reads it.
+// ---------------------------------------------------------------------------
+
+/** Short enough that a store which never answers doesn't slow the suite. */
+const WAIT = { catalogWait: { timeoutMs: 300, pollMs: 50 } };
+const MINUTE = 60 * 1000;
+const DAY = 24 * 60 * MINUTE;
+
+async function seedProject(userId: string, source: Platform = 'shopify'): Promise<string> {
+  const id = randomUUID();
+  await db.insert(projects).values({
+    id,
+    userId,
+    name: 'demo.example.com',
+    domain: 'demo.example.com',
+    url: 'https://demo.example.com',
+    source
+  });
+  return id;
+}
+
+/** Two products as only a connected store can provide them: with a
+ *  `sourceImageId` on every image. A scrape can never produce one. */
+async function seedStoredCatalog(
+  projectId: string,
+  source: Platform,
+  syncedAt: Date
+): Promise<void> {
+  await db.insert(products).values(
+    [900, 901].map((n) => ({
+      id: randomUUID(),
+      projectId,
+      source,
+      sourceId: String(n),
+      handle: `stored-${n}`,
+      title: `Stored product ${n}`,
+      descriptionHtml:
+        '<p>' + 'Stored description with plenty of words. '.repeat(10) + '</p><ul><li>a</li></ul>',
+      images: [
+        {
+          src: `https://cdn.example/${n}.jpg`,
+          alt: 'alt',
+          width: 1400,
+          height: 1400,
+          position: 0,
+          sourceImageId: `img-${n}`
+        }
+      ],
+      tags: ['one', 'two', 'three'],
+      variants: [
+        { id: `v-${n}`, title: 'Default', price: 10, sku: `S${n}`, available: true, options: {} }
+      ],
+      vendor: 'Brand',
+      productType: 'Type',
+      lastSeenAt: syncedAt,
+      sourceUpdatedAt: syncedAt
+    }))
+  );
+}
+
+async function connectStore(
+  projectId: string,
+  platform: 'shopify' | 'wix',
+  lastPullAt: Date | null
+): Promise<void> {
+  await db.insert(shopConnections).values({
+    id: randomUUID(),
+    projectId,
+    platform,
+    shopDomain: platform === 'shopify' ? 'demo.myshopify.com' : 'demo.wixsite.com',
+    accessTokenCiphertext: 'v1:aa:bb:cc',
+    keyId: 'v1',
+    scopes: [],
+    apiVersion: '2025-07',
+    status: 'connected',
+    lastPullAt
+  });
+}
+
+async function startAudit(projectId: string): Promise<string> {
+  const id = randomUUID();
+  await db.insert(audits).values({
+    id,
+    url: 'https://demo.example.com',
+    domain: 'demo.example.com',
+    projectId,
+    status: 'pending'
+  });
+  return id;
+}
+
+async function auditRow(id: string) {
+  const row = await db.query.audits.findFirst({ where: eq(audits.id, id) });
+  if (!row) throw new Error('audit vanished');
+  return row;
+}
+
+type SourceSummary = {
+  source?: string;
+  sourceReason?: string;
+  catalogStale?: boolean;
+  catalogSyncedAt?: string | null;
+  allProducts: { sourceId: string | null }[];
+};
+
+describe('processAudit on a connected store', () => {
+  it('scores the stored catalog and never writes the scrape over it', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId);
+    const syncedAt = new Date(Date.now() - 5 * MINUTE);
+    await seedStoredCatalog(projectId, 'shopify', syncedAt);
+    await connectStore(projectId, 'shopify', syncedAt);
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    const audit = await auditRow(auditId);
+    expect(audit.status).toBe('completed');
+    expect(audit.platform).toBe('shopify');
+    // The fake storefront serves 4 products; the stored catalog has 2.
+    expect(audit.productsSampled).toBe(2);
+    const summary = audit.summary as SourceSummary;
+    expect(summary.source).toBe('connection');
+    expect(summary.sourceReason).toBe('connected');
+    expect(summary.catalogStale).toBe(false);
+    expect(summary.allProducts.map((p) => p.sourceId).sort()).toEqual(['900', '901']);
+
+    // The catalog is untouched — same rows, and `sourceImageId` survived.
+    const rows = await db.query.products.findMany({ where: eq(products.projectId, projectId) });
+    expect(rows.map((r) => r.sourceId).sort()).toEqual(['900', '901']);
+    expect(rows.map((r) => r.images?.[0]?.sourceImageId).sort()).toEqual(['img-900', 'img-901']);
+    expect(rows.every((r) => r.status === 'active')).toBe(true);
+
+    // Fresh catalog: no need to bother the store.
+    const [conn] = await db
+      .select()
+      .from(shopConnections)
+      .where(eq(shopConnections.projectId, projectId));
+    expect(conn.pullRequestedAt).toBeNull();
+    expect(runDynamicAuditForProduct).toHaveBeenCalledTimes(2);
+  });
+
+  it('records the platform from the connection, not from URL detection', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId, 'wix');
+    const syncedAt = new Date(Date.now() - 5 * MINUTE);
+    await seedStoredCatalog(projectId, 'wix', syncedAt);
+    await connectStore(projectId, 'wix', syncedAt);
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    // Detection on this URL says "shopify" (the stubbed storefront) — the
+    // live connection wins.
+    expect((await auditRow(auditId)).platform).toBe('wix');
+  });
+
+  it('asks a stale connection for a pull, then scores what is there', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId);
+    const syncedAt = new Date(Date.now() - 8 * DAY);
+    await seedStoredCatalog(projectId, 'shopify', syncedAt);
+    await connectStore(projectId, 'shopify', syncedAt);
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    const [conn] = await db
+      .select()
+      .from(shopConnections)
+      .where(eq(shopConnections.projectId, projectId));
+    expect(conn.pullRequestedAt).toBeInstanceOf(Date);
+
+    const audit = await auditRow(auditId);
+    expect(audit.status).toBe('completed');
+    expect(audit.productsSampled).toBe(2);
+    const summary = audit.summary as SourceSummary;
+    expect(summary.source).toBe('connection');
+    // Surfaced so the UI can say how old the catalogue is.
+    expect(summary.catalogStale).toBe(true);
+    // MySQL timestamps have a 1 s resolution.
+    expect(
+      Math.abs(new Date(summary.catalogSyncedAt!).getTime() - syncedAt.getTime())
+    ).toBeLessThan(1000);
+    expect(
+      (await db.query.products.findMany({ where: eq(products.projectId, projectId) }))
+        .map((r) => r.sourceId)
+        .sort()
+    ).toEqual(['900', '901']);
+  });
+
+  it('emits sync.requested for an Integration-API catalog and scores it', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId, 'woocommerce');
+    await seedStoredCatalog(projectId, 'woocommerce', new Date(Date.now() - 2 * DAY));
+    await db.insert(apiKeys).values({
+      id: randomUUID(),
+      projectId,
+      userId,
+      name: 'plugin',
+      prefix: 'osl_live_ab1',
+      keyHash: 'a'.repeat(64),
+      permissions: ['catalog:write'],
+      lastUsedAt: new Date(Date.now() - MINUTE)
+    });
+    await db.insert(outboundWebhooks).values({
+      id: randomUUID(),
+      projectId,
+      kind: 'self',
+      url: 'https://plugin.example/wp-json/oneshoplab/v1/webhook',
+      urlHash: 'b'.repeat(64),
+      secretCiphertext: 'v1:aa:bb:cc',
+      events: ['sync.requested']
+    });
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    const deliveries = await db.select().from(webhookDeliveries);
+    expect(deliveries.map((d) => d.event)).toEqual(['sync.requested']);
+
+    const audit = await auditRow(auditId);
+    expect(audit.platform).toBe('woocommerce');
+    expect(audit.productsSampled).toBe(2);
+    expect((audit.summary as SourceSummary).source).toBe('connection');
+  });
+
+  it('falls back to scraping when the connection never synced anything', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId);
+    await connectStore(projectId, 'shopify', null);
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    const audit = await auditRow(auditId);
+    expect(audit.status).toBe('completed');
+    expect(audit.productsSampled).toBe(4);
+    const summary = audit.summary as SourceSummary;
+    expect(summary.source).toBe('storefront');
+    expect(summary.sourceReason).toBe('empty_catalog');
+    // The scrape IS the catalog here — nothing to overwrite.
+    const rows = await db.query.products.findMany({ where: eq(products.projectId, projectId) });
+    expect(rows.map((r) => r.sourceId).sort()).toEqual(['1', '2', '3', '4']);
+    // And the store was asked to fill the table for next time.
+    const [conn] = await db
+      .select()
+      .from(shopConnections)
+      .where(eq(shopConnections.projectId, projectId));
+    expect(conn.pullRequestedAt).toBeInstanceOf(Date);
+  });
+
+  it('scrapes a project whose site key has gone quiet', async () => {
+    const userId = await createUser();
+    const projectId = await seedProject(userId);
+    await seedStoredCatalog(projectId, 'shopify', new Date(Date.now() - 60 * DAY));
+    await db.insert(apiKeys).values({
+      id: randomUUID(),
+      projectId,
+      userId,
+      name: 'old plugin',
+      prefix: 'osl_live_cd2',
+      keyHash: 'c'.repeat(64),
+      permissions: ['catalog:write'],
+      lastUsedAt: new Date(Date.now() - 60 * DAY)
+    });
+
+    const auditId = await startAudit(projectId);
+    await processAudit(auditId, WAIT);
+
+    const audit = await auditRow(auditId);
+    expect((audit.summary as SourceSummary).source).toBe('storefront');
+    expect(audit.productsSampled).toBe(4);
+    const rows = await db.query.products.findMany({ where: eq(products.projectId, projectId) });
+    // Normal scrape behaviour: the stored rows are archived, the scrape wins.
+    expect(
+      rows
+        .filter((r) => r.status === 'active')
+        .map((r) => r.sourceId)
+        .sort()
+    ).toEqual(['1', '2', '3', '4']);
   });
 });
 

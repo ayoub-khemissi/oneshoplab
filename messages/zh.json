@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "当前的标题、描述、标签和图片将被新的 AI 生成内容替换。成本：{cost} 积分。"
   },
   "Report": {
+    "dataSource": {
+      "connection": "基于已连接的店铺分析 · {ago}同步",
+      "connectionNoSync": "基于已连接的店铺分析",
+      "storefront": "基于公开店铺页面分析",
+      "ago": {
+        "seconds": "{n} 秒前",
+        "minutes": "{n} 分钟前",
+        "hours": "{n} 小时前",
+        "days": "{n} 天前"
+      }
+    },
     "queued": "分析已排队,请稍候——通常约两分钟",
     "running": "分析进行中,请稍候——通常约两分钟",
     "failed": "分析失败: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "同步已完成",
-          "failed": "同步失败"
+          "failed": "同步失败",
+          "requested": "我们请求同步"
         },
         "connection": {
           "status_changed": "店铺连接状态发生变化"

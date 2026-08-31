@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "Mevcut başlık, açıklama, etiketler ve görseller yeni AI üretimleriyle değiştirilir. Maliyet: {cost} kredi."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Bağlı mağazanızdan denetlendi · {ago} eşitlendi",
+      "connectionNoSync": "Bağlı mağazanızdan denetlendi",
+      "storefront": "Herkese açık vitrininizden denetlendi",
+      "ago": {
+        "seconds": "{n} sn önce",
+        "minutes": "{n} dk önce",
+        "hours": "{n} sa önce",
+        "days": "{n} gün önce"
+      }
+    },
     "queued": "Analiz sırada, lütfen bekleyin — genelde yaklaşık iki dakika sürer",
     "running": "Analiz devam ediyor, lütfen bekleyin — genelde yaklaşık iki dakika sürer",
     "failed": "Analiz başarısız: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "Bir senkronizasyon tamamlandı",
-          "failed": "Bir senkronizasyon başarısız oldu"
+          "failed": "Bir senkronizasyon başarısız oldu",
+          "requested": "Eşitleme istiyoruz"
         },
         "connection": {
           "status_changed": "Mağaza bağlantısı değişti"

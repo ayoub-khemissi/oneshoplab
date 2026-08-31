@@ -147,6 +147,34 @@ export async function touchLastUsed(keyId: string, ip: string | null): Promise<b
   return res.affectedRows > 0;
 }
 
+/**
+ * Most recent call made with any live key of the project — the "is an
+ * integration actually driving this catalog?" signal (a revoked or expired
+ * key means the plugin is gone, whatever it did last month). Null when the
+ * project has no key or none was ever used.
+ */
+export async function lastSiteKeyUseAt(
+  projectId: string,
+  now: Date = new Date()
+): Promise<Date | null> {
+  const rows = await db
+    .select({ lastUsedAt: apiKeys.lastUsedAt })
+    .from(apiKeys)
+    .where(
+      and(
+        eq(apiKeys.projectId, projectId),
+        isNull(apiKeys.revokedAt),
+        or(isNull(apiKeys.expiresAt), gt(apiKeys.expiresAt, now)),
+        or(isNull(apiKeys.graceUntil), gt(apiKeys.graceUntil, now))
+      )
+    );
+  let latest: Date | null = null;
+  for (const r of rows) {
+    if (r.lastUsedAt && (!latest || r.lastUsedAt > latest)) latest = r.lastUsedAt;
+  }
+  return latest;
+}
+
 /** New key, same project/permissions; the old one stays valid for 24 h. */
 export async function rotateApiKey(input: {
   keyId: string;

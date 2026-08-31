@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "現在のタイトル、説明、タグ、画像が新しい AI 生成に置き換わります。コスト：{cost} クレジット。"
   },
   "Report": {
+    "dataSource": {
+      "connection": "接続済みストアのデータで診断 · {ago}に同期",
+      "connectionNoSync": "接続済みストアのデータで診断",
+      "storefront": "公開ストアフロントから診断",
+      "ago": {
+        "seconds": "{n} 秒前",
+        "minutes": "{n} 分前",
+        "hours": "{n} 時間前",
+        "days": "{n} 日前"
+      }
+    },
     "queued": "分析キュー中、お待ちください——通常2分ほど",
     "running": "分析中、お待ちください——通常2分ほど",
     "failed": "分析失敗: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "同期が完了した",
-          "failed": "同期が失敗した"
+          "failed": "同期が失敗した",
+          "requested": "同期をリクエスト"
         },
         "connection": {
           "status_changed": "ストアの接続状況が変わった"

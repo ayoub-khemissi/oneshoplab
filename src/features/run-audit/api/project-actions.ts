@@ -74,8 +74,10 @@ export async function relaunchProjectAuditAction(formData: FormData): Promise<vo
 }
 
 /**
- * Manually re-scrape the catalog of the user's project to refresh product
- * data without burning AI credits. Verifies ownership before running.
+ * Manually re-read the catalog of the user's project to refresh product data
+ * without burning AI credits — from the connected store when there is one
+ * (which may wait a few seconds for it to push), else a re-scrape. Verifies
+ * ownership before running.
  */
 export async function refreshProjectAction(formData: FormData): Promise<void> {
   const session = await auth();
@@ -89,7 +91,7 @@ export async function refreshProjectAction(formData: FormData): Promise<void> {
   });
   if (!project) return;
 
-  // Manual refresh — forces a re-scrape regardless of freshness.
+  // Manual refresh — runs regardless of freshness.
   const { findLatestAuditIdWhere } = await import('@/entities/audit');
   const latestId = await findLatestAuditIdWhere(eq(audits.projectId, project.id));
   if (latestId) {

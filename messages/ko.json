@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "현재 제목, 설명, 태그, 이미지가 새 AI 생성으로 대체됩니다. 비용: {cost} 크레딧."
   },
   "Report": {
+    "dataSource": {
+      "connection": "연결된 스토어 데이터로 진단 · {ago} 동기화됨",
+      "connectionNoSync": "연결된 스토어 데이터로 진단",
+      "storefront": "공개 스토어프론트에서 진단",
+      "ago": {
+        "seconds": "{n}초 전",
+        "minutes": "{n}분 전",
+        "hours": "{n}시간 전",
+        "days": "{n}일 전"
+      }
+    },
     "queued": "분석 대기 중, 잠시만 기다려 주세요 — 보통 약 2분 소요",
     "running": "분석 진행 중, 잠시만 기다려 주세요 — 보통 약 2분 소요",
     "failed": "분석 실패: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "동기화 완료됨",
-          "failed": "동기화 실패함"
+          "failed": "동기화 실패함",
+          "requested": "동기화를 요청함"
         },
         "connection": {
           "status_changed": "매장 연결 상태가 변경됨"

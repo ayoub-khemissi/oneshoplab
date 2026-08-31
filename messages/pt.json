@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "Título, descrição, tags e imagens atuais serão substituídos por novas gerações IA. Custo: {cost} créditos."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Auditado a partir da sua loja ligada · sincronizado {ago}",
+      "connectionNoSync": "Auditado a partir da sua loja ligada",
+      "storefront": "Auditado a partir da sua montra pública",
+      "ago": {
+        "seconds": "há {n} s",
+        "minutes": "há {n} min",
+        "hours": "há {n} h",
+        "days": "há {n} d"
+      }
+    },
     "queued": "Análise em fila, aguarde — costuma demorar cerca de dois minutos",
     "running": "Análise em curso, aguarde — costuma demorar cerca de dois minutos",
     "failed": "Análise falhou: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "Uma sincronização terminou",
-          "failed": "Uma sincronização falhou"
+          "failed": "Uma sincronização falhou",
+          "requested": "Pedimos uma sincronização"
         },
         "connection": {
           "status_changed": "A conexão com a loja mudou"

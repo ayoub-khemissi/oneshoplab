@@ -1091,11 +1091,18 @@ export const gdprRequests = mysqlTable(
 // The secret is sealed like a shop token; deliveries are the retry queue.
 // ============================================================================
 
+/** Stored as JSON (`outbound_webhooks.events`) / varchar
+ *  (`webhook_deliveries.event`), never as a MySQL enum — adding an event is
+ *  a code change with no migration. Receivers registered before an event
+ *  existed do not get it until they re-register (PUT /webhooks/self). */
 export const WEBHOOK_EVENTS = [
   'change.approved',
   'change.cancelled',
   'sync.completed',
   'sync.failed',
+  /** OSL is about to score this catalog and wants it fresh (audit run).
+   *  The receiver should push a sync now; OSL waits only seconds for it. */
+  'sync.requested',
   'connection.status_changed'
 ] as const;
 export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];

@@ -97,6 +97,12 @@ export interface SummaryShape {
   worstProducts?: ProductInsightLite[];
   allProducts?: PaginatedProductPayload[];
   detectedLanguage?: string | null;
+  /** How the audit was produced. Absent on rows written before the
+   *  connected-catalog audit existed — read as 'storefront'. */
+  source?: 'connection' | 'storefront';
+  /** ISO date of the last sync of the connected catalog that was scored. */
+  catalogSyncedAt?: string | null;
+  catalogStale?: boolean;
 }
 
 export type ProjectJobRow = typeof jobs.$inferSelect & {

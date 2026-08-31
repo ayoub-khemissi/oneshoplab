@@ -34,7 +34,12 @@ import { createChange } from '@/entities/product-change';
 import { drainWebhookDeliveries, sweepWebhookDeliveries } from '@/features/webhook-delivery';
 import { resetRateLimits } from '@/shared/api';
 import { db } from '@/shared/db';
-import { notifications, outboundWebhooks, webhookDeliveries } from '@/shared/db/schema';
+import {
+  WEBHOOK_EVENTS,
+  notifications,
+  outboundWebhooks,
+  webhookDeliveries
+} from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
 import { createProject } from './site-helpers';
@@ -105,7 +110,7 @@ describe('PUT/DELETE /webhooks/self', () => {
     expect(r.body.secret.startsWith(WEBHOOK_SECRET_PREFIX)).toBe(true);
     const row = await hookRow(r.body.id);
     expect(row.kind).toBe('self');
-    expect(row.events).toHaveLength(5);
+    expect(row.events).toHaveLength(WEBHOOK_EVENTS.length);
     expect(row.secretCiphertext.startsWith('v1:')).toBe(true);
     expect(row.secretCiphertext).not.toContain(r.body.secret);
     const views = await listWebhooks(projectId);
@@ -120,7 +125,7 @@ describe('PUT/DELETE /webhooks/self', () => {
     expect(b.status).toBe(200);
     expect(b.body.id).toBe(a.body.id);
     expect(b.body.secret).not.toBe(a.body.secret);
-    expect((await hookRow(a.body.id)).events).toHaveLength(5);
+    expect((await hookRow(a.body.id)).events).toHaveLength(WEBHOOK_EVENTS.length);
     const c = await put({ url: URL_B });
     expect(c.status).toBe(201);
     expect(c.body.id).not.toBe(a.body.id);

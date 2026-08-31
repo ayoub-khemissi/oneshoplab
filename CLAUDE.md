@@ -86,6 +86,20 @@ behind a reverse proxy (`/` → `/en` → `/`). 13 locales live in `messages/`
 adding it to **all 13 files** — `next-intl` errors at runtime on missing keys
 in the matched locale.
 
+### A connected store's catalog is never re-scraped
+
+`processAudit` and `refreshAuditProducts` both go through
+`runAuditForProject` (`src/features/run-audit/api/catalog-audit.ts`). When
+the project has a `shop_connections` row in `connected`, or a site key used
+in the last 30 days, the audit scores the `products` table (mapped back with
+`productRowToNormalized`) and **must not call `syncProjectProducts`** —
+scrape rows carry no `sourceImageId`, so writing them over the connection's
+rows silently degrades every later image op to the replace-all fallback
+(`docs/api/IMAGE-OPS.md` §1). Found in QA 2026-08-31. The decision itself is
+the pure `decideAuditSource` (`lib/source-decision.ts`); the audit summary
+records `source` / `sourceReason` / `catalogSyncedAt` / `catalogStale`, and a
+row without `source` predates this and means "storefront".
+
 ### Stripe webhook is the source of truth for plan + monthly credit grants
 
 Don't write plan changes from anywhere except `/api/stripe/webhook`. Manual

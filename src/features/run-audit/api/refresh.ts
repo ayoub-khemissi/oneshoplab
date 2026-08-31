@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { audits } from '@/shared/db/schema';
 import { findLatestAuditIdWhere } from '@/entities/audit';
-import { runAudit } from './run';
+import { auditSourceSummary, runAuditForProject, type AuditRunOptions } from './catalog-audit';
 import { syncProjectProducts } from '@/entities/product';
 
 /** How long an audit's product data is considered fresh before it qualifies
@@ -10,15 +10,22 @@ import { syncProjectProducts } from '@/entities/product';
 export const AUDIT_FRESH_FOR_MS = 24 * 60 * 60 * 1000; // 24h
 
 /**
- * Re-scrape the catalog of an existing audit and update its `summary` JSON
+ * Re-read the catalog of an existing audit and update its `summary` JSON
  * with the freshly-computed report (including `allProducts`). Existing
  * dynamic-AI generations are left untouched. No credit cost.
+ *
+ * Same source selection as `processAudit`: a connected project is scored
+ * from its stored catalog and never re-scraped, so the daily dashboard
+ * refresh cannot overwrite what the connection provided either.
  *
  * Idempotent: running it twice in rapid succession just yields the same
  * fresh data twice. Caller is expected to gate via `AUDIT_FRESH_FOR_MS` if
  * they want to throttle.
  */
-export async function refreshAuditProducts(auditId: string): Promise<{
+export async function refreshAuditProducts(
+  auditId: string,
+  options: { catalogWait?: AuditRunOptions['catalogWait'] } = {}
+): Promise<{
   ok: boolean;
   reason?: string;
   productsFetched?: number;
@@ -26,7 +33,10 @@ export async function refreshAuditProducts(auditId: string): Promise<{
   const audit = await db.query.audits.findFirst({ where: eq(audits.id, auditId) });
   if (!audit) return { ok: false, reason: 'audit_not_found' };
 
-  const result = await runAudit(audit.url, { maxProducts: 10000 });
+  const result = await runAuditForProject(audit.projectId, audit.url, {
+    maxProducts: 10000,
+    catalogWait: options.catalogWait
+  });
   if (!result.report) {
     return { ok: false, reason: result.error ?? 'no_report' };
   }
@@ -46,7 +56,8 @@ export async function refreshAuditProducts(auditId: string): Promise<{
     bestProducts: r.bestProducts,
     latestProducts: r.latestProducts,
     allProducts: r.allProducts,
-    detectedLanguage: r.detectedLanguage
+    detectedLanguage: r.detectedLanguage,
+    ...auditSourceSummary(result)
   };
 
   await db
@@ -63,8 +74,9 @@ export async function refreshAuditProducts(auditId: string): Promise<{
 
   // 3-way merge between scrape and DB — see syncProjectProducts for the
   // full contract. Same code path as the initial processAudit run; refresh
-  // is essentially "sync without re-scoring".
-  if (audit.projectId && result.products.length > 0) {
+  // is essentially "sync without re-scoring". Scrapes only: a connected
+  // catalog is already the table (see processAudit).
+  if (audit.projectId && result.source === 'storefront' && result.products.length > 0) {
     await syncProjectProducts(audit.projectId, result.platform, result.products);
   }
 

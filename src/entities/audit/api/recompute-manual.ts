@@ -1,5 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
+import { productRowToNormalized } from '@/entities/product';
 import type { NormalizedProduct } from '@/entities/store-adapter';
 import { db } from '@/shared/db';
 import { audits, products } from '@/shared/db/schema';
@@ -23,44 +24,19 @@ export async function recomputeManualAudit(projectId: string): Promise<void> {
     where: and(eq(products.projectId, projectId), eq(products.status, 'active'))
   });
 
-  // products row → NormalizedProduct shape. Most fields map 1:1; the
-  // few we synthesise are `position` on images (kept by insertion
-  // order) and parsing the decimal price columns back to numbers.
-  const normalized: NormalizedProduct[] = rows.map((p, idx) => ({
-    source: 'manual',
-    sourceId: p.sourceId ?? p.id,
-    sourceUrl: p.sourceUrl,
-    handle: p.handle,
-    title: p.title,
-    descriptionHtml: p.descriptionHtml ?? '',
-    images: (p.images ?? []).map((img, i) => ({
-      src: img.src,
-      alt: img.alt ?? null,
-      width: img.width ?? null,
-      height: img.height ?? null,
-      position: i
-    })),
-    tags: p.tags ?? [],
-    variants: (p.variants ?? []).map((v) => ({
-      id: v.id,
-      sourceVariantId: null,
-      title: v.title ?? null,
-      sku: v.sku ?? null,
-      price: v.price,
-      available: v.available,
-      options: v.options ?? {}
-    })),
-    vendor: p.vendor ?? null,
-    productType: p.productType ?? null,
-    priceMin: p.priceMin != null ? Number(p.priceMin) : null,
-    priceMax: p.priceMax != null ? Number(p.priceMax) : null,
-    currency: p.currency ?? null,
-    sku: p.sku ?? null,
-    // Use updatedAt so "latestProducts" picks the most-recently-edited
-    // products for the dynamic-audit slot in the future. Order in the
-    // table is otherwise arbitrary. Use idx as a tiebreaker bias.
-    sourceUpdatedAt: p.updatedAt ?? new Date(Date.now() - idx)
-  }));
+  // products row → NormalizedProduct shape (the shared mapper: the same
+  // one the connected-catalog audit uses). Manual rows never carry a
+  // store-side update date, so we fall back to `updatedAt` — that way
+  // "latestProducts" picks the most-recently-edited products for the
+  // dynamic-audit slot. Order in the table is otherwise arbitrary, hence
+  // the idx tiebreaker bias.
+  const normalized: NormalizedProduct[] = rows.map((p, idx) =>
+    productRowToNormalized(p, {
+      source: 'manual',
+      sourceIdFallback: p.id,
+      sourceUpdatedAtFallback: p.updatedAt ?? new Date(Date.now() - idx)
+    })
+  );
 
   const report = runScore(normalized, { skipAltText: true });
 

@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "Aktueller Titel, Beschreibung, Tags und Bilder werden durch neue KI-Generierungen ersetzt. Kosten: {cost} Credits."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Aus deinem verbundenen Shop geprüft · synchronisiert {ago}",
+      "connectionNoSync": "Aus deinem verbundenen Shop geprüft",
+      "storefront": "Aus deinem öffentlichen Shop geprüft",
+      "ago": {
+        "seconds": "vor {n} s",
+        "minutes": "vor {n} Min.",
+        "hours": "vor {n} Std.",
+        "days": "vor {n} Tagen"
+      }
+    },
     "queued": "Analyse in der Warteschlange, bitte warten — dauert meist etwa zwei Minuten",
     "running": "Analyse läuft, bitte warten — dauert meist etwa zwei Minuten",
     "failed": "Analyse fehlgeschlagen: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "Eine Synchronisierung ist abgeschlossen",
-          "failed": "Eine Synchronisierung ist fehlgeschlagen"
+          "failed": "Eine Synchronisierung ist fehlgeschlagen",
+          "requested": "Wir bitten um eine Synchronisierung"
         },
         "connection": {
           "status_changed": "Die Shop-Verbindung hat sich geändert"

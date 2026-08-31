@@ -476,6 +476,17 @@
     "confirmRegenerateAllBody": "Título, descripción, etiquetas e imágenes actuales serán reemplazados por nuevas generaciones IA. Coste: {cost} créditos."
   },
   "Report": {
+    "dataSource": {
+      "connection": "Auditado desde tu tienda conectada · sincronizado {ago}",
+      "connectionNoSync": "Auditado desde tu tienda conectada",
+      "storefront": "Auditado desde tu escaparate público",
+      "ago": {
+        "seconds": "hace {n} s",
+        "minutes": "hace {n} min",
+        "hours": "hace {n} h",
+        "days": "hace {n} d"
+      }
+    },
     "queued": "Análisis en cola, espera por favor — esto suele tardar unos dos minutos",
     "running": "Análisis en curso, espera por favor — esto suele tardar unos dos minutos",
     "failed": "Análisis fallido: {error}",
@@ -1485,7 +1496,8 @@
         },
         "sync": {
           "completed": "Termina una sincronización",
-          "failed": "Falla una sincronización"
+          "failed": "Falla una sincronización",
+          "requested": "Pedimos una sincronización"
         },
         "connection": {
           "status_changed": "Cambia la conexión de la tienda"

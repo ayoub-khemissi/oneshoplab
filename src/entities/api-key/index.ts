@@ -35,6 +35,7 @@ export {
   claimExpiringKeys,
   createApiKey,
   expireDueKeys,
+  lastSiteKeyUseAt,
   listProjectKeys,
   recordKeyEvent,
   revokeApiKey,

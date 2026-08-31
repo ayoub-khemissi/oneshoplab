@@ -3,15 +3,22 @@ import { runDynamicAuditForProduct } from './dynamic-audit';
 import { db } from '@/shared/db';
 import { audits, projects } from '@/shared/db/schema';
 import { notify } from '@/entities/notification';
-import { runAudit } from './run';
+import { auditSourceSummary, runAuditForProject, type AuditRunOptions } from './catalog-audit';
 import { syncProjectProducts } from '@/entities/product';
 
 const DYNAMIC_AUDIT_PRODUCTS = 3;
 
+export interface ProcessAuditOptions {
+  /** Bounded wait for a connected store to push a fresh catalog. */
+  catalogWait?: AuditRunOptions['catalogWait'];
+}
+
 /**
  * Process a pending audit row:
- *   1. Detect platform, fetch the catalog, compute the static rule-based
- *      report (scores, distribution, worst/best/latest products).
+ *   1. Get the catalog — from the connected store when the project has a
+ *      live integration, else by detecting the platform and scraping the
+ *      public storefront — and compute the static rule-based report
+ *      (scores, distribution, worst/best/latest products).
  *   2. Run the AI dynamic audit on the 3 most recently posted products:
  *      one Claude chat each (sync) for SEO rewrite + Instagram post,
  *      plus three image-to-image generations each (async via webhook).
@@ -19,7 +26,10 @@ const DYNAMIC_AUDIT_PRODUCTS = 3;
  *
  * Idempotent against double runs — only acts when the row is `pending`.
  */
-export async function processAudit(auditId: string): Promise<void> {
+export async function processAudit(
+  auditId: string,
+  options: ProcessAuditOptions = {}
+): Promise<void> {
   const row = await db.query.audits.findFirst({ where: eq(audits.id, auditId) });
   if (!row || row.status !== 'pending') return;
 
@@ -29,7 +39,10 @@ export async function processAudit(auditId: string): Promise<void> {
     .where(eq(audits.id, auditId));
 
   try {
-    const result = await runAudit(row.url, { maxProducts: 10000 });
+    const result = await runAuditForProject(row.projectId, row.url, {
+      maxProducts: 10000,
+      catalogWait: options.catalogWait
+    });
     const isFailure = !result.report && result.error;
 
     // 3-way merge: refresh metadata on existing products (title rename,
@@ -37,7 +50,12 @@ export async function processAudit(auditId: string): Promise<void> {
     // disappeared from the scrape. Custom instructions + AI-generation
     // jobs are preserved across the sync so a re-audit never destroys
     // the merchant's prior work.
-    if (row.projectId && result.products.length > 0) {
+    //
+    // Scrapes only. When the products came from the connected store they
+    // ARE the table: writing them back is at best a no-op and at worst
+    // destroys what only the connection knows (`sourceImageId`), which
+    // silently degrades every later image op to replace-all.
+    if (row.projectId && result.source === 'storefront' && result.products.length > 0) {
       await syncProjectProducts(row.projectId, result.platform, result.products);
     }
 
@@ -129,7 +147,8 @@ export async function processAudit(auditId: string): Promise<void> {
               allProducts: result.report.allProducts,
               detectedLanguage: result.report.detectedLanguage,
               detectionSignals: result.detectionSignals,
-              detectionConfidence: result.detectionConfidence
+              detectionConfidence: result.detectionConfidence,
+              ...auditSourceSummary(result)
             }
           : null,
         productsSampled: result.productsFetched,
