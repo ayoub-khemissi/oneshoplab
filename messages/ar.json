@@ -332,7 +332,6 @@
     "jobFailed": "فشل",
     "jobTimedOut": "انتهى الوقت",
     "jobKindAudit": "تدقيق",
-    "jobKindAiSuggestions": "اقتراحات الذكاء الاصطناعي",
     "jobKindTitle": "إعادة كتابة العنوان",
     "jobKindDescription": "إعادة كتابة الوصف",
     "jobKindTags": "اقتراح الوسوم",

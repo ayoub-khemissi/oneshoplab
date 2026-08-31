@@ -332,7 +332,6 @@
     "jobFailed": "실패",
     "jobTimedOut": "시간 초과",
     "jobKindAudit": "감사",
-    "jobKindAiSuggestions": "AI 제안",
     "jobKindTitle": "제목 다시 쓰기",
     "jobKindDescription": "설명 다시 쓰기",
     "jobKindTags": "태그 제안",

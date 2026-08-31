@@ -120,8 +120,8 @@ const PricingSchema = z.object({
   defaultChatModel: z.enum(CHAT_MODEL_IDS),
   /** Retired ids (still stored in old prefs / job payloads) → current id. */
   chatModelAliases: z.record(z.string(), z.enum(CHAT_MODEL_IDS)),
-  /** Models the app uses internally (prompt suggestions, dynamic audit) —
-   *  not user-selectable, not debited through estimateChatCredits. */
+  /** Models the app uses internally (prompt suggestions) — not
+   *  user-selectable, not debited through estimateChatCredits. */
   systemChatModels: z.object(
     Object.fromEntries(SYSTEM_CHAT_ROLES.map((r) => [r, ModelRefSchema])) as Record<
       SystemChatRole,

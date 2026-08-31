@@ -215,7 +215,6 @@ function renderOutputText(
 function jobKindLabel(kind: string): string {
   const map: Record<string, string> = {
     audit_run: 'jobKindAudit',
-    kie_dynamic_audit: 'jobKindAiSuggestions',
     kie_title: 'jobKindTitle',
     kie_description: 'jobKindDescription',
     kie_tags: 'jobKindTags',

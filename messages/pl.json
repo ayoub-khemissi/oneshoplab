@@ -332,7 +332,6 @@
     "jobFailed": "błąd",
     "jobTimedOut": "przekroczono czas",
     "jobKindAudit": "Audyt",
-    "jobKindAiSuggestions": "Sugestie AI",
     "jobKindTitle": "Przepisanie tytułu",
     "jobKindDescription": "Przepisanie opisu",
     "jobKindTags": "Sugestie tagów",

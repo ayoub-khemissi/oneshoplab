@@ -1,0 +1,1 @@
+ALTER TABLE `jobs` MODIFY COLUMN `kind` enum('audit_run','bulk_site_generate','kie_alt_text','kie_description','kie_tags','kie_title','kie_image_edit','kie_image_generate','kie_prompt_suggest') NOT NULL;

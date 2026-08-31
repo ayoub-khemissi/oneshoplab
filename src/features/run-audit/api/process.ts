@@ -1,12 +1,9 @@
 import { and, eq, sql } from 'drizzle-orm';
-import { runDynamicAuditForProduct } from './dynamic-audit';
 import { db } from '@/shared/db';
 import { audits, projects } from '@/shared/db/schema';
 import { notify } from '@/entities/notification';
 import { auditSourceSummary, runAuditForProject, type AuditRunOptions } from './catalog-audit';
 import { syncProjectProducts } from '@/entities/product';
-
-const DYNAMIC_AUDIT_PRODUCTS = 3;
 
 export interface ProcessAuditOptions {
   /** Bounded wait for a connected store to push a fresh catalog. */
@@ -72,57 +69,6 @@ export async function processAudit(
         .update(projects)
         .set({ source: result.platform, url: sql`COALESCE(${projects.url}, ${row.url})` })
         .where(and(eq(projects.id, row.projectId), eq(projects.source, 'unknown')));
-    }
-
-    // ---- AI dynamic audit on the 3 latest products ------------------------
-    // We await the chat calls so the audit isn't marked completed until
-    // the AI text suggestions are persisted. Image jobs fire asynchronously
-    // and resolve later via the kie webhook.
-    //
-    // Anonymous audits (public /audit, no user, no project) skip
-    // this entirely: the dynamic sub-audit spends real money (Claude chat
-    // + kie image gen) and there's no account to debit credits against.
-    // Free audits are scrape + rule-based score only — the AI rewrites are
-    // the "sign up to go further" gate. Inferring from `anonToken` (not a
-    // param) keeps the audit-watchdog recovery path correct for free.
-    if (!row.anonToken && result.report && result.report.latestProducts.length > 0) {
-      // Effective language for the dynamic audit text generation:
-      // override → detection. We resolve inline (vs getEffectiveLanguage)
-      // because detectedLanguage is already in memory and the audit row
-      // hasn't been committed yet — the helper would re-query for nothing.
-      let language = result.report.detectedLanguage;
-      if (row.projectId) {
-        const project = await db.query.projects.findFirst({
-          where: eq(projects.id, row.projectId),
-          columns: { languageOverride: true }
-        });
-        language = project?.languageOverride ?? language;
-      }
-      const platform = result.platform;
-      const appUrl = process.env.APP_URL ?? null;
-
-      await Promise.allSettled(
-        result.report.latestProducts.slice(0, DYNAMIC_AUDIT_PRODUCTS).map((p) =>
-          runDynamicAuditForProduct({
-            auditId,
-            platform,
-            language,
-            appUrl,
-            product: {
-              sourceId: p.sourceId,
-              title: p.title,
-              descriptionHtml: p.descriptionHtml,
-              tags: p.signals.tags ?? [],
-              vendor: p.signals.vendor,
-              productType: p.signals.productType,
-              priceMin: p.signals.priceMin,
-              priceMax: p.signals.priceMax,
-              currency: null,
-              images: p.images.map((i) => ({ src: i.src, alt: i.alt }))
-            }
-          })
-        )
-      );
     }
 
     await db

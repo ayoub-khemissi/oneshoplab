@@ -110,8 +110,8 @@ plan flips for testing go through `scripts/set-plan.ts`.
 `pricing.json` (repo root) is the single catalog: for every model its
 upstream ids (`openrouterId` primary, `kieModelId` fallback), display name,
 provider, tier, tagline and rates; the default model; `chatModelAliases`
-for retired ids; `systemChatModels` (fast/quality, used by suggestions and
-the dynamic audit); the image family + qualities; `imageFallbackModel`; and
+for retired ids; `systemChatModels` (fast/quality, used by the prompt
+suggestions); the image family + qualities; `imageFallbackModel`; and
 the two markups (`chatMarkupFactor` for text — 2.0, `creditMarkupFactor` for
 images — 3.5, env-overridable via `CREDIT_MARKUP_FACTOR`). Rates are USD/M
 tokens in units of `providerUnitUsd` (0.005 $): $2/M → 400.

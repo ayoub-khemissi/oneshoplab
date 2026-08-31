@@ -332,7 +332,6 @@
     "jobFailed": "başarısız",
     "jobTimedOut": "zaman aşımı",
     "jobKindAudit": "Denetim",
-    "jobKindAiSuggestions": "Yapay zekâ önerileri",
     "jobKindTitle": "Başlığı yeniden yaz",
     "jobKindDescription": "Açıklamayı yeniden yaz",
     "jobKindTags": "Etiket önerileri",

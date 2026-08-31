@@ -27,9 +27,8 @@ export async function recomputeManualAudit(projectId: string): Promise<void> {
   // products row → NormalizedProduct shape (the shared mapper: the same
   // one the connected-catalog audit uses). Manual rows never carry a
   // store-side update date, so we fall back to `updatedAt` — that way
-  // "latestProducts" picks the most-recently-edited products for the
-  // dynamic-audit slot. Order in the table is otherwise arbitrary, hence
-  // the idx tiebreaker bias.
+  // "latestProducts" lists the most-recently-edited products. Order in the
+  // table is otherwise arbitrary, hence the idx tiebreaker bias.
   const normalized: NormalizedProduct[] = rows.map((p, idx) =>
     productRowToNormalized(p, {
       source: 'manual',

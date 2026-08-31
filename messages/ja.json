@@ -332,7 +332,6 @@
     "jobFailed": "失敗",
     "jobTimedOut": "タイムアウト",
     "jobKindAudit": "監査",
-    "jobKindAiSuggestions": "AI提案",
     "jobKindTitle": "タイトル書き換え",
     "jobKindDescription": "説明書き換え",
     "jobKindTags": "タグ提案",

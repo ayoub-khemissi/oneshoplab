@@ -332,7 +332,6 @@
     "jobFailed": "fehlgeschlagen",
     "jobTimedOut": "Zeitüberschreitung",
     "jobKindAudit": "Audit",
-    "jobKindAiSuggestions": "KI-Vorschläge",
     "jobKindTitle": "Titel umschreiben",
     "jobKindDescription": "Beschreibung umschreiben",
     "jobKindTags": "Tag-Vorschläge",

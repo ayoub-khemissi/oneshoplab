@@ -42,8 +42,7 @@ export const JOB_KINDS = [
   'kie_title',
   'kie_image_edit',
   'kie_image_generate',
-  'kie_prompt_suggest',
-  'kie_dynamic_audit'
+  'kie_prompt_suggest'
 ] as const;
 
 export const PRODUCT_FIELDS = ['title', 'description', 'images', 'tags'] as const;

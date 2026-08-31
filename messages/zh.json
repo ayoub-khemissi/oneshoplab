@@ -332,7 +332,6 @@
     "jobFailed": "失败",
     "jobTimedOut": "超时",
     "jobKindAudit": "审计",
-    "jobKindAiSuggestions": "AI 建议",
     "jobKindTitle": "标题重写",
     "jobKindDescription": "描述重写",
     "jobKindTags": "标签建议",

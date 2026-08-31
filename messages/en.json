@@ -332,7 +332,6 @@
     "jobFailed": "failed",
     "jobTimedOut": "timed out",
     "jobKindAudit": "Audit",
-    "jobKindAiSuggestions": "AI suggestions",
     "jobKindTitle": "Title rewrite",
     "jobKindDescription": "Description rewrite",
     "jobKindTags": "Tag suggestions",

@@ -332,7 +332,6 @@
     "jobFailed": "ошибка",
     "jobTimedOut": "тайм-аут",
     "jobKindAudit": "Аудит",
-    "jobKindAiSuggestions": "ИИ-предложения",
     "jobKindTitle": "Переписать заголовок",
     "jobKindDescription": "Переписать описание",
     "jobKindTags": "Предложить теги",

@@ -26,7 +26,7 @@ export function buildProductIdByKey(productRows: ProductRowLite[]): Map<string, 
 // (count, lastOptimAt) so the products list can:
 //   - flag products with at least one finished generation via a badge,
 //   - default-sort the list by most-recently optimized first.
-// Excludes audit-runner kinds (kie_dynamic_audit, kie_prompt_suggest)
+// Excludes the prompt-suggestion helper (kie_prompt_suggest)
 // which aren't user-visible "optims".
 //
 // Note on resolution: legacy chat/image insert paths never populated
