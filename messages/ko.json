@@ -64,7 +64,7 @@
     "step1Title": "쇼핑몰 진단",
     "step1Description": "쇼핑몰 주소를 입력하세요. 아직 오픈 전이라면 직접 설명해도 됩니다. Shopify와 WooCommerce, Wix는 저희가 알아서 인식하고 약 1분 만에 상품마다 점수를 매깁니다.",
     "step2Title": "쇼핑몰 연결",
-    "step2Description": "WooCommerce에는 플러그인을 설치하고, Shopify와 Wix에서는 앱을 승인하세요. 2분이면 끝나고 테마는 건드리지 않습니다. 그 뒤로 OneShopLab이 실제 상품 페이지를 읽고 수정 사항을 그곳에 적어 넣을 수 있습니다.",
+    "step2Description": "WooCommerce에는 플러그인을 설치하고, Shopify와 Wix에서는 앱을 승인하세요. 2분이면 됩니다. 그 뒤로 OneShopLab이 실제 상품 페이지를 읽고, 승인한 내용만 적어 넣습니다.",
     "step3Title": "생성하고 반영",
     "step3Description": "텍스트 모델({budgetModel}, {balancedModel}, {premiumModel})과 {imageModel}의 이미지 품질(1K, 2K, 4K)을 고르세요. 승인 없이는 아무것도 나가지 않고, 되돌리기도 한 번이면 됩니다.",
     "compatibleWith": "호환",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "{total}단계 중 {n}단계",
     "connectTitle": "쇼핑몰을 연결하세요",
-    "connectLead": "수정 사항이 복사·붙여넣기 없이 바로 쇼핑몰에 반영됩니다. 2분이면 되고 테마는 그대로입니다.",
+    "connectLead": "수정 사항이 복사·붙여넣기 없이 바로 쇼핑몰에 반영됩니다. 설치는 2분이면 되고, 승인 없이는 아무것도 바뀌지 않습니다.",
     "applyTitle": "첫 변경을 반영하세요",
     "applyLead": "제목이나 설명을 생성하고 승인하면 쇼핑몰에 반영되고, 한 번이면 되돌릴 수 있습니다.",
     "stepAudit": "카탈로그 진단 완료",

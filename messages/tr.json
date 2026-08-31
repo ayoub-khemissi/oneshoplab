@@ -64,7 +64,7 @@
     "step1Title": "Mağazayı analiz et",
     "step1Description": "Mağazanın adresini yaz ya da henüz yayında değilse kendin anlat. Shopify, WooCommerce ve Wix'i kendimiz tanırız, sonra yaklaşık bir dakikada her ürüne puan veririz.",
     "step2Title": "Mağazayı bağla",
-    "step2Description": "Eklentimizi WooCommerce'e kur ya da uygulamamıza Shopify ve Wix'te izin ver. İki dakika sürer ve temana dokunmaz. Bundan sonra OneShopLab gerçek ürün sayfalarını okur ve düzeltmelerini oraya yazabilir.",
+    "step2Description": "Eklentimizi WooCommerce'e kur ya da uygulamamıza Shopify ve Wix'te izin ver. İki dakika sürer. Bundan sonra OneShopLab gerçek ürün sayfalarını okur ve oraya yalnızca onayladığın şeyi yazar.",
     "step3Title": "Üret ve uygula",
     "step3Description": "Metin modelini seç — {budgetModel}, {balancedModel} ya da {premiumModel} — ve görsel kalitesini (1K, 2K veya 4K) {imageModel} ile belirle. Onayın olmadan hiçbir şey gitmez, tek tıkla geri alınır.",
     "compatibleWith": "Uyumlu olduğu",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "Adım {n} / {total}",
     "connectTitle": "Mağazanı bağla",
-    "connectLead": "Düzeltmeler kopyala-yapıştır olmadan doğrudan mağazana iner. İki dakika ve temana dokunmadan.",
+    "connectLead": "Düzeltmeler kopyala-yapıştır olmadan doğrudan mağazana iner. Kurulum iki dakika sürer ve onayın olmadan hiçbir şey değişmez.",
     "applyTitle": "İlk değişikliği uygula",
     "applyLead": "Bir başlık ya da açıklama üret ve onayla: mağazana gider, tek tıkla geri alınır.",
     "stepAudit": "Katalog analiz edildi",

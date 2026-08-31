@@ -64,7 +64,7 @@
     "step1Title": "Shop analysieren",
     "step1Description": "Gib die URL deines Shops ein oder beschreibe ihn selbst, falls er noch nicht online ist. Wir erkennen Shopify, WooCommerce und Wix von allein und bewerten dann jedes Produkt in etwa einer Minute.",
     "step2Title": "Shop verbinden",
-    "step2Description": "Installiere unser Plugin in WooCommerce oder autorisiere unsere App in Shopify und Wix. Das dauert zwei Minuten und rührt dein Theme nicht an. Danach liest OneShopLab deine echten Produktseiten und kann deine Korrekturen dorthin zurückschreiben.",
+    "step2Description": "Installiere unser Plugin in WooCommerce oder autorisiere unsere App in Shopify und Wix. Das dauert zwei Minuten. Danach liest OneShopLab deine echten Produktseiten und schreibt nur zurück, was du freigegeben hast.",
     "step3Title": "Erzeugen und anwenden",
     "step3Description": "Wähle dein Textmodell — {budgetModel}, {balancedModel} oder {premiumModel} — und die Bildqualität (1K, 2K oder 4K) mit {imageModel}. Nichts geht ohne deine Freigabe raus, und ein Klick macht alles rückgängig.",
     "compatibleWith": "Kompatibel mit",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "Schritt {n} von {total}",
     "connectTitle": "Verbinde deinen Shop",
-    "connectLead": "Deine Korrekturen landen direkt im Shop, ohne Copy-Paste. Zwei Minuten, und dein Theme bleibt unberührt.",
+    "connectLead": "Deine Korrekturen landen direkt im Shop, ohne Copy-Paste. Zwei Minuten Einrichtung, und ohne deine Freigabe ändert sich nichts.",
     "applyTitle": "Wende die erste Änderung an",
     "applyLead": "Erzeuge einen Titel oder eine Beschreibung und gib sie frei: Sie geht in deinen Shop, ein Klick macht sie rückgängig.",
     "stepAudit": "Katalog analysiert",

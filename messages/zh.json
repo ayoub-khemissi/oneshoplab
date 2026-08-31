@@ -64,7 +64,7 @@
     "step1Title": "诊断店铺",
     "step1Description": "输入你的店铺网址；若还没上线，也可以自己描述。我们会自动识别 Shopify、WooCommerce 和 Wix，然后在约一分钟内为每个商品打分。",
     "step2Title": "连接店铺",
-    "step2Description": "在 WooCommerce 上安装我们的插件，或在 Shopify 和 Wix 上授权我们的应用。这需要两分钟，也不会改动你的主题。之后 OneShopLab 就能读取你真实的商品页面，并把改动写回去。",
+    "step2Description": "在 WooCommerce 上安装我们的插件，或在 Shopify 和 Wix 上授权我们的应用。只需两分钟。之后 OneShopLab 会读取你真实的商品页面，并且只写回你确认过的内容。",
     "step3Title": "生成并应用",
     "step3Description": "选择文本模型——{budgetModel}、{balancedModel} 或 {premiumModel}——以及通过 {imageModel} 选择图片质量（1K、2K 或 4K）。未经你确认不会发出，一键即可撤销。",
     "compatibleWith": "兼容平台",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "第 {n} 步，共 {total} 步",
     "connectTitle": "连接你的店铺",
-    "connectLead": "改动会直接写回店铺，无需复制粘贴。两分钟搞定，主题一动不动。",
+    "connectLead": "改动会直接写回店铺，无需复制粘贴。安装只需两分钟，未经你确认不会有任何改变。",
     "applyTitle": "应用第一处改动",
     "applyLead": "生成一个标题或描述并确认：它会写回店铺，一键即可撤销。",
     "stepAudit": "目录已诊断",

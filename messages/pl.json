@@ -64,7 +64,7 @@
     "step1Title": "Audyt sklepu",
     "step1Description": "Podaj adres swojego sklepu albo opisz go samodzielnie, jeśli nie jest jeszcze online. Rozpoznajemy Shopify, WooCommerce i Wix automatycznie, a potem oceniamy każdy produkt w około minutę.",
     "step2Title": "Podłączenie sklepu",
-    "step2Description": "Zainstaluj naszą wtyczkę w WooCommerce albo autoryzuj naszą aplikację w Shopify i Wix. Zajmuje to dwie minuty i nie rusza Twojego motywu. Od tej pory OneShopLab czyta Twoje prawdziwe karty produktów i może zapisywać w nich poprawki.",
+    "step2Description": "Zainstaluj naszą wtyczkę w WooCommerce albo autoryzuj naszą aplikację w Shopify i Wix. Zajmuje to dwie minuty. Od tej pory OneShopLab czyta Twoje prawdziwe karty produktów i zapisuje w nich tylko to, co zatwierdzisz.",
     "step3Title": "Generowanie i wdrożenie",
     "step3Description": "Wybierz model tekstowy — {budgetModel}, {balancedModel} lub {premiumModel} — oraz jakość obrazu (1K, 2K lub 4K) w {imageModel}. Nic nie wychodzi bez Twojej zgody, a jedno kliknięcie cofa zmianę.",
     "compatibleWith": "Kompatybilne z",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "Krok {n} z {total}",
     "connectTitle": "Podłącz swój sklep",
-    "connectLead": "Poprawki trafią prosto do sklepu, bez kopiowania i wklejania. Dwie minuty i żadnych zmian w motywie.",
+    "connectLead": "Poprawki trafią prosto do sklepu, bez kopiowania i wklejania. Dwie minuty instalacji i nic nie zmienia się bez Twojej zgody.",
     "applyTitle": "Wdróż pierwszą zmianę",
     "applyLead": "Wygeneruj tytuł albo opis i zatwierdź: trafi do sklepu, a jedno kliknięcie go cofnie.",
     "stepAudit": "Katalog zbadany",

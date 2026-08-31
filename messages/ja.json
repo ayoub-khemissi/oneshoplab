@@ -64,7 +64,7 @@
     "step1Title": "ショップを診断する",
     "step1Description": "ショップの URL を入力してください。まだ公開していない場合は、ご自身で内容を入力しても構いません。Shopify・WooCommerce・Wix はこちらで判別し、約1分で商品ごとに採点します。",
     "step2Title": "ショップをつなぐ",
-    "step2Description": "WooCommerce ではプラグインを入れ、Shopify と Wix ではアプリを許可してください。2分ほどで終わり、テーマには一切触れません。以後 OneShopLab は本当の商品ページを読み、そこへ修正を書き戻せます。",
+    "step2Description": "WooCommerce ではプラグインを入れ、Shopify と Wix ではアプリを許可してください。2分ほどで終わります。以後 OneShopLab は本当の商品ページを読み、あなたが承認したものだけを書き戻します。",
     "step3Title": "生成して反映する",
     "step3Description": "テキストモデル（{budgetModel}、{balancedModel}、{premiumModel}）と、{imageModel} による画像品質（1K・2K・4K）を選べます。承認なしに送られることはなく、取り消しもワンクリックです。",
     "compatibleWith": "対応",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "ステップ {n} / {total}",
     "connectTitle": "ショップをつなぐ",
-    "connectLead": "修正はコピペなしでそのままショップに反映されます。2分ほどで、テーマには手を入れません。",
+    "connectLead": "修正はコピペなしでそのままショップに反映されます。設定は2分ほど。承認なしに変わるものはありません。",
     "applyTitle": "最初の変更を反映する",
     "applyLead": "タイトルか説明を生成して承認すると、ショップに反映されます。取り消しもワンクリックです。",
     "stepAudit": "カタログを診断",

@@ -64,7 +64,7 @@
     "step1Title": "Auditar a loja",
     "step1Description": "Escreva o URL da sua loja, ou descreva-a você mesmo se ainda não estiver online. Reconhecemos Shopify, WooCommerce e Wix sozinhos e depois damos uma nota a cada produto em cerca de um minuto.",
     "step2Title": "Ligar a loja",
-    "step2Description": "Instale o nosso plugin no WooCommerce, ou autorize a nossa aplicação no Shopify e no Wix. Demora dois minutos e não mexe no seu tema. A partir daí o OneShopLab lê as suas fichas de produto reais e pode devolver-lhes as suas correções.",
+    "step2Description": "Instale o nosso plugin no WooCommerce, ou autorize a nossa aplicação no Shopify e no Wix. Demora dois minutos. A partir daí o OneShopLab lê as suas fichas de produto reais e só escreve nelas o que aprovou.",
     "step3Title": "Gerar e aplicar",
     "step3Description": "Escolha o seu modelo de texto — {budgetModel}, {balancedModel} ou {premiumModel} — e a qualidade de imagem (1K, 2K ou 4K) com {imageModel}. Nada sai sem a sua aprovação e um clique desfaz tudo.",
     "compatibleWith": "Compatível com",
@@ -1748,7 +1748,7 @@
   "Onboarding": {
     "stepCounter": "Passo {n} de {total}",
     "connectTitle": "Ligue a sua loja",
-    "connectLead": "As suas correções vão direto para a loja, sem copiar e colar. Dois minutos e sem mexer no seu tema.",
+    "connectLead": "As suas correções vão direto para a loja, sem copiar e colar. Dois minutos a instalar e nada muda sem a sua aprovação.",
     "applyTitle": "Aplique a primeira alteração",
     "applyLead": "Gere um título ou uma descrição e aprove: vai para a sua loja e um clique desfaz tudo.",
     "stepAudit": "Catálogo auditado",
