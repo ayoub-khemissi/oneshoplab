@@ -185,7 +185,12 @@ export function EditorTile(props: EditorTileProps) {
           {actions.setAlt && !editingAlt && on.generateAlt ? (
             <AltGenerateButton
               generate={on.generateAlt}
+              // The generated sentence goes straight into the queue, like every
+              // other generation: what the merchant validates is the change,
+              // not the draft. The field stays open on it so they can edit
+              // before sending.
               onGenerated={(alt) => {
+                on.saveAlt(alt);
                 setProposedAlt(alt);
                 setEditingAlt(true);
               }}

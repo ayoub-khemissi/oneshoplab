@@ -1736,7 +1736,7 @@
     "summaryRemaining": "还有 {count} 张照片没有替代文字，请再次运行以继续。",
     "generateTile": "生成替代文字",
     "generating": "生成中……",
-    "generatedNotice": "建议文字，可修改后保存。",
+    "generatedNotice": "已加入队列：可以再修改，它会和你的其他改动一起发送。",
     "errorUnsupported": "您的店铺暂时不支持由 OneShopLab 修改照片的替代文字。",
     "errorInsufficientCredits": "积分不足，无法生成这些替代文字。",
     "errorNothingMissing": "您的所有照片都已有替代文字。",

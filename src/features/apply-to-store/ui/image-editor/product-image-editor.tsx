@@ -238,8 +238,9 @@ export function ProductImageEditor({
               setAltDrafts((d) => ({ ...d, [tile.src]: alt }));
               setQueue((q) => withAltForSrc(q, tile.src, alt));
             },
-            // The generation is never queued on its own: it fills the field,
-            // the merchant reads it, saving is what queues the op.
+            // The generation queues its `set_alt` immediately (the tile calls
+            // saveAlt with the sentence) and leaves the field open on it —
+            // nothing reaches the store until the queue is sent anyway.
             generateAlt: generateAlt ? () => generateAlt(productId, tile.src) : undefined
           })}
         />

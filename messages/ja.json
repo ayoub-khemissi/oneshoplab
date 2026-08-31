@@ -1736,7 +1736,7 @@
     "summaryRemaining": "代替テキストのない写真がまだ {count} 枚あります。続けるにはもう一度実行してください。",
     "generateTile": "代替テキストを生成",
     "generating": "生成中…",
-    "generatedNotice": "提案されたテキストです。必要に応じて修正して保存してください。",
+    "generatedNotice": "キューに追加しました。必要なら編集してください。ほかの変更と一緒に送信されます。",
     "errorUnsupported": "お使いのストアでは、OneShopLab から写真の代替テキストを変更できません。",
     "errorInsufficientCredits": "これらの代替テキストを生成するにはクレジットが足りません。",
     "errorNothingMissing": "すべての写真にすでに代替テキストがあります。",

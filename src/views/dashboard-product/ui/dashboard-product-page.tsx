@@ -157,10 +157,16 @@ export async function DashboardProductPage({
   // `capabilities` decides whether applying images replaces the whole gallery
   // (docs/api/IMAGE-OPS.md §5) — the merchant confirms that in plain words.
   const [changeByJobId, siteKeys, capabilities, pendingSummary] = await Promise.all([
-    listChangesForJobs(
-      projectId,
-      pastGenPage.items.map((h) => h.jobId)
-    ),
+    listChangesForJobs(projectId, [
+      ...new Set([
+        ...pastGenPage.items.map((h) => h.jobId),
+        // The field rows send the newest generation of each field, which is
+        // not necessarily on the first page of the history.
+        ...[titleHistory[0], descriptionHistory[0], tagsHistory[0]]
+          .filter((h) => h != null)
+          .map((h) => h.jobId)
+      ])
+    ]),
     listProjectKeys({ projectId, userId: session.user.id }),
     getProjectCapabilities(projectId),
     listPendingSummaryForProduct(productId, session.user.id)
@@ -249,6 +255,8 @@ export async function DashboardProductPage({
             <ModelChips />
             <CustomInstructionsField
               hasSiteInstructions={projectInstructions.trim().length > 0}
+              productId={productId}
+              savedValue={productInstructions}
               suggestions={{
                 productId,
                 cost: suggestionsCost(),
@@ -273,6 +281,8 @@ export async function DashboardProductPage({
             liveImageJobs={liveImageJobs}
             costPerImage={costPerImage}
             retentionDays={retentionDays}
+            changeByJobId={changeByJobId}
+            hasSiteKey={hasSiteKey}
           />
         </div>
       </RetryableGenerateProvider>

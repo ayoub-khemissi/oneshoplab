@@ -1736,7 +1736,7 @@
     "summaryRemaining": "ما زالت {count} صورة بدون نص بديل — أعد التشغيل للمتابعة.",
     "generateTile": "إنشاء النص البديل",
     "generating": "جارٍ الإنشاء…",
-    "generatedNotice": "نص مقترح — عدّله إن أردت ثم احفظه.",
+    "generatedNotice": "أُضيف إلى قائمة الانتظار: عدّله إن أردت، وسيُرسل مع بقية التعديلات.",
     "errorUnsupported": "متجرك لا يسمح بعد لـ OneShopLab بتعديل النص البديل لصورك.",
     "errorInsufficientCredits": "رصيدك غير كافٍ لإنشاء هذه النصوص البديلة.",
     "errorNothingMissing": "كل صورك لديها نص بديل بالفعل.",

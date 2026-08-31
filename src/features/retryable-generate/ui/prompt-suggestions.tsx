@@ -14,6 +14,9 @@ export interface PromptSuggestionsProps {
    *  paying action, and the exact amount debited. */
   cost: number;
   creditsBalance: number;
+  /** Called with the angle that just landed in the field, so the page can
+   *  persist it without waiting for the next render. */
+  onPicked?: (value: string) => void;
 }
 
 /**
@@ -22,7 +25,12 @@ export interface PromptSuggestionsProps {
  * it lands in the box, and they edit it from there. Suggestions are cached per
  * product and field, so re-opening the list later costs nothing.
  */
-export function PromptSuggestions({ productId, cost, creditsBalance }: PromptSuggestionsProps) {
+export function PromptSuggestions({
+  productId,
+  cost,
+  creditsBalance,
+  onPicked
+}: PromptSuggestionsProps) {
   const t = useTranslations('Product');
   const { setCustomInstructions } = useGenerateContext();
   const [items, setItems] = useState<Array<{ tone: string; prompt: string }> | null>(null);
@@ -85,9 +93,11 @@ export function PromptSuggestions({ productId, cost, creditsBalance }: PromptSug
               <li key={`${s.tone}-${i}`}>
                 <button
                   type="button"
-                  onClick={() =>
-                    setCustomInstructions(s.prompt.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS))
-                  }
+                  onClick={() => {
+                    const value = s.prompt.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS);
+                    setCustomInstructions(value);
+                    onPicked?.(value);
+                  }}
                   className="flex w-full flex-col gap-0.5 rounded-md border border-[var(--border)] px-3 py-2 text-left text-sm hover:border-[var(--accent)] hover:bg-[var(--accent)]/5"
                 >
                   <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--accent)]">

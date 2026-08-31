@@ -14,6 +14,7 @@ import {
 import type { ProductSnapshot } from '../api/load-product';
 import { RetryableGenerateButton } from '@/features/retryable-generate';
 import type { ImageJobRow, OptimHistoryItem } from '@/entities/generation-job';
+import { ApplyToStoreButton, type ChangeSummary } from '@/features/apply-to-store';
 import { FieldRow, NoLatestGen } from './field-row';
 import { SourcePreview, SourceImageGrid } from './source-preview';
 
@@ -33,6 +34,9 @@ interface SuggestionsCardProps {
   liveImageJobs: ImageJobRow[];
   costPerImage: number;
   retentionDays: number;
+  /** Apply-to-store state of the latest generation of each field. */
+  changeByJobId: Record<string, ChangeSummary>;
+  hasSiteKey: boolean;
 }
 
 export async function SuggestionsCard({
@@ -50,9 +54,28 @@ export async function SuggestionsCard({
   tagsHistory,
   liveImageJobs,
   costPerImage,
-  retentionDays
+  retentionDays,
+  changeByJobId,
+  hasSiteKey
 }: SuggestionsCardProps) {
   const tReport = await getTranslations('Report');
+
+  /** The send button for a field's newest generation, or nothing when there
+   *  is none to send. */
+  const applyFor = (history: OptimHistoryItem[], field: 'title' | 'description' | 'tags') => {
+    const latest = history[0];
+    if (!latest) return null;
+    return (
+      <ApplyToStoreButton
+        jobId={latest.jobId}
+        siteId={siteId}
+        initialChange={changeByJobId[latest.jobId] ?? null}
+        hasSiteKey={hasSiteKey}
+        disabled={archived}
+        field={field}
+      />
+    );
+  };
 
   return (
     <Card variant="secondary" className="overflow-hidden">
@@ -94,7 +117,11 @@ export async function SuggestionsCard({
               </div>
             </div>
 
-            <FieldRow field="title" hasHistory={hasHistory.title}>
+            <FieldRow
+              field="title"
+              hasHistory={hasHistory.title}
+              apply={applyFor(titleHistory, 'title')}
+            >
               <FieldSwap
                 label={{
                   source: tReport('sourceTitleLabel'),
@@ -123,7 +150,11 @@ export async function SuggestionsCard({
               />
             </FieldRow>
 
-            <FieldRow field="description" hasHistory={hasHistory.description}>
+            <FieldRow
+              field="description"
+              hasHistory={hasHistory.description}
+              apply={applyFor(descriptionHistory, 'description')}
+            >
               <FieldSwap
                 label={{
                   source: tReport('sourceDescriptionLabel'),
@@ -184,7 +215,11 @@ export async function SuggestionsCard({
               />
             </FieldRow>
 
-            <FieldRow field="tags" hasHistory={hasHistory.tags}>
+            <FieldRow
+              field="tags"
+              hasHistory={hasHistory.tags}
+              apply={applyFor(tagsHistory, 'tags')}
+            >
               <FieldSwap
                 label={{
                   source: tReport('sourceTagsLabel'),

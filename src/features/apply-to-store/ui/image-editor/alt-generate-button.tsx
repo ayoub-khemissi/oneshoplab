@@ -6,10 +6,11 @@ import { useState, useTransition } from 'react';
 import { TileButton } from './tile-button';
 
 /**
- * "Générer le texte alternatif" on one tile. The sentence it gets back is a
- * PROPOSAL: it opens the field the merchant types in and nothing is queued
- * until they save it (docs/api/IMAGE-OPS.md §4). The error is shown here, in
- * the merchant's words — the provider's message never reaches this far.
+ * "Générer le texte alternatif" on one tile. The sentence it gets back is
+ * queued as a `set_alt` right away and the field stays open on it, so the
+ * merchant can edit it before the queue is sent (docs/api/IMAGE-OPS.md §4).
+ * The error is shown here, in the merchant's words — the provider's message
+ * never reaches this far.
  */
 export function AltGenerateButton({
   generate,

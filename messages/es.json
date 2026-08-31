@@ -1736,7 +1736,7 @@
     "summaryRemaining": "Quedan {count} fotos sin texto alternativo: vuelve a lanzarlo para continuar.",
     "generateTile": "Generar el texto alternativo",
     "generating": "Generando…",
-    "generatedNotice": "Texto propuesto: modifícalo si quieres y guárdalo.",
+    "generatedNotice": "Añadido a la cola: edítalo si quieres, saldrá con el resto de tus cambios.",
     "errorUnsupported": "Tu tienda todavía no permite que OneShopLab edite el texto alternativo de tus fotos.",
     "errorInsufficientCredits": "No tienes créditos suficientes para generar estos textos alternativos.",
     "errorNothingMissing": "Todas tus fotos ya tienen un texto alternativo.",

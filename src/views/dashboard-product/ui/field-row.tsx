@@ -6,11 +6,16 @@ export function FieldRow({
   field,
   hasHistory,
   available = true,
+  apply,
   children
 }: {
   field: 'title' | 'description' | 'tags' | 'images';
   hasHistory: boolean;
   available?: boolean;
+  /** "Apply to my store" for the latest generation of this field — the whole
+   *  point of generating one, and it used to live only in the history
+   *  accordion at the bottom of the page. */
+  apply?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -21,7 +26,8 @@ export function FieldRow({
     <FieldViewProvider>
       <div className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]">
         {children}
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {apply}
           <RetryableGenerateButton field={field} hasHistory={hasHistory} available={available} />
         </div>
       </div>

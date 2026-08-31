@@ -2,6 +2,7 @@
 
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { getOrGenerateSuggestions, type PromptSuggestion } from '@/entities/generation-job';
 import { auth } from '@/entities/user';
@@ -69,4 +70,33 @@ export async function suggestPromptsAction(
 
   if (!res.ok) return { ok: false, error: res.reason };
   return { ok: true, suggestions: res.suggestions, fromCache: res.fromCache };
+}
+
+/**
+ * Persist the product's custom instructions as soon as the merchant leaves the
+ * field. They used to be written only as a side effect of a generation, so
+ * guidance typed and not immediately used was lost on the next visit.
+ */
+export async function saveProductInstructionsAction(
+  productId: string,
+  instructions: string
+): Promise<{ ok: boolean }> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false };
+  const id = uuid.safeParse(productId);
+  if (!id.success) return { ok: false };
+
+  const [row] = await db
+    .select({ id: products.id })
+    .from(products)
+    .innerJoin(projects, eq(projects.id, products.projectId))
+    .where(and(eq(products.id, id.data), eq(projects.userId, session.user.id)));
+  if (!row) return { ok: false };
+
+  const trimmed = instructions.trim().slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS);
+  await db
+    .update(products)
+    .set({ customInstructions: trimmed.length > 0 ? trimmed : null })
+    .where(eq(products.id, row.id));
+  return { ok: true };
 }
