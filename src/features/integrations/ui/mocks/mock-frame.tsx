@@ -38,7 +38,7 @@ export function MockFrame({
           {url}
         </span>
       </div>
-      <div className="relative h-[190px] overflow-hidden">{children}</div>
+      <div className="relative min-h-[190px]">{children}</div>
     </div>
   );
 }
