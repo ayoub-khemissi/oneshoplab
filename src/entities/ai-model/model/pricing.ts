@@ -79,7 +79,7 @@ export type PricingPlanId = (typeof PLAN_IDS)[number];
 export const CHAT_MODEL_IDS = ['haiku-4-5', 'sonnet-5', 'opus-5'] as const;
 export type PricingChatModelId = (typeof CHAT_MODEL_IDS)[number];
 
-export const SYSTEM_CHAT_ROLES = ['fast', 'quality'] as const;
+export const SYSTEM_CHAT_ROLES = ['fast'] as const;
 export type SystemChatRole = (typeof SYSTEM_CHAT_ROLES)[number];
 
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;

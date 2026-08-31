@@ -106,10 +106,6 @@
     "fast": {
       "openrouterId": "anthropic/claude-haiku-4.5",
       "kieModelId": "claude-haiku-4-5"
-    },
-    "quality": {
-      "openrouterId": "anthropic/claude-sonnet-5",
-      "kieModelId": "claude-sonnet-4-6"
     }
   },
   "imageModel": {
