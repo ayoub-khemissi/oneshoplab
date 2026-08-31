@@ -1526,7 +1526,28 @@
       "secretSaved": "Lo he guardado"
     },
     "platformLocked": "Tu tienda funciona con {platform}.",
-    "changePlatform": "Cambiar de plataforma"
+    "changePlatform": "Cambiar de plataforma",
+    "summary": {
+      "connectedTitle": "Tienda conectada",
+      "connectedLead": "Todo está listo: los cambios que apruebas llegan a tu tienda y tu catálogo se mantiene al día.",
+      "partialTitle": "Conexión en curso",
+      "partialLead": "Queda un paso para que tus cambios puedan llegar a tu tienda.",
+      "idleTitle": "Tienda no conectada",
+      "idleLead": "Sigue los tres pasos de abajo: dos minutos y los cambios que apruebes irán directamente a tu tienda.",
+      "attentionTitle": "Conexión interrumpida",
+      "attentionLead": "Tu tienda ha dejado de responder. Restablece la conexión para reanudar los envíos.",
+      "step": {
+        "platform": "Plataforma elegida",
+        "credential": "Tienda autorizada",
+        "sync": "Catálogo sincronizado"
+      },
+      "problem": {
+        "tokenInvalid": "La autorización dada a OneShopLab ya no es válida, normalmente porque se retiró desde la tienda. Vuelve a conectar para renovarla.",
+        "connectionRevoked": "La conexión fue revocada. Vuelve a conectar tu tienda para reanudar los envíos.",
+        "keysDead": "Ninguna clave activa: las de esta tienda fueron revocadas o caducaron. Crea una nueva y pégala en el plugin.",
+        "keyGraceOnly": "Tu clave anterior está en periodo de gracia y dejará de funcionar pronto. Pega la nueva clave en el plugin."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Aplicar en mi tienda",

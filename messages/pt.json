@@ -1526,7 +1526,28 @@
       "secretSaved": "Eu guardei"
     },
     "platformLocked": "A sua loja funciona com {platform}.",
-    "changePlatform": "Mudar de plataforma"
+    "changePlatform": "Mudar de plataforma",
+    "summary": {
+      "connectedTitle": "Loja ligada",
+      "connectedLead": "Está tudo pronto: as alterações que aprova vão para a sua loja e o catálogo mantém-se atualizado.",
+      "partialTitle": "Ligação em curso",
+      "partialLead": "Falta um passo para que as suas alterações cheguem à loja.",
+      "idleTitle": "Loja não ligada",
+      "idleLead": "Siga os três passos abaixo: dois minutos e as alterações aprovadas vão direto para a sua loja.",
+      "attentionTitle": "Ligação interrompida",
+      "attentionLead": "A sua loja deixou de responder. Restabeleça a ligação para retomar os envios.",
+      "step": {
+        "platform": "Plataforma escolhida",
+        "credential": "Loja autorizada",
+        "sync": "Catálogo sincronizado"
+      },
+      "problem": {
+        "tokenInvalid": "A autorização dada ao OneShopLab já não é válida, normalmente porque foi retirada do lado da loja. Volte a ligar para a renovar.",
+        "connectionRevoked": "A ligação foi revogada. Volte a ligar a sua loja para retomar os envios.",
+        "keysDead": "Nenhuma chave ativa: as desta loja foram revogadas ou expiraram. Crie uma nova e cole-a no plugin.",
+        "keyGraceOnly": "A sua chave anterior está no período de tolerância e deixará de funcionar em breve. Cole a nova chave no plugin."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Aplicar na minha loja",

@@ -1526,7 +1526,28 @@
       "secretSaved": "I saved it"
     },
     "platformLocked": "Your store runs on {platform}.",
-    "changePlatform": "Change platform"
+    "changePlatform": "Change platform",
+    "summary": {
+      "connectedTitle": "Store connected",
+      "connectedLead": "Everything is in place: the changes you approve go to your store, and your catalog stays up to date.",
+      "partialTitle": "Connection in progress",
+      "partialLead": "One step is left before your changes can reach your store.",
+      "idleTitle": "Store not connected",
+      "idleLead": "Follow the three steps below: two minutes, and the changes you approve will go straight to your store.",
+      "attentionTitle": "Connection interrupted",
+      "attentionLead": "Your store stopped answering. Restore the connection to resume sending changes.",
+      "step": {
+        "platform": "Platform chosen",
+        "credential": "Store authorised",
+        "sync": "Catalog synced"
+      },
+      "problem": {
+        "tokenInvalid": "The authorisation given to OneShopLab is no longer valid — usually because it was removed on the store side. Reconnect to renew it.",
+        "connectionRevoked": "The connection was revoked. Reconnect your store to resume sending changes.",
+        "keysDead": "No active key: this store's keys were revoked or expired. Create a new one and paste it into the plugin.",
+        "keyGraceOnly": "Your previous key is in its grace period and will stop working shortly. Paste the new key into the plugin."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Apply to my store",

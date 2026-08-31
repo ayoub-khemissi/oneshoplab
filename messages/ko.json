@@ -1526,7 +1526,28 @@
       "secretSaved": "저장했습니다"
     },
     "platformLocked": "스토어가 {platform}에서 운영되고 있습니다.",
-    "changePlatform": "플랫폼 변경"
+    "changePlatform": "플랫폼 변경",
+    "summary": {
+      "connectedTitle": "쇼핑몰 연결됨",
+      "connectedLead": "모두 준비됐습니다. 승인한 변경은 쇼핑몰에 반영되고 카탈로그도 최신 상태로 유지됩니다.",
+      "partialTitle": "연결 진행 중",
+      "partialLead": "변경 사항이 쇼핑몰에 전달되기까지 한 단계 남았습니다.",
+      "idleTitle": "쇼핑몰 미연결",
+      "idleLead": "아래 세 단계를 따라오세요. 2분이면 승인한 변경이 바로 쇼핑몰에 반영됩니다.",
+      "attentionTitle": "연결이 끊겼습니다",
+      "attentionLead": "쇼핑몰이 응답하지 않습니다. 연결을 복구하면 전송을 다시 시작합니다.",
+      "step": {
+        "platform": "플랫폼 선택",
+        "credential": "쇼핑몰 승인",
+        "sync": "카탈로그 동기화"
+      },
+      "problem": {
+        "tokenInvalid": "OneShopLab에 부여된 권한이 더 이상 유효하지 않습니다. 대개 쇼핑몰 쪽에서 취소된 경우입니다. 다시 연결해 갱신하세요.",
+        "connectionRevoked": "연결이 취소되었습니다. 쇼핑몰을 다시 연결하면 전송을 재개합니다.",
+        "keysDead": "활성 키가 없습니다. 이 쇼핑몰의 키가 취소되었거나 만료되었습니다. 새 키를 만들어 플러그인에 붙여 넣으세요.",
+        "keyGraceOnly": "이전 키가 유예 기간에 있으며 곧 작동을 멈춥니다. 새 키를 플러그인에 붙여 넣으세요."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "내 스토어에 적용",

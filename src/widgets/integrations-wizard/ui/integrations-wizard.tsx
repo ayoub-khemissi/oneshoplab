@@ -9,7 +9,9 @@ import type { ShopifyConnectionView, WixConnectionView } from '@/entities/shop-c
 import { setPlatformAction } from '@/features/integrations/actions';
 import {
   ConnectionStatusCard,
+  ConnectionSummaryCard,
   isComingSoon,
+  summarizeConnection,
   KeyManagement,
   KeyReveal,
   PlatformGuide,
@@ -162,8 +164,21 @@ export function IntegrationsWizard({
         ? t('wix.step2Title')
         : t('step2Title');
 
+  // The verdict at the top of the tab. Reads the same live state the steps
+  // below do, so it can never disagree with them.
+  const summary = summarizeConnection({
+    platform,
+    comingSoon,
+    keys,
+    lastUsedAtIso: initialStatus.lastUsedAtIso,
+    productCount: initialStatus.productCount,
+    connection: shopify ?? wix
+  });
+
   return (
     <div className="flex flex-col gap-4">
+      <ConnectionSummaryCard summary={summary} />
+
       <Card variant="secondary" className="p-5 flex flex-col gap-2">
         <h2 className="text-base font-semibold">{t('wizardTitle')}</h2>
         <p className="text-sm text-[var(--muted)] leading-relaxed max-w-2xl">{t('wizardIntro')}</p>

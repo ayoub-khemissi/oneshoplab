@@ -1526,7 +1526,28 @@
       "secretSaved": "Ich habe es gespeichert"
     },
     "platformLocked": "Dein Shop läuft auf {platform}.",
-    "changePlatform": "Plattform ändern"
+    "changePlatform": "Plattform ändern",
+    "summary": {
+      "connectedTitle": "Shop verbunden",
+      "connectedLead": "Alles steht: Freigegebene Änderungen gehen in deinen Shop, und dein Katalog bleibt aktuell.",
+      "partialTitle": "Verbindung läuft",
+      "partialLead": "Ein Schritt fehlt noch, bevor deine Änderungen den Shop erreichen können.",
+      "idleTitle": "Shop nicht verbunden",
+      "idleLead": "Folge den drei Schritten unten: zwei Minuten, und freigegebene Änderungen gehen direkt in deinen Shop.",
+      "attentionTitle": "Verbindung unterbrochen",
+      "attentionLead": "Dein Shop antwortet nicht mehr. Stelle die Verbindung wieder her, um weiter zu senden.",
+      "step": {
+        "platform": "Plattform gewählt",
+        "credential": "Shop autorisiert",
+        "sync": "Katalog synchronisiert"
+      },
+      "problem": {
+        "tokenInvalid": "Die Autorisierung für OneShopLab gilt nicht mehr — meist, weil sie im Shop entzogen wurde. Verbinde neu, um sie zu erneuern.",
+        "connectionRevoked": "Die Verbindung wurde widerrufen. Verbinde deinen Shop neu, um wieder zu senden.",
+        "keysDead": "Kein aktiver Schlüssel: die dieses Shops wurden widerrufen oder sind abgelaufen. Erstelle einen neuen und füge ihn im Plugin ein.",
+        "keyGraceOnly": "Dein alter Schlüssel ist in der Übergangsfrist und funktioniert bald nicht mehr. Füge den neuen Schlüssel im Plugin ein."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "In meinem Shop anwenden",

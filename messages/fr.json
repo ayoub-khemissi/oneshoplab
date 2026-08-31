@@ -1526,7 +1526,28 @@
       "secretSaved": "Je l’ai enregistré"
     },
     "platformLocked": "Votre boutique est sur {platform}.",
-    "changePlatform": "Changer de plateforme"
+    "changePlatform": "Changer de plateforme",
+    "summary": {
+      "connectedTitle": "Boutique connectée",
+      "connectedLead": "Tout est en place : vos modifications validées partent dans votre boutique et votre catalogue reste à jour.",
+      "partialTitle": "Connexion en cours",
+      "partialLead": "Il reste une étape avant que vos modifications puissent partir dans votre boutique.",
+      "idleTitle": "Boutique non connectée",
+      "idleLead": "Suivez les trois étapes ci-dessous : deux minutes, et vos modifications validées partiront directement dans votre boutique.",
+      "attentionTitle": "Connexion interrompue",
+      "attentionLead": "Votre boutique ne répond plus. Rétablissez la connexion pour reprendre l'envoi des modifications.",
+      "step": {
+        "platform": "Plateforme choisie",
+        "credential": "Boutique autorisée",
+        "sync": "Catalogue synchronisé"
+      },
+      "problem": {
+        "tokenInvalid": "L'autorisation donnée à OneShopLab n'est plus valable — le plus souvent parce qu'elle a été retirée côté boutique. Reconnectez pour la renouveler.",
+        "connectionRevoked": "La connexion a été révoquée. Reconnectez votre boutique pour reprendre les envois.",
+        "keysDead": "Aucune clé active : celles de cette boutique ont été révoquées ou ont expiré. Créez-en une nouvelle et collez-la dans l'extension.",
+        "keyGraceOnly": "Votre ancienne clé est en période de grâce et cessera bientôt de fonctionner. Collez la nouvelle clé dans l'extension."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Appliquer sur la boutique",

@@ -1526,7 +1526,28 @@
       "secretSaved": "保存しました"
     },
     "platformLocked": "あなたのショップは {platform} で動いています。",
-    "changePlatform": "プラットフォームを変更"
+    "changePlatform": "プラットフォームを変更",
+    "summary": {
+      "connectedTitle": "ショップ接続済み",
+      "connectedLead": "準備は万全です。承認した変更はショップに反映され、カタログも最新に保たれます。",
+      "partialTitle": "接続の途中です",
+      "partialLead": "変更をショップへ送れるようになるまで、あと1ステップです。",
+      "idleTitle": "ショップ未接続",
+      "idleLead": "下の3ステップを進めてください。2分ほどで、承認した変更がそのままショップに反映されます。",
+      "attentionTitle": "接続が切れています",
+      "attentionLead": "ショップが応答しなくなりました。接続を復旧すると送信を再開できます。",
+      "step": {
+        "platform": "プラットフォーム選択",
+        "credential": "ショップの許可",
+        "sync": "カタログ同期"
+      },
+      "problem": {
+        "tokenInvalid": "OneShopLab に与えられた許可が無効になりました。多くはショップ側で取り消されたためです。再接続して更新してください。",
+        "connectionRevoked": "接続が取り消されました。ショップを再接続すると送信を再開できます。",
+        "keysDead": "有効なキーがありません。このショップのキーは取り消されたか期限切れです。新しいキーを作成してプラグインに貼り付けてください。",
+        "keyGraceOnly": "以前のキーは猶予期間中で、まもなく使えなくなります。新しいキーをプラグインに貼り付けてください。"
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

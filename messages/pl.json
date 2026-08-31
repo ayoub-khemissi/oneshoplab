@@ -1526,7 +1526,28 @@
       "secretSaved": "Zapisałem/-am go"
     },
     "platformLocked": "Twój sklep działa na {platform}.",
-    "changePlatform": "Zmień platformę"
+    "changePlatform": "Zmień platformę",
+    "summary": {
+      "connectedTitle": "Sklep podłączony",
+      "connectedLead": "Wszystko gotowe: zatwierdzone zmiany trafiają do sklepu, a katalog pozostaje aktualny.",
+      "partialTitle": "Podłączanie w toku",
+      "partialLead": "Został jeden krok, zanim zmiany będą mogły trafiać do sklepu.",
+      "idleTitle": "Sklep niepodłączony",
+      "idleLead": "Wykonaj trzy kroki poniżej: dwie minuty i zatwierdzone zmiany trafią prosto do Twojego sklepu.",
+      "attentionTitle": "Połączenie przerwane",
+      "attentionLead": "Twój sklep przestał odpowiadać. Przywróć połączenie, aby wznowić wysyłkę zmian.",
+      "step": {
+        "platform": "Platforma wybrana",
+        "credential": "Sklep autoryzowany",
+        "sync": "Katalog zsynchronizowany"
+      },
+      "problem": {
+        "tokenInvalid": "Autoryzacja udzielona OneShopLab jest już nieważna — zwykle dlatego, że cofnięto ją po stronie sklepu. Połącz ponownie, aby ją odnowić.",
+        "connectionRevoked": "Połączenie zostało cofnięte. Połącz sklep ponownie, aby wznowić wysyłkę.",
+        "keysDead": "Brak aktywnego klucza: klucze tego sklepu cofnięto lub wygasły. Utwórz nowy i wklej go we wtyczce.",
+        "keyGraceOnly": "Poprzedni klucz działa w okresie przejściowym i wkrótce przestanie. Wklej nowy klucz we wtyczce."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Zastosuj w sklepie",

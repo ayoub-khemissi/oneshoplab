@@ -1526,7 +1526,28 @@
       "secretSaved": "我已保存"
     },
     "platformLocked": "您的商店基于 {platform}。",
-    "changePlatform": "更换平台"
+    "changePlatform": "更换平台",
+    "summary": {
+      "connectedTitle": "店铺已连接",
+      "connectedLead": "一切就绪：你确认的改动会写回店铺，商品目录也保持最新。",
+      "partialTitle": "连接进行中",
+      "partialLead": "还差一步，你的改动才能写回店铺。",
+      "idleTitle": "店铺未连接",
+      "idleLead": "按下面三步操作：两分钟，你确认的改动就会直接写回店铺。",
+      "attentionTitle": "连接已中断",
+      "attentionLead": "店铺不再响应。请恢复连接以继续发送改动。",
+      "step": {
+        "platform": "已选择平台",
+        "credential": "店铺已授权",
+        "sync": "目录已同步"
+      },
+      "problem": {
+        "tokenInvalid": "授予 OneShopLab 的授权已失效，通常是在店铺一侧被取消。请重新连接以更新授权。",
+        "connectionRevoked": "连接已被撤销。请重新连接店铺以继续发送。",
+        "keysDead": "没有可用密钥：该店铺的密钥已被撤销或过期。请新建一个并粘贴到插件中。",
+        "keyGraceOnly": "旧密钥处于宽限期，很快将失效。请把新密钥粘贴到插件中。"
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

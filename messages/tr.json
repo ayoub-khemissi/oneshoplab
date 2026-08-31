@@ -1526,7 +1526,28 @@
       "secretSaved": "Kaydettim"
     },
     "platformLocked": "Mağazanız {platform} üzerinde çalışıyor.",
-    "changePlatform": "Platformu değiştir"
+    "changePlatform": "Platformu değiştir",
+    "summary": {
+      "connectedTitle": "Mağaza bağlı",
+      "connectedLead": "Her şey yerinde: onayladığın değişiklikler mağazana gidiyor, kataloğun güncel kalıyor.",
+      "partialTitle": "Bağlantı sürüyor",
+      "partialLead": "Değişikliklerinin mağazana ulaşabilmesi için bir adım kaldı.",
+      "idleTitle": "Mağaza bağlı değil",
+      "idleLead": "Aşağıdaki üç adımı izle: iki dakika, ve onayladığın değişiklikler doğrudan mağazana gidecek.",
+      "attentionTitle": "Bağlantı koptu",
+      "attentionLead": "Mağazan yanıt vermiyor. Göndermeye devam etmek için bağlantıyı yeniden kur.",
+      "step": {
+        "platform": "Platform seçildi",
+        "credential": "Mağaza yetkilendirildi",
+        "sync": "Katalog eşitlendi"
+      },
+      "problem": {
+        "tokenInvalid": "OneShopLab'e verilen yetki artık geçerli değil; genelde mağaza tarafında kaldırıldığı için. Yenilemek için yeniden bağlan.",
+        "connectionRevoked": "Bağlantı iptal edildi. Göndermeye devam etmek için mağazanı yeniden bağla.",
+        "keysDead": "Etkin anahtar yok: bu mağazanınkiler iptal edilmiş ya da süresi dolmuş. Yeni bir tane oluştur ve eklentiye yapıştır.",
+        "keyGraceOnly": "Eski anahtarın ek süre içinde ve yakında çalışmayı bırakacak. Yeni anahtarı eklentiye yapıştır."
+      }
+    }
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",
