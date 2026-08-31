@@ -37,7 +37,7 @@ export function AccountTabs({ labels }: AccountTabsProps) {
       // some browsers add when overflow-x:auto is set on a flex row
       // whose intrinsic content height oscillates during the
       // compact-mode transition.
-      className="border-b border-[var(--border)] flex flex-wrap gap-1 sm:flex-nowrap sm:overflow-x-auto sm:overflow-y-hidden"
+      className="border-b border-[var(--border)] flex gap-1 overflow-x-auto overflow-y-hidden"
     >
       {TABS.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
