@@ -58,10 +58,10 @@ Output rules:
 1. Return ONLY a JSON array. No preamble, no markdown fences, no commentary.
 2. Each item is an object with "tone" (a short label, max 4 words) and "prompt" (the actual prompt the merchant will hand off to the generator, written in instruction form, max 200 chars).
 3. Vary tone genuinely — no two items should overlap.
-4. Write the prompts in ${languageName}.
+4. Write BOTH the tone label and the prompt in ${languageName} — the merchant reads them, they are not internal labels.
 
 Example format (illustrative only, do not copy):
-[{"tone":"Punchy","prompt":"Rewrite as a sharp 6-word title that leads with the main benefit."},{"tone":"SEO-optimised","prompt":"…"}]`;
+[{"tone":"<short label>","prompt":"<instruction, e.g. rewrite as a sharp 6-word title leading with the main benefit>"}]`;
 }
 
 /** Build the actual user prompt + system prompt pair for a description rewrite. */
