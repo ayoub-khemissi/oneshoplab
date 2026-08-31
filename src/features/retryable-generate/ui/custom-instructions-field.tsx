@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
 import { InfoHint } from '@/shared/ui';
 import { useGenerateContext } from './context';
+import { PromptSuggestions } from './prompt-suggestions';
 
 /**
  * Custom-instructions textarea controlled by the provider so its current
@@ -14,10 +15,14 @@ interface CustomInstructionsFieldProps {
   /** When the project carries site-wide instructions, surface a notice so
    *  the merchant knows extra guidance is being added on top of theirs. */
   hasSiteInstructions?: boolean;
+  /** Offers ready-made angles under the box. Omitted (with its cost) the
+   *  suggestions simply aren't proposed. */
+  suggestions?: { productId: string; cost: number; creditsBalance: number };
 }
 
 export function CustomInstructionsField({
-  hasSiteInstructions = false
+  hasSiteInstructions = false,
+  suggestions
 }: CustomInstructionsFieldProps) {
   const t = useTranslations('Product');
   const { customInstructions, setCustomInstructions } = useGenerateContext();
@@ -44,6 +49,13 @@ export function CustomInstructionsField({
         placeholder={t('customInstructionsPlaceholder')}
         className="w-full px-3 py-2 rounded-md border border-[var(--border)] bg-[var(--background)] text-sm focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition resize-y min-h-[80px]"
       />
+      {suggestions ? (
+        <PromptSuggestions
+          productId={suggestions.productId}
+          cost={suggestions.cost}
+          creditsBalance={suggestions.creditsBalance}
+        />
+      ) : null}
       <div className="flex items-baseline justify-between gap-3 text-xs text-[var(--muted)]">
         <p>
           {t('customInstructionsHint')}

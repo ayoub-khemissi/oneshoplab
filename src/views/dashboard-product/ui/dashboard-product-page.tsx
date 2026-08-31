@@ -21,7 +21,8 @@ import {
 import {
   listOptimHistory,
   listOptimHistoryPaginated,
-  listProductImageJobs
+  listProductImageJobs,
+  suggestionsCost
 } from '@/entities/generation-job';
 import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
@@ -246,7 +247,14 @@ export async function DashboardProductPage({
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <ModelChips />
-            <CustomInstructionsField hasSiteInstructions={projectInstructions.trim().length > 0} />
+            <CustomInstructionsField
+              hasSiteInstructions={projectInstructions.trim().length > 0}
+              suggestions={{
+                productId,
+                cost: suggestionsCost(),
+                creditsBalance: balance
+              }}
+            />
           </div>
 
           <SuggestionsCard

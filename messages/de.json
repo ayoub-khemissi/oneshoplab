@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Alles generieren?",
     "confirmGenerateAllBody": "Titel, Beschreibung, Tags und 3 Bilder werden generiert. Kosten: {cost} Credits.",
     "confirmRegenerateAllTitle": "Alles neu generieren?",
-    "confirmRegenerateAllBody": "Aktueller Titel, Beschreibung, Tags und Bilder werden durch neue KI-Generierungen ersetzt. Kosten: {cost} Credits."
+    "confirmRegenerateAllBody": "Aktueller Titel, Beschreibung, Tags und Bilder werden durch neue KI-Generierungen ersetzt. Kosten: {cost} Credits.",
+    "suggestPrompts": "Ansätze vorschlagen",
+    "suggestPromptsBusy": "Suche nach Ansätzen…",
+    "suggestPromptsHint": "Klicke einen Ansatz an, um ihn ins Feld zu setzen, und passe ihn an.",
+    "suggestPromptsEmpty": "Für dieses Produkt konnte kein Ansatz vorgeschlagen werden.",
+    "suggestPromptsFailed": "Die Ansätze konnten nicht erzeugt werden. Versuche es gleich noch einmal."
   },
   "Report": {
     "dataSource": {

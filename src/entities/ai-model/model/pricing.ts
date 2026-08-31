@@ -85,7 +85,15 @@ export type SystemChatRole = (typeof SYSTEM_CHAT_ROLES)[number];
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
 export type PricingImageQualityId = (typeof IMAGE_QUALITY_IDS)[number];
 
-export const FIELD_IDS = ['title', 'description', 'tags', 'alt', 'social', 'fullAudit'] as const;
+export const FIELD_IDS = [
+  'title',
+  'description',
+  'tags',
+  'alt',
+  'suggest',
+  'social',
+  'fullAudit'
+] as const;
 export type PricingFieldId = (typeof FIELD_IDS)[number];
 
 export const CREDIT_PACK_IDS = ['boost', 'power', 'mega'] as const;

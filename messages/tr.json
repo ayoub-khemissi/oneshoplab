@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Hepsini üret?",
     "confirmGenerateAllBody": "Başlık, açıklama, etiketler ve 3 görsel üretilir. Maliyet: {cost} kredi.",
     "confirmRegenerateAllTitle": "Hepsini yeniden üret?",
-    "confirmRegenerateAllBody": "Mevcut başlık, açıklama, etiketler ve görseller yeni AI üretimleriyle değiştirilir. Maliyet: {cost} kredi."
+    "confirmRegenerateAllBody": "Mevcut başlık, açıklama, etiketler ve görseller yeni AI üretimleriyle değiştirilir. Maliyet: {cost} kredi.",
+    "suggestPrompts": "Bana açı öner",
+    "suggestPromptsBusy": "Açılar aranıyor…",
+    "suggestPromptsHint": "Bir açıya tıklayarak alana yerleştir, sonra istersen düzenle.",
+    "suggestPromptsEmpty": "Bu ürün için açı önerilemedi.",
+    "suggestPromptsFailed": "Açılar üretilemedi. Birazdan tekrar dene."
   },
   "Report": {
     "dataSource": {

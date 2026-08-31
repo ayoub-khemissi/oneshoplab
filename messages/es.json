@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "¿Generar todo?",
     "confirmGenerateAllBody": "Título, descripción, etiquetas y 3 imágenes serán generados. Coste: {cost} créditos.",
     "confirmRegenerateAllTitle": "¿Regenerar todo?",
-    "confirmRegenerateAllBody": "Título, descripción, etiquetas e imágenes actuales serán reemplazados por nuevas generaciones IA. Coste: {cost} créditos."
+    "confirmRegenerateAllBody": "Título, descripción, etiquetas e imágenes actuales serán reemplazados por nuevas generaciones IA. Coste: {cost} créditos.",
+    "suggestPrompts": "Sugiéreme enfoques",
+    "suggestPromptsBusy": "Buscando enfoques…",
+    "suggestPromptsHint": "Haz clic en un enfoque para colocarlo en el campo y edítalo si quieres.",
+    "suggestPromptsEmpty": "No se ha podido sugerir ningún enfoque para este producto.",
+    "suggestPromptsFailed": "No se han podido generar los enfoques. Inténtalo dentro de un momento."
   },
   "Report": {
     "dataSource": {

@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "توليد كل العناصر؟",
     "confirmGenerateAllBody": "سيتم توليد العنوان والوصف والوسوم و3 صور. التكلفة: {cost} رصيد.",
     "confirmRegenerateAllTitle": "إعادة توليد الكل؟",
-    "confirmRegenerateAllBody": "سيتم استبدال العنوان والوصف والوسوم والصور الحالية بتوليدات ذكاء اصطناعي جديدة. التكلفة: {cost} رصيد."
+    "confirmRegenerateAllBody": "سيتم استبدال العنوان والوصف والوسوم والصور الحالية بتوليدات ذكاء اصطناعي جديدة. التكلفة: {cost} رصيد.",
+    "suggestPrompts": "اقترح لي زوايا",
+    "suggestPromptsBusy": "جارٍ البحث عن زوايا…",
+    "suggestPromptsHint": "انقر على زاوية لوضعها في الحقل، ثم عدّلها إن أردت.",
+    "suggestPromptsEmpty": "تعذّر اقتراح أي زاوية لهذا المنتج.",
+    "suggestPromptsFailed": "تعذّر توليد الزوايا. حاول بعد قليل."
   },
   "Report": {
     "dataSource": {

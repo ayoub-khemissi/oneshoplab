@@ -154,8 +154,8 @@ export function getChatModel(id: ChatModelId | string | null | undefined): ChatM
   return CHAT_MODEL_REGISTRY[resolveChatModelId(id)];
 }
 
-/** Internal (non user-selectable) models: 'fast' for prompt suggestions,
- *  'quality' for the dynamic audit / structured rewrites. */
+/** Internal (non user-selectable) models: 'fast' writes the prompt
+ *  suggestions offered next to the custom-instructions field. */
 export const SYSTEM_CHAT_MODELS: Record<SystemChatRole, ChatModelRef> = PRICING.systemChatModels;
 
 /**

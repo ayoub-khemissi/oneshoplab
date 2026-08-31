@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "全部生成？",
     "confirmGenerateAllBody": "将生成标题、描述、标签和 3 张图片。成本：{cost} 积分。",
     "confirmRegenerateAllTitle": "全部重新生成？",
-    "confirmRegenerateAllBody": "当前的标题、描述、标签和图片将被新的 AI 生成内容替换。成本：{cost} 积分。"
+    "confirmRegenerateAllBody": "当前的标题、描述、标签和图片将被新的 AI 生成内容替换。成本：{cost} 积分。",
+    "suggestPrompts": "帮我想几个角度",
+    "suggestPromptsBusy": "正在寻找角度…",
+    "suggestPromptsHint": "点击一个角度即可填入输入框，随后可自行修改。",
+    "suggestPromptsEmpty": "无法为该商品给出角度建议。",
+    "suggestPromptsFailed": "角度生成失败，请稍后再试。"
   },
   "Report": {
     "dataSource": {

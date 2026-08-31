@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Gerar tudo?",
     "confirmGenerateAllBody": "Título, descrição, tags e 3 imagens serão gerados. Custo: {cost} créditos.",
     "confirmRegenerateAllTitle": "Regerar tudo?",
-    "confirmRegenerateAllBody": "Título, descrição, tags e imagens atuais serão substituídos por novas gerações IA. Custo: {cost} créditos."
+    "confirmRegenerateAllBody": "Título, descrição, tags e imagens atuais serão substituídos por novas gerações IA. Custo: {cost} créditos.",
+    "suggestPrompts": "Sugerir abordagens",
+    "suggestPromptsBusy": "A procurar abordagens…",
+    "suggestPromptsHint": "Clique numa abordagem para a colocar no campo e edite-a se quiser.",
+    "suggestPromptsEmpty": "Não foi possível sugerir nenhuma abordagem para este produto.",
+    "suggestPromptsFailed": "Não foi possível gerar as abordagens. Tente novamente daqui a pouco."
   },
   "Report": {
     "dataSource": {

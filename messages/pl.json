@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Wygenerować wszystko?",
     "confirmGenerateAllBody": "Wygenerowany zostanie tytuł, opis, tagi i 3 obrazy. Koszt: {cost} kredytów.",
     "confirmRegenerateAllTitle": "Wygenerować ponownie wszystko?",
-    "confirmRegenerateAllBody": "Aktualny tytuł, opis, tagi i obrazy zostaną zastąpione nowymi generacjami AI. Koszt: {cost} kredytów."
+    "confirmRegenerateAllBody": "Aktualny tytuł, opis, tagi i obrazy zostaną zastąpione nowymi generacjami AI. Koszt: {cost} kredytów.",
+    "suggestPrompts": "Zaproponuj ujęcia",
+    "suggestPromptsBusy": "Szukam ujęć…",
+    "suggestPromptsHint": "Kliknij ujęcie, aby wstawić je do pola, a potem je popraw.",
+    "suggestPromptsEmpty": "Nie udało się zaproponować żadnego ujęcia dla tego produktu.",
+    "suggestPromptsFailed": "Nie udało się wygenerować ujęć. Spróbuj za chwilę."
   },
   "Report": {
     "dataSource": {

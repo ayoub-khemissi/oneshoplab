@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "すべて生成しますか？",
     "confirmGenerateAllBody": "タイトル、説明、タグ、画像 3 枚を生成します。コスト：{cost} クレジット。",
     "confirmRegenerateAllTitle": "すべて再生成しますか？",
-    "confirmRegenerateAllBody": "現在のタイトル、説明、タグ、画像が新しい AI 生成に置き換わります。コスト：{cost} クレジット。"
+    "confirmRegenerateAllBody": "現在のタイトル、説明、タグ、画像が新しい AI 生成に置き換わります。コスト：{cost} クレジット。",
+    "suggestPrompts": "切り口を提案してもらう",
+    "suggestPromptsBusy": "切り口を探しています…",
+    "suggestPromptsHint": "切り口をクリックすると入力欄に入ります。そのあと自由に編集できます。",
+    "suggestPromptsEmpty": "この商品に合う切り口を提案できませんでした。",
+    "suggestPromptsFailed": "切り口を生成できませんでした。少し時間を置いてお試しください。"
   },
   "Report": {
     "dataSource": {

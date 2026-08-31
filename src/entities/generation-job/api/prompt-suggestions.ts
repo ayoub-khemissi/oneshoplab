@@ -1,29 +1,41 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
-import { applyCreditTransaction } from '@/entities/credit';
+import { applyCreditTransaction, getCreditBalance } from '@/entities/credit';
 import { db } from '@/shared/db';
 import { jobs, type ProductField } from '@/shared/db/schema';
 import { languageNameForPrompt } from '@/shared/i18n';
 import { chatCompletion } from '@/entities/ai-provider';
-import { SYSTEM_CHAT_MODELS } from '@/entities/ai-model';
-import { buildSuggestionPrompt, type ProductContext } from '@/entities/generation-job';
+import {
+  SYSTEM_CHAT_MODELS,
+  estimateChatCredits,
+  outputTokenCapFor,
+  systemChatModel
+} from '@/entities/ai-model';
+import { buildSuggestionPrompt, type ProductContext } from '../lib/prompts';
 
 export interface PromptSuggestion {
   tone: string;
   prompt: string;
 }
 
-export interface SuggestionsResult {
-  suggestions: PromptSuggestion[];
-  fromCache: boolean;
-  jobId: string;
+export type SuggestionsResult =
+  | { ok: true; suggestions: PromptSuggestion[]; fromCache: boolean; jobId: string }
+  | { ok: false; reason: 'insufficient_credits' | 'generation_failed' };
+
+/**
+ * What one round of suggestions costs, decided by the catalog exactly like a
+ * generation: the `suggest` cap × the system model's rates × the text markup.
+ * Deterministic on purpose — the button shows this number before the click,
+ * and this is the number debited.
+ */
+export function suggestionsCost(): number {
+  return estimateChatCredits(systemChatModel('fast').id, 'suggest');
 }
 
 /**
- * Get cached prompt suggestions for (project, productSourceId, field) or
- * generate fresh via Claude Haiku. Caching is keyed by inputPayload in the
- * jobs table — subsequent panel opens skip the kie call (and the credit
- * debit) entirely.
+ * Cached prompt suggestions for (project, productSourceId, field), or a fresh
+ * round from the fast system model. The cache is keyed by the job row's
+ * inputPayload, so asking again for the same product and field costs nothing.
  */
 export async function getOrGenerateSuggestions(opts: {
   userId: string;
@@ -36,7 +48,12 @@ export async function getOrGenerateSuggestions(opts: {
 }): Promise<SuggestionsResult> {
   const cached = await findCachedJob(opts.projectId, opts.productSourceId, opts.field);
   if (cached) {
-    return { suggestions: cached.suggestions, fromCache: true, jobId: cached.jobId };
+    return { ok: true, suggestions: cached.suggestions, fromCache: true, jobId: cached.jobId };
+  }
+
+  const cost = suggestionsCost();
+  if ((await getCreditBalance(opts.userId)) < cost) {
+    return { ok: false, reason: 'insufficient_credits' };
   }
 
   const userPrompt = buildSuggestionPrompt(
@@ -48,11 +65,13 @@ export async function getOrGenerateSuggestions(opts: {
   const response = await chatCompletion({
     model: SYSTEM_CHAT_MODELS.fast,
     messages: [{ role: 'user', content: userPrompt }],
-    max_tokens: 1024
+    max_tokens: outputTokenCapFor('suggest')
   });
 
-  const text = response.text;
-  const suggestions = parseSuggestions(text);
+  const suggestions = parseSuggestions(response.text);
+  // Nothing usable came back: the merchant keeps their credits rather than
+  // paying for an empty list.
+  if (suggestions.length === 0) return { ok: false, reason: 'generation_failed' };
 
   const jobId = randomUUID();
   const now = new Date();
@@ -63,22 +82,20 @@ export async function getOrGenerateSuggestions(opts: {
     status: 'completed',
     inputPayload: { productSourceId: opts.productSourceId, field: opts.field },
     result: { suggestions },
-    creditsCost: response.creditsConsumed,
+    creditsCost: cost,
     startedAt: now,
     finishedAt: now
   });
 
-  if (response.creditsConsumed > 0) {
-    await applyCreditTransaction({
-      userId: opts.userId,
-      delta: -response.creditsConsumed,
-      reason: 'kie_prompt_suggest',
-      jobId,
-      idempotencyKey: `job-${jobId}`
-    });
-  }
+  await applyCreditTransaction({
+    userId: opts.userId,
+    delta: -cost,
+    reason: 'kie_prompt_suggest',
+    jobId,
+    idempotencyKey: `job-${jobId}`
+  });
 
-  return { suggestions, fromCache: false, jobId };
+  return { ok: true, suggestions, fromCache: false, jobId };
 }
 
 export async function findCachedSuggestions(

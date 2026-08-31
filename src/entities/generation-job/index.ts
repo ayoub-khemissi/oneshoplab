@@ -31,3 +31,9 @@ export {
 export type { ProductContext } from './lib/prompts';
 export { IMAGE_ANGLES, IMAGE_ANGLE_PROMPTS, buildImagePrompt } from './lib/image-prompts';
 export type { ImageAngle } from './lib/image-prompts';
+export {
+  findCachedSuggestions,
+  getOrGenerateSuggestions,
+  suggestionsCost
+} from './api/prompt-suggestions';
+export type { PromptSuggestion, SuggestionsResult } from './api/prompt-suggestions';

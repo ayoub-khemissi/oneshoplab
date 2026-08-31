@@ -52,6 +52,10 @@
       "inputTokens": 1500,
       "outputTokens": 60
     },
+    "suggest": {
+      "inputTokens": 1500,
+      "outputTokens": 500
+    },
     "social": {
       "inputTokens": 1500,
       "outputTokens": 800

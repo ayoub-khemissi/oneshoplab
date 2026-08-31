@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Generare tutto?",
     "confirmGenerateAllBody": "Titolo, descrizione, tag e 3 immagini verranno generati. Costo: {cost} crediti.",
     "confirmRegenerateAllTitle": "Rigenerare tutto?",
-    "confirmRegenerateAllBody": "Titolo, descrizione, tag e immagini attuali saranno sostituiti da nuove generazioni IA. Costo: {cost} crediti."
+    "confirmRegenerateAllBody": "Titolo, descrizione, tag e immagini attuali saranno sostituiti da nuove generazioni IA. Costo: {cost} crediti.",
+    "suggestPrompts": "Proponimi degli angoli",
+    "suggestPromptsBusy": "Cerco degli angoli…",
+    "suggestPromptsHint": "Clicca su un angolo per inserirlo nel campo, poi modificalo se vuoi.",
+    "suggestPromptsEmpty": "Non è stato possibile proporre un angolo per questo prodotto.",
+    "suggestPromptsFailed": "Non è stato possibile generare gli angoli. Riprova tra un istante."
   },
   "Report": {
     "dataSource": {

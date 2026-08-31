@@ -471,7 +471,12 @@
     "confirmGenerateAllTitle": "Generate everything?",
     "confirmGenerateAllBody": "Title, description, tags and 3 images will be generated. Cost: {cost} credits.",
     "confirmRegenerateAllTitle": "Regenerate everything?",
-    "confirmRegenerateAllBody": "The current title, description, tags and images will be replaced with new AI generations. Cost: {cost} credits."
+    "confirmRegenerateAllBody": "The current title, description, tags and images will be replaced with new AI generations. Cost: {cost} credits.",
+    "suggestPrompts": "Suggest angles",
+    "suggestPromptsBusy": "Looking for angles…",
+    "suggestPromptsHint": "Click an angle to drop it in the field, then edit it if you want.",
+    "suggestPromptsEmpty": "No angle could be suggested for this product.",
+    "suggestPromptsFailed": "The angles could not be generated. Try again in a moment."
   },
   "Report": {
     "dataSource": {
