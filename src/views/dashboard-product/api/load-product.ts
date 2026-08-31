@@ -9,6 +9,17 @@ export interface ProductImage {
   height: number | null;
 }
 
+/**
+ * A photo as the `products` row holds it — with the store's own id when it
+ * reported one (docs/api/IMAGE-OPS.md §1). The audit summary's snapshot does
+ * not carry that id, so the image editor reads the row, never the snapshot.
+ */
+export interface StoreImage {
+  src: string;
+  alt: string | null;
+  sourceImageId: string | null;
+}
+
 export interface ProductVariant {
   id: string;
   title: string | null;
@@ -50,6 +61,9 @@ interface SummaryShape {
 export interface LoadedProduct {
   projectId: string;
   product: ProductSnapshot;
+  /** The gallery OSL knows, in store order, with the ids the image editor
+   *  addresses (the snapshot in `product.images` has none). */
+  storeImages: StoreImage[];
   /** Soft-archived: not in the latest scrape. Banner is shown and
    *  generation buttons are disabled. */
   archived: boolean;
@@ -154,6 +168,11 @@ export async function loadProductForUser(
   return {
     projectId: project.id,
     product,
+    storeImages: (productRow.images ?? []).map((img) => ({
+      src: img.src,
+      alt: img.alt ?? null,
+      sourceImageId: img.sourceImageId ?? null
+    })),
     archived: productRow.status === 'archived',
     productInstructions: productRow.customInstructions ?? '',
     projectInstructions: project.customInstructions ?? '',

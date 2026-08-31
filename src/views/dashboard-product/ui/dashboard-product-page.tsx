@@ -25,7 +25,7 @@ import {
 import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
-import { listChangesForJobs } from '@/features/apply-to-store';
+import { listChangesForJobs, ProductImageEditor } from '@/features/apply-to-store';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
@@ -61,8 +61,15 @@ export async function DashboardProductPage({
 
   const loaded = await loadProductForUser(session.user.id, siteId, productId);
   if (!loaded) notFound();
-  const { product, projectId, productInstructions, projectInstructions, archived, isManual } =
-    loaded;
+  const {
+    product,
+    storeImages,
+    projectId,
+    productInstructions,
+    projectInstructions,
+    archived,
+    isManual
+  } = loaded;
   // sourceId is the audit-summary key for this product; needed for history
   // lookups and as the form payload key for AI generation jobs.
   const sourceId = product.sourceId ?? product.handle ?? '';
@@ -244,6 +251,20 @@ export async function DashboardProductPage({
           />
         </div>
       </RetryableGenerateProvider>
+
+      {/* Step 3 of docs/api/IMAGE-OPS.md §6: the merchant arranges their own
+          gallery — every action is one the connection declared it can do. */}
+      <ProductImageEditor
+        productId={productId}
+        storeImages={storeImages}
+        generated={liveImageJobs.flatMap((j) =>
+          j.status === 'completed' && j.imageUrl
+            ? [{ jobId: j.id, src: j.imageUrl, alt: null }]
+            : []
+        )}
+        capabilities={capabilities}
+        archived={archived}
+      />
 
       <PastGenerationsSection
         title={t('generationsHistory')}

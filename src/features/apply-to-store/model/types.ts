@@ -22,6 +22,27 @@ export type ApproveResult =
       error: 'unauthorized' | 'bad_request' | 'not_found' | 'unsupported' | 'invalid_value';
     };
 
+/**
+ * The image editor's "Appliquer" (docs/api/IMAGE-OPS.md §4). Every reason is
+ * one the merchant can act on: `stale` = the gallery moved since the page
+ * loaded (reload and look again), `unsupported` = the connection never
+ * declared that verb, `last_image` = the product would end up with none.
+ */
+export type ImageOpsResult =
+  | { ok: true; change: ChangeSummary }
+  | { ok: false; error: 'too_many_images'; max: number }
+  | {
+      ok: false;
+      error:
+        | 'unauthorized'
+        | 'bad_request'
+        | 'not_found'
+        | 'archived'
+        | 'unsupported'
+        | 'stale'
+        | 'last_image';
+    };
+
 /** "Annuler" on an applied change → a reverse change (docs/api/IMAGE-OPS.md §3). */
 export type UndoResult =
   | { ok: true; change: ChangeSummary }

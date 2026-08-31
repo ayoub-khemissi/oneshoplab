@@ -1,13 +1,13 @@
 ---
 status: acted
-implemented: partial
+implemented: yes
 last-verified: 2026-08-31
 ---
 
 # Product image operations (v1.1 of the changes protocol)
 
-Status: steps 1 (guardrail) and 2 (protocol) shipped 2026-08-31; step 3 (the
-editor grid) is not built. Fixes a real hazard found during the WooCommerce QA:
+Status: steps 1 (guardrail), 2 (protocol) and 3 (editor grid) shipped
+2026-08-31. Fixes a real hazard found during the WooCommerce QA:
 applying an `images` change **replaces the merchant's whole gallery**
 (`set_image_id` + `set_gallery_image_ids`), and the OSL UI offers no way to say
 "just the main photo" or "add this one". A merchant with six curated photos who
@@ -96,7 +96,7 @@ No silent replace-all, ever — this guardrail ships first, before the ops.
 1. **Guardrail** — explicit confirmation naming the consequence (app only).
 2. **Protocol** — `sourceImageId` end to end, `ops`, `prior_value`, "Annuler",
    plugin + Shopify + Wix executors, openapi + spec, plugin minor version.
-3. **Editor** — the grid with per-image actions and reordering.
+3. **Editor** — the grid with per-image actions and reordering (shipped).
 
 Each step ships independently; step 1 is safe on its own, step 2 keeps old
 plugins working, step 3 is pure UI on top of the protocol.
@@ -123,6 +123,33 @@ plugins working, step 3 is pure UI on top of the protocol.
   path it restores order and alt and re-attaches what was detached, but images
   the change *added* have no id at approval time and survive the undo — the
   editor (step 3) is where they get removed.
+
+### As built (step 3, 2026-08-31)
+
+The editor is `features/apply-to-store/ui/image-editor/*` on top of
+`lib/image-editor.ts` (queue) and `lib/image-editor-grid.ts` (tiles + labels);
+the product view composes it. Decisions the code cannot state on its own:
+
+- **The grid is the preview.** It renders `simulateImageOps` replayed over
+  `products.images`, so a removed photo leaves the grid immediately. Photo
+  numbers stay those of the *original* gallery — the queue says "Retirer la
+  photo 1" and must keep pointing at the tile that was clicked.
+- **`reorder` is rebuilt, not queued.** It is one decision however many photos
+  moved, always the last op, and normalised against what the other ops left —
+  a queued reorder listing a since-removed ref would be dead weight. It is
+  offered only when *every* store photo has an id: a partial order silently
+  drops the others to the end.
+- **One destination per generated visual.** "Ajouter à la galerie" then
+  "Définir comme principale" on the same visual replaces the first decision;
+  stacking them would put the same image on the product twice.
+- **A generation's alt needs no `set_alt`.** It travels inside the op's `image`
+  and is set at creation time — that is why Shopify (no `set_alt`) still gets
+  the alt field on generated tiles, but not on its existing photos.
+- **`stale` is decided on targets, not on the simulation.** An op whose target
+  is absent from OSL's *current* gallery means the store moved since the page
+  loaded, so the action refuses and the page reloads. The simulation's own
+  `unresolved` cannot be used: it also fires for a target an earlier op in the
+  same queue legitimately removed.
 
 ## 7. Provider-agnostic contract (WooCommerce, Shopify, Wix, and the next ones)
 

@@ -25,6 +25,7 @@ export default async function globalSetup(): Promise<void> {
     for (const t of [
       'credit_transactions', 'legal_consents', 'subscriptions', 'password_reset_tokens',
       'contact_messages', 'notifications', 'share_links', 'product_changes', 'api_key_events',
+      'connection_capabilities',
       'api_keys', 'api_idempotency', 'catalog_sync_sessions', 'jobs', 'audits', 'products',
       'projects', 'users', 'sessions', 'accounts'
     ]) {
@@ -109,6 +110,47 @@ export default async function globalSetup(): Promise<void> {
       summary: { ...report, detectionSignals: ['seed'], detectionConfidence: 1 },
       productsSampled: catalog.length,
       completedAt: new Date()
+    });
+
+    // A second store whose connection declared the image ops: the product
+    // image editor offers its per-photo actions only there (IMAGE-OPS.md §7).
+    await db.insert(schema.projects).values({
+      id: SEED.imageProject.id,
+      userId,
+      name: SEED.imageProject.domain,
+      domain: SEED.imageProject.domain,
+      url: `https://${SEED.imageProject.domain}`,
+      source: 'woocommerce'
+    });
+    await db.insert(schema.products).values({
+      id: SEED.imageProduct.id,
+      projectId: SEED.imageProject.id,
+      source: 'woocommerce',
+      sourceId: SEED.imageProduct.sourceId,
+      handle: 'photographed-mug',
+      title: 'Photographed stoneware mug',
+      descriptionHtml: '<p>Three photos, three ids.</p>',
+      images: SEED.imageProduct.imageIds.map((sourceImageId, i) => ({
+        src: `https://cdn.test/photo-${i + 1}.jpg`,
+        alt: i === 0 ? 'Front view' : null,
+        width: 800,
+        height: 800,
+        position: i,
+        sourceImageId
+      })),
+      tags: ['mug'],
+      status: 'active' as const
+    });
+    await db.insert(schema.connectionCapabilities).values({
+      projectId: SEED.imageProject.id,
+      platform: 'woocommerce',
+      capabilities: {
+        stableImageIds: true,
+        imageOps: ['set_featured', 'append', 'replace', 'remove', 'set_alt', 'reorder'],
+        maxImages: 30,
+        altEditable: true,
+        fields: ['title', 'description', 'tags', 'images']
+      }
     });
 
     await db.insert(schema.shareLinks).values([
