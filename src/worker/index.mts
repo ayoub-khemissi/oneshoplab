@@ -11,6 +11,7 @@ const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-key');
 const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
+const { rescoreProjectsWithAppliedChanges } = await import('@/features/run-audit');
 const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
@@ -22,12 +23,15 @@ import { writeWorkerHeartbeat } from '@/shared/health';
 
 const TICK_MS = 5_000;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
+/** A store whose catalog just moved is re-scored on the next of these. */
+const RESCORE_INTERVAL_MS = 2 * 60 * 1000;
 
 async function main(): Promise<void> {
   console.log('[worker] starting');
 
   let stopping = false;
   let lastCleanupAt = 0;
+  let lastRescoreAt = 0;
   const stop = (signal: string) => {
     if (stopping) return;
     stopping = true;
@@ -58,6 +62,17 @@ async function main(): Promise<void> {
         // Outbound webhooks: due deliveries + retries (docs/api/OUTBOUND-WEBHOOKS.md).
         drainWebhookDeliveries().catch((e) => console.error('[worker] webhook-drain failed', e))
       ];
+      // Every couple of minutes: re-score the stores whose catalog moved
+      // because a change landed, so the product list stops disagreeing with
+      // the product page. Free — no scrape, no AI.
+      if (t0 - lastRescoreAt >= RESCORE_INTERVAL_MS) {
+        lastRescoreAt = t0;
+        tasks.push(
+          rescoreProjectsWithAppliedChanges().catch((e) =>
+            console.error('[worker] rescore-applied failed', e)
+          )
+        );
+      }
       // Hourly: drop R2 objects + DB rows for image jobs older than 30
       // days. Ride on the same loop so we don't spawn a separate process.
       if (t0 - lastCleanupAt >= CLEANUP_INTERVAL_MS) {

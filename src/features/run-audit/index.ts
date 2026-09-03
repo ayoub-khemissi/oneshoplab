@@ -25,4 +25,5 @@ export type {
 } from './lib/source-decision';
 export { launchAuditForUser, launchAnonymousAudit, normalizeUrl } from './api/launch';
 export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from './api/refresh';
+export { rescoreProjectsWithAppliedChanges } from './api/rescore-applied';
 export { refreshProjectAction, relaunchProjectAuditAction } from './api/project-actions';
