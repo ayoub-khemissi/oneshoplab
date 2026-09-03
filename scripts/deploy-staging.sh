@@ -18,7 +18,13 @@ NODE_HOME="${ONESHOPLAB_NODE_HOME:-/opt/node22}"
 export PATH="$NODE_HOME/bin:$PATH"
 
 STAGING_DIR="${ONESHOPLAB_STAGING_DIR:-/home/ubuntu/oneshoplab/staging}"
-[[ -f "$STAGING_DIR/ecosystem.config.cjs" ]] || { echo "no staging checkout at $STAGING_DIR"; exit 1; }
+# The PM2 config lives OUTSIDE the checkout on purpose: ecosystem.config.cjs is
+# tracked, so a staging copy of it under $STAGING_DIR is restored to the
+# production one by the reset below — after which this script would restart
+# production's apps, or nothing at all.
+STAGING_PM2="${ONESHOPLAB_STAGING_PM2:-/home/ubuntu/oneshoplab/staging-ecosystem.config.cjs}"
+[[ -d "$STAGING_DIR/.git" ]] || { echo "no staging checkout at $STAGING_DIR"; exit 1; }
+[[ -f "$STAGING_PM2" ]] || { echo "no staging PM2 config at $STAGING_PM2"; exit 1; }
 cd "$STAGING_DIR"
 
 # .env is per-environment and untracked; a reset must never be able to eat it.
@@ -53,7 +59,7 @@ log "restart staging web + worker"
 # See scripts/deploy.sh — startOrRestart can silently no-op and leave the old
 # process serving the previous build.
 pm2 delete oneshoplab-staging-web oneshoplab-staging-worker >/dev/null 2>&1 || true
-pm2 start ecosystem.config.cjs --only oneshoplab-staging-web,oneshoplab-staging-worker >/dev/null
+pm2 start "$STAGING_PM2" >/dev/null
 pm2 save >/dev/null
 sleep 6
 

@@ -52,7 +52,7 @@ log "restart web + worker"
 # passed (it read BUILD_ID off disk, which the fresh build had just updated).
 # delete guarantees the ecosystem file is re-read and the process is new.
 pm2 delete oneshoplab-web oneshoplab-worker >/dev/null 2>&1 || true
-pm2 start ecosystem.config.cjs --only oneshoplab-web,oneshoplab-worker >/dev/null
+pm2 start ecosystem.config.cjs >/dev/null
 pm2 save >/dev/null
 sleep 6
 
