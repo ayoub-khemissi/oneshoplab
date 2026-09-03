@@ -111,6 +111,12 @@ export const users = mysqlTable('users', {
    *  notifications are written in it — the interface changing language and the
    *  notifications staying in another is the same account speaking two. */
   locale: varchar('locale', { length: 8 }),
+  /** The partner whose link brought this account, kept on our own side.
+   *  The affiliate platform holds the same fact, but it is a supplier: owning
+   *  the attribution is what makes it replaceable, and what lets us answer a
+   *  partner's "was this one mine?" without asking anybody. */
+  referralRefId: varchar('referral_ref_id', { length: 64 }),
+  referredAt: timestamp('referred_at'),
   preferredChatModel: mysqlEnum('preferred_chat_model', CHAT_MODEL_IDS)
     .notNull()
     .default('sonnet-5'),

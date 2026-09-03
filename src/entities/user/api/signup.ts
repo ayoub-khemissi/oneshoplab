@@ -36,12 +36,15 @@ export async function registerCredentialsUser(input: {
 
   const userId = randomUUID();
   const passwordHash = await hashPassword(input.password);
+  const refId = input.refId?.trim() || null;
   await db.insert(users).values({
     id: userId,
     email,
     name: input.name?.trim() || null,
     passwordHash,
-    plan: 'free'
+    plan: 'free',
+    referralRefId: refId,
+    referredAt: refId ? new Date() : null
   });
   await applyCreditTransaction({
     userId,
@@ -61,8 +64,8 @@ export async function registerCredentialsUser(input: {
   // Tell the affiliate network which promoter this account came from. Never
   // awaited and never fatal: a network being down must not cost someone their
   // signup, and the commission is decided on their side anyway.
-  if (input.refId) {
-    void trackReferralSignup({ userId, email, refId: input.refId, ip: input.ip ?? null });
+  if (refId) {
+    void trackReferralSignup({ userId, email, refId, ip: input.ip ?? null });
   }
   return { ok: true, userId };
 }

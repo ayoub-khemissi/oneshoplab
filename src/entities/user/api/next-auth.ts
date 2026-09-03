@@ -145,8 +145,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       try {
         const jar = await cookies();
         const refId = normalizeRefId(jar.get(REFERRAL_COOKIE)?.value);
-        if (refId && user.email) {
-          void trackReferralSignup({ userId: user.id, email: user.email, refId });
+        if (refId) {
+          await db
+            .update(users)
+            .set({ referralRefId: refId, referredAt: new Date() })
+            .where(eq(users.id, user.id));
+          if (user.email) {
+            void trackReferralSignup({ userId: user.id, email: user.email, refId });
+          }
         }
       } catch {
         // No request context (or no cookie): the account is created either way.
