@@ -1,4 +1,5 @@
-import { and, desc, eq, gt, inArray, isNotNull } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, max } from 'drizzle-orm';
+import { findLatestAuditIdWhere } from '@/entities/audit';
 import { db } from '@/shared/db';
 import { audits, productChanges } from '@/shared/db/schema';
 import { refreshAuditProducts } from './refresh';
@@ -14,57 +15,49 @@ const MAX_PER_PASS = 5;
  * `summary` snapshot — so without this the merchant would see their new title
  * on the product page and the old one in the list right next to it.
  *
- * Self-limiting: the refresh bumps `completedAt`, which is exactly the marker
- * this query compares against, so a store settles after one pass. Scoring is
+ * The audit refreshed is the one every dashboard reads: newest by
+ * `createdAt`, exactly like `findLatestAuditIdWhere`. Refreshing any other row
+ * of the same project would bump a snapshot nobody looks at and leave the
+ * visible one stale for good.
+ *
+ * Self-limiting: the refresh bumps that audit's `completedAt`, which is the
+ * marker this compares against, so a store settles after one pass. Scoring is
  * deterministic and free (a connected store is read from its stored catalog,
  * never re-scraped), so this costs nothing but a little CPU.
  */
 export async function rescoreProjectsWithAppliedChanges(): Promise<number> {
-  // Newest applied ack per project, next to that project's newest audit.
-  const rows = await db
+  const candidates = await db
     .select({
-      auditId: audits.id,
-      completedAt: audits.completedAt,
-      ackedAt: productChanges.ackedAt,
-      projectId: productChanges.projectId
+      projectId: productChanges.projectId,
+      lastAckedAt: max(productChanges.ackedAt)
     })
     .from(productChanges)
-    .innerJoin(audits, eq(audits.projectId, productChanges.projectId))
-    .where(
-      and(
-        eq(productChanges.status, 'applied'),
-        isNotNull(productChanges.ackedAt),
-        eq(audits.status, 'completed'),
-        isNotNull(audits.completedAt),
-        gt(productChanges.ackedAt, audits.completedAt)
-      )
-    )
-    .orderBy(desc(audits.completedAt))
+    .where(and(eq(productChanges.status, 'applied'), isNotNull(productChanges.ackedAt)))
+    .groupBy(productChanges.projectId)
+    .orderBy(desc(max(productChanges.ackedAt)))
     .limit(MAX_PER_PASS * 20);
 
-  // One refresh per project, and only for its newest audit — the one every
-  // dashboard reads.
-  const newestAuditByProject = new Map<string, string>();
-  for (const row of rows) {
-    if (!newestAuditByProject.has(row.projectId)) {
-      newestAuditByProject.set(row.projectId, row.auditId);
-    }
-  }
-  const targets = [...newestAuditByProject.values()].slice(0, MAX_PER_PASS);
-  if (targets.length === 0) return 0;
-
-  // Guard against picking an older audit of the same project: only the latest
-  // one is worth refreshing.
-  const latest = await db
-    .select({ id: audits.id, projectId: audits.projectId, completedAt: audits.completedAt })
-    .from(audits)
-    .where(inArray(audits.id, targets));
-
   let refreshed = 0;
-  for (const audit of latest) {
-    const res = await refreshAuditProducts(audit.id);
+  for (const candidate of candidates) {
+    if (refreshed >= MAX_PER_PASS) break;
+    const auditId = await findLatestAuditIdWhere(
+      and(eq(audits.projectId, candidate.projectId), eq(audits.status, 'completed'))!
+    );
+    if (!auditId) continue;
+    const [audit] = await db
+      .select({ completedAt: audits.completedAt })
+      .from(audits)
+      .where(eq(audits.id, auditId));
+    // Already scored after the last change landed: nothing to redo.
+    if (
+      !candidate.lastAckedAt ||
+      (audit?.completedAt && audit.completedAt >= candidate.lastAckedAt)
+    ) {
+      continue;
+    }
+    const res = await refreshAuditProducts(auditId);
     if (res.ok) refreshed += 1;
-    else console.error('[rescore] refresh failed', audit.id, res.reason);
+    else console.error('[rescore] refresh failed', auditId, res.reason);
   }
   if (refreshed > 0)
     console.info(`[rescore] refreshed ${refreshed} store(s) after applied changes`);
