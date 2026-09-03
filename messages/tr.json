@@ -139,7 +139,8 @@
     "privacy": "Gizlilik",
     "faq": "SSS",
     "blog": "Blog",
-    "contact": "İletişim"
+    "contact": "İletişim",
+    "affiliate": "Ortaklık"
   },
   "Showcase": {
     "eyebrow": "Gerçek mağazalar, gerçek sonuçlar",
@@ -1810,5 +1811,30 @@
     "installLead": "iPhone'da Paylaş menüsünü aç, sonra «Ana Ekrana Ekle»: uygulama tam ekran açılır ve sana bildirim gönderebilir.",
     "enable": "Aç",
     "later": "Daha sonra"
+  },
+  "Affiliate": {
+    "eyebrow": "Ortaklık programı",
+    "title": "OneShopLab'i öner, her ay %15 kazan",
+    "subtitle": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır.",
+    "cta": "Ortak ol",
+    "mailSubject": "OneShopLab ortaklık programı",
+    "rateTitle": "%15, ve %20'ye kadar",
+    "rateBody": "Yönlendirdiklerinin her ödemesinden %15 — sadece ilk ay değil, aboneliğin tamamı boyunca. Düzenli mağaza getiren ortaklar %20'ye geçer. Satıcının ödediği fiyat değişmez: komisyon bizim payımızdan çıkar.",
+    "howTitle": "Nasıl işliyor",
+    "step_apply_title": "Bize yazarsın",
+    "step_apply_body": "Nerede konuştuğunu anlat: bir kanal, bir bülten, bir topluluk, ajans müşterilerin. Ortak hesabını açar, bağlantını veririz.",
+    "step_share_title": "Bağlantını paylaşırsın",
+    "step_share_body": "Bağlantı önerini 90 gün hatırlar. Bugün tıklayıp üç hafta sonra abone olan yine sana yazılır.",
+    "step_earn_title": "Her ay ödeme alırsın",
+    "step_earn_body": "Ortak paneli kayıtları, abonelikleri ve komisyonları gösterir. Ödeme gerçekten tahsil edilen parayı izler: bir iade, ona bağlı komisyonu geri alır.",
+    "fitTitle": "Kimler için",
+    "fitBody": "E-ticaret konuşan içerik üreticileri, Shopify, WooCommerce veya Wix mağazaları yöneten ajanslar, SEO danışmanları ve satıcı toplulukları. Kitlesini tanıyan birkaç ortağı, rastgele atılmış çok sayıda bağlantıya yeğleriz.",
+    "rulesTitle": "Ortaklığı bitiren şeyler",
+    "rulesBody": "Kendi hesaplarını yönlendirmek, reklamda marka adımıza teklif vermek, istenmeyen mesaj göndermek, ürünün vermediği sonuçları vaat etmek ya da getirmediğin yönlendirmeleri sahiplenmek. Başka bir şey yok: ne münhasırlık, ne asgari hacim.",
+    "rulesLink": "Programın tam koşullarını oku",
+    "joinTitle": "Programa katıl",
+    "joinBody": "Yayınladığın şeye bir bağlantıyla birlikte bize yaz. İki iş günü içinde yanıtlıyoruz ve kitle uymadığında hayır diyoruz: hiç dönüşmeyecek bir bağlantı koydurmaktan daha dürüst.",
+    "seoTitle": "OneShopLab'i öner, her ay %15 kazan",
+    "seoDescription": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır."
   }
 }

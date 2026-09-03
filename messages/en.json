@@ -139,7 +139,8 @@
     "privacy": "Privacy",
     "faq": "FAQ",
     "blog": "Blog",
-    "contact": "Contact"
+    "contact": "Contact",
+    "affiliate": "Affiliates"
   },
   "Showcase": {
     "eyebrow": "Real stores, real results",
@@ -1810,5 +1811,30 @@
     "installLead": "On iPhone, open the Share menu then “Add to Home Screen”: the app opens full screen and can notify you.",
     "enable": "Turn on",
     "later": "Later"
+  },
+  "Affiliate": {
+    "eyebrow": "Affiliate programme",
+    "title": "Recommend OneShopLab, earn 15% every month",
+    "subtitle": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed.",
+    "cta": "Become a partner",
+    "mailSubject": "OneShopLab affiliate programme",
+    "rateTitle": "15%, and up to 20%",
+    "rateBody": "15% of every payment your referrals make, for the whole life of their subscription — not just the first month. Partners who bring stores regularly move to 20%. The merchant's price does not change: the commission comes out of our margin.",
+    "howTitle": "How it works",
+    "step_apply_title": "You write to us",
+    "step_apply_body": "Tell us where you speak: a channel, a newsletter, a community, an agency's clients. We open your partner account and hand you your link.",
+    "step_share_title": "You share your link",
+    "step_share_body": "The link remembers your recommendation for 90 days. A merchant who follows it today and subscribes three weeks later is still yours.",
+    "step_earn_title": "You get paid monthly",
+    "step_earn_body": "Your partner dashboard tracks signups, subscriptions and commissions. Payment follows the money actually collected: a refund reverses the commission that went with it.",
+    "fitTitle": "Who it is for",
+    "fitBody": "Creators who talk e-commerce, agencies running Shopify, WooCommerce or Wix stores, SEO consultants, and merchant communities. We would rather have a few partners who know their audience than many links dropped at random.",
+    "rulesTitle": "What ends a partnership",
+    "rulesBody": "Referring your own accounts, bidding on our brand name in ads, unsolicited messaging, promising results the product does not deliver, or claiming referrals you did not bring. Nothing else: no exclusivity, no minimum volume.",
+    "rulesLink": "Read the full programme terms",
+    "joinTitle": "Join the programme",
+    "joinBody": "Write to us with a link to what you publish. We answer within two working days, and we say no when the audience does not fit — that is fairer than having you post a link that will never convert.",
+    "seoTitle": "Recommend OneShopLab, earn 15% every month",
+    "seoDescription": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed."
   }
 }

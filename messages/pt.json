@@ -139,7 +139,8 @@
     "privacy": "Privacidade",
     "faq": "FAQ",
     "blog": "Blog",
-    "contact": "Contato"
+    "contact": "Contato",
+    "affiliate": "Afiliação"
   },
   "Showcase": {
     "eyebrow": "Lojas reais, resultados reais",
@@ -1810,5 +1811,30 @@
     "installLead": "No iPhone, abra o menu Partilhar e «Adicionar ao ecrã principal»: a app abre em ecrã inteiro e pode notificá-lo.",
     "enable": "Ativar",
     "later": "Mais tarde"
+  },
+  "Affiliate": {
+    "eyebrow": "Programa de afiliação",
+    "title": "Recomende o OneShopLab e ganhe 15 % todos os meses",
+    "subtitle": "Fala com comerciantes de e-commerce? Cada loja que subscreve através do seu link paga-lhe uma comissão, todos os meses, enquanto se mantiver subscrita.",
+    "cta": "Tornar-se parceiro",
+    "mailSubject": "Programa de afiliação OneShopLab",
+    "rateTitle": "15 %, e até 20 %",
+    "rateBody": "15 % de cada pagamento dos seus referidos, durante toda a subscrição — não apenas o primeiro mês. Os parceiros que trazem lojas com regularidade passam a 20 %. O preço do comerciante não muda: a comissão sai da nossa margem.",
+    "howTitle": "Como funciona",
+    "step_apply_title": "Escreve-nos",
+    "step_apply_body": "Diga-nos onde fala: um canal, uma newsletter, uma comunidade, os clientes da sua agência. Abrimos a sua conta de parceiro e damos-lhe o link.",
+    "step_share_title": "Partilha o seu link",
+    "step_share_body": "O link guarda a sua recomendação durante 90 dias. Quem o seguir hoje e subscrever três semanas depois continua a ser seu.",
+    "step_earn_title": "Recebe todos os meses",
+    "step_earn_body": "O seu painel de parceiro segue inscrições, subscrições e comissões. O pagamento segue o dinheiro efetivamente recebido: um reembolso anula a comissão correspondente.",
+    "fitTitle": "Para quem é",
+    "fitBody": "Criadores que falam de e-commerce, agências que gerem lojas Shopify, WooCommerce ou Wix, consultores de SEO e comunidades de comerciantes. Preferimos poucos parceiros que conhecem o seu público a muitos links deixados ao acaso.",
+    "rulesTitle": "O que termina a parceria",
+    "rulesBody": "Referir as próprias contas, licitar a nossa marca em anúncios, mensagens não solicitadas, prometer resultados que o produto não dá, ou reclamar referências que não trouxe. Mais nada: sem exclusividade nem volume mínimo.",
+    "rulesLink": "Ler as condições completas do programa",
+    "joinTitle": "Aderir ao programa",
+    "joinBody": "Escreva-nos com um link para o que publica. Respondemos em dois dias úteis e dizemos que não quando o público não encaixa — é mais honesto do que levá-lo a colocar um link que nunca converterá.",
+    "seoTitle": "Recomende o OneShopLab e ganhe 15 % todos os meses",
+    "seoDescription": "Fala com comerciantes de e-commerce? Cada loja que subscreve através do seu link paga-lhe uma comissão, todos os meses, enquanto se mantiver subscrita."
   }
 }

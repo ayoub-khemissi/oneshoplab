@@ -139,7 +139,8 @@
     "privacy": "Datenschutz",
     "faq": "FAQ",
     "blog": "Blog",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "affiliate": "Partner"
   },
   "Showcase": {
     "eyebrow": "Echte Shops, echte Ergebnisse",
@@ -1810,5 +1811,30 @@
     "installLead": "Auf dem iPhone: Teilen-Menü öffnen, dann „Zum Home-Bildschirm“. Die App startet im Vollbild und kann dich benachrichtigen.",
     "enable": "Einschalten",
     "later": "Später"
+  },
+  "Affiliate": {
+    "eyebrow": "Partnerprogramm",
+    "title": "Empfiehl OneShopLab und verdiene jeden Monat 15 %",
+    "subtitle": "Du sprichst mit Online-Händlern? Jeder Shop, der über deinen Link abonniert, zahlt dir eine Provision — jeden Monat, solange das Abo läuft.",
+    "cta": "Partner werden",
+    "mailSubject": "OneShopLab Partnerprogramm",
+    "rateTitle": "15 %, und bis zu 20 %",
+    "rateBody": "15 % jeder Zahlung deiner Empfehlungen, über die gesamte Laufzeit des Abos — nicht nur im ersten Monat. Wer regelmäßig Shops bringt, steigt auf 20 %. Der Preis für den Händler bleibt gleich: die Provision kommt aus unserer Marge.",
+    "howTitle": "So läuft es",
+    "step_apply_title": "Du schreibst uns",
+    "step_apply_body": "Sag uns, wo du sprichst: Kanal, Newsletter, Community, Agenturkunden. Wir eröffnen dein Partnerkonto und geben dir deinen Link.",
+    "step_share_title": "Du teilst deinen Link",
+    "step_share_body": "Der Link merkt sich deine Empfehlung 90 Tage lang. Wer ihm heute folgt und drei Wochen später abonniert, zählt weiterhin für dich.",
+    "step_earn_title": "Du wirst monatlich bezahlt",
+    "step_earn_body": "Dein Partner-Dashboard zeigt Anmeldungen, Abos und Provisionen. Bezahlt wird, was tatsächlich eingegangen ist: eine Rückerstattung storniert die zugehörige Provision.",
+    "fitTitle": "Für wen es gedacht ist",
+    "fitBody": "Für Creator rund um E-Commerce, Agenturen mit Shopify-, WooCommerce- oder Wix-Shops, SEO-Beratung und Händler-Communities. Uns sind wenige Partner, die ihr Publikum kennen, lieber als viele zufällig gestreute Links.",
+    "rulesTitle": "Was die Partnerschaft beendet",
+    "rulesBody": "Eigene Konten empfehlen, auf unseren Markennamen bieten, unaufgeforderte Nachrichten, Ergebnisse versprechen, die das Produkt nicht liefert, oder Empfehlungen beanspruchen, die man nicht gebracht hat. Sonst nichts: keine Exklusivität, kein Mindestvolumen.",
+    "rulesLink": "Die vollständigen Programmbedingungen lesen",
+    "joinTitle": "Mitmachen",
+    "joinBody": "Schreib uns mit einem Link zu dem, was du veröffentlichst. Wir antworten binnen zwei Werktagen — und sagen ab, wenn das Publikum nicht passt. Das ist fairer, als dich einen Link setzen zu lassen, der nie konvertiert.",
+    "seoTitle": "Empfiehl OneShopLab und verdiene jeden Monat 15 %",
+    "seoDescription": "Du sprichst mit Online-Händlern? Jeder Shop, der über deinen Link abonniert, zahlt dir eine Provision — jeden Monat, solange das Abo läuft."
   }
 }

@@ -139,7 +139,8 @@
     "privacy": "Confidentialité",
     "faq": "FAQ",
     "blog": "Blog",
-    "contact": "Contact"
+    "contact": "Contact",
+    "affiliate": "Affiliation"
   },
   "Showcase": {
     "eyebrow": "Vraies boutiques, vrais résultats",
@@ -1810,5 +1811,30 @@
     "installLead": "Sur iPhone, ouvrez le menu Partager puis « Sur l'écran d'accueil » : l'app s'ouvre en plein écran et peut vous notifier.",
     "enable": "Activer",
     "later": "Plus tard"
+  },
+  "Affiliate": {
+    "eyebrow": "Programme d'affiliation",
+    "title": "Recommandez OneShopLab, touchez 15 % chaque mois",
+    "subtitle": "Vous parlez à des e-commerçants ? Chaque boutique qui s'abonne via votre lien vous rapporte une commission, tous les mois, tant qu'elle reste abonnée.",
+    "cta": "Devenir partenaire",
+    "mailSubject": "Programme d'affiliation OneShopLab",
+    "rateTitle": "15 %, et jusqu'à 20 %",
+    "rateBody": "15 % de chaque paiement de vos filleuls, sur toute la durée de leur abonnement — pas seulement le premier mois. Les partenaires qui amènent régulièrement des boutiques passent à 20 %. Le prix payé par le marchand ne change pas : la commission sort de notre marge.",
+    "howTitle": "Comment ça marche",
+    "step_apply_title": "Vous nous écrivez",
+    "step_apply_body": "Dites-nous où vous parlez : chaîne, newsletter, communauté, clientèle d'agence. Nous ouvrons votre compte partenaire et vous recevez votre lien.",
+    "step_share_title": "Vous partagez votre lien",
+    "step_share_body": "Le lien mémorise votre recommandation pendant 90 jours. Un marchand qui le suit aujourd'hui et s'abonne trois semaines plus tard reste attribué à vous.",
+    "step_earn_title": "Vous êtes payé chaque mois",
+    "step_earn_body": "Votre tableau de bord partenaire suit les inscriptions, les abonnements et les commissions. Le paiement suit l'argent réellement encaissé : un remboursement annule la commission correspondante.",
+    "fitTitle": "À qui ça s'adresse",
+    "fitBody": "Aux créateurs et créatrices qui parlent e-commerce, aux agences qui gèrent des boutiques Shopify, WooCommerce ou Wix, aux consultants SEO et aux communautés de marchands. Nous préférons peu de partenaires qui connaissent vraiment leur audience à beaucoup de liens posés au hasard.",
+    "rulesTitle": "Ce qui met fin au partenariat",
+    "rulesBody": "S'attribuer ses propres comptes, acheter notre nom de marque en publicité, envoyer des messages non sollicités, promettre des résultats que le produit ne tient pas, ou revendiquer des recommandations que l'on n'a pas apportées. Rien d'autre : nous ne demandons ni exclusivité, ni volume minimum.",
+    "rulesLink": "Lire les conditions complètes du programme",
+    "joinTitle": "Rejoindre le programme",
+    "joinBody": "Écrivez-nous avec un lien vers ce que vous publiez. Nous répondons sous deux jours ouvrés, et nous disons non quand l'audience ne colle pas — c'est plus honnête que de vous faire poser un lien qui ne convertira jamais.",
+    "seoTitle": "Recommandez OneShopLab, touchez 15 % chaque mois",
+    "seoDescription": "Vous parlez à des e-commerçants ? Chaque boutique qui s'abonne via votre lien vous rapporte une commission, tous les mois, tant qu'elle reste abonnée."
   }
 }

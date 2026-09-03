@@ -139,7 +139,8 @@
     "privacy": "Privacy",
     "faq": "FAQ",
     "blog": "Blog",
-    "contact": "Contatti"
+    "contact": "Contatti",
+    "affiliate": "Affiliazione"
   },
   "Showcase": {
     "eyebrow": "Negozi reali, risultati reali",
@@ -1810,5 +1811,30 @@
     "installLead": "Su iPhone apri il menu Condividi, poi «Aggiungi a Home»: l'app si apre a tutto schermo e può avvisarti.",
     "enable": "Attiva",
     "later": "Più tardi"
+  },
+  "Affiliate": {
+    "eyebrow": "Programma di affiliazione",
+    "title": "Consiglia OneShopLab e guadagna il 15 % ogni mese",
+    "subtitle": "Parli a commercianti online? Ogni negozio che si abbona con il tuo link ti paga una commissione, ogni mese, finché resta abbonato.",
+    "cta": "Diventa partner",
+    "mailSubject": "Programma di affiliazione OneShopLab",
+    "rateTitle": "15 %, e fino al 20 %",
+    "rateBody": "Il 15 % di ogni pagamento dei tuoi referral, per tutta la durata dell'abbonamento — non solo il primo mese. I partner che portano negozi con regolarità passano al 20 %. Il prezzo per il commerciante non cambia: la commissione esce dal nostro margine.",
+    "howTitle": "Come funziona",
+    "step_apply_title": "Ci scrivi",
+    "step_apply_body": "Raccontaci dove parli: un canale, una newsletter, una community, i clienti della tua agenzia. Apriamo il tuo account partner e ti diamo il link.",
+    "step_share_title": "Condividi il tuo link",
+    "step_share_body": "Il link ricorda la tua segnalazione per 90 giorni. Chi lo segue oggi e si abbona tre settimane dopo resta tuo.",
+    "step_earn_title": "Vieni pagato ogni mese",
+    "step_earn_body": "La tua dashboard partner segue iscrizioni, abbonamenti e commissioni. Il pagamento segue il denaro incassato davvero: un rimborso annulla la commissione collegata.",
+    "fitTitle": "A chi è rivolto",
+    "fitBody": "A creator che parlano di e-commerce, agenzie che gestiscono negozi Shopify, WooCommerce o Wix, consulenti SEO e community di commercianti. Meglio pochi partner che conoscono il proprio pubblico che tanti link sparsi a caso.",
+    "rulesTitle": "Cosa chiude la collaborazione",
+    "rulesBody": "Segnalare i propri account, fare offerte sul nostro marchio in pubblicità, messaggi non richiesti, promettere risultati che il prodotto non dà, o rivendicare segnalazioni non portate. Nient'altro: nessuna esclusiva, nessun volume minimo.",
+    "rulesLink": "Leggi le condizioni complete del programma",
+    "joinTitle": "Entra nel programma",
+    "joinBody": "Scrivici con un link a ciò che pubblichi. Rispondiamo entro due giorni lavorativi, e diciamo di no quando il pubblico non è quello giusto: è più onesto che farti mettere un link che non convertirà mai.",
+    "seoTitle": "Consiglia OneShopLab e guadagna il 15 % ogni mese",
+    "seoDescription": "Parli a commercianti online? Ogni negozio che si abbona con il tuo link ti paga una commissione, ogni mese, finché resta abbonato."
   }
 }
