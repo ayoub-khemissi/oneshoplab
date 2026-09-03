@@ -50,9 +50,12 @@ export function PushSettingsCard() {
               isOn ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'
             }`}
           >
+            {/* Anchored left: without it the knob starts from its static
+                position — centred, because a button centres its inline
+                content — and the "on" state pushed it past the track. */}
             <span
-              className={`absolute top-0.5 size-5 rounded-full bg-white transition-transform ${
-                isOn ? 'translate-x-[22px]' : 'translate-x-0.5'
+              className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-white shadow-sm transition-transform ${
+                isOn ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>
