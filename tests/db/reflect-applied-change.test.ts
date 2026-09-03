@@ -118,6 +118,23 @@ describe('reflectAppliedChange', () => {
     expect(row.images?.[0].alt).toBeNull();
   });
 
+  it('is idempotent: acking the same change twice writes the same row', async () => {
+    const product = await makeProduct();
+    const change = await approve(product, 'images', {
+      v: 1,
+      ops: [
+        { op: 'set_alt', target: '11', alt: 'Un vase en grès' },
+        { op: 'remove', target: '22' }
+      ]
+    });
+    await ackChange(projectId, change.id, { status: 'applied' });
+    const [first] = await db.select().from(products).where(eq(products.id, product.id));
+    await ackChange(projectId, change.id, { status: 'applied' });
+    const [second] = await db.select().from(products).where(eq(products.id, product.id));
+    expect(second.images).toEqual(first.images);
+    expect(first.images).toHaveLength(1);
+  });
+
   it('does not touch the row on a failed ack', async () => {
     const product = await makeProduct();
     const change = await approve(product, 'title', 'Titre refusé');
