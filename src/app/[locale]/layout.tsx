@@ -10,8 +10,6 @@ import { SiteFooter } from '@/widgets/site-footer';
 import { SiteHeader } from '@/widgets/site-header';
 import { ThemeProvider } from '@/shared/ui';
 import { ServiceWorkerRegistration } from '@/shared/pwa';
-import { PushOptInPrompt } from '@/features/push-notifications/client';
-import { auth } from '@/entities/user';
 import { getAppContactEmail } from '@/shared/config';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../manifest';
@@ -182,9 +180,6 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const dir = RTL_LOCALES.has(locale as never) ? 'rtl' : 'ltr';
-  // Push is offered to people who have an account to notify — the card asks
-  // nothing of a visitor still reading the landing page.
-  const session = await auth();
 
   return (
     <html
@@ -212,7 +207,6 @@ export default async function LocaleLayout({
           aria-hidden="true"
         />
         <ServiceWorkerRegistration />
-        <PushOptInPrompt signedIn={Boolean(session?.user?.id)} />
         {/* JSON-LD: site identity for rich results. Kept in the body so it's
             covered by the existing CSP and emitted on every locale page. */}
         <script
