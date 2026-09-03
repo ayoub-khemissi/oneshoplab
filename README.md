@@ -205,6 +205,46 @@ The vhost in `deploy/nginx.conf.sample`:
 but it loops behind a reverse proxy: `/` rewrites to `/en` internally, and
 `/en` 307s back to `/` because it's the canonical default-locale URL.
 
+### Staging (staging.oneshoplab.com)
+
+A second copy of the app on the same box, for anything you don't want to try
+against real merchants: Stripe Checkout, webhooks, a migration, a risky refactor.
+
+| | production | staging |
+|---|---|---|
+| checkout | `/home/ubuntu/oneshoplab/oneshoplab` | `/home/ubuntu/oneshoplab/staging` |
+| port | 3030 | 3040 |
+| database | `oneshoplab` | `oneshoplab_staging` |
+| PM2 | `oneshoplab-web` / `-worker` | `oneshoplab-staging-web` / `-worker` |
+| PM2 config | `ecosystem.config.cjs` | `/home/ubuntu/oneshoplab/staging-ecosystem.config.cjs` |
+| Stripe | live | test mode, its own prices + webhook secret |
+| nginx | `/etc/nginx/conf.d/oneshoplab.conf` | `…/staging.oneshoplab.conf` |
+
+```bash
+pnpm deploy:staging              # origin/main
+pnpm deploy:staging my-branch    # any ref
+pnpm deploy:staging --no-pull    # the staging working tree as-is
+```
+
+The staging deploy **resets** the checkout to the requested ref and **skips the
+quality gates** — staging is where you go because something doesn't pass yet.
+Production keeps its gates and only fast-forwards.
+
+Two things are deliberately not in the checkout, because `git reset --hard`
+would eat them: `.env` (gitignored) and the PM2 config (`ecosystem.config.cjs`
+is a *tracked* file, so a staging copy under that name is silently replaced by
+production's — the deploy then restarts the wrong app, or none).
+
+Staging **cannot send mail**: `SMTP_*` and `COLD_SMTP_*` are empty, so
+`sendMail()` logs the payload and returns `unconfigured`. A verification or
+password-reset link is therefore read from `pm2 logs oneshoplab-staging-web`.
+Discord, GA, the Meta pixel, reCAPTCHA and FirstPromoter are empty too. It
+shares the production R2 bucket — its own DB rows own the keys it writes, and
+its own retention pass expires them.
+
+It is kept out of search twice: an `X-Robots-Tag: noindex` from nginx, and a
+blanket `Disallow: /` from `src/app/robots.ts` when `APP_ENV=staging`.
+
 ## Environment variables
 
 | Name | Required | Notes |
