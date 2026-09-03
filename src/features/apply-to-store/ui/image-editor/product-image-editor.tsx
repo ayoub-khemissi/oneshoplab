@@ -3,7 +3,7 @@
 import { AlertTriangle, Check, Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import type { ImageOp } from '@/entities/product-change/client';
 import type { ConnectionCapabilities } from '@/shared/db/schema';
 import { InfoHint } from '@/shared/ui';
@@ -99,6 +99,31 @@ export function ProductImageEditor({
       fallback: t('photoFallback')
     }
   });
+
+  // A generated visual is meant for the product: it joins the queue by itself,
+  // so the merchant validates a result instead of assembling it. Each one is
+  // added once — taking it back out of the queue is a decision, and a decision
+  // is not undone by a re-render.
+  const autoAdded = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!editable) return;
+    const fresh = generated.filter(
+      (image) => !autoAdded.current.has(image.src) && !storeImages.some((s) => s.src === image.src)
+    );
+    if (fresh.length === 0) return;
+    fresh.forEach((image) => autoAdded.current.add(image.src));
+    setQueue((q) =>
+      fresh.reduce(
+        (acc, image) =>
+          pushOp(
+            acc,
+            { op: 'append', image: { src: image.src, alt: image.alt ?? null } },
+            `op-${opId.current++}`
+          ),
+        q
+      )
+    );
+  }, [generated, storeImages, editable]);
 
   function queueOp(op: ImageOp) {
     setError(null);

@@ -21,6 +21,7 @@ export async function saveSubscription(input: SaveSubscriptionInput): Promise<vo
     .values({
       id: randomUUID(),
       userId: input.userId,
+      channel: 'webpush',
       endpoint: input.endpoint,
       p256dh: input.p256dh,
       auth: input.auth,

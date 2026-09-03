@@ -2,8 +2,10 @@
 
 import type { ReactNode } from 'react';
 
-/** The one small action button under a tile. Its own file so the tile and the
- *  alt-text generator can share it without importing each other. */
+/** One action under a tile. Full width by design: these are decisions about
+ *  that photo, stacked so each is a target a thumb can hit — a wrapped row of
+ *  chips is unusable on a phone. Its own file so the tile and the alt-text
+ *  generator can share it without importing each other. */
 export function TileButton({
   onClick,
   testId,
@@ -29,7 +31,7 @@ export function TileButton({
       data-testid={testId}
       aria-label={ariaLabel}
       title={ariaLabel}
-      className={`inline-flex items-center gap-1 rounded-md border border-[var(--border)] px-1.5 py-1 text-[11px] disabled:opacity-40 ${
+      className={`inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--border)] px-2 py-1.5 text-[11px] disabled:opacity-40 ${
         danger
           ? 'hover:border-[var(--danger)] hover:text-[var(--danger)]'
           : 'hover:border-[var(--accent)] hover:text-[var(--accent)]'

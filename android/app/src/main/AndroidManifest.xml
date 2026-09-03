@@ -38,4 +38,11 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      Android 13 and up ask before any notification is shown. The app requests
+      it the first time the merchant turns notifications on, never at launch:
+      a permission sheet on the splash screen is a permission people refuse.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

@@ -41,7 +41,15 @@ export function isPushConfigured(): boolean {
  */
 export async function sendPushToUser(userId: string, payload: PushPayload): Promise<number> {
   if (!ensureConfigured()) return 0;
-  const devices = await listSubscriptions(userId);
+  // Web push only: a Firebase device carries a token, not an endpoint, and is
+  // delivered to by the native channel (see docs/ops/store-release.md).
+  const devices = (await listSubscriptions(userId)).filter(
+    (device): device is typeof device & { endpoint: string; p256dh: string; auth: string } =>
+      device.channel === 'webpush' &&
+      Boolean(device.endpoint) &&
+      Boolean(device.p256dh) &&
+      Boolean(device.auth)
+  );
   if (devices.length === 0) return 0;
 
   const body = JSON.stringify(payload);

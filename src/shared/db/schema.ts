@@ -1018,6 +1018,12 @@ export type ShopConnectionPlatform = (typeof SHOP_CONNECTION_PLATFORMS)[number];
  * service answers 404/410: a subscription outlives the browser profile that
  * created it, and nothing else tells us it is gone.
  */
+/** How a device is reached. The web stack for browsers and installed PWAs;
+ *  Firebase for the apps published to the stores, whose WebView has no Push
+ *  API of its own — on iOS in particular, nothing else reaches the device. */
+export const PUSH_CHANNELS = ['webpush', 'fcm'] as const;
+export type PushChannel = (typeof PUSH_CHANNELS)[number];
+
 export const pushSubscriptions = mysqlTable(
   'push_subscriptions',
   {
@@ -1025,18 +1031,24 @@ export const pushSubscriptions = mysqlTable(
     userId: varchar('user_id', { length: 36 })
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    /** Push service URL. Unique across accounts: one device, one row. */
-    endpoint: varchar('endpoint', { length: 512 }).notNull(),
-    /** Encryption material handed over by the browser at subscribe time. */
-    p256dh: varchar('p256dh', { length: 255 }).notNull(),
-    auth: varchar('auth', { length: 255 }).notNull(),
+    channel: mysqlEnum('channel', PUSH_CHANNELS).notNull().default('webpush'),
+    /** Web push: the service URL. Unique across accounts: one device, one row. */
+    endpoint: varchar('endpoint', { length: 512 }),
+    /** Web push: encryption material handed over by the browser at subscribe time. */
+    p256dh: varchar('p256dh', { length: 255 }),
+    auth: varchar('auth', { length: 255 }),
+    /** Firebase: the registration token of the installed app. */
+    deviceToken: varchar('device_token', { length: 512 }),
     userAgent: varchar('user_agent', { length: 512 }),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     /** Bumped on every successful send — a dead device stops moving. */
     lastSeenAt: timestamp('last_seen_at').notNull().defaultNow()
   },
   (t) => ({
+    // MySQL allows many NULLs under a unique index, so one index per channel
+    // keeps both identities unique without splitting the table.
     uqEndpoint: uniqueIndex('uq_push_subscriptions_endpoint').on(t.endpoint),
+    uqDeviceToken: uniqueIndex('uq_push_subscriptions_device_token').on(t.deviceToken),
     idxUser: index('idx_push_subscriptions_user').on(t.userId)
   })
 );

@@ -145,7 +145,7 @@ export function EditorTile(props: EditorTileProps) {
           {t('pickThisVisual')}
         </button>
       ) : (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-col gap-1">
           {actions.setFeatured && !props.isMain ? (
             <TileButton
               onClick={on.setFeatured}
@@ -187,12 +187,11 @@ export function EditorTile(props: EditorTileProps) {
               generate={on.generateAlt}
               // The generated sentence goes straight into the queue, like every
               // other generation: what the merchant validates is the change,
-              // not the draft. The field stays open on it so they can edit
-              // before sending.
+              // not the draft. Editing it is still one click away on the
+              // "Texte alternatif" button, but nothing is asked of them here.
               onGenerated={(alt) => {
                 on.saveAlt(alt);
                 setProposedAlt(alt);
-                setEditingAlt(true);
               }}
             />
           ) : null}
@@ -212,7 +211,7 @@ export function EditorTile(props: EditorTileProps) {
             </span>
           ) : null}
           {actions.move ? (
-            <span className="flex gap-1">
+            <span className="flex w-full gap-1 [&>button]:flex-1">
               <TileButton
                 onClick={() => on.move(-1)}
                 testId="tile-move-left"

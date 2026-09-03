@@ -87,7 +87,7 @@ export function PendingOpsPanel({
         onClick={onApply}
         disabled={disabled || pending}
         data-testid="apply-image-ops"
-        className="inline-flex w-fit items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-fit sm:justify-start sm:py-1.5"
       >
         {pending ? <Spinner size="sm" /> : <Store className="size-4" aria-hidden />}
         {t('apply')}
