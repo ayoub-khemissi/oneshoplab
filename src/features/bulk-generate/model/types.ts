@@ -2,7 +2,7 @@ import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
 
 export const BULK_STALL_TIMEOUT_MS = 15 * 60_000;
 
-export type BulkFieldKey = 'title' | 'description' | 'tags' | 'images';
+export type BulkFieldKey = 'title' | 'description' | 'tags' | 'alt' | 'images';
 
 export type BulkFieldOutcome = 'done' | { error: string };
 
@@ -60,6 +60,7 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
     title: f.title !== false,
     description: f.description !== false,
     tags: f.tags !== false,
+    alt: f.alt !== false,
     images: f.images !== false
   };
   const rawAngles = Array.isArray(r?.imageAngles) ? r.imageAngles : null;

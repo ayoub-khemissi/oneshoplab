@@ -28,6 +28,7 @@ import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
+  appliedGeneratedImagesFor,
   listChangesForJobs,
   listPendingSummaryForProduct,
   PendingChangesBanner,
@@ -156,7 +157,7 @@ export async function DashboardProductPage({
   // Apply-to-store state per past generation + whether a plugin can pick it up.
   // `capabilities` decides whether applying images replaces the whole gallery
   // (docs/api/IMAGE-OPS.md §5) — the merchant confirms that in plain words.
-  const [changeByJobId, siteKeys, capabilities, pendingSummary] = await Promise.all([
+  const [changeByJobId, siteKeys, capabilities, pendingSummary, takenByStore] = await Promise.all([
     listChangesForJobs(projectId, [
       ...new Set([
         ...pastGenPage.items.map((h) => h.jobId),
@@ -169,7 +170,10 @@ export async function DashboardProductPage({
     ]),
     listProjectKeys({ projectId, userId: session.user.id }),
     getProjectCapabilities(projectId),
-    listPendingSummaryForProduct(productId, session.user.id)
+    listPendingSummaryForProduct(productId, session.user.id),
+    // Visuals the store already took: they are store photos now, and showing
+    // the generation beside them reads as a duplicate.
+    appliedGeneratedImagesFor(productId)
   ]);
   const hasSiteKey = siteKeys.some((k) => isUsableKey(k));
 
@@ -293,7 +297,7 @@ export async function DashboardProductPage({
         productId={productId}
         storeImages={storeImages}
         generated={liveImageJobs.flatMap((j) =>
-          j.status === 'completed' && j.imageUrl
+          j.status === 'completed' && j.imageUrl && !takenByStore.has(j.imageUrl)
             ? [{ jobId: j.id, src: j.imageUrl, alt: null }]
             : []
         )}

@@ -860,6 +860,7 @@
     "fieldTitle": "タイトル",
     "fieldDescription": "説明",
     "fieldTags": "タグ",
+    "fieldAlt": "代替テキスト",
     "fieldImages": "画像",
     "costPerProductChat": "商品ごと · テキストフィールド",
     "costPerProductImages": "商品ごと · 画像3枚",

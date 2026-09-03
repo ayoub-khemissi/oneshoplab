@@ -18,6 +18,7 @@ export function CandidateRow({ candidate, selected, enabled, onToggle }: Candida
     title: t('fieldTitle'),
     description: t('fieldDescription'),
     tags: t('fieldTags'),
+    alt: t('fieldAlt'),
     images: t('fieldImages')
   };
   return (

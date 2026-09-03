@@ -860,6 +860,7 @@
     "fieldTitle": "Заголовок",
     "fieldDescription": "Описание",
     "fieldTags": "Теги",
+    "fieldAlt": "Альт-тексты",
     "fieldImages": "Изображения",
     "costPerProductChat": "На товар · текстовые поля",
     "costPerProductImages": "На товар · 3 изображения",

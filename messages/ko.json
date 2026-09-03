@@ -860,6 +860,7 @@
     "fieldTitle": "제목",
     "fieldDescription": "설명",
     "fieldTags": "태그",
+    "fieldAlt": "대체 텍스트",
     "fieldImages": "이미지",
     "costPerProductChat": "상품당 · 텍스트 필드",
     "costPerProductImages": "상품당 · 이미지 3장",

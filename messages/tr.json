@@ -860,6 +860,7 @@
     "fieldTitle": "Başlık",
     "fieldDescription": "Açıklama",
     "fieldTags": "Etiketler",
+    "fieldAlt": "Alternatif metinler",
     "fieldImages": "Görseller",
     "costPerProductChat": "Ürün başına · metin alanları",
     "costPerProductImages": "Ürün başına · 3 görsel",

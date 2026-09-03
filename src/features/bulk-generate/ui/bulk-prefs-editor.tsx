@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
  * the bulk modal, the site-settings tab and the account-prefs page.
  */
 
-export type BulkFieldKey = 'title' | 'description' | 'tags' | 'images';
+export type BulkFieldKey = 'title' | 'description' | 'tags' | 'alt' | 'images';
 export type ImageAngle = 'lifestyle' | 'studio' | 'inuse';
 export const ALL_ANGLES: ImageAngle[] = ['lifestyle', 'studio', 'inuse'];
 
@@ -29,6 +29,7 @@ export function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
     title: p.fields.title !== false,
     description: p.fields.description !== false,
     tags: p.fields.tags !== false,
+    alt: p.fields.alt !== false,
     images: p.fields.images !== false
   };
   let imageAngles = ALL_ANGLES.filter((a) => p.imageAngles.includes(a));
@@ -44,7 +45,7 @@ export const prefsKey = (p: BulkPrefs): string =>
 export const noFieldsSelected = (p: BulkPrefs): boolean =>
   !p.fields.title && !p.fields.description && !p.fields.tags && !p.fields.images;
 
-const FIELD_KEYS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
+const FIELD_KEYS: BulkFieldKey[] = ['title', 'description', 'tags', 'alt', 'images'];
 
 /** HeroUI v3 Checkbox is a compound component — without Control /
  *  Indicator / Content it renders only the label (no visible box, no
@@ -97,6 +98,7 @@ export function BulkPrefsEditor({
     title: t('fieldTitle'),
     description: t('fieldDescription'),
     tags: t('fieldTags'),
+    alt: t('fieldAlt'),
     images: t('fieldImages')
   };
   const selectedFieldCount = FIELD_KEYS.filter((k) => value.fields[k]).length;
@@ -104,7 +106,7 @@ export function BulkPrefsEditor({
   return (
     <div className="flex flex-col gap-3">
       <p className="text-xs text-[var(--muted)] leading-relaxed">{t('configHint')}</p>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {FIELD_KEYS.map((key) => {
           // Never let the last selected field be unticked — at least
           // one element must always be generated.

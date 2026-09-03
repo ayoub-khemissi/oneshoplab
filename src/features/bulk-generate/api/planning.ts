@@ -5,6 +5,7 @@ import {
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
+import { altTextCredits } from '@/entities/generation-job';
 import { db } from '@/shared/db';
 import { jobs, projects, products, users, type JobKind } from '@/shared/db/schema';
 import {
@@ -76,7 +77,11 @@ export function estimateBulkCostBreakdown(
   const chatPerProduct =
     (p.fields.title ? estimateChatCredits(chatModelId, 'title') : 0) +
     (p.fields.description ? estimateChatCredits(chatModelId, 'description') : 0) +
-    (p.fields.tags ? estimateChatCredits(chatModelId, 'tags') : 0);
+    (p.fields.tags ? estimateChatCredits(chatModelId, 'tags') : 0) +
+    // Alt texts are per photo, and only for the ones that have none — the
+    // estimate assumes one, which is the floor a merchant should expect
+    // rather than a number that could overshoot on a product with twelve.
+    (p.fields.alt ? altTextCredits() : 0);
   const imagesPerProduct = p.fields.images
     ? costForImage(imageQualityId) * p.imageAngles.length
     : 0;
@@ -129,10 +134,12 @@ const FIELD_TO_KIND: Record<BulkFieldKey, JobKind> = {
   title: 'kie_title',
   description: 'kie_description',
   tags: 'kie_tags',
+  alt: 'kie_alt_text',
   images: 'kie_image_edit'
 };
 
 const KIND_TO_FIELD: Partial<Record<JobKind, BulkFieldKey>> = {
+  kie_alt_text: 'alt',
   kie_title: 'title',
   kie_description: 'description',
   kie_tags: 'tags',

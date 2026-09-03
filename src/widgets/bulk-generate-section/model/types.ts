@@ -6,7 +6,7 @@ export interface ActiveBulkJob {
   errors: number;
 }
 
-export type FieldKey = 'title' | 'description' | 'tags' | 'images';
+export type FieldKey = 'title' | 'description' | 'tags' | 'alt' | 'images';
 export type FieldOutcome = 'done' | { error: string };
 
 export interface ProductBulkState {

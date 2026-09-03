@@ -16,6 +16,7 @@ export function FailureBreakdown({ perProduct, productTitleById }: FailureBreakd
     title: t('fieldTitle'),
     description: t('fieldDescription'),
     tags: t('fieldTags'),
+    alt: t('fieldAlt'),
     images: t('fieldImages')
   };
 

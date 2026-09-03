@@ -860,6 +860,7 @@
     "fieldTitle": "العنوان",
     "fieldDescription": "الوصف",
     "fieldTags": "الوسوم",
+    "fieldAlt": "النصوص البديلة",
     "fieldImages": "الصور",
     "costPerProductChat": "لكل منتج · الحقول النصية",
     "costPerProductImages": "لكل منتج · 3 صور",

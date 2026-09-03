@@ -1,6 +1,12 @@
 import { and, asc, eq, lt, or } from 'drizzle-orm';
 import { buildImagePrompt, startImageOptim } from '@/entities/generation-job';
-import { runChatOptim } from '@/entities/generation-job';
+import { runAltTextOptim, runChatOptim } from '@/entities/generation-job';
+import {
+  canRunAltBatch,
+  getProjectCapabilities,
+  isMissingAlt
+} from '@/entities/connection-capability';
+import { createChange } from '@/entities/product-change';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/shared/db';
@@ -20,6 +26,7 @@ import {
   effectiveFields,
   readResult,
   resolveBulkPrefs,
+  type BulkFieldOutcome,
   type BulkInputPayload,
   type BulkProductState
 } from '../model/types';
@@ -179,7 +186,16 @@ export async function processNextBulkProduct(): Promise<boolean> {
     }
 
     try {
-      if (field === 'images') {
+      if (field === 'alt') {
+        state.fields.alt = await runAltPass({
+          userId: project.userId,
+          projectId: project.id,
+          productId: productRow.id,
+          productSourceId: sourceId,
+          languageCode,
+          product: context
+        });
+      } else if (field === 'images') {
         if (!sourceImage) {
           state.fields.images = { error: 'No source image on this product' };
         } else {
@@ -276,4 +292,65 @@ export async function runBulkWatchdog(): Promise<void> {
     // Best-effort: the bulk may have finished between the query and here.
     await markJobStatus(job.id, 'failed', 'bulk_stalled', { tolerate: true });
   }
+}
+
+/**
+ * Alt texts for the photos of one product that have none.
+ *
+ * Unlike the other fields this one does not stop at a generation: an alt text
+ * is only worth anything on the store, and it can never conflict with a
+ * merchant's own words — there were none. So each sentence is queued as a
+ * `set_alt` change straight away, exactly as the per-image button does.
+ *
+ * A store that cannot address its images one by one is skipped rather than
+ * charged: `set_alt` has nowhere to land there (IMAGE-OPS.md §7).
+ */
+async function runAltPass(opts: {
+  userId: string;
+  projectId: string;
+  productId: string;
+  productSourceId: string;
+  languageCode: string;
+  product: Parameters<typeof runAltTextOptim>[0]['product'];
+}): Promise<BulkFieldOutcome> {
+  const capabilities = await getProjectCapabilities(opts.projectId);
+  if (!canRunAltBatch(capabilities)) {
+    return { error: 'This store cannot receive alt texts' };
+  }
+  const row = await db.query.products.findFirst({
+    where: eq(products.id, opts.productId),
+    columns: { images: true }
+  });
+  const candidates = (row?.images ?? []).filter(
+    (image) => image.sourceImageId && isMissingAlt(image.alt)
+  );
+  if (candidates.length === 0) return 'done';
+
+  const ops: Array<{ op: 'set_alt'; target: string; alt: string }> = [];
+  for (const image of candidates) {
+    const result = await runAltTextOptim({
+      userId: opts.userId,
+      projectId: opts.projectId,
+      productSourceId: opts.productSourceId,
+      imageSrc: image.src,
+      imageSourceImageId: image.sourceImageId ?? null,
+      product: opts.product,
+      languageCode: opts.languageCode
+    });
+    const alt = result.alt.trim();
+    if (alt.length > 0 && image.sourceImageId) {
+      ops.push({ op: 'set_alt', target: image.sourceImageId, alt });
+    }
+  }
+  if (ops.length === 0) return { error: 'No alt text could be written' };
+
+  const created = await createChange({
+    projectId: opts.projectId,
+    productId: opts.productId,
+    productSourceId: opts.productSourceId,
+    field: 'images',
+    value: { v: 1, ops },
+    approvedBy: opts.userId
+  });
+  return created.ok ? 'done' : { error: `Could not queue the alt texts (${created.reason})` };
 }

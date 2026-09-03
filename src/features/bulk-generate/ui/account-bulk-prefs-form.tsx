@@ -57,7 +57,7 @@ export function AccountBulkPrefsForm({
       /* no-op; user can retry */
     }
     const legacy = canonicalizePrefs({
-      fields: { title: true, description: true, tags: true, images: true },
+      fields: { title: true, description: true, tags: true, alt: true, images: true },
       imageAngles: ['lifestyle', 'studio', 'inuse']
     });
     lastSavedKey.current = prefsKey(legacy);

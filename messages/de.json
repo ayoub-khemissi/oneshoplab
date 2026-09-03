@@ -860,6 +860,7 @@
     "fieldTitle": "Titel",
     "fieldDescription": "Beschreibung",
     "fieldTags": "Tags",
+    "fieldAlt": "Alt-Texte",
     "fieldImages": "Bilder",
     "costPerProductChat": "Pro Produkt · Textfelder",
     "costPerProductImages": "Pro Produkt · 3 Bilder",

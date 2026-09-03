@@ -860,6 +860,7 @@
     "fieldTitle": "标题",
     "fieldDescription": "描述",
     "fieldTags": "标签",
+    "fieldAlt": "替代文本",
     "fieldImages": "图片",
     "costPerProductChat": "每个产品 · 文本字段",
     "costPerProductImages": "每个产品 · 3 张图",

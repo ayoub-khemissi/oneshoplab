@@ -1,4 +1,5 @@
 import { and, desc, eq, gt, inArray, isNull, or } from 'drizzle-orm';
+import { appliedGeneratedSources } from '@/entities/product-change';
 import { db } from '@/shared/db';
 import { productChanges, products, projects } from '@/shared/db/schema';
 import {
@@ -78,6 +79,26 @@ export async function listPendingChangesForSite(
     productTitle: r.productTitle,
     field: r.change.field
   }));
+}
+
+/**
+ * The generated visuals this product's store has already taken.
+ *
+ * Used to drop them from the editor: once applied, the store holds its own
+ * copy, and showing the generation next to it reads as a duplicate.
+ */
+export async function appliedGeneratedImagesFor(productId: string): Promise<Set<string>> {
+  const rows = await db
+    .select({
+      field: productChanges.field,
+      status: productChanges.status,
+      value: productChanges.value
+    })
+    .from(productChanges)
+    .where(and(eq(productChanges.productId, productId), eq(productChanges.field, 'images')))
+    .orderBy(desc(productChanges.id))
+    .limit(PENDING_LIST_LIMIT);
+  return appliedGeneratedSources(rows);
 }
 
 /** Onboarding: has this store ever received a change? One indexed read. */

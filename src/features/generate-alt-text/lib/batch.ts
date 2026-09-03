@@ -37,9 +37,7 @@ export interface AltBatchPlan {
   remaining: number;
 }
 
-export function isMissingAlt(alt: string | null | undefined): boolean {
-  return !alt || alt.trim().length === 0;
-}
+export { isMissingAlt } from '@/entities/connection-capability';
 
 /**
  * Fills the run image by image so a catalog whose first product has 30 photos

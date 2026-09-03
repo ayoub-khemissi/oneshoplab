@@ -34,6 +34,7 @@ export type {
   PriorImageRef,
   SimulatedImage
 } from './lib/image-ops';
+export { appliedGeneratedSources } from './lib/applied-images';
 export { buildReverseValue, parsePriorImages } from './lib/reverse';
 export type { PriorImage, ReverseValue } from './lib/reverse';
 export {

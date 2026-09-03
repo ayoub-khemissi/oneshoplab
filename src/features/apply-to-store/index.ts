@@ -24,6 +24,7 @@ export {
 } from './api/actions';
 export { approveImageOpsAction } from './api/image-ops-actions';
 export {
+  appliedGeneratedImagesFor,
   countPendingByProject,
   hasAppliedChange,
   listChangesForJobs,
