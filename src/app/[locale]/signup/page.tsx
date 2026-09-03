@@ -31,6 +31,7 @@ export async function generateMetadata({
 import { GoogleSignInButton } from '@/features/auth';
 import { claimAnonAudits, claimAuditByToken, clearAnonToken, getAnonToken } from '@/entities/user';
 import { isGoogleAuthEnabled, signIn } from '@/entities/user';
+import { REFERRAL_COOKIE } from '@/entities/referral';
 import { registerCredentialsUser } from '@/entities/user';
 import {
   isRecaptchaEnabled,
@@ -88,7 +89,8 @@ async function signupAction(formData: FormData) {
     email,
     password,
     name,
-    locale: jar.get('NEXT_LOCALE')?.value ?? null
+    locale: jar.get('NEXT_LOCALE')?.value ?? null,
+    refId: jar.get(REFERRAL_COOKIE)?.value ?? null
   });
   if (!created.ok) {
     redirect(`/signup?error=${created.error}${carryQs}`);

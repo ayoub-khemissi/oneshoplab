@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { REFERRAL_COOKIE, normalizeRefId, trackReferralSignup } from '@/entities/referral';
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
@@ -138,6 +139,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
       } catch (e) {
         console.error('[auth] failed to record signup consent for', user.id, e);
+      }
+      // Same attribution as the credentials path: the promoter whose link
+      // brought this visitor, read from the first-party cookie the proxy set.
+      try {
+        const jar = await cookies();
+        const refId = normalizeRefId(jar.get(REFERRAL_COOKIE)?.value);
+        if (refId && user.email) {
+          void trackReferralSignup({ userId: user.id, email: user.email, refId });
+        }
+      } catch {
+        // No request context (or no cookie): the account is created either way.
       }
       // Mark a fresh OAuth (Google) signup so the browser can fire the
       // sign_up / CompleteRegistration conversion events. The

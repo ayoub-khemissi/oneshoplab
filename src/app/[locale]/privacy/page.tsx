@@ -247,6 +247,22 @@ export default function PrivacyPolicyPage() {
           reports an endpoint as gone has it deleted on the spot.
         </p>
 
+        <h3>1.14 Affiliate referrals</h3>
+        <p>
+          When you arrive through a partner&apos;s link, that link carries the partner&apos;s public
+          referral identifier. We keep it for 90 days in a first-party cookie of our own — no
+          third-party script and no third-party cookie is loaded — solely so that a partner who
+          brought you is credited if you later create an account. It contains no profile and is
+          never used to target advertising at you.
+        </p>
+        <p>
+          If you do create an account, we tell our affiliate platform (FirstPromoter) that this
+          partner referred it: your email address, your account identifier and, for their fraud
+          checks, your IP address. Partners never see your data — they see that a referral
+          converted. Clearing your cookies removes the identifier, and an account created without
+          one is never reported.
+        </p>
+
         <h2>2. How We Use Your Data</h2>
         <p>We use the categories above to:</p>
         <ul>
@@ -376,6 +392,16 @@ export default function PrivacyPolicyPage() {
                 <td>USA / Ireland (EU)</td>
               </tr>
               <tr>
+                <td>FirstPromoter (Vilocity SRL)</td>
+                <td>
+                  Affiliate programme: records that a partner&apos;s link led to an account, so
+                  their commission can be calculated. Receives the referral identifier, your email,
+                  your account id and your IP address at signup — only when you arrived through such
+                  a link.
+                </td>
+                <td>European Union</td>
+              </tr>
+              <tr>
                 <td>Discord Inc.</td>
                 <td>
                   Delivery of contact-form messages to a private, staff-only channel of our Discord
@@ -468,6 +494,11 @@ export default function PrivacyPolicyPage() {
           <li>
             <strong>Notification devices</strong>: until you turn notifications off on that device,
             sign out of it, uninstall the app, or the push service tells us the device is gone.
+          </li>
+          <li>
+            <strong>Affiliate referral identifier</strong>: 90 days in your browser, then it expires
+            on its own. Once an account is created, the attribution lives on our affiliate platform
+            for as long as the partnership it belongs to.
           </li>
           <li>
             <strong>Contact-form messages</strong>: 24 months after the last exchange, then deleted.

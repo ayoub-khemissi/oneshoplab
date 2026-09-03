@@ -1,7 +1,31 @@
 import { getToken } from 'next-auth/jwt';
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
+import { REFERRAL_COOKIE, refFromSearchParams } from './entities/referral/lib/ref';
 import { routing, SUPPORTED_LOCALES } from './i18n/routing';
+
+/** A promoter's click is worth ninety days, the industry's window. */
+const REFERRAL_MAX_AGE = 90 * 24 * 60 * 60;
+
+/**
+ * An influencer's link carries their referral id. Remember it here, on the very
+ * first response, so it survives the visitor reading three pages and signing up
+ * a week later — and so the attribution needs no third-party script and no
+ * third-party cookie. First writer wins: the promoter who actually brought the
+ * visitor is the one who gets the credit.
+ */
+function rememberReferral(req: NextRequest, res: NextResponse): NextResponse {
+  const refId = refFromSearchParams(req.nextUrl.searchParams);
+  if (!refId || req.cookies.get(REFERRAL_COOKIE)) return res;
+  res.cookies.set(REFERRAL_COOKIE, refId, {
+    maxAge: REFERRAL_MAX_AGE,
+    path: '/',
+    sameSite: 'lax',
+    httpOnly: true,
+    secure: (process.env.APP_URL ?? 'https://').startsWith('https://')
+  });
+  return res;
+}
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -72,19 +96,22 @@ export default async function middleware(req: NextRequest) {
       const isAuthed = Boolean(token);
 
       if (isAuthed && isGuestOnly) {
-        return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
+        return rememberReferral(
+          req,
+          NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url))
+        );
       }
       if (!isAuthed && isAuthRequired) {
         const url = new URL(`/${locale}/login`, req.url);
         // Preserve the originally requested path + query so login can
         // bounce the user back where they intended to go.
         url.searchParams.set('next', pathname + (search ?? ''));
-        return NextResponse.redirect(url);
+        return rememberReferral(req, NextResponse.redirect(url));
       }
     }
   }
 
-  return intlMiddleware(req);
+  return rememberReferral(req, intlMiddleware(req) as NextResponse);
 }
 
 export const config = {

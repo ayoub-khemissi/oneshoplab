@@ -5,6 +5,7 @@ import { applyCreditTransaction } from '@/entities/credit';
 import { db } from '@/shared/db';
 import { legalConsents, users } from '@/shared/db/schema';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
+import { trackReferralSignup } from '@/entities/referral';
 import { hashPassword } from '../model/password';
 
 export type SignupError = 'invalid_email' | 'short_password' | 'email_taken';
@@ -12,15 +13,19 @@ export type SignupError = 'invalid_email' | 'short_password' | 'email_taken';
 /**
  * Credentials signup — the mirror of the OAuth `createUser` adapter event in
  * lib/auth.ts, so BOTH paths end up identical: welcome credits granted through
- * the ledger (balance == SUM(ledger), idempotent per user) and a `signup_tos`
- * consent row as proof of the click-wrap on the form. Before this module the
- * credentials path wrote the credit buckets directly and recorded no consent.
+ * the ledger (balance == SUM(ledger), idempotent per user), a `signup_tos`
+ * consent row as proof of the click-wrap on the form, and the affiliate
+ * attribution when the visitor arrived through a promoter's link.
  */
 export async function registerCredentialsUser(input: {
   email: string;
   password: string;
   name?: string | null;
   locale?: string | null;
+  /** Promoter who brought this visitor, from the referral cookie. */
+  refId?: string | null;
+  /** Visitor address, passed to the affiliate network's fraud checks. */
+  ip?: string | null;
 }): Promise<{ ok: true; userId: string } | { ok: false; error: SignupError }> {
   const email = input.email.toLowerCase().trim();
   if (!email.includes('@') || email.length < 3) return { ok: false, error: 'invalid_email' };
@@ -53,5 +58,11 @@ export async function registerCredentialsUser(input: {
     source: `user:${userId}`,
     locale: input.locale ?? null
   });
+  // Tell the affiliate network which promoter this account came from. Never
+  // awaited and never fatal: a network being down must not cost someone their
+  // signup, and the commission is decided on their side anyway.
+  if (input.refId) {
+    void trackReferralSignup({ userId, email, refId: input.refId, ip: input.ip ?? null });
+  }
   return { ok: true, userId };
 }

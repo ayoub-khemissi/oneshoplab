@@ -75,7 +75,13 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
   if (!customerId) {
     const customer = await stripe.customers.create({
       email,
-      metadata: { oneshoplabUserId: userId }
+      metadata: {
+        oneshoplabUserId: userId,
+        // What the affiliate network matches a subscription on: the same id we
+        // reported as the lead's `uid` at signup. Without it a referred
+        // merchant's recurring commission never attaches to their promoter.
+        fp_uid: userId
+      }
     });
     customerId = customer.id;
 
@@ -167,7 +173,13 @@ export async function buyCreditPackAction(formData: FormData): Promise<void> {
   if (!customerId) {
     const customer = await stripe.customers.create({
       email,
-      metadata: { oneshoplabUserId: userId }
+      metadata: {
+        oneshoplabUserId: userId,
+        // What the affiliate network matches a subscription on: the same id we
+        // reported as the lead's `uid` at signup. Without it a referred
+        // merchant's recurring commission never attaches to their promoter.
+        fp_uid: userId
+      }
     });
     customerId = customer.id;
     if (existing) {
