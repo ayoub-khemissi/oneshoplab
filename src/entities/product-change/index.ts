@@ -57,6 +57,7 @@ export {
   listPendingChanges,
   priorFieldValue
 } from './api/changes';
+export { reflectAppliedChange } from './api/reflect';
 export { createReverseChange } from './api/reverse';
 export { runIntegrationSweeps, sweepSyncSessions } from './api/sweeps';
 export { applyPendingChanges, storeFieldValue } from './api/apply-loop';

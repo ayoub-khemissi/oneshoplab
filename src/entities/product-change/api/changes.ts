@@ -5,6 +5,7 @@ import { productChanges, products, projects, type ProductChangeField } from '@/s
 import { ulid } from '@/shared/lib';
 import { hashValue } from '../lib/hash';
 import { checkImageChangeValue } from '../lib/image-ops';
+import { reflectAppliedChange } from './reflect';
 import type {
   AckChangeInput,
   AckChangeResult,
@@ -174,6 +175,9 @@ export async function ackChange(
   );
   const after = await getChange(projectId, id);
   if (!after) return { kind: 'not_found' };
+  // The store took it: OSL's own row has to say the same thing, or the
+  // merchant reads a title their storefront no longer has.
+  if (after.status === 'applied') await reflectAppliedChange(after);
   if (result === 'refused') {
     // Lost a race against another ack / a cancel — re-apply the rule.
     return after.ackPayload?.status === payload.status
