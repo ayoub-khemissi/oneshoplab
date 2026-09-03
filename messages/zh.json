@@ -755,6 +755,7 @@
     "backToDashboard": "返回控制台",
     "tabProfile": "资料",
     "tabSubscription": "订阅",
+    "tabAffiliate": "推广合作",
     "tabPreferences": "偏好",
     "tabCredits": "积分"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "加入计划",
     "joinBody": "写信给我们，附上你发布内容的链接。我们两个工作日内回复；如果受众不匹配，我们会直说——这比让你放一个永远不会转化的链接更诚实。",
     "seoTitle": "推荐 OneShopLab，每月赚取 15%",
-    "seoDescription": "你面向电商卖家发声吗？每一家通过你的链接订阅的店铺，只要订阅还在，你每个月都能拿到佣金。"
+    "seoDescription": "你面向电商卖家发声吗？每一家通过你的链接订阅的店铺，只要订阅还在，你每个月都能拿到佣金。",
+    "dashboardCta": "打开我的合作面板"
   }
 }

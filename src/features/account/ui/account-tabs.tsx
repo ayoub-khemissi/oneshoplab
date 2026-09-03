@@ -6,6 +6,7 @@ interface AccountTabsProps {
   labels: {
     profile: string;
     subscription: string;
+    affiliate: string;
     preferences: string;
     credits: string;
   };
@@ -14,12 +15,13 @@ interface AccountTabsProps {
 const TABS: Array<{ key: keyof AccountTabsProps['labels']; href: string }> = [
   { key: 'profile', href: '/account/profile' },
   { key: 'subscription', href: '/account/subscription' },
+  { key: 'affiliate', href: '/account/affiliate' },
   { key: 'preferences', href: '/account/preferences' },
   { key: 'credits', href: '/account/credits' }
 ];
 
 /**
- * Sub-navigation across the four /account/* surfaces. Highlights the
+ * Sub-navigation across the /account/* surfaces. Highlights the
  * active route by exact-prefix match against the current pathname.
  *
  * Mirrors the per-site dashboard <TabsNav> compaction: the

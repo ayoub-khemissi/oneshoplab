@@ -755,6 +755,7 @@
     "backToDashboard": "Torna alla dashboard",
     "tabProfile": "Profilo",
     "tabSubscription": "Abbonamento",
+    "tabAffiliate": "Affiliazione",
     "tabPreferences": "Preferenze",
     "tabCredits": "Crediti"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "Entra nel programma",
     "joinBody": "Scrivici con un link a ciò che pubblichi. Rispondiamo entro due giorni lavorativi, e diciamo di no quando il pubblico non è quello giusto: è più onesto che farti mettere un link che non convertirà mai.",
     "seoTitle": "Consiglia OneShopLab e guadagna il 15 % ogni mese",
-    "seoDescription": "Parli a commercianti online? Ogni negozio che si abbona con il tuo link ti paga una commissione, ogni mese, finché resta abbonato."
+    "seoDescription": "Parli a commercianti online? Ogni negozio che si abbona con il tuo link ti paga una commissione, ogni mese, finché resta abbonato.",
+    "dashboardCta": "Apri la mia dashboard partner"
   }
 }

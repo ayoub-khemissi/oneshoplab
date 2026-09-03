@@ -755,6 +755,7 @@
     "backToDashboard": "Back to dashboard",
     "tabProfile": "Profile",
     "tabSubscription": "Subscription",
+    "tabAffiliate": "Affiliate",
     "tabPreferences": "Preferences",
     "tabCredits": "Credits"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "Join the programme",
     "joinBody": "Write to us with a link to what you publish. We answer within two working days, and we say no when the audience does not fit — that is fairer than having you post a link that will never convert.",
     "seoTitle": "Recommend OneShopLab, earn 15% every month",
-    "seoDescription": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed."
+    "seoDescription": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed.",
+    "dashboardCta": "Open my partner dashboard"
   }
 }

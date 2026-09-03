@@ -755,6 +755,7 @@
     "backToDashboard": "Volver al panel",
     "tabProfile": "Perfil",
     "tabSubscription": "Suscripción",
+    "tabAffiliate": "Afiliación",
     "tabPreferences": "Preferencias",
     "tabCredits": "Créditos"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "Únete al programa",
     "joinBody": "Escríbenos con un enlace a lo que publicas. Respondemos en dos días laborables, y decimos que no cuando la audiencia no encaja: es más honesto que hacerte poner un enlace que no convertirá.",
     "seoTitle": "Recomienda OneShopLab y gana un 15 % cada mes",
-    "seoDescription": "¿Hablas con comerciantes de e-commerce? Cada tienda que se suscribe con tu enlace te paga una comisión, todos los meses, mientras siga suscrita."
+    "seoDescription": "¿Hablas con comerciantes de e-commerce? Cada tienda que se suscribe con tu enlace te paga una comisión, todos los meses, mientras siga suscrita.",
+    "dashboardCta": "Abrir mi panel de partner"
   }
 }

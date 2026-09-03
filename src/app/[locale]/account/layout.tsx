@@ -54,6 +54,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
           labels={{
             profile: t('tabProfile'),
             subscription: t('tabSubscription'),
+            affiliate: t('tabAffiliate'),
             preferences: t('tabPreferences'),
             credits: t('tabCredits')
           }}

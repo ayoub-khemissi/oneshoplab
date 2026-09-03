@@ -755,6 +755,7 @@
     "backToDashboard": "Panele dön",
     "tabProfile": "Profil",
     "tabSubscription": "Abonelik",
+    "tabAffiliate": "Ortaklık",
     "tabPreferences": "Tercihler",
     "tabCredits": "Krediler"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "Programa katıl",
     "joinBody": "Yayınladığın şeye bir bağlantıyla birlikte bize yaz. İki iş günü içinde yanıtlıyoruz ve kitle uymadığında hayır diyoruz: hiç dönüşmeyecek bir bağlantı koydurmaktan daha dürüst.",
     "seoTitle": "OneShopLab'i öner, her ay %15 kazan",
-    "seoDescription": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır."
+    "seoDescription": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır.",
+    "dashboardCta": "Ortak panelimi aç"
   }
 }

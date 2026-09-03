@@ -755,6 +755,7 @@
     "backToDashboard": "Wróć do panelu",
     "tabProfile": "Profil",
     "tabSubscription": "Subskrypcja",
+    "tabAffiliate": "Program partnerski",
     "tabPreferences": "Preferencje",
     "tabCredits": "Kredyty"
   },
@@ -1835,6 +1836,7 @@
     "joinTitle": "Dołącz do programu",
     "joinBody": "Napisz do nas i podaj link do tego, co publikujesz. Odpowiadamy w dwa dni robocze i mówimy „nie”, gdy publiczność nie pasuje — to uczciwsze niż link, który nigdy nie zadziała.",
     "seoTitle": "Polecaj OneShopLab i zarabiaj 15 % co miesiąc",
-    "seoDescription": "Rozmawiasz ze sprzedawcami w e-commerce? Każdy sklep, który wykupi abonament z Twojego linku, płaci Ci prowizję co miesiąc, dopóki pozostaje abonentem."
+    "seoDescription": "Rozmawiasz ze sprzedawcami w e-commerce? Każdy sklep, który wykupi abonament z Twojego linku, płaci Ci prowizję co miesiąc, dopóki pozostaje abonentem.",
+    "dashboardCta": "Otwórz panel partnera"
   }
 }
