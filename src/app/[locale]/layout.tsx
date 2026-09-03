@@ -1,5 +1,5 @@
 import { Toast } from '@heroui/react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -9,8 +9,10 @@ import { AuditToastWatcher } from '@/widgets/audit-toast-watcher';
 import { SiteFooter } from '@/widgets/site-footer';
 import { SiteHeader } from '@/widgets/site-header';
 import { ThemeProvider } from '@/shared/ui';
+import { ServiceWorkerRegistration } from '@/shared/pwa';
 import { getAppContactEmail } from '@/shared/config';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
+import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../manifest';
 import '../globals.css';
 // SVG flag glyphs — Windows doesn't ship flag emoji in its system fonts,
 // so the locale switcher fell back to the country code letters. flag-icons
@@ -124,7 +126,14 @@ export async function generateMetadata({
         { url: '/osl-light.svg', type: 'image/svg+xml', media: '(prefers-color-scheme: dark)' }
       ],
       shortcut: '/favicon.ico',
-      apple: '/favicon.ico'
+      apple: '/icons/apple-touch-icon.png'
+    },
+    // Added to an iPhone's home screen, the app runs without Safari's chrome
+    // and keeps an opaque bar with dark glyphs above the page.
+    appleWebApp: {
+      capable: true,
+      title: 'OneShopLab',
+      statusBarStyle: 'default'
     },
     category: 'technology'
   } satisfies Metadata;
@@ -132,6 +141,29 @@ export async function generateMetadata({
 
 // All our pages depend on request-scoped data (auth cookie, DB lookups,
 // search params) so we keep them dynamic.
+/**
+ * The system bars of the installed app. Android tints its status bar with this
+ * value and Chrome derives the icon contrast from it, so it follows the app's
+ * own background rather than the brand blue — a coloured bar above a white page
+ * reads as a second header that belongs to nobody.
+ *
+ * Android's navigation bar is out of reach here: no meta and no manifest field
+ * addresses it. Only the native shell can, which is why the Capacitor project
+ * sets it (see `capacitor.config.ts`).
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR_LIGHT },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR_DARK }
+  ],
+  colorScheme: 'light dark',
+  width: 'device-width',
+  initialScale: 1,
+  // The notch and the home indicator are painted by the layout, so the page
+  // owns the whole screen instead of stopping at the safe area.
+  viewportFit: 'cover'
+};
+
 export const dynamic = 'force-dynamic';
 
 export default async function LocaleLayout({
@@ -157,6 +189,24 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="min-h-screen flex flex-col antialiased font-sans">
+        {/*
+          Installed, the app owns the whole screen (`viewportFit: 'cover'`), so
+          the strips behind the notch and under the home indicator take the
+          colour of whatever the page paints there — a coloured button at the
+          bottom of a form would tint the system bar. These two keep both ends
+          on the app's own background, in either colour scheme.
+        */}
+        <div
+          className="fixed inset-x-0 top-0 z-50 bg-[var(--background)]"
+          style={{ height: 'env(safe-area-inset-top)' }}
+          aria-hidden="true"
+        />
+        <div
+          className="fixed inset-x-0 bottom-0 z-50 bg-[var(--background)]"
+          style={{ height: 'env(safe-area-inset-bottom)' }}
+          aria-hidden="true"
+        />
+        <ServiceWorkerRegistration />
         {/* JSON-LD: site identity for rich results. Kept in the body so it's
             covered by the existing CSP and emitted on every locale page. */}
         <script
