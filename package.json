@@ -24,6 +24,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm i18n:check && pnpm deps:circular && pnpm test && pnpm audit:prod",
     "prepare": "husky",
     "deploy": "bash scripts/deploy.sh",
+    "deploy:staging": "bash scripts/deploy-staging.sh",
     "backup": "bash scripts/backup/backup-mysql.sh",
     "backup:restore-test": "bash scripts/backup/restore-test.sh",
     "backup:usage": "tsx scripts/backup/r2-backup.ts usage",

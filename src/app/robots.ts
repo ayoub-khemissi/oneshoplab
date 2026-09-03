@@ -3,6 +3,14 @@ import type { MetadataRoute } from 'next';
 const SITE_URL = process.env.APP_URL ?? 'https://oneshoplab.com';
 
 export default function robots(): MetadataRoute.Robots {
+  // The staging copy serves the same pages under a different host; indexed, it
+  // would compete with production for its own name. nginx already sends a
+  // noindex header there — this is the second lock, for crawlers that read
+  // robots.txt first and never fetch the page.
+  if (process.env.APP_ENV === 'staging') {
+    return { rules: [{ userAgent: '*', disallow: '/' }] };
+  }
+
   return {
     rules: [
       {
