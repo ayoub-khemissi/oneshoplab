@@ -176,6 +176,7 @@ export async function SiteHeader() {
                     dashboardLabel={t('dashboard')}
                     profileLabel={t('profile')}
                     subscriptionLabel={t('subscription')}
+                    affiliateLabel={t('affiliate')}
                     preferencesLabel={t('preferences')}
                     buyCreditsLabel={t('buyCredits')}
                     manageSubscriptionLabel={t('manageSubscription')}

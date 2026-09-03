@@ -232,6 +232,15 @@ export function MobileMenu({
                     {labels.subscription}
                   </ListBox.Item>
                   <ListBox.Item
+                    id="account-affiliate"
+                    href="/account/affiliate"
+                    textValue={labels.affiliate}
+                    onAction={() => setIsOpen(false)}
+                  >
+                    <BadgeEuro className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                    {labels.affiliate}
+                  </ListBox.Item>
+                  <ListBox.Item
                     id="credits"
                     href="/account/credits"
                     textValue={labels.buyCredits}

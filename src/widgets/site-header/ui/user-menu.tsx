@@ -2,6 +2,7 @@
 
 import { Avatar } from '@heroui/react';
 import {
+  BadgeEuro,
   Coins,
   CreditCard,
   LayoutDashboard,
@@ -28,6 +29,7 @@ interface UserMenuProps {
   dashboardLabel: string;
   profileLabel: string;
   subscriptionLabel: string;
+  affiliateLabel: string;
   preferencesLabel: string;
   buyCreditsLabel: string;
   manageSubscriptionLabel: string;
@@ -52,6 +54,7 @@ export function UserMenu({
   dashboardLabel,
   profileLabel,
   subscriptionLabel,
+  affiliateLabel,
   preferencesLabel,
   buyCreditsLabel,
   manageSubscriptionLabel,
@@ -155,6 +158,15 @@ export function UserMenu({
           >
             <CreditCard className="size-4 text-[var(--muted)]" />
             {subscriptionLabel}
+          </Link>
+          <Link
+            href="/account/affiliate"
+            onClick={() => setOpen(false)}
+            className="px-3 py-2 text-sm hover:bg-[var(--default)] transition-colors flex items-center gap-2"
+            role="menuitem"
+          >
+            <BadgeEuro className="size-4 text-[var(--muted)]" />
+            {affiliateLabel}
           </Link>
           <Link
             href="/account/preferences"
