@@ -31,9 +31,10 @@ describe('reflectAppliedChange', () => {
 
   async function makeProduct(over: Partial<typeof products.$inferInsert> = {}) {
     const id = randomUUID();
-    await db.insert(products).values({
+    const values: typeof products.$inferInsert = {
       id,
       projectId,
+      source: 'woocommerce',
       sourceId: `p-${id.slice(0, 8)}`,
       title: 'Ancien titre',
       descriptionHtml: '<p>ancienne description</p>',
@@ -48,9 +49,10 @@ describe('reflectAppliedChange', () => {
         },
         { src: 'https://cdn.test/2.jpg', alt: null, width: null, height: null, sourceImageId: '22' }
       ],
-      status: 'active',
-      ...over
-    });
+      status: 'active'
+    };
+    Object.assign(values, over);
+    await db.insert(products).values(values);
     const [row] = await db.select().from(products).where(eq(products.id, id));
     return row;
   }
