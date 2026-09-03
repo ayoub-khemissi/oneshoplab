@@ -1,4 +1,4 @@
-import { aiProviderNamesForCopy, aiSubProcessors } from '@/entities/ai-model';
+import { aiProviderNamesForCopy } from '@/entities/ai-model';
 import { getAppContactEmail } from '@/shared/config';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
