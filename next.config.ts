@@ -21,19 +21,11 @@ const CSP_REPORT_ONLY = [
   'report-uri /api/csp-report'
 ].join('; ');
 
-// One id, generated at build time, used both as Next's build id and as a value
-// inlined into the bundle. /api/health reports the inlined one, so a deploy that
-// built successfully but failed to restart the process shows up as a mismatch
-// with .next/BUILD_ID on disk instead of passing silently.
-const BUILD_ID = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
-
 const config: NextConfig = {
   // Build output dir. Default `.next` is what PM2 serves; a separate dir lets
   // us build/serve a production bundle (e2e, future blue-green) without
   // touching the live one: NEXT_DIST_DIR=.next-e2e pnpm build && next start.
   distDir: process.env.NEXT_DIST_DIR ?? '.next',
-  generateBuildId: () => BUILD_ID,
-  env: { APP_BUILD_ID: BUILD_ID },
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }]
   },

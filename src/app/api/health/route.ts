@@ -11,6 +11,16 @@ export const dynamic = 'force-dynamic';
 /** Worker ticks every 5 s; anything past this is a stuck or dead worker. */
 const WORKER_STALE_MS = 90_000;
 
+/** Read at module load, so it names the build this process booted on and not
+ *  whatever a later deploy wrote to disk. See the mismatch check in GET. */
+const build = ((): string => {
+  try {
+    return readFileSync(join(process.cwd(), '.next', 'BUILD_ID'), 'utf8').trim();
+  } catch {
+    return 'unknown'; // dev server has no BUILD_ID
+  }
+})();
+
 interface Check {
   ok: boolean;
   detail?: string;
@@ -38,11 +48,10 @@ export async function GET(): Promise<NextResponse> {
       ? { ok: false, detail: 'no heartbeat' }
       : { ok: age < WORKER_STALE_MS, detail: `${Math.round(age / 1000)}s ago` };
 
-  // `build` is inlined at compile time, so it is the build this PROCESS is
-  // running. `builtOnDisk` is the newest build present. They differ when a
-  // deploy built but never restarted PM2 — the failure mode that used to look
-  // like a healthy deploy.
-  const build = process.env.APP_BUILD_ID ?? 'unknown';
+  // `build` is read once, when this module is first loaded — i.e. the build the
+  // running PROCESS started on. `builtOnDisk` is re-read per request. They
+  // differ when a deploy built but never restarted PM2, which used to look
+  // exactly like a healthy deploy because both values came off disk.
   let builtOnDisk = build;
   try {
     builtOnDisk = readFileSync(join(process.cwd(), '.next', 'BUILD_ID'), 'utf8').trim();
