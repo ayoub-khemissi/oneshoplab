@@ -1,4 +1,5 @@
 import webpush from 'web-push';
+import { isNativePushConfigured, sendNativePush } from './send-native';
 import { listSubscriptions, purgeSubscription, touchSubscription } from './subscriptions';
 import type { PushPayload } from '../model/types';
 
@@ -28,8 +29,9 @@ function ensureConfigured(): boolean {
   return true;
 }
 
+/** Either channel being configured is enough to have something to send with. */
 export function isPushConfigured(): boolean {
-  return ensureConfigured();
+  return ensureConfigured() || isNativePushConfigured();
 }
 
 /**
@@ -40,20 +42,28 @@ export function isPushConfigured(): boolean {
  * @returns how many devices were actually reached.
  */
 export async function sendPushToUser(userId: string, payload: PushPayload): Promise<number> {
-  if (!ensureConfigured()) return 0;
-  // Web push only: a Firebase device carries a token, not an endpoint, and is
-  // delivered to by the native channel (see docs/ops/store-release.md).
-  const devices = (await listSubscriptions(userId)).filter(
+  const all = await listSubscriptions(userId);
+  if (all.length === 0) return 0;
+
+  // The same person may hold both: a browser on the laptop and the app from a
+  // store on the phone. Each channel delivers to its own rows.
+  const tokens = all
+    .filter((device) => device.channel === 'fcm' && device.deviceToken)
+    .map((device) => device.deviceToken as string);
+  const nativeDelivered = await sendNativePush(tokens, payload);
+
+  if (!ensureConfigured()) return nativeDelivered;
+  const devices = all.filter(
     (device): device is typeof device & { endpoint: string; p256dh: string; auth: string } =>
       device.channel === 'webpush' &&
       Boolean(device.endpoint) &&
       Boolean(device.p256dh) &&
       Boolean(device.auth)
   );
-  if (devices.length === 0) return 0;
+  if (devices.length === 0) return nativeDelivered;
 
   const body = JSON.stringify(payload);
-  let delivered = 0;
+  let delivered = nativeDelivered;
   await Promise.all(
     devices.map(async (device) => {
       try {

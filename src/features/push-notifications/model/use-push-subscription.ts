@@ -2,11 +2,23 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import {
+  hasNativeToken,
+  registerNativePush,
+  unregisterNativePush
+} from '../lib/native-push.client';
+import {
   isIosBrowserWithoutPush,
   isWebPushAvailable,
   subscribeToWebPush,
   unsubscribeFromWebPush
 } from '../lib/web-push.client';
+
+/** Running inside the app published to the stores, where push is native. */
+function inNativeShell(): boolean {
+  if (typeof window === 'undefined') return false;
+  const capacitor = (window as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  return Boolean(capacitor?.isNativePlatform?.());
+}
 
 /**
  * Where this device stands with push.
@@ -58,6 +70,9 @@ async function readSubscription(): Promise<PushSubscription | null> {
 
 /** Where this device stands right now, as the browser tells it. */
 async function readStatus(): Promise<PushStatus> {
+  // The store app has no browser permission to read: it either registered a
+  // Firebase token with the account, or it has not asked yet.
+  if (inNativeShell()) return hasNativeToken() ? 'on' : 'prompt';
   if (!isWebPushAvailable()) {
     return isIosBrowserWithoutPush() ? 'ios_install' : 'unavailable';
   }
@@ -93,6 +108,12 @@ export function usePushSubscription() {
   const enable = useCallback(async (): Promise<boolean> => {
     setIsBusy(true);
     try {
+      if (inNativeShell()) {
+        const ok = await registerNativePush();
+        writePushDisabled(!ok);
+        setStatus(ok ? 'on' : 'denied');
+        return ok;
+      }
       await subscribeToWebPush();
       writePushDisabled(false);
       setStatus('on');
@@ -110,7 +131,8 @@ export function usePushSubscription() {
   const disable = useCallback(async (): Promise<boolean> => {
     setIsBusy(true);
     try {
-      await unsubscribeFromWebPush();
+      if (inNativeShell()) await unregisterNativePush();
+      else await unsubscribeFromWebPush();
       writePushDisabled(true);
       setStatus('off');
       return true;

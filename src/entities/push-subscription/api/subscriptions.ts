@@ -63,3 +63,50 @@ export async function touchSubscription(endpoint: string): Promise<void> {
     .set({ lastSeenAt: new Date() })
     .where(eq(pushSubscriptions.endpoint, endpoint));
 }
+
+/** Register (or re-register) an installed app's Firebase token. */
+export async function saveDeviceToken(input: {
+  userId: string;
+  deviceToken: string;
+  userAgent?: string | null;
+}): Promise<void> {
+  const now = new Date();
+  await db
+    .insert(pushSubscriptions)
+    .values({
+      id: randomUUID(),
+      userId: input.userId,
+      channel: 'fcm',
+      deviceToken: input.deviceToken,
+      userAgent: input.userAgent?.slice(0, 512) ?? null,
+      lastSeenAt: now
+    })
+    .onDuplicateKeyUpdate({
+      set: {
+        userId: input.userId,
+        channel: 'fcm',
+        userAgent: input.userAgent?.slice(0, 512) ?? null,
+        lastSeenAt: now
+      }
+    });
+}
+
+/** Unregister one installed app of one account. */
+export async function removeDeviceToken(userId: string, token: string): Promise<void> {
+  await db
+    .delete(pushSubscriptions)
+    .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.deviceToken, token)));
+}
+
+/** Firebase reported the token as gone: it never comes back. */
+export async function purgeDeviceToken(token: string): Promise<void> {
+  await db.delete(pushSubscriptions).where(eq(pushSubscriptions.deviceToken, token));
+}
+
+/** Bumped after a successful native send. */
+export async function touchDeviceToken(token: string): Promise<void> {
+  await db
+    .update(pushSubscriptions)
+    .set({ lastSeenAt: new Date() })
+    .where(eq(pushSubscriptions.deviceToken, token));
+}
