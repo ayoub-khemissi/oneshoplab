@@ -92,10 +92,12 @@ export const config = {
   //   - Next.js internals (_next, _vercel)
   //   - API routes
   //   - Files served from /public ending with a known static extension
+  //   - The service worker and its offline page: a locale redirect on either
+  //     breaks `cache.addAll` at install time, so the worker never activates
   //
   // The previous `.*\\..*` exclusion broke paths like /dashboard/sites/example.com
   // that legitimately contain a dot (the merchant's domain).
   matcher: [
-    '/((?!api|downloads|_next|_vercel|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|opengraph-image|twitter-image|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|otf|css|js|map)$).*)'
+    '/((?!api|downloads|_next|_vercel|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|sw\\.js|offline\\.html|opengraph-image|twitter-image|.*\\.(?:png|jpg|jpeg|gif|svg|webp|avif|ico|woff2?|ttf|otf|css|js|map)$).*)'
   ]
 };
