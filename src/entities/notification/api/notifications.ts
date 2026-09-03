@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { and, desc, eq, inArray, isNotNull, notInArray } from 'drizzle-orm';
 import { isPushConfigured, sendPushToUser } from '@/entities/push-subscription';
 import { db } from '@/shared/db';
-import { legalConsents, notifications, type NotificationKind } from '@/shared/db/schema';
+import { legalConsents, notifications, users, type NotificationKind } from '@/shared/db/schema';
 import { pushPayloadFor } from '../lib/notification-push';
 
 /** Per-user retention cap. We keep the 20 most recent notifications
@@ -64,8 +64,17 @@ export async function notify(input: NotificationInput): Promise<string> {
   return id;
 }
 
-/** Locale of the account, as last signed on a consent — English otherwise. */
+/**
+ * The language to write in: the one the account is reading the app in, and
+ * failing that the one it last signed something in. English otherwise.
+ */
 async function localeOf(userId: string): Promise<string | null> {
+  const [user] = await db
+    .select({ locale: users.locale })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (user?.locale) return user.locale;
   const [consent] = await db
     .select({ locale: legalConsents.locale })
     .from(legalConsents)

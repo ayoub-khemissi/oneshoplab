@@ -9,6 +9,7 @@ import { UserMenu } from './user-menu';
 import type { NotificationKind } from '@/shared/db/schema';
 import type { Locale } from '@/i18n/routing';
 import { PushOptInPrompt } from '@/features/push-notifications/client';
+import { setAccountLocaleAction } from '@/features/account/actions';
 
 /**
  * Site-wide header. Server component — fetches the auth session once per
@@ -140,7 +141,11 @@ export async function SiteHeader() {
               {user ? (
                 <NotificationBell ariaLabel={t('notifications.title')} labels={notifLabels} />
               ) : null}
-              <LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />
+              <LocaleSwitcher
+                current={locale}
+                ariaLabel={t('changeLanguage')}
+                onLocalePicked={user ? setAccountLocaleAction : undefined}
+              />
               <ThemeToggle ariaLabel={t('changeTheme')} />
               <span className="w-px h-6 bg-[var(--border)] mx-1.5" aria-hidden />
               {user ? (
@@ -243,7 +248,13 @@ export async function SiteHeader() {
                   joinDiscord: t('joinDiscord')
                 }}
                 discordUrl={process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? null}
-                localeSwitcher={<LocaleSwitcher current={locale} ariaLabel={t('changeLanguage')} />}
+                localeSwitcher={
+                  <LocaleSwitcher
+                    current={locale}
+                    ariaLabel={t('changeLanguage')}
+                    onLocalePicked={user ? setAccountLocaleAction : undefined}
+                  />
+                }
                 themeToggle={<ThemeToggle ariaLabel={t('changeTheme')} />}
               />
             </div>

@@ -107,6 +107,10 @@ export const users = mysqlTable('users', {
   creditsBalanceSubscription: int('credits_balance_subscription').notNull().default(0),
   /** Accumulated pack purchases — never expires. */
   creditsBalancePack: int('credits_balance_pack').notNull().default(0),
+  /** The language the account last chose in the app. Emails and push
+   *  notifications are written in it — the interface changing language and the
+   *  notifications staying in another is the same account speaking two. */
+  locale: varchar('locale', { length: 8 }),
   preferredChatModel: mysqlEnum('preferred_chat_model', CHAT_MODEL_IDS)
     .notNull()
     .default('sonnet-5'),

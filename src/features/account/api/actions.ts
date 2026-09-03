@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
+import { routing } from '@/i18n/routing';
 import { auth, hashPassword, signOut } from '@/entities/user';
 import { db } from '@/shared/db';
 import { subscriptions, users } from '@/shared/db/schema';
@@ -128,4 +129,19 @@ export async function deleteAccountAction(formData: FormData): Promise<ActionRes
   // Terminal redirect — the client form's await will be interrupted by the
   // framework's NEXT_REDIRECT signal, so we never actually return ok:true.
   redirect('/?account_deleted=1');
+}
+
+/**
+ * Remember the language the account is reading in.
+ *
+ * The interface follows the URL, but e-mails and push notifications are written
+ * by the server long after the visit — without this they would keep speaking
+ * whatever language the person happened to sign up in. Silent by design: it
+ * rides along a language switch nobody expects a confirmation for.
+ */
+export async function setAccountLocaleAction(locale: string): Promise<void> {
+  const session = await auth();
+  if (!session?.user?.id) return;
+  if (!(routing.locales as readonly string[]).includes(locale)) return;
+  await db.update(users).set({ locale }).where(eq(users.id, session.user.id));
 }

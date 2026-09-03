@@ -13,6 +13,8 @@ import {
 interface LocaleSwitcherProps {
   current: Locale;
   ariaLabel: string;
+  /** Persists the choice on the account — omitted for a signed-out visitor. */
+  onLocalePicked?: (locale: Locale) => void | Promise<void>;
 }
 
 /**
@@ -21,7 +23,7 @@ interface LocaleSwitcherProps {
  * Uses next-intl's `usePathname` + `useRouter` to keep the current path when
  * switching locale.
  */
-export function LocaleSwitcher({ current, ariaLabel }: LocaleSwitcherProps) {
+export function LocaleSwitcher({ current, ariaLabel, onLocalePicked }: LocaleSwitcherProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -46,6 +48,11 @@ export function LocaleSwitcher({ current, ariaLabel }: LocaleSwitcherProps) {
   function pickLocale(locale: Locale) {
     setOpen(false);
     if (locale === current) return;
+    // Tell the account too, so the e-mails and the notifications it will get
+    // later are written in the language it is being read in. Fire-and-forget:
+    // a signed-out visitor has nothing to remember, and a failure here must
+    // not hold up the navigation.
+    void onLocalePicked?.(locale);
     router.replace(pathname, { locale });
   }
 
