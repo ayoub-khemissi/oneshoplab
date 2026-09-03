@@ -123,7 +123,7 @@ export function NewImageModal({ costPerImage, isReplace, onCancel, onSubmit }: N
             placeholder={t('customPromptPlaceholder')}
             maxLength={800}
             rows={3}
-            className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--card)] p-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-y"
+            className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--surface)] p-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-y"
             autoFocus
           />
         ) : null}

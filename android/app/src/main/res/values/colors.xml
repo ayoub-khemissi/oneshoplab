@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The shell's own surfaces. They exist to disappear: the page behind them is
+  white in light mode and near-black in dark, and the system bars take the same
+  value so the app has one edge-to-edge colour instead of three.
+  Kept in sync by hand with `THEME_COLOR_LIGHT` / `THEME_COLOR_DARK`
+  (src/app/manifest.ts).
+-->
+<resources>
+    <color name="colorPrimary">#fafdff</color>
+    <color name="colorPrimaryDark">#fafdff</color>
+    <color name="colorAccent">#0a84ff</color>
+    <!-- Status bar, navigation bar and the splash background. -->
+    <color name="systemBar">#fafdff</color>
+    <color name="appBackground">#fafdff</color>
+</resources>

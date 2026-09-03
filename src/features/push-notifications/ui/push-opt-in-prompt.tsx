@@ -85,7 +85,7 @@ export function PushOptInPrompt({ signedIn }: { signedIn: boolean }) {
   return (
     <div
       data-testid="push-opt-in"
-      className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 shadow-lg sm:inset-x-auto sm:right-4"
+      className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-xl sm:inset-x-auto sm:right-4"
       style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-start gap-3">

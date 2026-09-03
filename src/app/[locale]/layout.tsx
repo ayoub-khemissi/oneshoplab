@@ -9,7 +9,7 @@ import { AuditToastWatcher } from '@/widgets/audit-toast-watcher';
 import { SiteFooter } from '@/widgets/site-footer';
 import { SiteHeader } from '@/widgets/site-header';
 import { ThemeProvider } from '@/shared/ui';
-import { ServiceWorkerRegistration } from '@/shared/pwa';
+import { ServiceWorkerRegistration, ThemeColorSync } from '@/shared/pwa';
 import { getAppContactEmail } from '@/shared/config';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../manifest';
@@ -232,6 +232,9 @@ export default async function LocaleLayout({
           }}
         />
         <ThemeProvider>
+          {/* Inside the provider: it reads the resolved theme to paint the
+              system bars with what the screen actually shows. */}
+          <ThemeColorSync />
           <NextIntlClientProvider>
             <SiteHeader />
             <div className="flex-1 flex flex-col">{children}</div>

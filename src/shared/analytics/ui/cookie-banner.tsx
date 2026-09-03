@@ -68,7 +68,7 @@ export function CookieBanner() {
       aria-live="polite"
       aria-label={t('ariaLabel')}
       style={{ position: 'fixed', zIndex: 100 }}
-      className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md rounded-lg border border-[var(--border)] bg-[var(--card)]/85 supports-[backdrop-filter]:bg-[var(--card)]/70 backdrop-blur-xl backdrop-saturate-150 shadow-xl p-4 flex items-start gap-3"
+      className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md rounded-lg border border-[var(--border)] bg-[var(--surface)] supports-[backdrop-filter]:bg-[var(--surface)]/95 backdrop-blur-xl backdrop-saturate-150 shadow-xl p-4 flex items-start gap-3"
     >
       <Cookie className="size-4 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
       <div className="flex-1 flex flex-col gap-2 text-xs leading-relaxed">

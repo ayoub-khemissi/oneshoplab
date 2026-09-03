@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">OneShopLab</string>
+    <string name="title_activity_main">OneShopLab</string>
+    <string name="package_name">com.oneshoplab.app</string>
+    <string name="custom_url_scheme">com.oneshoplab.app</string>
+</resources>

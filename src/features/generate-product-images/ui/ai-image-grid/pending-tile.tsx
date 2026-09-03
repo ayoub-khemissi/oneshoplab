@@ -36,7 +36,7 @@ export function PendingTile({ job, now, isBusy, onDelete }: PendingTileProps) {
             type="button"
             onClick={onDelete}
             disabled={isBusy === 'delete'}
-            className="pointer-events-auto mt-1 px-2 py-1 rounded text-[10px] uppercase tracking-wider bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)] transition-colors disabled:opacity-50"
+            className="pointer-events-auto mt-1 px-2 py-1 rounded text-[10px] uppercase tracking-wider bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)] transition-colors disabled:opacity-50"
           >
             {isBusy === 'delete' ? t('cancellingShort') : t('cancelAndRefund')}
           </button>

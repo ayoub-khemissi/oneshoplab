@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Same surfaces on a phone set to dark: the app follows the system there. -->
+<resources>
+    <color name="colorPrimary">#020409</color>
+    <color name="colorPrimaryDark">#020409</color>
+    <color name="colorAccent">#0a84ff</color>
+    <color name="systemBar">#020409</color>
+    <color name="appBackground">#020409</color>
+</resources>

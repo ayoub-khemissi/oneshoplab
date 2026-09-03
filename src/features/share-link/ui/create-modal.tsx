@@ -117,7 +117,7 @@ export function CreateModal({
               onChange={(e) => setLabel(e.target.value)}
               maxLength={120}
               placeholder={t('labelPlaceholder')}
-              className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--card)] px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             />
           </label>
 

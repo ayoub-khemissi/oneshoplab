@@ -212,7 +212,7 @@ function SiteCard({ site }: { site: SiteCardData }) {
   // delete button and the pending-changes pill are interactive too, and an
   // anchor inside an anchor is invalid HTML (React warns, hydration diverges).
   return (
-    <div className="group relative rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--card)] flex flex-col p-5 gap-4">
+    <div className="group relative rounded-lg border border-[var(--border)] hover:border-[var(--accent)] transition-colors bg-[var(--surface)] flex flex-col p-5 gap-4">
       <div className="flex items-center gap-3 min-w-0">
         <SiteFavicon domain={site.domain} size={28} className="rounded shrink-0" />
         <div className="flex flex-col min-w-0 flex-1">

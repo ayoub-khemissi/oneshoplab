@@ -181,7 +181,7 @@ export function AccountDeleteForm({
   }
 
   return (
-    <div className="rounded-md border border-[var(--danger)]/40 bg-[var(--card)] p-5 flex flex-col gap-3">
+    <div className="rounded-md border border-[var(--danger)]/40 bg-[var(--surface)] p-5 flex flex-col gap-3">
       <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--danger)]">
         {copy.dangerTitle}
       </h2>
@@ -228,7 +228,7 @@ export function AccountDeleteForm({
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col gap-3">
+    <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-5 flex flex-col gap-3">
       <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--muted)]">{title}</h2>
       {children}
     </div>
