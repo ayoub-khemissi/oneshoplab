@@ -50,8 +50,11 @@ fi
 echo "BUILD_ID=$(cat .next/BUILD_ID)"
 
 log "restart staging web + worker"
-pm2 startOrRestart ecosystem.config.cjs \
-  --only oneshoplab-staging-web,oneshoplab-staging-worker --update-env >/dev/null
+# See scripts/deploy.sh — startOrRestart can silently no-op and leave the old
+# process serving the previous build.
+pm2 delete oneshoplab-staging-web oneshoplab-staging-worker >/dev/null 2>&1 || true
+pm2 start ecosystem.config.cjs --only oneshoplab-staging-web,oneshoplab-staging-worker >/dev/null
+pm2 save >/dev/null
 sleep 6
 
 log "health check"
@@ -60,4 +63,9 @@ for path in /fr /fr/pricing /api/health; do
   printf '  %-14s %s\n' "$path" "$code"
   [[ "$code" == "200" ]] || { echo "✗ ${path} returned ${code}" >&2; exit 1; }
 done
+
+served=$(curl -s https://staging.oneshoplab.com/api/health | sed -n 's/.*"build":"\([^"]*\)".*/\1/p')
+printf '  %-14s %s\n' "served build" "${served:-unknown}"
+[[ "$served" == "$(cat .next/BUILD_ID)" ]] || {
+  echo "✗ the running process serves build '${served}', not $(cat .next/BUILD_ID)" >&2; exit 1; }
 echo "✓ staging deployed $(git rev-parse --short HEAD)"

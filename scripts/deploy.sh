@@ -47,9 +47,13 @@ fi
 echo "BUILD_ID=$(cat .next/BUILD_ID)"
 
 log "restart web + worker"
-# startOrRestart re-reads ecosystem.config.cjs (interpreter, env) — a plain
-# `pm2 restart` would keep whatever interpreter the process was started with.
-pm2 startOrRestart ecosystem.config.cjs --only oneshoplab-web,oneshoplab-worker --update-env >/dev/null
+# delete + start, not startOrRestart: the latter has been observed to no-op on
+# an already-running app, leaving the OLD process serving while the health check
+# passed (it read BUILD_ID off disk, which the fresh build had just updated).
+# delete guarantees the ecosystem file is re-read and the process is new.
+pm2 delete oneshoplab-web oneshoplab-worker >/dev/null 2>&1 || true
+pm2 start ecosystem.config.cjs --only oneshoplab-web,oneshoplab-worker >/dev/null
+pm2 save >/dev/null
 sleep 6
 
 log "health check"
@@ -58,5 +62,12 @@ for path in /fr /fr/pricing /fr/audit; do
   printf '  %-14s %s\n' "$path" "$code"
   [[ "$code" == "200" ]] || { echo "✗ ${path} returned ${code}" >&2; exit 1; }
 done
+
+# The build id in /api/health is compiled INTO the bundle, so a mismatch with
+# .next/BUILD_ID means the process serving traffic is not the build we just made.
+served=$(curl -s https://oneshoplab.com/api/health | sed -n 's/.*"build":"\([^"]*\)".*/\1/p')
+printf '  %-14s %s\n' "served build" "${served:-unknown}"
+[[ "$served" == "$(cat .next/BUILD_ID)" ]] || {
+  echo "✗ the running process serves build '${served}', not $(cat .next/BUILD_ID)" >&2; exit 1; }
 pm2 list | grep -E 'oneshoplab-(web|worker)' | awk -F'│' '{print "  " $3 $10}'
 echo "✓ deployed $(git rev-parse --short HEAD)"

@@ -38,16 +38,24 @@ export async function GET(): Promise<NextResponse> {
       ? { ok: false, detail: 'no heartbeat' }
       : { ok: age < WORKER_STALE_MS, detail: `${Math.round(age / 1000)}s ago` };
 
-  let build = 'unknown';
+  // `build` is inlined at compile time, so it is the build this PROCESS is
+  // running. `builtOnDisk` is the newest build present. They differ when a
+  // deploy built but never restarted PM2 — the failure mode that used to look
+  // like a healthy deploy.
+  const build = process.env.APP_BUILD_ID ?? 'unknown';
+  let builtOnDisk = build;
   try {
-    build = readFileSync(join(process.cwd(), '.next', 'BUILD_ID'), 'utf8').trim();
+    builtOnDisk = readFileSync(join(process.cwd(), '.next', 'BUILD_ID'), 'utf8').trim();
   } catch {
     /* dev server has no BUILD_ID */
+  }
+  if (builtOnDisk !== build) {
+    checks.build = { ok: false, detail: `process on ${build}, disk has ${builtOnDisk}` };
   }
 
   const ok = Object.values(checks).every((c) => c.ok);
   return NextResponse.json(
-    { ok, checks, build, at: new Date().toISOString() },
+    { ok, checks, build, builtOnDisk, at: new Date().toISOString() },
     { status: ok ? 200 : 503, headers: { 'cache-control': 'no-store' } }
   );
 }
