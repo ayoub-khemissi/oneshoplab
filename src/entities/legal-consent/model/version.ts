@@ -5,4 +5,4 @@
  * Kept free of framework imports so auth.ts and route handlers can
  * import it without pulling next-intl/server into their module graph.
  */
-export const LEGAL_TERMS_VERSION = '2026-08-29';
+export const LEGAL_TERMS_VERSION = '2026-09-03';

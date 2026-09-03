@@ -1,7 +1,7 @@
 {
-  "version": "1.6.2",
-  "sha256": "7fea57795fff47656febff65b74af7c56c22119644ae3b86c334cbc93957700f",
-  "builtAt": "2026-08-31T14:53:05Z",
+  "version": "1.7.0",
+  "sha256": "0fa8a0fb58b944370d9fa04fc546fba8a1f18528d37404f71fb0f4b6afb1ce0f",
+  "builtAt": "2026-09-03T06:19:52Z",
   "requires": {
     "wordpress": ">=6.0",
     "woocommerce": ">=7.0",

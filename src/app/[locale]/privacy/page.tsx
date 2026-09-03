@@ -32,7 +32,7 @@ export async function generateMetadata({
   };
 }
 
-const LAST_UPDATED = 'August 29, 2026';
+const LAST_UPDATED = 'September 3, 2026';
 const CONTACT_EMAIL = getAppContactEmail();
 const COMPANY_NAME = 'OneShopLab';
 const SERVICE_URL = 'https://oneshoplab.com';
@@ -203,7 +203,7 @@ export default function PrivacyPolicyPage() {
           .
         </p>
 
-        <h3>1.10 Contact form</h3>
+        <h3>1.11 Contact form</h3>
         <p>
           When you write to us through the contact form, we collect your name, email address,
           optional subject, message, preferred language, IP address and browser signature (the last
@@ -212,6 +212,39 @@ export default function PrivacyPolicyPage() {
           <strong>private, staff-only channel on our Discord server</strong> through our own bot, so
           that we can answer quickly. Discord Inc. therefore processes the content of your message
           as described in Section 4.
+        </p>
+
+        <h3>1.12 Store connections</h3>
+        <p>
+          When you connect a store, we receive and store the product catalogue that store sends us:
+          titles, descriptions, tags, prices, product images and the identifiers your platform uses
+          for them. This is the same catalogue we already scored, kept up to date by the connection
+          instead of by a public scrape. We also store what the connection needs to exist: the
+          hashed site key you generated (never the key itself, which is shown once and never again),
+          or the access token of the app you installed — encrypted at rest, and used only to read
+          your catalogue and to write back the changes you approved.
+        </p>
+        <p>
+          We record which changes were sent, when they were applied and what your store answered, so
+          you can see the history and undo a change. We do not receive your orders, your customers
+          or your payment data, and we never ask a connection for them. Disconnecting from the
+          Integrations tab deletes the credential immediately; the catalogue is deleted with the
+          project.
+        </p>
+
+        <h3>1.13 Notification devices</h3>
+        <p>
+          If you turn on notifications, we store what it takes to reach that device: the endpoint
+          your browser&apos;s push service issued and its two encryption keys, or, in the app
+          installed from an application store, the token issued by Firebase Cloud Messaging. We also
+          store your browser or device signature, so you can tell your devices apart in your
+          settings, and the date each was last reached.
+        </p>
+        <p>
+          This data identifies a device, never a person&apos;s behaviour: we do not track whether
+          you opened a notification, and we never use notifications for advertising. Turning the
+          switch off, signing out, or uninstalling the app removes the device; a push service that
+          reports an endpoint as gone has it deleted on the spot.
         </p>
 
         <h2>2. How We Use Your Data</h2>
@@ -271,9 +304,10 @@ export default function PrivacyPolicyPage() {
           </li>
           <li>
             <strong>Consent</strong> — for optional processing that requires it, namely analytics
-            cookies (Section 1.8), the Meta advertising pixel (Section 1.9), and marketing emails if
-            we add them. You may withdraw consent at any time; this does not affect the lawfulness
-            of prior processing.
+            cookies (Section 1.8), the Meta advertising pixel (Section 1.9), push notifications on a
+            device (Section 1.13), and marketing emails if we add them. You may withdraw consent at
+            any time — from your account settings, your browser, or your device — and this does not
+            affect the lawfulness of prior processing.
           </li>
         </ul>
 
@@ -321,6 +355,26 @@ export default function PrivacyPolicyPage() {
                   <td>{sp.location}</td>
                 </tr>
               ))}
+              <tr>
+                <td>
+                  Push services: Google LLC (FCM), Apple Inc. (APNs), Mozilla, Microsoft — whichever
+                  your browser or device uses
+                </td>
+                <td>
+                  Delivery of the notifications you asked for. They receive the device endpoint or
+                  token and the encrypted notice; we never send them your account data.
+                </td>
+                <td>USA / EU</td>
+              </tr>
+              <tr>
+                <td>Google LLC (Google Play) and Apple Inc. (App Store)</td>
+                <td>
+                  Distribution of our mobile application, where you install it from their store.
+                  They act as independent controllers for the download itself and for any purchase
+                  made through them.
+                </td>
+                <td>USA / Ireland (EU)</td>
+              </tr>
               <tr>
                 <td>Discord Inc.</td>
                 <td>
@@ -404,6 +458,16 @@ export default function PrivacyPolicyPage() {
             your plan (currently 30 days on Free and Starter, 60 days on Pro, 90 days on Scale),
             then deleted automatically. Images you have applied to a product are copied to that
             product and kept as long as the product exists.
+          </li>
+          <li>
+            <strong>Store connections</strong>: the credential (hashed site key or encrypted token)
+            lives until you revoke it, rotate it, or disconnect; a revoked key is kept as a revoked
+            record so it can never be reused. The catalogue and the history of applied changes are
+            deleted with the project.
+          </li>
+          <li>
+            <strong>Notification devices</strong>: until you turn notifications off on that device,
+            sign out of it, uninstall the app, or the push service tells us the device is gone.
           </li>
           <li>
             <strong>Contact-form messages</strong>: 24 months after the last exchange, then deleted.
