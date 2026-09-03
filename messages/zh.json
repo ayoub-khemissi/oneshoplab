@@ -1793,5 +1793,18 @@
     "rescueTitle": "连接店铺，我们才能读取你的商品目录",
     "rescueLead": "你的店铺没有对外公开商品页面，这很常见，也不是问题。连接之后，OneShopLab 会直接读取你的目录，并把你的改动写回去。",
     "cardNotReadable": "外部无法读取商品目录"
+  },
+  "Push": {
+    "settingsTitle": "此设备上的通知",
+    "settingsLead": "在这里收到与铃铛相同的提醒：生成完成、诊断结束、店铺连接出问题。",
+    "deniedHint": "此浏览器的设置中已阻止 OneShopLab 的通知。请在那里允许后再回来。",
+    "iosInstallHint": "在 iPhone 和 iPad 上，通知只会送达已安装的应用：打开「分享」菜单，然后选择「添加到主屏幕」。",
+    "unavailableHint": "此浏览器不支持通知。请从已安装的应用或较新的浏览器中尝试。",
+    "promptTitle": "完成后通知你？",
+    "promptLead": "一次生成可能需要一分钟：完成时我们会通知你，即使你已经关掉标签页。",
+    "installTitle": "安装 OneShopLab",
+    "installLead": "在 iPhone 上打开「分享」菜单，选择「添加到主屏幕」：应用会全屏打开并可以向你推送通知。",
+    "enable": "开启",
+    "later": "以后再说"
   }
 }

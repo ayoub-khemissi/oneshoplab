@@ -13,6 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { signOutAction } from '@/features/account/actions';
+import { unsubscribeFromWebPush } from '@/features/push-notifications/client';
 import { createPortalSessionAction } from '@/features/billing/actions';
 
 interface UserMenuProps {
@@ -195,7 +196,16 @@ export function UserMenu({
               </button>
             </form>
           )}
-          <form action={signOutAction}>
+          <form
+            action={signOutAction}
+            // Unregister this device first: after the sign-out the action has
+            // no session to delete the subscription with, and the browser would
+            // keep receiving the notifications of an account nobody is signed
+            // into here any more.
+            onSubmit={() => {
+              void unsubscribeFromWebPush().catch(() => undefined);
+            }}
+          >
             <button
               type="submit"
               className="w-full text-left px-3 py-2 text-sm hover:bg-[var(--danger)]/10 text-[var(--danger)] transition-colors flex items-center gap-2 border-t border-[var(--border)]"

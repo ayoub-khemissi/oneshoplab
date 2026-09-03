@@ -1793,5 +1793,18 @@
     "rescueTitle": "Kataloğunu okuyabilmemiz için mağazanı bağla",
     "rescueLead": "Mağazan ürün sayfalarını dışarıya açmıyor; bu sık görülen ve sorun olmayan bir durum. Bağlandıktan sonra OneShopLab kataloğunu doğrudan okur ve düzeltmelerini oraya uygulayabilir.",
     "cardNotReadable": "Katalog dışarıdan okunamıyor"
+  },
+  "Push": {
+    "settingsTitle": "Bu cihazdaki bildirimler",
+    "settingsLead": "Zildekiyle aynı bildirimleri burada al: üretim bitti, analiz hazır, mağaza bağlantısında sorun var.",
+    "deniedHint": "Bu tarayıcının ayarlarında OneShopLab bildirimleri engellenmiş. Oradan izin ver, sonra buraya dön.",
+    "iosInstallHint": "iPhone ve iPad'de bildirimler yalnızca kurulu uygulamaya gelir: Paylaş menüsünü aç, ardından «Ana Ekrana Ekle».",
+    "unavailableHint": "Bu tarayıcı bildirimleri desteklemiyor. Kurulu uygulamadan ya da güncel bir tarayıcıdan dene.",
+    "promptTitle": "Hazır olunca haber verelim mi?",
+    "promptLead": "Bir üretim bir dakika sürebilir: sekmeyi kapatmış olsan da bittiğinde haber veririz.",
+    "installTitle": "OneShopLab'i kur",
+    "installLead": "iPhone'da Paylaş menüsünü aç, sonra «Ana Ekrana Ekle»: uygulama tam ekran açılır ve sana bildirim gönderebilir.",
+    "enable": "Aç",
+    "later": "Daha sonra"
   }
 }

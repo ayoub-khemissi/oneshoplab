@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import type { NotificationKind } from '@/shared/db/schema';
+import { notificationHref } from '../lib/href';
 
 interface NotificationRow {
   id: string;
@@ -260,7 +261,7 @@ function NotificationItem({
   const tone = kindTone(row.kind);
   const icon = kindIcon(row.kind);
   const detail = kindDetail(row, labels);
-  const href = kindHref(row);
+  const href = notificationHref(row);
   const time = formatRelative(row.createdAt, labels);
 
   const body = (
@@ -394,18 +395,6 @@ function kindDetail(
   }
 
   return { title, sub };
-}
-
-function kindHref(row: NotificationRow): string | null {
-  if (row.kind.startsWith('integration_') && row.projectId) {
-    return `/dashboard/sites/${row.projectId}?tab=integrations`;
-  }
-  if (row.productId && row.projectId) {
-    return `/dashboard/sites/${row.projectId}/products/${row.productId}`;
-  }
-  if (row.projectId) return `/dashboard/sites/${row.projectId}`;
-  if (row.auditId) return `/dashboard`;
-  return null;
 }
 
 function formatRelative(iso: string, labels: NotificationBellProps['labels']): string {

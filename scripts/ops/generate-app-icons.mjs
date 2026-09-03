@@ -4,11 +4,11 @@
  *
  *   node scripts/ops/generate-app-icons.mjs
  *
- * The blue tile is the app's face on a home screen: a coloured square reads as
- * an app, where a transparent glyph reads as a bookmark. The maskable variant
- * keeps the monogram inside the 80% safe circle Android crops to, and the badge
- * is a white silhouette — Android paints the status-bar badge from alpha only,
- * so a coloured icon there comes out as a white square.
+ * The brand is a black monogram on white, and the icons say the same: a filled
+ * white tile reads as an app where a transparent glyph reads as a bookmark. The
+ * maskable variant keeps the monogram inside the 80% safe circle Android crops
+ * to, and the badge is a bare silhouette — Android paints the status-bar badge
+ * from alpha only, so anything coloured there comes out as a white square.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -20,7 +20,8 @@ const sharp = require('sharp');
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = resolve(ROOT, 'public/icons');
-const BRAND = '#0a84ff';
+const INK = '#191A19';
+const PAPER = '#ffffff';
 
 /** The logo with every fill swapped for `color`, sized to `size`. */
 async function logo(color, size) {
@@ -53,20 +54,20 @@ async function main() {
   // full bleed square because the platform crops it to its own shape.
   await writeFile(
     resolve(OUT, 'icon-192.png'),
-    await tile({ size: 192, background: BRAND, logoColor: '#ffffff', logoRatio: 0.66, radius: 40 })
+    await tile({ size: 192, background: PAPER, logoColor: INK, logoRatio: 0.66, radius: 40 })
   );
   await writeFile(
     resolve(OUT, 'icon-512.png'),
-    await tile({ size: 512, background: BRAND, logoColor: '#ffffff', logoRatio: 0.66, radius: 108 })
+    await tile({ size: 512, background: PAPER, logoColor: INK, logoRatio: 0.66, radius: 108 })
   );
   await writeFile(
     resolve(OUT, 'icon-maskable-512.png'),
-    await tile({ size: 512, background: BRAND, logoColor: '#ffffff', logoRatio: 0.5, radius: 0 })
+    await tile({ size: 512, background: PAPER, logoColor: INK, logoRatio: 0.5, radius: 0 })
   );
   // iOS never rounds a transparent PNG and never shows one well: opaque, square.
   await writeFile(
     resolve(OUT, 'apple-touch-icon.png'),
-    await tile({ size: 180, background: BRAND, logoColor: '#ffffff', logoRatio: 0.66, radius: 0 })
+    await tile({ size: 180, background: PAPER, logoColor: INK, logoRatio: 0.66, radius: 0 })
   );
   // Status-bar badge: alpha only.
   await writeFile(resolve(OUT, 'badge-96.png'), await (await logo('#ffffff', 96)).png().toBuffer());

@@ -1793,5 +1793,18 @@
     "rescueTitle": "Verbinde deinen Shop, damit wir deinen Katalog lesen können",
     "rescueLead": "Dein Shop zeigt seine Produktseiten von außen nicht — das ist häufig und harmlos. Sobald er verbunden ist, liest OneShopLab deinen Katalog direkt und kann deine Korrekturen dort anwenden.",
     "cardNotReadable": "Katalog von außen nicht lesbar"
+  },
+  "Push": {
+    "settingsTitle": "Benachrichtigungen auf diesem Gerät",
+    "settingsLead": "Bekomme hier dieselben Hinweise wie in der Glocke: Generierung fertig, Analyse fertig, Verbindung zum Shop gestört.",
+    "deniedHint": "Benachrichtigungen sind für OneShopLab in den Einstellungen dieses Browsers blockiert. Erlaube sie dort und komm zurück.",
+    "iosInstallHint": "Auf iPhone und iPad erreichen Benachrichtigungen nur die installierte App: Teilen-Menü öffnen, dann „Zum Home-Bildschirm“.",
+    "unavailableHint": "Dieser Browser unterstützt keine Benachrichtigungen. Versuche es aus der installierten App oder einem aktuellen Browser.",
+    "promptTitle": "Bescheid geben, wenn es fertig ist?",
+    "promptLead": "Eine Generierung kann eine Minute dauern: Wir melden uns, wenn sie fertig ist — auch wenn du den Tab geschlossen hast.",
+    "installTitle": "OneShopLab installieren",
+    "installLead": "Auf dem iPhone: Teilen-Menü öffnen, dann „Zum Home-Bildschirm“. Die App startet im Vollbild und kann dich benachrichtigen.",
+    "enable": "Einschalten",
+    "later": "Später"
   }
 }

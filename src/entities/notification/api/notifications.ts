@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNotNull, notInArray } from 'drizzle-orm';
+import { isPushConfigured, sendPushToUser } from '@/entities/push-subscription';
 import { db } from '@/shared/db';
-import { notifications, type NotificationKind } from '@/shared/db/schema';
+import { legalConsents, notifications, type NotificationKind } from '@/shared/db/schema';
+import { pushPayloadFor } from '../lib/notification-push';
 
 /** Per-user retention cap. We keep the 20 most recent notifications
  *  and trim older rows on every insert — the bell isn't an archive,
@@ -53,7 +55,41 @@ export async function notify(input: NotificationInput): Promise<string> {
     isRead: input.isRead ?? false
   });
   await trimOldest(input.userId);
+  // The same notice, on the merchant's phone. Best-effort and un-awaited: the
+  // row is already in the bell, and a push service being slow or down must
+  // never hold up the generation that triggered it. A notice the merchant was
+  // guaranteed to see as a toast (`isRead`) is not pushed — they are looking
+  // at it.
+  if (!input.isRead) void mirrorToPush(input).catch(() => undefined);
   return id;
+}
+
+/** Locale of the account, as last signed on a consent — English otherwise. */
+async function localeOf(userId: string): Promise<string | null> {
+  const [consent] = await db
+    .select({ locale: legalConsents.locale })
+    .from(legalConsents)
+    .where(and(eq(legalConsents.userId, userId), isNotNull(legalConsents.locale)))
+    .orderBy(desc(legalConsents.acceptedAt))
+    .limit(1);
+  return consent?.locale ?? null;
+}
+
+async function mirrorToPush(input: NotificationInput): Promise<void> {
+  if (!isPushConfigured()) return;
+  const appUrl = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
+  const payload = await pushPayloadFor(
+    {
+      kind: input.kind,
+      projectId: input.projectId ?? null,
+      productId: input.productId ?? null,
+      auditId: input.auditId ?? null,
+      payload: input.payload ?? null
+    },
+    await localeOf(input.userId),
+    appUrl
+  );
+  await sendPushToUser(input.userId, payload);
 }
 
 /** Drop everything past the KEEP_PER_USER cap. Runs after every

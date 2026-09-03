@@ -10,6 +10,7 @@ import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '@/features/bulk-generate';
 import { db } from '@/shared/db';
 import { users } from '@/shared/db/schema';
+import { PushSettingsCard } from '@/features/push-notifications/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,8 @@ export default async function AccountPreferencesPage() {
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-[var(--muted)] max-w-2xl leading-relaxed">{t('subtitle')}</p>
       </header>
+
+      <PushSettingsCard />
 
       <ModelPreferencesForm
         initialChatModel={resolveChatModelId(session.user.preferredChatModel)}

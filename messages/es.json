@@ -1793,5 +1793,18 @@
     "rescueTitle": "Conecta tu tienda para que podamos leer tu catálogo",
     "rescueLead": "Tu tienda no muestra sus fichas de producto desde fuera, algo habitual y sin importancia. Una vez conectada, OneShopLab lee tu catálogo directamente y puede aplicarle tus correcciones.",
     "cardNotReadable": "Catálogo no legible desde fuera"
+  },
+  "Push": {
+    "settingsTitle": "Notificaciones en este dispositivo",
+    "settingsLead": "Recibe aquí los mismos avisos que en la campana: generación terminada, auditoría lista, problema de conexión con la tienda.",
+    "deniedHint": "Las notificaciones están bloqueadas para OneShopLab en los ajustes de este navegador. Permítelas allí y vuelve.",
+    "iosInstallHint": "En iPhone y iPad las notificaciones solo llegan a la app instalada: abre el menú Compartir y «Añadir a pantalla de inicio».",
+    "unavailableHint": "Este navegador no admite notificaciones. Prueba desde la app instalada o un navegador reciente.",
+    "promptTitle": "¿Te avisamos cuando esté listo?",
+    "promptLead": "Una generación puede tardar un minuto: te avisamos al terminar, aunque hayas cerrado la pestaña.",
+    "installTitle": "Instala OneShopLab",
+    "installLead": "En iPhone, abre el menú Compartir y «Añadir a pantalla de inicio»: la app se abre a pantalla completa y puede avisarte.",
+    "enable": "Activar",
+    "later": "Más tarde"
   }
 }

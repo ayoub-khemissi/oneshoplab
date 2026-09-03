@@ -1793,5 +1793,18 @@
     "rescueTitle": "Connect your store so we can read your catalog",
     "rescueLead": "Your store doesn't expose its product pages to the outside, which is common and harmless. Once it is connected, OneShopLab reads your catalog directly and can apply your fixes to it.",
     "cardNotReadable": "Catalog not readable from the outside"
+  },
+  "Push": {
+    "settingsTitle": "Notifications on this device",
+    "settingsLead": "Get the same notices as the bell right here: a generation finished, an audit done, a store connection in trouble.",
+    "deniedHint": "Notifications are blocked for OneShopLab in this browser's settings. Allow them there, then come back.",
+    "iosInstallHint": "On iPhone and iPad, notifications only reach the installed app: open the Share menu, then “Add to Home Screen”.",
+    "unavailableHint": "This browser does not support notifications. Try from the installed app or a recent browser.",
+    "promptTitle": "Tell you when it's ready?",
+    "promptLead": "A generation can take a minute: we'll let you know when it's done, even if you closed the tab.",
+    "installTitle": "Install OneShopLab",
+    "installLead": "On iPhone, open the Share menu then “Add to Home Screen”: the app opens full screen and can notify you.",
+    "enable": "Turn on",
+    "later": "Later"
   }
 }

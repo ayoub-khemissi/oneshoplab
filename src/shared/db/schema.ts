@@ -1008,6 +1008,39 @@ export const connectionCapabilities = mysqlTable('connection_capabilities', {
 
 export const SHOP_CONNECTION_PLATFORMS = ['shopify', 'wix'] as const;
 export type ShopConnectionPlatform = (typeof SHOP_CONNECTION_PLATFORMS)[number];
+/**
+ * One row per device that agreed to receive push notifications: a browser, an
+ * installed PWA, or the app from a store. The endpoint IS the identity — the
+ * same person on a phone and a laptop is two rows, and re-subscribing on the
+ * same device returns the same endpoint, so registering is an upsert.
+ *
+ * Deleted with the user (cascade), and purged by the sender the moment a push
+ * service answers 404/410: a subscription outlives the browser profile that
+ * created it, and nothing else tells us it is gone.
+ */
+export const pushSubscriptions = mysqlTable(
+  'push_subscriptions',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** Push service URL. Unique across accounts: one device, one row. */
+    endpoint: varchar('endpoint', { length: 512 }).notNull(),
+    /** Encryption material handed over by the browser at subscribe time. */
+    p256dh: varchar('p256dh', { length: 255 }).notNull(),
+    auth: varchar('auth', { length: 255 }).notNull(),
+    userAgent: varchar('user_agent', { length: 512 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    /** Bumped on every successful send — a dead device stops moving. */
+    lastSeenAt: timestamp('last_seen_at').notNull().defaultNow()
+  },
+  (t) => ({
+    uqEndpoint: uniqueIndex('uq_push_subscriptions_endpoint').on(t.endpoint),
+    idxUser: index('idx_push_subscriptions_user').on(t.userId)
+  })
+);
+
 export const SHOP_CONNECTION_STATUSES = ['connected', 'token_invalid', 'revoked'] as const;
 export type ShopConnectionStatus = (typeof SHOP_CONNECTION_STATUSES)[number];
 /** `custom_app` = merchant pasted a custom-app token; `oauth` = installed our public app. */

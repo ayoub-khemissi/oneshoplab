@@ -1793,5 +1793,18 @@
     "rescueTitle": "Podłącz sklep, żebyśmy mogli odczytać katalog",
     "rescueLead": "Twój sklep nie pokazuje kart produktów z zewnątrz — to częste i nic złego. Po podłączeniu OneShopLab czyta katalog bezpośrednio i może wprowadzać do niego Twoje poprawki.",
     "cardNotReadable": "Katalog nieczytelny z zewnątrz"
+  },
+  "Push": {
+    "settingsTitle": "Powiadomienia na tym urządzeniu",
+    "settingsLead": "Odbieraj tutaj te same powiadomienia co w dzwonku: gotowa generacja, skończony audyt, problem z połączeniem sklepu.",
+    "deniedHint": "Powiadomienia dla OneShopLab są zablokowane w ustawieniach tej przeglądarki. Zezwól na nie tam i wróć.",
+    "iosInstallHint": "Na iPhonie i iPadzie powiadomienia trafiają tylko do zainstalowanej aplikacji: menu Udostępnij, potem „Do ekranu początkowego”.",
+    "unavailableHint": "Ta przeglądarka nie obsługuje powiadomień. Spróbuj z zainstalowanej aplikacji lub nowszej przeglądarki.",
+    "promptTitle": "Dać znać, gdy będzie gotowe?",
+    "promptLead": "Generacja może potrwać minutę: damy znać, gdy się skończy, nawet jeśli zamkniesz kartę.",
+    "installTitle": "Zainstaluj OneShopLab",
+    "installLead": "Na iPhonie otwórz menu Udostępnij i „Do ekranu początkowego”: aplikacja otwiera się na pełnym ekranie i może powiadamiać.",
+    "enable": "Włącz",
+    "later": "Później"
   }
 }
