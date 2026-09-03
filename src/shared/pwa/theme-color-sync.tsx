@@ -23,7 +23,14 @@ export function ThemeColorSync() {
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const color = resolvedTheme === 'dark' ? DARK : LIGHT;
+    const isDark = resolvedTheme === 'dark';
+    const color = isDark ? DARK : LIGHT;
+
+    // Inside the app from a store, the meta is not what paints the bar: the
+    // shell owns it, and it is the only way to reach Android's navigation bar
+    // at all. An installed PWA is stuck with the colour its manifest carried at
+    // install time — that one really is a platform limit, not ours.
+    void syncNativeBars(isDark);
     const metas = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
     if (metas.length === 0) {
       const meta = document.createElement('meta');
@@ -38,4 +45,24 @@ export function ThemeColorSync() {
   }, [resolvedTheme]);
 
   return null;
+}
+
+/** Running inside the native shell, where the system bars are ours to set. */
+function inNativeShell(): boolean {
+  const capacitor = (window as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  return Boolean(capacitor?.isNativePlatform?.());
+}
+
+async function syncNativeBars(isDark: boolean): Promise<void> {
+  if (!inNativeShell()) return;
+  try {
+    // Imported lazily: a browser must never download the shell's runtime.
+    const { StatusBar, Style } = await import('@capacitor/status-bar');
+    // `Style.Dark` means dark *content* on a light bar — the plugin names the
+    // glyphs, not the surface, which is the opposite of what the word suggests.
+    await StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark });
+    await StatusBar.setBackgroundColor({ color: isDark ? DARK : LIGHT });
+  } catch {
+    // An older shell without the plugin keeps whatever its theme declared.
+  }
 }

@@ -313,18 +313,47 @@ export default function TermsOfServicePage() {
             .map((s) => `${s.entity} (${s.role})`)
             .join('; ')}
           ; Google (Google Sign-In and reCAPTCHA anti-bot verification), Stripe (payments),
-          Cloudflare (object storage and DNS), Brevo (transactional email), and OVH (hosting). Their
-          availability, pricing, and policies may change. Where their terms flow down to you (for
-          example, Stripe&apos;s acceptable-use policy or Google&apos;s reCAPTCHA terms when you
-          complete the signup challenge), you agree to comply with them. We are not responsible for
-          outages or actions of these providers, but we will use commercially reasonable efforts to
-          mitigate their impact on the Service. The list of AI gateways and model providers in use
-          at any time, and their roles, is published in our Privacy Policy; we may add, replace or
-          use providers as fallbacks without notice when this does not reduce the protection of your
-          data.
+          Cloudflare (object storage and DNS), Brevo (transactional email), OVH (hosting), and
+          FirstPromoter (affiliate attribution and commission accounting, when you arrive through a
+          partner&apos;s link). Their availability, pricing, and policies may change. Where their
+          terms flow down to you (for example, Stripe&apos;s acceptable-use policy or Google&apos;s
+          reCAPTCHA terms when you complete the signup challenge), you agree to comply with them. We
+          are not responsible for outages or actions of these providers, but we will use
+          commercially reasonable efforts to mitigate their impact on the Service. The list of AI
+          gateways and model providers in use at any time, and their roles, is published in our
+          Privacy Policy; we may add, replace or use providers as fallbacks without notice when this
+          does not reduce the protection of your data.
         </p>
 
-        <h2>12. Intellectual Property</h2>
+        <h2>12. Referrals and the Affiliate Programme</h2>
+        <p>
+          We run an affiliate programme: partners — creators, agencies, consultants — may share a
+          link carrying their referral identifier and earn a commission on the subscriptions it
+          brings. If you arrive through such a link, we remember that identifier for 90 days so the
+          partner is credited if you subscribe. <strong>Your price is exactly the same</strong>: a
+          commission is paid by us out of our own revenue and never added to what you pay, and a
+          partner never gains any access to your account, your catalogue or your data.
+        </p>
+        <p>
+          If you are a partner, the commission rate, the payment schedule and the payout method are
+          those shown in your affiliate dashboard when you join, and they apply for as long as the
+          subscription you referred remains active and paid. Attribution is what our own records
+          show — a referral identifier held at signup — and last-click within the 90-day window.
+          Commission is due on amounts actually collected: a payment refunded, charged back or
+          cancelled reverses the commission that was recorded for it.
+        </p>
+        <p>
+          We may withhold commission and end a partnership, without notice, for: referring your own
+          account or accounts you control; bidding on our brand name in paid search, or any use of
+          our name that suggests you are us; unsolicited messaging, spam, or posting referral links
+          where they are not welcome; misrepresenting what the Service does, what it costs, or what
+          results it produces; cookie stuffing, forced clicks, or any other means of claiming a
+          referral the partner did not bring; or breaching these Terms. Partnerships may also be
+          ended by either side at any time, in which case commissions already earned on active
+          subscriptions remain payable under the rules above.
+        </p>
+
+        <h2>13. Intellectual Property</h2>
         <p>
           The Service, its software, design, and all materials we provide (excluding your Input
           Content and the Output as defined above) are owned by us or our licensors and are
@@ -337,7 +366,7 @@ export default function TermsOfServicePage() {
           prior written consent.
         </p>
 
-        <h2>13. Termination</h2>
+        <h2>14. Termination</h2>
         <p>
           You may terminate your account at any time by cancelling your subscription and ceasing to
           use the Service. We may suspend or terminate your account if we reasonably believe you
@@ -348,7 +377,7 @@ export default function TermsOfServicePage() {
           limitation of liability, indemnification, and governing law).
         </p>
 
-        <h2>14. Disclaimer of Warranties</h2>
+        <h2>15. Disclaimer of Warranties</h2>
         <p>
           THE SERVICE AND THE OUTPUT ARE PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot;,
           WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
@@ -363,7 +392,7 @@ export default function TermsOfServicePage() {
           rights are not waived by these Terms.
         </p>
 
-        <h2>15. Limitation of Liability</h2>
+        <h2>16. Limitation of Liability</h2>
         <p>
           TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL WE OR OUR AFFILIATES
           BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES,
@@ -390,7 +419,7 @@ export default function TermsOfServicePage() {
           injury caused by negligence).
         </p>
 
-        <h2>16. Indemnification</h2>
+        <h2>17. Indemnification</h2>
         <p>
           You agree to defend, indemnify, and hold harmless {COMPANY_NAME} and its officers,
           directors, employees, and agents from and against any claims, liabilities, damages,
@@ -400,14 +429,14 @@ export default function TermsOfServicePage() {
           your violation of any third-party right.
         </p>
 
-        <h2>17. Privacy</h2>
+        <h2>18. Privacy</h2>
         <p>
           Our collection and use of personal data in connection with the Service is described in our{' '}
           <Link href="/privacy">Privacy Policy</Link>, which is incorporated into these Terms by
           reference.
         </p>
 
-        <h2>18. Changes to the Service or These Terms</h2>
+        <h2>19. Changes to the Service or These Terms</h2>
         <p>
           We may modify these Terms from time to time. If we make material changes, we will notify
           you by email or by a notice on the Service before the changes take effect. Your continued
@@ -415,7 +444,7 @@ export default function TermsOfServicePage() {
           If you do not agree, you must stop using the Service before the effective date.
         </p>
 
-        <h2>19. Governing Law and Disputes</h2>
+        <h2>20. Governing Law and Disputes</h2>
         <p>
           These Terms are governed by {GOVERNING_LAW}, without regard to its conflict-of-laws
           principles. The courts located in {VENUE} have exclusive jurisdiction over any dispute
@@ -443,7 +472,7 @@ export default function TermsOfServicePage() {
           .
         </p>
 
-        <h2>20. Miscellaneous</h2>
+        <h2>21. Miscellaneous</h2>
         <p>
           These Terms, together with the Privacy Policy and any pricing or plan documents referenced
           on the Service, constitute the entire agreement between you and us regarding the Service.
@@ -453,7 +482,7 @@ export default function TermsOfServicePage() {
           with a merger, acquisition, or sale of assets.
         </p>
 
-        <h2>21. Contact</h2>
+        <h2>22. Contact</h2>
         <p>
           For any question regarding these Terms, contact us at{' '}
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
