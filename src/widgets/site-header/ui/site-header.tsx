@@ -111,6 +111,12 @@ export async function SiteHeader() {
                 {t('blog')}
               </Link>
               <Link
+                href="/affiliate"
+                className="hidden md:inline text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              >
+                {t('affiliate')}
+              </Link>
+              <Link
                 href="/contact"
                 className="hidden md:inline text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
               >
@@ -231,6 +237,7 @@ export async function SiteHeader() {
                   pricing: t('pricing'),
                   faq: t('faq'),
                   blog: t('blog'),
+                  affiliate: t('affiliate'),
                   contact: t('contact'),
                   dashboard: t('dashboard'),
                   credits: t('credits'),

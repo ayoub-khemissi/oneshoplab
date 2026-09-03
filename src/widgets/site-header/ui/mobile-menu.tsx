@@ -2,6 +2,7 @@
 
 import { Button, Drawer, ListBox } from '@heroui/react';
 import {
+  BadgeEuro,
   Coins,
   HelpCircle,
   LayoutDashboard,
@@ -34,6 +35,7 @@ interface MobileMenuProps {
     pricing: string;
     faq: string;
     blog: string;
+    affiliate: string;
     contact: string;
     dashboard: string;
     credits: string;
@@ -164,6 +166,15 @@ export function MobileMenu({
                 >
                   <Newspaper className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
                   {labels.blog}
+                </ListBox.Item>
+                <ListBox.Item
+                  id="affiliate"
+                  href="/affiliate"
+                  textValue={labels.affiliate}
+                  onAction={() => setIsOpen(false)}
+                >
+                  <BadgeEuro className="size-4 mr-2 text-[var(--muted)]" aria-hidden />
+                  {labels.affiliate}
                 </ListBox.Item>
                 <ListBox.Item
                   id="contact"

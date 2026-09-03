@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
-import { getAppContactEmail } from '@/shared/config';
 
 /**
  * The affiliate programme, from inside an account.
@@ -21,7 +20,6 @@ export default async function AccountAffiliatePage() {
 
   const t = await getTranslations('Affiliate');
   const tAccount = await getTranslations('Account');
-  const contact = getAppContactEmail();
   const dashboardUrl = process.env.FIRSTPROMOTER_DASHBOARD_URL ?? null;
 
   return (
@@ -49,13 +47,13 @@ export default async function AccountAffiliatePage() {
               <ArrowUpRight className="size-4" aria-hidden />
             </a>
           ) : (
-            <a
-              href={`mailto:${contact}?subject=${encodeURIComponent(t('mailSubject'))}`}
+            <Link
+              href="/contact?subject=affiliate"
               className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90"
             >
               <Mail className="size-4" aria-hidden />
               {t('cta')}
-            </a>
+            </Link>
           )}
           <Link
             href="/affiliate"

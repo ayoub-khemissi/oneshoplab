@@ -11,8 +11,10 @@ interface ContactFormProps {
   locale: string;
   /** null = captcha disabled server-side (dev) → widget not rendered. */
   recaptchaSiteKey: string | null;
-  /** Prefill for logged-in users. */
-  defaults: { name: string; email: string };
+  /** Prefill: the account's own details, and — when the visitor arrived from a
+   *  page that knows what they came to say — the subject and a message
+   *  skeleton they only have to fill in. */
+  defaults: { name: string; email: string; subject?: string; message?: string };
 }
 
 const INITIAL: ContactFormState = { status: 'idle' };
@@ -48,8 +50,8 @@ function InnerForm({
   const v = state.values ?? {
     name: defaults.name,
     email: defaults.email,
-    subject: '',
-    message: ''
+    subject: defaults.subject ?? '',
+    message: defaults.message ?? ''
   };
 
   if (state.status === 'success') {

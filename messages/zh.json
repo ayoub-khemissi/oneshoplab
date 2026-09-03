@@ -98,6 +98,7 @@
     "joinDiscord": "加入我们的 Discord",
     "faq": "常见问题",
     "blog": "博客",
+    "affiliate": "推广合作",
     "notifications": {
       "title": "通知",
       "empty": "暂无新内容",
@@ -1837,6 +1838,7 @@
     "joinBody": "写信给我们，附上你发布内容的链接。我们两个工作日内回复；如果受众不匹配，我们会直说——这比让你放一个永远不会转化的链接更诚实。",
     "seoTitle": "推荐 OneShopLab，每月赚取 15%",
     "seoDescription": "你面向电商卖家发声吗？每一家通过你的链接订阅的店铺，只要订阅还在，你每个月都能拿到佣金。",
-    "dashboardCta": "打开我的合作面板"
+    "dashboardCta": "打开我的合作面板",
+    "applyTemplate": "您好，\n\n我想加入推广合作计划。\n\n• 公开名称或昵称：\n• 我在哪里发布（频道、邮件通讯、网站、社群的链接）：\n• 大致受众规模：\n• 国家/地区（用于开票）：\n• 希望出现在链接里的词（例如「marie」对应 oneshoplab.com/?fpr=marie）：\n\n谢谢！"
   }
 }

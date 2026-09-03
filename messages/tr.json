@@ -98,6 +98,7 @@
     "joinDiscord": "Discord sunucumuza katıl",
     "faq": "SSS",
     "blog": "Blog",
+    "affiliate": "Ortaklık",
     "notifications": {
       "title": "Bildirimler",
       "empty": "Şimdilik yeni bir şey yok",
@@ -1837,6 +1838,7 @@
     "joinBody": "Yayınladığın şeye bir bağlantıyla birlikte bize yaz. İki iş günü içinde yanıtlıyoruz ve kitle uymadığında hayır diyoruz: hiç dönüşmeyecek bir bağlantı koydurmaktan daha dürüst.",
     "seoTitle": "OneShopLab'i öner, her ay %15 kazan",
     "seoDescription": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır.",
-    "dashboardCta": "Ortak panelimi aç"
+    "dashboardCta": "Ortak panelimi aç",
+    "applyTemplate": "Merhaba,\n\nOrtaklık programına katılmak istiyorum.\n\n• Herkese açık ad veya kullanıcı adı:\n• Nerede yayınlıyorum (kanal, bülten, site, topluluk bağlantıları):\n• Yaklaşık kitle:\n• Ülke (faturalama için):\n• Bağlantımda olmasını istediğim kelime (ör. “marie” → oneshoplab.com/?fpr=marie):\n\nTeşekkürler!"
   }
 }

@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { SUPPORTED_LOCALES } from '@/i18n/routing';
-import { getAppContactEmail } from '@/shared/config';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
@@ -43,7 +42,6 @@ export async function generateMetadata({
 export default async function AffiliatePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Affiliate' });
-  const contact = getAppContactEmail();
 
   const steps = [
     { key: 'apply', icon: <Link2 className="size-5" aria-hidden /> },
@@ -57,13 +55,13 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
         <span className="eyebrow">{t('eyebrow')}</span>
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{t('title')}</h1>
         <p className="max-w-2xl text-base leading-relaxed text-[var(--muted)]">{t('subtitle')}</p>
-        <a
-          href={`mailto:${contact}?subject=${encodeURIComponent(t('mailSubject'))}`}
+        <Link
+          href="/contact?subject=affiliate"
           className="mt-2 inline-flex w-fit items-center gap-2 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] transition-opacity hover:opacity-90"
         >
           <BadgeEuro className="size-4" aria-hidden />
           {t('cta')}
-        </a>
+        </Link>
       </header>
 
       <section className="flex flex-col gap-4 rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-5">
@@ -108,12 +106,12 @@ export default async function AffiliatePage({ params }: { params: Promise<{ loca
       <section className="flex flex-col gap-3 border-t border-[var(--border)] pt-6">
         <h2 className="text-xl font-semibold tracking-tight">{t('joinTitle')}</h2>
         <p className="text-sm leading-relaxed text-[var(--muted)]">{t('joinBody')}</p>
-        <a
-          href={`mailto:${contact}?subject=${encodeURIComponent(t('mailSubject'))}`}
+        <Link
+          href="/contact?subject=affiliate"
           className="inline-flex w-fit items-center gap-2 rounded-md border border-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/10"
         >
-          {contact}
-        </a>
+          {t('cta')}
+        </Link>
       </section>
     </main>
   );

@@ -29,12 +29,28 @@ export async function generateMetadata({
   };
 }
 
-export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ContactPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
+  const query = await searchParams;
   const [t, session] = await Promise.all([getTranslations('Contact'), auth()]);
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   const recaptchaSiteKey = isRecaptchaEnabled() && siteKey ? siteKey : null;
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? null;
+
+  // `?subject=affiliate` — the affiliate pages send people here rather than to
+  // a mail client, so the form arrives with its subject set and a skeleton
+  // asking only for what it takes to open a partner account.
+  const tAffiliate = await getTranslations('Affiliate');
+  const isAffiliate = query.subject === 'affiliate';
+  const prefill = isAffiliate
+    ? { subject: tAffiliate('mailSubject'), message: tAffiliate('applyTemplate') }
+    : { subject: '', message: '' };
 
   return (
     <main className="flex-1 px-4 md:px-10 py-8 md:py-14 max-w-2xl w-full mx-auto flex flex-col gap-8">
@@ -49,7 +65,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         recaptchaSiteKey={recaptchaSiteKey}
         defaults={{
           name: session?.user?.name ?? '',
-          email: session?.user?.email ?? ''
+          email: session?.user?.email ?? '',
+          subject: prefill.subject,
+          message: prefill.message
         }}
       />
       {/* Server component (getTranslations) — must stay outside the client

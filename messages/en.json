@@ -98,6 +98,7 @@
     "joinDiscord": "Join our Discord",
     "faq": "FAQ",
     "blog": "Blog",
+    "affiliate": "Affiliates",
     "notifications": {
       "title": "Notifications",
       "empty": "Nothing new for now",
@@ -1837,6 +1838,7 @@
     "joinBody": "Write to us with a link to what you publish. We answer within two working days, and we say no when the audience does not fit — that is fairer than having you post a link that will never convert.",
     "seoTitle": "Recommend OneShopLab, earn 15% every month",
     "seoDescription": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed.",
-    "dashboardCta": "Open my partner dashboard"
+    "dashboardCta": "Open my partner dashboard",
+    "applyTemplate": "Hello,\n\nI would like to join the affiliate programme.\n\n• Public name or handle:\n• Where I publish (links to my channel, newsletter, site, community):\n• Approximate audience:\n• Country (for invoicing):\n• Word I would like in my link (e.g. “marie” for oneshoplab.com/?fpr=marie):\n\nThank you!"
   }
 }

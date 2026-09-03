@@ -98,6 +98,7 @@
     "joinDiscord": "Tritt unserem Discord bei",
     "faq": "FAQ",
     "blog": "Blog",
+    "affiliate": "Partner",
     "notifications": {
       "title": "Benachrichtigungen",
       "empty": "Nichts Neues",
@@ -1837,6 +1838,7 @@
     "joinBody": "Schreib uns mit einem Link zu dem, was du veröffentlichst. Wir antworten binnen zwei Werktagen — und sagen ab, wenn das Publikum nicht passt. Das ist fairer, als dich einen Link setzen zu lassen, der nie konvertiert.",
     "seoTitle": "Empfiehl OneShopLab und verdiene jeden Monat 15 %",
     "seoDescription": "Du sprichst mit Online-Händlern? Jeder Shop, der über deinen Link abonniert, zahlt dir eine Provision — jeden Monat, solange das Abo läuft.",
-    "dashboardCta": "Mein Partner-Dashboard öffnen"
+    "dashboardCta": "Mein Partner-Dashboard öffnen",
+    "applyTemplate": "Hallo,\n\nich möchte am Partnerprogramm teilnehmen.\n\n• Öffentlicher Name oder Handle:\n• Wo ich veröffentliche (Links zu Kanal, Newsletter, Website, Community):\n• Ungefähre Reichweite:\n• Land (für die Rechnung):\n• Gewünschtes Wort in meinem Link (z. B. „marie“ für oneshoplab.com/?fpr=marie):\n\nDanke!"
   }
 }
