@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, =1 {1 clave revocada o caducada} other {# claves revocadas o caducadas}}",
-    "keysPastMore": "{count, plural, =1 {1 clave más antigua no se muestra} other {# claves más antiguas no se muestran}}"
+    "keysPastMore": "{count, plural, =1 {1 clave más antigua no se muestra} other {# claves más antiguas no se muestran}}",
+    "nextCheck": "Próxima comprobación en {time}",
+    "syncNowAsk": "Sincronizar ahora",
+    "syncNowCooldown": "Faltan {seconds} s"
   },
   "ApplyToStore": {
     "apply": "Aplicar en mi tienda",

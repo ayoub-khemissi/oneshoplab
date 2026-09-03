@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `sync_requested_at` timestamp;

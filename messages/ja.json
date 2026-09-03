@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, other {取り消し済み・期限切れのキー # 件}}",
-    "keysPastMore": "{count, plural, other {さらに古いキー # 件は表示していません}}"
+    "keysPastMore": "{count, plural, other {さらに古いキー # 件は表示していません}}",
+    "nextCheck": "次の確認まで {time}",
+    "syncNowAsk": "今すぐ同期",
+    "syncNowCooldown": "あと {seconds} 秒"
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

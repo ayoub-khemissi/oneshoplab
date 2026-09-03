@@ -58,7 +58,8 @@ export function IntegrationsWizard({
   interest,
   shopifyAppConfigured,
   wixAppConfigured,
-  returnNotice
+  returnNotice,
+  syncRequestedAtIso
 }: {
   projectId: string;
   /** Project domain or URL used to build the "Open" links of the guide. */
@@ -75,6 +76,8 @@ export function IntegrationsWizard({
   shopifyAppConfigured: boolean;
   wixAppConfigured: boolean;
   returnNotice: IntegrationReturn;
+  /** Last manual sync request on this store, to hold the button for a minute. */
+  syncRequestedAtIso?: string | null;
 }) {
   const t = useTranslations('Integrations');
   const locale = useLocale();
@@ -297,7 +300,11 @@ export function IntegrationsWizard({
 
       {keyStepAvailable && activeKey ? (
         <Step n={4} title={t('step4Title')}>
-          <ConnectionStatusCard projectId={projectId} initial={initialStatus} />
+          <ConnectionStatusCard
+            projectId={projectId}
+            initial={initialStatus}
+            syncRequestedAtIso={syncRequestedAtIso}
+          />
         </Step>
       ) : null}
 

@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, =1 {1 widerrufener oder abgelaufener Schlüssel} other {# widerrufene oder abgelaufene Schlüssel}}",
-    "keysPastMore": "{count, plural, =1 {1 älterer Schlüssel wird nicht angezeigt} other {# ältere Schlüssel werden nicht angezeigt}}"
+    "keysPastMore": "{count, plural, =1 {1 älterer Schlüssel wird nicht angezeigt} other {# ältere Schlüssel werden nicht angezeigt}}",
+    "nextCheck": "Nächste Prüfung in {time}",
+    "syncNowAsk": "Jetzt synchronisieren",
+    "syncNowCooldown": "Noch {seconds} s"
   },
   "ApplyToStore": {
     "apply": "In meinem Shop anwenden",

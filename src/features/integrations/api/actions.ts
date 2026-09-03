@@ -11,11 +11,14 @@ import {
   type OwnedResult,
   type CreatedApiKey
 } from '@/entities/api-key';
+import { emitProjectEvent } from '@/entities/outbound-webhook';
 import {
   getConnectionForUser,
+  requestPull,
   toShopifyConnectionView,
   toWixConnectionView
 } from '@/entities/shop-connection';
+import { cooldownRemainingMs } from '../lib/sync-schedule';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { INTEGRATION_INTEREST_PLATFORMS, products, projects } from '@/shared/db/schema';
@@ -171,4 +174,49 @@ export async function getConnectionStatusAction(formData: FormData): Promise<Con
         ? toWixConnectionView(connection, productCount)
         : null
   };
+}
+
+export type RequestSyncResult =
+  | { ok: true; requestedAtIso: string }
+  | { ok: false; error: 'unauthorized' | 'not_found' | 'cooldown'; retryInMs?: number };
+
+/**
+ * "Synchroniser maintenant": asks the store to send its catalog without waiting
+ * for its next check.
+ *
+ * The plugin owns the write path, so this is an ask, not an order — it travels
+ * as the `sync.requested` event the plugin already listens for, and a build too
+ * old to listen simply syncs on its own tick. Held to one a minute per store:
+ * the ask reaches a store that is already checking every five minutes, and
+ * more often is noise on someone else's server.
+ */
+export async function requestSyncNowAction(projectId: string): Promise<RequestSyncResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
+  const id = idSchema.safeParse(projectId);
+  if (!id.success) return { ok: false, error: 'not_found' };
+
+  const [project] = await db
+    .select({ id: projects.id, syncRequestedAt: projects.syncRequestedAt })
+    .from(projects)
+    .where(and(eq(projects.id, id.data), eq(projects.userId, session.user.id)));
+  if (!project) return { ok: false, error: 'not_found' };
+
+  const remaining = cooldownRemainingMs(project.syncRequestedAt?.toISOString() ?? null);
+  if (remaining > 0) return { ok: false, error: 'cooldown', retryInMs: remaining };
+
+  const now = new Date();
+  await db.update(projects).set({ syncRequestedAt: now }).where(eq(projects.id, project.id));
+
+  const connection = await getConnectionForUser(project.id, session.user.id);
+  if (connection?.status === 'connected') {
+    await requestPull(project.id);
+  } else {
+    await emitProjectEvent(project.id, 'sync.requested', {
+      reason: 'merchant_requested',
+      requestedAt: now.toISOString()
+    });
+  }
+  revalidatePath(`/dashboard/sites/${project.id}`);
+  return { ok: true, requestedAtIso: now.toISOString() };
 }

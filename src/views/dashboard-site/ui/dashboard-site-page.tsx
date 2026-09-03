@@ -571,6 +571,7 @@ export async function DashboardSitePage({
             shopifyAppConfigured={isShopifyAppConfigured()}
             wixAppConfigured={isWixAppConfigured()}
             returnNotice={parseIntegrationReturn(searchParams)}
+            syncRequestedAtIso={project.syncRequestedAt?.toISOString() ?? null}
           />
           <PendingChangesList siteId={siteId} initialItems={pendingChanges} />
         </div>

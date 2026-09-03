@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, other {취소되었거나 만료된 키 #개}}",
-    "keysPastMore": "{count, plural, other {더 오래된 키 #개는 표시하지 않았습니다}}"
+    "keysPastMore": "{count, plural, other {더 오래된 키 #개는 표시하지 않았습니다}}",
+    "nextCheck": "다음 확인까지 {time}",
+    "syncNowAsk": "지금 동기화",
+    "syncNowCooldown": "{seconds}초 남음"
   },
   "ApplyToStore": {
     "apply": "내 스토어에 적용",

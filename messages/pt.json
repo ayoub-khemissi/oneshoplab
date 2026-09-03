@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, =1 {1 chave revogada ou expirada} other {# chaves revogadas ou expiradas}}",
-    "keysPastMore": "{count, plural, =1 {1 chave mais antiga não é mostrada} other {# chaves mais antigas não são mostradas}}"
+    "keysPastMore": "{count, plural, =1 {1 chave mais antiga não é mostrada} other {# chaves mais antigas não são mostradas}}",
+    "nextCheck": "Próxima verificação em {time}",
+    "syncNowAsk": "Sincronizar agora",
+    "syncNowCooldown": "Faltam {seconds} s"
   },
   "ApplyToStore": {
     "apply": "Aplicar na minha loja",

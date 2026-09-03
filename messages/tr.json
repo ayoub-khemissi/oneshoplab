@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, other {# iptal edilmiş veya süresi dolmuş anahtar}}",
-    "keysPastMore": "{count, plural, other {# daha eski anahtar gösterilmiyor}}"
+    "keysPastMore": "{count, plural, other {# daha eski anahtar gösterilmiyor}}",
+    "nextCheck": "Sonraki kontrol {time} sonra",
+    "syncNowAsk": "Şimdi eşitle",
+    "syncNowCooldown": "{seconds} sn kaldı"
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",

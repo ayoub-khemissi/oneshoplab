@@ -196,6 +196,10 @@ export const projects = mysqlTable(
     source: mysqlEnum('source', PLATFORMS).notNull().default('unknown'),
     url: varchar('url', { length: 1024 }),
     domain: varchar('domain', { length: 255 }),
+    /** Last time the merchant asked for an immediate catalog sync. The plugin
+     *  polls on its own every five minutes; this is the "don't wait" button,
+     *  and the column is what keeps it from being a hammer. */
+    syncRequestedAt: timestamp('sync_requested_at'),
     /** Last time the owner consulted this project — used to pick the default
      *  project on dashboard load when the user has multiple stores. */
     lastViewedAt: timestamp('last_viewed_at'),

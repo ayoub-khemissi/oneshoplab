@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, other {# 个已撤销或过期的密钥}}",
-    "keysPastMore": "{count, plural, other {另有 # 个更早的密钥未显示}}"
+    "keysPastMore": "{count, plural, other {另有 # 个更早的密钥未显示}}",
+    "nextCheck": "下次检查还有 {time}",
+    "syncNowAsk": "立即同步",
+    "syncNowCooldown": "还需 {seconds} 秒"
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

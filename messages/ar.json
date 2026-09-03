@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, other {# مفتاح ملغى أو منتهي الصلاحية}}",
-    "keysPastMore": "{count, plural, other {# مفتاح أقدم غير معروض}}"
+    "keysPastMore": "{count, plural, other {# مفتاح أقدم غير معروض}}",
+    "nextCheck": "الفحص التالي بعد {time}",
+    "syncNowAsk": "زامن الآن",
+    "syncNowCooldown": "بقي {seconds} ثانية"
   },
   "ApplyToStore": {
     "apply": "تطبيق في متجري",

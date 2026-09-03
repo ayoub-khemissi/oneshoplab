@@ -1,5 +1,6 @@
 // Client-safe UI of the slice (no db / next/headers in this graph).
 export { ConnectionStatusCard } from './ui/connection-status-card';
+export { SyncNow } from './ui/sync-now';
 export { ConnectionSummaryCard } from './ui/connection-summary-card';
 export { summarizeConnection } from './lib/connection-summary';
 export type { ConnectionSummaryView, SummaryStepKey, SummaryTone } from './lib/connection-summary';

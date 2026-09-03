@@ -2,6 +2,7 @@
 
 import { CheckCircle2, CircleDashed } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { SyncNow } from './sync-now';
 import { useEffect, useState } from 'react';
 import { getConnectionStatusAction } from '../api/actions';
 import type { ConnectionStatus } from '../model/types';
@@ -11,10 +12,13 @@ const TICK_MS = 1_000;
 
 export function ConnectionStatusCard({
   projectId,
-  initial
+  initial,
+  syncRequestedAtIso
 }: {
   projectId: string;
   initial: ConnectionStatus;
+  /** Last manual "sync now" on this store — holds the button for a minute. */
+  syncRequestedAtIso?: string | null;
 }) {
   const t = useTranslations('Integrations');
   const [status, setStatus] = useState(initial);
@@ -69,7 +73,13 @@ export function ConnectionStatusCard({
           </span>
           {!connected ? (
             <span className="text-xs text-[var(--muted)] leading-relaxed">{t('waitingHint')}</span>
-          ) : null}
+          ) : (
+            <SyncNow
+              projectId={projectId}
+              lastSeenAtIso={status.lastUsedAtIso}
+              lastRequestedAtIso={syncRequestedAtIso ?? null}
+            />
+          )}
         </div>
       </div>
       <details className="text-xs">

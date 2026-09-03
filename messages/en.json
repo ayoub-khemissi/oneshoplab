@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, =1 {1 revoked or expired key} other {# revoked or expired keys}}",
-    "keysPastMore": "{count, plural, =1 {1 older key is not shown} other {# older keys are not shown}}"
+    "keysPastMore": "{count, plural, =1 {1 older key is not shown} other {# older keys are not shown}}",
+    "nextCheck": "Next check in {time}",
+    "syncNowAsk": "Sync now",
+    "syncNowCooldown": "{seconds}s to go"
   },
   "ApplyToStore": {
     "apply": "Apply to my store",

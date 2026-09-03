@@ -1559,7 +1559,10 @@
       }
     },
     "keysPastToggle": "{count, plural, one {# cofnięty lub wygasły klucz} few {# cofnięte lub wygasłe klucze} other {# cofniętych lub wygasłych kluczy}}",
-    "keysPastMore": "{count, plural, one {# starszy klucz nie jest pokazany} few {# starsze klucze nie są pokazane} other {# starszych kluczy nie jest pokazanych}}"
+    "keysPastMore": "{count, plural, one {# starszy klucz nie jest pokazany} few {# starsze klucze nie są pokazane} other {# starszych kluczy nie jest pokazanych}}",
+    "nextCheck": "Następne sprawdzenie za {time}",
+    "syncNowAsk": "Synchronizuj teraz",
+    "syncNowCooldown": "Jeszcze {seconds} s"
   },
   "ApplyToStore": {
     "apply": "Zastosuj w sklepie",
