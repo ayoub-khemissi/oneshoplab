@@ -210,10 +210,12 @@ describe('product changes', () => {
     const undo = await createReverseChange(projectId, applied.id, userId);
     expect(undo.ok && undo.change.value).toBe('Old title');
     expect(undo.ok && undo.change.status).toBe('pending');
-    // The reverse change is itself undoable: it captured its own prior value.
-    expect(undo.ok && undo.change.priorValue).toBe('Old title');
+    // The reverse change is itself undoable: it captured its own prior value —
+    // which, since ack now reflects the applied value onto our product row, is
+    // the applied title and not the one it replaced.
+    expect(undo.ok && undo.change.priorValue).toBe('New title');
 
-    // Store re-synced with the applied value → still undoable.
+    // A later store re-sync writing the same value changes nothing.
     await db.update(products).set({ title: 'New title' }).where(eq(products.id, product.id));
     expect((await createReverseChange(projectId, applied.id, userId)).ok).toBe(true);
     // Merchant edited it since → refused, nothing queued.

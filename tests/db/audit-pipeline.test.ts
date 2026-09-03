@@ -1,15 +1,12 @@
 /**
  * The audit pipeline end to end against a simulated Shopify store:
  * launch → detect → fetch → score → persist → sync products → notify.
- * Network is stubbed per URL; the AI dynamic sub-audit is mocked.
+ * Network is stubbed per URL. The audit is purely static: it must never
+ * queue a generation job nor move the ledger, and that is asserted here.
  */
 import { eq } from 'drizzle-orm';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const runDynamicAuditForProduct = vi.fn().mockResolvedValue(undefined);
-vi.mock('@/features/run-audit/api/dynamic-audit', () => ({
-  runDynamicAuditForProduct: (...a: unknown[]) => runDynamicAuditForProduct(...a)
-}));
 vi.mock('@/entities/user/api/next-auth', () => ({ auth: async () => null }));
 
 import { randomUUID } from 'node:crypto';
@@ -20,6 +17,7 @@ import {
   apiKeys,
   audits,
   notifications,
+  creditTransactions,
   outboundWebhooks,
   products,
   projects,
@@ -54,9 +52,19 @@ const shopifyProduct = (id: number, title = `Product ${id}`) => ({
   }))
 });
 
+/** An audit reads and scores; it never generates. Anything else is a
+ *  regression that would silently bill merchants for a free feature. */
+async function expectNoGeneration() {
+  const queued = await db.query.jobs.findMany();
+  // `audit_run` is the audit itself; anything else queued here would be a
+  // generation the merchant never asked for.
+  expect(queued.filter((j) => j.kind !== 'audit_run')).toHaveLength(0);
+  const ledger = await db.select().from(creditTransactions);
+  expect(ledger.filter((t) => t.delta < 0)).toHaveLength(0);
+}
+
 beforeEach(async () => {
   await resetTables();
-  runDynamicAuditForProduct.mockClear();
   store.up = true;
   store.products = [shopifyProduct(1), shopifyProduct(2), shopifyProduct(3), shopifyProduct(4)];
   vi.stubGlobal('fetch', async (input: string | URL | Request) => {
@@ -138,7 +146,7 @@ describe('launchAuditForUser + processAudit', () => {
     expect(synced.map((p) => p.sourceId).sort()).toEqual(['1', '2', '3', '4']);
     expect(synced.every((p) => p.status === 'active')).toBe(true);
 
-    expect(runDynamicAuditForProduct).toHaveBeenCalledTimes(3);
+    await expectNoGeneration();
     const notes = await db.query.notifications.findMany({
       where: eq(notifications.userId, userId)
     });
@@ -174,7 +182,7 @@ describe('launchAuditForUser + processAudit', () => {
     expect(audit.status).toBe('failed');
     expect(audit.platform).toBe('unknown');
     expect(audit.error).toMatch(/detect/i);
-    expect(runDynamicAuditForProduct).not.toHaveBeenCalled();
+    await expectNoGeneration();
     const [note] = await db.query.notifications.findMany({
       where: eq(notifications.userId, userId)
     });
@@ -188,9 +196,8 @@ describe('launchAuditForUser + processAudit', () => {
       normalizeUrl('https://demo.example.com')!
     );
     const audit = await latestAuditFor(projectId!);
-    runDynamicAuditForProduct.mockClear();
     await processAudit(audit.id);
-    expect(runDynamicAuditForProduct).not.toHaveBeenCalled();
+    await expectNoGeneration();
     expect(
       (await db.query.audits.findFirst({ where: eq(audits.id, audit.id) }))!.completedAt?.getTime()
     ).toBe(audit.completedAt?.getTime());
@@ -337,7 +344,7 @@ describe('processAudit on a connected store', () => {
       .from(shopConnections)
       .where(eq(shopConnections.projectId, projectId));
     expect(conn.pullRequestedAt).toBeNull();
-    expect(runDynamicAuditForProduct).toHaveBeenCalledTimes(2);
+    await expectNoGeneration();
   });
 
   it('records the platform from the connection, not from URL detection', async () => {
@@ -490,7 +497,7 @@ describe('launchAnonymousAudit', () => {
     const done = await waitForAudit(row.id);
     expect(done.status).toBe('completed');
     expect(done.projectId).toBeNull();
-    expect(runDynamicAuditForProduct).not.toHaveBeenCalled();
+    await expectNoGeneration();
     expect(await db.query.products.findMany()).toHaveLength(0);
 
     const second = await launchAnonymousAudit(norm);

@@ -11,6 +11,7 @@ import {
   DEFAULT_IMAGE_QUALITY,
   estimateChatCredits
 } from '@/entities/ai-model';
+import { altTextCredits } from '@/entities/generation-job';
 import {
   cancelBulkJob,
   estimateBulkCostBreakdown,
@@ -46,7 +47,10 @@ describe('estimateBulkCostBreakdown', () => {
     const chat =
       (prefs.fields.title ? estimateChatCredits('sonnet-5', 'title') : 0) +
       (prefs.fields.description ? estimateChatCredits('sonnet-5', 'description') : 0) +
-      (prefs.fields.tags ? estimateChatCredits('sonnet-5', 'tags') : 0);
+      (prefs.fields.tags ? estimateChatCredits('sonnet-5', 'tags') : 0) +
+      // Alt texts ride along with the text fields — one photo's worth per
+      // product, the floor the estimate promises.
+      (prefs.fields.alt ? altTextCredits() : 0);
     const images = prefs.fields.images ? costForImage('image-2k') * prefs.imageAngles.length : 0;
     expect(b.perProduct).toEqual({ chat, images, total: chat + images });
     expect(b.total).toBe((chat + images) * 10);
