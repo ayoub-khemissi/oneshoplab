@@ -112,6 +112,14 @@ describe('normalizeUrl', () => {
       domain: 'demo.example.com'
     });
     expect(normalizeUrl('demo.example.com')).toMatchObject({ domain: 'demo.example.com' });
+    // The shape a Shopify merchant actually types. Every URL field must accept
+    // it bare: the add-site form used input type="url", whose native
+    // validation demands a scheme, so this was rejected before it ever reached
+    // here — while the field's own placeholder showed a bare domain.
+    expect(normalizeUrl('oneshoplab-test.myshopify.com')).toEqual({
+      url: 'https://oneshoplab-test.myshopify.com',
+      domain: 'oneshoplab-test.myshopify.com'
+    });
     expect(normalizeUrl('not a url')).toBeNull();
   });
 });

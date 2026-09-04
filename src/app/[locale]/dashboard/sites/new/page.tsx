@@ -86,13 +86,25 @@ export default async function AddSitePage({ searchParams }: PageProps) {
       ) : null}
 
       <form action={addSiteAction} className="flex flex-col gap-4">
-        <TextField fullWidth isRequired name="url" type="url" autoFocus>
+        {/* type="text", not "url" — same reason as the public audit form and
+            the hero: the browser's native url validation demands a scheme, so
+            "maboutique.myshopify.com" is rejected before the request is even
+            sent. normalizeUrl() prepends https:// and validates server-side,
+            so the friendly bare form is accepted. This page was the one entry
+            point still refusing it. */}
+        <TextField fullWidth isRequired name="url" type="text" autoFocus>
           <Label>{t('addSiteUrlLabel')}</Label>
           <InputGroup>
             <InputGroup.Prefix>
               <Globe className="size-4" />
             </InputGroup.Prefix>
-            <InputGroup.Input placeholder={t('addSiteUrlPlaceholder')} />
+            <InputGroup.Input
+              placeholder={t('addSiteUrlPlaceholder')}
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+            />
           </InputGroup>
         </TextField>
         <button
