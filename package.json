@@ -17,7 +17,7 @@
     "reconcile": "tsx scripts/reconcile-kie-jobs.ts",
     "lint:fix": "eslint . --fix",
     "lint:strict": "eslint . --max-warnings=0",
-    "audit:prod": "pnpm audit --prod --audit-level critical",
+    "audit:prod": "bash scripts/audit-prod.sh",
     "i18n:check": "node scripts/check-i18n.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
