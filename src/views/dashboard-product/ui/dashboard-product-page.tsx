@@ -3,7 +3,7 @@ import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { InfoHint } from '@/shared/ui';
+import { AutoRefresh, InfoHint } from '@/shared/ui';
 import { CustomInstructionsField, RetryableGenerateProvider } from '@/features/retryable-generate';
 import { ModelChips } from '@/widgets/model-chips';
 import { AppliedToastOnMount } from '@/features/manual-catalog';
@@ -185,6 +185,11 @@ export async function DashboardProductPage({
   // `connected` is the same status the worker's apply pass requires.
   const canApplyToStore =
     siteKeys.some((k) => isUsableKey(k)) || connection?.status === 'connected';
+  // A change is in flight. A connector applies it within seconds, a polling
+  // plugin within minutes — either way the page must reach "applied" on its
+  // own, or the merchant is left reading a chip that says "queued" next to a
+  // panel that says nothing is queued.
+  const changeInFlight = pendingSummary.items.some((i) => i.status === 'pending');
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
@@ -329,6 +334,7 @@ export async function DashboardProductPage({
         replaceAllImages={!capabilities.stableImageIds}
         currentImageCount={product.images.length}
       />
+      {changeInFlight ? <AutoRefresh intervalMs={5000} /> : null}
     </main>
   );
 }

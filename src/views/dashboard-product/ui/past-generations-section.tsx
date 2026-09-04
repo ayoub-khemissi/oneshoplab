@@ -96,6 +96,10 @@ export function PastGenerationsSection({
                   <PastGenResult item={h} />
                   {h.field === 'images' && h.expiredAt ? null : (
                     <ApplyToStoreButton
+                      // Remount when the server reports a new status, so the
+                      // chip follows the change through to "applied" instead
+                      // of staying on the value the click produced.
+                      key={changeByJobId[h.jobId]?.status ?? 'none'}
                       jobId={h.jobId}
                       siteId={siteId}
                       initialChange={changeByJobId[h.jobId] ?? null}

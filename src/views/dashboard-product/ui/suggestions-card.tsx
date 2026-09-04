@@ -67,6 +67,7 @@ export async function SuggestionsCard({
     if (!latest) return null;
     return (
       <ApplyToStoreButton
+        key={changeByJobId[latest.jobId]?.status ?? 'none'}
         jobId={latest.jobId}
         siteId={siteId}
         initialChange={changeByJobId[latest.jobId] ?? null}

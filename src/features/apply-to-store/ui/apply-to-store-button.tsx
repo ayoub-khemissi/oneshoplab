@@ -3,6 +3,7 @@
 import { Spinner } from '@heroui/react';
 import { AlertTriangle, Check, Clock, RotateCcw, Store, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
 import { ConfirmDialog } from '@/shared/ui';
@@ -47,6 +48,7 @@ export function ApplyToStoreButton({
   generatedImageCount?: number;
 }) {
   const t = useTranslations('ApplyToStore');
+  const router = useRouter();
   const [change, setChange] = useState<ChangeSummary | null>(initialChange);
   const [error, setError] = useState<string | null>(null);
   const [undone, setUndone] = useState(false);
@@ -62,8 +64,12 @@ export function ApplyToStoreButton({
     setError(null);
     startTransition(async () => {
       const res = await approveGenerationAction(fd);
-      if (res.ok) setChange(res.change);
-      else setError(t('errorGeneric'));
+      if (res.ok) {
+        setChange(res.change);
+        // The pending-changes panel is server-rendered: without this it keeps
+        // saying "0 en attente" next to a chip that says the opposite.
+        router.refresh();
+      } else setError(t('errorGeneric'));
       setDialog(null);
     });
   }
@@ -75,8 +81,10 @@ export function ApplyToStoreButton({
     fd.set('changeId', change.id);
     startTransition(async () => {
       const res = await cancelChangeAction(fd);
-      if (res.ok) setChange(null);
-      else setError(t('errorGeneric'));
+      if (res.ok) {
+        setChange(null);
+        router.refresh();
+      } else setError(t('errorGeneric'));
     });
   }
 
@@ -88,8 +96,10 @@ export function ApplyToStoreButton({
     setError(null);
     startTransition(async () => {
       const res = await undoChangeAction(fd);
-      if (res.ok) setUndone(true);
-      else setError(res.error === 'conflict' ? t('undoBlocked') : t('undoUnavailable'));
+      if (res.ok) {
+        setUndone(true);
+        router.refresh();
+      } else setError(res.error === 'conflict' ? t('undoBlocked') : t('undoUnavailable'));
       setDialog(null);
     });
   }
