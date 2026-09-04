@@ -15,6 +15,7 @@ export type {
   ImageOp,
   ImageOpsPayload,
   ImageOpsSimulation,
+  ImageValueRejection,
   PriorImageRef,
   SimulatedImage
 } from './lib/image-ops';

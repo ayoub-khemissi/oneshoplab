@@ -1726,6 +1726,7 @@
     "fallbackHint": "En attendant, le bouton « Appliquer sur la boutique » d’une génération remplace toutes les photos du produit, après confirmation.",
     "noActionsAvailable": "Votre boutique n’accepte aucune modification de photo depuis OneShopLab pour le moment.",
     "previewInvalid": "Ces modifications ne peuvent pas être appliquées ensemble. Retirez-en une pour continuer.",
+    "previewRemovesLastImage": "Un produit doit garder au moins une photo. Retirez cette suppression pour continuer.",
     "errorStale": "Vos photos ont changé dans votre boutique depuis l’ouverture de cette page. Nous l’avons rechargée : vérifiez, puis recommencez.",
     "errorLastImage": "Votre produit doit garder au moins une photo.",
     "errorTooMany": "Votre boutique accepte {max} photos au maximum par produit.",

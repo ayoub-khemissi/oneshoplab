@@ -1726,6 +1726,7 @@
     "fallbackHint": "그전까지는 생성 결과의 “상점에 적용” 버튼이 확인 후 상품의 사진을 모두 교체합니다.",
     "noActionsAvailable": "현재 상점은 OneShopLab의 사진 변경을 받지 않습니다.",
     "previewInvalid": "이 변경들은 함께 적용할 수 없습니다. 하나를 제거하세요.",
+    "previewRemovesLastImage": "상품에는 사진이 최소 한 장 있어야 합니다. 이 삭제를 취소하면 계속할 수 있습니다.",
     "errorStale": "이 페이지를 연 뒤 상점의 사진이 바뀌었습니다. 페이지를 새로 불러왔습니다. 확인 후 다시 시도하세요.",
     "errorLastImage": "상품에는 사진이 최소 한 장 남아 있어야 합니다.",
     "errorTooMany": "상점은 상품당 최대 {max}장까지 허용합니다.",

@@ -1726,6 +1726,7 @@
     "fallbackHint": "Na razie przycisk „Zastosuj w sklepie” przy generacji zastępuje wszystkie zdjęcia produktu, po potwierdzeniu.",
     "noActionsAvailable": "Na razie Twój sklep nie przyjmuje zmian zdjęć z OneShopLab.",
     "previewInvalid": "Tych zmian nie można zastosować razem. Usuń jedną z nich.",
+    "previewRemovesLastImage": "Produkt musi zachować co najmniej jedno zdjęcie. Usuń to skasowanie, aby kontynuować.",
     "errorStale": "Zdjęcia w sklepie zmieniły się od otwarcia tej strony. Odświeżyliśmy ją: sprawdź i spróbuj ponownie.",
     "errorLastImage": "Produkt musi zachować co najmniej jedno zdjęcie.",
     "errorTooMany": "Twój sklep przyjmuje maksymalnie {max} zdjęć na produkt.",

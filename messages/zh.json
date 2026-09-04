@@ -1726,6 +1726,7 @@
     "fallbackHint": "在此之前，某次生成的“应用到店铺”按钮会在确认后替换商品的全部图片。",
     "noActionsAvailable": "您的店铺暂时不接受来自 OneShopLab 的图片修改。",
     "previewInvalid": "这些修改无法一起应用。请移除其中一条。",
+    "previewRemovesLastImage": "商品必须至少保留一张照片。请移除该删除操作后继续。",
     "errorStale": "自本页打开以来，店铺中的图片已发生变化。我们已重新加载：请查看后重试。",
     "errorLastImage": "商品至少要保留一张图片。",
     "errorTooMany": "您的店铺每个商品最多接受 {max} 张图片。",

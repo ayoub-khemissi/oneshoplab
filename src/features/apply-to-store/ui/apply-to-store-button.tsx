@@ -25,7 +25,7 @@ export function ApplyToStoreButton({
   jobId,
   siteId,
   initialChange,
-  hasSiteKey,
+  canApplyToStore,
   disabled = false,
   field,
   replaceAllImages = false,
@@ -35,7 +35,7 @@ export function ApplyToStoreButton({
   jobId: string;
   siteId: string;
   initialChange: ChangeSummary | null;
-  hasSiteKey: boolean;
+  canApplyToStore: boolean;
   /** Archived products cannot be written back. */
   disabled?: boolean;
   /** Which field this generation rewrites — only `images` can replace a gallery. */
@@ -94,7 +94,7 @@ export function ApplyToStoreButton({
     });
   }
 
-  if (!hasSiteKey) {
+  if (!canApplyToStore) {
     return (
       <p className="text-xs text-[var(--muted)] inline-flex items-center gap-1.5 flex-wrap">
         <Store className="size-3.5" aria-hidden />

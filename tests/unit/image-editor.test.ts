@@ -196,14 +196,28 @@ describe('image editor — queue assembly', () => {
     expect(moveRef(['m1', 'm2', 'm3'], 'm3', 1)).toEqual(['m1', 'm2', 'm3']);
   });
 
-  it('flags a queue that would leave the product with no photo', () => {
+  it('flags a queue that would leave the product with no photo, and says why', () => {
     const queue = queueOf(
       { op: 'remove', target: 'm1' },
       { op: 'remove', target: 'm2' },
       { op: 'remove', target: 'm3' }
     );
-    expect(previewQueue(queue, storeImages).invalid).toBe(true);
-    expect(previewQueue(EMPTY_QUEUE, storeImages).images).toHaveLength(3);
+    const preview = previewQueue(queue, storeImages);
+    expect(preview.invalid).toBe(true);
+    // The merchant is told the rule they hit — "keep one photo" — and not that
+    // two of their changes conflict, which would be a hunt for nothing.
+    expect(preview.invalidReason).toBe('removes_last_image');
+
+    const fine = previewQueue(EMPTY_QUEUE, storeImages);
+    expect(fine.images).toHaveLength(3);
+    expect(fine.invalidReason).toBeNull();
+  });
+
+  it('a single removal on a one-photo product is the same rule', () => {
+    const onlyPhoto = [storeImages[0]];
+    const preview = previewQueue(queueOf({ op: 'remove', target: 'm1' }), onlyPhoto);
+    expect(preview.invalid).toBe(true);
+    expect(preview.invalidReason).toBe('removes_last_image');
   });
 
   it('an alt typed on a generated tile follows it into the queued op', () => {

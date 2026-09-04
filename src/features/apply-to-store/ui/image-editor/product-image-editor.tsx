@@ -289,7 +289,9 @@ export function ProductImageEditor({
       ) : null}
       {preview.invalid ? (
         <p className="text-sm text-[var(--danger)]" role="alert">
-          {t('previewInvalid')}
+          {preview.invalidReason === 'removes_last_image'
+            ? t('previewRemovesLastImage')
+            : t('previewInvalid')}
         </p>
       ) : null}
 

@@ -1726,6 +1726,7 @@
     "fallbackHint": "Bis dahin ersetzt die Schaltfläche „Im Shop anwenden“ einer Generierung nach Bestätigung alle Fotos des Produkts.",
     "noActionsAvailable": "Ihr Shop akzeptiert derzeit keine Fotoänderung aus OneShopLab.",
     "previewInvalid": "Diese Änderungen können nicht zusammen angewendet werden. Entfernen Sie eine davon.",
+    "previewRemovesLastImage": "Ein Produkt muss mindestens ein Foto behalten. Entfernen Sie diese Löschung, um fortzufahren.",
     "errorStale": "Ihre Fotos haben sich in Ihrem Shop geändert, seit diese Seite geöffnet wurde. Wir haben sie neu geladen: bitte prüfen und erneut versuchen.",
     "errorLastImage": "Ihr Produkt muss mindestens ein Foto behalten.",
     "errorTooMany": "Ihr Shop akzeptiert höchstens {max} Fotos pro Produkt.",

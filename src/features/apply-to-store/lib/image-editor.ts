@@ -14,6 +14,7 @@
 import {
   simulateImageOps,
   type ImageOp,
+  type ImageValueRejection,
   type PriorImageRef
 } from '@/entities/product-change/client';
 import type { ConnectionCapabilities, ImageOpVerb } from '@/shared/db/schema';
@@ -181,19 +182,31 @@ export interface EditorPreview {
   unresolved: string[];
   /** The queue is not applicable as it stands (e.g. it empties the gallery). */
   invalid: boolean;
+  /** Why, so the merchant is told the actual rule they hit rather than a
+   *  generic "these can't be applied together" that sends them hunting for a
+   *  conflict between two ops when the problem is a single one. */
+  invalidReason: ImageValueRejection['code'] | null;
 }
 
 /** Replays the queue over the store gallery — the entity owns the simulation. */
 export function previewQueue(queue: EditorQueue, prior: readonly PriorImageRef[]): EditorPreview {
   const base = queue.ops.map((q) => q.op);
   const first = simulateImageOps(base, prior);
-  if (!first.ok) return { ops: base, images: [], unresolved: [], invalid: true };
+  if (!first.ok)
+    return {
+      ops: base,
+      images: [],
+      unresolved: [],
+      invalid: true,
+      invalidReason: first.rejection.code
+    };
   if (!queue.order) {
     return {
       ops: base,
       images: first.simulation.images,
       unresolved: first.simulation.unresolved,
-      invalid: false
+      invalid: false,
+      invalidReason: null
     };
   }
   const order = normalizeOrder(
@@ -202,12 +215,14 @@ export function previewQueue(queue: EditorQueue, prior: readonly PriorImageRef[]
   );
   const ops: ImageOp[] = [...base, { op: 'reorder', order }];
   const second = simulateImageOps(ops, prior);
-  if (!second.ok) return { ops, images: [], unresolved: [], invalid: true };
+  if (!second.ok)
+    return { ops, images: [], unresolved: [], invalid: true, invalidReason: second.rejection.code };
   return {
     ops,
     images: second.simulation.images,
     unresolved: second.simulation.unresolved,
-    invalid: false
+    invalid: false,
+    invalidReason: null
   };
 }
 

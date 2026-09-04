@@ -19,7 +19,7 @@ export function PastGenerationsSection({
   totalPages,
   siteId,
   archived,
-  hasSiteKey,
+  canApplyToStore,
   changeByJobId,
   replaceAllImages,
   currentImageCount
@@ -35,7 +35,7 @@ export function PastGenerationsSection({
   siteId: string;
   archived: boolean;
   /** A usable site key exists — otherwise the row shows a link to set one up. */
-  hasSiteKey: boolean;
+  canApplyToStore: boolean;
   changeByJobId: Record<string, ChangeSummary>;
   /** The store cannot be addressed image by image → applying replaces the
    *  whole gallery, which the merchant must confirm (IMAGE-OPS.md §5). */
@@ -99,7 +99,7 @@ export function PastGenerationsSection({
                       jobId={h.jobId}
                       siteId={siteId}
                       initialChange={changeByJobId[h.jobId] ?? null}
-                      hasSiteKey={hasSiteKey}
+                      canApplyToStore={canApplyToStore}
                       disabled={archived}
                       field={h.field}
                       replaceAllImages={replaceAllImages}

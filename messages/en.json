@@ -1726,6 +1726,7 @@
     "fallbackHint": "In the meantime, the “Apply to store” button on a generation replaces every photo of the product, after confirmation.",
     "noActionsAvailable": "Your store accepts no photo change from OneShopLab for now.",
     "previewInvalid": "These changes cannot be applied together. Remove one to continue.",
+    "previewRemovesLastImage": "A product must keep at least one photo. Remove that deletion to continue.",
     "errorStale": "Your photos changed in your store since this page was opened. We reloaded it: have a look and try again.",
     "errorLastImage": "Your product must keep at least one photo.",
     "errorTooMany": "Your store accepts at most {max} photos per product.",

@@ -27,6 +27,7 @@ import {
 import { auth } from '@/entities/user';
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
+import { getConnection } from '@/entities/shop-connection';
 import {
   appliedGeneratedImagesFor,
   listChangesForJobs,
@@ -157,25 +158,33 @@ export async function DashboardProductPage({
   // Apply-to-store state per past generation + whether a plugin can pick it up.
   // `capabilities` decides whether applying images replaces the whole gallery
   // (docs/api/IMAGE-OPS.md §5) — the merchant confirms that in plain words.
-  const [changeByJobId, siteKeys, capabilities, pendingSummary, takenByStore] = await Promise.all([
-    listChangesForJobs(projectId, [
-      ...new Set([
-        ...pastGenPage.items.map((h) => h.jobId),
-        // The field rows send the newest generation of each field, which is
-        // not necessarily on the first page of the history.
-        ...[titleHistory[0], descriptionHistory[0], tagsHistory[0]]
-          .filter((h) => h != null)
-          .map((h) => h.jobId)
-      ])
-    ]),
-    listProjectKeys({ projectId, userId: session.user.id }),
-    getProjectCapabilities(projectId),
-    listPendingSummaryForProduct(productId, session.user.id),
-    // Visuals the store already took: they are store photos now, and showing
-    // the generation beside them reads as a duplicate.
-    appliedGeneratedImagesFor(productId)
-  ]);
-  const hasSiteKey = siteKeys.some((k) => isUsableKey(k));
+  const [changeByJobId, siteKeys, connection, capabilities, pendingSummary, takenByStore] =
+    await Promise.all([
+      listChangesForJobs(projectId, [
+        ...new Set([
+          ...pastGenPage.items.map((h) => h.jobId),
+          // The field rows send the newest generation of each field, which is
+          // not necessarily on the first page of the history.
+          ...[titleHistory[0], descriptionHistory[0], tagsHistory[0]]
+            .filter((h) => h != null)
+            .map((h) => h.jobId)
+        ])
+      ]),
+      listProjectKeys({ projectId, userId: session.user.id }),
+      getConnection(projectId),
+      getProjectCapabilities(projectId),
+      listPendingSummaryForProduct(productId, session.user.id),
+      // Visuals the store already took: they are store photos now, and showing
+      // the generation beside them reads as a duplicate.
+      appliedGeneratedImagesFor(productId)
+    ]);
+  // A store can take a change through either path: the plugin polling with a
+  // site key, or a connector the merchant installed (Shopify, Wix). Reading
+  // only the keys told every OAuth-connected merchant to "connect your store"
+  // on a store that was connected, and hid the apply button entirely.
+  // `connected` is the same status the worker's apply pass requires.
+  const canApplyToStore =
+    siteKeys.some((k) => isUsableKey(k)) || connection?.status === 'connected';
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
@@ -286,7 +295,7 @@ export async function DashboardProductPage({
             costPerImage={costPerImage}
             retentionDays={retentionDays}
             changeByJobId={changeByJobId}
-            hasSiteKey={hasSiteKey}
+            canApplyToStore={canApplyToStore}
           />
         </div>
       </RetryableGenerateProvider>
@@ -315,7 +324,7 @@ export async function DashboardProductPage({
         totalPages={pastGenPage.totalPages}
         siteId={siteId}
         archived={archived}
-        hasSiteKey={hasSiteKey}
+        canApplyToStore={canApplyToStore}
         changeByJobId={changeByJobId}
         replaceAllImages={!capabilities.stableImageIds}
         currentImageCount={product.images.length}

@@ -1726,6 +1726,7 @@
     "fallbackHint": "O zamana kadar, bir üretimdeki “Mağazaya uygula” düğmesi, onayınızdan sonra ürünün tüm fotoğraflarını değiştirir.",
     "noActionsAvailable": "Mağazanız şu an OneShopLab’den gelen fotoğraf değişikliklerini kabul etmiyor.",
     "previewInvalid": "Bu değişiklikler birlikte uygulanamaz. Devam etmek için birini kaldırın.",
+    "previewRemovesLastImage": "Bir ürün en az bir fotoğraf içermelidir. Devam etmek için bu silme işlemini kaldırın.",
     "errorStale": "Bu sayfa açıldığından beri mağazanızdaki fotoğraflar değişti. Sayfayı yeniledik: kontrol edip tekrar deneyin.",
     "errorLastImage": "Ürününüzde en az bir fotoğraf kalmalı.",
     "errorTooMany": "Mağazanız ürün başına en fazla {max} fotoğraf kabul ediyor.",

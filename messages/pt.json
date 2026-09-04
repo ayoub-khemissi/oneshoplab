@@ -1726,6 +1726,7 @@
     "fallbackHint": "Entretanto, o botão «Aplicar na loja» de uma geração substitui todas as fotos do produto, após confirmação.",
     "noActionsAvailable": "Por agora a sua loja não aceita alterações de fotos a partir do OneShopLab.",
     "previewInvalid": "Estas alterações não podem ser aplicadas em conjunto. Retire uma para continuar.",
+    "previewRemovesLastImage": "Um produto deve manter pelo menos uma foto. Remova essa exclusão para continuar.",
     "errorStale": "As suas fotos mudaram na loja desde que abriu esta página. Recarregámos: verifique e tente de novo.",
     "errorLastImage": "O seu produto tem de manter pelo menos uma foto.",
     "errorTooMany": "A sua loja aceita no máximo {max} fotos por produto.",
