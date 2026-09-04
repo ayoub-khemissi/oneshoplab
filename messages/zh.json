@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "应用到我的店铺",
     "applyAgain": "再次应用",
-    "pending": "等待插件",
+    "pending": "正在发送到你的店铺…",
+    "pendingPlugin": "等待你的插件",
     "cancel": "取消",
     "applied": "已应用到你的店铺",
     "conflict": "未应用：此字段在你的店铺中已被修改。",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "请选择用来替换这张图片的生成图。",
     "replacePickEmpty": "暂时没有可用的生成图。",
     "replaceCancel": "取消替换",
-    "queueTitle": "待应用的修改（{count}）",
-    "queueEmpty": "暂无待应用的修改。请使用每张图片下方的按钮。",
+    "queueTitle": "待发送的照片修改（{count}）",
+    "queueEmpty": "尚未准备任何照片修改。请使用照片下方的按钮。",
     "queueRemove": "移除这条修改",
     "queueClear": "全部清除",
     "apply": "应用到我的店铺",
@@ -1841,5 +1842,23 @@
     "seoDescription": "你面向电商卖家发声吗？每一家通过你的链接订阅的店铺，只要订阅还在，你每个月都能拿到佣金。",
     "dashboardCta": "打开我的合作面板",
     "applyTemplate": "您好，\n\n我想加入推广合作计划。\n\n• 公开名称或昵称：\n• 我在哪里发布（频道、邮件通讯、网站、社群的链接）：\n• 大致受众规模：\n• 国家/地区（用于开票）：\n• 希望出现在链接里的词（例如「marie」对应 oneshoplab.com/?fpr=marie）：\n\n谢谢！"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, other {# 项生成内容可应用}}",
+    "titleAllSent": "所有生成内容均已发送",
+    "field": {
+      "title": "标题",
+      "description": "描述",
+      "tags": "标签"
+    },
+    "state": {
+      "to_apply": "等待你决定",
+      "sending": "发送中",
+      "applied": "已应用到你的店铺",
+      "conflict": "店铺端已更改",
+      "failed": "失败"
+    },
+    "hintToApply": "点击每项生成内容下方的「应用」按钮，将其发送到你的店铺。",
+    "hintAllSent": "该商品没有等待你处理的内容。"
   }
 }

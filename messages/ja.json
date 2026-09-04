@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "ストアに反映",
     "applyAgain": "もう一度反映",
-    "pending": "プラグインを待っています",
+    "pending": "ストアへ送信中…",
+    "pendingPlugin": "プラグインの応答待ち",
     "cancel": "取り消す",
     "applied": "ストアに反映済み",
     "conflict": "未反映：この項目はその後ストアで変更されました。",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "この写真と差し替える画像を選んでください。",
     "replacePickEmpty": "使える生成画像がまだありません。",
     "replaceCancel": "差し替えをやめる",
-    "queueTitle": "保留中の変更（{count}）",
-    "queueEmpty": "保留中の変更はありません。各写真の下のボタンを使ってください。",
+    "queueTitle": "送信待ちの写真編集（{count}）",
+    "queueEmpty": "準備された写真編集はありません。写真の下のボタンをお使いください。",
     "queueRemove": "この変更を取り消す",
     "queueClear": "すべて消す",
     "apply": "ショップに適用する",
@@ -1841,5 +1842,23 @@
     "seoDescription": "EC 事業者に向けて発信していますか。あなたのリンク経由で契約したショップが継続するかぎり、毎月コミッションをお支払いします。",
     "dashboardCta": "パートナー画面を開く",
     "applyTemplate": "こんにちは。\n\nアフィリエイトプログラムに参加したいです。\n\n• 公開名またはハンドル：\n• 発信している場所（チャンネル・ニュースレター・サイト・コミュニティのリンク）：\n• おおよその読者数：\n• 国（請求のため）：\n• リンクに入れたい語（例：「marie」→ oneshoplab.com/?fpr=marie）：\n\nよろしくお願いします。"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, other {適用できる生成が# 件}}",
+    "titleAllSent": "生成した内容はすべて送信済みです",
+    "field": {
+      "title": "タイトル",
+      "description": "説明",
+      "tags": "タグ"
+    },
+    "state": {
+      "to_apply": "あなたの判断待ち",
+      "sending": "送信中",
+      "applied": "ストアに適用済み",
+      "conflict": "ストア側で変更されました",
+      "failed": "失敗"
+    },
+    "hintToApply": "各生成の下にある「適用」ボタンでストアに送信できます。",
+    "hintAllSent": "この商品に判断待ちの項目はありません。"
   }
 }

@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "Zastosuj w sklepie",
     "applyAgain": "Zastosuj ponownie",
-    "pending": "Czekamy na wtyczkę",
+    "pending": "Wysyłanie do sklepu…",
+    "pendingPlugin": "Oczekiwanie na wtyczkę",
     "cancel": "Anuluj",
     "applied": "Zastosowano w sklepie",
     "conflict": "Nie zastosowano: to pole zmieniło się w sklepie.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Wybierz grafikę, która zastąpi to zdjęcie.",
     "replacePickEmpty": "Nie ma jeszcze wygenerowanych grafik.",
     "replaceCancel": "Anuluj zastąpienie",
-    "queueTitle": "Oczekujące zmiany ({count})",
-    "queueEmpty": "Brak oczekujących zmian. Skorzystaj z przycisków pod każdym zdjęciem.",
+    "queueTitle": "Zmiany zdjęć gotowe do wysłania ({count})",
+    "queueEmpty": "Brak przygotowanych zmian. Użyj przycisków pod zdjęciem.",
     "queueRemove": "Usuń tę zmianę",
     "queueClear": "Wyczyść wszystko",
     "apply": "Zastosuj w moim sklepie",
@@ -1841,5 +1842,23 @@
     "seoDescription": "Rozmawiasz ze sprzedawcami w e-commerce? Każdy sklep, który wykupi abonament z Twojego linku, płaci Ci prowizję co miesiąc, dopóki pozostaje abonentem.",
     "dashboardCta": "Otwórz panel partnera",
     "applyTemplate": "Dzień dobry,\n\nchciałbym dołączyć do programu partnerskiego.\n\n• Publiczna nazwa lub pseudonim:\n• Gdzie publikuję (linki do kanału, newslettera, strony, społeczności):\n• Przybliżona wielkość odbiorców:\n• Kraj (do faktury):\n• Słowo, które chcę w swoim linku (np. „marie” dla oneshoplab.com/?fpr=marie):\n\nDziękuję!"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {1 wygenerowana treść gotowa do zastosowania} other {# wygenerowanych treści gotowych do zastosowania}}",
+    "titleAllSent": "Wszystko, co wygenerowano, zostało wysłane",
+    "field": {
+      "title": "Tytuł",
+      "description": "Opis",
+      "tags": "Tagi"
+    },
+    "state": {
+      "to_apply": "czeka na Twoją decyzję",
+      "sending": "wysyłanie",
+      "applied": "zastosowano w sklepie",
+      "conflict": "zmienione po stronie sklepu",
+      "failed": "niepowodzenie"
+    },
+    "hintToApply": "Użyj przycisku Zastosuj pod daną treścią, aby wysłać ją do sklepu.",
+    "hintAllSent": "Nic nie czeka na Twoją decyzję przy tym produkcie."
   }
 }

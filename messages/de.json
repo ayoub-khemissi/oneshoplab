@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "In meinem Shop anwenden",
     "applyAgain": "Erneut anwenden",
-    "pending": "Wartet auf das Plugin",
+    "pending": "Wird an Ihren Shop gesendet…",
+    "pendingPlugin": "Warten auf Ihr Plugin",
     "cancel": "Abbrechen",
     "applied": "In deinem Shop angewendet",
     "conflict": "Nicht angewendet: dieses Feld wurde inzwischen im Shop geändert.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Wählen Sie das Bild, das dieses Foto ersetzt.",
     "replacePickEmpty": "Noch kein erstelltes Bild verfügbar.",
     "replaceCancel": "Ersetzen abbrechen",
-    "queueTitle": "Offene Änderungen ({count})",
-    "queueEmpty": "Keine offenen Änderungen. Nutzen Sie die Schaltflächen unter jedem Foto.",
+    "queueTitle": "Fotoänderungen bereit zum Senden ({count})",
+    "queueEmpty": "Keine Fotoänderung vorbereitet. Nutzen Sie die Schaltflächen unter einem Foto.",
     "queueRemove": "Diese Änderung entfernen",
     "queueClear": "Alles löschen",
     "apply": "In meinem Shop anwenden",
@@ -1841,5 +1842,23 @@
     "seoDescription": "Du sprichst mit Online-Händlern? Jeder Shop, der über deinen Link abonniert, zahlt dir eine Provision — jeden Monat, solange das Abo läuft.",
     "dashboardCta": "Mein Partner-Dashboard öffnen",
     "applyTemplate": "Hallo,\n\nich möchte am Partnerprogramm teilnehmen.\n\n• Öffentlicher Name oder Handle:\n• Wo ich veröffentliche (Links zu Kanal, Newsletter, Website, Community):\n• Ungefähre Reichweite:\n• Land (für die Rechnung):\n• Gewünschtes Wort in meinem Link (z. B. „marie“ für oneshoplab.com/?fpr=marie):\n\nDanke!"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {1 Generierung bereit zum Anwenden} other {# Generierungen bereit zum Anwenden}}",
+    "titleAllSent": "Alles Generierte wurde gesendet",
+    "field": {
+      "title": "Titel",
+      "description": "Beschreibung",
+      "tags": "Tags"
+    },
+    "state": {
+      "to_apply": "wartet auf Sie",
+      "sending": "wird gesendet",
+      "applied": "in Ihrem Shop angewendet",
+      "conflict": "im Shop geändert",
+      "failed": "fehlgeschlagen"
+    },
+    "hintToApply": "Nutzen Sie die Schaltfläche „Anwenden“ unter jeder Generierung, um sie an Ihren Shop zu senden.",
+    "hintAllSent": "Bei diesem Produkt wartet nichts auf Sie."
   }
 }

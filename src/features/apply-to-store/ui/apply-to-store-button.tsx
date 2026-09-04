@@ -27,6 +27,7 @@ export function ApplyToStoreButton({
   siteId,
   initialChange,
   canApplyToStore,
+  appliesVia = 'plugin',
   disabled = false,
   field,
   replaceAllImages = false,
@@ -37,6 +38,10 @@ export function ApplyToStoreButton({
   siteId: string;
   initialChange: ChangeSummary | null;
   canApplyToStore: boolean;
+  /** How the change reaches the store. A connector (Shopify, Wix) applies
+   *  within seconds; the plugin polls, so it can be minutes. Saying "waiting
+   *  for your plugin" to a merchant who never installed one is nonsense. */
+  appliesVia?: 'connector' | 'plugin';
   /** Archived products cannot be written back. */
   disabled?: boolean;
   /** Which field this generation rewrites — only `images` can replace a gallery. */
@@ -128,7 +133,8 @@ export function ApplyToStoreButton({
       {status === 'pending' ? (
         <>
           <span className="inline-flex items-center gap-1.5 text-[var(--muted)] font-medium">
-            <Clock className="size-3.5" aria-hidden /> {t('pending')}
+            <Clock className="size-3.5" aria-hidden />{' '}
+            {appliesVia === 'connector' ? t('pending') : t('pendingPlugin')}
           </span>
           <button
             type="button"

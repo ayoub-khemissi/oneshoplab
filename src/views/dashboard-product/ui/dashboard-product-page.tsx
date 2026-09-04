@@ -30,10 +30,13 @@ import { getProjectCapabilities } from '@/entities/connection-capability';
 import { getConnection } from '@/entities/shop-connection';
 import {
   appliedGeneratedImagesFor,
+  buildProductRecap,
   listChangesForJobs,
   listPendingSummaryForProduct,
   PendingChangesBanner,
-  ProductImageEditor
+  ProductImageEditor,
+  ProductRecapCard,
+  RECAP_FIELDS
 } from '@/features/apply-to-store';
 import { generateAltTextAction } from '@/features/generate-alt-text/actions';
 import { isUsableKey } from '@/features/integrations';
@@ -185,11 +188,28 @@ export async function DashboardProductPage({
   // `connected` is the same status the worker's apply pass requires.
   const canApplyToStore =
     siteKeys.some((k) => isUsableKey(k)) || connection?.status === 'connected';
+  const appliesVia = connection?.status === 'connected' ? 'connector' : 'plugin';
   // A change is in flight. A connector applies it within seconds, a polling
   // plugin within minutes — either way the page must reach "applied" on its
   // own, or the merchant is left reading a chip that says "queued" next to a
   // panel that says nothing is queued.
   const changeInFlight = pendingSummary.items.some((i) => i.status === 'pending');
+  // What is waiting on the merchant, per field. A generation only enters the
+  // store-side counters once they click Apply, so without this a rewritten set
+  // of tags nobody applied showed up nowhere on the page.
+  const recapRows = buildProductRecap(
+    RECAP_FIELDS.map((field) => {
+      const latest = { title: titleHistory, description: descriptionHistory, tags: tagsHistory }[
+        field
+      ][0];
+      const change = latest ? (changeByJobId[latest.jobId] ?? null) : null;
+      return {
+        field,
+        jobId: latest?.jobId ?? null,
+        change: change ? { status: change.status, approvedAtIso: change.approvedAtIso } : null
+      };
+    })
+  );
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
@@ -230,6 +250,8 @@ export async function DashboardProductPage({
           </h1>
         )}
       </div>
+
+      <ProductRecapCard rows={recapRows} />
 
       <PendingChangesBanner
         projectId={projectId}
@@ -301,6 +323,7 @@ export async function DashboardProductPage({
             retentionDays={retentionDays}
             changeByJobId={changeByJobId}
             canApplyToStore={canApplyToStore}
+            appliesVia={appliesVia}
           />
         </div>
       </RetryableGenerateProvider>
@@ -330,6 +353,7 @@ export async function DashboardProductPage({
         siteId={siteId}
         archived={archived}
         canApplyToStore={canApplyToStore}
+        appliesVia={appliesVia}
         changeByJobId={changeByJobId}
         replaceAllImages={!capabilities.stableImageIds}
         currentImageCount={product.images.length}

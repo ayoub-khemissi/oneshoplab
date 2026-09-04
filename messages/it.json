@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "Applica nel mio negozio",
     "applyAgain": "Applica di nuovo",
-    "pending": "In attesa del plugin",
+    "pending": "Invio al tuo negozio…",
+    "pendingPlugin": "In attesa del tuo plugin",
     "cancel": "Annulla",
     "applied": "Applicato nel tuo negozio",
     "conflict": "Non applicato: questo campo è cambiato nel negozio nel frattempo.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Scegli l’immagine che sostituirà questa foto.",
     "replacePickEmpty": "Nessuna immagine generata da usare per ora.",
     "replaceCancel": "Annulla la sostituzione",
-    "queueTitle": "Modifiche in attesa ({count})",
-    "queueEmpty": "Nessuna modifica in attesa. Usa i pulsanti sotto ogni foto.",
+    "queueTitle": "Modifiche foto pronte da inviare ({count})",
+    "queueEmpty": "Nessuna modifica preparata. Usa i pulsanti sotto una foto.",
     "queueRemove": "Rimuovi questa modifica",
     "queueClear": "Cancella tutto",
     "apply": "Applica sul mio negozio",
@@ -1841,5 +1842,23 @@
     "seoDescription": "Parli a commercianti online? Ogni negozio che si abbona con il tuo link ti paga una commissione, ogni mese, finché resta abbonato.",
     "dashboardCta": "Apri la mia dashboard partner",
     "applyTemplate": "Buongiorno,\n\nvorrei entrare nel programma di affiliazione.\n\n• Nome pubblico o nickname:\n• Dove pubblico (link al canale, alla newsletter, al sito, alla community):\n• Pubblico approssimativo:\n• Paese (per la fatturazione):\n• Parola che vorrei nel mio link (es. «marie» per oneshoplab.com/?fpr=marie):\n\nGrazie!"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {1 generazione pronta da applicare} other {# generazioni pronte da applicare}}",
+    "titleAllSent": "Tutto ciò che è stato generato è stato inviato",
+    "field": {
+      "title": "Titolo",
+      "description": "Descrizione",
+      "tags": "Tag"
+    },
+    "state": {
+      "to_apply": "attende la tua decisione",
+      "sending": "invio in corso",
+      "applied": "applicato al tuo negozio",
+      "conflict": "modificato lato negozio",
+      "failed": "non riuscito"
+    },
+    "hintToApply": "Usa il pulsante Applica sotto ogni generazione per inviarla al tuo negozio.",
+    "hintAllSent": "Nulla attende la tua decisione su questo prodotto."
   }
 }

@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "Appliquer sur la boutique",
     "applyAgain": "Appliquer à nouveau",
-    "pending": "En attente du plugin",
+    "pending": "Envoi vers votre boutique…",
+    "pendingPlugin": "En attente de votre plugin",
     "cancel": "Annuler",
     "applied": "Appliqué dans votre boutique",
     "conflict": "Non appliqué : ce champ a changé dans votre boutique entre-temps.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Choisissez le visuel qui remplacera cette photo.",
     "replacePickEmpty": "Aucun visuel généré à utiliser pour l’instant.",
     "replaceCancel": "Annuler le remplacement",
-    "queueTitle": "Modifications en attente ({count})",
-    "queueEmpty": "Aucune modification en attente. Utilisez les boutons sous chaque photo.",
+    "queueTitle": "Retouches photo prêtes à envoyer ({count})",
+    "queueEmpty": "Aucune retouche préparée. Utilisez les boutons sous une photo.",
     "queueRemove": "Retirer cette modification",
     "queueClear": "Tout effacer",
     "apply": "Appliquer sur ma boutique",
@@ -1841,5 +1842,23 @@
     "seoDescription": "Vous parlez à des e-commerçants ? Chaque boutique qui s'abonne via votre lien vous rapporte une commission, tous les mois, tant qu'elle reste abonnée.",
     "dashboardCta": "Ouvrir mon tableau de bord partenaire",
     "applyTemplate": "Bonjour,\n\nJe souhaite rejoindre le programme d'affiliation.\n\n• Nom ou pseudo public :\n• Où je publie (liens vers ma chaîne, ma newsletter, mon site, ma communauté) :\n• Audience approximative :\n• Pays (pour la facturation) :\n• Mot souhaité dans mon lien (ex. « marie » pour oneshoplab.com/?fpr=marie) :\n\nMerci !"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {1 génération prête à appliquer} other {# générations prêtes à appliquer}}",
+    "titleAllSent": "Tout ce qui a été généré a été envoyé",
+    "field": {
+      "title": "Titre",
+      "description": "Description",
+      "tags": "Tags"
+    },
+    "state": {
+      "to_apply": "attend votre décision",
+      "sending": "envoi en cours",
+      "applied": "appliqué à votre boutique",
+      "conflict": "modifié côté boutique",
+      "failed": "échec"
+    },
+    "hintToApply": "Utilisez le bouton Appliquer sous chaque génération pour l’envoyer à votre boutique.",
+    "hintAllSent": "Rien n’attend votre décision sur ce produit."
   }
 }

@@ -37,6 +37,7 @@ interface SuggestionsCardProps {
   /** Apply-to-store state of the latest generation of each field. */
   changeByJobId: Record<string, ChangeSummary>;
   canApplyToStore: boolean;
+  appliesVia: 'connector' | 'plugin';
 }
 
 export async function SuggestionsCard({
@@ -56,7 +57,8 @@ export async function SuggestionsCard({
   costPerImage,
   retentionDays,
   changeByJobId,
-  canApplyToStore
+  canApplyToStore,
+  appliesVia
 }: SuggestionsCardProps) {
   const tReport = await getTranslations('Report');
 
@@ -72,6 +74,7 @@ export async function SuggestionsCard({
         siteId={siteId}
         initialChange={changeByJobId[latest.jobId] ?? null}
         canApplyToStore={canApplyToStore}
+        appliesVia={appliesVia}
         disabled={archived}
         field={field}
       />

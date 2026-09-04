@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "Apply to my store",
     "applyAgain": "Apply again",
-    "pending": "Waiting for the plugin",
+    "pending": "Sending to your store…",
+    "pendingPlugin": "Waiting for your plugin",
     "cancel": "Cancel",
     "applied": "Applied to your store",
     "conflict": "Not applied: this field changed in your store since.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Pick the visual that will replace this photo.",
     "replacePickEmpty": "No generated visual to use yet.",
     "replaceCancel": "Cancel the replacement",
-    "queueTitle": "Pending changes ({count})",
-    "queueEmpty": "Nothing pending. Use the buttons under each photo.",
+    "queueTitle": "Photo edits ready to send ({count})",
+    "queueEmpty": "No photo edit staged. Use the buttons under a photo.",
     "queueRemove": "Remove this change",
     "queueClear": "Clear all",
     "apply": "Apply to my store",
@@ -1841,5 +1842,23 @@
     "seoDescription": "Do you talk to e-commerce merchants? Every store that subscribes through your link pays you a commission, every month, for as long as it stays subscribed.",
     "dashboardCta": "Open my partner dashboard",
     "applyTemplate": "Hello,\n\nI would like to join the affiliate programme.\n\n• Public name or handle:\n• Where I publish (links to my channel, newsletter, site, community):\n• Approximate audience:\n• Country (for invoicing):\n• Word I would like in my link (e.g. “marie” for oneshoplab.com/?fpr=marie):\n\nThank you!"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {1 generation ready to apply} other {# generations ready to apply}}",
+    "titleAllSent": "Everything generated has been sent",
+    "field": {
+      "title": "Title",
+      "description": "Description",
+      "tags": "Tags"
+    },
+    "state": {
+      "to_apply": "waiting for you",
+      "sending": "being sent",
+      "applied": "applied to your store",
+      "conflict": "changed on the store side",
+      "failed": "failed"
+    },
+    "hintToApply": "Use the Apply button under each generation to send it to your store.",
+    "hintAllSent": "Nothing is waiting for you on this product."
   }
 }

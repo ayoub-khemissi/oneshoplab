@@ -295,7 +295,9 @@ export function ProductImageEditor({
         </p>
       ) : null}
 
-      {editable ? (
+      {/* A product with no photo has nothing to stage: the panel would sit
+          there announcing an empty queue the merchant cannot fill from here. */}
+      {editable && storeImages.length > 0 ? (
         <PendingOpsPanel
           rows={[
             ...queue.ops.map((q) => ({ id: q.id, description: describeOp(q.op, namer) })),

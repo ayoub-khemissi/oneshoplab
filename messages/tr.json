@@ -1570,7 +1570,8 @@
   "ApplyToStore": {
     "apply": "Mağazama uygula",
     "applyAgain": "Tekrar uygula",
-    "pending": "Eklenti bekleniyor",
+    "pending": "Mağazanıza gönderiliyor…",
+    "pendingPlugin": "Eklentiniz bekleniyor",
     "cancel": "Vazgeç",
     "applied": "Mağazanıza uygulandı",
     "conflict": "Uygulanmadı: bu alan bu arada mağazanızda değişti.",
@@ -1707,8 +1708,8 @@
     "replacePickTitle": "Bu fotoğrafın yerine geçecek görseli seçin.",
     "replacePickEmpty": "Henüz kullanılabilecek üretilmiş görsel yok.",
     "replaceCancel": "Değiştirmekten vazgeç",
-    "queueTitle": "Bekleyen değişiklikler ({count})",
-    "queueEmpty": "Bekleyen değişiklik yok. Her fotoğrafın altındaki düğmeleri kullanın.",
+    "queueTitle": "Gönderilmeye hazır fotoğraf düzenlemeleri ({count})",
+    "queueEmpty": "Hazırlanmış düzenleme yok. Bir fotoğrafın altındaki düğmeleri kullanın.",
     "queueRemove": "Bu değişikliği kaldır",
     "queueClear": "Tümünü temizle",
     "apply": "Mağazama uygula",
@@ -1841,5 +1842,23 @@
     "seoDescription": "E-ticaret satıcılarıyla mı konuşuyorsun? Senin bağlantınla abone olan her mağaza, aboneliği sürdüğü sürece sana her ay komisyon kazandırır.",
     "dashboardCta": "Ortak panelimi aç",
     "applyTemplate": "Merhaba,\n\nOrtaklık programına katılmak istiyorum.\n\n• Herkese açık ad veya kullanıcı adı:\n• Nerede yayınlıyorum (kanal, bülten, site, topluluk bağlantıları):\n• Yaklaşık kitle:\n• Ülke (faturalama için):\n• Bağlantımda olmasını istediğim kelime (ör. “marie” → oneshoplab.com/?fpr=marie):\n\nTeşekkürler!"
+  },
+  "ProductRecap": {
+    "titleToApply": "{count, plural, =1 {Uygulanmaya hazır 1 üretim} other {Uygulanmaya hazır # üretim}}",
+    "titleAllSent": "Üretilen her şey gönderildi",
+    "field": {
+      "title": "Başlık",
+      "description": "Açıklama",
+      "tags": "Etiketler"
+    },
+    "state": {
+      "to_apply": "kararınızı bekliyor",
+      "sending": "gönderiliyor",
+      "applied": "mağazanıza uygulandı",
+      "conflict": "mağaza tarafında değiştirildi",
+      "failed": "başarısız"
+    },
+    "hintToApply": "Mağazanıza göndermek için her üretimin altındaki Uygula düğmesini kullanın.",
+    "hintAllSent": "Bu üründe kararınızı bekleyen bir şey yok."
   }
 }
