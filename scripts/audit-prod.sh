@@ -16,7 +16,10 @@ set -uo pipefail
 LEVEL="${AUDIT_LEVEL:-critical}"
 # pnpm retries with backoff; a registry that accepts the connection and never
 # answers would otherwise stall the deploy indefinitely.
-TIMEOUT="${AUDIT_TIMEOUT:-180}"
+# Kept short on purpose: this runs inside the pre-push hook, which holds the
+# SSH connection to the remote open while it works. Three minutes of registry
+# retries on top of the test suite is enough for GitHub to close it mid-push.
+TIMEOUT="${AUDIT_TIMEOUT:-60}"
 out=$(timeout "$TIMEOUT" pnpm audit --prod --audit-level "$LEVEL" 2>&1)
 status=$?
 echo "$out"
