@@ -11,7 +11,8 @@ const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-key');
 const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
-const { rescoreProjectsWithAppliedChanges } = await import('@/features/run-audit');
+const { auditProjectsWithSyncedCatalog, rescoreProjectsWithAppliedChanges } =
+  await import('@/features/run-audit');
 const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
@@ -70,6 +71,14 @@ async function main(): Promise<void> {
         tasks.push(
           rescoreProjectsWithAppliedChanges().catch((e) =>
             console.error('[worker] rescore-applied failed', e)
+          )
+        );
+        // Same cadence: score a store whose catalog arrived after its audit
+        // failed, so connecting actually clears the failure the funnel used
+        // the connection to fix.
+        tasks.push(
+          auditProjectsWithSyncedCatalog().catch((e: unknown) =>
+            console.error('[worker] audit-after-sync failed', e)
           )
         );
       }
