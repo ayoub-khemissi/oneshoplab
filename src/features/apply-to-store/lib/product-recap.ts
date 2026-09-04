@@ -82,3 +82,17 @@ export function countToApply(rows: readonly RecapRow[]): number {
 export function hasSending(rows: readonly RecapRow[]): boolean {
   return rows.some((r) => r.state === 'sending');
 }
+
+/**
+ * "Is a change still on its way to a store?" — the single rule every surface
+ * that displays change state uses to decide whether to keep watching.
+ *
+ * A `pending` row is owed an answer by the store: a connector delivers within
+ * seconds, a polling plugin within minutes. Until then the page must reach the
+ * outcome on its own, or the merchant clicks Apply, sees nothing move, and
+ * reloads by hand to find out what happened. `conflict` and `failed` are
+ * settled — nobody is coming back with news about them.
+ */
+export function isAwaitingStore(counts: { pending: number } | null | undefined): boolean {
+  return (counts?.pending ?? 0) > 0;
+}

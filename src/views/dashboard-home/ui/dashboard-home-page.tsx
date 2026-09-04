@@ -6,10 +6,14 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { DeleteSiteButton } from '@/features/manage-project';
-import { countPendingByProject, PendingChangesPill } from '@/features/apply-to-store';
+import {
+  countPendingByProject,
+  isAwaitingStore,
+  PendingChangesPill
+} from '@/features/apply-to-store';
 import { listConnectedProjectIds } from '@/features/integrations';
 import type { PendingCounts } from '@/features/apply-to-store';
-import { SiteFavicon } from '@/shared/ui';
+import { AutoRefresh, SiteFavicon } from '@/shared/ui';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
@@ -113,9 +117,14 @@ export async function DashboardHomePage() {
 
   const siteLimit = siteLimitForPlan(session.user.plan);
   const canAddSite = sites.length < siteLimit;
+  // The site cards carry the same per-store counters as the pages below them;
+  // they have to reach the outcome on their own too, or a merchant who applied
+  // from a product page comes back here to a number that never moves.
+  const awaitingStore = sites.some((site) => isAwaitingStore(site.pending));
 
   return (
     <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto flex flex-col gap-6 md:gap-8">
+      {awaitingStore ? <AutoRefresh intervalMs={5000} /> : null}
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-4xl font-bold tracking-tight">{t('title')}</h1>

@@ -8,6 +8,7 @@ import {
   buildProductRecap,
   countToApply,
   hasSending,
+  isAwaitingStore,
   type RecapInput
 } from '@/features/apply-to-store/lib/product-recap';
 
@@ -58,5 +59,28 @@ describe('buildProductRecap', () => {
     expect(hasSending(rows)).toBe(true);
     expect(countToApply(rows)).toBe(0);
     expect(hasSending(rows.slice(0, 1))).toBe(false);
+  });
+});
+
+/**
+ * Every surface that shows change state asks this one question to decide
+ * whether to keep watching. The three of them disagreeing is how a merchant
+ * ends up pressing F5 to find out whether their click did anything.
+ */
+describe('isAwaitingStore', () => {
+  it('is true while the store owes an answer', () => {
+    expect(isAwaitingStore({ pending: 1 })).toBe(true);
+    expect(isAwaitingStore({ pending: 0 })).toBe(false);
+  });
+
+  it('treats a settled outcome as nothing to wait for', () => {
+    // Nobody is coming back with news about a conflict or a failure: they are
+    // the merchant's to act on, and polling would never end.
+    expect(isAwaitingStore({ pending: 0, conflict: 2, failed: 3 } as never)).toBe(false);
+  });
+
+  it('survives a missing summary', () => {
+    expect(isAwaitingStore(null)).toBe(false);
+    expect(isAwaitingStore(undefined)).toBe(false);
   });
 });

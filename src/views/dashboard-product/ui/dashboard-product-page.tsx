@@ -31,6 +31,7 @@ import { getConnection } from '@/entities/shop-connection';
 import {
   appliedGeneratedImagesFor,
   buildProductRecap,
+  isAwaitingStore,
   listChangesForJobs,
   listPendingSummaryForProduct,
   PendingChangesBanner,
@@ -193,7 +194,7 @@ export async function DashboardProductPage({
   // plugin within minutes — either way the page must reach "applied" on its
   // own, or the merchant is left reading a chip that says "queued" next to a
   // panel that says nothing is queued.
-  const changeInFlight = pendingSummary.items.some((i) => i.status === 'pending');
+  const changeInFlight = isAwaitingStore(pendingSummary.counts);
   // What is waiting on the merchant, per field. A generation only enters the
   // store-side counters once they click Apply, so without this a rewritten set
   // of tags nobody applied showed up nowhere on the page.

@@ -29,6 +29,7 @@ import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
   hasAppliedChange,
+  isAwaitingStore,
   listPendingChangesForSite,
   listPendingSummaryForSite,
   PendingChangesBanner,
@@ -362,6 +363,7 @@ export async function DashboardSitePage({
       : null,
     audit: { status: audit.status, createdAt: audit.createdAt }
   });
+  // `awaitingStore` is computed further down, next to the summary it reads.
   const isLoading = auditLoading || hasUnfinishedJobs || catalogArriving;
 
   const userPlan = (session.user.plan ?? 'free') as UserPlan;
@@ -438,6 +440,9 @@ export async function DashboardSitePage({
   // The store-wide "changes are waiting" banner sits above the tabs, so it is
   // loaded on every tab — one indexed read on (project_id, status, id).
   const pendingSummary = await listPendingSummaryForSite(project.id, session.user.id);
+  // Same rule as the product page: while a store owes us an answer, the page
+  // watches for it instead of leaving the merchant to press F5.
+  const awaitingStore = isAwaitingStore(pendingSummary.counts);
   // Onboarding: where this store stands on the connect-then-apply path. Both
   // are indexed existence checks, and they stop being read as soon as the
   // guide has nothing left to say.
@@ -465,7 +470,7 @@ export async function DashboardSitePage({
 
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
-      {isLoading ? <AutoRefresh /> : null}
+      {isLoading || awaitingStore ? <AutoRefresh /> : null}
 
       <ScrollAwareSticky topOffsetPx={68}>
         <SiteHeaderBar
