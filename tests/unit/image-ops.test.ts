@@ -79,6 +79,16 @@ describe('images value shapes', () => {
     expect(!empty.ok && empty.rejection.code).toBe('removes_last_image');
   });
 
+  it('a product that never had a photo breaks no rule by still having none', () => {
+    // Shopify's own demo catalog ships such a product. Refusing here put a red
+    // "cannot be applied" under the image editor of every photoless product,
+    // on load, with nothing queued.
+    expect(simulateImageOps([], []).ok).toBe(true);
+    expect(
+      simulateImageOps([{ op: 'append', image: { src: 'https://cdn.test/first.jpg' } }], []).ok
+    ).toBe(true);
+  });
+
   it('resolves `new:<n>` against the images introduced earlier in the list', () => {
     const good = check(
       ops(

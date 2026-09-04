@@ -201,7 +201,12 @@ export function simulateImageOps(
       }
     }
   }
-  if (images.length === 0) return { ok: false, rejection: { code: 'removes_last_image' } };
+  // "Removes the last image" — so a product that arrived with none breaks no
+  // rule by still having none. Enforcing it unconditionally made the image
+  // editor show a refusal on every photoless product, on load, before the
+  // merchant had queued anything at all.
+  if (prior.length > 0 && images.length === 0)
+    return { ok: false, rejection: { code: 'removes_last_image' } };
   return { ok: true, simulation: { images, unresolved } };
 }
 

@@ -220,6 +220,12 @@ describe('image editor — queue assembly', () => {
     expect(preview.invalidReason).toBe('removes_last_image');
   });
 
+  it('says nothing on a product that has no photo to begin with', () => {
+    const preview = previewQueue(EMPTY_QUEUE, []);
+    expect(preview.invalid).toBe(false);
+    expect(preview.invalidReason).toBeNull();
+  });
+
   it('an alt typed on a generated tile follows it into the queued op', () => {
     const queue = withAltForSrc(
       queueOf({ op: 'append', image: { src: generated[0].src, alt: null } }),
