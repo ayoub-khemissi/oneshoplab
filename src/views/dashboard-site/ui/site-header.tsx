@@ -117,11 +117,34 @@ const KNOWN_ERROR_CODES: Record<string, string> = {
   process_interrupted: 'errorProcessInterrupted',
   no_report: 'errorNoReport',
   audit_not_found: 'errorAuditNotFound',
-  no_products_fetched: 'errorNoProductsFetched'
+  no_products_fetched: 'errorNoProductsFetched',
+  // The most common failure of all, and it used to reach the merchant as its
+  // raw English sentence embedded in a translated frame ("Audit échoué : Could
+  // not detect a supported e-commerce platform on this URL."). Both the code
+  // and the legacy sentence map here, so rows written before this read right.
+  platform_not_detected: 'errorPlatformNotDetected',
+  'Could not detect a supported e-commerce platform on this URL.': 'errorPlatformNotDetected'
 };
 
-export function StatusLine({ status, error }: { status: string; error: string | null }) {
+export function StatusLine({
+  status,
+  error,
+  catalogArriving = false
+}: {
+  status: string;
+  error: string | null;
+  /** The store is handing us its catalog: whatever the last audit says, it
+   *  predates what is arriving, and showing its failure reads as breakage. */
+  catalogArriving?: boolean;
+}) {
   const t = useTranslations('Report');
+  if (catalogArriving) {
+    return (
+      <p className="text-sm text-[var(--muted)] flex items-center gap-2">
+        <PulsingDot /> {t('catalogArriving')}
+      </p>
+    );
+  }
   if (status === 'pending') {
     return (
       <p className="text-sm text-[var(--muted)] flex items-center gap-2">
@@ -147,6 +170,23 @@ export function StatusLine({ status, error }: { status: string; error: string | 
     );
   }
   return null;
+}
+
+/**
+ * The products tab while the catalog is on its way. An empty list there reads
+ * as "you have no products", which is both wrong and alarming — the merchant
+ * has just connected a store full of them.
+ */
+export function CatalogArrivingNotice() {
+  const t = useTranslations('Report');
+  return (
+    <p
+      data-testid="catalog-arriving"
+      className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-3 text-sm text-[var(--muted)] flex items-center gap-2"
+    >
+      <PulsingDot /> {t('catalogArrivingHint')}
+    </p>
+  );
 }
 
 function PulsingDot() {

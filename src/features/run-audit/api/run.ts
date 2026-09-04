@@ -69,7 +69,9 @@ export async function runAudit(
       truncated: false,
       products: [],
       report: null,
-      error: 'Could not detect a supported e-commerce platform on this URL.',
+      // A code, not a sentence: the UI translates it. It used to be stored as
+      // English prose and rendered verbatim inside a translated frame.
+      error: 'platform_not_detected',
       ...STOREFRONT_SOURCE
     };
   }

@@ -27,4 +27,6 @@ export { launchAuditForUser, launchAnonymousAudit, normalizeUrl } from './api/la
 export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from './api/refresh';
 export { rescoreProjectsWithAppliedChanges } from './api/rescore-applied';
 export { auditProjectsWithSyncedCatalog } from './api/audit-after-sync';
+export { isCatalogArriving } from './lib/catalog-arrival';
+export type { CatalogArrivalInput } from './lib/catalog-arrival';
 export { refreshProjectAction, relaunchProjectAuditAction } from './api/project-actions';

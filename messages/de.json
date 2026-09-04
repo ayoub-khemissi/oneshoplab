@@ -494,6 +494,8 @@
     },
     "queued": "Analyse in der Warteschlange, bitte warten — dauert meist etwa zwei Minuten",
     "running": "Analyse läuft, bitte warten — dauert meist etwa zwei Minuten",
+    "catalogArriving": "Ihr Katalog wird aus Ihrem Shop geladen…",
+    "catalogArrivingHint": "Ihr Katalog wird geladen — Ihre Produkte erscheinen gleich hier.",
     "failed": "Analyse fehlgeschlagen: {error}",
     "completed": "{count} Produkte auf {platform} analysiert",
     "tabAi": "KI-Analyse",
@@ -613,7 +615,8 @@
     "errorNoReport": "Konnte den Shop-Katalog nicht lesen. Prüfe, ob die URL erreichbar ist, und versuche es erneut.",
     "errorAuditNotFound": "Dieses Audit existiert nicht mehr. Starte ein neues Audit vom Dashboard.",
     "copyPlain": "Als Text kopieren",
-    "errorNoProductsFetched": "Audit abgeschlossen, aber keine Produkte erkannt. Ihr Shop blockiert möglicherweise unseren Scraper, stellt keinen öffentlichen Katalog-Endpunkt bereit, oder die Plattform wurde falsch erkannt. Starten Sie das Audit neu oder kontaktieren Sie uns bei anhaltenden Problemen."
+    "errorNoProductsFetched": "Audit abgeschlossen, aber keine Produkte erkannt. Ihr Shop blockiert möglicherweise unseren Scraper, stellt keinen öffentlichen Katalog-Endpunkt bereit, oder die Plattform wurde falsch erkannt. Starten Sie das Audit neu oder kontaktieren Sie uns bei anhaltenden Problemen.",
+    "errorPlatformNotDetected": "Wir konnten die E-Commerce-Plattform unter dieser Adresse nicht erkennen. Verbinden Sie Ihren Shop, dann lesen wir seinen Katalog direkt."
   },
   "Issues": {
     "no_image": "Kein Bild",

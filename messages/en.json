@@ -494,6 +494,8 @@
     },
     "queued": "Analysis queued, please wait — this usually takes about two minutes",
     "running": "Analysis in progress, please wait — this usually takes about two minutes",
+    "catalogArriving": "Fetching your catalogue from your store…",
+    "catalogArrivingHint": "Fetching your catalogue — your products will appear here in a moment.",
     "failed": "Analysis failed: {error}",
     "completed": "Analyzed {count} products on {platform}",
     "tabAi": "AI analysis",
@@ -613,7 +615,8 @@
     "errorNoReport": "Couldn't read your store catalog. Check that the URL is reachable and try again.",
     "errorAuditNotFound": "This audit no longer exists. Launch a new analysis from the dashboard.",
     "copyPlain": "Copy as text",
-    "errorNoProductsFetched": "Audit finished but no products were detected. Your store may block our scraper, expose no public catalog endpoint, or the platform was misidentified. Try relaunching the audit, or contact us if it persists."
+    "errorNoProductsFetched": "Audit finished but no products were detected. Your store may block our scraper, expose no public catalog endpoint, or the platform was misidentified. Try relaunching the audit, or contact us if it persists.",
+    "errorPlatformNotDetected": "We couldn't recognise the e-commerce platform at this address. Connect your store and we will read its catalogue directly."
   },
   "Issues": {
     "no_image": "No image",

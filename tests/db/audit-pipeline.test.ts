@@ -189,7 +189,9 @@ describe('launchAuditForUser + processAudit', () => {
     const audit = await latestAuditFor(projectId!);
     expect(audit.status).toBe('failed');
     expect(audit.platform).toBe('unknown');
-    expect(audit.error).toMatch(/detect/i);
+    // A code the UI translates, never prose: it used to be stored in English
+    // and rendered verbatim inside a French sentence.
+    expect(audit.error).toBe('platform_not_detected');
     await expectNoGeneration();
     const [note] = await db.query.notifications.findMany({
       where: eq(notifications.userId, userId)

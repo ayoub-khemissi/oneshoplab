@@ -494,6 +494,8 @@
     },
     "queued": "Audit en file d'attente, veuillez patienter — cela prend environ deux minutes",
     "running": "Audit en cours, veuillez patienter — cela prend environ deux minutes",
+    "catalogArriving": "Récupération de votre catalogue depuis votre boutique…",
+    "catalogArrivingHint": "Récupération de votre catalogue — vos produits vont apparaître ici dans un instant.",
     "failed": "Audit échoué : {error}",
     "completed": "{count} produits analysés sur {platform}",
     "tabAi": "Analyse IA",
@@ -613,7 +615,8 @@
     "errorNoReport": "Impossible de lire ton catalogue. Vérifie que l'URL est accessible et réessaie.",
     "errorAuditNotFound": "Cet audit n'existe plus. Lance une nouvelle analyse depuis le dashboard.",
     "copyPlain": "Copier en texte",
-    "errorNoProductsFetched": "Audit terminé mais aucun produit détecté. Ta boutique bloque peut-être notre scraper, n'expose pas d'endpoint catalogue public, ou la plateforme a été mal identifiée. Relance l'audit ou contacte-nous si ça persiste."
+    "errorNoProductsFetched": "Audit terminé mais aucun produit détecté. Ta boutique bloque peut-être notre scraper, n'expose pas d'endpoint catalogue public, ou la plateforme a été mal identifiée. Relance l'audit ou contacte-nous si ça persiste.",
+    "errorPlatformNotDetected": "Nous n'avons pas reconnu la plateforme e-commerce à cette adresse. Connectez votre boutique et nous lirons son catalogue directement."
   },
   "Issues": {
     "no_image": "Aucune image",

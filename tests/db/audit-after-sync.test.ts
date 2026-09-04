@@ -53,7 +53,7 @@ afterAll(async () => {
 async function insertAudit(
   status: 'failed' | 'completed',
   createdAt: Date,
-  error: string | null = 'Could not detect a supported e-commerce platform on this URL.'
+  error: string | null = 'platform_not_detected'
 ) {
   const id = randomUUID();
   await db.insert(audits).values({

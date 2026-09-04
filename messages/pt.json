@@ -494,6 +494,8 @@
     },
     "queued": "Análise em fila, aguarde — costuma demorar cerca de dois minutos",
     "running": "Análise em curso, aguarde — costuma demorar cerca de dois minutos",
+    "catalogArriving": "A obter o seu catálogo da sua loja…",
+    "catalogArrivingHint": "A obter o seu catálogo — os seus produtos vão aparecer aqui dentro de momentos.",
     "failed": "Análise falhou: {error}",
     "completed": "Analisados {count} produtos em {platform}",
     "tabAi": "Análise IA",
@@ -613,7 +615,8 @@
     "errorNoReport": "Não foi possível ler o catálogo. Verifique se o URL está acessível e tente novamente.",
     "errorAuditNotFound": "Esta auditoria já não existe. Lance uma nova análise a partir do painel.",
     "copyPlain": "Copiar como texto",
-    "errorNoProductsFetched": "Auditoria concluída mas nenhum produto detetado. A tua loja pode estar a bloquear o nosso scraper, não expor um endpoint de catálogo público, ou a plataforma foi mal identificada. Relança a auditoria ou contacta-nos se persistir."
+    "errorNoProductsFetched": "Auditoria concluída mas nenhum produto detetado. A tua loja pode estar a bloquear o nosso scraper, não expor um endpoint de catálogo público, ou a plataforma foi mal identificada. Relança a auditoria ou contacta-nos se persistir.",
+    "errorPlatformNotDetected": "Não reconhecemos a plataforma de comércio eletrónico neste endereço. Ligue a sua loja e leremos o catálogo diretamente."
   },
   "Issues": {
     "no_image": "Sem imagem",

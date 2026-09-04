@@ -494,6 +494,8 @@
     },
     "queued": "分析已排队,请稍候——通常约两分钟",
     "running": "分析进行中,请稍候——通常约两分钟",
+    "catalogArriving": "正在从你的店铺获取商品目录…",
+    "catalogArrivingHint": "正在获取商品目录，你的商品稍后会显示在这里。",
     "failed": "分析失败: {error}",
     "completed": "已在 {platform} 上分析了 {count} 件产品",
     "tabAi": "AI 分析",
@@ -613,7 +615,8 @@
     "errorNoReport": "无法读取你的店铺目录。请确认 URL 可访问后再试。",
     "errorAuditNotFound": "此审计已不存在。请从控制台启动新的分析。",
     "copyPlain": "复制为文本",
-    "errorNoProductsFetched": "审计已完成,但未检测到任何商品。你的店铺可能屏蔽了我们的爬虫、未公开任何商品目录接口,或者平台被错误识别。请重新启动审计,如果问题持续请联系我们。"
+    "errorNoProductsFetched": "审计已完成,但未检测到任何商品。你的店铺可能屏蔽了我们的爬虫、未公开任何商品目录接口,或者平台被错误识别。请重新启动审计,如果问题持续请联系我们。",
+    "errorPlatformNotDetected": "我们无法识别该网址上的电商平台。连接你的店铺，我们将直接读取其商品目录。"
   },
   "Issues": {
     "no_image": "无图片",

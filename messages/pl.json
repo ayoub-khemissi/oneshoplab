@@ -494,6 +494,8 @@
     },
     "queued": "Analiza w kolejce, czekaj — zwykle zajmuje około dwóch minut",
     "running": "Analiza w toku, czekaj — zwykle zajmuje około dwóch minut",
+    "catalogArriving": "Pobieramy katalog z Twojego sklepu…",
+    "catalogArrivingHint": "Pobieramy katalog — Twoje produkty pojawią się tu za chwilę.",
     "failed": "Analiza nie powiodła się: {error}",
     "completed": "Przeanalizowano {count} produktów na {platform}",
     "tabAi": "Analiza AI",
@@ -613,7 +615,8 @@
     "errorNoReport": "Nie udało się odczytać katalogu. Sprawdź, czy URL jest osiągalny, i spróbuj ponownie.",
     "errorAuditNotFound": "Ten audyt już nie istnieje. Uruchom nową analizę z panelu.",
     "copyPlain": "Kopiuj jako tekst",
-    "errorNoProductsFetched": "Audyt zakończony, ale nie wykryto żadnych produktów. Twój sklep może blokować nasz scraper, nie udostępnia publicznego endpointu katalogu lub platforma została błędnie zidentyfikowana. Uruchom audyt ponownie lub skontaktuj się z nami, jeśli problem nie ustępuje."
+    "errorNoProductsFetched": "Audyt zakończony, ale nie wykryto żadnych produktów. Twój sklep może blokować nasz scraper, nie udostępnia publicznego endpointu katalogu lub platforma została błędnie zidentyfikowana. Uruchom audyt ponownie lub skontaktuj się z nami, jeśli problem nie ustępuje.",
+    "errorPlatformNotDetected": "Nie rozpoznaliśmy platformy e-commerce pod tym adresem. Połącz swój sklep, a odczytamy jego katalog bezpośrednio."
   },
   "Issues": {
     "no_image": "Brak obrazu",

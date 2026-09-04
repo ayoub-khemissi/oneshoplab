@@ -27,6 +27,26 @@ const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
 /** A store whose catalog just moved is re-scored on the next of these. */
 const RESCORE_INTERVAL_MS = 2 * 60 * 1000;
 
+/**
+ * Run the requested pulls, and score right away if any store just handed us its
+ * catalog.
+ *
+ * Waiting for the two-minute sweep meant a merchant who had just connected sat
+ * in front of "Audit échoué" with their products already in our database —
+ * measured at 114 seconds in production on 2026-09-04. Connecting is the moment
+ * they are watching hardest; it is the worst possible place to make them wait.
+ */
+async function auditAfterPulls(
+  runPulls: () => Promise<number>,
+  label: string
+): Promise<void> {
+  try {
+    if ((await runPulls()) > 0) await auditProjectsWithSyncedCatalog();
+  } catch (e) {
+    console.error(`[worker] ${label}-pull failed`, e);
+  }
+}
+
 async function main(): Promise<void> {
   console.log('[worker] starting');
 
@@ -57,9 +77,9 @@ async function main(): Promise<void> {
         // Shopify connector: write approved changes back (no-op without
         // pending changes) and run pulls queued by connect / "Synchroniser".
         runShopifyApplies().catch((e) => console.error('[worker] shopify-apply failed', e)),
-        runShopifyRequestedPulls().catch((e) => console.error('[worker] shopify-pull failed', e)),
+        auditAfterPulls(runShopifyRequestedPulls, 'shopify'),
         runWixApplies().catch((e) => console.error('[worker] wix-apply failed', e)),
-        runWixRequestedPulls().catch((e) => console.error('[worker] wix-pull failed', e)),
+        auditAfterPulls(runWixRequestedPulls, 'wix'),
         // Outbound webhooks: due deliveries + retries (docs/api/OUTBOUND-WEBHOOKS.md).
         drainWebhookDeliveries().catch((e) => console.error('[worker] webhook-drain failed', e))
       ];
@@ -73,9 +93,9 @@ async function main(): Promise<void> {
             console.error('[worker] rescore-applied failed', e)
           )
         );
-        // Same cadence: score a store whose catalog arrived after its audit
-        // failed, so connecting actually clears the failure the funnel used
-        // the connection to fix.
+        // Safety net for a catalog that arrived some other way (a plugin push,
+        // a nightly pull). The connect path does not wait for this — see
+        // auditAfterPulls.
         tasks.push(
           auditProjectsWithSyncedCatalog().catch((e: unknown) =>
             console.error('[worker] audit-after-sync failed', e)

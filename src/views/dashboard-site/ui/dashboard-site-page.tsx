@@ -68,7 +68,7 @@ import { db } from '@/shared/db';
 import { audits, jobs, products, projects } from '@/shared/db/schema';
 import { OverviewTab, StaticSkeleton } from './overview-tab';
 import { ProjectJobsList } from './project-jobs-list';
-import { SiteHeaderBar, StatusLine, TabsNav } from './site-header';
+import { CatalogArrivingNotice, SiteHeaderBar, StatusLine, TabsNav } from './site-header';
 
 export interface DashboardSiteSearchParams {
   tab?: string;
@@ -333,6 +333,12 @@ export async function DashboardSitePage({
   // colour, the overview tab gating — we promote it to "failed" and
   // synthesise a friendly message via the `no_products_fetched`
   // code.
+  // Read on EVERY tab, not just integrations: the overview and the product
+  // list are where a merchant waits after connecting, and they need to know a
+  // pull is in flight rather than read an audit that predates it. One indexed
+  // row, no ciphertext.
+  const shopConnection = await getConnectionForUser(project.id, session.user.id);
+
   const effectiveStatus =
     audit.status === 'completed' && (audit.productsSampled ?? 0) === 0
       ? ('failed' as const)
@@ -342,7 +348,21 @@ export async function DashboardSitePage({
       ? 'no_products_fetched'
       : audit.error;
   const auditLoading = effectiveStatus === 'pending' || effectiveStatus === 'running';
-  const isLoading = auditLoading || hasUnfinishedJobs;
+  // The store is still handing us its catalog: whatever the newest audit says,
+  // it does not describe what is arriving.
+  const { isCatalogArriving } = await import('@/features/run-audit');
+  const catalogArriving = isCatalogArriving({
+    connection: shopConnection
+      ? {
+          status: shopConnection.status,
+          pullPhase: (shopConnection.pullProgress as { phase?: string } | null)?.phase ?? null,
+          pullRequestedAt: shopConnection.pullRequestedAt,
+          lastPullAt: shopConnection.lastPullAt
+        }
+      : null,
+    audit: { status: audit.status, createdAt: audit.createdAt }
+  });
+  const isLoading = auditLoading || hasUnfinishedJobs || catalogArriving;
 
   const userPlan = (session.user.plan ?? 'free') as UserPlan;
   // Reuses `userProjectIdsList` computed above — see comment.
@@ -396,14 +416,13 @@ export async function DashboardSitePage({
 
   // Integrations tab: site keys + the plugin's "to apply" queue. Two cheap
   // indexed reads, gated by tab like everything else above.
-  const [siteKeys, pendingChanges, shopConnection] =
+  const [siteKeys, pendingChanges] =
     activeTab === 'integrations'
       ? await Promise.all([
           listProjectKeys({ projectId: project.id, userId: session.user.id }),
-          listPendingChangesForSite(project.id),
-          getConnectionForUser(project.id, session.user.id)
+          listPendingChangesForSite(project.id)
         ])
-      : [[], [], null];
+      : [[], []];
   // "Generate the missing alt texts": offered on the products tab only, and
   // only when the connection declared it can carry a `set_alt` — a button that
   // would silently do nothing is never shown (IMAGE-OPS.md §7). The count is
@@ -468,7 +487,11 @@ export async function DashboardSitePage({
             OneShopLab doesn't work. A connected store still sees the real
             status — there, a failure means something else went wrong. */}
         {project.source === 'manual' || (effectiveStatus === 'failed' && !storeConnected) ? null : (
-          <StatusLine status={effectiveStatus} error={effectiveError} />
+          <StatusLine
+            status={effectiveStatus}
+            error={effectiveError}
+            catalogArriving={catalogArriving}
+          />
         )}
         <PendingChangesBanner
           projectId={project.id}
@@ -504,6 +527,9 @@ export async function DashboardSitePage({
         ) : null
       ) : activeTab === 'products' ? (
         <div className="flex flex-col gap-4">
+          {/* An empty list here reads as "you have no products" — which is
+              wrong and alarming while they are still on their way. */}
+          {catalogArriving && productsTotalActive === 0 ? <CatalogArrivingNotice /> : null}
           <BulkGenerateSection
             siteId={siteId}
             plan={userPlan}

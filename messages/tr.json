@@ -494,6 +494,8 @@
     },
     "queued": "Analiz sırada, lütfen bekleyin — genelde yaklaşık iki dakika sürer",
     "running": "Analiz devam ediyor, lütfen bekleyin — genelde yaklaşık iki dakika sürer",
+    "catalogArriving": "Kataloğunuz mağazanızdan alınıyor…",
+    "catalogArrivingHint": "Kataloğunuz alınıyor — ürünleriniz birazdan burada görünecek.",
     "failed": "Analiz başarısız: {error}",
     "completed": "{platform} üzerinde {count} ürün analiz edildi",
     "tabAi": "Yapay zekâ analizi",
@@ -613,7 +615,8 @@
     "errorNoReport": "Mağaza kataloğu okunamadı. URL'nin erişilebilir olduğunu kontrol edin ve tekrar deneyin.",
     "errorAuditNotFound": "Bu denetim artık yok. Panelden yeni bir analiz başlatın.",
     "copyPlain": "Metin olarak kopyala",
-    "errorNoProductsFetched": "Denetim tamamlandı ancak hiçbir ürün tespit edilmedi. Mağazanız tarayıcımızı engelliyor olabilir, herkese açık bir katalog uç noktası sunmuyor veya platform yanlış tanımlanmış olabilir. Denetimi yeniden başlatın veya sorun devam ederse bizimle iletişime geçin."
+    "errorNoProductsFetched": "Denetim tamamlandı ancak hiçbir ürün tespit edilmedi. Mağazanız tarayıcımızı engelliyor olabilir, herkese açık bir katalog uç noktası sunmuyor veya platform yanlış tanımlanmış olabilir. Denetimi yeniden başlatın veya sorun devam ederse bizimle iletişime geçin.",
+    "errorPlatformNotDetected": "Bu adreste bir e-ticaret platformu tanıyamadık. Mağazanızı bağlayın, kataloğunu doğrudan okuyalım."
   },
   "Issues": {
     "no_image": "Görsel yok",
