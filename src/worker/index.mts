@@ -17,7 +17,11 @@ const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
-const { autoSendCompletedGenerations } = await import('@/features/apply-to-store');
+// Straight to the module, NOT the feature barrel: that barrel exports React
+// components, and pulling @heroui/react into the tsx worker crash-loops it.
+const { autoSendCompletedGenerations } = await import(
+  '@/features/apply-to-store/api/auto-send'
+);
 const { drainWebhookDeliveries, sweepWebhookDeliveries } =
   await import('@/features/webhook-delivery');
 
