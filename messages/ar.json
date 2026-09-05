@@ -489,7 +489,8 @@
     "modelsModalClose": "تم",
     "suggestPromptsSee": "عرض الزوايا ({count})",
     "suggestPromptsAgain": "اقترح زوايا أخرى",
-    "suggestPromptsModalTitle": "اختر زاوية"
+    "suggestPromptsModalTitle": "اختر زاوية",
+    "suggestPromptsClose": "إغلاق"
   },
   "Report": {
     "dataSource": {

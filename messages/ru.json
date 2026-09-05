@@ -489,7 +489,8 @@
     "modelsModalClose": "Готово",
     "suggestPromptsSee": "Показать варианты ({count})",
     "suggestPromptsAgain": "Предложить другие варианты",
-    "suggestPromptsModalTitle": "Выберите вариант"
+    "suggestPromptsModalTitle": "Выберите вариант",
+    "suggestPromptsClose": "Закрыть"
   },
   "Report": {
     "dataSource": {

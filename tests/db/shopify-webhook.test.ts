@@ -1,8 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/webhooks/shopify/[projectId]/route';
-import { getConnection } from '@/entities/shop-connection';
-import { connectShopifyStore } from '@/features/shopify-connector';
+import { getConnection, revokeConnection } from '@/entities/shop-connection';
+import { connectShopifyStore, handleShopifyWebhook } from '@/features/shopify-connector';
 import { db } from '@/shared/db';
 import { products } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
@@ -135,5 +136,32 @@ describe('POST /api/webhooks/shopify/[projectId]', () => {
     expect(
       (await post(updateBody, shopifyHeaders(updateBody, 'products/update'), other)).status
     ).toBe(401);
+  });
+});
+
+describe('a subscription we no longer serve', () => {
+  it('is acknowledged, not retried forever', async () => {
+    // The merchant disconnected: the subscription stays on the store because a
+    // revoked connection has no token left to delete it with. Answering 404
+    // bought six retries per product change against a URL that will never
+    // work again. Observed in production on 2026-09-05.
+    await revokeConnection(projectId, 'test');
+    const res = await handleShopifyWebhook({
+      projectId,
+      rawBody: JSON.stringify({ id: 1 }),
+      headers: new Headers({ 'x-shopify-topic': 'products/update' })
+    });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ ok: true, action: 'disconnected' });
+  });
+
+  it('a project that never had a connection is still a 404', async () => {
+    // That one is a wrong URL, and silence would hide it.
+    const res = await handleShopifyWebhook({
+      projectId: randomUUID(),
+      rawBody: JSON.stringify({ id: 1 }),
+      headers: new Headers({ 'x-shopify-topic': 'products/update' })
+    });
+    expect(res.status).toBe(404);
   });
 });

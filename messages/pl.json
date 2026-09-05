@@ -489,7 +489,8 @@
     "modelsModalClose": "Gotowe",
     "suggestPromptsSee": "Zobacz propozycje ({count})",
     "suggestPromptsAgain": "Zaproponuj inne ujęcia",
-    "suggestPromptsModalTitle": "Wybierz ujęcie"
+    "suggestPromptsModalTitle": "Wybierz ujęcie",
+    "suggestPromptsClose": "Zamknij"
   },
   "Report": {
     "dataSource": {

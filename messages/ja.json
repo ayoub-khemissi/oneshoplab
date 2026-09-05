@@ -489,7 +489,8 @@
     "modelsModalClose": "完了",
     "suggestPromptsSee": "提案を見る（{count}）",
     "suggestPromptsAgain": "別の切り口を提案",
-    "suggestPromptsModalTitle": "切り口を選ぶ"
+    "suggestPromptsModalTitle": "切り口を選ぶ",
+    "suggestPromptsClose": "閉じる"
   },
   "Report": {
     "dataSource": {

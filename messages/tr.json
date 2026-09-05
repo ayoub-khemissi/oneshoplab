@@ -489,7 +489,8 @@
     "modelsModalClose": "Tamam",
     "suggestPromptsSee": "Önerileri gör ({count})",
     "suggestPromptsAgain": "Bana başka açılar öner",
-    "suggestPromptsModalTitle": "Bir açı seçin"
+    "suggestPromptsModalTitle": "Bir açı seçin",
+    "suggestPromptsClose": "Kapat"
   },
   "Report": {
     "dataSource": {

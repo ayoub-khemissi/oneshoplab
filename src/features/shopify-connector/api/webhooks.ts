@@ -7,6 +7,7 @@
 import { createHash } from 'node:crypto';
 import { archiveProductBySourceId, syncProjectProducts } from '@/entities/product';
 import {
+  getConnection,
   markTokenInvalid,
   revokeConnection,
   setLastError,
@@ -53,10 +54,20 @@ export async function registerShopifyWebhooks(
     const url = webhookCallbackUrl(projectId);
     const created: string[] = [];
     const topics = connection.authMode === 'oauth' ? OAUTH_WEBHOOK_TOPICS : WEBHOOK_TOPICS;
-    for (const topic of topics) created.push(await client.webhookSubscriptionCreate(topic, url));
+    for (const topic of topics) {
+      try {
+        created.push(await client.webhookSubscriptionCreate(topic, url));
+      } catch (e) {
+        // One topic Shopify refuses — most often because a subscription for it
+        // already exists from an earlier install — must not throw away the ids
+        // of the ones that worked. Untracked subscriptions are the ones we can
+        // never delete, and they keep hammering a dead URL after a disconnect.
+        console.error('[shopify] webhook create failed', topic, (e as Error).message);
+      }
+    }
     return created;
   });
-  if (ids) await setWebhookIds(projectId, ids);
+  if (ids && ids.length > 0) await setWebhookIds(projectId, ids);
   return ids ?? null;
 }
 
@@ -184,5 +195,14 @@ export async function handleShopifyWebhook(
       }
     }
   );
-  return outcome ?? { status: 404, body: { ok: false, error: 'not_found' } };
+  if (outcome) return outcome;
+
+  // No live connection for this project. A subscription we deliberately dropped
+  // — the merchant disconnected — is not an error on Shopify's side, and a 404
+  // only buys six retries per product change against a URL that will never
+  // answer. Acknowledge it so the noise stops; a URL that never had a
+  // connection at all still gets a 404, because that one IS a misconfiguration.
+  const known = await getConnection(req.projectId);
+  if (known) return { status: 200, body: { ok: true, action: 'disconnected' } };
+  return { status: 404, body: { ok: false, error: 'not_found' } };
 }

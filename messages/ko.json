@@ -489,7 +489,8 @@
     "modelsModalClose": "완료",
     "suggestPromptsSee": "제안 보기 ({count})",
     "suggestPromptsAgain": "다른 관점 제안받기",
-    "suggestPromptsModalTitle": "관점 선택"
+    "suggestPromptsModalTitle": "관점 선택",
+    "suggestPromptsClose": "닫기"
   },
   "Report": {
     "dataSource": {

@@ -489,7 +489,8 @@
     "modelsModalClose": "Fertig",
     "suggestPromptsSee": "Vorschläge ansehen ({count})",
     "suggestPromptsAgain": "Andere Ansätze vorschlagen",
-    "suggestPromptsModalTitle": "Wählen Sie einen Ansatz"
+    "suggestPromptsModalTitle": "Wählen Sie einen Ansatz",
+    "suggestPromptsClose": "Schließen"
   },
   "Report": {
     "dataSource": {

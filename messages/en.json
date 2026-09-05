@@ -489,7 +489,8 @@
     "modelsModalClose": "Done",
     "suggestPromptsSee": "See the angles ({count})",
     "suggestPromptsAgain": "Propose other angles",
-    "suggestPromptsModalTitle": "Choose an angle"
+    "suggestPromptsModalTitle": "Choose an angle",
+    "suggestPromptsClose": "Close"
   },
   "Report": {
     "dataSource": {

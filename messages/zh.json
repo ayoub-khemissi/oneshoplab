@@ -489,7 +489,8 @@
     "modelsModalClose": "完成",
     "suggestPromptsSee": "查看角度建议（{count}）",
     "suggestPromptsAgain": "再给我一些角度",
-    "suggestPromptsModalTitle": "选择一个角度"
+    "suggestPromptsModalTitle": "选择一个角度",
+    "suggestPromptsClose": "关闭"
   },
   "Report": {
     "dataSource": {

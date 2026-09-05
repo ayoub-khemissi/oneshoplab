@@ -489,7 +489,8 @@
     "modelsModalClose": "Concluído",
     "suggestPromptsSee": "Ver as abordagens ({count})",
     "suggestPromptsAgain": "Proponha-me outras abordagens",
-    "suggestPromptsModalTitle": "Escolha uma abordagem"
+    "suggestPromptsModalTitle": "Escolha uma abordagem",
+    "suggestPromptsClose": "Fechar"
   },
   "Report": {
     "dataSource": {

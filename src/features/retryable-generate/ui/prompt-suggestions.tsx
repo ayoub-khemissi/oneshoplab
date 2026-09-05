@@ -1,7 +1,7 @@
 'use client';
 
 import { Modal, Spinner } from '@heroui/react';
-import { Coins, Lightbulb, RefreshCw } from 'lucide-react';
+import { Coins, Lightbulb, RefreshCw, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
@@ -154,10 +154,21 @@ export function PromptSuggestions({
         <Modal.Backdrop>
           <Modal.Container size="lg">
             <Modal.Dialog>
-              <Modal.Header>
+              <Modal.Header className="flex items-start justify-between gap-4">
                 <Modal.Heading className="text-base font-semibold">
                   {t('suggestPromptsModalTitle')}
                 </Modal.Heading>
+                {/* A modal you can only leave by picking something is a trap:
+                    the merchant opened it to look. */}
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  aria-label={t('suggestPromptsClose')}
+                  data-testid="suggest-prompts-close"
+                  className="-mr-1 -mt-1 rounded-md p-1 text-[var(--muted)] hover:bg-[var(--default)] hover:text-[var(--foreground)]"
+                >
+                  <X className="size-4" aria-hidden />
+                </button>
               </Modal.Header>
               <Modal.Body>
                 <p className="mb-3 text-xs text-[var(--muted)]">{t('suggestPromptsHint')}</p>

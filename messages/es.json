@@ -489,7 +489,8 @@
     "modelsModalClose": "Listo",
     "suggestPromptsSee": "Ver los enfoques ({count})",
     "suggestPromptsAgain": "Propóngame otros enfoques",
-    "suggestPromptsModalTitle": "Elija un enfoque"
+    "suggestPromptsModalTitle": "Elija un enfoque",
+    "suggestPromptsClose": "Cerrar"
   },
   "Report": {
     "dataSource": {

@@ -489,7 +489,8 @@
     "modelsModalClose": "Fatto",
     "suggestPromptsSee": "Vedi gli angoli ({count})",
     "suggestPromptsAgain": "Proponimi altri angoli",
-    "suggestPromptsModalTitle": "Scegli un angolo"
+    "suggestPromptsModalTitle": "Scegli un angolo",
+    "suggestPromptsClose": "Chiudi"
   },
   "Report": {
     "dataSource": {
