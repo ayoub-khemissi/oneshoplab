@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Açılar aranıyor…",
     "suggestPromptsHint": "Bir açıya tıklayarak alana yerleştir, sonra istersen düzenle.",
     "suggestPromptsEmpty": "Bu ürün için açı önerilemedi.",
-    "suggestPromptsFailed": "Açılar üretilemedi. Birazdan tekrar dene."
+    "suggestPromptsFailed": "Açılar üretilemedi. Birazdan tekrar dene.",
+    "modelsSummary": "Modeller: {chat} · {image}",
+    "modelsChange": "Değiştir",
+    "modelsModalTitle": "Modellerinizi seçin",
+    "modelsModalClose": "Tamam"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Mağazanıza göndermek için her üretimin altındaki Uygula düğmesini kullanın.",
     "hintAllSent": "Bu üründe kararınızı bekleyen bir şey yok."
+  },
+  "SiteStatus": {
+    "auditRunning": "Kataloğunuz analiz ediliyor…",
+    "catalogArriving": "Kataloğunuz alınıyor…",
+    "auditFailed": "Son analiz tamamlanmadı",
+    "changesToReview": "{count, plural, other {# değişiklik ilginizi bekliyor}}",
+    "changesSending": "{count, plural, other {# değişiklik mağazanıza gidiyor}}",
+    "connectStore": "Değişikliklerin otomatik uygulanması için mağazanızı bağlayın",
+    "applyFirstChange": "İlk değişikliğinizi mağazanıza uygulayın",
+    "action": "Aç"
   }
 }

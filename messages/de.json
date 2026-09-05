@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Suche nach Ansätzen…",
     "suggestPromptsHint": "Klicke einen Ansatz an, um ihn ins Feld zu setzen, und passe ihn an.",
     "suggestPromptsEmpty": "Für dieses Produkt konnte kein Ansatz vorgeschlagen werden.",
-    "suggestPromptsFailed": "Die Ansätze konnten nicht erzeugt werden. Versuche es gleich noch einmal."
+    "suggestPromptsFailed": "Die Ansätze konnten nicht erzeugt werden. Versuche es gleich noch einmal.",
+    "modelsSummary": "Modelle: {chat} · {image}",
+    "modelsChange": "Ändern",
+    "modelsModalTitle": "Wählen Sie Ihre Modelle",
+    "modelsModalClose": "Fertig"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Nutzen Sie die Schaltfläche „Anwenden“ unter jeder Generierung, um sie an Ihren Shop zu senden.",
     "hintAllSent": "Bei diesem Produkt wartet nichts auf Sie."
+  },
+  "SiteStatus": {
+    "auditRunning": "Ihr Katalog wird analysiert…",
+    "catalogArriving": "Ihr Katalog wird geladen…",
+    "auditFailed": "Die letzte Analyse wurde nicht abgeschlossen",
+    "changesToReview": "{count, plural, =1 {1 Änderung braucht Ihre Aufmerksamkeit} other {# Änderungen brauchen Ihre Aufmerksamkeit}}",
+    "changesSending": "{count, plural, =1 {1 Änderung ist auf dem Weg zu Ihrem Shop} other {# Änderungen sind auf dem Weg zu Ihrem Shop}}",
+    "connectStore": "Verbinden Sie Ihren Shop, um Änderungen automatisch anzuwenden",
+    "applyFirstChange": "Wenden Sie Ihre erste Änderung in Ihrem Shop an",
+    "action": "Öffnen"
   }
 }

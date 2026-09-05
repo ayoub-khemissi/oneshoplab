@@ -32,7 +32,6 @@ import {
   isAwaitingStore,
   listPendingChangesForSite,
   listPendingSummaryForSite,
-  PendingChangesBanner,
   PendingChangesList
 } from '@/features/apply-to-store';
 import {
@@ -70,6 +69,7 @@ import { audits, jobs, products, projects } from '@/shared/db/schema';
 import { OverviewTab, StaticSkeleton } from './overview-tab';
 import { ProjectJobsList } from './project-jobs-list';
 import { CatalogArrivingNotice, SiteHeaderBar, StatusLine, TabsNav } from './site-header';
+import { resolveSiteStatus, SiteStatusLine } from '@/widgets/site-status-line';
 
 export interface DashboardSiteSearchParams {
   tab?: string;
@@ -449,6 +449,20 @@ export async function DashboardSitePage({
     isProjectConnected(project.id),
     hasAppliedChange(project.id)
   ]);
+
+  const siteStatus = resolveSiteStatus({
+    auditStatus: effectiveStatus,
+    catalogArriving,
+    connected: storeConnected,
+    applied: storeApplied,
+    pending: pendingSummary.counts.pending,
+    toReview: pendingSummary.counts.conflict + pendingSummary.counts.failed,
+    manual: project.source === 'manual'
+  });
+  // The rescue card earns its space: an unreadable storefront is the moment
+  // the whole funnel turns on, and a one-line hint would waste it. Every other
+  // onboarding step is now the status line's lowest-priority message.
+  const showRescueCard = effectiveStatus === 'failed' && !storeConnected;
   const activeProductCount = productRows.filter((p) => p.status === 'active').length;
   // Prefer the stored source; fall back to the latest audit's detection so a
   // project created before source persistence still routes to its platform.
@@ -490,30 +504,27 @@ export async function DashboardSitePage({
             below points at the fix instead of teaching the merchant that
             OneShopLab doesn't work. A connected store still sees the real
             status — there, a failure means something else went wrong. */}
-        {project.source === 'manual' || (effectiveStatus === 'failed' && !storeConnected) ? null : (
-          <StatusLine
-            status={effectiveStatus}
-            error={effectiveError}
-            catalogArriving={catalogArriving}
-          />
+        {/* One line, one message. Four cards used to speak about this same
+            subject and could all render at once — on a phone that was four
+            blocks of chrome above the product list. `resolveSiteStatus` picks
+            the most urgent; the rest is a click away. A real failure keeps its
+            own words, since only it carries an error string. */}
+        {siteStatus?.kind === 'auditFailed' ? (
+          <StatusLine status="failed" error={effectiveError} catalogArriving={false} />
+        ) : (
+          <SiteStatusLine status={siteStatus} projectId={project.id} items={pendingSummary.items} />
         )}
-        <PendingChangesBanner
-          projectId={project.id}
-          counts={pendingSummary.counts}
-          items={pendingSummary.items}
-          scope="site"
-        />
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
 
       {/* The path to a store that updates itself. Hidden on the Integrations
           tab: the merchant is already looking at the step it points to. */}
-      {activeTab === 'integrations' ? null : (
+      {activeTab === 'integrations' || !showRescueCard ? null : (
         <StoreSetupGuide
           projectId={project.id}
           connected={storeConnected}
           applied={storeApplied}
-          auditFailed={effectiveStatus === 'failed'}
+          auditFailed
         />
       )}
 
@@ -534,24 +545,33 @@ export async function DashboardSitePage({
           {/* An empty list here reads as "you have no products" — which is
               wrong and alarming while they are still on their way. */}
           {catalogArriving && productsTotalActive === 0 ? <CatalogArrivingNotice /> : null}
-          <BulkGenerateSection
-            siteId={siteId}
-            plan={userPlan}
-            productCount={bulkCandidatesAll.length}
-            costEstimate={bulkCostEstimate}
-            initialCandidates={bulkCandidatesPending}
-            initialActive={bulkActive}
-            initialDetail={bulkDetail}
-            creditsBalance={session.user.creditsBalance ?? 0}
-            productTitleById={productTitleById}
-            initialPrefs={bulkEffective?.prefs ?? resolveBulkPrefs(null)}
-            initialSiteOverride={bulkEffective?.siteOverride ?? false}
-            initialChatModel={bulkChatModel}
-            initialImageQuality={bulkImageQuality}
-          />
-          {missingAltCount > 0 ? (
-            <BulkAltTextCard projectId={project.id} missingCount={missingAltCount} />
-          ) : null}
+          {/* A toolbar, not two cards: both actions are one click away and the
+              product list starts ~300px higher on a phone. */}
+          <div className="flex flex-wrap items-center gap-2">
+            <BulkGenerateSection
+              siteId={siteId}
+              plan={userPlan}
+              productCount={bulkCandidatesAll.length}
+              costEstimate={bulkCostEstimate}
+              initialCandidates={bulkCandidatesPending}
+              initialActive={bulkActive}
+              initialDetail={bulkDetail}
+              creditsBalance={session.user.creditsBalance ?? 0}
+              productTitleById={productTitleById}
+              initialPrefs={bulkEffective?.prefs ?? resolveBulkPrefs(null)}
+              initialSiteOverride={bulkEffective?.siteOverride ?? false}
+              initialChatModel={bulkChatModel}
+              initialImageQuality={bulkImageQuality}
+              variant="inline"
+            />
+            {missingAltCount > 0 ? (
+              <BulkAltTextCard
+                projectId={project.id}
+                missingCount={missingAltCount}
+                variant="inline"
+              />
+            ) : null}
+          </div>
           <PaginatedProductsList
             siteId={siteId}
             products={productsSlice}

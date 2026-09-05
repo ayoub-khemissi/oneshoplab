@@ -252,14 +252,20 @@ export async function DashboardProductPage({
         )}
       </div>
 
+      {/* One block about this product's changes, not two. The recap says where
+          each generation stands; the banner only added a count of the subset
+          already sent, which the recap's own lines carry. It stays for the
+          cases the recap has no words for — a conflict or a failure, which
+          open the recap modal. */}
       <ProductRecapCard rows={recapRows} />
-
-      <PendingChangesBanner
-        projectId={projectId}
-        counts={pendingSummary.counts}
-        items={pendingSummary.items}
-        scope="product"
-      />
+      {pendingSummary.counts.conflict + pendingSummary.counts.failed > 0 ? (
+        <PendingChangesBanner
+          projectId={projectId}
+          counts={pendingSummary.counts}
+          items={pendingSummary.items}
+          scope="product"
+        />
+      ) : null}
 
       {archived ? (
         <div

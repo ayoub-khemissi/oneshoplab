@@ -49,6 +49,9 @@ interface BulkGenerateSectionProps {
    *  account (no site-level config) — same as the product page. */
   initialChatModel: ChatModelId;
   initialImageQuality: ImageQualityId;
+  /** `inline` renders the idle state as a single toolbar button instead of an
+   *  explanatory card. A run in flight keeps the full card either way. */
+  variant?: 'card' | 'inline';
 }
 
 export function BulkGenerateSection({
@@ -64,7 +67,8 @@ export function BulkGenerateSection({
   initialPrefs,
   initialSiteOverride,
   initialChatModel,
-  initialImageQuality
+  initialImageQuality,
+  variant = 'card'
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
   // Bulk catalog generation is unlocked from the Pro plan upwards. Free
@@ -293,26 +297,19 @@ export function BulkGenerateSection({
           CTA below) so the action isn't squeezed against the title on
           narrow screens. Above sm: switches back to the original
           side-by-side layout. */}
-      <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
-          <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
-            <p className="text-xs text-[var(--muted)] leading-relaxed">
-              {!canBulk
-                ? t('upgradeHint')
-                : noCandidates
-                  ? t('subtitleNoCandidates')
-                  : t('subtitle', { count: candidates.length })}
-            </p>
-          </div>
-        </div>
-        {canBulk ? (
+      {/* Idle, on the products tab: one button in the toolbar. The card that
+          used to sit here explained the feature every single visit and pushed
+          the product list off a phone screen — the explanation lives in the
+          modal the button opens, where it is actually being read. A run in
+          flight still gets the full card above: that is live status. */}
+      {variant === 'inline' ? (
+        canBulk ? (
           <button
             type="button"
             disabled={noProducts || noCandidates}
             onClick={() => setModalOpen(true)}
-            className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            data-testid="bulk-generate-open"
+            className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             title={
               noProducts
                 ? t('errorNoProducts')
@@ -321,17 +318,59 @@ export function BulkGenerateSection({
                   : undefined
             }
           >
+            <Sparkles className="size-3.5" aria-hidden />
             {t('cta')}
           </button>
         ) : (
           <Link
             href="/pricing"
-            className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent)] hover:bg-[var(--accent)]/10"
           >
+            <Sparkles className="size-3.5" aria-hidden />
             {t('upgradeCta')}
           </Link>
-        )}
-      </div>
+        )
+      ) : (
+        <div className="flex flex-col gap-3 p-4 rounded-md border border-[var(--border)] bg-[var(--default)]/30 sm:flex-row sm:items-start">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <Sparkles className="size-5 mt-0.5 text-[var(--accent)] shrink-0" aria-hidden />
+            <div className="flex flex-col gap-1 min-w-0">
+              <span className="font-semibold text-[var(--foreground)]">{t('title')}</span>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">
+                {!canBulk
+                  ? t('upgradeHint')
+                  : noCandidates
+                    ? t('subtitleNoCandidates')
+                    : t('subtitle', { count: candidates.length })}
+              </p>
+            </div>
+          </div>
+          {canBulk ? (
+            <button
+              type="button"
+              disabled={noProducts || noCandidates}
+              onClick={() => setModalOpen(true)}
+              className="w-full sm:w-auto px-3 py-2 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              title={
+                noProducts
+                  ? t('errorNoProducts')
+                  : noCandidates
+                    ? t('subtitleNoCandidates')
+                    : undefined
+              }
+            >
+              {t('cta')}
+            </button>
+          ) : (
+            <Link
+              href="/pricing"
+              className="w-full sm:w-auto text-center px-3 py-2 rounded-md text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 shrink-0"
+            >
+              {t('upgradeCta')}
+            </Link>
+          )}
+        </div>
+      )}
 
       {modalOpen ? (
         <SelectionModal

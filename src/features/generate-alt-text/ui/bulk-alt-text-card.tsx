@@ -19,11 +19,16 @@ import type { AltBatchProgress, AltTextErrorCode } from '../model/types';
  */
 export function BulkAltTextCard({
   projectId,
-  missingCount
+  missingCount,
+  variant = 'card'
 }: {
   projectId: string;
   /** Photos the latest audit reported without an alt text. */
   missingCount: number;
+  /** `inline` drops the heading and the frame: the products tab shows this as
+   *  one button in a toolbar, because a full card above the list pushed the
+   *  products themselves off a phone screen. */
+  variant?: 'card' | 'inline';
 }) {
   const t = useTranslations('AltText');
   const router = useRouter();
@@ -77,13 +82,24 @@ export function BulkAltTextCard({
   const percent =
     progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
+  const inline = variant === 'inline';
+
   return (
     <section
       data-testid="bulk-alt-text"
-      className="flex flex-col gap-2 rounded-lg border border-[var(--border)] p-4"
+      data-variant={variant}
+      className={
+        inline
+          ? 'flex flex-col gap-2'
+          : 'flex flex-col gap-2 rounded-lg border border-[var(--border)] p-4'
+      }
     >
-      <h2 className="text-base font-semibold">{t('title')}</h2>
-      <p className="text-sm leading-relaxed text-[var(--muted)]">{t('intro')}</p>
+      {inline ? null : (
+        <>
+          <h2 className="text-base font-semibold">{t('title')}</h2>
+          <p className="text-sm leading-relaxed text-[var(--muted)]">{t('intro')}</p>
+        </>
+      )}
 
       {progress ? (
         <div className="flex flex-col gap-1.5" role="status" data-testid="bulk-alt-progress">

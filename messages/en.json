@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Looking for angles…",
     "suggestPromptsHint": "Click an angle to drop it in the field, then edit it if you want.",
     "suggestPromptsEmpty": "No angle could be suggested for this product.",
-    "suggestPromptsFailed": "The angles could not be generated. Try again in a moment."
+    "suggestPromptsFailed": "The angles could not be generated. Try again in a moment.",
+    "modelsSummary": "Models: {chat} · {image}",
+    "modelsChange": "Change",
+    "modelsModalTitle": "Choose your models",
+    "modelsModalClose": "Done"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Use the Apply button under each generation to send it to your store.",
     "hintAllSent": "Nothing is waiting for you on this product."
+  },
+  "SiteStatus": {
+    "auditRunning": "Analysing your catalogue…",
+    "catalogArriving": "Fetching your catalogue…",
+    "auditFailed": "The last analysis did not finish",
+    "changesToReview": "{count, plural, =1 {1 change needs your attention} other {# changes need your attention}}",
+    "changesSending": "{count, plural, =1 {1 change on its way to your store} other {# changes on their way to your store}}",
+    "connectStore": "Connect your store to apply your changes automatically",
+    "applyFirstChange": "Apply your first change to your store",
+    "action": "Open"
   }
 }

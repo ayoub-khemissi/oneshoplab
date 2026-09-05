@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "正在寻找角度…",
     "suggestPromptsHint": "点击一个角度即可填入输入框，随后可自行修改。",
     "suggestPromptsEmpty": "无法为该商品给出角度建议。",
-    "suggestPromptsFailed": "角度生成失败，请稍后再试。"
+    "suggestPromptsFailed": "角度生成失败，请稍后再试。",
+    "modelsSummary": "模型：{chat} · {image}",
+    "modelsChange": "更改",
+    "modelsModalTitle": "选择你的模型",
+    "modelsModalClose": "完成"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "点击每项生成内容下方的「应用」按钮，将其发送到你的店铺。",
     "hintAllSent": "该商品没有等待你处理的内容。"
+  },
+  "SiteStatus": {
+    "auditRunning": "正在分析你的商品目录…",
+    "catalogArriving": "正在获取你的商品目录…",
+    "auditFailed": "上一次分析未完成",
+    "changesToReview": "{count, plural, other {# 项修改需要你处理}}",
+    "changesSending": "{count, plural, other {# 项修改正在发送到你的店铺}}",
+    "connectStore": "连接店铺即可自动应用修改",
+    "applyFirstChange": "把第一项修改应用到你的店铺",
+    "action": "打开"
   }
 }

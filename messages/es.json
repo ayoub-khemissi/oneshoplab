@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Buscando enfoques…",
     "suggestPromptsHint": "Haz clic en un enfoque para colocarlo en el campo y edítalo si quieres.",
     "suggestPromptsEmpty": "No se ha podido sugerir ningún enfoque para este producto.",
-    "suggestPromptsFailed": "No se han podido generar los enfoques. Inténtalo dentro de un momento."
+    "suggestPromptsFailed": "No se han podido generar los enfoques. Inténtalo dentro de un momento.",
+    "modelsSummary": "Modelos: {chat} · {image}",
+    "modelsChange": "Cambiar",
+    "modelsModalTitle": "Elija sus modelos",
+    "modelsModalClose": "Listo"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Use el botón Aplicar debajo de cada generación para enviarla a su tienda.",
     "hintAllSent": "Nada espera su decisión en este producto."
+  },
+  "SiteStatus": {
+    "auditRunning": "Analizando su catálogo…",
+    "catalogArriving": "Obteniendo su catálogo…",
+    "auditFailed": "El último análisis no se completó",
+    "changesToReview": "{count, plural, =1 {1 cambio requiere su atención} other {# cambios requieren su atención}}",
+    "changesSending": "{count, plural, =1 {1 cambio en camino a su tienda} other {# cambios en camino a su tienda}}",
+    "connectStore": "Conecte su tienda para aplicar sus cambios automáticamente",
+    "applyFirstChange": "Aplique su primer cambio a su tienda",
+    "action": "Abrir"
   }
 }

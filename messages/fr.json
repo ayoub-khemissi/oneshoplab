@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Recherche d'angles…",
     "suggestPromptsHint": "Cliquez sur un angle pour le placer dans le champ, puis modifiez-le si besoin.",
     "suggestPromptsEmpty": "Aucun angle n'a pu être proposé pour ce produit.",
-    "suggestPromptsFailed": "Les angles n'ont pas pu être générés. Réessayez dans un instant."
+    "suggestPromptsFailed": "Les angles n'ont pas pu être générés. Réessayez dans un instant.",
+    "modelsSummary": "Modèles : {chat} · {image}",
+    "modelsChange": "Modifier",
+    "modelsModalTitle": "Choisissez vos modèles",
+    "modelsModalClose": "Terminé"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Utilisez le bouton Appliquer sous chaque génération pour l’envoyer à votre boutique.",
     "hintAllSent": "Rien n’attend votre décision sur ce produit."
+  },
+  "SiteStatus": {
+    "auditRunning": "Analyse de votre catalogue…",
+    "catalogArriving": "Récupération de votre catalogue…",
+    "auditFailed": "La dernière analyse ne s’est pas terminée",
+    "changesToReview": "{count, plural, =1 {1 modification demande votre attention} other {# modifications demandent votre attention}}",
+    "changesSending": "{count, plural, =1 {1 modification en route vers votre boutique} other {# modifications en route vers votre boutique}}",
+    "connectStore": "Connectez votre boutique pour appliquer vos modifications automatiquement",
+    "applyFirstChange": "Appliquez votre première modification à votre boutique",
+    "action": "Ouvrir"
   }
 }

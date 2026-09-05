@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "Szukam ujęć…",
     "suggestPromptsHint": "Kliknij ujęcie, aby wstawić je do pola, a potem je popraw.",
     "suggestPromptsEmpty": "Nie udało się zaproponować żadnego ujęcia dla tego produktu.",
-    "suggestPromptsFailed": "Nie udało się wygenerować ujęć. Spróbuj za chwilę."
+    "suggestPromptsFailed": "Nie udało się wygenerować ujęć. Spróbuj za chwilę.",
+    "modelsSummary": "Modele: {chat} · {image}",
+    "modelsChange": "Zmień",
+    "modelsModalTitle": "Wybierz modele",
+    "modelsModalClose": "Gotowe"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Użyj przycisku Zastosuj pod daną treścią, aby wysłać ją do sklepu.",
     "hintAllSent": "Nic nie czeka na Twoją decyzję przy tym produkcie."
+  },
+  "SiteStatus": {
+    "auditRunning": "Analizujemy Twój katalog…",
+    "catalogArriving": "Pobieramy Twój katalog…",
+    "auditFailed": "Ostatnia analiza nie została ukończona",
+    "changesToReview": "{count, plural, other {# zmian wymaga Twojej uwagi}}",
+    "changesSending": "{count, plural, other {# zmian w drodze do Twojego sklepu}}",
+    "connectStore": "Połącz sklep, aby zmiany były wprowadzane automatycznie",
+    "applyFirstChange": "Zastosuj pierwszą zmianę w swoim sklepie",
+    "action": "Otwórz"
   }
 }

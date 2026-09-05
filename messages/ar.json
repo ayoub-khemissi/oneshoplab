@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "جارٍ البحث عن زوايا…",
     "suggestPromptsHint": "انقر على زاوية لوضعها في الحقل، ثم عدّلها إن أردت.",
     "suggestPromptsEmpty": "تعذّر اقتراح أي زاوية لهذا المنتج.",
-    "suggestPromptsFailed": "تعذّر توليد الزوايا. حاول بعد قليل."
+    "suggestPromptsFailed": "تعذّر توليد الزوايا. حاول بعد قليل.",
+    "modelsSummary": "النماذج: {chat} · {image}",
+    "modelsChange": "تغيير",
+    "modelsModalTitle": "اختر نماذجك",
+    "modelsModalClose": "تم"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "استخدم زر «تطبيق» أسفل كل نتيجة لإرسالها إلى متجرك.",
     "hintAllSent": "لا شيء ينتظر قرارك في هذا المنتج."
+  },
+  "SiteStatus": {
+    "auditRunning": "جارٍ تحليل كتالوجك…",
+    "catalogArriving": "جارٍ جلب كتالوجك…",
+    "auditFailed": "لم يكتمل التحليل الأخير",
+    "changesToReview": "{count, plural, other {# تعديلات تحتاج انتباهك}}",
+    "changesSending": "{count, plural, other {# تعديلات في طريقها إلى متجرك}}",
+    "connectStore": "اربط متجرك لتطبيق تعديلاتك تلقائيًا",
+    "applyFirstChange": "طبّق أول تعديل على متجرك",
+    "action": "فتح"
   }
 }

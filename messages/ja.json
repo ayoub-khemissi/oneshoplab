@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "切り口を探しています…",
     "suggestPromptsHint": "切り口をクリックすると入力欄に入ります。そのあと自由に編集できます。",
     "suggestPromptsEmpty": "この商品に合う切り口を提案できませんでした。",
-    "suggestPromptsFailed": "切り口を生成できませんでした。少し時間を置いてお試しください。"
+    "suggestPromptsFailed": "切り口を生成できませんでした。少し時間を置いてお試しください。",
+    "modelsSummary": "モデル：{chat} · {image}",
+    "modelsChange": "変更",
+    "modelsModalTitle": "モデルを選ぶ",
+    "modelsModalClose": "完了"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "各生成の下にある「適用」ボタンでストアに送信できます。",
     "hintAllSent": "この商品に判断待ちの項目はありません。"
+  },
+  "SiteStatus": {
+    "auditRunning": "カタログを分析しています…",
+    "catalogArriving": "カタログを取得しています…",
+    "auditFailed": "前回の分析は完了しませんでした",
+    "changesToReview": "{count, plural, other {対応が必要な変更が# 件}}",
+    "changesSending": "{count, plural, other {ストアへ送信中の変更が# 件}}",
+    "connectStore": "ストアを接続すると変更が自動で反映されます",
+    "applyFirstChange": "最初の変更をストアに反映しましょう",
+    "action": "開く"
   }
 }

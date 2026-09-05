@@ -482,7 +482,11 @@
     "suggestPromptsBusy": "A procurar abordagens…",
     "suggestPromptsHint": "Clique numa abordagem para a colocar no campo e edite-a se quiser.",
     "suggestPromptsEmpty": "Não foi possível sugerir nenhuma abordagem para este produto.",
-    "suggestPromptsFailed": "Não foi possível gerar as abordagens. Tente novamente daqui a pouco."
+    "suggestPromptsFailed": "Não foi possível gerar as abordagens. Tente novamente daqui a pouco.",
+    "modelsSummary": "Modelos: {chat} · {image}",
+    "modelsChange": "Alterar",
+    "modelsModalTitle": "Escolha os seus modelos",
+    "modelsModalClose": "Concluído"
   },
   "Report": {
     "dataSource": {
@@ -1867,5 +1871,15 @@
     },
     "hintToApply": "Use o botão Aplicar sob cada geração para a enviar para a sua loja.",
     "hintAllSent": "Nada aguarda a sua decisão neste produto."
+  },
+  "SiteStatus": {
+    "auditRunning": "A analisar o seu catálogo…",
+    "catalogArriving": "A obter o seu catálogo…",
+    "auditFailed": "A última análise não foi concluída",
+    "changesToReview": "{count, plural, =1 {1 alteração precisa da sua atenção} other {# alterações precisam da sua atenção}}",
+    "changesSending": "{count, plural, =1 {1 alteração a caminho da sua loja} other {# alterações a caminho da sua loja}}",
+    "connectStore": "Ligue a sua loja para aplicar as alterações automaticamente",
+    "applyFirstChange": "Aplique a sua primeira alteração à sua loja",
+    "action": "Abrir"
   }
 }
