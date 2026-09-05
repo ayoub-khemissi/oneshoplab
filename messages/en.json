@@ -1761,7 +1761,8 @@
     "errorArchived": "This product is no longer in your store.",
     "errorGeneric": "Something went wrong. Please try again.",
     "tileSyncing": "Syncing with your store — actions come back after the next sync.",
-    "sending": "Sending to your store… this gallery updates on its own as soon as the store confirms."
+    "sending": "Sending to your store… this gallery updates on its own as soon as the store confirms.",
+    "altNotEditable": "Your store does not allow editing this photo’s alt text. Reconnect it to grant that permission."
   },
   "AltText": {
     "title": "Missing alternative text",

@@ -21,6 +21,7 @@ import {
   type TileContext
 } from '@/features/apply-to-store/lib/image-editor';
 import { buildGrid } from '@/features/apply-to-store/lib/image-editor-grid';
+import { shopifyCapabilitiesFor } from '@/entities/connection-capability';
 import type { ConnectionCapabilities } from '@/shared/db/schema';
 
 const MINIMUM: ConnectionCapabilities = {
@@ -333,5 +334,24 @@ describe('the main photo', () => {
     // do exactly that. Reported in production on 2026-09-05.
     expect(tileActions(storeTile(0), ctx({ isMain: true })).setFeatured).toBe(false);
     expect(tileActions(storeTile(1), ctx({ isMain: false })).setFeatured).toBe(true);
+  });
+});
+
+describe('Shopify alt editing follows the granted scopes', () => {
+  it('is offered only when the store granted write_files', () => {
+    // Claiming a verb the store will refuse is worse than admitting we lack it:
+    // the merchant would queue a change that comes back failed.
+    const without = shopifyCapabilitiesFor(['read_products', 'write_products']);
+    expect(without.altEditable).toBe(false);
+    expect(without.imageOps).not.toContain('set_alt');
+
+    const withScope = shopifyCapabilitiesFor(['read_products', 'write_products', 'write_files']);
+    expect(withScope.altEditable).toBe(true);
+    expect(withScope.imageOps).toContain('set_alt');
+  });
+
+  it('survives a connection that recorded no scopes at all', () => {
+    expect(shopifyCapabilitiesFor(null).altEditable).toBe(false);
+    expect(shopifyCapabilitiesFor(undefined).altEditable).toBe(false);
   });
 });

@@ -1761,7 +1761,8 @@
     "errorArchived": "Este produto já não está na sua loja.",
     "errorGeneric": "Ocorreu um erro. Tente novamente.",
     "tileSyncing": "A sincronizar com a sua loja — as ações voltam após a próxima sincronização.",
-    "sending": "A enviar para a sua loja… esta galeria atualiza-se sozinha assim que a loja confirmar."
+    "sending": "A enviar para a sua loja… esta galeria atualiza-se sozinha assim que a loja confirmar.",
+    "altNotEditable": "A sua loja não permite editar o texto alternativo desta foto. Volte a ligá-la para conceder essa permissão."
   },
   "AltText": {
     "title": "Textos alternativos em falta",

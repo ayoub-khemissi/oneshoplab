@@ -13,6 +13,7 @@ import {
 import { createOauthState, verifyOauthState, type OauthStatePayload } from '@/shared/lib';
 import {
   missingScopes,
+  OPTIONAL_SHOPIFY_APP_SCOPES,
   shopifyAppConfig,
   shopifyAuthorizeUrl,
   verifyShopifyQueryHmac
@@ -128,7 +129,10 @@ export async function completeShopifyInstall(
     return fail('unreachable', state, e instanceof Error ? e.message : String(e));
   }
   if (!token) return fail('exchange_failed', state);
-  const missing = missingScopes(cfg.scopes, token.scopes);
+  const missing = missingScopes(
+    cfg.scopes.filter((s) => !OPTIONAL_SHOPIFY_APP_SCOPES.includes(s)),
+    token.scopes
+  );
   if (missing.length) return fail('scopes_missing', state, missing.join(','));
 
   const makeClient = deps.makeClient ?? createAdminClient;

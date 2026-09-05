@@ -6,7 +6,11 @@ import {
   type ConnectionCapabilities
 } from '@/shared/db/schema';
 import { capabilitiesSchema, normalizeCapabilities } from '../lib/schema';
-import { MINIMUM_CAPABILITIES, PLATFORM_CAPABILITIES } from '../model/capabilities';
+import {
+  MINIMUM_CAPABILITIES,
+  PLATFORM_CAPABILITIES,
+  shopifyCapabilitiesFor
+} from '../model/capabilities';
 
 /** Persisted on `POST /products/sync` when the plugin sends `capabilities`. */
 export async function saveReportedCapabilities(
@@ -32,10 +36,16 @@ export async function saveReportedCapabilities(
  */
 export async function getProjectCapabilities(projectId: string): Promise<ConnectionCapabilities> {
   const [connection] = await db
-    .select({ platform: shopConnections.platform })
+    .select({ platform: shopConnections.platform, scopes: shopConnections.scopes })
     .from(shopConnections)
     .where(and(eq(shopConnections.projectId, projectId), ne(shopConnections.status, 'revoked')));
-  if (connection) return PLATFORM_CAPABILITIES[connection.platform];
+  if (connection) {
+    // Shopify's alt editing depends on a scope the merchant may or may not have
+    // granted, so the answer comes from their own connection, not from a table.
+    return connection.platform === 'shopify'
+      ? shopifyCapabilitiesFor(connection.scopes)
+      : PLATFORM_CAPABILITIES[connection.platform];
+  }
 
   const [reported] = await db
     .select({ capabilities: connectionCapabilities.capabilities })

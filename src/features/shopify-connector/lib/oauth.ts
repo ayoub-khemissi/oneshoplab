@@ -5,7 +5,22 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export const SHOPIFY_STATE_COOKIE = 'osl_shopify_oauth';
-export const DEFAULT_SHOPIFY_APP_SCOPES = ['read_products', 'write_products'] as const;
+// `write_files` is what lets us set the alt text of a photo already on the
+// store. Asked for up front, while the app is young: added later it would make
+// every connected merchant re-consent, and a store without it simply keeps the
+// smaller capability set.
+export const DEFAULT_SHOPIFY_APP_SCOPES = [
+  'read_products',
+  'write_products',
+  'write_files'
+] as const;
+
+/**
+ * Scopes we ask for but do not require. `write_files` only unlocks editing the
+ * alt text of a photo already on the store: a merchant who declines it should
+ * still get a working connection with a smaller set of verbs, not a refusal.
+ */
+export const OPTIONAL_SHOPIFY_APP_SCOPES: readonly string[] = ['write_files'];
 
 export interface ShopifyAppConfig {
   clientId: string;

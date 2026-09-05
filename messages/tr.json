@@ -1761,7 +1761,8 @@
     "errorArchived": "Bu ürün artık mağazanızda değil.",
     "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin.",
     "tileSyncing": "Mağazanızla eşitleniyor — işlemler bir sonraki eşitlemeden sonra döner.",
-    "sending": "Mağazanıza gönderiliyor… mağaza onaylar onaylamaz bu galeri kendi kendine güncellenir."
+    "sending": "Mağazanıza gönderiliyor… mağaza onaylar onaylamaz bu galeri kendi kendine güncellenir.",
+    "altNotEditable": "Mağazanız bu fotoğrafın alt metnini düzenlemeye izin vermiyor. İzni vermek için mağazayı yeniden bağlayın."
   },
   "AltText": {
     "title": "Eksik alternatif metinler",

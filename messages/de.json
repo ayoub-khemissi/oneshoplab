@@ -1761,7 +1761,8 @@
     "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
     "errorGeneric": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
     "tileSyncing": "Wird mit Ihrem Shop synchronisiert — die Aktionen kehren nach der nächsten Synchronisierung zurück.",
-    "sending": "Wird an Ihren Shop gesendet… diese Galerie aktualisiert sich selbst, sobald der Shop bestätigt."
+    "sending": "Wird an Ihren Shop gesendet… diese Galerie aktualisiert sich selbst, sobald der Shop bestätigt.",
+    "altNotEditable": "Ihr Shop erlaubt es nicht, den Alt-Text dieses Fotos zu ändern. Verbinden Sie ihn erneut, um diese Berechtigung zu erteilen."
   },
   "AltText": {
     "title": "Fehlende Alternativtexte",

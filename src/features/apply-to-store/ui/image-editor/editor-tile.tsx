@@ -236,6 +236,14 @@ export function EditorTile(props: EditorTileProps) {
               {t('actionRemove')}
             </TileButton>
           ) : null}
+          {/* A store photo with no alt and no way to give it one used to be a
+              dead end: the caption said "none" and no button followed. Say why,
+              and what unlocks it. */}
+          {props.kind === 'store' && !actions.setAlt && !props.alt && !props.syncing ? (
+            <span className="w-full text-[10px] leading-snug text-[var(--muted)]">
+              {t('altNotEditable')}
+            </span>
+          ) : null}
           {props.syncing ? (
             // Silence here read as a broken tile: no buttons, and an alt column
             // saying "none" on a photo that had just been sent to the store.

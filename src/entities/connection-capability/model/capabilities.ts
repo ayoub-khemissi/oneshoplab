@@ -23,12 +23,14 @@ export const MINIMUM_CAPABILITIES: ConnectionCapabilities = {
 };
 
 /**
- * Shopify Admin API 2025-07. `set_alt` is deliberately absent: editing the alt
- * of an existing MediaImage goes through `fileUpdate`, which needs the
- * `write_files` scope our app does not request (adding it would force every
- * connected merchant to re-consent). Alt text set at creation time still works
- * — `productCreateMedia` takes it. `set_featured` is a `productReorderMedia`
- * move to position 0; Shopify caps a product at 250 media.
+ * Shopify Admin API 2025-07. `set_featured` is a `productReorderMedia` move to
+ * position 0; Shopify caps a product at 250 media.
+ *
+ * `set_alt` depends on what the merchant actually granted: editing the alt of
+ * an existing MediaImage goes through `fileUpdate`, which needs `write_files`.
+ * A store connected without it keeps the safe set below — claiming the verb
+ * would mean queueing changes the store then refuses. Alt text set at creation
+ * time works either way: `productCreateMedia` takes it.
  */
 const SHOPIFY_CAPABILITIES: ConnectionCapabilities = {
   stableImageIds: true,
@@ -37,6 +39,26 @@ const SHOPIFY_CAPABILITIES: ConnectionCapabilities = {
   altEditable: false,
   fields: ['title', 'description', 'tags', 'images']
 };
+
+/** The scope Shopify requires to edit the alt text of an existing image. */
+export const SHOPIFY_ALT_SCOPE = 'write_files';
+
+/**
+ * What this particular Shopify connection can do, given the scopes it was
+ * granted. Derived from the store's own answer rather than from our wish list:
+ * a capability we claim and cannot honour is worse than one we admit we lack.
+ */
+export function shopifyCapabilitiesFor(
+  grantedScopes: readonly string[] | null | undefined
+): ConnectionCapabilities {
+  const granted = grantedScopes ?? [];
+  if (!granted.includes(SHOPIFY_ALT_SCOPE)) return SHOPIFY_CAPABILITIES;
+  return {
+    ...SHOPIFY_CAPABILITIES,
+    imageOps: [...SHOPIFY_CAPABILITIES.imageOps, 'set_alt'],
+    altEditable: true
+  };
+}
 
 /**
  * Wix Stores Catalog v1. Media can be added and removed by id (so `replace` is

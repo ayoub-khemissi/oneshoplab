@@ -1761,7 +1761,8 @@
     "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
     "errorGeneric": "Wystąpił błąd. Spróbuj ponownie.",
     "tileSyncing": "Synchronizacja ze sklepem — akcje wrócą po następnej synchronizacji.",
-    "sending": "Wysyłanie do sklepu… ta galeria zaktualizuje się sama, gdy sklep potwierdzi."
+    "sending": "Wysyłanie do sklepu… ta galeria zaktualizuje się sama, gdy sklep potwierdzi.",
+    "altNotEditable": "Twój sklep nie pozwala edytować tekstu alternatywnego tego zdjęcia. Połącz go ponownie, aby nadać to uprawnienie."
   },
   "AltText": {
     "title": "Brakujące teksty alternatywne",
