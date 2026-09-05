@@ -749,7 +749,17 @@
     "retryWithCost": "重试 · {cost} 积分",
     "confirmDeleteTitle": "删除此图片？",
     "confirmDeleteBody": "将从网格中移除。生成历史会被保留。",
-    "expiredLabel": "图片已过期"
+    "expiredLabel": "图片已过期",
+    "anglePackshotTitle": "纯白背景",
+    "anglePackshotHint": "平台标准：纯白、无阴影。",
+    "angleFlatlayTitle": "平铺俯拍",
+    "angleFlatlayHint": "从上方拍摄，搭配少量道具。",
+    "angleMacroTitle": "材质特写",
+    "angleMacroHint": "清晰呈现质感与做工。",
+    "angleScaleTitle": "尺寸参照",
+    "angleScaleHint": "与常见物品并列，一眼看出大小。",
+    "angleGiftTitle": "礼品氛围",
+    "angleGiftHint": "旁有包装与丝带，暖色灯光。"
   },
   "Relaunch": {
     "relaunch": "重新分析",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "有 {count} 个商品无法处理。",
     "summaryRemaining": "还有 {count} 张照片没有替代文字，请再次运行以继续。",
     "generateTile": "生成替代文字",
+    "regenerateTile": "重新生成替代文本",
     "generating": "生成中……",
     "generatedNotice": "已加入队列：可以再修改，它会和你的其他改动一起发送。",
     "errorUnsupported": "您的店铺暂时不支持由 OneShopLab 修改照片的替代文字。",

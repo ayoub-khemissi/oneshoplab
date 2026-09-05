@@ -749,7 +749,17 @@
     "retryWithCost": "再試行 · {cost} クレジット",
     "confirmDeleteTitle": "この画像を削除しますか？",
     "confirmDeleteBody": "グリッドから削除されます。生成履歴は保持されます。",
-    "expiredLabel": "画像の保存期限切れ"
+    "expiredLabel": "画像の保存期限切れ",
+    "anglePackshotTitle": "白背景",
+    "anglePackshotHint": "モール標準：純白・影なし。",
+    "angleFlatlayTitle": "真上からの俯瞰",
+    "angleFlatlayHint": "平置きで、小物を少し添えて。",
+    "angleMacroTitle": "素材のクローズアップ",
+    "angleMacroHint": "質感と仕上げを細部まで。",
+    "angleScaleTitle": "サイズの目安",
+    "angleScaleHint": "身近な物と並べ、大きさが一目で伝わる。",
+    "angleGiftTitle": "ギフトの雰囲気",
+    "angleGiftHint": "包装やリボンを添えた暖かい光。"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "{count} 件の商品を処理できませんでした。",
     "summaryRemaining": "代替テキストのない写真がまだ {count} 枚あります。続けるにはもう一度実行してください。",
     "generateTile": "代替テキストを生成",
+    "regenerateTile": "代替テキストを再生成",
     "generating": "生成中…",
     "generatedNotice": "キューに追加しました。必要なら編集してください。ほかの変更と一緒に送信されます。",
     "errorUnsupported": "お使いのストアでは、OneShopLab から写真の代替テキストを変更できません。",

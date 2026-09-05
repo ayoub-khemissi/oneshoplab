@@ -749,7 +749,17 @@
     "retryWithCost": "Retry · {cost} credits",
     "confirmDeleteTitle": "Delete this image?",
     "confirmDeleteBody": "It will be removed from the grid. The generation history is preserved.",
-    "expiredLabel": "Image expired"
+    "expiredLabel": "Image expired",
+    "anglePackshotTitle": "White background",
+    "anglePackshotHint": "Marketplace standard: pure white, no shadow.",
+    "angleFlatlayTitle": "Flat lay",
+    "angleFlatlayHint": "Seen from above, styled with a few props.",
+    "angleMacroTitle": "Material close-up",
+    "angleMacroHint": "Texture and finish in sharp detail.",
+    "angleScaleTitle": "Size reference",
+    "angleScaleHint": "Beside a familiar object, so the size reads at a glance.",
+    "angleGiftTitle": "Gift setting",
+    "angleGiftHint": "Wrapping and ribbon nearby, warm festive light."
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "{count} products could not be processed.",
     "summaryRemaining": "{count} photos still have no alternative text — run it again to continue.",
     "generateTile": "Generate the alternative text",
+    "regenerateTile": "Rewrite alt text",
     "generating": "Generating…",
     "generatedNotice": "Added to the queue: edit it if you want, it will go out with the rest of your changes.",
     "errorUnsupported": "Your store does not let OneShopLab edit the alternative text of your photos yet.",

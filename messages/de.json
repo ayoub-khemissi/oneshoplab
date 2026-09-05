@@ -749,7 +749,17 @@
     "retryWithCost": "Erneut · {cost} Credits",
     "confirmDeleteTitle": "Dieses Bild löschen?",
     "confirmDeleteBody": "Es wird aus dem Raster entfernt. Der Generierungsverlauf bleibt erhalten.",
-    "expiredLabel": "Bild abgelaufen"
+    "expiredLabel": "Bild abgelaufen",
+    "anglePackshotTitle": "Weißer Hintergrund",
+    "anglePackshotHint": "Marktplatz-Standard: reinweiß, ohne Schatten.",
+    "angleFlatlayTitle": "Draufsicht",
+    "angleFlatlayHint": "Flach gelegt, mit einigen Requisiten arrangiert.",
+    "angleMacroTitle": "Material-Nahaufnahme",
+    "angleMacroHint": "Textur und Verarbeitung im Detail.",
+    "angleScaleTitle": "Größenvergleich",
+    "angleScaleHint": "Neben einem vertrauten Objekt, damit die Größe sofort klar ist.",
+    "angleGiftTitle": "Geschenk-Stimmung",
+    "angleGiftHint": "Verpackung und Schleife daneben, warmes Licht."
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "{count} Produkte konnten nicht verarbeitet werden.",
     "summaryRemaining": "{count} Fotos haben weiterhin keinen Alternativtext – starten Sie erneut, um fortzufahren.",
     "generateTile": "Alternativtext erzeugen",
+    "regenerateTile": "Alt-Text neu erzeugen",
     "generating": "Wird erstellt…",
     "generatedNotice": "Zur Warteschlange hinzugefügt: Passe ihn an, wenn du willst — er geht mit deinen übrigen Änderungen raus.",
     "errorUnsupported": "Ihr Shop erlaubt OneShopLab noch nicht, den Alternativtext Ihrer Fotos zu ändern.",

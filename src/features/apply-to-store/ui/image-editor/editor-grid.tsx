@@ -16,6 +16,7 @@ export function EditorGrid({
   actionsFor,
   removeBlockedFor,
   handlersFor,
+  altCost,
   onDragStart,
   onDrop
 }: {
@@ -27,6 +28,8 @@ export function EditorGrid({
   actionsFor: (tile: GridTile) => TileActions;
   removeBlockedFor: (tile: GridTile) => boolean;
   handlersFor: (tile: GridTile) => TileHandlers;
+  /** Credits one alt-text generation costs — shown on each tile's button. */
+  altCost: number;
   onDragStart: (tile: GridTile) => void;
   onDrop: (tile: GridTile) => void;
 }) {
@@ -43,6 +46,7 @@ export function EditorGrid({
           isMain={tile.position === 0}
           inGallery={tile.inGallery}
           actions={actionsFor(tile)}
+          altCost={altCost}
           canMoveLeft={tile.position > 0}
           canMoveRight={tile.position >= 0 && tile.position < galleryLength - 1}
           replacing={replaceFor === tile.domRef}

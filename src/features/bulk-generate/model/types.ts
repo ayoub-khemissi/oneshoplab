@@ -36,6 +36,9 @@ export interface BulkResult {
 
 export const ALL_FIELDS: BulkFieldKey[] = ['title', 'description', 'tags', 'images'];
 
+/** Deliberately the original three, not the full single-image catalogue: bulk
+ *  multiplies every angle by every product, so eight of them would quietly turn
+ *  a run into an eight-figure credit bill. */
 export type BulkImageAngle = 'lifestyle' | 'studio' | 'inuse';
 const ALL_ANGLES: BulkImageAngle[] = ['lifestyle', 'studio', 'inuse'];
 

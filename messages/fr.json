@@ -749,7 +749,17 @@
     "retryWithCost": "Réessayer · {cost} crédits",
     "confirmDeleteTitle": "Supprimer cette image ?",
     "confirmDeleteBody": "Elle sera retirée de la grille. L'historique de génération est conservé.",
-    "expiredLabel": "Image expirée"
+    "expiredLabel": "Image expirée",
+    "anglePackshotTitle": "Fond blanc",
+    "anglePackshotHint": "Standard des marketplaces : blanc pur, sans ombre.",
+    "angleFlatlayTitle": "Vue de dessus",
+    "angleFlatlayHint": "À plat, mise en scène avec quelques accessoires.",
+    "angleMacroTitle": "Gros plan matière",
+    "angleMacroHint": "La texture et les finitions en détail.",
+    "angleScaleTitle": "Mise à l’échelle",
+    "angleScaleHint": "À côté d’un objet familier, pour saisir la taille d’un coup d’œil.",
+    "angleGiftTitle": "Ambiance cadeau",
+    "angleGiftHint": "Emballage et ruban à proximité, lumière chaleureuse."
   },
   "Relaunch": {
     "relaunch": "Relancer l'analyse",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "{count} produits n’ont pas pu être traités.",
     "summaryRemaining": "{count} photos n’ont toujours pas de texte alternatif : relancez pour continuer.",
     "generateTile": "Générer le texte alternatif",
+    "regenerateTile": "Regénérer le texte alternatif",
     "generating": "Génération…",
     "generatedNotice": "Texte ajouté à la file : modifiez-le si besoin, il partira avec les autres modifications.",
     "errorUnsupported": "Votre boutique ne permet pas encore à OneShopLab de modifier le texte alternatif de vos photos.",

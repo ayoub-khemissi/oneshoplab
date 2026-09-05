@@ -132,7 +132,8 @@ describe('generateAltTextAction (one tile)', () => {
     expect(res).toEqual({
       ok: true,
       alt: 'Mug en grès posé sur une table en bois',
-      creditsConsumed: 1
+      creditsConsumed: 1,
+      changeQueued: true
     });
 
     const rows = await altJobs();
@@ -167,9 +168,19 @@ describe('generateAltTextAction (one tile)', () => {
     expect(provider.calls[0].model.openrouterId).toContain('anthropic/');
   });
 
-  it('queues nothing on its own — the merchant saves the text themselves', async () => {
+  it('queues the set_alt itself, so the sentence is not lost on reload', async () => {
+    // It used to return the alt and stop there: the merchant saw a sentence
+    // that existed nowhere — not on the product, not on its way to the store,
+    // gone on the next reload, while the page still read "no alt text". Found
+    // in production on 2026-09-05.
     await generateAltTextAction(product.id, 'https://cdn.test/2.jpg');
-    expect(await changesOf(product.id)).toHaveLength(0);
+    const changes = await changesOf(product.id);
+    expect(changes).toHaveLength(1);
+    expect(changes[0].field).toBe('images');
+    expect(changes[0].value).toEqual({
+      v: 1,
+      ops: [{ op: 'set_alt', target: 'm2', alt: 'Mug en grès posé sur une table en bois' }]
+    });
   });
 
   it('refuses and spends nothing when the store cannot edit an alt', async () => {

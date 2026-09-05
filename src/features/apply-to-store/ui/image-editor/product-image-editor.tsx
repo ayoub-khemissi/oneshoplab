@@ -62,7 +62,8 @@ export function ProductImageEditor({
   generated,
   capabilities,
   archived = false,
-  generateAlt
+  generateAlt,
+  altCost
 }: {
   productId: string;
   storeImages: EditorStoreImage[];
@@ -72,6 +73,8 @@ export function ProductImageEditor({
   /** Server action that writes an alt text for one photo. Wired by the page;
    *  absent = no "generate" button (see AltTextGenerator). */
   generateAlt?: AltTextGenerator;
+  /** Credits one alt-text generation costs — shown on each tile's button. */
+  altCost: number;
 }) {
   const t = useTranslations('ProductImages');
   const router = useRouter();
@@ -178,6 +181,17 @@ export function ProductImageEditor({
 
   const altOf = (src: string, fallback: string | null) => altDrafts[src] ?? fallback;
 
+  // Empty, the panel is pure noise above the grid — the merchant fills it from
+  // the buttons under each photo, which are right below.
+  const queuedRows = [
+    ...queue.ops.map((q) => ({ id: q.id, description: describeOp(q.op, namer) })),
+    // Reordering is one decision however many photos moved, and it is rebuilt
+    // on every change — hence its own row rather than a queued op.
+    ...(queue.order
+      ? [{ id: REORDER_ROW, description: describeOp({ op: 'reorder', order: queue.order }, namer) }]
+      : [])
+  ];
+
   return (
     <section data-testid="image-editor" className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
@@ -199,6 +213,26 @@ export function ProductImageEditor({
             {t('fallbackHint')}
           </span>
         </p>
+      ) : null}
+
+      {/* Above the grid, not under it: these are edits waiting to be sent, and
+          at the bottom of a photo grid they were routinely scrolled past. Also
+          hidden on a product with no photo, where the queue cannot be filled
+          from here anyway. */}
+      {editable && storeImages.length > 0 && queuedRows.length > 0 ? (
+        <PendingOpsPanel
+          rows={queuedRows}
+          pending={pending}
+          disabled={preview.ops.length === 0 || preview.invalid}
+          onRemove={(id) =>
+            setQueue((q) => (id === REORDER_ROW ? { ...q, order: null } : removeQueuedOp(q, id)))
+          }
+          onClear={() => {
+            setQueue(EMPTY_QUEUE);
+            setReplaceFor(null);
+          }}
+          onApply={apply}
+        />
       ) : null}
 
       {tiles.length === 0 ? (
@@ -229,6 +263,7 @@ export function ProductImageEditor({
             capabilities.imageOps.includes('remove') &&
             preview.images.length <= 1
           }
+          altCost={altCost}
           onDragStart={(tile) => {
             dragged.current = tile.domRef;
           }}
@@ -293,36 +328,6 @@ export function ProductImageEditor({
             ? t('previewRemovesLastImage')
             : t('previewInvalid')}
         </p>
-      ) : null}
-
-      {/* A product with no photo has nothing to stage: the panel would sit
-          there announcing an empty queue the merchant cannot fill from here. */}
-      {editable && storeImages.length > 0 ? (
-        <PendingOpsPanel
-          rows={[
-            ...queue.ops.map((q) => ({ id: q.id, description: describeOp(q.op, namer) })),
-            // Reordering is one decision however many photos moved, and it is
-            // rebuilt on every change — hence its own row rather than a queued op.
-            ...(queue.order
-              ? [
-                  {
-                    id: REORDER_ROW,
-                    description: describeOp({ op: 'reorder', order: queue.order }, namer)
-                  }
-                ]
-              : [])
-          ]}
-          pending={pending}
-          disabled={preview.ops.length === 0 || preview.invalid}
-          onRemove={(id) =>
-            setQueue((q) => (id === REORDER_ROW ? { ...q, order: null } : removeQueuedOp(q, id)))
-          }
-          onClear={() => {
-            setQueue(EMPTY_QUEUE);
-            setReplaceFor(null);
-          }}
-          onApply={apply}
-        />
       ) : null}
 
       {applied ? (

@@ -48,6 +48,7 @@ const BASE: ProductRow = {
   sku: 'MUG',
   sourceUpdatedAt: new Date('2026-08-01T10:00:00Z'),
   customInstructions: 'keep it short',
+  customImagePrompt: null,
   status: 'active',
   lastSeenAt: new Date('2026-08-30T10:00:00Z'),
   archivedAt: null,

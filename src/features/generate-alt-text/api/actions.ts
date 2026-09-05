@@ -75,7 +75,35 @@ export async function generateAltTextAction(
       product: toAltProductContext(row.product),
       languageCode: await getEffectiveLanguage(row.projectId)
     });
-    return { ok: true, alt: result.alt, creditsConsumed: result.creditsConsumed };
+    // Queue it, exactly as the batch does. Returning the sentence and stopping
+    // there left the merchant looking at an alt text that existed nowhere: not
+    // on the product, not on the way to the store, gone on the next reload —
+    // while the page still read "no alt text". A generation they paid for has
+    // to land somewhere.
+    let changeQueued = false;
+    if (stored && result.alt.trim().length > 0) {
+      const created = await createChange({
+        projectId: row.projectId,
+        productId: row.product.id,
+        productSourceId: sourceKeyOf(row.product),
+        field: 'images',
+        value: {
+          v: 1,
+          ops: [{ op: 'set_alt', target: stored.sourceImageId, alt: result.alt }]
+        },
+        approvedBy: session.user.id
+      });
+      changeQueued = created.ok;
+      if (created.ok) {
+        revalidatePath(`/dashboard/sites/${row.projectId}/products/${row.product.id}`);
+      }
+    }
+    return {
+      ok: true,
+      alt: result.alt,
+      creditsConsumed: result.creditsConsumed,
+      changeQueued
+    };
   } catch (e) {
     if (e instanceof InsufficientCreditsError) {
       return { ok: false, error: 'insufficient_credits' };

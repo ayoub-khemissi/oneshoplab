@@ -15,7 +15,15 @@ export type AltTextErrorCode =
   | 'generation_failed';
 
 export type GenerateAltTextResult =
-  { ok: true; alt: string; creditsConsumed: number } | { ok: false; error: AltTextErrorCode };
+  | {
+      ok: true;
+      alt: string;
+      creditsConsumed: number;
+      /** A `set_alt` is on its way to the store. False for a generated image
+       *  that is not on the product yet — its alt travels with it instead. */
+      changeQueued: boolean;
+    }
+  | { ok: false; error: AltTextErrorCode };
 
 /** One row of the planned batch, as the progress UI needs it. */
 export interface AltBatchProduct {

@@ -749,7 +749,17 @@
     "retryWithCost": "Ponów · {cost} kredytów",
     "confirmDeleteTitle": "Usunąć ten obraz?",
     "confirmDeleteBody": "Zostanie usunięty z siatki. Historia generowania pozostaje zachowana.",
-    "expiredLabel": "Obraz wygasł"
+    "expiredLabel": "Obraz wygasł",
+    "anglePackshotTitle": "Białe tło",
+    "anglePackshotHint": "Standard marketplace’ów: czysta biel, bez cienia.",
+    "angleFlatlayTitle": "Widok z góry",
+    "angleFlatlayHint": "Na płasko, z kilkoma dodatkami.",
+    "angleMacroTitle": "Zbliżenie materiału",
+    "angleMacroHint": "Faktura i wykończenie w szczegółach.",
+    "angleScaleTitle": "Odniesienie wielkości",
+    "angleScaleHint": "Obok znanego przedmiotu, by od razu ocenić rozmiar.",
+    "angleGiftTitle": "Klimat prezentu",
+    "angleGiftHint": "Opakowanie i wstążka obok, ciepłe światło."
   },
   "Relaunch": {
     "relaunch": "Wznów analizę",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "Nie udało się przetworzyć produktów: {count}.",
     "summaryRemaining": "Bez tekstu alternatywnego pozostaje {count} zdjęć — uruchom ponownie, aby kontynuować.",
     "generateTile": "Wygeneruj tekst alternatywny",
+    "regenerateTile": "Wygeneruj alt ponownie",
     "generating": "Generowanie…",
     "generatedNotice": "Dodano do kolejki: możesz go poprawić, pojedzie razem z pozostałymi zmianami.",
     "errorUnsupported": "Twój sklep nie pozwala jeszcze OneShopLab zmieniać tekstu alternatywnego zdjęć.",

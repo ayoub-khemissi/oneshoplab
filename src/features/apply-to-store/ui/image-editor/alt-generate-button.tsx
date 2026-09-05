@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { Coins, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { TileButton } from './tile-button';
@@ -14,10 +14,20 @@ import { TileButton } from './tile-button';
  */
 export function AltGenerateButton({
   generate,
-  onGenerated
+  onGenerated,
+  cost,
+  hasAlt
 }: {
-  generate: () => Promise<{ ok: true; alt: string } | { ok: false; error: string }>;
-  onGenerated: (alt: string) => void;
+  generate: () => Promise<
+    { ok: true; alt: string; changeQueued?: boolean } | { ok: false; error: string }
+  >;
+  onGenerated: (alt: string, changeQueued: boolean) => void;
+  /** Credits this click spends — shown on the button like every other paying
+   *  action in the app, so nothing is ever debited by surprise. */
+  cost: number;
+  /** Drives the label: replacing an alt text is not the same promise as
+   *  writing the first one. */
+  hasAlt: boolean;
 }) {
   const t = useTranslations('AltText');
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +53,7 @@ export function AltGenerateButton({
           setError(null);
           startTransition(async () => {
             const res = await generate();
-            if (res.ok) onGenerated(res.alt);
+            if (res.ok) onGenerated(res.alt, res.changeQueued === true);
             else setError(res.error);
           });
         }}
@@ -51,7 +61,17 @@ export function AltGenerateButton({
         disabled={pending}
         icon={<Sparkles className="size-3" />}
       >
-        {pending ? t('generating') : t('generateTile')}
+        {pending ? (
+          t('generating')
+        ) : (
+          <>
+            {hasAlt ? t('regenerateTile') : t('generateTile')}
+            <span className="inline-flex items-center gap-0.5 font-mono text-[10px] opacity-70">
+              <Coins className="size-2.5" aria-hidden />
+              {cost}
+            </span>
+          </>
+        )}
       </TileButton>
       {error ? (
         <p className="w-full text-[10px] leading-snug text-[var(--danger)]" role="alert">

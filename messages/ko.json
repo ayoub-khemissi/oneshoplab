@@ -749,7 +749,17 @@
     "retryWithCost": "재시도 · {cost} 크레딧",
     "confirmDeleteTitle": "이 이미지를 삭제하시겠습니까?",
     "confirmDeleteBody": "그리드에서 제거됩니다. 생성 기록은 유지됩니다.",
-    "expiredLabel": "이미지 보관 기간 만료"
+    "expiredLabel": "이미지 보관 기간 만료",
+    "anglePackshotTitle": "흰 배경",
+    "anglePackshotHint": "마켓플레이스 표준: 순백, 그림자 없음.",
+    "angleFlatlayTitle": "위에서 본 구도",
+    "angleFlatlayHint": "평평하게 놓고 소품 몇 가지와 함께.",
+    "angleMacroTitle": "소재 클로즈업",
+    "angleMacroHint": "질감과 마감을 세밀하게.",
+    "angleScaleTitle": "크기 기준",
+    "angleScaleHint": "익숙한 물건 옆에 두어 크기를 한눈에.",
+    "angleGiftTitle": "선물 분위기",
+    "angleGiftHint": "포장과 리본을 곁들인 따뜻한 조명."
   },
   "Relaunch": {
     "relaunch": "분석 다시 실행",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "상품 {count}개를 처리하지 못했습니다.",
     "summaryRemaining": "아직 대체 텍스트가 없는 사진이 {count}장 있습니다. 계속하려면 다시 실행하세요.",
     "generateTile": "대체 텍스트 생성",
+    "regenerateTile": "대체 텍스트 다시 생성",
     "generating": "생성 중…",
     "generatedNotice": "대기열에 추가했습니다. 원하면 수정하세요. 다른 변경 사항과 함께 전송됩니다.",
     "errorUnsupported": "현재 스토어에서는 OneShopLab이 사진의 대체 텍스트를 수정할 수 없습니다.",

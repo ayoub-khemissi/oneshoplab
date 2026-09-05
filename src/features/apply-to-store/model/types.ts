@@ -124,7 +124,18 @@ export type ImageOpsResult =
 export type AltTextGenerator = (
   productId: string,
   src: string
-) => Promise<{ ok: true; alt: string; creditsConsumed: number } | { ok: false; error: string }>;
+) => Promise<
+  | {
+      ok: true;
+      alt: string;
+      creditsConsumed: number;
+      /** The server already queued the `set_alt`. The editor must NOT queue a
+       *  second, local copy — that duplicate is what left "1 photo edit ready
+       *  to send" hanging after the photo had already reached the store. */
+      changeQueued?: boolean;
+    }
+  | { ok: false; error: string }
+>;
 
 /** "Annuler" on an applied change → a reverse change (docs/api/IMAGE-OPS.md §3). */
 export type UndoResult =

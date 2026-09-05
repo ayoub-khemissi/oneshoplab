@@ -18,7 +18,9 @@ export interface TileHandlers {
   move: (delta: -1 | 1) => void;
   pick: () => void;
   /** Absent when the page wired no generator in — the button is not shown. */
-  generateAlt?: () => Promise<{ ok: true; alt: string } | { ok: false; error: string }>;
+  generateAlt?: () => Promise<
+    { ok: true; alt: string; changeQueued?: boolean } | { ok: false; error: string }
+  >;
 }
 
 export interface EditorTileProps {
@@ -39,6 +41,8 @@ export interface EditorTileProps {
   pickable: boolean;
   /** "Retirer" is hidden because the product would end up with no photo. */
   removeBlocked: boolean;
+  /** Credits one alt-text generation costs, shown on the button. */
+  altCost: number;
   on: TileHandlers;
   onDragStart?: () => void;
   onDrop?: () => void;
@@ -185,12 +189,16 @@ export function EditorTile(props: EditorTileProps) {
           {actions.setAlt && !editingAlt && on.generateAlt ? (
             <AltGenerateButton
               generate={on.generateAlt}
-              // The generated sentence goes straight into the queue, like every
-              // other generation: what the merchant validates is the change,
-              // not the draft. Editing it is still one click away on the
-              // "Texte alternatif" button, but nothing is asked of them here.
-              onGenerated={(alt) => {
-                on.saveAlt(alt);
+              cost={props.altCost}
+              hasAlt={(props.alt ?? '').trim().length > 0}
+              // The generation goes to the store as a change, like every other
+              // one: what the merchant validates is the change, not the draft.
+              // For a STORE photo the server already queued it — queueing a
+              // local copy too is what left a phantom "1 edit to send" behind.
+              // A generated image is not on the product yet, so its alt still
+              // rides in the local queue with the image itself.
+              onGenerated={(alt, changeQueued) => {
+                if (!changeQueued) on.saveAlt(alt);
                 setProposedAlt(alt);
               }}
             />

@@ -335,6 +335,9 @@ export const products = mysqlTable(
      *  product page. Auto-saved on each generation request so the user's
      *  last guidance pre-fills the textarea on next visit. */
     customInstructions: text('custom_instructions'),
+    /** The merchant's own image prompt for THIS product, kept so they never
+     *  retype it: a prompt worth writing is worth reusing on the next angle. */
+    customImagePrompt: text('custom_image_prompt'),
     /** Soft-archive flag. 'archived' = product was present on a previous
      *  scrape but is now missing from the store (deactivated, deleted,
      *  out-of-stock-and-hidden). The row + customInstructions + jobs all

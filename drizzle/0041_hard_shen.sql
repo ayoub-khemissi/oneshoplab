@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `custom_image_prompt` text;

@@ -9,15 +9,28 @@ import type { ImageAngle, NewImagePayload } from './types';
 interface NewImageModalProps {
   costPerImage: number;
   isReplace: boolean;
+  /** What this product's prompt was last time — the merchant does not retype it. */
+  initialCustomPrompt?: string;
+  /** Persists the prompt so the next visit starts where this one left off. */
+  onSavePrompt?: (prompt: string) => void;
   onCancel: () => void;
   onSubmit: (payload: NewImagePayload) => Promise<boolean>;
 }
 
 /** Modal: pick an angle preset OR write a custom prompt, then submit. */
-export function NewImageModal({ costPerImage, isReplace, onCancel, onSubmit }: NewImageModalProps) {
+export function NewImageModal({
+  costPerImage,
+  isReplace,
+  initialCustomPrompt = '',
+  onSavePrompt,
+  onCancel,
+  onSubmit
+}: NewImageModalProps) {
   const t = useTranslations('AiImageGrid');
-  const [angle, setAngle] = useState<ImageAngle>('lifestyle');
-  const [customPrompt, setCustomPrompt] = useState('');
+  // A saved prompt means they wrote one before: start on that option rather
+  // than making them find it again.
+  const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'lifestyle');
+  const [customPrompt, setCustomPrompt] = useState(initialCustomPrompt);
   const [submitting, setSubmitting] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +52,7 @@ export function NewImageModal({ costPerImage, isReplace, onCancel, onSubmit }: N
     if (angle === 'custom' && !customPrompt.trim()) return;
     setSubmitting(true);
     try {
+      if (angle === 'custom') onSavePrompt?.(customPrompt.trim());
       const ok = await onSubmit({ angle, customPrompt: customPrompt.trim() });
       if (!ok) setSubmitting(false);
     } catch {
@@ -46,32 +60,48 @@ export function NewImageModal({ costPerImage, isReplace, onCancel, onSubmit }: N
     }
   }
 
-  const angles: Array<{
-    id: ImageAngle;
-    label: string;
-    description: string;
-  }> = [
-    {
-      id: 'lifestyle',
-      label: t('angleLifestyleTitle'),
-      description: t('angleLifestyleHint')
-    },
-    {
-      id: 'studio',
-      label: t('angleStudioTitle'),
-      description: t('angleStudioHint')
-    },
-    {
-      id: 'inuse',
-      label: t('angleInUseTitle'),
-      description: t('angleInUseHint')
-    },
-    {
-      id: 'custom',
-      label: t('angleCustomTitle'),
-      description: t('angleCustomHint')
-    }
+  // Presets scroll; "custom" is pinned below them, because it is the one
+  // option that opens a field and scrolling away from your own text to find
+  // the confirm button is a bad way to write a prompt.
+  const presets: Array<{ id: ImageAngle; label: string; description: string }> = [
+    { id: 'lifestyle', label: t('angleLifestyleTitle'), description: t('angleLifestyleHint') },
+    { id: 'studio', label: t('angleStudioTitle'), description: t('angleStudioHint') },
+    { id: 'inuse', label: t('angleInUseTitle'), description: t('angleInUseHint') },
+    { id: 'packshot', label: t('anglePackshotTitle'), description: t('anglePackshotHint') },
+    { id: 'flatlay', label: t('angleFlatlayTitle'), description: t('angleFlatlayHint') },
+    { id: 'macro', label: t('angleMacroTitle'), description: t('angleMacroHint') },
+    { id: 'scale', label: t('angleScaleTitle'), description: t('angleScaleHint') },
+    { id: 'gift', label: t('angleGiftTitle'), description: t('angleGiftHint') }
   ];
+  const customOption = {
+    id: 'custom' as ImageAngle,
+    label: t('angleCustomTitle'),
+    description: t('angleCustomHint')
+  };
+
+  const option = (a: { id: ImageAngle; label: string; description: string }) => (
+    <label
+      key={a.id}
+      className={`p-3 rounded-md border cursor-pointer transition-colors flex items-start gap-3 ${
+        angle === a.id
+          ? 'border-[var(--accent)] bg-[var(--accent)]/5'
+          : 'border-[var(--border)] hover:border-[var(--muted)]'
+      }`}
+    >
+      <input
+        type="radio"
+        name="angle"
+        value={a.id}
+        checked={angle === a.id}
+        onChange={() => setAngle(a.id)}
+        className="mt-0.5 accent-[var(--accent)]"
+      />
+      <div className="flex-1">
+        <div className="text-sm font-medium">{a.label}</div>
+        <div className="text-xs text-[var(--muted)] mt-0.5">{a.description}</div>
+      </div>
+    </label>
+  );
 
   return (
     <div
@@ -91,31 +121,10 @@ export function NewImageModal({ costPerImage, isReplace, onCancel, onSubmit }: N
           </h3>
           <p className="text-xs text-[var(--muted)] mt-1">{t('modalSubtitle')}</p>
         </div>
-        <div className="flex flex-col gap-1.5">
-          {angles.map((a) => (
-            <label
-              key={a.id}
-              className={`p-3 rounded-md border cursor-pointer transition-colors flex items-start gap-3 ${
-                angle === a.id
-                  ? 'border-[var(--accent)] bg-[var(--accent)]/5'
-                  : 'border-[var(--border)] hover:border-[var(--muted)]'
-              }`}
-            >
-              <input
-                type="radio"
-                name="angle"
-                value={a.id}
-                checked={angle === a.id}
-                onChange={() => setAngle(a.id)}
-                className="mt-0.5 accent-[var(--accent)]"
-              />
-              <div className="flex-1">
-                <div className="text-sm font-medium">{a.label}</div>
-                <div className="text-xs text-[var(--muted)] mt-0.5">{a.description}</div>
-              </div>
-            </label>
-          ))}
+        <div className="flex max-h-[38vh] flex-col gap-1.5 overflow-y-auto pr-1">
+          {presets.map(option)}
         </div>
+        {option(customOption)}
         {angle === 'custom' ? (
           <textarea
             value={customPrompt}

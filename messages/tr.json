@@ -749,7 +749,17 @@
     "retryWithCost": "Yeniden dene · {cost} kredi",
     "confirmDeleteTitle": "Bu görsel silinsin mi?",
     "confirmDeleteBody": "Izgaradan kaldırılır. Üretim geçmişi korunur.",
-    "expiredLabel": "Görsel süresi doldu"
+    "expiredLabel": "Görsel süresi doldu",
+    "anglePackshotTitle": "Beyaz arka plan",
+    "anglePackshotHint": "Pazaryeri standardı: saf beyaz, gölgesiz.",
+    "angleFlatlayTitle": "Üstten görünüm",
+    "angleFlatlayHint": "Düz yerleşim, birkaç aksesuarla.",
+    "angleMacroTitle": "Malzeme yakın çekimi",
+    "angleMacroHint": "Doku ve işçilik ayrıntılı biçimde.",
+    "angleScaleTitle": "Boyut referansı",
+    "angleScaleHint": "Tanıdık bir nesnenin yanında, boyut bir bakışta anlaşılsın.",
+    "angleGiftTitle": "Hediye atmosferi",
+    "angleGiftHint": "Yanında ambalaj ve kurdele, sıcak ışık."
   },
   "Relaunch": {
     "relaunch": "Analizi yeniden başlat",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "{count} ürün işlenemedi.",
     "summaryRemaining": "{count} fotoğrafın hâlâ alternatif metni yok — devam etmek için yeniden başlatın.",
     "generateTile": "Alternatif metni oluştur",
+    "regenerateTile": "Alt metni yeniden üret",
     "generating": "Oluşturuluyor…",
     "generatedNotice": "Kuyruğa eklendi: istersen düzenle, diğer değişikliklerle birlikte gidecek.",
     "errorUnsupported": "Mağazanız OneShopLab’in fotoğraflarınızın alternatif metnini değiştirmesine henüz izin vermiyor.",

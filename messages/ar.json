@@ -749,7 +749,17 @@
     "retryWithCost": "إعادة المحاولة · {cost} رصيدًا",
     "confirmDeleteTitle": "حذف هذه الصورة؟",
     "confirmDeleteBody": "ستتم إزالتها من الشبكة. يُحفظ سجل التوليد.",
-    "expiredLabel": "انتهت صلاحية الصورة"
+    "expiredLabel": "انتهت صلاحية الصورة",
+    "anglePackshotTitle": "خلفية بيضاء",
+    "anglePackshotHint": "معيار المتاجر الكبرى: أبيض نقي بلا ظل.",
+    "angleFlatlayTitle": "منظر علوي",
+    "angleFlatlayHint": "مسطّح مع بعض العناصر المرافقة.",
+    "angleMacroTitle": "لقطة قريبة للخامة",
+    "angleMacroHint": "الملمس والتشطيب بالتفصيل.",
+    "angleScaleTitle": "مرجع للحجم",
+    "angleScaleHint": "بجانب غرض مألوف ليتّضح الحجم فورًا.",
+    "angleGiftTitle": "أجواء هدية",
+    "angleGiftHint": "تغليف وشريط بالقرب، إضاءة دافئة."
   },
   "Relaunch": {
     "relaunch": "إعادة إطلاق التحليل",
@@ -1755,6 +1765,7 @@
     "summaryFailed": "تعذّرت معالجة {count} من المنتجات.",
     "summaryRemaining": "ما زالت {count} صورة بدون نص بديل — أعد التشغيل للمتابعة.",
     "generateTile": "إنشاء النص البديل",
+    "regenerateTile": "إعادة توليد النص البديل",
     "generating": "جارٍ الإنشاء…",
     "generatedNotice": "أُضيف إلى قائمة الانتظار: عدّله إن أردت، وسيُرسل مع بقية التعديلات.",
     "errorUnsupported": "متجرك لا يسمح بعد لـ OneShopLab بتعديل النص البديل لصورك.",

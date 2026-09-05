@@ -40,6 +40,7 @@ import {
   RECAP_FIELDS
 } from '@/features/apply-to-store';
 import { generateAltTextAction } from '@/features/generate-alt-text/actions';
+import { altTextCredits } from '@/entities/generation-job';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
@@ -348,6 +349,7 @@ export async function DashboardProductPage({
         capabilities={capabilities}
         archived={archived}
         generateAlt={generateAltTextAction}
+        altCost={altTextCredits()}
       />
 
       <PastGenerationsSection
