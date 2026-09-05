@@ -107,6 +107,39 @@ describe('reflectAppliedChange', () => {
     expect(row.images?.[1]).toMatchObject({ sourceImageId: '22' });
   });
 
+  it('a new main photo moves to the front on our row too, order otherwise kept', async () => {
+    // The merchant sets photo 2 as the main one: the store shows it first, and
+    // OSL has to agree — otherwise the dashboard keeps presenting the old main
+    // photo for a product whose storefront has already changed.
+    const product = await makeProduct({
+      images: [
+        {
+          src: 'https://cdn.test/1.jpg',
+          alt: null,
+          width: null,
+          height: null,
+          sourceImageId: '11'
+        },
+        {
+          src: 'https://cdn.test/2.jpg',
+          alt: null,
+          width: null,
+          height: null,
+          sourceImageId: '22'
+        },
+        { src: 'https://cdn.test/3.jpg', alt: null, width: null, height: null, sourceImageId: '33' }
+      ]
+    });
+    const change = await approve(product, 'images', {
+      v: 1,
+      ops: [{ op: 'set_featured', target: '22' }]
+    });
+    await ackChange(projectId, change.id, { status: 'applied' });
+
+    const [row] = await db.select().from(products).where(eq(products.id, product.id));
+    expect(row.images?.map((i) => i.sourceImageId)).toEqual(['22', '11', '33']);
+  });
+
   it('leaves the row alone when the store skipped an op', async () => {
     const product = await makeProduct();
     const change = await approve(product, 'images', {

@@ -181,6 +181,10 @@ export function ProductImageEditor({
 
   const altOf = (src: string, fallback: string | null) => altDrafts[src] ?? fallback;
 
+  // The buttons are under the photos and the queue is above them, so a click
+  // could put its own acknowledgement off-screen: the merchant pressed "make
+  // this the main photo" and nothing appeared to happen. Bring the queue into
+  // view the moment it stops being empty.
   // Empty, the panel is pure noise above the grid — the merchant fills it from
   // the buttons under each photo, which are right below.
   const queuedRows = [
@@ -191,6 +195,16 @@ export function ProductImageEditor({
       ? [{ id: REORDER_ROW, description: describeOp({ op: 'reorder', order: queue.order }, namer) }]
       : [])
   ];
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const hadRows = useRef(false);
+  useEffect(() => {
+    const has = queuedRows.length > 0;
+    if (has && !hadRows.current) {
+      panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    hadRows.current = has;
+  });
 
   return (
     <section data-testid="image-editor" className="flex flex-col gap-3">
@@ -220,19 +234,21 @@ export function ProductImageEditor({
           hidden on a product with no photo, where the queue cannot be filled
           from here anyway. */}
       {editable && storeImages.length > 0 && queuedRows.length > 0 ? (
-        <PendingOpsPanel
-          rows={queuedRows}
-          pending={pending}
-          disabled={preview.ops.length === 0 || preview.invalid}
-          onRemove={(id) =>
-            setQueue((q) => (id === REORDER_ROW ? { ...q, order: null } : removeQueuedOp(q, id)))
-          }
-          onClear={() => {
-            setQueue(EMPTY_QUEUE);
-            setReplaceFor(null);
-          }}
-          onApply={apply}
-        />
+        <div ref={panelRef}>
+          <PendingOpsPanel
+            rows={queuedRows}
+            pending={pending}
+            disabled={preview.ops.length === 0 || preview.invalid}
+            onRemove={(id) =>
+              setQueue((q) => (id === REORDER_ROW ? { ...q, order: null } : removeQueuedOp(q, id)))
+            }
+            onClear={() => {
+              setQueue(EMPTY_QUEUE);
+              setReplaceFor(null);
+            }}
+            onApply={apply}
+          />
+        </div>
       ) : null}
 
       {tiles.length === 0 ? (
@@ -251,7 +267,8 @@ export function ProductImageEditor({
                     previewCount: preview.images.length,
                     generatedCount: generated.length,
                     everyStoreImageAddressable,
-                    inGallery: tile.inGallery
+                    inGallery: tile.inGallery,
+                    isMain: tile.position === 0
                   }
                 )
               : NO_ACTIONS

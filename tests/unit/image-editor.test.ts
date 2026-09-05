@@ -84,6 +84,7 @@ const ctx = (over: Partial<TileContext> = {}): TileContext => ({
   generatedCount: 2,
   everyStoreImageAddressable: true,
   inGallery: true,
+  isMain: false,
   ...over
 });
 
@@ -323,5 +324,14 @@ describe('image editor — plain words', () => {
     });
     expect(tiles).toHaveLength(1);
     expect(tiles[0]).toMatchObject({ label: 'Photo 1', domRef: 'pos:0', sourceImageId: null });
+  });
+});
+
+describe('the main photo', () => {
+  it('is not offered "make this the main photo"', () => {
+    // The op would move nothing, so the merchant clicks and watches the page
+    // do exactly that. Reported in production on 2026-09-05.
+    expect(tileActions(storeTile(0), ctx({ isMain: true })).setFeatured).toBe(false);
+    expect(tileActions(storeTile(1), ctx({ isMain: false })).setFeatured).toBe(true);
   });
 });

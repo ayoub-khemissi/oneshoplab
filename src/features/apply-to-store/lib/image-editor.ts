@@ -71,6 +71,10 @@ export interface TileContext {
   everyStoreImageAddressable: boolean;
   /** Already on the product (either a store photo or a queued addition). */
   inGallery: boolean;
+  /** This photo is already the main one. Offering "make it the main photo"
+   *  there queues an op that moves nothing, and the merchant clicks a button
+   *  and watches nothing happen. */
+  isMain: boolean;
 }
 
 const NO_ACTIONS: TileActions = {
@@ -90,7 +94,7 @@ export function tileActions(image: EditorImage, ctx: TileContext): TileActions {
   const isStore = image.kind === 'store';
   const room = ctx.previewCount < caps.maxImages;
   return {
-    setFeatured: can('set_featured') && (isStore || ctx.inGallery || room),
+    setFeatured: !ctx.isMain && can('set_featured') && (isStore || ctx.inGallery || room),
     append: !isStore && !ctx.inGallery && can('append') && room,
     replace: isStore && can('replace') && ctx.generatedCount > 0,
     // The store would show a placeholder with an empty gallery (§2).
