@@ -64,7 +64,8 @@ export function ProductImageEditor({
   archived = false,
   generateAlt,
   altCost,
-  sending = false
+  sending = false,
+  inFlightAlts = []
 }: {
   productId: string;
   storeImages: EditorStoreImage[];
@@ -80,6 +81,9 @@ export function ProductImageEditor({
    *  below is the OLD one until it does, and saying "saved" over an unchanged
    *  grid reads as "nothing happened". */
   sending?: boolean;
+  /** Alt generations running right now, read from the job rows so a refresh
+   *  resumes them with their real elapsed time. */
+  inFlightAlts?: Array<{ imageSrc: string; startedAtMs: number }>;
 }) {
   const t = useTranslations('ProductImages');
   const router = useRouter();
@@ -201,6 +205,10 @@ export function ProductImageEditor({
       : [])
   ];
 
+  const altStartedAtBySrc = Object.fromEntries(
+    inFlightAlts.map((a) => [a.imageSrc, a.startedAtMs])
+  );
+
   const panelRef = useRef<HTMLDivElement>(null);
   const hadRows = useRef(false);
   useEffect(() => {
@@ -286,6 +294,7 @@ export function ProductImageEditor({
             preview.images.length <= 1
           }
           altCost={altCost}
+          altStartedAtBySrc={altStartedAtBySrc}
           onDragStart={(tile) => {
             dragged.current = tile.domRef;
           }}

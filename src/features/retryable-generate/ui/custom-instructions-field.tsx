@@ -25,6 +25,8 @@ interface CustomInstructionsFieldProps {
     creditsBalance: number;
     /** Angles already generated for this product, loaded server-side. */
     initial?: Array<{ tone: string; prompt: string }>;
+    /** A round already running when the page loaded. */
+    startedAtMs?: number | null;
   };
   /** Product whose row stores the text. Without it the field stays in memory
    *  (the bulk panel reuses this component for a whole store). */
@@ -85,6 +87,7 @@ export function CustomInstructionsField({
           cost={suggestions.cost}
           creditsBalance={suggestions.creditsBalance}
           initial={suggestions.initial}
+          startedAtMs={suggestions.startedAtMs}
           onPicked={(value) => persist(value)}
         />
       ) : null}

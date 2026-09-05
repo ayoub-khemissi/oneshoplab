@@ -159,7 +159,8 @@ export async function DashboardProductPage({
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
 
-  const { inFlightChatJobs, recentFailedChatJobs } = await loadRecentChatJobs(productId);
+  const { inFlightChatJobs, recentFailedChatJobs, inFlightAlts, inFlightSuggestionStartedAtMs } =
+    await loadRecentChatJobs(productId);
 
   // Apply-to-store state per past generation + whether a plugin can pick it up.
   // `capabilities` decides whether applying images replaces the whole gallery
@@ -315,7 +316,8 @@ export async function DashboardProductPage({
                 // Already generated and paid for: leaving the page used to
                 // hide them for good, so the merchant paid twice for the same
                 // five angles or simply never saw them again.
-                initial: cachedSuggestions
+                initial: cachedSuggestions,
+                startedAtMs: inFlightSuggestionStartedAtMs
               }}
             />
           </div>
@@ -359,6 +361,7 @@ export async function DashboardProductPage({
         generateAlt={generateAltTextAction}
         altCost={altTextCredits()}
         sending={changeInFlight}
+        inFlightAlts={inFlightAlts}
       />
 
       <PastGenerationsSection
@@ -376,7 +379,13 @@ export async function DashboardProductPage({
         replaceAllImages={!capabilities.stableImageIds}
         currentImageCount={product.images.length}
       />
-      {changeInFlight ? <AutoRefresh intervalMs={5000} /> : null}
+      {/* Anything the server knows is running: a store change on its way, an
+          alt text being written, a round of angles. Resuming them after a
+          refresh is only half the job — the page has to reach their outcome
+          too, or the merchant is left watching a timer that never ends. */}
+      {changeInFlight || inFlightAlts.length > 0 || inFlightSuggestionStartedAtMs != null ? (
+        <AutoRefresh intervalMs={5000} />
+      ) : null}
     </main>
   );
 }

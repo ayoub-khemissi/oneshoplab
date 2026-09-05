@@ -5,6 +5,7 @@ import { Coins, Lightbulb, RefreshCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
+import { ElapsedTimer } from '@/shared/ui';
 import { suggestPromptsAction } from '../actions';
 import { useGenerateContext } from './context';
 
@@ -20,6 +21,10 @@ export interface PromptSuggestionsProps {
   /** Angles already generated for this product, loaded server-side. They were
    *  paid for and cached; leaving the page used to hide them for good. */
   initial?: Array<{ tone: string; prompt: string }>;
+  /** A round already running when the page loaded — read from its job row, so
+   *  a refresh mid-generation resumes it instead of showing a button that has
+   *  forgotten it was pressed. */
+  startedAtMs?: number | null;
 }
 
 /**
@@ -33,7 +38,8 @@ export function PromptSuggestions({
   cost,
   creditsBalance,
   onPicked,
-  initial
+  initial,
+  startedAtMs
 }: PromptSuggestionsProps) {
   const t = useTranslations('Product');
   const { setCustomInstructions } = useGenerateContext();
@@ -44,6 +50,9 @@ export function PromptSuggestions({
   const [error, setError] = useState<string | null>(null);
   const [busy, startTransition] = useTransition();
 
+  // Either this tab is generating, or another one was and the job is still
+  // running: both mean "in flight", and the merchant should see the same thing.
+  const inFlight = busy || startedAtMs != null;
   const affordable = creditsBalance >= cost;
 
   function ask(force = false) {
@@ -89,12 +98,12 @@ export function PromptSuggestions({
           <button
             type="button"
             onClick={() => ask(true)}
-            disabled={busy || !affordable}
+            disabled={inFlight || !affordable}
             title={!affordable ? t('insufficientCredits') : undefined}
             data-testid="suggest-prompts-again"
             className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-60"
           >
-            {busy ? <Spinner size="sm" /> : <RefreshCw className="size-3" aria-hidden />}
+            {inFlight ? <Spinner size="sm" /> : <RefreshCw className="size-3" aria-hidden />}
             {t('suggestPromptsAgain')}
             <span className="inline-flex items-center gap-0.5 font-mono">
               <Coins className="size-2.5" aria-hidden /> {cost}
@@ -105,7 +114,7 @@ export function PromptSuggestions({
         <button
           type="button"
           onClick={() => ask(false)}
-          disabled={busy || !affordable}
+          disabled={inFlight || !affordable}
           data-testid="suggest-prompts"
           title={!affordable ? t('insufficientCredits') : undefined}
           className={`inline-flex w-fit items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -114,10 +123,11 @@ export function PromptSuggestions({
               : 'cursor-not-allowed border-[var(--border)] text-[var(--muted)] opacity-60'
           }`}
         >
-          {busy ? (
+          {inFlight ? (
             <>
               <Spinner size="sm" />
               <span>{t('suggestPromptsBusy')}</span>
+              {startedAtMs != null ? <ElapsedTimer startedAt={startedAtMs} /> : null}
             </>
           ) : (
             <>

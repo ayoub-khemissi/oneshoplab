@@ -1,9 +1,18 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, ImagePlus, Repeat, Star, Tag, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ImagePlus,
+  Repeat,
+  Sparkles,
+  Star,
+  Tag,
+  Trash2
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { InfoHint } from '@/shared/ui';
+import { ElapsedTimer, InfoHint } from '@/shared/ui';
 import type { TileActions } from '../../lib/image-editor';
 import { AltGenerateButton } from './alt-generate-button';
 import { AltTextField } from './alt-text-field';
@@ -43,6 +52,10 @@ export interface EditorTileProps {
   removeBlocked: boolean;
   /** Credits one alt-text generation costs, shown on the button. */
   altCost: number;
+  /** An alt text for THIS photo is being written right now — read from the job
+   *  row, so a refresh resumes it with the real elapsed time instead of
+   *  dropping it. */
+  altStartedAtMs?: number | null;
   /** A store photo we cannot address yet: applied to the store, but the
    *  catalogue has not come back with its id. Every action is off until then. */
   syncing?: boolean;
@@ -189,7 +202,14 @@ export function EditorTile(props: EditorTileProps) {
               {t('actionAlt')}
             </TileButton>
           ) : null}
-          {actions.setAlt && !editingAlt && on.generateAlt ? (
+          {props.altStartedAtMs ? (
+            <span className="inline-flex w-full items-center gap-1.5 text-[10px] text-[var(--muted)]">
+              <Sparkles className="size-3 shrink-0 animate-pulse" aria-hidden />
+              {tAlt('generating')}
+              <ElapsedTimer startedAt={props.altStartedAtMs} />
+            </span>
+          ) : null}
+          {actions.setAlt && !editingAlt && on.generateAlt && !props.altStartedAtMs ? (
             <AltGenerateButton
               generate={on.generateAlt}
               cost={props.altCost}

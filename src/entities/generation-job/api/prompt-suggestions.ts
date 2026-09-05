@@ -69,16 +69,46 @@ export async function getOrGenerateSuggestions(opts: {
     opts.force ? cached?.suggestions.map((s) => s.prompt) : undefined
   );
 
-  const response = await chatCompletion({
-    model: SYSTEM_CHAT_MODELS.fast,
-    messages: [{ role: 'user', content: userPrompt }],
-    max_tokens: outputTokenCapFor('suggest')
+  // The row exists BEFORE the call, so a refresh mid-generation finds a round
+  // in flight instead of a button that pretends nothing was asked. It is also
+  // what carries the elapsed time the merchant sees resume.
+  const jobId = randomUUID();
+  const startedAt = new Date();
+  await db.insert(jobs).values({
+    id: jobId,
+    projectId: opts.projectId,
+    kind: 'kie_prompt_suggest',
+    status: 'running',
+    inputPayload: { productSourceId: opts.productSourceId, field: opts.field },
+    creditsCost: cost,
+    startedAt
   });
+
+  let response;
+  try {
+    response = await chatCompletion({
+      model: SYSTEM_CHAT_MODELS.fast,
+      messages: [{ role: 'user', content: userPrompt }],
+      max_tokens: outputTokenCapFor('suggest')
+    });
+  } catch (e) {
+    await db
+      .update(jobs)
+      .set({ status: 'failed', error: (e as Error).message, finishedAt: new Date() })
+      .where(eq(jobs.id, jobId));
+    throw e;
+  }
 
   const suggestions = parseSuggestions(response.text);
   // Nothing usable came back: the merchant keeps their credits rather than
   // paying for an empty list.
-  if (suggestions.length === 0) return { ok: false, reason: 'generation_failed' };
+  if (suggestions.length === 0) {
+    await db
+      .update(jobs)
+      .set({ status: 'failed', error: 'no_suggestions', finishedAt: new Date() })
+      .where(eq(jobs.id, jobId));
+    return { ok: false, reason: 'generation_failed' };
+  }
 
   // The previous round stops being the cached answer the moment a new one
   // lands, so the merchant is never shown a mix of two generations.
@@ -86,19 +116,10 @@ export async function getOrGenerateSuggestions(opts: {
     await db.update(jobs).set({ hiddenAt: new Date() }).where(eq(jobs.id, cached.jobId));
   }
 
-  const jobId = randomUUID();
-  const now = new Date();
-  await db.insert(jobs).values({
-    id: jobId,
-    projectId: opts.projectId,
-    kind: 'kie_prompt_suggest',
-    status: 'completed',
-    inputPayload: { productSourceId: opts.productSourceId, field: opts.field },
-    result: { suggestions },
-    creditsCost: cost,
-    startedAt: now,
-    finishedAt: now
-  });
+  await db
+    .update(jobs)
+    .set({ status: 'completed', result: { suggestions }, finishedAt: new Date() })
+    .where(eq(jobs.id, jobId));
 
   await applyCreditTransaction({
     userId: opts.userId,
