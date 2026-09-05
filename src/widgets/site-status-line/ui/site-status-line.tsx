@@ -6,8 +6,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
-import { PendingChangesModal, type PendingChangeItem } from '@/features/apply-to-store/client';
-import { sendAllGenerationsAction } from '@/features/apply-to-store';
+import {
+  PendingChangesModal,
+  sendAllGenerationsAction,
+  type PendingChangeItem
+} from '@/features/apply-to-store/client';
 import type { SiteStatus } from '../lib/resolve';
 
 /**
