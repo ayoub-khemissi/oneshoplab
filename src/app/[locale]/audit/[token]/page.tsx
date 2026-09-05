@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { and, eq, isNull } from 'drizzle-orm';
-import { AlertTriangle, ArrowRight, ExternalLink, Loader2, Sparkles } from 'lucide-react';
+import { AlertTriangle, ArrowRight, ExternalLink, Loader2, Plug, Sparkles } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -18,6 +18,7 @@ import {
 import { db } from '@/shared/db';
 import { audits } from '@/shared/db/schema';
 import { translateIssueText } from '@/entities/share-link';
+import { isUnreadableStorefront } from '@/features/run-audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -201,18 +202,46 @@ export default async function FreeAuditResultPage({ params }: PageProps) {
 
   // --- Failed --------------------------------------------------------------
   if (audit.status === 'failed') {
+    // A storefront we could not read is the single most common outcome here,
+    // and it is not a failure of theirs: the connection reads what the outside
+    // never could. Offering "try another store" under a red triangle, at the
+    // most decisive moment of the funnel, teaches a visitor that we don't work
+    // and sends them to re-run the thing that just failed.
+    const unreadable = isUnreadableStorefront({
+      error: audit.error,
+      source: 'storefront',
+      hasConnection: false
+    });
     return (
       <main className="flex-1 px-4 md:px-10 py-16 max-w-2xl w-full mx-auto flex flex-col items-center gap-6 text-center">
-        <AlertTriangle className="size-10 text-[var(--danger)]" aria-hidden />
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('failedTitle')}</h1>
-        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">{t('failedBody')}</p>
-        <Link
-          href="/audit"
-          className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:border-[var(--accent)] inline-flex items-center gap-1.5"
-        >
-          {t('retry')}
-          <ArrowRight className="size-3.5" />
-        </Link>
+        {unreadable ? (
+          <Plug className="size-10 text-[var(--accent)]" aria-hidden />
+        ) : (
+          <AlertTriangle className="size-10 text-[var(--danger)]" aria-hidden />
+        )}
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          {unreadable ? t('unreadableTitle') : t('failedTitle')}
+        </h1>
+        <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed">
+          {unreadable ? t('unreadableBody') : t('failedBody')}
+        </p>
+        {unreadable ? (
+          <Link
+            href={`/signup?claim=${encodeURIComponent(token)}`}
+            className="px-5 py-2.5 rounded-md text-sm font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 inline-flex items-center gap-1.5"
+          >
+            {t('unreadableCta')}
+            <Plug className="size-3.5" />
+          </Link>
+        ) : (
+          <Link
+            href="/audit"
+            className="px-4 py-2 rounded-md text-sm font-medium border border-[var(--border)] hover:border-[var(--accent)] inline-flex items-center gap-1.5"
+          >
+            {t('retry')}
+            <ArrowRight className="size-3.5" />
+          </Link>
+        )}
       </main>
     );
   }

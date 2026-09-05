@@ -61,6 +61,10 @@ export const NOTIFICATION_KINDS = [
   'image_failed',
   'audit_completed',
   'audit_failed',
+  // Not a failure: the storefront could not be read, and connecting the store
+  // is the fix. Telling a merchant their audit failed teaches them the product
+  // does not work; telling them to plug the store in gets them moving.
+  'store_connection_needed',
   'bulk_completed',
   'bulk_failed',
   // Integration alerts (bell + email, see entities/notification/api/integration-alerts.ts)

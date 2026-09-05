@@ -28,5 +28,7 @@ export { AUDIT_FRESH_FOR_MS, refreshAuditProducts, refreshProjectIfStale } from 
 export { rescoreProjectsWithAppliedChanges } from './api/rescore-applied';
 export { auditProjectsWithSyncedCatalog } from './api/audit-after-sync';
 export { isCatalogArriving } from './lib/catalog-arrival';
+export { isUnreadableStorefront } from './lib/unreadable-storefront';
+export type { UnreadableStorefrontInput } from './lib/unreadable-storefront';
 export type { CatalogArrivalInput } from './lib/catalog-arrival';
 export { refreshProjectAction, relaunchProjectAuditAction } from './api/project-actions';

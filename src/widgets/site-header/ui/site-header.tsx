@@ -34,6 +34,7 @@ export async function SiteHeader() {
     image_failed: t('notifications.kinds.image_failed'),
     audit_completed: t('notifications.kinds.audit_completed'),
     audit_failed: t('notifications.kinds.audit_failed'),
+    store_connection_needed: t('notifications.kinds.store_connection_needed'),
     bulk_completed: t('notifications.kinds.bulk_completed'),
     bulk_failed: t('notifications.kinds.bulk_failed'),
     integration_key_expiring: t('notifications.kinds.integration_key_expiring'),

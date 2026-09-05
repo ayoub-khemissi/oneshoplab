@@ -9,7 +9,10 @@ import type { NotificationRow } from '../api/notifications';
 export function notificationHref(
   row: Pick<NotificationRow, 'kind' | 'projectId' | 'productId' | 'auditId'>
 ): string | null {
-  if (row.kind.startsWith('integration_') && row.projectId) {
+  if (
+    (row.kind.startsWith('integration_') || row.kind === 'store_connection_needed') &&
+    row.projectId
+  ) {
     return `/dashboard/sites/${row.projectId}?tab=integrations`;
   }
   if (row.productId && row.projectId) {

@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` MODIFY COLUMN `kind` enum('chat_completed','chat_failed','image_completed','image_failed','audit_completed','audit_failed','store_connection_needed','bulk_completed','bulk_failed','integration_key_expiring','integration_key_expired','integration_key_revoked','integration_token_invalid','integration_sync_failed','integration_webhook_disabled') NOT NULL;

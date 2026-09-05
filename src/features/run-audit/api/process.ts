@@ -2,6 +2,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { audits, projects } from '@/shared/db/schema';
 import { notify } from '@/entities/notification';
+import { isUnreadableStorefront } from '../lib/unreadable-storefront';
 import { auditSourceSummary, runAuditForProject, type AuditRunOptions } from './catalog-audit';
 import { syncProjectProducts } from '@/entities/product';
 
@@ -103,13 +104,23 @@ export async function processAudit(
       })
       .where(eq(audits.id, auditId));
 
+    // An unreadable storefront is answered with "connect your store", not with
+    // a failure: the merchant has a next step, and it is a better one than the
+    // scrape they were relying on.
+    const inviteToConnect =
+      isFailure &&
+      isUnreadableStorefront({
+        error: result.error,
+        source: result.source,
+        hasConnection: result.source === 'connection'
+      });
     await emitAuditNotification(
       row.projectId,
       auditId,
-      isFailure ? 'audit_failed' : 'audit_completed',
+      inviteToConnect ? 'store_connection_needed' : isFailure ? 'audit_failed' : 'audit_completed',
       row.domain,
       result.report?.scores?.overall ?? null,
-      isFailure ? (result.error ?? null) : null
+      isFailure && !inviteToConnect ? (result.error ?? null) : null
     );
   } catch (e) {
     await db
@@ -142,7 +153,7 @@ export async function processAudit(
 async function emitAuditNotification(
   projectId: string | null,
   auditId: string,
-  kind: 'audit_completed' | 'audit_failed',
+  kind: 'audit_completed' | 'audit_failed' | 'store_connection_needed',
   domain: string,
   scoreOverall: number | null,
   errorMessage: string | null

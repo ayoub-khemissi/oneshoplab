@@ -196,7 +196,9 @@ describe('launchAuditForUser + processAudit', () => {
     const [note] = await db.query.notifications.findMany({
       where: eq(notifications.userId, userId)
     });
-    expect(note.kind).toBe('audit_failed');
+    // Not "your audit failed": the storefront could not be read, and the
+    // connection is the answer. The notice invites them to plug the store in.
+    expect(note.kind).toBe('store_connection_needed');
   });
 
   it('processAudit is idempotent: a non-pending audit is left alone', async () => {

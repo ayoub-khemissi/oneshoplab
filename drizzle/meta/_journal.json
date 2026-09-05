@@ -274,6 +274,13 @@
       "when": 1788423080587,
       "tag": "0038_orange_black_crow",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "5",
+      "when": 1788590555358,
+      "tag": "0039_mean_tana_nile",
+      "breakpoints": true
     }
   ]
 }
