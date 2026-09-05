@@ -208,7 +208,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
                 sourceImageUrl: sourceImage,
                 userPrompt: buildImagePrompt(angle, '', merchantInstructions),
                 appUrl: process.env.APP_URL,
-                imageQualityId: input.imageQualityId
+                imageQualityId: input.imageQualityId,
+                silent: true
               })
             )
           );
@@ -225,6 +226,9 @@ export async function processNextBulkProduct(): Promise<boolean> {
         }
       } else {
         await runChatOptim({
+          // One notification per field per product would mean thousands for a
+          // single click. `reportBulkOutcome` says it once, at the end.
+          silent: true,
           userId: project.userId,
           projectId: project.id,
           productSourceId: sourceId,

@@ -6,6 +6,10 @@ export interface PushPayload {
   url?: string;
   /** Same tag replaces the previous notice instead of stacking a second one. */
   tag?: string;
+  /** Shown as the notification's icon. The product's own photo when there is
+   *  one: on a lock screen a merchant recognises their product long before
+   *  they read the title. Falls back to the app icon in `sw.js`. */
+  icon?: string;
 }
 
 /** A browser subscription, as `PushManager.subscribe` returns it. */

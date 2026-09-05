@@ -69,7 +69,9 @@ export function pushBodyFor(notice: PushNotice, fieldLabel: (field: string) => s
 export async function pushPayloadFor(
   notice: PushNotice,
   locale: string | null | undefined,
-  appUrl: string
+  appUrl: string,
+  /** The product's own photo, when the notice is about one. */
+  icon?: string | null
 ): Promise<PushPayload> {
   const resolved: Locale = resolveLocale(locale);
   const messages = await loadMessages(resolved);
@@ -89,6 +91,7 @@ export async function pushPayloadFor(
     url: path ? `${appUrl}/${resolved}${path}` : `${appUrl}/${resolved}/dashboard`,
     // The event, not the row: two devices of the same person are each told,
     // and a second push about the same thing replaces the first.
-    tag: `${notice.kind}:${notice.productId ?? notice.projectId ?? notice.auditId ?? 'general'}`
+    tag: `${notice.kind}:${notice.productId ?? notice.projectId ?? notice.auditId ?? 'general'}`,
+    ...(icon ? { icon } : {})
   };
 }

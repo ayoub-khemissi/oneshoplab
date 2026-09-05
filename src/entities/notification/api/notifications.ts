@@ -2,7 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { and, desc, eq, inArray, isNotNull, notInArray } from 'drizzle-orm';
 import { isPushConfigured, sendPushToUser } from '@/entities/push-subscription';
 import { db } from '@/shared/db';
-import { legalConsents, notifications, users, type NotificationKind } from '@/shared/db/schema';
+import {
+  legalConsents,
+  notifications,
+  products,
+  users,
+  type NotificationKind
+} from '@/shared/db/schema';
 import { pushPayloadFor } from '../lib/notification-push';
 
 /** Per-user retention cap. We keep the 20 most recent notifications
@@ -84,6 +90,18 @@ async function localeOf(userId: string): Promise<string | null> {
   return consent?.locale ?? null;
 }
 
+/** The product's first photo, so a lock-screen notice is recognisable before
+ *  it is read. Absent product, absent photo, or a relative src → the app icon. */
+async function productIconOf(productId: string | null): Promise<string | null> {
+  if (!productId) return null;
+  const row = await db.query.products.findFirst({
+    where: eq(products.id, productId),
+    columns: { images: true }
+  });
+  const src = row?.images?.[0]?.src;
+  return src && src.startsWith('https://') ? src : null;
+}
+
 async function mirrorToPush(input: NotificationInput): Promise<void> {
   if (!isPushConfigured()) return;
   const appUrl = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
@@ -96,7 +114,8 @@ async function mirrorToPush(input: NotificationInput): Promise<void> {
       payload: input.payload ?? null
     },
     await localeOf(input.userId),
-    appUrl
+    appUrl,
+    await productIconOf(input.productId ?? null)
   );
   await sendPushToUser(input.userId, payload);
 }

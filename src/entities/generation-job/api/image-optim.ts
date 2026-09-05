@@ -21,6 +21,9 @@ export interface StartImageOptimOptions {
   appUrl?: string;
   /** Caller-selected image quality. Falls back to the user's preference / default. */
   imageQualityId?: ImageQualityId;
+  /** No bell entry and no push when this image lands. Set by the bulk run,
+   *  which reports once at the end instead of once per photo per product. */
+  silent?: boolean;
 }
 
 export interface StartImageOptimResult {
@@ -74,7 +77,10 @@ export async function startImageOptim(
       field: 'images',
       userPrompt: opts.userPrompt,
       sourceImageUrl: opts.sourceImageUrl,
-      imageQualityId: quality.id
+      imageQualityId: quality.id,
+      // Read back when the image lands: a bulk run must not fire one push per
+      // photo per product. It reports once, at the end, with the tally.
+      ...(opts.silent ? { silent: true } : {})
     },
     creditsCost: cost,
     startedAt: new Date()

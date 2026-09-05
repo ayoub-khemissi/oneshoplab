@@ -144,9 +144,12 @@ async function emitImageNotification(
 ): Promise<void> {
   const job = await db.query.jobs.findFirst({
     where: eq(jobs.id, jobId),
-    columns: { projectId: true, productId: true }
+    columns: { projectId: true, productId: true, inputPayload: true }
   });
   if (!job?.projectId) return;
+  // Part of a bulk run: the run itself reports at the end, and one push per
+  // photo across a catalogue is an alarm going off all afternoon.
+  if ((job.inputPayload as { silent?: boolean } | null)?.silent) return;
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, job.projectId),
     columns: { userId: true }

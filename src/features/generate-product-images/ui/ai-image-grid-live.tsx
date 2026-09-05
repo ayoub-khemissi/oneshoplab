@@ -5,6 +5,7 @@ import { AddTile } from './ai-image-grid/add-tile';
 import { ImageTile } from './ai-image-grid/image-tile';
 import { NewImageModal } from './ai-image-grid/new-image-modal';
 import { useImageJobs } from './ai-image-grid/use-image-jobs';
+import { saveProductImagePromptAction } from '../api/image-prompt-actions';
 import { MAX_IMAGES_PER_PRODUCT } from '../model/limits';
 import type { ImageJobRow } from '@/entities/generation-job';
 
@@ -21,6 +22,8 @@ interface AiImageGridLiveProps {
    *  them. Plan-specific (Free/Starter 30d, Pro 60d, Scale 90d) so the
    *  per-image expiry caption matches what the merchant has paid for. */
   retentionDays: number;
+  /** This product's own image prompt, saved last time it was used. */
+  savedPrompt?: string;
 }
 
 /**
@@ -47,7 +50,8 @@ export function AiImageGridLive({
   productId,
   initial,
   costPerImage,
-  retentionDays
+  retentionDays,
+  savedPrompt = ''
 }: AiImageGridLiveProps) {
   const t = useTranslations('AiImageGrid');
   const {
@@ -91,6 +95,10 @@ export function AiImageGridLive({
         <NewImageModal
           costPerImage={costPerImage}
           isReplace={modalReplaceId !== null}
+          initialCustomPrompt={savedPrompt}
+          onSavePrompt={(prompt) => {
+            void saveProductImagePromptAction(productId, prompt);
+          }}
           onCancel={closeModal}
           onSubmit={(payload) => submitNewImage({ ...payload, replaceJobId: modalReplaceId })}
         />

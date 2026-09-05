@@ -81,6 +81,7 @@ export async function DashboardProductPage({
     storeImages,
     projectId,
     productInstructions,
+    productImagePrompt,
     projectInstructions,
     archived,
     isManual
@@ -332,6 +333,7 @@ export async function DashboardProductPage({
             changeByJobId={changeByJobId}
             canApplyToStore={canApplyToStore}
             appliesVia={appliesVia}
+            savedImagePrompt={productImagePrompt}
           />
         </div>
       </RetryableGenerateProvider>

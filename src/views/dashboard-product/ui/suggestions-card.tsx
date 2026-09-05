@@ -38,6 +38,9 @@ interface SuggestionsCardProps {
   changeByJobId: Record<string, ChangeSummary>;
   canApplyToStore: boolean;
   appliesVia: 'connector' | 'plugin';
+  /** The merchant's own image prompt for this product, so the modal opens on
+   *  what they wrote last time instead of an empty field. */
+  savedImagePrompt: string;
 }
 
 export async function SuggestionsCard({
@@ -58,7 +61,8 @@ export async function SuggestionsCard({
   retentionDays,
   changeByJobId,
   canApplyToStore,
-  appliesVia
+  appliesVia,
+  savedImagePrompt
 }: SuggestionsCardProps) {
   const tReport = await getTranslations('Report');
 
@@ -307,6 +311,7 @@ export async function SuggestionsCard({
                     initial={liveImageJobs}
                     costPerImage={costPerImage}
                     retentionDays={retentionDays}
+                    savedPrompt={savedImagePrompt}
                   />
                 }
               />

@@ -28,6 +28,9 @@ export interface ChatOptimRequest {
   chatModelId?: ChatModelId;
   /** Effective ISO 639-1 language code resolved by getEffectiveLanguage(). */
   languageCode: string;
+  /** No bell entry and no push for this one. Set by the bulk run, which
+   *  reports once at the end instead of once per field per product. */
+  silent?: boolean;
 }
 
 export interface ChatOptimResult {
@@ -85,10 +88,15 @@ export async function runChatOptim(opts: ChatOptimRequest): Promise<ChatOptimRes
     maxTokens: Math.ceil(outputTokenCapFor(opts.field) * SAFETY_MULTIPLIER),
     debit: estimateChatCredits(model.id, opts.field),
     parse: (text) => (opts.field === 'tags' ? parseTags(text) : text),
-    notifications: {
-      field: opts.field,
-      preview: (output) => previewFor(opts.field, output as string | string[])
-    }
+    // A bulk run generates three fields across hundreds of products; one bell
+    // entry and one push per field is not news, it is an alarm going off all
+    // afternoon. The run reports once, at the end, with the tally.
+    notifications: opts.silent
+      ? undefined
+      : {
+          field: opts.field,
+          preview: (output) => previewFor(opts.field, output as string | string[])
+        }
   });
 
   return {

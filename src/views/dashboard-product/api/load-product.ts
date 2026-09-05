@@ -70,6 +70,9 @@ export interface LoadedProduct {
   /** Last per-product instructions persisted by the API on previous
    *  generations. Pre-fills the textarea on render. */
   productInstructions: string;
+  /** The merchant's own image prompt for this product, so the "new image"
+   *  modal opens on what they wrote last time instead of an empty field. */
+  productImagePrompt: string;
   /** Site-wide instructions configured on the project. Surfaced as a hint
    *  on the product page so the merchant knows extra guidance is in flight. */
   projectInstructions: string;
@@ -175,6 +178,7 @@ export async function loadProductForUser(
     })),
     archived: productRow.status === 'archived',
     productInstructions: productRow.customInstructions ?? '',
+    productImagePrompt: productRow.customImagePrompt ?? '',
     projectInstructions: project.customInstructions ?? '',
     isManual: project.source === 'manual'
   };
