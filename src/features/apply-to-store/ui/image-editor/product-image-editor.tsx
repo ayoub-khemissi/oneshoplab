@@ -4,7 +4,7 @@ import { AlertTriangle, Check, Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import type { ImageOp } from '@/entities/product-change/client';
+import { simulateImageOps, type ImageOp } from '@/entities/product-change/client';
 import type { ConnectionCapabilities } from '@/shared/db/schema';
 import { InfoHint } from '@/shared/ui';
 import { approveImageOpsAction } from '../../api/image-ops-actions';
@@ -65,7 +65,8 @@ export function ProductImageEditor({
   generateAlt,
   altCost,
   sending = false,
-  inFlightAlts = []
+  inFlightAlts = [],
+  sentOps = []
 }: {
   productId: string;
   storeImages: EditorStoreImage[];
@@ -84,10 +85,22 @@ export function ProductImageEditor({
   /** Alt generations running right now, read from the job rows so a refresh
    *  resumes them with their real elapsed time. */
   inFlightAlts?: Array<{ imageSrc: string; startedAtMs: number }>;
+  /** Image ops already sent and not yet confirmed by the store. The gallery
+   *  shows what the store is ABOUT to have, so a reorder the merchant sent
+   *  does not appear to have been forgotten while it travels. */
+  sentOps?: ImageOp[];
 }) {
   const t = useTranslations('ProductImages');
   const router = useRouter();
+  // Staged edits are a draft, and a draft that dies on F5 is a draft the
+  // merchant stops trusting: they set a new main photo, refreshed, and watched
+  // it go back. Kept per product, in this browser, until it is sent or cleared.
+  const draftKey = `oneshoplab.image-queue.${productId}`;
   const [queue, setQueue] = useState<EditorQueue>(EMPTY_QUEUE);
+  // Restored after mount, never during render: the server has no localStorage,
+  // so reading it in the initialiser would hand the client a different first
+  // render than the HTML it just received.
+  const restored = useRef(false);
   const [altDrafts, setAltDrafts] = useState<Record<string, string>>({});
   const [replaceFor, setReplaceFor] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +110,21 @@ export function ProductImageEditor({
   const dragged = useRef<string | null>(null);
 
   const editable = hasPerImageActions(capabilities) && !archived;
-  const preview = previewQueue(queue, storeImages);
+  // What the store is about to have: its current gallery, then the ops already
+  // sent and still travelling, then whatever is staged here. Without the middle
+  // term, a merchant who set a new main photo and refreshed saw it back in its
+  // old place — the change was on its way, the page just did not say so.
+  const sent = sentOps.length > 0 ? simulateImageOps(sentOps, storeImages) : null;
+  const base =
+    sent?.ok === true
+      ? sent.simulation.images.map((i) => ({
+          ref: i.ref,
+          src: i.src,
+          alt: i.alt,
+          sourceImageId: storeImages.find((s) => s.src === i.src)?.sourceImageId ?? null
+        }))
+      : storeImages;
+  const preview = previewQueue(queue, base);
   const galleryRefs = preview.images.map((i) => i.ref);
   const everyStoreImageAddressable = storeImages.every((i) => Boolean(i.sourceImageId));
   const { tiles, namer } = buildGrid({
@@ -204,6 +231,16 @@ export function ProductImageEditor({
       ? [{ id: REORDER_ROW, description: describeOp({ op: 'reorder', order: queue.order }, namer) }]
       : [])
   ];
+
+  useEffect(() => {
+    if (!restored.current) {
+      restored.current = true;
+      const draft = readDraft(draftKey);
+      if (draft.ops.length > 0 || draft.order) setQueue(draft);
+      return;
+    }
+    writeDraft(draftKey, queue);
+  }, [draftKey, queue]);
 
   const altStartedAtBySrc = Object.fromEntries(
     inFlightAlts.map((a) => [a.imageSrc, a.startedAtMs])
@@ -385,4 +422,38 @@ export function ProductImageEditor({
       ) : null}
     </section>
   );
+}
+
+/**
+ * The staged queue, per product, in this browser only.
+ *
+ * Deliberately not the database: nothing here has been committed to anything —
+ * it is what the merchant is still assembling. But it has to outlive a reload,
+ * which is the one thing client state cannot do. Every accessor is guarded:
+ * private windows and blocked site data throw rather than return null.
+ */
+function readDraft(key: string): EditorQueue {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return EMPTY_QUEUE;
+    const parsed = JSON.parse(raw) as EditorQueue;
+    // A shape we do not recognise is a shape from an older build: start clean
+    // rather than replay something the simulation cannot read.
+    if (!parsed || !Array.isArray(parsed.ops)) return EMPTY_QUEUE;
+    return parsed;
+  } catch {
+    return EMPTY_QUEUE;
+  }
+}
+
+function writeDraft(key: string, queue: EditorQueue): void {
+  try {
+    if (queue.ops.length === 0 && !queue.order) {
+      window.localStorage.removeItem(key);
+      return;
+    }
+    window.localStorage.setItem(key, JSON.stringify(queue));
+  } catch {
+    /* Private window, blocked site data — the queue simply stays in memory. */
+  }
 }

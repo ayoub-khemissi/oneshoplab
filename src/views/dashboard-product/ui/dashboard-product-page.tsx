@@ -362,6 +362,9 @@ export async function DashboardProductPage({
         altCost={altTextCredits()}
         sending={changeInFlight}
         inFlightAlts={inFlightAlts}
+        sentOps={pendingSummary.items
+          .filter((i) => i.status === 'pending' && i.detail.kind === 'imageOps')
+          .flatMap((i) => (i.detail.kind === 'imageOps' ? i.detail.ops : []))}
       />
 
       <PastGenerationsSection
