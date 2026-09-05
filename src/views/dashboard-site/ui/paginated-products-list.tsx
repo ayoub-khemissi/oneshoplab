@@ -180,20 +180,42 @@ export function PaginatedProductsList({
       <ul className={`flex flex-col gap-2 ${isPending ? 'opacity-60 transition-opacity' : ''}`}>
         {products.map((p) => (
           <li key={p.productId}>
+            {/* Stacks on mobile. As a permanent row, the actions column took
+                about half the width and squeezed the issues into a ribbon of
+                two or three words per line, while `items-center` floated the
+                button in the middle of a tall text block. */}
             <Card
               variant="secondary"
-              className={`p-4 flex flex-row items-center gap-4 ${p.archived ? 'opacity-60' : ''}`}
+              className={`p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 ${
+                p.archived ? 'opacity-60' : ''
+              }`}
             >
               <div className="flex-1 flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
-                  {p.archived ? (
-                    <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] inline-flex items-center gap-1">
-                      <Archive className="size-3" aria-hidden />
-                      {t('archivedBadge')}
-                    </span>
-                  ) : (
-                    <ScoreChip score={p.score} />
-                  )}
+                  {/* Score and title stay on one line whatever the title's
+                      length, so every card in the list has the same shape; the
+                      badges wrap below on their own. Without this the wrap
+                      point moved from card to card. */}
+                  <div className="flex min-w-0 flex-1 items-center gap-3 sm:flex-none">
+                    {p.archived ? (
+                      <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] inline-flex items-center gap-1 shrink-0">
+                        <Archive className="size-3" aria-hidden />
+                        {t('archivedBadge')}
+                      </span>
+                    ) : (
+                      <ScoreChip score={p.score} />
+                    )}
+                    {p.archived ? (
+                      <span className="font-medium truncate">{p.title}</span>
+                    ) : (
+                      <Link
+                        href={`/dashboard/sites/${siteId}/products/${p.productId}`}
+                        className="font-medium hover:underline truncate min-w-0"
+                      >
+                        {p.title}
+                      </Link>
+                    )}
+                  </div>
                   {!p.archived && p.aiCompleted ? (
                     <span
                       className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--success)]/10 text-[var(--success)] inline-flex items-center gap-1"
@@ -211,16 +233,6 @@ export function PaginatedProductsList({
                       {t('aiStartedBadge')}
                     </span>
                   ) : null}
-                  {p.archived ? (
-                    <span className="font-medium truncate">{p.title}</span>
-                  ) : (
-                    <Link
-                      href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                      className="font-medium hover:underline truncate min-w-0"
-                    >
-                      {p.title}
-                    </Link>
-                  )}
                   {p.productType?.trim() ? (
                     <span
                       className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--default)] text-[var(--muted)] border border-[var(--border)] truncate max-w-[12rem]"
@@ -255,7 +267,7 @@ export function PaginatedProductsList({
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 sm:shrink-0">
                 <ArchiveToggle
                   siteId={siteId}
                   productId={p.productId}
@@ -264,7 +276,7 @@ export function PaginatedProductsList({
                 />
                 <Link
                   href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                  className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity ${
+                  className={`flex-1 justify-center px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity sm:flex-none ${
                     p.archived
                       ? 'border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]'
                       : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'
