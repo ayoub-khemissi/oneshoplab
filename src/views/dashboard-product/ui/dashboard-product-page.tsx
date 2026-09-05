@@ -358,6 +358,7 @@ export async function DashboardProductPage({
         archived={archived}
         generateAlt={generateAltTextAction}
         altCost={altTextCredits()}
+        sending={changeInFlight}
       />
 
       <PastGenerationsSection

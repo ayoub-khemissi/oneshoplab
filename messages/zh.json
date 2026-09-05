@@ -1760,7 +1760,8 @@
     "errorUnsupported": "您的店铺不支持这项修改。",
     "errorArchived": "该商品已不在您的店铺中。",
     "errorGeneric": "出错了，请重试。",
-    "tileSyncing": "正在与你的店铺同步——下次同步后操作会恢复。"
+    "tileSyncing": "正在与你的店铺同步——下次同步后操作会恢复。",
+    "sending": "正在发送到你的店铺……店铺确认后，此图库会自动更新。"
   },
   "AltText": {
     "title": "缺失的替代文字",

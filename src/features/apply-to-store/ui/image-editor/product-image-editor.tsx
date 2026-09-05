@@ -63,7 +63,8 @@ export function ProductImageEditor({
   capabilities,
   archived = false,
   generateAlt,
-  altCost
+  altCost,
+  sending = false
 }: {
   productId: string;
   storeImages: EditorStoreImage[];
@@ -75,6 +76,10 @@ export function ProductImageEditor({
   generateAlt?: AltTextGenerator;
   /** Credits one alt-text generation costs — shown on each tile's button. */
   altCost: number;
+  /** The store still owes an answer on a change for this product. The gallery
+   *  below is the OLD one until it does, and saying "saved" over an unchanged
+   *  grid reads as "nothing happened". */
+  sending?: boolean;
 }) {
   const t = useTranslations('ProductImages');
   const router = useRouter();
@@ -347,7 +352,19 @@ export function ProductImageEditor({
         </p>
       ) : null}
 
-      {applied ? (
+      {sending ? (
+        <p
+          className="inline-flex items-center gap-2 text-sm text-[var(--muted)]"
+          role="status"
+          data-testid="image-editor-sending"
+        >
+          <span className="relative flex size-2 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
+            <span className="relative inline-flex size-2 rounded-full bg-[var(--accent)]" />
+          </span>
+          {t('sending')}
+        </p>
+      ) : applied ? (
         <p className="inline-flex items-center gap-1.5 text-sm text-[var(--success)]" role="status">
           <Check className="size-4" aria-hidden /> {t('applied')}
         </p>

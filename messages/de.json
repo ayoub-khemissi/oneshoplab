@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Ihr Shop unterstützt diese Änderung nicht.",
     "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
     "errorGeneric": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
-    "tileSyncing": "Wird mit Ihrem Shop synchronisiert — die Aktionen kehren nach der nächsten Synchronisierung zurück."
+    "tileSyncing": "Wird mit Ihrem Shop synchronisiert — die Aktionen kehren nach der nächsten Synchronisierung zurück.",
+    "sending": "Wird an Ihren Shop gesendet… diese Galerie aktualisiert sich selbst, sobald der Shop bestätigt."
   },
   "AltText": {
     "title": "Fehlende Alternativtexte",

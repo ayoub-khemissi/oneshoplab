@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Votre boutique ne gère pas cette modification.",
     "errorArchived": "Ce produit n’est plus dans votre boutique.",
     "errorGeneric": "Une erreur est survenue. Réessayez.",
-    "tileSyncing": "Synchronisation avec votre boutique — les actions reviennent après la prochaine synchro."
+    "tileSyncing": "Synchronisation avec votre boutique — les actions reviennent après la prochaine synchro.",
+    "sending": "Envoi vers votre boutique… cette galerie se met à jour toute seule dès que la boutique confirme."
   },
   "AltText": {
     "title": "Textes alternatifs manquants",

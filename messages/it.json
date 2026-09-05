@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Il tuo negozio non gestisce questa modifica.",
     "errorArchived": "Questo prodotto non è più nel tuo negozio.",
     "errorGeneric": "Si è verificato un errore. Riprova.",
-    "tileSyncing": "Sincronizzazione con il tuo negozio: le azioni tornano dopo la prossima sincronizzazione."
+    "tileSyncing": "Sincronizzazione con il tuo negozio: le azioni tornano dopo la prossima sincronizzazione.",
+    "sending": "Invio al tuo negozio… questa galleria si aggiorna da sola appena il negozio conferma."
   },
   "AltText": {
     "title": "Testi alternativi mancanti",

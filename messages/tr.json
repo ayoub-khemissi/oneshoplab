@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Mağazanız bu değişikliği desteklemiyor.",
     "errorArchived": "Bu ürün artık mağazanızda değil.",
     "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin.",
-    "tileSyncing": "Mağazanızla eşitleniyor — işlemler bir sonraki eşitlemeden sonra döner."
+    "tileSyncing": "Mağazanızla eşitleniyor — işlemler bir sonraki eşitlemeden sonra döner.",
+    "sending": "Mağazanıza gönderiliyor… mağaza onaylar onaylamaz bu galeri kendi kendine güncellenir."
   },
   "AltText": {
     "title": "Eksik alternatif metinler",

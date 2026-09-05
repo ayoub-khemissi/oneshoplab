@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Twój sklep nie obsługuje tej zmiany.",
     "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
     "errorGeneric": "Wystąpił błąd. Spróbuj ponownie.",
-    "tileSyncing": "Synchronizacja ze sklepem — akcje wrócą po następnej synchronizacji."
+    "tileSyncing": "Synchronizacja ze sklepem — akcje wrócą po następnej synchronizacji.",
+    "sending": "Wysyłanie do sklepu… ta galeria zaktualizuje się sama, gdy sklep potwierdzi."
   },
   "AltText": {
     "title": "Brakujące teksty alternatywne",

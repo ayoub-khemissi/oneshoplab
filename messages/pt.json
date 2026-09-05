@@ -1760,7 +1760,8 @@
     "errorUnsupported": "A sua loja não suporta esta alteração.",
     "errorArchived": "Este produto já não está na sua loja.",
     "errorGeneric": "Ocorreu um erro. Tente novamente.",
-    "tileSyncing": "A sincronizar com a sua loja — as ações voltam após a próxima sincronização."
+    "tileSyncing": "A sincronizar com a sua loja — as ações voltam após a próxima sincronização.",
+    "sending": "A enviar para a sua loja… esta galeria atualiza-se sozinha assim que a loja confirmar."
   },
   "AltText": {
     "title": "Textos alternativos em falta",

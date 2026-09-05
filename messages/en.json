@@ -1760,7 +1760,8 @@
     "errorUnsupported": "Your store does not support this change.",
     "errorArchived": "This product is no longer in your store.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "tileSyncing": "Syncing with your store — actions come back after the next sync."
+    "tileSyncing": "Syncing with your store — actions come back after the next sync.",
+    "sending": "Sending to your store… this gallery updates on its own as soon as the store confirms."
   },
   "AltText": {
     "title": "Missing alternative text",
