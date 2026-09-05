@@ -1885,6 +1885,9 @@
     "connectStore": "ストアを接続すると変更が自動で反映されます",
     "applyFirstChange": "最初の変更をストアに反映しましょう",
     "action": "開く",
-    "sendAll": "{count, plural, other {# 件の変更をストアへ送信}}"
+    "sendAll": "{count, plural, other {# 件の変更をストアへ送信}}",
+    "autoSendTitle": "変更を自動で送信する",
+    "autoSendHint": "生成が完了した時点で、確認なしにストアへ送信します。あとから取り消すことも可能です。",
+    "autoSendSaved": "保存しました"
   }
 }

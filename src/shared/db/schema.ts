@@ -235,6 +235,11 @@ export const projects = mysqlTable(
       };
       imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
     } | null>(),
+    /** Send every completed generation to the store without waiting for the
+     *  merchant to click Apply. Off by default and set per store, never
+     *  account-wide: writing into a live catalogue unreviewed is a decision
+     *  someone makes for a shop they trust, not for all of them at once. */
+    autoApply: boolean('auto_apply').notNull().default(false),
     /** "Notify me" toggles of the Integrations wizard for the connectors
      *  that have not shipped yet (Shopify phase 3, Wix phase 5). NULL =
      *  never asked. Read by the launch announcement, nothing else. */

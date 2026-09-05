@@ -1885,6 +1885,9 @@
     "connectStore": "Conecte su tienda para aplicar sus cambios automáticamente",
     "applyFirstChange": "Aplique su primer cambio a su tienda",
     "action": "Abrir",
-    "sendAll": "{count, plural, =1 {Enviar 1 cambio a mi tienda} other {Enviar # cambios a mi tienda}}"
+    "sendAll": "{count, plural, =1 {Enviar 1 cambio a mi tienda} other {Enviar # cambios a mi tienda}}",
+    "autoSendTitle": "Enviar los cambios automáticamente",
+    "autoSendHint": "Una generación llega a su tienda en cuanto está lista, sin revisión. Siempre puede deshacer un cambio después.",
+    "autoSendSaved": "Guardado"
   }
 }

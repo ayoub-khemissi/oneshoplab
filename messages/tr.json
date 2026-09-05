@@ -1885,6 +1885,9 @@
     "connectStore": "Değişikliklerin otomatik uygulanması için mağazanızı bağlayın",
     "applyFirstChange": "İlk değişikliğinizi mağazanıza uygulayın",
     "action": "Aç",
-    "sendAll": "{count, plural, other {# değişikliği mağazama gönder}}"
+    "sendAll": "{count, plural, other {# değişikliği mağazama gönder}}",
+    "autoSendTitle": "Değişiklikleri otomatik gönder",
+    "autoSendHint": "Bir üretim hazır olur olmaz, inceleme adımı olmadan mağazanıza gider. Her değişikliği sonradan geri alabilirsiniz.",
+    "autoSendSaved": "Kaydedildi"
   }
 }

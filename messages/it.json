@@ -1885,6 +1885,9 @@
     "connectStore": "Collega il tuo negozio per applicare le modifiche automaticamente",
     "applyFirstChange": "Applica la tua prima modifica al negozio",
     "action": "Apri",
-    "sendAll": "{count, plural, =1 {Invia 1 modifica al mio negozio} other {Invia # modifiche al mio negozio}}"
+    "sendAll": "{count, plural, =1 {Invia 1 modifica al mio negozio} other {Invia # modifiche al mio negozio}}",
+    "autoSendTitle": "Invia le modifiche automaticamente",
+    "autoSendHint": "Una generazione parte verso il tuo negozio appena è pronta, senza revisione. Puoi comunque annullare una modifica in seguito.",
+    "autoSendSaved": "Salvato"
   }
 }

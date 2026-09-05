@@ -1885,6 +1885,9 @@
     "connectStore": "스토어를 연결하면 변경 사항이 자동으로 적용됩니다",
     "applyFirstChange": "첫 변경 사항을 스토어에 적용해 보세요",
     "action": "열기",
-    "sendAll": "{count, plural, other {변경 # 건을 스토어로 보내기}}"
+    "sendAll": "{count, plural, other {변경 # 건을 스토어로 보내기}}",
+    "autoSendTitle": "변경 사항 자동 전송",
+    "autoSendHint": "생성이 끝나는 즉시 검토 없이 스토어로 전송합니다. 이후 언제든 되돌릴 수 있습니다.",
+    "autoSendSaved": "저장됨"
   }
 }

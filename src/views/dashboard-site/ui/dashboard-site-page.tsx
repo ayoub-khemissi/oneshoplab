@@ -28,6 +28,7 @@ import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/s
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
+  AutoSendToggle,
   countSendableGenerationsAction,
   hasAppliedChange,
   isAwaitingStore,
@@ -649,6 +650,11 @@ export async function DashboardSitePage({
             projectId={project.id}
             initialValue={project.customInstructions ?? ''}
           />
+          {/* Only offered where it can act: a store with no connection has
+              nothing to send to. */}
+          {storeConnected ? (
+            <AutoSendToggle projectId={project.id} enabled={project.autoApply} />
+          ) : null}
           <SiteBulkPrefsEditor
             siteId={project.id}
             canBulk={userPlan === 'pro' || userPlan === 'scale'}

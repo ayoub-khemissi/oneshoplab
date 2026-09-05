@@ -1885,6 +1885,9 @@
     "connectStore": "Połącz sklep, aby zmiany były wprowadzane automatycznie",
     "applyFirstChange": "Zastosuj pierwszą zmianę w swoim sklepie",
     "action": "Otwórz",
-    "sendAll": "{count, plural, other {Wyślij # zmian do sklepu}}"
+    "sendAll": "{count, plural, other {Wyślij # zmian do sklepu}}",
+    "autoSendTitle": "Wysyłaj zmiany automatycznie",
+    "autoSendHint": "Wygenerowana treść trafia do sklepu od razu, bez sprawdzania. Każdą zmianę możesz później cofnąć.",
+    "autoSendSaved": "Zapisano"
   }
 }

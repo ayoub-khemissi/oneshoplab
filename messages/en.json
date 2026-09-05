@@ -1885,6 +1885,9 @@
     "connectStore": "Connect your store to apply your changes automatically",
     "applyFirstChange": "Apply your first change to your store",
     "action": "Open",
-    "sendAll": "{count, plural, =1 {Send 1 change to my store} other {Send # changes to my store}}"
+    "sendAll": "{count, plural, =1 {Send 1 change to my store} other {Send # changes to my store}}",
+    "autoSendTitle": "Send changes automatically",
+    "autoSendHint": "A generation goes to your store as soon as it is ready, with no review step. You can still undo any change afterwards.",
+    "autoSendSaved": "Saved"
   }
 }

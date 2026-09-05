@@ -1885,6 +1885,9 @@
     "connectStore": "连接店铺即可自动应用修改",
     "applyFirstChange": "把第一项修改应用到你的店铺",
     "action": "打开",
-    "sendAll": "{count, plural, other {发送 # 项修改到我的店铺}}"
+    "sendAll": "{count, plural, other {发送 # 项修改到我的店铺}}",
+    "autoSendTitle": "自动发送修改",
+    "autoSendHint": "生成完成后立即发送到你的店铺，无需审阅。之后仍可撤销任何修改。",
+    "autoSendSaved": "已保存"
   }
 }

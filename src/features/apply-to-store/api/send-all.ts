@@ -36,7 +36,7 @@ export type SendAllResult =
  * subquery over the jobs table costs far more than walking a bounded, ordered
  * page of it.
  */
-async function listSendableJobIds(projectId: string, productId?: string): Promise<string[]> {
+export async function listSendableJobIds(projectId: string, productId?: string): Promise<string[]> {
   const rows = await db
     .select({ id: jobs.id, productId: jobs.productId, kind: jobs.kind })
     .from(jobs)

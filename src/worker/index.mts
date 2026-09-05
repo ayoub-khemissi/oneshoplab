@@ -17,6 +17,7 @@ const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
   await import('@/features/shopify-connector');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
+const { autoSendCompletedGenerations } = await import('@/features/apply-to-store');
 const { drainWebhookDeliveries, sweepWebhookDeliveries } =
   await import('@/features/webhook-delivery');
 
@@ -81,7 +82,13 @@ async function main(): Promise<void> {
         runWixApplies().catch((e) => console.error('[worker] wix-apply failed', e)),
         auditAfterPulls(runWixRequestedPulls, 'wix'),
         // Outbound webhooks: due deliveries + retries (docs/api/OUTBOUND-WEBHOOKS.md).
-        drainWebhookDeliveries().catch((e) => console.error('[worker] webhook-drain failed', e))
+        drainWebhookDeliveries().catch((e) => console.error('[worker] webhook-drain failed', e)),
+        // Stores that asked to skip the review step. A pass rather than a hook
+        // at job completion: text, images, alt texts and bulk runs all finish
+        // in different places, and this covers every one without touching any.
+        autoSendCompletedGenerations().catch((e: unknown) =>
+          console.error('[worker] auto-send failed', e)
+        )
       ];
       // Every couple of minutes: re-score the stores whose catalog moved
       // because a change landed, so the product list stops disagreeing with

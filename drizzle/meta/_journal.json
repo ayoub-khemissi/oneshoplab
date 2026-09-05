@@ -281,6 +281,13 @@
       "when": 1788590555358,
       "tag": "0039_mean_tana_nile",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "5",
+      "when": 1788596617616,
+      "tag": "0040_mean_klaw",
+      "breakpoints": true
     }
   ]
 }

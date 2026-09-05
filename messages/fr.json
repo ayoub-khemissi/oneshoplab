@@ -1885,6 +1885,9 @@
     "connectStore": "Connectez votre boutique pour appliquer vos modifications automatiquement",
     "applyFirstChange": "Appliquez votre première modification à votre boutique",
     "action": "Ouvrir",
-    "sendAll": "{count, plural, =1 {Envoyer 1 modification à ma boutique} other {Envoyer # modifications à ma boutique}}"
+    "sendAll": "{count, plural, =1 {Envoyer 1 modification à ma boutique} other {Envoyer # modifications à ma boutique}}",
+    "autoSendTitle": "Envoyer les modifications automatiquement",
+    "autoSendHint": "Une génération part vers votre boutique dès qu’elle est prête, sans relecture. Vous pouvez toujours annuler une modification ensuite.",
+    "autoSendSaved": "Enregistré"
   }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `auto_apply` boolean DEFAULT false NOT NULL;

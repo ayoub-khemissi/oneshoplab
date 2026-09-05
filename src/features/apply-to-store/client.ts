@@ -1,5 +1,6 @@
 // Client-safe UI of the slice (no db / next/headers in this graph).
 export { ApplyToStoreButton } from './ui/apply-to-store-button';
+export { AutoSendToggle } from './ui/auto-send-toggle';
 // A `'use server'` module: Next turns it into an action reference, so client
 // code can call it without dragging the server barrel — and the DB driver —
 // into the browser bundle.

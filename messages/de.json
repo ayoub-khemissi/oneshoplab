@@ -1885,6 +1885,9 @@
     "connectStore": "Verbinden Sie Ihren Shop, um Änderungen automatisch anzuwenden",
     "applyFirstChange": "Wenden Sie Ihre erste Änderung in Ihrem Shop an",
     "action": "Öffnen",
-    "sendAll": "{count, plural, =1 {1 Änderung an meinen Shop senden} other {# Änderungen an meinen Shop senden}}"
+    "sendAll": "{count, plural, =1 {1 Änderung an meinen Shop senden} other {# Änderungen an meinen Shop senden}}",
+    "autoSendTitle": "Änderungen automatisch senden",
+    "autoSendHint": "Eine Generierung geht sofort an Ihren Shop, ohne Prüfschritt. Sie können jede Änderung danach rückgängig machen.",
+    "autoSendSaved": "Gespeichert"
   }
 }
