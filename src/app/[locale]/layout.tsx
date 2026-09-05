@@ -195,9 +195,15 @@ export default async function LocaleLayout({
           colour of whatever the page paints there — a coloured button at the
           bottom of a form would tint the system bar. These two keep both ends
           on the app's own background, in either colour scheme.
+
+          The top one matches the header's material rather than the raw
+          background: the page below the notch is the header, and two different
+          surfaces meeting there draw a visible line. The bottom one stays
+          opaque — what it covers is the page background itself, which is the
+          same colour, so there is no seam to avoid.
         */}
         <div
-          className="fixed inset-x-0 top-0 z-50 bg-[var(--background)]"
+          className="fixed inset-x-0 top-0 z-50 bg-[var(--background)]/80 backdrop-blur-md"
           style={{ height: 'env(safe-area-inset-top)' }}
           aria-hidden="true"
         />
