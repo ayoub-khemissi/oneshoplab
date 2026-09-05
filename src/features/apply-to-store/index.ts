@@ -34,6 +34,8 @@ export {
   listPendingSummaryForUser
 } from './api/queries';
 export { ApplyToStoreButton } from './ui/apply-to-store-button';
+export { countSendableGenerationsAction, sendAllGenerationsAction } from './api/send-all';
+export type { SendAllResult } from './api/send-all';
 export { ProductRecapCard } from './ui/product-recap-card';
 export {
   RECAP_FIELDS,

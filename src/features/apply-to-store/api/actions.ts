@@ -17,6 +17,7 @@ import {
   productChanges,
   products,
   projects,
+  type Plan,
   type ProductChangeField
 } from '@/shared/db/schema';
 import { toChangeSummary } from '../lib/summary';
@@ -61,12 +62,29 @@ export async function approveGenerationAction(formData: FormData): Promise<Appro
   if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
   const jobId = uuid.safeParse(formData.get('jobId'));
   if (!jobId.success) return { ok: false, error: 'bad_request' };
+  const res = await approveOneGeneration(session.user.id, session.user.plan ?? 'free', jobId.data);
+  if (res.ok && res.projectId) revalidatePath(`/dashboard/sites/${res.projectId}`);
+  return res;
+}
 
+/**
+ * The body of "apply this generation", callable one job at a time.
+ *
+ * Split out so a merchant can send everything a product — or a whole store —
+ * has waiting in one click, instead of clicking Apply once per generated
+ * field. Ownership is re-checked per job: the caller passes a user id, never a
+ * pre-authorised list.
+ */
+export async function approveOneGeneration(
+  userId: string,
+  plan: Plan,
+  jobId: string
+): Promise<ApproveResult> {
   const [row] = await db
     .select({ job: jobs })
     .from(jobs)
     .innerJoin(projects, eq(projects.id, jobs.projectId))
-    .where(and(eq(jobs.id, jobId.data), eq(projects.userId, session.user.id)));
+    .where(and(eq(jobs.id, jobId), eq(projects.userId, userId)));
   const job = row?.job;
   if (!job || !job.projectId || job.status !== 'completed') {
     return { ok: false, error: 'not_found' };
@@ -103,9 +121,7 @@ export async function approveGenerationAction(formData: FormData): Promise<Appro
   // them before that, so the change carries the same deadline.
   const expiresAt =
     field === 'images'
-      ? new Date(
-          job.createdAt.getTime() + imageRetentionDaysForPlan(session.user.plan ?? 'free') * DAY_MS
-        )
+      ? new Date(job.createdAt.getTime() + imageRetentionDaysForPlan(plan) * DAY_MS)
       : null;
 
   const created = await createChange({
@@ -115,14 +131,16 @@ export async function approveGenerationAction(formData: FormData): Promise<Appro
     field,
     value,
     sourceJobId: job.id,
-    approvedBy: session.user.id,
+    approvedBy: userId,
     expiresAt
   });
   if (!created.ok) {
     return { ok: false, error: created.reason === 'not_found' ? 'not_found' : 'invalid_value' };
   }
-  revalidatePath(`/dashboard/sites/${job.projectId}`);
-  return { ok: true, change: toChangeSummary(created.change) };
+  // The caller revalidates: sending a whole store calls this hundreds of times
+  // and one revalidation at the end is the same result for a fraction of the
+  // work — and this helper then stays callable outside a request.
+  return { ok: true, change: toChangeSummary(created.change), projectId: job.projectId };
 }
 
 /**
