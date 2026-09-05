@@ -23,3 +23,5 @@ access.txt
 playwright-report/
 test-results/
 .next-e2e/
+# Verification build (scripts/deploy.sh, NEXT_DIST_DIR) — never committed.
+.next-verify/
