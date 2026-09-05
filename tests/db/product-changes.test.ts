@@ -13,6 +13,7 @@ import {
   listPendingChanges,
   type ProductChangeRow
 } from '@/entities/product-change';
+import { simulateImageOps, type ImageOp } from '@/entities/product-change/client';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
 import { createProject } from './site-helpers';
@@ -224,6 +225,63 @@ describe('product changes', () => {
       ok: false,
       reason: 'conflict'
     });
+  });
+
+  it('undo of a new main photo puts the old order back', async () => {
+    // The ops-based case: "make this the main photo" is not a replace-all, and
+    // the merchant has to be able to take it back the same way.
+    const p = await createProduct(projectId, {
+      sourceId: 'featured',
+      images: [
+        {
+          src: 'https://cdn.test/1.jpg',
+          alt: null,
+          width: null,
+          height: null,
+          sourceImageId: 'm1'
+        },
+        {
+          src: 'https://cdn.test/2.jpg',
+          alt: null,
+          width: null,
+          height: null,
+          sourceImageId: 'm2'
+        },
+        { src: 'https://cdn.test/3.jpg', alt: null, width: null, height: null, sourceImageId: 'm3' }
+      ]
+    });
+    const res = await createChange({
+      projectId,
+      productId: p.id,
+      productSourceId: p.sourceId,
+      field: 'images',
+      value: { v: 1, ops: [{ op: 'set_featured', target: 'm2' }] },
+      approvedBy: userId
+    });
+    if (!res.ok) throw new Error('create failed');
+    await ackChange(projectId, res.change.id, { status: 'applied' });
+
+    const undo = await createReverseChange(projectId, res.change.id, userId);
+    expect(undo.ok).toBe(true);
+    if (!undo.ok) return;
+
+    // The reverse is expressed as ops, not as a replace-all: that keeps the
+    // store's own image ids, which a full replacement would throw away. What
+    // matters is where it lands, so replay it over the moved gallery.
+    const moved = (await db.select().from(products).where(eq(products.id, p.id)))[0];
+    const prior = (moved.images ?? []).map((img) => ({
+      src: img.src,
+      alt: img.alt ?? null,
+      sourceImageId: img.sourceImageId ?? null
+    }));
+    const payload = undo.change.value as { v: number; ops: ImageOp[] };
+    const replayed = simulateImageOps(payload.ops, prior);
+    expect(replayed.ok).toBe(true);
+    expect(replayed.ok && replayed.simulation.images.map((i) => i.src)).toEqual([
+      'https://cdn.test/1.jpg',
+      'https://cdn.test/2.jpg',
+      'https://cdn.test/3.jpg'
+    ]);
   });
 
   it('undo of an images change restores the prior gallery', async () => {
