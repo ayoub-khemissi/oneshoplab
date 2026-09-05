@@ -245,7 +245,7 @@ export function useBulkGenerate({
     if (modalOpen) refresh();
   }, [modalOpen, refresh]);
 
-  async function startBulk(productIds: string[]) {
+  async function startBulk(productIds: string[], autoSend = false) {
     setSubmitting(true);
     setErrorMsg(null);
     try {
@@ -256,7 +256,8 @@ export function useBulkGenerate({
           siteId,
           productIds,
           chatModelId: chatRef.current,
-          imageQualityId: imgRef.current
+          imageQualityId: imgRef.current,
+          autoSend
         })
       });
       if (!res.ok) {

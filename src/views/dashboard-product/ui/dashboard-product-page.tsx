@@ -40,7 +40,7 @@ import {
   RECAP_FIELDS
 } from '@/features/apply-to-store';
 import { generateAltTextAction } from '@/features/generate-alt-text/actions';
-import { altTextCredits } from '@/entities/generation-job';
+import { altTextCredits, findCachedSuggestions } from '@/entities/generation-job';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { PastGenerationsSection } from './past-generations-section';
@@ -197,6 +197,8 @@ export async function DashboardProductPage({
   // own, or the merchant is left reading a chip that says "queued" next to a
   // panel that says nothing is queued.
   const changeInFlight = isAwaitingStore(pendingSummary.counts);
+  const cachedSuggestions =
+    (await findCachedSuggestions(projectId, sourceId, 'description'))?.suggestions ?? [];
   // What is waiting on the merchant, per field. A generation only enters the
   // store-side counters once they click Apply, so without this a rewritten set
   // of tags nobody applied showed up nowhere on the page.
@@ -309,7 +311,11 @@ export async function DashboardProductPage({
               suggestions={{
                 productId,
                 cost: suggestionsCost(),
-                creditsBalance: balance
+                creditsBalance: balance,
+                // Already generated and paid for: leaving the page used to
+                // hide them for good, so the merchant paid twice for the same
+                // five angles or simply never saw them again.
+                initial: cachedSuggestions
               }}
             />
           </div>

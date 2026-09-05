@@ -277,7 +277,7 @@ export function BulkGenerateSection({
             onPickImage={onPickImage}
             estimateTotal={estimate.total}
             onCancel={() => setModalOpen(false)}
-            onConfirm={(ids) => startBulk(ids)}
+            onConfirm={(ids, autoSend) => startBulk(ids, autoSend)}
           />
         ) : null}
       </>
@@ -392,7 +392,7 @@ export function BulkGenerateSection({
           onPickImage={onPickImage}
           estimateTotal={estimate.total}
           onCancel={() => setModalOpen(false)}
-          onConfirm={(ids) => startBulk(ids)}
+          onConfirm={(ids, autoSend) => startBulk(ids, autoSend)}
         />
       ) : null}
 

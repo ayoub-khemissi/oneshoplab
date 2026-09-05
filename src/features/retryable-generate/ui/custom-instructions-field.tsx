@@ -19,7 +19,13 @@ interface CustomInstructionsFieldProps {
   hasSiteInstructions?: boolean;
   /** Offers ready-made angles under the box. Omitted (with its cost) the
    *  suggestions simply aren't proposed. */
-  suggestions?: { productId: string; cost: number; creditsBalance: number };
+  suggestions?: {
+    productId: string;
+    cost: number;
+    creditsBalance: number;
+    /** Angles already generated for this product, loaded server-side. */
+    initial?: Array<{ tone: string; prompt: string }>;
+  };
   /** Product whose row stores the text. Without it the field stays in memory
    *  (the bulk panel reuses this component for a whole store). */
   productId?: string;
@@ -78,6 +84,7 @@ export function CustomInstructionsField({
           productId={suggestions.productId}
           cost={suggestions.cost}
           creditsBalance={suggestions.creditsBalance}
+          initial={suggestions.initial}
           onPicked={(value) => persist(value)}
         />
       ) : null}

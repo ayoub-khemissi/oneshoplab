@@ -486,7 +486,10 @@
     "modelsSummary": "Modeller: {chat} · {image}",
     "modelsChange": "Değiştir",
     "modelsModalTitle": "Modellerinizi seçin",
-    "modelsModalClose": "Tamam"
+    "modelsModalClose": "Tamam",
+    "suggestPromptsSee": "Önerileri gör ({count})",
+    "suggestPromptsAgain": "Bana başka açılar öner",
+    "suggestPromptsModalTitle": "Bir açı seçin"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Yapılandırma",
     "stepSelect": "Ürünler",
     "eligibleCount": "{count} uygun ürün",
-    "estimatedTotal": "≈ {cost} toplam"
+    "estimatedTotal": "≈ {cost} toplam",
+    "autoSendLabel": "Doğrudan mağazama gönder",
+    "autoSendHint": "Üretimler hazır oldukça, inceleme olmadan gider. Yalnızca bu çalışma için."
   },
   "Share": {
     "title": "Potansiyel müşteriyle paylaş",

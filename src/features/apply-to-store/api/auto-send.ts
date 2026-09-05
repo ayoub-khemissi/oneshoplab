@@ -1,6 +1,6 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, gt, inArray, or } from 'drizzle-orm';
 import { db } from '@/shared/db';
-import { projects } from '@/shared/db/schema';
+import { jobs, projects } from '@/shared/db/schema';
 import { approveOneGeneration } from './actions';
 import { listSendableJobIds } from './send-all';
 
@@ -8,6 +8,9 @@ import { listSendableJobIds } from './send-all';
 const MAX_STORES_PER_PASS = 3;
 /** Generations sent per store per pass. The store's own queue drains ~300/min. */
 const MAX_PER_STORE = 100;
+/** How long a finished bulk run keeps sending: its last generations land after
+ *  the run is marked done, and they are part of what the merchant approved. */
+const BULK_TAIL_MS = 30 * 60 * 1000;
 
 /**
  * Send completed generations for the stores that asked to skip the review step.
@@ -27,11 +30,40 @@ export async function autoSendCompletedGenerations(): Promise<number> {
     .from(projects)
     .where(eq(projects.autoApply, true))
     .limit(MAX_STORES_PER_PASS * 20);
-  if (enabled.length === 0) return 0;
+
+  // A bulk run can opt in for itself without changing the store's setting.
+  // Its tail counts too: the last generations land after the run is marked
+  // done, and they belong to the batch the merchant said yes to.
+  const runs = await db
+    .select({ projectId: jobs.projectId, payload: jobs.inputPayload })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.kind, 'bulk_site_generate'),
+        or(
+          inArray(jobs.status, ['pending', 'running']),
+          gt(jobs.createdAt, new Date(Date.now() - BULK_TAIL_MS))
+        )
+      )
+    )
+    .limit(MAX_STORES_PER_PASS * 20);
+
+  const byProject = new Map(enabled.map((p) => [p.id, p.userId]));
+  for (const run of runs) {
+    if (!run.projectId || byProject.has(run.projectId)) continue;
+    if (!(run.payload as { autoSend?: boolean } | null)?.autoSend) continue;
+    const owner = await db.query.projects.findFirst({
+      where: eq(projects.id, run.projectId),
+      columns: { userId: true }
+    });
+    if (owner) byProject.set(run.projectId, owner.userId);
+  }
+  const targets = [...byProject].map(([id, userId]) => ({ id, userId }));
+  if (targets.length === 0) return 0;
 
   let sent = 0;
   let served = 0;
-  for (const project of enabled) {
+  for (const project of targets) {
     if (served >= MAX_STORES_PER_PASS) break;
     const owner = await db.query.users.findFirst({
       where: (u, { eq: is }) => is(u.id, project.userId),

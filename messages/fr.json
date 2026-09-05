@@ -486,7 +486,10 @@
     "modelsSummary": "Modèles : {chat} · {image}",
     "modelsChange": "Modifier",
     "modelsModalTitle": "Choisissez vos modèles",
-    "modelsModalClose": "Terminé"
+    "modelsModalClose": "Terminé",
+    "suggestPromptsSee": "Voir les angles proposés ({count})",
+    "suggestPromptsAgain": "Reproposez-moi des angles",
+    "suggestPromptsModalTitle": "Choisissez un angle"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Configuration",
     "stepSelect": "Produits",
     "eligibleCount": "{count} produits éligibles",
-    "estimatedTotal": "≈ {cost} au total"
+    "estimatedTotal": "≈ {cost} au total",
+    "autoSendLabel": "Envoyer directement à ma boutique",
+    "autoSendHint": "Les générations partent au fur et à mesure, sans relecture. Uniquement pour ce lancement."
   },
   "Share": {
     "title": "Partage prospect",

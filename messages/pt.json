@@ -486,7 +486,10 @@
     "modelsSummary": "Modelos: {chat} · {image}",
     "modelsChange": "Alterar",
     "modelsModalTitle": "Escolha os seus modelos",
-    "modelsModalClose": "Concluído"
+    "modelsModalClose": "Concluído",
+    "suggestPromptsSee": "Ver as abordagens ({count})",
+    "suggestPromptsAgain": "Proponha-me outras abordagens",
+    "suggestPromptsModalTitle": "Escolha uma abordagem"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Configuração",
     "stepSelect": "Produtos",
     "eligibleCount": "{count} produtos elegíveis",
-    "estimatedTotal": "≈ {cost} no total"
+    "estimatedTotal": "≈ {cost} no total",
+    "autoSendLabel": "Enviar diretamente para a minha loja",
+    "autoSendHint": "As gerações seguem à medida que chegam, sem revisão. Apenas para esta execução."
   },
   "Share": {
     "title": "Partilha com prospects",

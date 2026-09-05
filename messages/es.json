@@ -486,7 +486,10 @@
     "modelsSummary": "Modelos: {chat} · {image}",
     "modelsChange": "Cambiar",
     "modelsModalTitle": "Elija sus modelos",
-    "modelsModalClose": "Listo"
+    "modelsModalClose": "Listo",
+    "suggestPromptsSee": "Ver los enfoques ({count})",
+    "suggestPromptsAgain": "Propóngame otros enfoques",
+    "suggestPromptsModalTitle": "Elija un enfoque"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Configuración",
     "stepSelect": "Productos",
     "eligibleCount": "{count} productos elegibles",
-    "estimatedTotal": "≈ {cost} en total"
+    "estimatedTotal": "≈ {cost} en total",
+    "autoSendLabel": "Enviar directamente a mi tienda",
+    "autoSendHint": "Las generaciones salen a medida que llegan, sin revisión. Solo para esta ejecución."
   },
   "Share": {
     "title": "Compartir con prospectos",

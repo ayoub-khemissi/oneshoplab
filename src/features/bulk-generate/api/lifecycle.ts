@@ -36,6 +36,9 @@ export async function startBulkSiteGenerate(opts: {
   /** Resolved site prefs, snapshotted into the payload so the worker
    *  is deterministic even if the site prefs change mid-run. */
   prefs?: ResolvedBulkPrefs;
+  /** Send this run's output straight to the store. Scoped to the run: a
+   *  merchant can trust one batch without trusting every future generation. */
+  autoSend?: boolean;
 }): Promise<{ ok: true; jobId: string } | { ok: false; reason: 'already_running' }> {
   const id = randomUUID();
   const chatModelId =
@@ -55,7 +58,8 @@ export async function startBulkSiteGenerate(opts: {
     imageQualityId,
     customInstructions: opts.customInstructions ?? '',
     fields: prefs.fields,
-    imageAngles: prefs.imageAngles
+    imageAngles: prefs.imageAngles,
+    ...(opts.autoSend ? { autoSend: true } : {})
   };
   const result: BulkResult = {
     total: opts.productIds.length,

@@ -486,7 +486,10 @@
     "modelsSummary": "Modele: {chat} · {image}",
     "modelsChange": "Zmień",
     "modelsModalTitle": "Wybierz modele",
-    "modelsModalClose": "Gotowe"
+    "modelsModalClose": "Gotowe",
+    "suggestPromptsSee": "Zobacz propozycje ({count})",
+    "suggestPromptsAgain": "Zaproponuj inne ujęcia",
+    "suggestPromptsModalTitle": "Wybierz ujęcie"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Konfiguracja",
     "stepSelect": "Produkty",
     "eligibleCount": "{count} kwalifikujących się produktów",
-    "estimatedTotal": "≈ {cost} łącznie"
+    "estimatedTotal": "≈ {cost} łącznie",
+    "autoSendLabel": "Wysyłaj od razu do sklepu",
+    "autoSendHint": "Wyniki wychodzą na bieżąco, bez sprawdzania. Tylko dla tego uruchomienia."
   },
   "Share": {
     "title": "Udostępnij prospektowi",

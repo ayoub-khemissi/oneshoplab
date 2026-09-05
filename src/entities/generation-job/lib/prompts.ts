@@ -31,7 +31,10 @@ const FIELD_BRIEFS: Record<ProductField, string> = {
 export function buildSuggestionPrompt(
   field: ProductField,
   p: ProductContext,
-  languageName: string
+  languageName: string,
+  /** Angles already proposed for this product. Asking again and getting the
+   *  same five back would be worse than not offering the button. */
+  avoid?: readonly string[]
 ): string {
   const brief = FIELD_BRIEFS[field];
 
@@ -58,7 +61,13 @@ Output rules:
 1. Return ONLY a JSON array. No preamble, no markdown fences, no commentary.
 2. Each item is an object with "tone" (a short label, max 4 words) and "prompt" (the actual prompt the merchant will hand off to the generator, written in instruction form, max 200 chars).
 3. Vary tone genuinely — no two items should overlap.
-4. Write BOTH the tone label and the prompt in ${languageName} — the merchant reads them, they are not internal labels.
+4. Write BOTH the tone label and the prompt in ${languageName} — the merchant reads them, they are not internal labels.${
+    avoid && avoid.length > 0
+      ? `\n5. The merchant already saw these angles and asked for others. Propose five genuinely different ones — a different lens on the product, not a rewording:\n${avoid
+          .map((a) => `   - ${a}`)
+          .join('\n')}`
+      : ''
+  }
 
 Example format (illustrative only, do not copy):
 [{"tone":"<short label>","prompt":"<instruction, e.g. rewrite as a sharp 6-word title leading with the main benefit>"}]`;

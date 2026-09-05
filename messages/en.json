@@ -486,7 +486,10 @@
     "modelsSummary": "Models: {chat} · {image}",
     "modelsChange": "Change",
     "modelsModalTitle": "Choose your models",
-    "modelsModalClose": "Done"
+    "modelsModalClose": "Done",
+    "suggestPromptsSee": "See the angles ({count})",
+    "suggestPromptsAgain": "Propose other angles",
+    "suggestPromptsModalTitle": "Choose an angle"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Configuration",
     "stepSelect": "Products",
     "eligibleCount": "{count} eligible products",
-    "estimatedTotal": "≈ {cost} total"
+    "estimatedTotal": "≈ {cost} total",
+    "autoSendLabel": "Send straight to my store",
+    "autoSendHint": "Generations go out as they land, without a review step. Only for this run."
   },
   "Share": {
     "title": "Share for prospects",

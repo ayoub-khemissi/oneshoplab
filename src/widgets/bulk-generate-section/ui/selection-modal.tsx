@@ -39,7 +39,7 @@ export interface SelectionModalProps {
    *  the step-1 preview. */
   estimateTotal: number;
   onCancel: () => void;
-  onConfirm: (productIds: string[]) => Promise<boolean>;
+  onConfirm: (productIds: string[], autoSend: boolean) => Promise<boolean>;
 }
 
 // Selection modal — checkbox list + virtual budget counter
@@ -69,6 +69,9 @@ export function SelectionModal({
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   // 2-step wizard: 1 = config (what + models), 2 = product selection.
   const [step, setStep] = useState<1 | 2>(1);
+  // Scoped to this run on purpose: a merchant can trust one batch without
+  // trusting every future generation on the shop.
+  const [autoSend, setAutoSend] = useState(false);
 
   // Selection is scoped to a FIXED config snapshot: clear it whenever
   // we're on step 1 (incl. after "Edit" from step 2), so step 2 always
@@ -149,7 +152,7 @@ export function SelectionModal({
 
   async function handleConfirm() {
     if (selected.size === 0 || overBudget || noFields || launchBlocked) return;
-    await onConfirm(Array.from(selected));
+    await onConfirm(Array.from(selected), autoSend);
   }
 
   const allSelected = selected.size === candidates.length && candidates.length > 0;
@@ -388,6 +391,21 @@ export function SelectionModal({
               </>
             ) : (
               <>
+                <label className="mr-auto flex items-start gap-2 text-xs text-[var(--muted)]">
+                  <input
+                    type="checkbox"
+                    checked={autoSend}
+                    onChange={(e) => setAutoSend(e.target.checked)}
+                    data-testid="bulk-auto-send"
+                    className="mt-0.5 accent-[var(--accent)]"
+                  />
+                  <span className="flex flex-col">
+                    <span className="font-medium text-[var(--foreground)]">
+                      {t('autoSendLabel')}
+                    </span>
+                    <span>{t('autoSendHint')}</span>
+                  </span>
+                </label>
                 <button
                   type="button"
                   onClick={() => setStep(1)}

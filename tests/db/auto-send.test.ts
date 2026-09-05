@@ -92,6 +92,39 @@ describe('autoSendCompletedGenerations', () => {
     expect(await changesFor(projectId)).toHaveLength(0);
   });
 
+  it('a bulk run can opt in for itself without touching the store setting', async () => {
+    const product = await createProduct(projectId, { sourceId: 'p1' });
+    await generation(projectId, product.id);
+    await db.insert(jobs).values({
+      id: randomUUID(),
+      projectId,
+      kind: 'bulk_site_generate',
+      status: 'running',
+      inputPayload: { siteId: projectId, productIds: [product.id], autoSend: true }
+    });
+
+    expect(await autoSendCompletedGenerations()).toBe(1);
+    expect(await changesFor(projectId)).toHaveLength(1);
+    // The store itself never opted in — the next run decides again.
+    const [row] = await db.select().from(projects).where(eq(projects.id, projectId));
+    expect(row.autoApply).toBe(false);
+  });
+
+  it('a bulk run without the flag sends nothing', async () => {
+    const product = await createProduct(projectId, { sourceId: 'p1' });
+    await generation(projectId, product.id);
+    await db.insert(jobs).values({
+      id: randomUUID(),
+      projectId,
+      kind: 'bulk_site_generate',
+      status: 'running',
+      inputPayload: { siteId: projectId, productIds: [product.id] }
+    });
+
+    expect(await autoSendCompletedGenerations()).toBe(0);
+    expect(await changesFor(projectId)).toHaveLength(0);
+  });
+
   it('refuses to flip a store the caller does not own', async () => {
     const stranger = await createUser();
     expect(await setAutoApply(projectId, stranger, true)).toBe(false);

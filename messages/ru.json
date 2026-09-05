@@ -486,7 +486,10 @@
     "modelsSummary": "Модели: {chat} · {image}",
     "modelsChange": "Изменить",
     "modelsModalTitle": "Выберите модели",
-    "modelsModalClose": "Готово"
+    "modelsModalClose": "Готово",
+    "suggestPromptsSee": "Показать варианты ({count})",
+    "suggestPromptsAgain": "Предложить другие варианты",
+    "suggestPromptsModalTitle": "Выберите вариант"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Настройка",
     "stepSelect": "Товары",
     "eligibleCount": "{count} подходящих товаров",
-    "estimatedTotal": "≈ {cost} всего"
+    "estimatedTotal": "≈ {cost} всего",
+    "autoSendLabel": "Отправлять сразу в магазин",
+    "autoSendHint": "Результаты уходят по мере готовности, без проверки. Только для этого запуска."
   },
   "Share": {
     "title": "Поделиться с потенциальным клиентом",

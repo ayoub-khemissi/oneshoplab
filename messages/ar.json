@@ -486,7 +486,10 @@
     "modelsSummary": "النماذج: {chat} · {image}",
     "modelsChange": "تغيير",
     "modelsModalTitle": "اختر نماذجك",
-    "modelsModalClose": "تم"
+    "modelsModalClose": "تم",
+    "suggestPromptsSee": "عرض الزوايا ({count})",
+    "suggestPromptsAgain": "اقترح زوايا أخرى",
+    "suggestPromptsModalTitle": "اختر زاوية"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "الإعداد",
     "stepSelect": "المنتجات",
     "eligibleCount": "{count} منتج مؤهل",
-    "estimatedTotal": "≈ {cost} إجمالاً"
+    "estimatedTotal": "≈ {cost} إجمالاً",
+    "autoSendLabel": "الإرسال مباشرة إلى متجري",
+    "autoSendHint": "تُرسل النواتج أولًا بأول بلا مراجعة. لهذه العملية فقط."
   },
   "Share": {
     "title": "مشاركة مع العملاء المحتملين",

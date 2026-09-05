@@ -486,7 +486,10 @@
     "modelsSummary": "모델: {chat} · {image}",
     "modelsChange": "변경",
     "modelsModalTitle": "모델 선택",
-    "modelsModalClose": "완료"
+    "modelsModalClose": "완료",
+    "suggestPromptsSee": "제안 보기 ({count})",
+    "suggestPromptsAgain": "다른 관점 제안받기",
+    "suggestPromptsModalTitle": "관점 선택"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "구성",
     "stepSelect": "상품",
     "eligibleCount": "대상 상품 {count}개",
-    "estimatedTotal": "≈ 총 {cost}"
+    "estimatedTotal": "≈ 총 {cost}",
+    "autoSendLabel": "스토어로 바로 전송",
+    "autoSendHint": "생성되는 대로 검토 없이 전송합니다. 이번 실행에만 적용됩니다."
   },
   "Share": {
     "title": "잠재 고객에게 공유",

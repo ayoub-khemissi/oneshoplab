@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { applyCreditTransaction, getCreditBalance } from '@/entities/credit';
 import { db } from '@/shared/db';
@@ -45,9 +45,13 @@ export async function getOrGenerateSuggestions(opts: {
   product: ProductContext;
   /** Effective ISO 639-1 language code resolved by getEffectiveLanguage(). */
   languageCode: string;
+  /** "Propose others": ignore the cache, retire the previous round and ask for
+   *  angles that differ from it. Costs a fresh generation, which is why it is
+   *  a separate decision and not what the first click does. */
+  force?: boolean;
 }): Promise<SuggestionsResult> {
   const cached = await findCachedJob(opts.projectId, opts.productSourceId, opts.field);
-  if (cached) {
+  if (cached && !opts.force) {
     return { ok: true, suggestions: cached.suggestions, fromCache: true, jobId: cached.jobId };
   }
 
@@ -59,7 +63,10 @@ export async function getOrGenerateSuggestions(opts: {
   const userPrompt = buildSuggestionPrompt(
     opts.field,
     opts.product,
-    languageNameForPrompt(opts.languageCode)
+    languageNameForPrompt(opts.languageCode),
+    // Asking again and getting the same five angles back would be worse than
+    // not offering the button.
+    opts.force ? cached?.suggestions.map((s) => s.prompt) : undefined
   );
 
   const response = await chatCompletion({
@@ -72,6 +79,12 @@ export async function getOrGenerateSuggestions(opts: {
   // Nothing usable came back: the merchant keeps their credits rather than
   // paying for an empty list.
   if (suggestions.length === 0) return { ok: false, reason: 'generation_failed' };
+
+  // The previous round stops being the cached answer the moment a new one
+  // lands, so the merchant is never shown a mix of two generations.
+  if (cached) {
+    await db.update(jobs).set({ hiddenAt: new Date() }).where(eq(jobs.id, cached.jobId));
+  }
 
   const jobId = randomUUID();
   const now = new Date();
@@ -115,7 +128,8 @@ async function findCachedJob(
     where: and(
       eq(jobs.projectId, projectId),
       eq(jobs.kind, 'kie_prompt_suggest'),
-      eq(jobs.status, 'completed')
+      eq(jobs.status, 'completed'),
+      isNull(jobs.hiddenAt)
     ),
     orderBy: [desc(jobs.createdAt)],
     limit: 50

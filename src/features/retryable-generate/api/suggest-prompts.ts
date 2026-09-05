@@ -28,7 +28,10 @@ export type SuggestPromptsResult =
  */
 export async function suggestPromptsAction(
   productId: string,
-  forField: string
+  forField: string,
+  /** "Propose others": retire the round they already saw and pay for a new
+   *  one. The plain click still replays the cache for free. */
+  force = false
 ): Promise<SuggestPromptsResult> {
   const session = await auth();
   if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
@@ -65,7 +68,8 @@ export async function suggestPromptsAction(
       priceMin: p.priceMin != null ? Number(p.priceMin) : null,
       priceMax: p.priceMax != null ? Number(p.priceMax) : null,
       currency: p.currency
-    }
+    },
+    force
   });
 
   if (!res.ok) return { ok: false, error: res.reason };

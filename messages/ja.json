@@ -486,7 +486,10 @@
     "modelsSummary": "モデル：{chat} · {image}",
     "modelsChange": "変更",
     "modelsModalTitle": "モデルを選ぶ",
-    "modelsModalClose": "完了"
+    "modelsModalClose": "完了",
+    "suggestPromptsSee": "提案を見る（{count}）",
+    "suggestPromptsAgain": "別の切り口を提案",
+    "suggestPromptsModalTitle": "切り口を選ぶ"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "設定",
     "stepSelect": "商品",
     "eligibleCount": "対象商品 {count} 件",
-    "estimatedTotal": "≈ 合計 {cost}"
+    "estimatedTotal": "≈ 合計 {cost}",
+    "autoSendLabel": "ストアへ直接送信する",
+    "autoSendHint": "生成でき次第、確認なしに送信します。今回の実行のみ。"
   },
   "Share": {
     "title": "見込み客に共有",

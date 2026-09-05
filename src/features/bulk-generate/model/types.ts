@@ -22,6 +22,9 @@ export interface BulkInputPayload {
    *  legacy "everything on, 3 angles" default. */
   fields?: Record<BulkFieldKey, boolean>;
   imageAngles?: BulkImageAngle[];
+  /** Send this run's generations to the store as they land, without changing
+   *  the store's own setting. A decision for one batch, not for the shop. */
+  autoSend?: boolean;
 }
 
 export interface BulkResult {

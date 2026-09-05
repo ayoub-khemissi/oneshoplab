@@ -486,7 +486,10 @@
     "modelsSummary": "Modelle: {chat} · {image}",
     "modelsChange": "Ändern",
     "modelsModalTitle": "Wählen Sie Ihre Modelle",
-    "modelsModalClose": "Fertig"
+    "modelsModalClose": "Fertig",
+    "suggestPromptsSee": "Vorschläge ansehen ({count})",
+    "suggestPromptsAgain": "Andere Ansätze vorschlagen",
+    "suggestPromptsModalTitle": "Wählen Sie einen Ansatz"
   },
   "Report": {
     "dataSource": {
@@ -924,7 +927,9 @@
     "stepConfig": "Konfiguration",
     "stepSelect": "Produkte",
     "eligibleCount": "{count} infrage kommende Produkte",
-    "estimatedTotal": "≈ {cost} gesamt"
+    "estimatedTotal": "≈ {cost} gesamt",
+    "autoSendLabel": "Direkt an meinen Shop senden",
+    "autoSendHint": "Generierungen gehen sofort raus, ohne Prüfschritt. Nur für diesen Lauf."
   },
   "Share": {
     "title": "Mit Interessenten teilen",

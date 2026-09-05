@@ -95,6 +95,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     /** Model picker overrides (validated server-side). */
     chatModelId?: unknown;
     imageQualityId?: unknown;
+    /** Send this run's output to the store as it lands, for this run only. */
+    autoSend?: unknown;
     /** When provided, the server clones the prior bulk's failed-product
      *  set instead of taking productIds from the body. Mutually
      *  exclusive with productIds (retryFromBulkId wins). */
@@ -215,7 +217,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     imageQualityId,
     customInstructions,
     totalCreditsBudget: totalCost,
-    prefs
+    prefs,
+    // Per-run decision, never persisted on the store.
+    autoSend: body.autoSend === true
   });
 
   if (!result.ok) {
