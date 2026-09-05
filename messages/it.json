@@ -1754,7 +1754,8 @@
     "errorTooMany": "Il tuo negozio accetta al massimo {max} foto per prodotto.",
     "errorUnsupported": "Il tuo negozio non gestisce questa modifica.",
     "errorArchived": "Questo prodotto non è più nel tuo negozio.",
-    "errorGeneric": "Si è verificato un errore. Riprova."
+    "errorGeneric": "Si è verificato un errore. Riprova.",
+    "tileSyncing": "Sincronizzazione con il tuo negozio: le azioni tornano dopo la prossima sincronizzazione."
   },
   "AltText": {
     "title": "Testi alternativi mancanti",
@@ -1780,7 +1781,7 @@
     "title": "Da 30 a 70 caratteri: abbastanza preciso perché Google capisca il prodotto, abbastanza corto da non essere troncato nei risultati.",
     "description": "Una descrizione dettagliata risponde ai dubbi prima dell’acquisto e riduce esitazioni e resi. Il punteggio pieno arriva a 600 caratteri, con qualche sottotitolo o elenco.",
     "tags": "I tag mettono il prodotto sullo scaffale giusto e alimentano la ricerca e i filtri del tuo negozio. Da 5 tag in su il punteggio è pieno.",
-    "images": "Più angolazioni rassicurano chi compra — il materiale, la misura, l’uso — e fanno tornare indietro meno pacchi. Da 4 foto in su il punteggio è pieno.",
+    "images": "Più angolazioni rassicurano chi compra — il materiale, la misura, l’uso — e fanno tornare indietro meno pacchi. Da 4 foto in su il punteggio è pieno. Ogni foto generata arriva con il suo testo alternativo, scritto insieme e incluso nel prezzo.",
     "altText": "Una frase che descrive la foto: compare se l’immagine non si carica, i lettori di schermo la leggono ad alta voce e dà senso ai tuoi visual nella ricerca per immagini. Basta una frase semplice per foto.",
     "imageCount": "Il numero di foto per prodotto pesa più di tutto sul punteggio visivo. Sotto le 4 manca quasi sempre un’angolazione o una foto in uso, proprio quella che chiude la vendita.",
     "imageResolution": "Sotto gli 800 px di larghezza la foto diventa sfocata appena la si ingrandisce sul telefono, e nasce il dubbio. Segnaliamo ogni prodotto la cui foto più piccola scende sotto questa soglia.",

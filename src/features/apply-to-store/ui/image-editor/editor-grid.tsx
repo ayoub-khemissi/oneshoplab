@@ -47,6 +47,7 @@ export function EditorGrid({
           inGallery={tile.inGallery}
           actions={actionsFor(tile)}
           altCost={altCost}
+          syncing={tile.kind === 'store' && !tile.sourceImageId}
           canMoveLeft={tile.position > 0}
           canMoveRight={tile.position >= 0 && tile.position < galleryLength - 1}
           replacing={replaceFor === tile.domRef}

@@ -22,6 +22,7 @@ const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
 const { autoSendCompletedGenerations } = await import(
   '@/features/apply-to-store/api/auto-send'
 );
+const { generateAltsForNewImages } = await import('@/entities/generation-job');
 const { drainWebhookDeliveries, sweepWebhookDeliveries } =
   await import('@/features/webhook-delivery');
 
@@ -92,6 +93,12 @@ async function main(): Promise<void> {
         // in different places, and this covers every one without touching any.
         autoSendCompletedGenerations().catch((e: unknown) =>
           console.error('[worker] auto-send failed', e)
+        ),
+        // The alt text `costForImage` already charged for. Here rather than in
+        // the kie callback: that callback should not wait on a second model
+        // call, and a job is picked up by existing.
+        generateAltsForNewImages().catch((e: unknown) =>
+          console.error('[worker] image-alts failed', e)
         )
       ];
       // Every couple of minutes: re-score the stores whose catalog moved

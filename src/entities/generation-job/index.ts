@@ -16,6 +16,7 @@ export type { OptimHistoryItem } from './api/optim-history';
 export { runChatOptim } from './api/optims';
 export type { ChatOptimRequest, ChatOptimResult } from './api/optims';
 export { altTextCredits, runAltTextOptim } from './api/alt-text';
+export { generateAltsForNewImages } from './api/image-alts';
 export type { AltTextOptimRequest } from './api/alt-text';
 export { IMAGE_COST_CREDITS, startImageOptim } from './api/image-optim';
 export type { StartImageOptimOptions, StartImageOptimResult } from './api/image-optim';

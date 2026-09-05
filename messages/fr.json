@@ -1754,7 +1754,8 @@
     "errorTooMany": "Votre boutique accepte {max} photos au maximum par produit.",
     "errorUnsupported": "Votre boutique ne gère pas cette modification.",
     "errorArchived": "Ce produit n’est plus dans votre boutique.",
-    "errorGeneric": "Une erreur est survenue. Réessayez."
+    "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "tileSyncing": "Synchronisation avec votre boutique — les actions reviennent après la prochaine synchro."
   },
   "AltText": {
     "title": "Textes alternatifs manquants",
@@ -1780,7 +1781,7 @@
     "title": "30 à 70 caractères : assez précis pour que Google comprenne votre produit, assez court pour ne pas être coupé dans les résultats.",
     "description": "Une description détaillée répond aux questions d’avant-achat, ce qui limite les hésitations et les retours. La note maximale s’obtient à 600 caractères, avec quelques sous-titres ou listes.",
     "tags": "Les tags rangent le produit dans les bons rayons et alimentent la recherche et les filtres de votre boutique. À partir de 5 tags, la note est au maximum.",
-    "images": "Plusieurs angles rassurent l’acheteur — la matière, la taille, l’usage — et font revenir moins de colis. À partir de 4 photos, la note est au maximum.",
+    "images": "Plusieurs angles rassurent l’acheteur — la matière, la taille, l’usage — et font revenir moins de colis. À partir de 4 photos, la note est au maximum. Chaque photo générée arrive avec son texte alternatif, rédigé en même temps et compris dans le prix.",
     "altText": "Une phrase qui décrit la photo : elle s’affiche si l’image ne charge pas, les lecteurs d’écran la lisent à voix haute, et elle donne du sens à vos visuels dans la recherche d’images. Une phrase simple par photo suffit.",
     "imageCount": "Le nombre de photos par produit pèse le plus lourd dans la note visuelle. En dessous de 4, il manque presque toujours un angle ou une mise en situation — souvent celle qui déclenche l’achat.",
     "imageResolution": "En dessous de 800 px de large, la photo devient floue dès qu’on l’agrandit sur mobile, et le doute s’installe. Nous signalons chaque produit dont la plus petite photo passe sous ce seuil.",

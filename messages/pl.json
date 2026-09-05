@@ -1754,7 +1754,8 @@
     "errorTooMany": "Twój sklep przyjmuje maksymalnie {max} zdjęć na produkt.",
     "errorUnsupported": "Twój sklep nie obsługuje tej zmiany.",
     "errorArchived": "Tego produktu nie ma już w Twoim sklepie.",
-    "errorGeneric": "Wystąpił błąd. Spróbuj ponownie."
+    "errorGeneric": "Wystąpił błąd. Spróbuj ponownie.",
+    "tileSyncing": "Synchronizacja ze sklepem — akcje wrócą po następnej synchronizacji."
   },
   "AltText": {
     "title": "Brakujące teksty alternatywne",
@@ -1780,7 +1781,7 @@
     "title": "Od 30 do 70 znaków: dość precyzyjnie, by Google zrozumiał produkt, i dość krótko, by tytuł nie został ucięty w wynikach.",
     "description": "Szczegółowy opis odpowiada na pytania sprzed zakupu i ogranicza wahanie oraz zwroty. Pełna nota od 600 znaków, z kilkoma śródtytułami lub listami.",
     "tags": "Tagi układają produkt na właściwej półce i zasilają wyszukiwarkę oraz filtry twojego sklepu. Od 5 tagów nota jest pełna.",
-    "images": "Kilka ujęć uspokaja kupującego — materiał, rozmiar, zastosowanie — i mniej paczek wraca. Od 4 zdjęć nota jest pełna.",
+    "images": "Kilka ujęć uspokaja kupującego — materiał, rozmiar, zastosowanie — i mniej paczek wraca. Od 4 zdjęć nota jest pełna. Każde wygenerowane zdjęcie ma swój tekst alternatywny, pisany od razu i wliczony w cenę.",
     "altText": "Zdanie opisujące zdjęcie: pojawia się, gdy obraz się nie wczyta, czytniki ekranu czytają je na głos, a wyszukiwarka grafiki dzięki niemu rozumie twoje zdjęcia. Wystarczy jedno proste zdanie na zdjęcie.",
     "imageCount": "Liczba zdjęć na produkt waży najwięcej w nocie wizualnej. Poniżej 4 prawie zawsze brakuje ujęcia albo zdjęcia w użyciu — właśnie tego, które domyka sprzedaż.",
     "imageResolution": "Poniżej 800 px szerokości zdjęcie rozmywa się przy powiększeniu na telefonie i rodzi wątpliwość. Oznaczamy każdy produkt, którego najmniejsze zdjęcie schodzi poniżej tego progu.",

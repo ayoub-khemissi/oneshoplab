@@ -1754,7 +1754,8 @@
     "errorTooMany": "Your store accepts at most {max} photos per product.",
     "errorUnsupported": "Your store does not support this change.",
     "errorArchived": "This product is no longer in your store.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "tileSyncing": "Syncing with your store — actions come back after the next sync."
   },
   "AltText": {
     "title": "Missing alternative text",
@@ -1780,7 +1781,7 @@
     "title": "30 to 70 characters: precise enough for Google to understand your product, short enough not to be cut off in the results.",
     "description": "A detailed description answers the questions buyers ask before ordering, which cuts hesitation and returns. Full marks at 600 characters, with a few subheadings or lists.",
     "tags": "Tags file the product on the right shelves and feed your store’s own search and filters. Five tags or more scores full marks.",
-    "images": "Several angles reassure the buyer — the material, the size, how it is used — and fewer parcels come back. Four photos or more scores full marks.",
+    "images": "Several angles reassure the buyer — the material, the size, how it is used — and fewer parcels come back. Four photos or more scores full marks. Each generated photo comes with its alt text, written at the same time and included in the price.",
     "altText": "One sentence describing the photo: it shows if the image fails to load, screen readers read it aloud, and it gives your visuals meaning in image search. One plain sentence per photo is enough.",
     "imageCount": "The number of photos per product weighs the most in the visual score. Below four, an angle or a real-life shot is almost always missing — often the one that closes the sale.",
     "imageResolution": "Below 800 px wide a photo turns blurry as soon as it is enlarged on a phone, and doubt sets in. We flag every product whose smallest photo falls under that mark.",

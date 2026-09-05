@@ -1754,7 +1754,8 @@
     "errorTooMany": "Mağazanız ürün başına en fazla {max} fotoğraf kabul ediyor.",
     "errorUnsupported": "Mağazanız bu değişikliği desteklemiyor.",
     "errorArchived": "Bu ürün artık mağazanızda değil.",
-    "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin."
+    "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "tileSyncing": "Mağazanızla eşitleniyor — işlemler bir sonraki eşitlemeden sonra döner."
   },
   "AltText": {
     "title": "Eksik alternatif metinler",
@@ -1780,7 +1781,7 @@
     "title": "30 ila 70 karakter: Google’ın ürününüzü anlamasına yetecek kadar açık, arama sonuçlarında kesilmeyecek kadar kısa.",
     "description": "Ayrıntılı bir açıklama satın almadan önceki soruları yanıtlar; tereddüdü ve iadeleri azaltır. Tam puan 600 karakterden ve birkaç ara başlık ya da listeden geçer.",
     "tags": "Etiketler ürünü doğru rafa yerleştirir ve mağazanızın kendi aramasını ve filtrelerini besler. 5 etiketten itibaren puan tamdır.",
-    "images": "Birkaç farklı açı alıcıyı rahatlatır — malzeme, ölçü, kullanım — ve daha az kargo geri döner. 4 fotoğraftan itibaren puan tamdır.",
+    "images": "Birkaç farklı açı alıcıyı rahatlatır — malzeme, ölçü, kullanım — ve daha az kargo geri döner. 4 fotoğraftan itibaren puan tamdır. Üretilen her fotoğraf, aynı anda yazılan ve fiyata dahil olan alt metniyle gelir.",
     "altText": "Fotoğrafı anlatan bir cümle: görsel yüklenmezse görünür, ekran okuyucular sesli okur ve görsel aramada fotoğraflarınıza anlam kazandırır. Fotoğraf başına yalın bir cümle yeter.",
     "imageCount": "Ürün başına fotoğraf sayısı görsel puanda en ağır basan ölçüdür. 4’ün altında neredeyse her zaman bir açı ya da kullanım karesi eksiktir — çoğu zaman satışı kapatan kare.",
     "imageResolution": "800 pikselin altındaki genişlikte fotoğraf telefonda büyütülür büyütülmez bulanıklaşır ve şüphe başlar. En küçük fotoğrafı bu eşiğin altında kalan her ürünü işaretliyoruz.",

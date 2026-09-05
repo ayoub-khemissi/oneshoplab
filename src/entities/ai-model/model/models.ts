@@ -307,10 +307,27 @@ export function getImageModel(id: ImageQualityId | string | null | undefined): I
   return IMAGE_MODEL_REGISTRY[DEFAULT_IMAGE_QUALITY];
 }
 
-/** Per-image flat cost in user-facing OneShopLab credits. */
-export function costForImage(qualityId: ImageQualityId): number {
+/**
+ * The alt text that ships with a generated image, priced here rather than in
+ * `generation-job` so `costForImage` can include it without an import cycle.
+ * It is the same quote `altTextCredits()` produces there.
+ */
+export function altCostForImage(chatModelId?: ChatModelId | null): number {
+  return estimateChatCredits(visionChatModel(chatModelId).id, 'alt');
+}
+
+/**
+ * Per-image flat cost in user-facing OneShopLab credits — the picture AND its
+ * alt text.
+ *
+ * They are one purchase because they are one job to the merchant: an image
+ * without an alt is an image they have to come back and finish, and asking
+ * them to click again for a sentence the model can write while it is already
+ * looking at the photo is a step that exists for our convenience, not theirs.
+ */
+export function costForImage(qualityId: ImageQualityId, chatModelId?: ChatModelId | null): number {
   const m = IMAGE_MODEL_REGISTRY[qualityId];
-  return Math.ceil(m.kieCost * CREDIT_MARKUP);
+  return Math.ceil(m.kieCost * CREDIT_MARKUP) + altCostForImage(chatModelId);
 }
 
 export const IMAGE_ANGLES_PER_GEN = PRICING.imageAnglesPerGen;

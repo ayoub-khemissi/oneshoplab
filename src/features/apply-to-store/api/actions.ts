@@ -44,9 +44,13 @@ function changeValue(field: ProductChangeField, result: unknown): unknown {
   const r = (result ?? {}) as {
     output?: string | string[];
     persistedUrls?: string[];
+    alts?: string[];
   };
   if (field === 'images') {
-    return (r.persistedUrls ?? []).map((src) => ({ src, alt: null }));
+    // The alt ships with the picture: `costForImage` charges for both, and a
+    // photo that reaches the store already described saves the merchant a
+    // second trip through the whole apply flow.
+    return (r.persistedUrls ?? []).map((src, i) => ({ src, alt: r.alts?.[i] ?? null }));
   }
   return r.output ?? '';
 }

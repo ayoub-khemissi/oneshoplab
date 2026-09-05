@@ -1754,7 +1754,8 @@
     "errorTooMany": "A sua loja aceita no máximo {max} fotos por produto.",
     "errorUnsupported": "A sua loja não suporta esta alteração.",
     "errorArchived": "Este produto já não está na sua loja.",
-    "errorGeneric": "Ocorreu um erro. Tente novamente."
+    "errorGeneric": "Ocorreu um erro. Tente novamente.",
+    "tileSyncing": "A sincronizar com a sua loja — as ações voltam após a próxima sincronização."
   },
   "AltText": {
     "title": "Textos alternativos em falta",
@@ -1780,7 +1781,7 @@
     "title": "De 30 a 70 caracteres: preciso o suficiente para o Google entender o produto e curto o suficiente para não ser cortado nos resultados.",
     "description": "Uma descrição detalhada responde às dúvidas antes da compra e reduz a hesitação e as devoluções. A nota máxima chega aos 600 caracteres, com alguns subtítulos ou listas.",
     "tags": "As tags arrumam o produto na prateleira certa e alimentam a busca e os filtros da sua loja. A partir de 5 tags a nota é máxima.",
-    "images": "Vários ângulos tranquilizam quem compra — o material, o tamanho, o uso — e menos encomendas voltam. A partir de 4 fotos a nota é máxima.",
+    "images": "Vários ângulos tranquilizam quem compra — o material, o tamanho, o uso — e menos encomendas voltam. A partir de 4 fotos a nota é máxima. Cada foto gerada vem com o seu texto alternativo, escrito ao mesmo tempo e incluído no preço.",
     "altText": "Uma frase que descreve a foto: aparece se a imagem não carregar, os leitores de tela leem em voz alta e dá sentido aos seus visuais na busca por imagens. Basta uma frase simples por foto.",
     "imageCount": "O número de fotos por produto é o que mais pesa na nota visual. Abaixo de 4 falta quase sempre um ângulo ou uma foto em uso — justamente a que fecha a venda.",
     "imageResolution": "Abaixo de 800 px de largura a foto fica desfocada assim que é ampliada no celular, e a dúvida aparece. Sinalizamos todo produto cuja menor foto fica abaixo desse limite.",

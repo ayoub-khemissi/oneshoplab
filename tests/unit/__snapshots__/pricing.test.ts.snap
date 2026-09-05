@@ -2,9 +2,9 @@
 
 exports[`credit costs (snapshot — update deliberately) > image generation per quality 1`] = `
 {
-  "image-1k": 21,
-  "image-2k": 35,
-  "image-4k": 56,
+  "image-1k": 22,
+  "image-2k": 36,
+  "image-4k": 57,
 }
 `;
 

@@ -43,6 +43,9 @@ export interface EditorTileProps {
   removeBlocked: boolean;
   /** Credits one alt-text generation costs, shown on the button. */
   altCost: number;
+  /** A store photo we cannot address yet: applied to the store, but the
+   *  catalogue has not come back with its id. Every action is off until then. */
+  syncing?: boolean;
   on: TileHandlers;
   onDragStart?: () => void;
   onDrop?: () => void;
@@ -212,6 +215,13 @@ export function EditorTile(props: EditorTileProps) {
             >
               {t('actionRemove')}
             </TileButton>
+          ) : null}
+          {props.syncing ? (
+            // Silence here read as a broken tile: no buttons, and an alt column
+            // saying "none" on a photo that had just been sent to the store.
+            <span className="w-full text-[10px] leading-snug text-[var(--muted)]">
+              {t('tileSyncing')}
+            </span>
           ) : null}
           {props.removeBlocked ? (
             <span className="text-[10px] text-[var(--muted)]" title={t('removeBlocked')}>

@@ -93,7 +93,7 @@ describe('catalog invariants', () => {
   });
 
   it('image qualities are ordered by cost and resolve with a fallback', () => {
-    const costs = IMAGE_QUALITY_IDS.map(costForImage);
+    const costs = IMAGE_QUALITY_IDS.map((id) => costForImage(id));
     expect([...costs].sort((a, b) => a - b)).toEqual(costs);
     expect(getImageModel('bogus').id).toBe(PRICING.defaultImageQuality);
     expect(Object.keys(IMAGE_MODEL_REGISTRY).sort()).toEqual([...IMAGE_QUALITY_IDS].sort());

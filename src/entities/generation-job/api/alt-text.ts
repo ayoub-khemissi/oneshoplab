@@ -34,6 +34,10 @@ export interface AltTextOptimRequest {
   /** Caller's model pick. Absent → the 'fast' system model; a pick that
    *  cannot read images is swapped for one that can (visionChatModel). */
   chatModelId?: ChatModelId | null;
+  /** Skip the debit because the caller already charged for this alt. Used by
+   *  the alt that ships with a generated image: `costForImage` includes it, so
+   *  billing it again here would charge the merchant twice for one sentence. */
+  alreadyPaid?: boolean;
 }
 
 /**
@@ -75,7 +79,7 @@ export async function runAltTextOptim(opts: AltTextOptimRequest): Promise<AltTex
     system: built.system,
     messages: [{ role: 'user', content: built.user }],
     maxTokens: Math.ceil(outputTokenCapFor('alt') * SAFETY_MULTIPLIER),
-    debit: estimateChatCredits(model.id, 'alt'),
+    debit: opts.alreadyPaid ? 0 : estimateChatCredits(model.id, 'alt'),
     parse: sanitizeAltText
     // No bell entry on purpose: the batch action fans this out up to 25 times
     // per click, and 25 notifications for one action is noise, not news. Both

@@ -1754,7 +1754,8 @@
     "errorTooMany": "Ihr Shop akzeptiert höchstens {max} Fotos pro Produkt.",
     "errorUnsupported": "Ihr Shop unterstützt diese Änderung nicht.",
     "errorArchived": "Dieses Produkt ist nicht mehr in Ihrem Shop.",
-    "errorGeneric": "Ein Fehler ist aufgetreten. Bitte erneut versuchen."
+    "errorGeneric": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
+    "tileSyncing": "Wird mit Ihrem Shop synchronisiert — die Aktionen kehren nach der nächsten Synchronisierung zurück."
   },
   "AltText": {
     "title": "Fehlende Alternativtexte",
@@ -1780,7 +1781,7 @@
     "title": "30 bis 70 Zeichen: präzise genug, damit Google Ihr Produkt versteht, und kurz genug, um in den Ergebnissen nicht abgeschnitten zu werden.",
     "description": "Eine ausführliche Beschreibung beantwortet die Fragen vor dem Kauf und senkt Zögern und Retouren. Die volle Punktzahl gibt es ab 600 Zeichen, mit ein paar Zwischentiteln oder Listen.",
     "tags": "Tags sortieren das Produkt ins richtige Regal und speisen Suche und Filter Ihres Shops. Ab 5 Tags ist die Punktzahl voll.",
-    "images": "Mehrere Blickwinkel geben Sicherheit — Material, Größe, Einsatz — und weniger Pakete kommen zurück. Ab 4 Fotos ist die Punktzahl voll.",
+    "images": "Mehrere Blickwinkel geben Sicherheit — Material, Größe, Einsatz — und weniger Pakete kommen zurück. Ab 4 Fotos ist die Punktzahl voll. Jedes generierte Foto kommt mit seinem Alt-Text, gleichzeitig geschrieben und im Preis enthalten.",
     "altText": "Ein Satz, der das Foto beschreibt: Er erscheint, wenn das Bild nicht lädt, Screenreader lesen ihn vor, und er gibt Ihren Bildern in der Bildersuche einen Sinn. Ein einfacher Satz pro Foto genügt.",
     "imageCount": "Die Zahl der Fotos pro Produkt wiegt in der visuellen Note am schwersten. Unter 4 fehlt fast immer ein Blickwinkel oder ein Bild im Einsatz — oft genau das, was den Kauf auslöst.",
     "imageResolution": "Unter 800 px Breite wird das Foto beim Vergrößern auf dem Handy unscharf, und Zweifel entstehen. Wir markieren jedes Produkt, dessen kleinstes Foto darunter liegt.",

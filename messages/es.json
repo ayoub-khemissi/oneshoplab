@@ -1754,7 +1754,8 @@
     "errorTooMany": "Tu tienda acepta como máximo {max} fotos por producto.",
     "errorUnsupported": "Tu tienda no admite este cambio.",
     "errorArchived": "Este producto ya no está en tu tienda.",
-    "errorGeneric": "Se ha producido un error. Inténtalo de nuevo."
+    "errorGeneric": "Se ha producido un error. Inténtalo de nuevo.",
+    "tileSyncing": "Sincronizando con su tienda: las acciones vuelven tras la próxima sincronización."
   },
   "AltText": {
     "title": "Textos alternativos que faltan",
@@ -1780,7 +1781,7 @@
     "title": "De 30 a 70 caracteres: bastante preciso para que Google entienda tu producto y bastante corto para que no se corte en los resultados.",
     "description": "Una descripción detallada responde a las dudas previas a la compra y reduce las vacilaciones y las devoluciones. La nota máxima llega a los 600 caracteres, con algunos subtítulos o listas.",
     "tags": "Las etiquetas colocan el producto en el estante correcto y alimentan el buscador y los filtros de tu tienda. A partir de 5 etiquetas la nota es máxima.",
-    "images": "Varios ángulos tranquilizan al comprador — el material, el tamaño, el uso — y hacen volver menos paquetes. A partir de 4 fotos la nota es máxima.",
+    "images": "Varios ángulos tranquilizan al comprador — el material, el tamaño, el uso — y hacen volver menos paquetes. A partir de 4 fotos la nota es máxima. Cada foto generada llega con su texto alternativo, redactado a la vez e incluido en el precio.",
     "altText": "Una frase que describe la foto: aparece si la imagen no carga, los lectores de pantalla la leen en voz alta y da sentido a tus visuales en la búsqueda de imágenes. Basta una frase sencilla por foto.",
     "imageCount": "El número de fotos por producto es lo que más pesa en la nota visual. Por debajo de 4 casi siempre falta un ángulo o una foto en uso, justo la que cierra la venta.",
     "imageResolution": "Por debajo de 800 px de ancho la foto se ve borrosa al ampliarla en el móvil y aparece la duda. Señalamos cada producto cuya foto más pequeña baja de ese umbral.",
