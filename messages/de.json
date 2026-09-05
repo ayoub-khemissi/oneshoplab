@@ -1870,7 +1870,11 @@
       "failed": "fehlgeschlagen"
     },
     "hintToApply": "Nutzen Sie die Schaltfläche „Anwenden“ unter jeder Generierung, um sie an Ihren Shop zu senden.",
-    "hintAllSent": "Bei diesem Produkt wartet nichts auf Sie."
+    "hintAllSent": "Bei diesem Produkt wartet nichts auf Sie.",
+    "sendAll": "{count, plural, =1 {1 Änderung an meinen Shop senden} other {# Änderungen an meinen Shop senden}}",
+    "sendAllBusy": "Wird gesendet…",
+    "sendAllDone": "{count, plural, =1 {1 Änderung gesendet} other {# Änderungen gesendet}}",
+    "sendAllNone": "Es konnte nichts gesendet werden"
   },
   "SiteStatus": {
     "auditRunning": "Ihr Katalog wird analysiert…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, =1 {1 Änderung ist auf dem Weg zu Ihrem Shop} other {# Änderungen sind auf dem Weg zu Ihrem Shop}}",
     "connectStore": "Verbinden Sie Ihren Shop, um Änderungen automatisch anzuwenden",
     "applyFirstChange": "Wenden Sie Ihre erste Änderung in Ihrem Shop an",
-    "action": "Öffnen"
+    "action": "Öffnen",
+    "sendAll": "{count, plural, =1 {1 Änderung an meinen Shop senden} other {# Änderungen an meinen Shop senden}}"
   }
 }

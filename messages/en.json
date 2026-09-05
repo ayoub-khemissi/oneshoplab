@@ -1870,7 +1870,11 @@
       "failed": "failed"
     },
     "hintToApply": "Use the Apply button under each generation to send it to your store.",
-    "hintAllSent": "Nothing is waiting for you on this product."
+    "hintAllSent": "Nothing is waiting for you on this product.",
+    "sendAll": "{count, plural, =1 {Send 1 change to my store} other {Send # changes to my store}}",
+    "sendAllBusy": "Sending…",
+    "sendAllDone": "{count, plural, =1 {1 change sent} other {# changes sent}}",
+    "sendAllNone": "Nothing could be sent"
   },
   "SiteStatus": {
     "auditRunning": "Analysing your catalogue…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, =1 {1 change on its way to your store} other {# changes on their way to your store}}",
     "connectStore": "Connect your store to apply your changes automatically",
     "applyFirstChange": "Apply your first change to your store",
-    "action": "Open"
+    "action": "Open",
+    "sendAll": "{count, plural, =1 {Send 1 change to my store} other {Send # changes to my store}}"
   }
 }

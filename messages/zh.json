@@ -1870,7 +1870,11 @@
       "failed": "失败"
     },
     "hintToApply": "点击每项生成内容下方的「应用」按钮，将其发送到你的店铺。",
-    "hintAllSent": "该商品没有等待你处理的内容。"
+    "hintAllSent": "该商品没有等待你处理的内容。",
+    "sendAll": "{count, plural, other {发送 # 项修改到我的店铺}}",
+    "sendAllBusy": "发送中…",
+    "sendAllDone": "{count, plural, other {已发送 # 项修改}}",
+    "sendAllNone": "没有内容可发送"
   },
   "SiteStatus": {
     "auditRunning": "正在分析你的商品目录…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {# 项修改正在发送到你的店铺}}",
     "connectStore": "连接店铺即可自动应用修改",
     "applyFirstChange": "把第一项修改应用到你的店铺",
-    "action": "打开"
+    "action": "打开",
+    "sendAll": "{count, plural, other {发送 # 项修改到我的店铺}}"
   }
 }

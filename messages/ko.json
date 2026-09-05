@@ -1870,7 +1870,11 @@
       "failed": "실패"
     },
     "hintToApply": "각 생성 아래의 적용 버튼으로 스토어에 전송하세요.",
-    "hintAllSent": "이 상품에는 결정을 기다리는 항목이 없습니다."
+    "hintAllSent": "이 상품에는 결정을 기다리는 항목이 없습니다.",
+    "sendAll": "{count, plural, other {변경 # 건을 스토어로 보내기}}",
+    "sendAllBusy": "전송 중…",
+    "sendAllDone": "{count, plural, other {변경 # 건을 전송했습니다}}",
+    "sendAllNone": "보낼 수 있는 항목이 없습니다"
   },
   "SiteStatus": {
     "auditRunning": "카탈로그를 분석하는 중…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {스토어로 전송 중인 변경 # 건}}",
     "connectStore": "스토어를 연결하면 변경 사항이 자동으로 적용됩니다",
     "applyFirstChange": "첫 변경 사항을 스토어에 적용해 보세요",
-    "action": "열기"
+    "action": "열기",
+    "sendAll": "{count, plural, other {변경 # 건을 스토어로 보내기}}"
   }
 }

@@ -1870,7 +1870,11 @@
       "failed": "فشل"
     },
     "hintToApply": "استخدم زر «تطبيق» أسفل كل نتيجة لإرسالها إلى متجرك.",
-    "hintAllSent": "لا شيء ينتظر قرارك في هذا المنتج."
+    "hintAllSent": "لا شيء ينتظر قرارك في هذا المنتج.",
+    "sendAll": "{count, plural, other {إرسال # تعديلات إلى متجري}}",
+    "sendAllBusy": "جارٍ الإرسال…",
+    "sendAllDone": "{count, plural, other {تم إرسال # تعديلات}}",
+    "sendAllNone": "تعذّر إرسال أي شيء"
   },
   "SiteStatus": {
     "auditRunning": "جارٍ تحليل كتالوجك…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {# تعديلات في طريقها إلى متجرك}}",
     "connectStore": "اربط متجرك لتطبيق تعديلاتك تلقائيًا",
     "applyFirstChange": "طبّق أول تعديل على متجرك",
-    "action": "فتح"
+    "action": "فتح",
+    "sendAll": "{count, plural, other {إرسال # تعديلات إلى متجري}}"
   }
 }

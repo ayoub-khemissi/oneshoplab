@@ -1,10 +1,13 @@
 'use client';
 
-import { AlertTriangle, ArrowRight, Plug } from 'lucide-react';
+import { Spinner } from '@heroui/react';
+import { AlertTriangle, ArrowRight, Plug, Store } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
 import { PendingChangesModal, type PendingChangeItem } from '@/features/apply-to-store/client';
+import { sendAllGenerationsAction } from '@/features/apply-to-store';
 import type { SiteStatus } from '../lib/resolve';
 
 /**
@@ -15,16 +18,47 @@ import type { SiteStatus } from '../lib/resolve';
 export function SiteStatusLine({
   status,
   projectId,
-  items
+  items,
+  sendable = 0
 }: {
   status: SiteStatus | null;
   projectId: string;
   /** Feeds the recap the "changes" targets open — same modal as before. */
   items: PendingChangeItem[];
+  /** Generations this store made and never sent. Offered beside the message so
+   *  a merchant clears a whole catalogue in one click rather than one per
+   *  field, which is unclickable after a bulk run. */
+  sendable?: number;
 }) {
   const t = useTranslations('SiteStatus');
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  if (!status) return null;
+  const [busy, startTransition] = useTransition();
+
+  function sendAll() {
+    startTransition(async () => {
+      await sendAllGenerationsAction(projectId);
+      router.refresh();
+    });
+  }
+
+  const sendAllButton =
+    sendable > 0 ? (
+      <button
+        type="button"
+        onClick={sendAll}
+        disabled={busy}
+        data-testid="site-send-all"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-[var(--accent-foreground)] hover:opacity-90 disabled:opacity-60"
+      >
+        {busy ? <Spinner size="sm" /> : <Store className="size-3" aria-hidden />}
+        {t('sendAll', { count: sendable })}
+      </button>
+    ) : null;
+
+  if (!status) {
+    return sendAllButton ? <div className="flex min-w-0">{sendAllButton}</div> : null;
+  }
 
   const label = t(status.kind, { count: status.count ?? 0 });
   const tone =
@@ -53,7 +87,11 @@ export function SiteStatusLine({
   );
 
   return (
-    <div data-testid="site-status-line" data-kind={status.kind} className="flex min-w-0">
+    <div
+      data-testid="site-status-line"
+      data-kind={status.kind}
+      className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1"
+    >
       {status.target === 'changes' ? (
         <>
           <button
@@ -80,6 +118,7 @@ export function SiteStatusLine({
       ) : (
         body
       )}
+      {sendAllButton}
     </div>
   );
 }

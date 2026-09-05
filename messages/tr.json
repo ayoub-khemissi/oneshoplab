@@ -1870,7 +1870,11 @@
       "failed": "başarısız"
     },
     "hintToApply": "Mağazanıza göndermek için her üretimin altındaki Uygula düğmesini kullanın.",
-    "hintAllSent": "Bu üründe kararınızı bekleyen bir şey yok."
+    "hintAllSent": "Bu üründe kararınızı bekleyen bir şey yok.",
+    "sendAll": "{count, plural, other {# değişikliği mağazama gönder}}",
+    "sendAllBusy": "Gönderiliyor…",
+    "sendAllDone": "{count, plural, other {# değişiklik gönderildi}}",
+    "sendAllNone": "Hiçbir şey gönderilemedi"
   },
   "SiteStatus": {
     "auditRunning": "Kataloğunuz analiz ediliyor…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {# değişiklik mağazanıza gidiyor}}",
     "connectStore": "Değişikliklerin otomatik uygulanması için mağazanızı bağlayın",
     "applyFirstChange": "İlk değişikliğinizi mağazanıza uygulayın",
-    "action": "Aç"
+    "action": "Aç",
+    "sendAll": "{count, plural, other {# değişikliği mağazama gönder}}"
   }
 }

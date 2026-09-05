@@ -257,7 +257,7 @@ export async function DashboardProductPage({
           already sent, which the recap's own lines carry. It stays for the
           cases the recap has no words for — a conflict or a failure, which
           open the recap modal. */}
-      <ProductRecapCard rows={recapRows} />
+      <ProductRecapCard rows={recapRows} projectId={projectId} productId={productId} />
       {pendingSummary.counts.conflict + pendingSummary.counts.failed > 0 ? (
         <PendingChangesBanner
           projectId={projectId}

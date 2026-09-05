@@ -28,6 +28,7 @@ import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/s
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
+  countSendableGenerationsAction,
   hasAppliedChange,
   isAwaitingStore,
   listPendingChangesForSite,
@@ -463,6 +464,9 @@ export async function DashboardSitePage({
   // the whole funnel turns on, and a one-line hint would waste it. Every other
   // onboarding step is now the status line's lowest-priority message.
   const showRescueCard = effectiveStatus === 'failed' && !storeConnected;
+  // Only a connected store can be sent to, so this bounded pair of reads is
+  // skipped entirely everywhere else.
+  const sendableCount = storeConnected ? await countSendableGenerationsAction(project.id) : 0;
   const activeProductCount = productRows.filter((p) => p.status === 'active').length;
   // Prefer the stored source; fall back to the latest audit's detection so a
   // project created before source persistence still routes to its platform.

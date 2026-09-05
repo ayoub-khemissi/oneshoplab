@@ -1870,7 +1870,11 @@
       "failed": "error"
     },
     "hintToApply": "Use el botón Aplicar debajo de cada generación para enviarla a su tienda.",
-    "hintAllSent": "Nada espera su decisión en este producto."
+    "hintAllSent": "Nada espera su decisión en este producto.",
+    "sendAll": "{count, plural, =1 {Enviar 1 cambio a mi tienda} other {Enviar # cambios a mi tienda}}",
+    "sendAllBusy": "Enviando…",
+    "sendAllDone": "{count, plural, =1 {1 cambio enviado} other {# cambios enviados}}",
+    "sendAllNone": "No se pudo enviar nada"
   },
   "SiteStatus": {
     "auditRunning": "Analizando su catálogo…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, =1 {1 cambio en camino a su tienda} other {# cambios en camino a su tienda}}",
     "connectStore": "Conecte su tienda para aplicar sus cambios automáticamente",
     "applyFirstChange": "Aplique su primer cambio a su tienda",
-    "action": "Abrir"
+    "action": "Abrir",
+    "sendAll": "{count, plural, =1 {Enviar 1 cambio a mi tienda} other {Enviar # cambios a mi tienda}}"
   }
 }

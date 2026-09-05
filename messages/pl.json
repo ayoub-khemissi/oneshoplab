@@ -1870,7 +1870,11 @@
       "failed": "niepowodzenie"
     },
     "hintToApply": "Użyj przycisku Zastosuj pod daną treścią, aby wysłać ją do sklepu.",
-    "hintAllSent": "Nic nie czeka na Twoją decyzję przy tym produkcie."
+    "hintAllSent": "Nic nie czeka na Twoją decyzję przy tym produkcie.",
+    "sendAll": "{count, plural, other {Wyślij # zmian do sklepu}}",
+    "sendAllBusy": "Wysyłanie…",
+    "sendAllDone": "{count, plural, other {Wysłano zmian: #}}",
+    "sendAllNone": "Nie udało się nic wysłać"
   },
   "SiteStatus": {
     "auditRunning": "Analizujemy Twój katalog…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {# zmian w drodze do Twojego sklepu}}",
     "connectStore": "Połącz sklep, aby zmiany były wprowadzane automatycznie",
     "applyFirstChange": "Zastosuj pierwszą zmianę w swoim sklepie",
-    "action": "Otwórz"
+    "action": "Otwórz",
+    "sendAll": "{count, plural, other {Wyślij # zmian do sklepu}}"
   }
 }

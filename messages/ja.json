@@ -1870,7 +1870,11 @@
       "failed": "失敗"
     },
     "hintToApply": "各生成の下にある「適用」ボタンでストアに送信できます。",
-    "hintAllSent": "この商品に判断待ちの項目はありません。"
+    "hintAllSent": "この商品に判断待ちの項目はありません。",
+    "sendAll": "{count, plural, other {# 件の変更をストアへ送信}}",
+    "sendAllBusy": "送信中…",
+    "sendAllDone": "{count, plural, other {# 件の変更を送信しました}}",
+    "sendAllNone": "送信できるものがありませんでした"
   },
   "SiteStatus": {
     "auditRunning": "カタログを分析しています…",
@@ -1880,6 +1884,7 @@
     "changesSending": "{count, plural, other {ストアへ送信中の変更が# 件}}",
     "connectStore": "ストアを接続すると変更が自動で反映されます",
     "applyFirstChange": "最初の変更をストアに反映しましょう",
-    "action": "開く"
+    "action": "開く",
+    "sendAll": "{count, plural, other {# 件の変更をストアへ送信}}"
   }
 }
