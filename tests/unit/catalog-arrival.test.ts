@@ -1,8 +1,7 @@
 /**
- * The window between connecting a store and its first score. Everything is
- * fine there and nothing looks it, so the page has to be told when to say
- * "fetching your catalog" instead of rendering an audit that predates the
- * connection.
+ * The window between connecting a store and its catalogue landing. The rule
+ * has to close on its own: a banner that says "fetching…" forever is worse
+ * than no banner at all, and that is exactly what the first version did.
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -10,9 +9,7 @@ import {
   type CatalogArrivalInput
 } from '@/features/run-audit/lib/catalog-arrival';
 
-const T0 = new Date('2026-09-04T12:23:05Z'); // the audit that failed
-const T1 = new Date('2026-09-04T12:24:11Z'); // the catalog landed
-const T2 = new Date('2026-09-04T12:26:05Z'); // it finally got scored
+const T1 = new Date('2026-09-05T06:22:36Z');
 
 function connected(over: Partial<NonNullable<CatalogArrivalInput['connection']>> = {}) {
   return {
@@ -25,59 +22,35 @@ function connected(over: Partial<NonNullable<CatalogArrivalInput['connection']>>
 }
 
 describe('isCatalogArriving', () => {
-  it('covers the real production gap: catalog in, audit still the old failure', () => {
+  it('is true while a pull is queued, running, or has never happened', () => {
     expect(
-      isCatalogArriving({
-        connection: connected(),
-        audit: { status: 'failed', createdAt: T0 }
-      })
+      isCatalogArriving({ connection: connected({ pullRequestedAt: T1, lastPullAt: null }) })
     ).toBe(true);
+    expect(isCatalogArriving({ connection: connected({ pullPhase: 'running' }) })).toBe(true);
+    expect(isCatalogArriving({ connection: connected({ lastPullAt: null }) })).toBe(true);
   });
 
-  it('ends as soon as an audit has scored that catalog', () => {
+  it('closes as soon as the catalogue has landed', () => {
+    expect(isCatalogArriving({ connection: connected() })).toBe(false);
+  });
+
+  it('closes even though an audit ran BEFORE the last pull', () => {
+    // The trap the first version fell into: an audit asks the store for a
+    // fresh catalogue while it runs, so the pull it triggers is always stamped
+    // after the audit that caused it. Comparing the two meant the banner could
+    // never come down. Only the connection's own state decides now.
+    expect(isCatalogArriving({ connection: connected({ lastPullAt: new Date() }) })).toBe(false);
+  });
+
+  it('a failed pull is not "on its way"', () => {
+    // The connection card reports the failure; a spinner here would never end.
     expect(
-      isCatalogArriving({
-        connection: connected(),
-        audit: { status: 'completed', createdAt: T2 }
-      })
+      isCatalogArriving({ connection: connected({ pullPhase: 'failed', lastPullAt: null }) })
     ).toBe(false);
-  });
-
-  it('a completed audit older than the catalog does not describe it', () => {
-    expect(
-      isCatalogArriving({
-        connection: connected({ lastPullAt: T2 }),
-        audit: { status: 'completed', createdAt: T1 }
-      })
-    ).toBe(true);
-  });
-
-  it('is true while a pull is queued or running', () => {
-    expect(
-      isCatalogArriving({
-        connection: connected({ pullRequestedAt: T1, lastPullAt: null }),
-        audit: null
-      })
-    ).toBe(true);
-    expect(
-      isCatalogArriving({
-        connection: connected({ pullPhase: 'running' }),
-        audit: { status: 'completed', createdAt: T2 }
-      })
-    ).toBe(true);
   });
 
   it('says nothing about a project with no connector, or a dead one', () => {
-    expect(
-      isCatalogArriving({ connection: null, audit: { status: 'failed', createdAt: T0 } })
-    ).toBe(false);
-    // A revoked connection is not fetching anything: the merchant must see the
-    // real state, not a spinner that never resolves.
-    expect(
-      isCatalogArriving({
-        connection: connected({ status: 'revoked' }),
-        audit: { status: 'failed', createdAt: T0 }
-      })
-    ).toBe(false);
+    expect(isCatalogArriving({ connection: null })).toBe(false);
+    expect(isCatalogArriving({ connection: connected({ status: 'revoked' }) })).toBe(false);
   });
 });

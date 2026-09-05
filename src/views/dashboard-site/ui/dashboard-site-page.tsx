@@ -360,8 +360,7 @@ export async function DashboardSitePage({
           pullRequestedAt: shopConnection.pullRequestedAt,
           lastPullAt: shopConnection.lastPullAt
         }
-      : null,
-    audit: { status: audit.status, createdAt: audit.createdAt }
+      : null
   });
   // `awaitingStore` is computed further down, next to the summary it reads.
   const isLoading = auditLoading || hasUnfinishedJobs || catalogArriving;
@@ -576,6 +575,14 @@ export async function DashboardSitePage({
       ) : activeTab === 'integrations' ? (
         <div className="flex flex-col gap-4">
           <IntegrationsWizard
+            // The wizard seeds client state from these props and never resyncs
+            // it, so the summary card kept reading a connection that had no
+            // pull yet and stayed orange on a store that was already synced —
+            // until a hard reload. Remount it whenever the server reports a
+            // different link state.
+            key={`${shopConnection?.status ?? 'none'}:${
+              shopConnection?.lastPullAt?.getTime() ?? 0
+            }:${activeProductCount > 0}`}
             projectId={project.id}
             domain={project.domain ?? project.url ?? null}
             pluginVersion={pluginManifest?.version ?? null}
