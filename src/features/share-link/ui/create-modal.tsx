@@ -3,6 +3,7 @@
 import { Spinner } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { ModalCloseButton } from '@/shared/ui';
 import { createShareLinkAction } from '../api/actions';
 import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
 
@@ -98,9 +99,10 @@ export function CreateModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col"
+        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col"
       >
-        <div className="p-5 border-b border-[var(--border)] flex flex-col gap-1">
+        <ModalCloseButton onClose={onCancel} />
+        <div className="p-5 pr-12 border-b border-[var(--border)] flex flex-col gap-1">
           <h3 className="text-base font-semibold">{t('modalTitle')}</h3>
           <p className="text-xs text-[var(--muted)] leading-relaxed">{t('modalBody')}</p>
         </div>

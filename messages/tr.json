@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "close": "Kapat"
+  },
   "Blog": {
     "indexEyebrow": "Blog",
     "indexTitle": "OneShopLab blogu",

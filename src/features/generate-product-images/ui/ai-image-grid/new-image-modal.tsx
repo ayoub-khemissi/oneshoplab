@@ -4,6 +4,7 @@ import { Spinner } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { ModalCloseButton } from '@/shared/ui';
 import type { ImageAngle, NewImagePayload } from './types';
 
 interface NewImageModalProps {
@@ -113,9 +114,10 @@ export function NewImageModal({
       <div
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-md w-full p-5 flex flex-col gap-4"
+        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-md w-full p-5 flex flex-col gap-4"
       >
-        <div>
+        <ModalCloseButton onClose={onCancel} />
+        <div className="pr-10">
           <h3 className="text-base font-semibold">
             {isReplace ? t('regenerateTitle') : t('newImageTitle')}
           </h3>

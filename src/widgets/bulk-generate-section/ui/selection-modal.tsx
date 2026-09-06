@@ -1,13 +1,13 @@
 'use client';
 
 import { Spinner } from '@heroui/react';
-import { Coins, X } from 'lucide-react';
+import { Coins } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { CandidateRow } from './candidate-row';
 import type { BulkCandidate } from '../model/types';
 import { BulkPrefsEditor, type BulkPrefs } from '@/features/bulk-generate/client';
-import { DebouncedSearchInput } from '@/shared/ui';
+import { DebouncedSearchInput, ModalCloseButton } from '@/shared/ui';
 import { ModelPickerChips } from '@/features/model-preferences';
 import {
   CHAT_MODEL_REGISTRY,
@@ -183,24 +183,15 @@ export function SelectionModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col"
+        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col"
       >
+        <ModalCloseButton onClose={onCancel} label={t('cancel')} />
         {/* Header + stepper ---------------------------------------- */}
-        <div className="p-4 sm:p-5 border-b border-[var(--border)] flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <h3 className="text-base font-semibold shrink-0">{t('selectionTitle')}</h3>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] truncate">
-              · {step}/2 · {step === 1 ? t('stepConfig') : t('stepSelect')}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={onCancel}
-            aria-label={t('cancel')}
-            className="size-8 rounded-md hover:bg-[var(--default)] inline-flex items-center justify-center shrink-0"
-          >
-            <X className="size-4" />
-          </button>
+        <div className="p-4 pr-12 sm:p-5 sm:pr-12 border-b border-[var(--border)] flex items-center gap-2 min-w-0">
+          <h3 className="text-base font-semibold shrink-0">{t('selectionTitle')}</h3>
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--muted)] truncate">
+            · {step}/2 · {step === 1 ? t('stepConfig') : t('stepSelect')}
+          </span>
         </div>
 
         {step === 1 ? (

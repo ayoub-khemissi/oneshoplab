@@ -19,6 +19,7 @@ export {
   useFieldView
 } from './field-swap';
 export { ImageZoom } from './image-zoom';
+export { ModalCloseButton } from './modal-close-button';
 export type { InfoHintProps, InfoHintTopic } from './info-hint';
 export { InfoHint } from './info-hint';
 export { LocalePicker } from './locale-picker';

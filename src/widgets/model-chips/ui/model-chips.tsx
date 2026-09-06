@@ -13,6 +13,7 @@ import {
 import { updateUserPreferencesAction } from '@/features/model-preferences';
 import { ModelPickerChips, useModelCopy } from '@/features/model-preferences';
 import { useGenerateContext } from '@/features/retryable-generate';
+import { ModalCloseButton } from '@/shared/ui';
 
 /**
  * Product-page model/quality picker. State comes from the generate context (so
@@ -81,7 +82,8 @@ export function ModelChips() {
         <Modal.Backdrop>
           <Modal.Container size="lg">
             <Modal.Dialog>
-              <Modal.Header>
+              <ModalCloseButton onClose={() => setOpen(false)} />
+              <Modal.Header className="pr-10">
                 <Modal.Heading className="text-base font-semibold">
                   {t('modelsModalTitle')}
                 </Modal.Heading>

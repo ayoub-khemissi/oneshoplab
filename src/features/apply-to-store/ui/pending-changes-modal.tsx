@@ -5,6 +5,7 @@ import { AlertTriangle, Check, ListChecks, Store, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+import { ModalCloseButton } from '@/shared/ui';
 import { applyPendingChangesAction, cancelChangeAction, dismissChangeAction } from '../api/actions';
 import { groupByProduct, resultParts } from '../lib/pending-summary';
 import type { ApplySelectionCounts, PendingChangeItem } from '../model/types';
@@ -114,7 +115,8 @@ export function PendingChangesModal({
       <Modal.Backdrop>
         <Modal.Container size="lg">
           <Modal.Dialog>
-            <Modal.Header className="flex flex-col gap-1">
+            <ModalCloseButton onClose={() => onOpenChange(false)} label={t('close')} />
+            <Modal.Header className="flex flex-col gap-1 pr-10">
               <Modal.Heading className="inline-flex items-center gap-2 text-base font-semibold">
                 <ListChecks className="size-4" aria-hidden /> {t('title')}
               </Modal.Heading>

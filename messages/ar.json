@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "close": "إغلاق"
+  },
   "Blog": {
     "indexEyebrow": "المدونة",
     "indexTitle": "مدونة OneShopLab",

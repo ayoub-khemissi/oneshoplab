@@ -3,6 +3,7 @@
 import { AlertDialog, Button } from '@heroui/react';
 import { AlertTriangle } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { ModalCloseButton } from './modal-close-button';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -44,7 +45,10 @@ export function ConfirmDialog({
       <AlertDialog.Backdrop>
         <AlertDialog.Container size="md">
           <AlertDialog.Dialog>
-            <AlertDialog.Header className="flex items-start gap-3">
+            {/* Cancel already exists, but the cross is where a hand goes
+                first — every dialog in the app leaves the same way. */}
+            <ModalCloseButton onClose={() => onOpenChange(false)} />
+            <AlertDialog.Header className="flex items-start gap-3 pr-10">
               <AlertDialog.Icon status={destructive ? 'danger' : 'warning'}>
                 <AlertTriangle className="size-5" aria-hidden />
               </AlertDialog.Icon>

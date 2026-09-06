@@ -93,14 +93,17 @@ export function MobileMenu({
       <Drawer.Backdrop>
         <Drawer.Content placement="right">
           <Drawer.Dialog className="flex flex-col h-full">
-            <Drawer.Header className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-5 py-4">
+            {/* Outside the header, not inside it: `.drawer__header` is
+                `flex-col`, so a cross written as a header child lands under
+                the title instead of beside it. */}
+            <Drawer.CloseTrigger
+              aria-label={labels.closeMenu}
+              className="size-9 rounded-md hover:bg-[var(--default)]"
+            />
+            <Drawer.Header className="border-b border-[var(--border)] px-5 py-4 pr-14">
               <Drawer.Heading className="text-base font-bold tracking-tight">
                 {labels.menuTitle}
               </Drawer.Heading>
-              <Drawer.CloseTrigger
-                aria-label={labels.closeMenu}
-                className="size-9 rounded-md hover:bg-[var(--default)]"
-              />
             </Drawer.Header>
 
             <Drawer.Body className="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-4">

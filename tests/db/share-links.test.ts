@@ -26,7 +26,7 @@ import {
   createShareLinkAction,
   revokeShareLinkAction,
   setShareLinkShowOnHomeAction
-} from '@/features/share-link';
+} from '@/features/share-link/actions';
 import { loadSharedAudit } from '@/entities/share-link';
 import { createUser, resetTables } from './helpers';
 import { createProject, createShareLink } from './site-helpers';

@@ -1,8 +1,9 @@
 'use client';
 
-import { Check, ClipboardCopy, MessageSquareText, X } from 'lucide-react';
+import { Check, ClipboardCopy, MessageSquareText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ContactLang } from '../api/contact-form';
+import { ModalCloseButton } from '@/shared/ui';
 
 export interface OutreachCopyData {
   subject: string;
@@ -99,24 +100,15 @@ function OutreachModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[88vh] flex flex-col text-left"
+        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[88vh] flex flex-col text-left"
       >
+        <ModalCloseButton onClose={onClose} />
         {/* Header ---------------------------------------------------- */}
-        <div className="p-4 border-b border-[var(--border)] flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-0.5 min-w-0">
-            <h3 className="text-base font-semibold truncate">{domain}</h3>
-            <span className="text-[10px] uppercase tracking-wider text-[var(--muted)] font-medium">
-              {variantLabel}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fermer"
-            className="shrink-0 inline-flex items-center justify-center size-7 rounded hover:bg-[var(--default)] text-[var(--muted)]"
-          >
-            <X className="size-4" aria-hidden />
-          </button>
+        <div className="p-4 pr-12 border-b border-[var(--border)] flex flex-col gap-0.5 min-w-0">
+          <h3 className="text-base font-semibold truncate">{domain}</h3>
+          <span className="text-[10px] uppercase tracking-wider text-[var(--muted)] font-medium">
+            {variantLabel}
+          </span>
         </div>
 
         {/* Language tabs --------------------------------------------- */}

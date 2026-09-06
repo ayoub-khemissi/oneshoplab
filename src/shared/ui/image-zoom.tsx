@@ -1,9 +1,10 @@
 'use client';
 
 import { Spinner } from '@heroui/react';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ModalCloseButton } from './modal-close-button';
 
 interface ImageZoomProps {
   url: string;
@@ -153,11 +154,13 @@ export function ImageZoom({
               className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
               onClick={() => setOpen(false)}
             >
+              {/* Download moves to the left: the top-right corner is where the
+                  way out lives, in this viewer as in every other dialog. */}
               <button
                 type="button"
                 onClick={(e) => downloadImage(e)}
                 disabled={downloading}
-                className="absolute top-4 right-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center disabled:opacity-50"
+                className="absolute top-4 left-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center disabled:opacity-50"
                 aria-label="Download image"
                 title="Download"
               >
@@ -168,14 +171,7 @@ export function ImageZoom({
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="absolute top-4 left-4 size-11 rounded-full bg-black/10 hover:bg-black/30 backdrop-blur-md transition-colors flex items-center justify-center"
-                aria-label="Close"
-              >
-                <X className="size-5 text-white" />
-              </button>
+              <ModalCloseButton onClose={() => setOpen(false)} tone="overlay" />
 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

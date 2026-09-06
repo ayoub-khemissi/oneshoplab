@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "close": "关闭"
+  },
   "Blog": {
     "indexEyebrow": "博客",
     "indexTitle": "OneShopLab 博客",

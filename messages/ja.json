@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "close": "閉じる"
+  },
   "Blog": {
     "indexEyebrow": "ブログ",
     "indexTitle": "OneShopLab ブログ",
