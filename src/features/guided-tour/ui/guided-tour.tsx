@@ -246,6 +246,7 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
               type="button"
               onClick={() => (last ? finish() : go(run[index + 1].id))}
               data-testid="tour-next"
+              data-last={last}
               className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-2 text-xs font-medium text-[var(--accent-foreground)] hover:opacity-90"
             >
               {last ? t('finish') : t('next')}

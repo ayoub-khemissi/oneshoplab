@@ -29,6 +29,11 @@ const config: NextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }]
   },
+  // `next dev` blocks its own chunks when the browser asks for them on
+  // 127.0.0.1 while the server bound to localhost — which is exactly what the
+  // Playwright smoke does. Nothing hydrates, and every client component looks
+  // broken. Dev-only setting; `next start` ignores it.
+  allowedDevOrigins: ['127.0.0.1'],
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb'
