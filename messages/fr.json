@@ -1923,9 +1923,9 @@
     "finish": "Terminer",
     "notHere": "Cet élément est sur une autre page — « Suivant » vous y emmène.",
     "replayTitle": "Tutoriel guidé",
-    "replayHint": "Refaites le parcours : l’audit, la connexion de votre boutique et la première correction.",
-    "replay": "Revoir le tutoriel",
-    "replayDone": "Il s’ouvrira à votre prochaine visite du tableau de bord.",
+    "replayHint": "Rejouez une partie, ou tout le parcours : l’audit, la connexion de votre boutique, la génération, les photos et les réglages.",
+    "replay": "Revoir tout le tutoriel",
+    "replayDone": "Il démarre à votre prochaine visite du tableau de bord.",
     "steps": {
       "welcome": {
         "title": "Bienvenue",
@@ -1979,6 +1979,15 @@
         "title": "Le reste est ici",
         "body": "Crédits, plan, modèles par défaut et notifications. Une génération continue même si vous fermez l’onglet : nous vous prévenons quand elle est prête."
       }
+    },
+    "chapterSteps": "{count, plural, =1 {1 étape} other {# étapes}}",
+    "chapters": {
+      "start": "L’audit",
+      "connect": "La connexion de la boutique",
+      "products": "Vos produits",
+      "generate": "La génération",
+      "photos": "Les photos",
+      "settings": "Réglages et compte"
     }
   }
 }

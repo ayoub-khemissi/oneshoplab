@@ -1923,9 +1923,9 @@
     "finish": "Finish",
     "notHere": "This is on another page — \"Next\" takes you there.",
     "replayTitle": "Guided tour",
-    "replayHint": "Walk through the audit, connecting your store and your first change again.",
-    "replay": "Replay the tour",
-    "replayDone": "It will open on your next visit to the dashboard.",
+    "replayHint": "Replay a part, or the whole path: the audit, connecting your store, generating, the photos and the settings.",
+    "replay": "Replay the whole tour",
+    "replayDone": "It starts on your next visit to the dashboard.",
     "steps": {
       "welcome": {
         "title": "Welcome",
@@ -1979,6 +1979,15 @@
         "title": "The rest lives here",
         "body": "Credits, plan, default models and notifications. A generation keeps running even if you close the tab — we tell you when it is ready."
       }
+    },
+    "chapterSteps": "{count, plural, =1 {1 step} other {# steps}}",
+    "chapters": {
+      "start": "The audit",
+      "connect": "Connecting your store",
+      "products": "Your products",
+      "generate": "Generating",
+      "photos": "The photos",
+      "settings": "Settings and account"
     }
   }
 }

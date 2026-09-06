@@ -26,6 +26,24 @@ export const TOUR_STEP_IDS = [
 
 export type TourStepId = (typeof TOUR_STEP_IDS)[number];
 
+/**
+ * The walkthrough in chapters, so it can be replayed a piece at a time.
+ *
+ * "How do I connect my store again?" is a different question from "how does
+ * generation work?", and answering the first should not cost the merchant a
+ * ride through all thirteen steps.
+ */
+export const TOUR_CHAPTERS = [
+  'start',
+  'connect',
+  'products',
+  'generate',
+  'photos',
+  'settings'
+] as const;
+
+export type TourChapterId = (typeof TOUR_CHAPTERS)[number];
+
 export type SiteTab = 'overview' | 'products' | 'jobs' | 'integrations' | 'settings';
 
 /** Where the merchant currently is, stripped of locale and ids. */
@@ -44,6 +62,7 @@ export type TourWhere =
 
 export interface TourStep {
   id: TourStepId;
+  chapter: TourChapterId;
   /** The `data-tour` value to spotlight. Absent = a card in the middle. */
   anchor?: string;
   where: TourWhere;
@@ -52,34 +71,91 @@ export interface TourStep {
 }
 
 export const TOUR_STEPS: readonly TourStep[] = [
-  { id: 'welcome', where: { kind: 'dashboard' } },
-  { id: 'audit', anchor: 'audit-cta', where: { kind: 'dashboard' }, side: 'bottom' },
-  { id: 'score', anchor: 'site-score', where: { kind: 'site', tab: 'overview' }, side: 'bottom' },
-  { id: 'connect', anchor: 'tab-integrations', where: { kind: 'site' }, side: 'bottom' },
+  { id: 'welcome', chapter: 'start', where: { kind: 'dashboard' } },
+  {
+    id: 'audit',
+    chapter: 'start',
+    anchor: 'audit-cta',
+    where: { kind: 'dashboard' },
+    side: 'bottom'
+  },
+  {
+    id: 'score',
+    chapter: 'start',
+    anchor: 'site-score',
+    where: { kind: 'site', tab: 'overview' },
+    side: 'bottom'
+  },
+  {
+    id: 'connect',
+    chapter: 'connect',
+    anchor: 'tab-integrations',
+    where: { kind: 'site' },
+    side: 'bottom'
+  },
   {
     id: 'platform',
+    chapter: 'connect',
     anchor: 'integrations-wizard',
     where: { kind: 'site', tab: 'integrations' },
     side: 'top'
   },
-  { id: 'products', anchor: 'tab-products', where: { kind: 'site' }, side: 'bottom' },
+  {
+    id: 'products',
+    chapter: 'products',
+    anchor: 'tab-products',
+    where: { kind: 'site' },
+    side: 'bottom'
+  },
   {
     id: 'product',
+    chapter: 'products',
     anchor: 'product-row',
     where: { kind: 'site', tab: 'products' },
     side: 'bottom'
   },
-  { id: 'models', anchor: 'model-chips', where: { kind: 'product' }, side: 'bottom' },
-  { id: 'generate', anchor: 'field-title', where: { kind: 'product' }, side: 'top' },
-  { id: 'apply', anchor: 'apply-to-store', where: { kind: 'product' }, side: 'top' },
-  { id: 'photos', anchor: 'image-editor', where: { kind: 'product' }, side: 'top' },
+  {
+    id: 'models',
+    chapter: 'generate',
+    anchor: 'model-chips',
+    where: { kind: 'product' },
+    side: 'bottom'
+  },
+  {
+    id: 'generate',
+    chapter: 'generate',
+    anchor: 'field-title',
+    where: { kind: 'product' },
+    side: 'top'
+  },
+  {
+    id: 'apply',
+    chapter: 'generate',
+    anchor: 'apply-to-store',
+    where: { kind: 'product' },
+    side: 'top'
+  },
+  {
+    id: 'photos',
+    chapter: 'photos',
+    anchor: 'image-editor',
+    where: { kind: 'product' },
+    side: 'top'
+  },
   {
     id: 'settings',
+    chapter: 'settings',
     anchor: 'site-settings',
     where: { kind: 'site', tab: 'settings' },
     side: 'bottom'
   },
-  { id: 'tips', anchor: 'account-menu', where: { kind: 'anywhere' }, side: 'bottom' }
+  {
+    id: 'tips',
+    chapter: 'settings',
+    anchor: 'account-menu',
+    where: { kind: 'anywhere' },
+    side: 'bottom'
+  }
 ] as const;
 
 export const FIRST_STEP: TourStepId = TOUR_STEPS[0].id;
@@ -88,8 +164,29 @@ export function stepById(id: string | null | undefined): TourStep | null {
   return TOUR_STEPS.find((s) => s.id === id) ?? null;
 }
 
-export function stepIndex(id: TourStepId): number {
-  return TOUR_STEPS.findIndex((s) => s.id === id);
+export function isChapterId(value: unknown): value is TourChapterId {
+  return typeof value === 'string' && (TOUR_CHAPTERS as readonly string[]).includes(value);
+}
+
+/**
+ * The run to play: the whole thing, or one chapter on its own.
+ *
+ * Everything downstream — the counter, "is this the last step", where Next
+ * goes — reads this list rather than the constant, so a chapter replay ends
+ * at the end of the CHAPTER instead of walking on into the next subject.
+ */
+export function stepsFor(chapter: TourChapterId | null | undefined): readonly TourStep[] {
+  if (!chapter) return TOUR_STEPS;
+  const only = TOUR_STEPS.filter((s) => s.chapter === chapter);
+  return only.length > 0 ? only : TOUR_STEPS;
+}
+
+export function firstStepOf(chapter: TourChapterId): TourStepId {
+  return stepsFor(chapter)[0].id;
+}
+
+export function stepIndex(id: TourStepId, steps: readonly TourStep[] = TOUR_STEPS): number {
+  return steps.findIndex((s) => s.id === id);
 }
 
 export const TOUR_TOTAL = TOUR_STEPS.length;
@@ -141,11 +238,16 @@ export function fits(step: TourStep, place: TourPlace): boolean {
  * instead of pointing at nothing. It never rewinds on its own — going back is
  * the merchant's decision, not ours.
  */
-export function resolveStep(current: TourStepId, place: TourPlace): TourStepId {
-  const step = stepById(current);
-  if (step && fits(step, place)) return current;
-  const from = stepIndex(current) + 1;
-  const ahead = TOUR_STEPS.slice(from).find((s) => s.where.kind !== 'anywhere' && fits(s, place));
+export function resolveStep(
+  current: TourStepId,
+  place: TourPlace,
+  steps: readonly TourStep[] = TOUR_STEPS
+): TourStepId {
+  const step = steps.find((s) => s.id === current);
+  if (!step) return steps[0].id;
+  if (fits(step, place)) return current;
+  const from = stepIndex(current, steps) + 1;
+  const ahead = steps.slice(from).find((s) => s.where.kind !== 'anywhere' && fits(s, place));
   return ahead ? ahead.id : current;
 }
 

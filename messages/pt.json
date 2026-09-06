@@ -1923,9 +1923,9 @@
     "finish": "Concluir",
     "notHere": "Isto está noutra página — «Seguinte» leva-o lá.",
     "replayTitle": "Tour guiado",
-    "replayHint": "Refaça o percurso: a auditoria, a ligação da loja e a primeira alteração.",
-    "replay": "Rever o tour",
-    "replayDone": "Abrirá na sua próxima visita ao painel.",
+    "replayHint": "Reveja uma parte ou todo o percurso: a auditoria, a ligação da loja, a geração, as fotos e as definições.",
+    "replay": "Rever o tour completo",
+    "replayDone": "Começa na sua próxima visita ao painel.",
     "steps": {
       "welcome": {
         "title": "Bem-vindo",
@@ -1979,6 +1979,15 @@
         "title": "O resto está aqui",
         "body": "Créditos, plano, modelos por omissão e notificações. Uma geração continua mesmo se fechar o separador: avisamos quando estiver pronta."
       }
+    },
+    "chapterSteps": "{count, plural, =1 {1 etapa} other {# etapas}}",
+    "chapters": {
+      "start": "A auditoria",
+      "connect": "Ligar a loja",
+      "products": "Os seus produtos",
+      "generate": "A geração",
+      "photos": "As fotos",
+      "settings": "Definições e conta"
     }
   }
 }

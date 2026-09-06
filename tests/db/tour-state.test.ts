@@ -31,12 +31,16 @@ const set = (v: Partial<typeof users.$inferInsert>) =>
 describe('loadTourState', () => {
   it('opens at the beginning for an account with no store yet', async () => {
     const state = await loadTourState(userId);
-    expect(state).toEqual({ step: 'welcome', siteId: null });
+    expect(state).toEqual({ step: 'welcome', siteId: null, chapter: null });
   });
 
   it('carries the only store, so "Next" can walk to it', async () => {
     const projectId = await createProject(userId);
-    expect(await loadTourState(userId)).toEqual({ step: 'welcome', siteId: projectId });
+    expect(await loadTourState(userId)).toEqual({
+      step: 'welcome',
+      siteId: projectId,
+      chapter: null
+    });
   });
 
   it('resumes where the merchant stopped', async () => {
@@ -66,5 +70,22 @@ describe('loadTourState', () => {
     await createProject(userId);
     await set({ tourStep: 'welcome', tourEndedAt: null });
     expect((await loadTourState(userId))?.step).toBe('welcome');
+  });
+
+  it('a replayed chapter opens on that chapter, not at the beginning', async () => {
+    await set({ tourStep: 'connect', tourChapter: 'connect', tourEndedAt: null });
+    expect(await loadTourState(userId)).toMatchObject({ step: 'connect', chapter: 'connect' });
+  });
+
+  it('a step left over from another chapter restarts the replayed one', async () => {
+    // "Replay the photos" after stopping mid-audit: resuming at `score` would
+    // play a step this run does not contain.
+    await set({ tourStep: 'score', tourChapter: 'photos', tourEndedAt: null });
+    expect((await loadTourState(userId))?.step).toBe('photos');
+  });
+
+  it('a chapter we no longer ship falls back to the whole walkthrough', async () => {
+    await set({ tourStep: 'welcome', tourChapter: 'retired-chapter' });
+    expect(await loadTourState(userId)).toMatchObject({ step: 'welcome', chapter: null });
   });
 });

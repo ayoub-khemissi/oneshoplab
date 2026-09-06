@@ -1923,9 +1923,9 @@
     "finish": "Bitir",
     "notHere": "Bu başka bir sayfada — “İleri” sizi oraya götürür.",
     "replayTitle": "Rehberli tur",
-    "replayHint": "Yolu baştan izleyin: denetim, mağaza bağlantısı ve ilk değişiklik.",
-    "replay": "Turu tekrar izle",
-    "replayDone": "Panele bir sonraki girişinizde açılacak.",
+    "replayHint": "Bir bölümü ya da tüm yolu yeniden izleyin: denetim, mağaza bağlantısı, üretim, fotoğraflar ve ayarlar.",
+    "replay": "Turun tamamını yeniden izle",
+    "replayDone": "Panele bir sonraki girişinizde başlar.",
     "steps": {
       "welcome": {
         "title": "Hoş geldiniz",
@@ -1979,6 +1979,15 @@
         "title": "Gerisi burada",
         "body": "Krediler, plan, varsayılan modeller ve bildirimler. Sekmeyi kapatsanız da üretim sürer; hazır olduğunda haber veririz."
       }
+    },
+    "chapterSteps": "{count, plural, other {# adım}}",
+    "chapters": {
+      "start": "Denetim",
+      "connect": "Mağaza bağlantısı",
+      "products": "Ürünleriniz",
+      "generate": "Üretim",
+      "photos": "Fotoğraflar",
+      "settings": "Ayarlar ve hesap"
     }
   }
 }

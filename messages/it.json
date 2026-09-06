@@ -1923,9 +1923,9 @@
     "finish": "Fine",
     "notHere": "Si trova in un’altra pagina: «Avanti» ti porta lì.",
     "replayTitle": "Tour guidato",
-    "replayHint": "Rifai il percorso: l’analisi, la connessione del negozio e la prima modifica.",
-    "replay": "Rivedi il tour",
-    "replayDone": "Si aprirà alla tua prossima visita alla dashboard.",
+    "replayHint": "Rivedi una parte o tutto il percorso: l’analisi, la connessione del negozio, la generazione, le foto e le impostazioni.",
+    "replay": "Rivedi tutto il tour",
+    "replayDone": "Parte alla tua prossima visita alla dashboard.",
     "steps": {
       "welcome": {
         "title": "Benvenuto",
@@ -1979,6 +1979,15 @@
         "title": "Il resto è qui",
         "body": "Crediti, piano, modelli predefiniti e notifiche. Una generazione continua anche se chiudi la scheda: ti avvisiamo quando è pronta."
       }
+    },
+    "chapterSteps": "{count, plural, =1 {1 passaggio} other {# passaggi}}",
+    "chapters": {
+      "start": "L’analisi",
+      "connect": "Collegare il negozio",
+      "products": "I tuoi prodotti",
+      "generate": "La generazione",
+      "photos": "Le foto",
+      "settings": "Impostazioni e account"
     }
   }
 }

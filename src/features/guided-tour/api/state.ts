@@ -1,13 +1,22 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { projects, users } from '@/shared/db/schema';
-import { FIRST_STEP, stepById, type TourStepId } from '../model/steps';
+import {
+  FIRST_STEP,
+  isChapterId,
+  stepById,
+  stepsFor,
+  type TourChapterId,
+  type TourStepId
+} from '../model/steps';
 
 export interface TourState {
   /** The step to open on. */
   step: TourStepId;
   /** The merchant's store, so "Next" can walk to it from the dashboard. */
   siteId: string | null;
+  /** Set when they replayed a single chapter — the run stops at its end. */
+  chapter: TourChapterId | null;
 }
 
 /**
@@ -21,7 +30,7 @@ export interface TourState {
 export async function loadTourState(userId: string): Promise<TourState | null> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { tourStep: true, tourEndedAt: true }
+    columns: { tourStep: true, tourEndedAt: true, tourChapter: true }
   });
   if (!user || user.tourEndedAt) return null;
 
@@ -37,8 +46,14 @@ export async function loadTourState(userId: string): Promise<TourState | null> {
   // arguing with a deliberate click.
   if (owned.length > 1 && !user.tourStep) return null;
 
+  const chapter = isChapterId(user.tourChapter) ? user.tourChapter : null;
+  const run = stepsFor(chapter);
+  // A stored step from outside the replayed chapter (or from a version that
+  // shipped different steps) means the run has nowhere to resume: start it.
+  const stored = stepById(user.tourStep)?.id;
   return {
-    step: stepById(user.tourStep)?.id ?? FIRST_STEP,
-    siteId: owned[0]?.id ?? null
+    step: stored && run.some((s) => s.id === stored) ? stored : (run[0].id ?? FIRST_STEP),
+    siteId: owned[0]?.id ?? null,
+    chapter
   };
 }

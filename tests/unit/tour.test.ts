@@ -9,11 +9,14 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  TOUR_CHAPTERS,
   TOUR_STEPS,
+  firstStepOf,
   hrefFor,
   placeOf,
   resolveStep,
   stepById,
+  stepsFor,
   type TourStepId
 } from '@/features/guided-tour/model/steps';
 import { centreBubble, placeBubble, spotlightOf } from '@/features/guided-tour/lib/placement';
@@ -166,5 +169,46 @@ describe('the copy', () => {
       expect(tour.steps[step.id]?.title?.length ?? 0).toBeGreaterThan(2);
       expect(tour.steps[step.id]?.body?.length ?? 0).toBeGreaterThan(20);
     }
+  });
+});
+
+describe('replaying one chapter', () => {
+  it('covers every step exactly once, in order', () => {
+    // A step that belongs to no chapter can never be replayed, and one in two
+    // chapters would be played twice: both are silent holes in the feature.
+    const covered = TOUR_CHAPTERS.flatMap((c) => stepsFor(c).map((s) => s.id));
+    expect(covered).toEqual(TOUR_STEPS.map((s) => s.id));
+  });
+
+  it('every chapter has a first step to start on', () => {
+    for (const chapter of TOUR_CHAPTERS) {
+      expect(stepsFor(chapter)[0].id).toBe(firstStepOf(chapter));
+    }
+  });
+
+  it('a run stops at the end of its chapter instead of walking on', () => {
+    const connect = stepsFor('connect');
+    expect(connect.map((s) => s.id)).toEqual(['connect', 'platform']);
+    // Nothing in the run points past the chapter, so "last step" is real.
+    expect(connect.at(-1)!.id).not.toBe(TOUR_STEPS.at(-1)!.id);
+  });
+
+  it('catching up never escapes the chapter being replayed', () => {
+    // Replaying "connect", the merchant wanders onto a product page. The tour
+    // must not silently continue into the generation chapter they did not ask
+    // for — it holds its step.
+    const run = stepsFor('connect');
+    const at = resolveStep('connect', placeOf('/fr/dashboard/sites/s1/products/p1'), run);
+    expect(run.some((s) => s.id === at)).toBe(true);
+  });
+
+  it('no chapter is the whole tour by accident', () => {
+    for (const chapter of TOUR_CHAPTERS) {
+      expect(stepsFor(chapter).length).toBeLessThan(TOUR_STEPS.length);
+    }
+  });
+
+  it('no chapter falls back to the whole tour on an unknown value', () => {
+    expect(stepsFor(null)).toEqual(TOUR_STEPS);
   });
 });

@@ -148,6 +148,9 @@ export const users = mysqlTable('users', {
   /** Finished or dismissed — either way it never opens by itself again.
    *  Replaying it stays possible, but only when the merchant asks. */
   tourEndedAt: timestamp('tour_ended_at'),
+  /** Set when the merchant replays ONE chapter: the run then ends where that
+   *  chapter ends. NULL = the whole walkthrough. */
+  tourChapter: varchar('tour_chapter', { length: 32 }),
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()

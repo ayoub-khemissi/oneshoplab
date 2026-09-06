@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname as useRawPathname, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from '@/i18n/navigation';
 import { ModalCloseButton } from '@/shared/ui';
@@ -16,14 +16,13 @@ import {
   type Rect
 } from '../lib/placement';
 import {
-  TOUR_STEPS,
-  TOUR_TOTAL,
   fits,
   hrefFor,
   placeOf,
   resolveStep,
-  stepById,
   stepIndex,
+  stepsFor,
+  type TourChapterId,
   type TourStepId
 } from '../model/steps';
 
@@ -32,13 +31,16 @@ export interface GuidedTourProps {
   initialStep: TourStepId;
   /** The merchant's only store, so the tour can walk to it. */
   siteId: string | null;
+  /** Replaying one chapter: the run then ends where that chapter ends. */
+  chapter?: TourChapterId | null;
   onStep: (step: string) => void;
   onEnd: () => void;
 }
 
-/** How long to keep looking for an element the page may still be rendering. */
-const ANCHOR_TIMEOUT_MS = 4000;
+/** How long to keep looking for an element the page may still be rendering:
+ *  counted in attempts rather than clock time, so the loop stays pure. */
 const ANCHOR_POLL_MS = 120;
+const ANCHOR_ATTEMPTS = 34;
 
 /**
  * The first-store walkthrough: a dimmed page with one thing lit up, and a
@@ -56,7 +58,10 @@ const ANCHOR_POLL_MS = 120;
  * its bubble in the middle of the screen and keeps going, rather than
  * pointing at a corner where nothing is.
  */
-export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourProps) {
+export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: GuidedTourProps) {
+  // Every "which step is next / how many are there / is this the last one"
+  // below reads this run, not the full list.
+  const run = stepsFor(chapter);
   const t = useTranslations('Tour');
   const router = useRouter();
   const rawPath = useRawPathname();
@@ -75,75 +80,66 @@ export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourPro
   // whatever this page is about instead of pointing at another screen. This
   // is derived during render, not in an effect: it is a pure function of the
   // URL, and an effect would paint the stale step first.
-  const stepId = resolveStep(chosen, place);
+  const stepId = resolveStep(chosen, place, run);
   if (stepId !== chosen) setChosen(stepId);
 
-  const step = stepById(stepId) ?? TOUR_STEPS[0];
-  const index = stepIndex(step.id);
+  const step = run.find((s) => s.id === stepId) ?? run[0];
+  const index = stepIndex(step.id, run);
   const onRightPage = fits(step, place);
 
-  // Remembering the step is talking to the outside world, so it belongs in an
-  // effect — and it must not be awaited (see TourMount).
+  // The two callbacks are held in a ref because the caller passes fresh
+  // arrows on every render: an effect depending on them directly would fire —
+  // and write to the account — on every render of the page underneath.
+  const handlers = useRef({ onStep, onEnd });
   useEffect(() => {
-    onStep(stepId);
-  }, [stepId, onStep]);
+    handlers.current = { onStep, onEnd };
+  }, [onStep, onEnd]);
 
-  const measure = useCallback(() => {
-    if (!step.anchor) {
-      setRect(null);
-      return true;
-    }
-    const el = document.querySelector<HTMLElement>(`[data-tour="${step.anchor}"]`);
-    if (!el) {
-      setRect(null);
-      return false;
-    }
-    const r = el.getBoundingClientRect();
-    if (r.width === 0 && r.height === 0) {
-      setRect(null);
-      return false;
-    }
-    setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
-    return true;
-  }, [step.anchor]);
+  // Remembering the step is talking to the outside world, so it belongs in an
+  // effect, and it must not be awaited (see TourMount).
+  useEffect(() => {
+    handlers.current.onStep(stepId);
+  }, [stepId]);
 
-  // Find the anchor, giving the page a few seconds to finish rendering it —
-  // a server component streaming in is the normal case, not the exception.
+  const anchor = step.anchor;
+
+  // Find the anchor, giving the page a few seconds to render it — a server
+  // component still streaming in is the normal case, not the exception.
   useEffect(() => {
     let alive = true;
-    const started = Date.now();
+    let attempts = 0;
     const tick = () => {
       if (!alive) return;
-      const el = step.anchor
-        ? document.querySelector<HTMLElement>(`[data-tour="${step.anchor}"]`)
-        : null;
+      attempts += 1;
+      const el = anchor ? document.querySelector<HTMLElement>(`[data-tour="${anchor}"]`) : null;
       if (el && needsScroll(el.getBoundingClientRect(), viewport())) {
         el.scrollIntoView({ block: 'center', behavior: 'smooth' });
       }
-      if (measure() || Date.now() - started > ANCHOR_TIMEOUT_MS) return;
+      const found = measureAnchor(anchor);
+      setRect(found);
+      if (found || !anchor || attempts >= ANCHOR_ATTEMPTS) return;
       window.setTimeout(tick, ANCHOR_POLL_MS);
     };
-    // Deferred by a tick rather than run inline: the anchor often belongs to
-    // a server component still streaming in, and looking before the paint
-    // finds nothing and re-renders for it.
+    // Deferred by a tick rather than run inline: looking before the paint
+    // finds nothing and costs a render for it.
     const first = window.setTimeout(tick, 0);
     return () => {
       alive = false;
       window.clearTimeout(first);
     };
-  }, [step.anchor, rawPath, measure]);
+  }, [anchor, rawPath]);
 
   // The page moves under the tour: sticky headers collapse, images load, the
   // merchant scrolls. The light has to stay on the same element.
   useEffect(() => {
-    const onMove = () => measure();
+    const onMove = () => setRect(measureAnchor(anchor));
     window.addEventListener('scroll', onMove, true);
     window.addEventListener('resize', onMove);
     return () => {
       window.removeEventListener('scroll', onMove, true);
       window.removeEventListener('resize', onMove);
     };
-  }, [measure]);
+  }, [anchor]);
 
   // The bubble's own height decides whether it fits below the spotlight, and
   // the copy is translated — German runs two lines longer than English on the
@@ -154,36 +150,35 @@ export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourPro
     if (h && Math.abs(h - bubbleHeight) > 1) setBubbleHeight(h);
   }, [bubbleHeight, stepId, rect]);
 
-  const finish = useCallback(() => {
-    setClosed(true);
-    onEnd();
-  }, [onEnd]);
-
   // Leaving must always be one gesture away: Escape, the cross, or the link.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') finish();
+      if (e.key !== 'Escape') return;
+      setClosed(true);
+      handlers.current.onEnd();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [finish]);
+  }, []);
 
-  const go = useCallback(
-    (to: TourStepId) => {
-      setChosen(to);
-      const target = stepById(to);
-      if (!target) return;
-      const href = hrefFor(target, { siteId: currentSiteId, productId });
-      // Only travel when the step genuinely lives somewhere else — pushing the
-      // current URL would scroll the page back to the top for nothing.
-      if (href && !fitsHere(to, rawPath, search.get('tab'))) router.push(href);
-    },
-    [currentSiteId, productId, router, rawPath, search]
-  );
+  function finish() {
+    setClosed(true);
+    onEnd();
+  }
+
+  function go(to: TourStepId) {
+    setChosen(to);
+    const target = run.find((s) => s.id === to);
+    if (!target) return;
+    const href = hrefFor(target, { siteId: currentSiteId, productId });
+    // Only travel when the step genuinely lives somewhere else — pushing the
+    // current URL would scroll the page back to the top for nothing.
+    if (href && !fits(target, place)) router.push(href);
+  }
 
   if (closed) return null;
 
-  const last = index === TOUR_TOTAL - 1;
+  const last = index === run.length - 1;
   const spot = rect ? spotlightOf(rect) : null;
   const vp = viewport();
   const bubble: BubblePlacement = spot
@@ -220,7 +215,7 @@ export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourPro
         <ModalCloseButton onClose={finish} label={t('skip')} />
         <div className="flex flex-col gap-1">
           <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--accent)]">
-            {t('counter', { n: index + 1, total: TOUR_TOTAL })}
+            {t('counter', { n: index + 1, total: run.length })}
           </span>
           <h2 className="text-sm font-semibold">{t(`steps.${step.id}.title`)}</h2>
         </div>
@@ -240,7 +235,7 @@ export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourPro
             {index > 0 ? (
               <button
                 type="button"
-                onClick={() => go(TOUR_STEPS[index - 1].id)}
+                onClick={() => go(run[index - 1].id)}
                 aria-label={t('back')}
                 className="inline-flex size-8 items-center justify-center rounded-md border border-[var(--border)] hover:bg-[var(--default)]"
               >
@@ -249,7 +244,7 @@ export function GuidedTour({ initialStep, siteId, onStep, onEnd }: GuidedTourPro
             ) : null}
             <button
               type="button"
-              onClick={() => (last ? finish() : go(TOUR_STEPS[index + 1].id))}
+              onClick={() => (last ? finish() : go(run[index + 1].id))}
               data-testid="tour-next"
               className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-2 text-xs font-medium text-[var(--accent-foreground)] hover:opacity-90"
             >
@@ -312,17 +307,16 @@ function Cutout({
   );
 }
 
+/** The anchor's box right now, or null when the page is not showing it. */
+function measureAnchor(anchor: string | undefined): Rect | null {
+  if (!anchor) return null;
+  const el = document.querySelector<HTMLElement>(`[data-tour="${anchor}"]`);
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  if (r.width === 0 && r.height === 0) return null;
+  return { top: r.top, left: r.left, width: r.width, height: r.height };
+}
+
 function viewport() {
   return { width: window.innerWidth, height: window.innerHeight };
-}
-
-function fitsHere(id: TourStepId, pathname: string, tab: string | null): boolean {
-  const target = stepById(id);
-  if (!target) return false;
-  const here = placeOf(pathname, tab);
-  return resolveStep(id, here) === id && matches(target.where.kind, here.kind);
-}
-
-function matches(want: string, got: string): boolean {
-  return want === 'anywhere' ? got !== 'elsewhere' : want === got;
 }

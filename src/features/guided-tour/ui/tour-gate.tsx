@@ -19,7 +19,7 @@ export async function TourGate() {
   if (!state) return null;
   return (
     <Suspense fallback={null}>
-      <TourMount initialStep={state.step} siteId={state.siteId} />
+      <TourMount initialStep={state.step} siteId={state.siteId} chapter={state.chapter} />
     </Suspense>
   );
 }

@@ -1923,9 +1923,9 @@
     "finish": "Zakończ",
     "notHere": "To jest na innej stronie — „Dalej” Cię tam przeniesie.",
     "replayTitle": "Przewodnik",
-    "replayHint": "Przejdź drogę jeszcze raz: audyt, podłączenie sklepu i pierwsza zmiana.",
-    "replay": "Powtórz przewodnik",
-    "replayDone": "Otworzy się przy następnej wizycie w panelu.",
+    "replayHint": "Powtórz fragment albo całą drogę: audyt, podłączenie sklepu, generowanie, zdjęcia i ustawienia.",
+    "replay": "Powtórz cały przewodnik",
+    "replayDone": "Zacznie się przy następnej wizycie w panelu.",
     "steps": {
       "welcome": {
         "title": "Witamy",
@@ -1979,6 +1979,15 @@
         "title": "Reszta jest tutaj",
         "body": "Kredyty, plan, domyślne modele i powiadomienia. Generowanie trwa nawet po zamknięciu karty — damy znać, gdy będzie gotowe."
       }
+    },
+    "chapterSteps": "{count, plural, one {# krok} few {# kroki} many {# kroków} other {# kroku}}",
+    "chapters": {
+      "start": "Audyt",
+      "connect": "Podłączenie sklepu",
+      "products": "Twoje produkty",
+      "generate": "Generowanie",
+      "photos": "Zdjęcia",
+      "settings": "Ustawienia i konto"
     }
   }
 }

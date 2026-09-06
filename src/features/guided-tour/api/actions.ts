@@ -4,7 +4,13 @@ import { eq } from 'drizzle-orm';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { users } from '@/shared/db/schema';
-import { FIRST_STEP, TOUR_STEP_IDS, type TourStepId } from '../model/steps';
+import {
+  FIRST_STEP,
+  TOUR_STEP_IDS,
+  firstStepOf,
+  isChapterId,
+  type TourStepId
+} from '../model/steps';
 
 function isStepId(value: unknown): value is TourStepId {
   return typeof value === 'string' && (TOUR_STEP_IDS as readonly string[]).includes(value);
@@ -33,15 +39,27 @@ export async function endTourAction(): Promise<{ ok: boolean }> {
   return { ok: true };
 }
 
-/** "Replay the tutorial", from the account preferences. */
-export async function restartTourAction(): Promise<{ ok: boolean }> {
+/**
+ * "Replay it", from the account preferences — all of it, or one chapter.
+ *
+ * A merchant coming back to ask how the store connection works should not
+ * have to sit through the audit and the photo editor to get there, so a
+ * chapter is stored alongside the step and the run ends where that chapter
+ * ends.
+ */
+export async function restartTourAction(chapter?: string): Promise<{ ok: boolean }> {
   const session = await auth();
   if (!session?.user?.id) return { ok: false };
+  if (chapter !== undefined && !isChapterId(chapter)) return { ok: false };
   await db
     .update(users)
-    // Back to the first step, and marked as started: an explicit replay is
-    // not subject to the "first store only" rule that gates the auto-open.
-    .set({ tourEndedAt: null, tourStep: FIRST_STEP })
+    // Marked as started: an explicit replay is not subject to the "first
+    // store only" rule that gates the automatic opening.
+    .set({
+      tourEndedAt: null,
+      tourStep: chapter ? firstStepOf(chapter) : FIRST_STEP,
+      tourChapter: chapter ?? null
+    })
     .where(eq(users.id, session.user.id));
   return { ok: true };
 }

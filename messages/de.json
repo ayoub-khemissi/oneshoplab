@@ -1923,9 +1923,9 @@
     "finish": "Fertig",
     "notHere": "Das liegt auf einer anderen Seite – „Weiter“ bringt dich hin.",
     "replayTitle": "Geführte Tour",
-    "replayHint": "Geh den Weg noch einmal: Audit, Shop verbinden und die erste Änderung.",
-    "replay": "Tour wiederholen",
-    "replayDone": "Sie öffnet sich bei deinem nächsten Besuch im Dashboard.",
+    "replayHint": "Spiele einen Teil oder den ganzen Weg noch einmal: Audit, Shop verbinden, Generierung, Fotos und Einstellungen.",
+    "replay": "Ganze Tour wiederholen",
+    "replayDone": "Sie startet bei deinem nächsten Besuch im Dashboard.",
     "steps": {
       "welcome": {
         "title": "Willkommen",
@@ -1979,6 +1979,15 @@
         "title": "Der Rest wohnt hier",
         "body": "Credits, Tarif, Standardmodelle und Benachrichtigungen. Eine Generierung läuft weiter, auch wenn du den Tab schließt – wir sagen Bescheid, wenn sie fertig ist."
       }
+    },
+    "chapterSteps": "{count, plural, =1 {1 Schritt} other {# Schritte}}",
+    "chapters": {
+      "start": "Das Audit",
+      "connect": "Shop verbinden",
+      "products": "Deine Produkte",
+      "generate": "Generierung",
+      "photos": "Die Fotos",
+      "settings": "Einstellungen und Konto"
     }
   }
 }

@@ -1923,9 +1923,9 @@
     "finish": "完成",
     "notHere": "该内容在另一个页面上——点击“下一步”即可前往。",
     "replayTitle": "引导教程",
-    "replayHint": "重新走一遍：审计、连接店铺，以及第一次修改。",
-    "replay": "重看教程",
-    "replayDone": "下次进入控制台时会自动打开。",
+    "replayHint": "可以只重看其中一部分，也可以走完整条路径：审计、连接店铺、生成、图片和设置。",
+    "replay": "重看完整教程",
+    "replayDone": "下次进入控制台时开始。",
     "steps": {
       "welcome": {
         "title": "欢迎",
@@ -1979,6 +1979,15 @@
         "title": "其余都在这里",
         "body": "积分、套餐、默认模型和通知。即使关闭标签页，生成也会继续，完成时我们会通知你。"
       }
+    },
+    "chapterSteps": "{count, plural, other {# 步}}",
+    "chapters": {
+      "start": "审计",
+      "connect": "连接店铺",
+      "products": "你的商品",
+      "generate": "生成",
+      "photos": "图片",
+      "settings": "设置与账户"
     }
   }
 }

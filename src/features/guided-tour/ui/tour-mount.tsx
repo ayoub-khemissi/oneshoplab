@@ -2,7 +2,7 @@
 
 import { endTourAction, setTourStepAction } from '../actions';
 import { GuidedTour } from './guided-tour';
-import type { TourStepId } from '../model/steps';
+import type { TourChapterId, TourStepId } from '../model/steps';
 
 /**
  * Wires the overlay to the account.
@@ -12,15 +12,18 @@ import type { TourStepId } from '../model/steps';
  */
 export function TourMount({
   initialStep,
-  siteId
+  siteId,
+  chapter
 }: {
   initialStep: TourStepId;
   siteId: string | null;
+  chapter: TourChapterId | null;
 }) {
   return (
     <GuidedTour
       initialStep={initialStep}
       siteId={siteId}
+      chapter={chapter}
       onStep={(step) => void setTourStepAction(step)}
       onEnd={() => void endTourAction()}
     />
