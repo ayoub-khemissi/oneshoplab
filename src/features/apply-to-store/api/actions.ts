@@ -4,6 +4,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { imageRetentionDaysForPlan } from '@/entities/ai-model';
+import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
   cancelChange,
   createChange,
@@ -17,6 +18,7 @@ import {
   productChanges,
   products,
   projects,
+  type ConnectionCapabilities,
   type Plan,
   type ProductChangeField
 } from '@/shared/db/schema';
@@ -39,8 +41,24 @@ const FIELD_BY_KIND: Partial<Record<(typeof jobs.$inferSelect)['kind'], ProductC
   kie_image_edit: 'images'
 };
 
-/** Value in the shape the plugin receives (spec §3 `GET /changes`). */
-function changeValue(field: ProductChangeField, result: unknown): unknown {
+/**
+ * Value in the shape the plugin receives (spec §3 `GET /changes`).
+ *
+ * For images this used to be a replace-all, always: applying one generated
+ * photo wiped every photo the merchant already had. The confirmation dialog
+ * that warns about exactly that is only shown when the store CANNOT do better,
+ * so on a store that can append, the destructive path ran silently. Found on a
+ * WooCommerce store on 2026-09-05: a gallery of two became one.
+ *
+ * So when the connection says it can address images one by one, the generation
+ * is appended and nothing else is touched. Replace-all stays for stores that
+ * offer no other way — and there the dialog does warn.
+ */
+function changeValue(
+  field: ProductChangeField,
+  result: unknown,
+  capabilities?: ConnectionCapabilities | null
+): unknown {
   const r = (result ?? {}) as {
     output?: string | string[];
     persistedUrls?: string[];
@@ -50,13 +68,26 @@ function changeValue(field: ProductChangeField, result: unknown): unknown {
     // The alt ships with the picture: `costForImage` charges for both, and a
     // photo that reaches the store already described saves the merchant a
     // second trip through the whole apply flow.
-    return (r.persistedUrls ?? []).map((src, i) => ({ src, alt: r.alts?.[i] ?? null }));
+    const images = (r.persistedUrls ?? []).map((src, i) => ({ src, alt: r.alts?.[i] ?? null }));
+    const canAppend = capabilities?.stableImageIds && capabilities.imageOps.includes('append');
+    if (canAppend && images.length > 0) {
+      return { v: 1, ops: images.map((image) => ({ op: 'append', image })) };
+    }
+    return images;
   }
   return r.output ?? '';
 }
 
 function isEmpty(field: ProductChangeField, value: unknown): boolean {
   if (Array.isArray(value)) return value.length === 0;
+  // An images value can also be an ops payload — `{ v, ops }` — which is not a
+  // string and must not be mistaken for nothing.
+  if (field === 'images' && value !== null && typeof value === 'object') {
+    return (
+      !Array.isArray((value as { ops?: unknown }).ops) ||
+      (value as { ops: unknown[] }).ops.length === 0
+    );
+  }
   return typeof value !== 'string' || value.trim().length === 0;
 }
 
@@ -95,7 +126,8 @@ export async function approveOneGeneration(
   }
   const field = FIELD_BY_KIND[job.kind];
   if (!field) return { ok: false, error: 'unsupported' };
-  const value = changeValue(field, job.result);
+  const capabilities = field === 'images' ? await getProjectCapabilities(job.projectId) : null;
+  const value = changeValue(field, job.result, capabilities);
   if (isEmpty(field, value)) return { ok: false, error: 'unsupported' };
 
   const [existing] = await db

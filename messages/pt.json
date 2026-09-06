@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "Aprovado a {date}",
     "errorGeneric": "Algo correu mal. Tente novamente.",
+    "errorImageLimit": "O limite de fotos da sua loja foi atingido. Remova uma foto do produto e tente novamente.",
     "replaceAllTitle": "Substituir todas as fotos?",
     "replaceAllBody": "As suas {current} fotos atuais serão removidas do produto e substituídas pelos {generated} visuais gerados. Continuarão na sua biblioteca de media.",
     "replaceAllConfirm": "Substituir as fotos",

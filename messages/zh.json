@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "批准于 {date}",
     "errorGeneric": "出了点问题，请重试。",
+    "errorImageLimit": "已达到店铺的图片数量上限。请先从商品中移除一张图片，然后重试。",
     "replaceAllTitle": "替换所有照片？",
     "replaceAllBody": "您当前的 {current} 张照片将从商品中移除，并由 {generated} 张生成的图片替换。它们仍会保留在您的媒体库中。",
     "replaceAllConfirm": "替换照片",

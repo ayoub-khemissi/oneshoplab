@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "Freigegeben am {date}",
     "errorGeneric": "Etwas ist schiefgelaufen. Versuch es noch einmal.",
+    "errorImageLimit": "Das Fotolimit deines Shops ist erreicht. Entferne ein Foto vom Produkt und versuche es erneut.",
     "replaceAllTitle": "Alle Fotos ersetzen?",
     "replaceAllBody": "Ihre {current} aktuellen Fotos werden vom Produkt entfernt und durch die {generated} generierten Visuals ersetzt. Sie bleiben in Ihrer Mediathek.",
     "replaceAllConfirm": "Fotos ersetzen",

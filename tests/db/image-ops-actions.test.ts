@@ -4,6 +4,7 @@
  * the photo cap, the last-image rule and the freshness of every target are all
  * decided again here.
  */
+import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -14,9 +15,11 @@ vi.mock('@/entities/user/api/next-auth', () => ({
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
 import { approveImageOpsAction } from '@/features/apply-to-store/actions';
+import { approveGenerationAction } from '@/features/apply-to-store/api/actions';
 import { db } from '@/shared/db';
 import {
   connectionCapabilities,
+  jobs,
   productChanges,
   products,
   type ConnectionCapabilities
@@ -43,6 +46,21 @@ async function declare(caps: Partial<ConnectionCapabilities>): Promise<void> {
     .insert(connectionCapabilities)
     .values({ projectId, platform: 'woocommerce', capabilities: { ...WOO, ...caps } })
     .onDuplicateKeyUpdate({ set: { capabilities: { ...WOO, ...caps } } });
+}
+
+/** A finished image generation, as the worker leaves it behind. */
+async function completedImageJob(urls: string[]): Promise<string> {
+  const id = randomUUID();
+  await db.insert(jobs).values({
+    id,
+    projectId,
+    productId: product.id,
+    kind: 'kie_image_edit',
+    status: 'completed',
+    inputPayload: { productSourceId: product.sourceId, field: 'images' },
+    result: { persistedUrls: urls }
+  });
+  return id;
 }
 
 async function changesOf(productId: string) {
@@ -215,5 +233,47 @@ describe('approveImageOpsAction', () => {
       ok: false,
       error: 'archived'
     });
+  });
+});
+
+describe('applying a generated image', () => {
+  it('adds it to the gallery instead of replacing it, when the store can', async () => {
+    // A gallery of two became one: the apply button always sent a replace-all,
+    // whatever the store could do, and the dialog that warns about losing
+    // photos only shows when the store has no better option. So on a store
+    // that CAN append, the destructive path ran silently. WooCommerce, 2026-09-05.
+    await declare({ stableImageIds: true, imageOps: ['append', 'remove'], altEditable: true });
+    const jobId = await completedImageJob(['https://cdn.test/gen.jpg']);
+
+    const fd = new FormData();
+    fd.set('jobId', jobId);
+    const res = await approveGenerationAction(fd);
+    expect(res.ok).toBe(true);
+
+    const [change] = await db
+      .select()
+      .from(productChanges)
+      .where(eq(productChanges.sourceJobId, jobId));
+    expect(change.value).toEqual({
+      v: 1,
+      ops: [{ op: 'append', image: { src: 'https://cdn.test/gen.jpg', alt: null } }]
+    });
+  });
+
+  it('still replaces the gallery on a store that offers nothing better', async () => {
+    // There the merchant is warned first — that dialog is the whole reason the
+    // destructive shape is allowed at all.
+    await declare({ stableImageIds: false, imageOps: [], altEditable: false });
+    const jobId = await completedImageJob(['https://cdn.test/gen.jpg']);
+
+    const fd = new FormData();
+    fd.set('jobId', jobId);
+    expect((await approveGenerationAction(fd)).ok).toBe(true);
+
+    const [change] = await db
+      .select()
+      .from(productChanges)
+      .where(eq(productChanges.sourceJobId, jobId));
+    expect(change.value).toEqual([{ src: 'https://cdn.test/gen.jpg', alt: null }]);
   });
 });

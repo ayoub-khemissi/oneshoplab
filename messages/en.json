@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "Approved {date}",
     "errorGeneric": "Something went wrong. Try again.",
+    "errorImageLimit": "Your store's photo limit is reached. Remove a photo from the product, then apply again.",
     "replaceAllTitle": "Replace all the photos?",
     "replaceAllBody": "Your {current} current photos will be removed from the product and replaced by the {generated} generated visuals. They will stay in your media library.",
     "replaceAllConfirm": "Replace the photos",

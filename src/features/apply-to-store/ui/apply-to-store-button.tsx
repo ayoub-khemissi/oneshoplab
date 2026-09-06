@@ -74,6 +74,10 @@ export function ApplyToStoreButton({
         // The pending-changes panel is server-rendered: without this it keeps
         // saying "0 en attente" next to a chip that says the opposite.
         router.refresh();
+      } else if (res.error === 'invalid_value') {
+        // The generation is now appended to the gallery rather than replacing
+        // it, so a product already at the store's cap has nowhere to put it.
+        setError(t('errorImageLimit'));
       } else setError(t('errorGeneric'));
       setDialog(null);
     });

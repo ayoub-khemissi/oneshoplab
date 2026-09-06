@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "{date} tarihinde onaylandı",
     "errorGeneric": "Bir sorun oluştu. Tekrar deneyin.",
+    "errorImageLimit": "Mağazanızın fotoğraf sınırına ulaşıldı. Üründen bir fotoğraf kaldırıp yeniden deneyin.",
     "replaceAllTitle": "Tüm fotoğraflar değiştirilsin mi?",
     "replaceAllBody": "Mevcut {current} fotoğrafınız üründen kaldırılacak ve oluşturulan {generated} görselle değiştirilecek. Medya kitaplığınızda kalmaya devam edecekler.",
     "replaceAllConfirm": "Fotoğrafları değiştir",

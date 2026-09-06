@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "Zatwierdzono {date}",
     "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie.",
+    "errorImageLimit": "Osiągnięto limit zdjęć w Twoim sklepie. Usuń jedno zdjęcie produktu i spróbuj ponownie.",
     "replaceAllTitle": "Zastąpić wszystkie zdjęcia?",
     "replaceAllBody": "Twoje obecne zdjęcia ({current}) zostaną usunięte z produktu i zastąpione wygenerowanymi wizualizacjami ({generated}). Pozostaną w Twojej bibliotece multimediów.",
     "replaceAllConfirm": "Zastąp zdjęcia",

@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "{date} に承認",
     "errorGeneric": "問題が発生しました。もう一度お試しください。",
+    "errorImageLimit": "ストアの写真数の上限に達しました。商品から写真を1枚削除してから、もう一度お試しください。",
     "replaceAllTitle": "すべての写真を差し替えますか？",
     "replaceAllBody": "現在の写真 {current} 枚が商品から削除され、生成されたビジュアル {generated} 枚に差し替えられます。写真はメディアライブラリに残ります。",
     "replaceAllConfirm": "写真を差し替える",

@@ -1618,6 +1618,7 @@
     },
     "approvedOn": "Validé le {date}",
     "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "errorImageLimit": "La limite de photos de votre boutique est atteinte. Retirez une photo du produit, puis réessayez.",
     "replaceAllTitle": "Remplacer toutes les photos ?",
     "replaceAllBody": "Vos {current} photos actuelles seront retirées du produit et remplacées par les {generated} visuels générés. Elles resteront dans votre médiathèque.",
     "replaceAllConfirm": "Remplacer les photos",
