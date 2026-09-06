@@ -80,3 +80,42 @@ describe('resolveSiteStatus', () => {
     expect(resolveSiteStatus(input({ manual: true, toReview: 4 }))?.kind).toBe('changesToReview');
   });
 });
+
+describe('a store nobody is connected to', () => {
+  const disconnected = {
+    auditStatus: 'completed' as const,
+    catalogArriving: false,
+    connected: false,
+    applied: false,
+    manual: false
+  };
+
+  it('says nothing about changes it cannot send', () => {
+    // Rows can outlive the connection that made them — a merchant who removed
+    // their plugin still has `pending` in the table. Talking about a delivery
+    // that can no longer happen is worse than saying nothing.
+    expect(resolveSiteStatus({ ...disconnected, pending: 4, toReview: 0 })?.kind).toBe(
+      'connectStore'
+    );
+    expect(resolveSiteStatus({ ...disconnected, pending: 0, toReview: 2 })?.kind).toBe(
+      'connectStore'
+    );
+  });
+
+  it('still reports them the moment a store is connected', () => {
+    expect(
+      resolveSiteStatus({ ...disconnected, connected: true, pending: 0, toReview: 2 })?.kind
+    ).toBe('changesToReview');
+    expect(
+      resolveSiteStatus({ ...disconnected, connected: true, pending: 4, toReview: 0 })?.kind
+    ).toBe('changesSending');
+  });
+
+  it('a manual catalogue is not a disconnected store', () => {
+    // It has no store to connect at all, and its changes apply to OneShopLab
+    // itself — so they are still its business.
+    expect(
+      resolveSiteStatus({ ...disconnected, manual: true, pending: 0, toReview: 3 })?.kind
+    ).toBe('changesToReview');
+  });
+});

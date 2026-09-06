@@ -28,6 +28,7 @@ export function FieldRow({
     // sibling sections.
     <FieldViewProvider>
       <div
+        id={`field-${field}`}
         data-tour={tour}
         className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]"
       >

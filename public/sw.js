@@ -16,7 +16,7 @@
  * Bump CACHE to invalidate everything on the next activation.
  */
 
-const CACHE = 'oneshoplab-v1';
+const CACHE = 'oneshoplab-v2';
 const OFFLINE_URL = '/offline.html';
 const PRECACHE_URLS = [OFFLINE_URL, '/icons/icon-192.png'];
 
@@ -80,9 +80,17 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       const target = new URL(targetUrl, self.location.origin);
+      // The fragment counts. A notice names a row, not just a page: a tab
+      // already sitting on that product but scrolled somewhere else must be
+      // navigated so the hash changes and the page can move to the row, not
+      // merely focused on the spot the merchant had left it.
       const onTarget = clientList.find((client) => {
         const url = new URL(client.url);
-        return url.pathname === target.pathname && url.search === target.search;
+        return (
+          url.pathname === target.pathname &&
+          url.search === target.search &&
+          url.hash === target.hash
+        );
       });
       if (onTarget && 'focus' in onTarget) return onTarget.focus();
       const anyTab = clientList.find((client) => 'navigate' in client);

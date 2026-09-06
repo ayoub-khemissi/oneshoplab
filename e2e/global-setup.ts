@@ -141,6 +141,19 @@ export default async function globalSetup(): Promise<void> {
       tags: ['mug'],
       status: 'active' as const
     });
+    // A store that declared capabilities without anything actually connected
+    // cannot exist in production — the capabilities ARRIVE with the plugin —
+    // and the pages now hide every store-sync surface where there is no
+    // connection. So the fixture carries the key that makes it a real one.
+    await db.insert(schema.apiKeys).values({
+      id: '55555555-0000-4000-8000-000000000001',
+      projectId: SEED.imageProject.id,
+      userId,
+      name: 'E2E plugin',
+      prefix: 'osl_live_e2e',
+      keyHash: 'e'.repeat(64),
+      permissions: ['catalog:write', 'changes:read', 'changes:ack']
+    });
     await db.insert(schema.connectionCapabilities).values({
       projectId: SEED.imageProject.id,
       platform: 'woocommerce',

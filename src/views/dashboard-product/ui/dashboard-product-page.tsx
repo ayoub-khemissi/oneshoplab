@@ -3,7 +3,7 @@ import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { AutoRefresh, InfoHint } from '@/shared/ui';
+import { AutoRefresh, InfoHint, ScrollToHash } from '@/shared/ui';
 import { CustomInstructionsField, RetryableGenerateProvider } from '@/features/retryable-generate';
 import { ModelChips } from '@/widgets/model-chips';
 import { AppliedToastOnMount } from '@/features/manual-catalog';
@@ -262,8 +262,10 @@ export async function DashboardProductPage({
           already sent, which the recap's own lines carry. It stays for the
           cases the recap has no words for — a conflict or a failure, which
           open the recap modal. */}
-      <ProductRecapCard rows={recapRows} projectId={projectId} productId={productId} />
-      {pendingSummary.counts.conflict + pendingSummary.counts.failed > 0 ? (
+      {canApplyToStore ? (
+        <ProductRecapCard rows={recapRows} projectId={projectId} productId={productId} />
+      ) : null}
+      {canApplyToStore && pendingSummary.counts.conflict + pendingSummary.counts.failed > 0 ? (
         <PendingChangesBanner
           projectId={projectId}
           counts={pendingSummary.counts}
@@ -289,6 +291,8 @@ export async function DashboardProductPage({
       ) : null}
 
       <AppliedToastOnMount />
+      {/* A notice names a row; this takes the merchant to it. */}
+      <ScrollToHash />
 
       <RetryableGenerateProvider
         siteId={siteId}
@@ -347,25 +351,31 @@ export async function DashboardProductPage({
       </RetryableGenerateProvider>
 
       {/* Step 3 of docs/api/IMAGE-OPS.md §6: the merchant arranges their own
-          gallery — every action is one the connection declared it can do. */}
-      <ProductImageEditor
-        productId={productId}
-        storeImages={storeImages}
-        generated={liveImageJobs.flatMap((j) =>
-          j.status === 'completed' && j.imageUrl && !takenByStore.has(j.imageUrl)
-            ? [{ jobId: j.id, src: j.imageUrl, alt: null }]
-            : []
-        )}
-        capabilities={capabilities}
-        archived={archived}
-        generateAlt={generateAltTextAction}
-        altCost={altTextCredits()}
-        sending={changeInFlight}
-        inFlightAlts={inFlightAlts}
-        sentOps={pendingSummary.items
-          .filter((i) => i.status === 'pending' && i.detail.kind === 'imageOps')
-          .flatMap((i) => (i.detail.kind === 'imageOps' ? i.detail.ops : []))}
-      />
+          gallery — every action is one the connection declared it can do.
+          With no connection there is no gallery to arrange and no op to send,
+          so the whole panel goes: it would otherwise be a section explaining
+          at length that nothing in it works. The product's own photos stay
+          visible above, in the source preview. */}
+      {canApplyToStore ? (
+        <ProductImageEditor
+          productId={productId}
+          storeImages={storeImages}
+          generated={liveImageJobs.flatMap((j) =>
+            j.status === 'completed' && j.imageUrl && !takenByStore.has(j.imageUrl)
+              ? [{ jobId: j.id, src: j.imageUrl, alt: null }]
+              : []
+          )}
+          capabilities={capabilities}
+          archived={archived}
+          generateAlt={generateAltTextAction}
+          altCost={altTextCredits()}
+          sending={changeInFlight}
+          inFlightAlts={inFlightAlts}
+          sentOps={pendingSummary.items
+            .filter((i) => i.status === 'pending' && i.detail.kind === 'imageOps')
+            .flatMap((i) => (i.detail.kind === 'imageOps' ? i.detail.ops : []))}
+        />
+      ) : null}
 
       <PastGenerationsSection
         title={t('generationsHistory')}

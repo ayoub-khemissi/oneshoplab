@@ -71,11 +71,17 @@ export function resolveSiteStatus(input: SiteStatusInput): SiteStatus | null {
     return { kind: 'auditFailed', tone: 'danger' };
   }
 
-  if (input.toReview > 0) {
-    return { kind: 'changesToReview', tone: 'danger', count: input.toReview, target: 'changes' };
-  }
-  if (input.pending > 0) {
-    return { kind: 'changesSending', tone: 'busy', count: input.pending, target: 'changes' };
+  // Both of these are about a store carrying our changes, so neither is said
+  // on a store nobody is connected to: rows left over from a connection that
+  // has since been removed would otherwise talk about a sync that cannot
+  // happen. The connect message below is the honest thing to show instead.
+  if (input.connected) {
+    if (input.toReview > 0) {
+      return { kind: 'changesToReview', tone: 'danger', count: input.toReview, target: 'changes' };
+    }
+    if (input.pending > 0) {
+      return { kind: 'changesSending', tone: 'busy', count: input.pending, target: 'changes' };
+    }
   }
 
   // The onboarding path, last: it is the least urgent thing on the page, and

@@ -83,7 +83,15 @@ export async function pushPayloadFor(
       ? (t(`notifications.fieldLabels.${field}` as never) as string)
       : field
   );
-  const path = notificationHref(notice as Parameters<typeof notificationHref>[0]);
+  // The payload carries the field the notice is about, which is what turns
+  // "your product page" into "this title".
+  const path = notificationHref({
+    kind: notice.kind,
+    projectId: notice.projectId ?? null,
+    productId: notice.productId ?? null,
+    auditId: notice.auditId ?? null,
+    payload: notice.payload ?? null
+  });
 
   return {
     title,

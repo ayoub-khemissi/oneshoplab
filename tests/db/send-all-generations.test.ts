@@ -11,7 +11,7 @@ import { db } from '@/shared/db';
 import { jobs, productChanges, projects, type JobKind } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
-import { createProject } from './site-helpers';
+import { createProject, connectProject } from './site-helpers';
 
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 
@@ -31,6 +31,7 @@ beforeEach(async () => {
   userId = await createUser();
   session.userId = userId;
   projectId = await createProject(userId);
+  await connectProject(projectId, userId);
 });
 afterAll(async () => {
   await db.$client.end();
@@ -118,6 +119,7 @@ describe('send all generations', () => {
   it('refuses a project the caller does not own', async () => {
     const stranger = await createUser();
     const theirProject = await createProject(stranger);
+    await connectProject(theirProject, stranger);
     const theirProduct = await createProduct(theirProject, { sourceId: 'x' });
     await db.insert(jobs).values({
       id: randomUUID(),

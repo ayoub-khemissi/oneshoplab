@@ -49,6 +49,9 @@ interface BulkGenerateSectionProps {
    *  account (no site-level config) — same as the product page. */
   initialChatModel: ChatModelId;
   initialImageQuality: ImageQualityId;
+  /** Whether the store can be written to. Gates "send as they finish", which
+   *  is a store action and has no meaning without a connection. */
+  canApplyToStore: boolean;
   /** `inline` renders the idle state as a single toolbar button instead of an
    *  explanatory card. A run in flight keeps the full card either way. */
   variant?: 'card' | 'inline';
@@ -68,6 +71,7 @@ export function BulkGenerateSection({
   initialSiteOverride,
   initialChatModel,
   initialImageQuality,
+  canApplyToStore,
   variant = 'card'
 }: BulkGenerateSectionProps) {
   const t = useTranslations('BulkGenerate');
@@ -259,6 +263,7 @@ export function BulkGenerateSection({
 
         {modalOpen ? (
           <SelectionModal
+            canApplyToStore={canApplyToStore}
             candidates={candidates}
             balance={balance}
             submitting={submitting}
@@ -374,6 +379,7 @@ export function BulkGenerateSection({
 
       {modalOpen ? (
         <SelectionModal
+          canApplyToStore={canApplyToStore}
           candidates={candidates}
           balance={balance}
           submitting={submitting}

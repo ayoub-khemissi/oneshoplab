@@ -25,7 +25,7 @@ import { db } from '@/shared/db';
 import { jobs, productChanges, type ProductChangeField } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
-import { createProject } from './site-helpers';
+import { createProject, connectProject } from './site-helpers';
 
 let userId: string;
 let otherUserId: string;
@@ -37,6 +37,7 @@ beforeEach(async () => {
   userId = await createUser();
   otherUserId = await createUser();
   projectId = await createProject(userId);
+  await connectProject(projectId, userId);
   session.userId = userId;
   product = await createProduct(projectId, { title: 'Old title' });
 });
@@ -189,6 +190,7 @@ describe('pending summary queries', () => {
 
   it('groups the counters per store for the dashboard cards', async () => {
     const second = await createProject(userId, 'Second');
+    await connectProject(second, userId);
     const secondProduct = await createProduct(second, { title: 'Board' });
     await change();
     await conflict((await change()).id);

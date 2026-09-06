@@ -23,6 +23,7 @@ import {
   type ProductChangeField
 } from '@/shared/db/schema';
 import { toChangeSummary } from '../lib/summary';
+import { projectCanReceiveChanges } from './undeliverable';
 import type {
   ApplySelectionResult,
   ApproveResult,
@@ -126,6 +127,14 @@ export async function approveOneGeneration(
   }
   const field = FIELD_BY_KIND[job.kind];
   if (!field) return { ok: false, error: 'unsupported' };
+  // Queueing a change for a store we cannot reach is a promise we cannot
+  // keep: it sits pending until the sweep gives up on it, while the product
+  // page says "sending". Refuse here rather than let the queue fill — the
+  // button is hidden in that case, but hiding is not enforcing, and auto-send
+  // and "send everything" reach this same code without any button at all.
+  if (!(await projectCanReceiveChanges(job.projectId))) {
+    return { ok: false, error: 'not_connected' };
+  }
   const capabilities = field === 'images' ? await getProjectCapabilities(job.projectId) : null;
   const value = changeValue(field, job.result, capabilities);
   if (isEmpty(field, value)) return { ok: false, error: 'unsupported' };

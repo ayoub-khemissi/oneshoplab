@@ -91,7 +91,14 @@ export type ApproveResult =
   | { ok: true; change: ChangeSummary; projectId?: string }
   | {
       ok: false;
-      error: 'unauthorized' | 'bad_request' | 'not_found' | 'unsupported' | 'invalid_value';
+      error:
+        | 'unauthorized'
+        | 'bad_request'
+        | 'not_found'
+        | 'unsupported'
+        | 'invalid_value'
+        /** No store can receive it: nothing was queued. */
+        | 'not_connected';
     };
 
 /**

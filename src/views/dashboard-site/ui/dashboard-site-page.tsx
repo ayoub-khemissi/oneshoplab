@@ -6,7 +6,7 @@ import {
   resolveChatModelId
 } from '@/entities/ai-model';
 import { notFound, redirect } from 'next/navigation';
-import { AutoRefresh, ScrollAwareSticky } from '@/shared/ui';
+import { AutoRefresh, ScrollAwareSticky, ScrollToHash } from '@/shared/ui';
 import { PaginatedProductsList } from './paginated-products-list';
 import { SiteBulkPrefsEditor } from '@/features/bulk-generate/client';
 import { SiteInstructionsEditor, SiteLanguageEditor } from '@/features/manage-project';
@@ -489,6 +489,7 @@ export async function DashboardSitePage({
   return (
     <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6 md:gap-8">
       {isLoading || awaitingStore ? <AutoRefresh /> : null}
+      <ScrollToHash />
 
       <ScrollAwareSticky topOffsetPx={68}>
         <SiteHeaderBar
@@ -517,7 +518,12 @@ export async function DashboardSitePage({
         {siteStatus?.kind === 'auditFailed' ? (
           <StatusLine status="failed" error={effectiveError} catalogArriving={false} />
         ) : (
-          <SiteStatusLine status={siteStatus} projectId={project.id} items={pendingSummary.items} />
+          <SiteStatusLine
+            status={siteStatus}
+            projectId={project.id}
+            items={pendingSummary.items}
+            sendable={sendableCount}
+          />
         )}
         <TabsNav active={activeTab} siteId={siteId} />
       </ScrollAwareSticky>
@@ -567,9 +573,14 @@ export async function DashboardSitePage({
               initialSiteOverride={bulkEffective?.siteOverride ?? false}
               initialChatModel={bulkChatModel}
               initialImageQuality={bulkImageQuality}
+              canApplyToStore={storeConnected}
               variant="inline"
             />
-            {missingAltCount > 0 ? (
+            {/* Capabilities outlive the connection that reported them — an
+                uninstalled plugin leaves its row behind — so the connection is
+                asked too: a batch of alt texts nothing can deliver is not
+                offered. */}
+            {storeConnected && missingAltCount > 0 ? (
               <BulkAltTextCard
                 projectId={project.id}
                 missingCount={missingAltCount}

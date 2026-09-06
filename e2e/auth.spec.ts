@@ -9,7 +9,10 @@ test.describe('authentication', () => {
     await page.fill('input[name="password"]', 'brand-new-password-1');
     await page.getByRole('button', { name: 'Créer mon compte' }).click();
     await page.waitForURL(/\/fr\/dashboard/);
-    await expect(page.getByText(/Bienvenue/)).toBeVisible(); // fresh account: onboarding dashboard
+    // The onboarding dashboard greets them — and so does the first-store
+    // walkthrough, which opens on exactly this account. Two matches is the
+    // correct page, not an ambiguous one.
+    await expect(page.getByText(/Bienvenue/).first()).toBeVisible();
   });
 
   test('signup refuses a taken email and a short password', async ({ page }) => {

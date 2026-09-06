@@ -19,6 +19,9 @@ const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
 // Straight to the module, NOT the feature barrel: that barrel exports React
 // components, and pulling @heroui/react into the tsx worker crash-loops it.
+const { failUndeliverableChanges } = await import(
+  '@/features/apply-to-store/api/undeliverable'
+);
 const { autoSendCompletedGenerations } = await import(
   '@/features/apply-to-store/api/auto-send'
 );
@@ -99,6 +102,12 @@ async function main(): Promise<void> {
         // call, and a job is picked up by existing.
         generateAltsForNewImages().catch((e: unknown) =>
           console.error('[worker] image-alts failed', e)
+        ),
+        // A change whose store went away is never picked up by any of the
+        // passes above, so without this it stays "sending" for ever. Past a
+        // grace window it becomes a failure the merchant can actually see.
+        failUndeliverableChanges().catch((e: unknown) =>
+          console.error('[worker] undeliverable failed', e)
         )
       ];
       // Every couple of minutes: re-score the stores whose catalog moved

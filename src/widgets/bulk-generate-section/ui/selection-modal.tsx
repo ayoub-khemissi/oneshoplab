@@ -40,6 +40,9 @@ export interface SelectionModalProps {
   estimateTotal: number;
   onCancel: () => void;
   onConfirm: (productIds: string[], autoSend: boolean) => Promise<boolean>;
+  /** Whether a store can be written to at all. "Send as they finish" is a
+   *  store action, so it is not offered where there is no store to send to. */
+  canApplyToStore: boolean;
 }
 
 // Selection modal — checkbox list + virtual budget counter
@@ -62,7 +65,8 @@ export function SelectionModal({
   onPickImage,
   estimateTotal,
   onCancel,
-  onConfirm
+  onConfirm,
+  canApplyToStore
 }: SelectionModalProps) {
   const t = useTranslations('BulkGenerate');
   const locale = useLocale();
@@ -382,21 +386,25 @@ export function SelectionModal({
               </>
             ) : (
               <>
-                <label className="mr-auto flex items-start gap-2 text-xs text-[var(--muted)]">
-                  <input
-                    type="checkbox"
-                    checked={autoSend}
-                    onChange={(e) => setAutoSend(e.target.checked)}
-                    data-testid="bulk-auto-send"
-                    className="mt-0.5 accent-[var(--accent)]"
-                  />
-                  <span className="flex flex-col">
-                    <span className="font-medium text-[var(--foreground)]">
-                      {t('autoSendLabel')}
+                {canApplyToStore ? (
+                  <label className="mr-auto flex items-start gap-2 text-xs text-[var(--muted)]">
+                    <input
+                      type="checkbox"
+                      checked={autoSend}
+                      onChange={(e) => setAutoSend(e.target.checked)}
+                      data-testid="bulk-auto-send"
+                      className="mt-0.5 accent-[var(--accent)]"
+                    />
+                    <span className="flex flex-col">
+                      <span className="font-medium text-[var(--foreground)]">
+                        {t('autoSendLabel')}
+                      </span>
+                      <span>{t('autoSendHint')}</span>
                     </span>
-                    <span>{t('autoSendHint')}</span>
-                  </span>
-                </label>
+                  </label>
+                ) : (
+                  <span className="mr-auto" />
+                )}
                 <button
                   type="button"
                   onClick={() => setStep(1)}

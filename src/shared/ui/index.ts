@@ -26,6 +26,7 @@ export { LocalePicker } from './locale-picker';
 export { LocaleSwitcher } from './locale-switcher';
 export { ProductImageGallery } from './product-image-gallery';
 export { ScrollAwareSticky } from './scroll-aware-sticky';
+export { ScrollToHash } from './scroll-to-hash';
 export { ScrollHidingHeader } from './scroll-hiding-header';
 export { ServerPagination } from './server-pagination';
 export { SiteFavicon } from './site-favicon';

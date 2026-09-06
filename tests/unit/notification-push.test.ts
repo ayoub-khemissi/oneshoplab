@@ -66,7 +66,11 @@ describe('pushPayloadFor', () => {
       'https://oneshoplab.com'
     );
     expect(payload.title).toBe('Texte généré');
-    expect(payload.url).toBe('https://oneshoplab.com/fr/dashboard/sites/p1/products/x1');
+    // Down to the row: a tap lands on the title that was rewritten, not at
+    // the top of a page the merchant then has to search.
+    expect(payload.url).toBe(
+      'https://oneshoplab.com/fr/dashboard/sites/p1/products/x1#field-title'
+    );
     expect(payload.tag).toBe('chat_completed:x1');
   });
 

@@ -26,7 +26,7 @@ import {
 } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
-import { createProject } from './site-helpers';
+import { createProject, connectProject } from './site-helpers';
 
 const GEN = 'https://cdn.test/gen-a.jpg';
 const WOO: ConnectionCapabilities = {
@@ -71,6 +71,7 @@ beforeEach(async () => {
   await resetTables();
   userId = await createUser();
   projectId = await createProject(userId);
+  await connectProject(projectId, userId);
   session.userId = userId;
   product = await createProduct(projectId, {
     sourceId: 'gallery',

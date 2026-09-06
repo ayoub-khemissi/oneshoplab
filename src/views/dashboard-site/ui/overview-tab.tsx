@@ -256,6 +256,7 @@ function HeroScore({
         : 'border-[var(--danger)]';
   return (
     <Card
+      id="site-score"
       variant="tertiary"
       data-tour="site-score"
       className="p-8 flex flex-col md:flex-row items-center gap-8"

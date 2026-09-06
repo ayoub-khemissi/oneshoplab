@@ -418,3 +418,36 @@
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+/* =============================================================================
+   Anchor landing — a notification that names a row has to point at it.
+   `scroll-margin-top` keeps the target clear of the sticky header when the
+   browser does the scrolling itself; the flash is what <ScrollToHash /> adds
+   for a moment, so the merchant can tell WHICH row the notice meant.
+   ============================================================================= */
+[id^='field-'],
+#site-score {
+  scroll-margin-top: 96px;
+}
+
+.anchor-flash {
+  animation: anchor-flash 1.6s ease-out;
+  border-radius: 0.5rem;
+}
+
+@keyframes anchor-flash {
+  0%,
+  55% {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anchor-flash {
+    animation: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 45%, transparent);
+  }
+}

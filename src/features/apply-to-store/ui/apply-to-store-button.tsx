@@ -5,7 +5,6 @@ import { AlertTriangle, Check, Clock, RotateCcw, Store, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { Link } from '@/i18n/navigation';
 import { ConfirmDialog } from '@/shared/ui';
 import { approveGenerationAction, cancelChangeAction, undoChangeAction } from '../api/actions';
 import type { ChangeSummary } from '../model/types';
@@ -113,20 +112,12 @@ export function ApplyToStoreButton({
     });
   }
 
-  if (!canApplyToStore) {
-    return (
-      <p className="text-xs text-[var(--muted)] inline-flex items-center gap-1.5 flex-wrap">
-        <Store className="size-3.5" aria-hidden />
-        {t('noKeyHint')}{' '}
-        <Link
-          href={`/dashboard/sites/${siteId}?tab=integrations`}
-          className="text-[var(--accent)] hover:underline font-medium"
-        >
-          {t('noKeyLink')}
-        </Link>
-      </p>
-    );
-  }
+  // Nothing to send to, so nothing about sending. This used to be a small
+  // "connect your store" card repeated under every field, which put the
+  // subject of store sync all over a page where none of it could happen. The
+  // invitation to connect belongs to the site, and the site already carries
+  // it — once, in its status line and its setup guide.
+  if (!canApplyToStore) return null;
 
   const status = change?.status;
   const settled =

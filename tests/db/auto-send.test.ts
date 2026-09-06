@@ -10,7 +10,7 @@ import { db } from '@/shared/db';
 import { jobs, productChanges, projects } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
-import { createProject } from './site-helpers';
+import { connectProject, createProject } from './site-helpers';
 
 vi.mock('next/cache', () => ({ revalidatePath: () => {} }));
 vi.mock('@/entities/user', () => ({ auth: async () => null }));
@@ -25,6 +25,8 @@ beforeEach(async () => {
   await resetTables();
   userId = await createUser();
   projectId = await createProject(userId);
+  // Auto-send queues real changes, and a change now needs somewhere to go.
+  await connectProject(projectId, userId);
 });
 afterAll(async () => {
   await db.$client.end();
@@ -71,6 +73,7 @@ describe('autoSendCompletedGenerations', () => {
   it('leaves every other store alone', async () => {
     const otherUser = await createUser();
     const otherProject = await createProject(otherUser);
+    await connectProject(otherProject, otherUser);
     const mine = await createProduct(projectId, { sourceId: 'a' });
     const theirs = await createProduct(otherProject, { sourceId: 'b' });
     await generation(projectId, mine.id);

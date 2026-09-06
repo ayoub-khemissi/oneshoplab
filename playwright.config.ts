@@ -23,6 +23,13 @@ export const E2E_ENV: Record<string, string> = {
   RECAPTCHA_SECRET_KEY: '',
   GOOGLE_CLIENT_ID: '',
   GOOGLE_CLIENT_SECRET: '',
+  // Blanked on purpose: two specs assert what the Integrations tab shows when
+  // the public Shopify app is NOT configured, and a local run would otherwise
+  // inherit the real credentials from .env and take the other branch.
+  SHOPIFY_APP_CLIENT_ID: '',
+  SHOPIFY_APP_CLIENT_SECRET: '',
+  WIX_APP_ID: '',
+  WIX_APP_SECRET: '',
   SMTP_HOST: '127.0.0.1',
   SMTP_PORT: '1',
   DISCORD_BOT_API_URL: 'http://127.0.0.1:1',
