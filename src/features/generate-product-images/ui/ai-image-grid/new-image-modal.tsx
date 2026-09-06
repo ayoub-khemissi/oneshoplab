@@ -4,7 +4,7 @@ import { Spinner } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
-import { ModalCloseButton } from '@/shared/ui';
+import { ModalCloseButton, useModalHistory } from '@/shared/ui';
 import type { ImageAngle, NewImagePayload } from './types';
 
 interface NewImageModalProps {
@@ -33,6 +33,8 @@ export function NewImageModal({
   const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'lifestyle');
   const [customPrompt, setCustomPrompt] = useState(initialCustomPrompt);
   const [submitting, setSubmitting] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(true, onCancel);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

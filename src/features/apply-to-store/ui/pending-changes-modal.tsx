@@ -5,7 +5,7 @@ import { AlertTriangle, Check, ListChecks, Store, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { ModalCloseButton } from '@/shared/ui';
+import { ModalCloseButton, useModalHistory } from '@/shared/ui';
 import { applyPendingChangesAction, cancelChangeAction, dismissChangeAction } from '../api/actions';
 import { groupByProduct, resultParts } from '../lib/pending-summary';
 import type { ApplySelectionCounts, PendingChangeItem } from '../model/types';
@@ -109,6 +109,9 @@ export function PendingChangesModal({
         failed: (count) => t('resultFailed', { count })
       })
     : [];
+
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(isOpen, () => onOpenChange(false));
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

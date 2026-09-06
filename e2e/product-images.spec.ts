@@ -12,6 +12,16 @@ async function login(page: Page) {
 }
 
 /** The change the editor queued, read straight from the database. */
+/** Drop what an earlier test queued: the preview replays pending ops. */
+async function clearChanges(productId: string) {
+  const conn = await mysql.createConnection({ uri: E2E_ENV.DATABASE_URL });
+  try {
+    await conn.execute('DELETE FROM product_changes WHERE product_id = ?', [productId]);
+  } finally {
+    await conn.end();
+  }
+}
+
 async function imageChanges(productId: string) {
   const conn = await mysql.createConnection({ uri: E2E_ENV.DATABASE_URL });
   try {
@@ -28,7 +38,10 @@ async function imageChanges(productId: string) {
 const editorUrl = `/fr/dashboard/sites/${SEED.imageProject.id}/products/${SEED.imageProduct.id}`;
 
 test.describe('product images', () => {
-  test.beforeEach(async ({ page }) => login(page));
+  test.beforeEach(async ({ page }) => {
+    await clearChanges(SEED.imageProduct.id);
+    await login(page);
+  });
 
   test('queues two actions, previews them, and applies them as one change', async ({ page }) => {
     await page.goto(editorUrl);
@@ -75,8 +88,9 @@ test.describe('product images', () => {
       ]
     });
 
-    // The queue is empty again and nothing else was queued behind our back.
-    await expect(page.getByTestId('pending-ops')).toHaveAttribute('data-count', '0');
+    // The queue is empty again — and an empty queue shows no panel at all,
+    // which is the whole point of having moved it above the grid.
+    await expect(page.getByTestId('pending-ops')).toHaveCount(0);
   });
 
   test('the move buttons reorder the gallery without a mouse drag', async ({ page }) => {
@@ -97,7 +111,8 @@ test.describe('product images', () => {
     // Taking the decision back restores the store's own order.
     await queue.getByTestId('queued-op').getByRole('button').first().click();
     await expect(tiles.nth(0)).toHaveAttribute('data-ref', 'm1');
-    await expect(page.getByTestId('apply-image-ops')).toBeDisabled();
+    // Nothing left to apply, so there is no panel to apply from.
+    await expect(page.getByTestId('apply-image-ops')).toHaveCount(0);
   });
 
   test('a store without stable image ids keeps the replace-all path only', async ({ page }) => {
@@ -133,7 +148,14 @@ test.describe('product images', () => {
     // One button per store photo — the connection declared set_alt + altEditable.
     const generate = editor.getByTestId('tile-generate-alt');
     await expect(generate).toHaveCount(3);
-    await expect(generate.first()).toContainText('Générer le texte alternatif');
+    // m1 has an alt in the fixture, so its button offers to rewrite it; m2 has
+    // none, and is the one that must offer to write the first.
+    await expect(
+      editor.locator('[data-ref="m1"]').getByTestId('tile-generate-alt')
+    ).toContainText('Regénérer le texte alternatif');
+    await expect(
+      editor.locator('[data-ref="m2"]').getByTestId('tile-generate-alt')
+    ).toContainText('Générer le texte alternatif');
 
     // This environment has no AI keys on purpose (playwright.config E2E_ENV):
     // the provider is never reached, and the merchant gets a sentence instead
@@ -144,7 +166,7 @@ test.describe('product images', () => {
       timeout: 20_000
     });
     await expect(page.locator('body')).not.toContainText(/MISSING_MESSAGE|Application error/);
-    await expect(page.getByTestId('pending-ops')).toHaveAttribute('data-count', '0');
+    await expect(page.getByTestId('pending-ops')).toHaveCount(0);
   });
 
   test('a tap on the circled i explains what the alternative text buys them', async ({ page }) => {

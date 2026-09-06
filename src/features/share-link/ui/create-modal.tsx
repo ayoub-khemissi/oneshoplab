@@ -3,7 +3,7 @@
 import { Spinner } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { ModalCloseButton } from '@/shared/ui';
+import { ModalCloseButton, useModalHistory } from '@/shared/ui';
 import { createShareLinkAction } from '../api/actions';
 import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
 
@@ -30,6 +30,8 @@ export function CreateModal({
   const [label, setLabel] = useState<string>(defaultLabel);
   const [showOnHome, setShowOnHome] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(true, onCancel);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {

@@ -141,6 +141,20 @@ export default async function globalSetup(): Promise<void> {
       tags: ['mug'],
       status: 'active' as const
     });
+    // The default store is a connected one too: it reports only the minimum
+    // capabilities (no stable image ids), which is a real plugin state — but a
+    // store with NO connection now hides every sync surface, and the spec
+    // about the replace-all fallback needs the editor on screen.
+    await db.insert(schema.apiKeys).values({
+      id: '11111111-0000-4000-8000-000000000001',
+      projectId: SEED.project.id,
+      userId,
+      name: 'E2E plugin (minimum)',
+      prefix: 'osl_live_min',
+      keyHash: 'm'.repeat(64),
+      permissions: ['catalog:write', 'changes:read', 'changes:ack']
+    });
+
     // A store that declared capabilities without anything actually connected
     // cannot exist in production — the capabilities ARRIVE with the plugin —
     // and the pages now hide every store-sync surface where there is no
@@ -167,7 +181,9 @@ export default async function globalSetup(): Promise<void> {
     });
 
     // A third store whose changes are still waiting: the banner + recap modal
-    // need one pending change per field and one the store refused.
+    // need one pending change per field and one the store refused. Waiting
+    // changes imply a store that can receive them — without a connection they
+    // would now be hidden, and the sweep would eventually fail them.
     const { hashValue } = await import('@/entities/product-change/lib/hash');
     await db.insert(schema.projects).values({
       id: SEED.pendingProject.id,
@@ -176,6 +192,16 @@ export default async function globalSetup(): Promise<void> {
       domain: SEED.pendingProject.domain,
       url: `https://${SEED.pendingProject.domain}`,
       source: 'woocommerce'
+    });
+
+    await db.insert(schema.apiKeys).values({
+      id: '77777777-0000-4000-8000-000000000001',
+      projectId: SEED.pendingProject.id,
+      userId,
+      name: 'E2E plugin (pending)',
+      prefix: 'osl_live_pen',
+      keyHash: 'p'.repeat(64),
+      permissions: ['catalog:write', 'changes:read', 'changes:ack']
     });
     await db.insert(schema.products).values({
       id: SEED.pendingProduct.id,

@@ -362,7 +362,7 @@ export async function DashboardProductPage({
           storeImages={storeImages}
           generated={liveImageJobs.flatMap((j) =>
             j.status === 'completed' && j.imageUrl && !takenByStore.has(j.imageUrl)
-              ? [{ jobId: j.id, src: j.imageUrl, alt: null }]
+              ? [{ jobId: j.id, src: j.imageUrl, alt: j.alt }]
               : []
           )}
           capabilities={capabilities}

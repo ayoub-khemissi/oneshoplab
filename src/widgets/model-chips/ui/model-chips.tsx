@@ -13,7 +13,7 @@ import {
 import { updateUserPreferencesAction } from '@/features/model-preferences';
 import { ModelPickerChips, useModelCopy } from '@/features/model-preferences';
 import { useGenerateContext } from '@/features/retryable-generate';
-import { ModalCloseButton } from '@/shared/ui';
+import { ModalCloseButton, useModalHistory } from '@/shared/ui';
 
 /**
  * Product-page model/quality picker. State comes from the generate context (so
@@ -30,6 +30,8 @@ export function ModelChips() {
   const modelCopy = useModelCopy();
   const { chatModelId, imageQualityId, setChatModelId, setImageQualityId } = useGenerateContext();
   const [open, setOpen] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(open, () => setOpen(false));
   const [, startPersist] = useTransition();
 
   function persist(next: { chatModelId?: ChatModelId; imageQualityId?: ImageQualityId }) {

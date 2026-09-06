@@ -5,7 +5,7 @@ import { Coins, Lightbulb, RefreshCw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
-import { ElapsedTimer, ModalCloseButton } from '@/shared/ui';
+import { ElapsedTimer, ModalCloseButton, useModalHistory } from '@/shared/ui';
 import { suggestPromptsAction } from '../actions';
 import { useGenerateContext } from './context';
 
@@ -47,6 +47,8 @@ export function PromptSuggestions({
     initial && initial.length > 0 ? initial : null
   );
   const [open, setOpen] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(open, () => setOpen(false));
   const [error, setError] = useState<string | null>(null);
   const [busy, startTransition] = useTransition();
 

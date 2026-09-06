@@ -52,7 +52,11 @@ export async function listProductImageJobs(
 
 function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
   const input = r.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
-  const result = r.result as { persistedUrls?: string[]; resultUrls?: string[] } | null;
+  const result = r.result as {
+    persistedUrls?: string[];
+    resultUrls?: string[];
+    alts?: string[];
+  } | null;
   // Only ever surface the persisted (R2) URL — never the raw kie
   // resultUrls, which are temp (tempfile.aiquickdraw.com) and 404
   // after a few days. A completed job always has persistedUrls
@@ -64,6 +68,11 @@ function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
     status: r.status,
     kieTaskId: r.kieTaskId ?? null,
     imageUrl: url,
+    // Dropping this was invisible and expensive: the alt pass writes it here,
+    // the page then handed the editor `alt: null`, and the merchant was shown
+    // "no alternative text" on a photo whose alt they had already paid for —
+    // next to a button offering to generate it a second time.
+    alt: result?.alts?.[0] ?? null,
     sourceImageUrl: input?.sourceImageUrl ?? null,
     prompt: input?.userPrompt ?? '',
     createdAt: r.createdAt,

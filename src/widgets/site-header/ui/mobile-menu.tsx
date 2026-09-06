@@ -18,7 +18,7 @@ import {
 import { useState, type ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { signOutAction } from '@/features/account/actions';
-import { DiscordGlyph } from '@/shared/ui';
+import { DiscordGlyph, useModalHistory } from '@/shared/ui';
 
 interface MobileMenuProps {
   user: {
@@ -81,6 +81,8 @@ export function MobileMenu({
   discordUrl
 }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(isOpen, () => setIsOpen(false));
 
   return (
     <Drawer isOpen={isOpen} onOpenChange={setIsOpen}>

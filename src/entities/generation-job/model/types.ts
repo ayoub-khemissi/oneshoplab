@@ -11,6 +11,9 @@ export interface ImageJobRow {
   status: JobStatus;
   kieTaskId: string | null;
   imageUrl: string | null;
+  /** The alt text written for this image — `costForImage` charged for both,
+   *  so it belongs to the job and must travel with it. */
+  alt: string | null;
   sourceImageUrl: string | null;
   prompt: string;
   createdAt: Date;
