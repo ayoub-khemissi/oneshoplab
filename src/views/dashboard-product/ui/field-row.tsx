@@ -7,9 +7,12 @@ export function FieldRow({
   hasHistory,
   available = true,
   apply,
+  tour,
   children
 }: {
   field: 'title' | 'description' | 'tags' | 'images';
+  /** Anchor for the first-store walkthrough (@/features/guided-tour). */
+  tour?: string;
   hasHistory: boolean;
   available?: boolean;
   /** "Apply to my store" for the latest generation of this field — the whole
@@ -24,7 +27,10 @@ export function FieldRow({
     // Regenerate can flip this section to AI without disturbing
     // sibling sections.
     <FieldViewProvider>
-      <div className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]">
+      <div
+        data-tour={tour}
+        className="flex flex-col gap-2 pb-5 last:pb-0 border-b last:border-b-0 border-[var(--border)]"
+      >
         {children}
         <div className="flex flex-wrap items-center justify-end gap-2">
           {apply}

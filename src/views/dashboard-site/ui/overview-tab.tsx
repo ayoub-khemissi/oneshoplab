@@ -255,7 +255,11 @@ function HeroScore({
         ? 'border-[var(--warning)]'
         : 'border-[var(--danger)]';
   return (
-    <Card variant="tertiary" className="p-8 flex flex-col md:flex-row items-center gap-8">
+    <Card
+      variant="tertiary"
+      data-tour="site-score"
+      className="p-8 flex flex-col md:flex-row items-center gap-8"
+    >
       <div
         className={`score-ring w-36 h-36 rounded-full border-8 ${ringColor} flex items-center justify-center flex-shrink-0`}
       >

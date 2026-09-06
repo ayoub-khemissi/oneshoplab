@@ -127,6 +127,7 @@ export async function SuggestionsCard({
 
             <FieldRow
               field="title"
+              tour="field-title"
               hasHistory={hasHistory.title}
               apply={applyFor(titleHistory, 'title')}
             >

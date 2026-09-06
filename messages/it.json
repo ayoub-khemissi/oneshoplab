@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Invia le modifiche automaticamente",
     "autoSendHint": "Una generazione parte verso il tuo negozio appena è pronta, senza revisione. Puoi comunque annullare una modifica in seguito.",
     "autoSendSaved": "Salvato"
+  },
+  "Tour": {
+    "ariaLabel": "Tour guidato",
+    "counter": "Passaggio {n} di {total}",
+    "next": "Avanti",
+    "back": "Indietro",
+    "skip": "Salta il tour",
+    "finish": "Fine",
+    "notHere": "Si trova in un’altra pagina: «Avanti» ti porta lì.",
+    "replayTitle": "Tour guidato",
+    "replayHint": "Rifai il percorso: l’analisi, la connessione del negozio e la prima modifica.",
+    "replay": "Rivedi il tour",
+    "replayDone": "Si aprirà alla tua prossima visita alla dashboard.",
+    "steps": {
+      "welcome": {
+        "title": "Benvenuto",
+        "body": "Due minuti per vedere tutto il percorso: l’analisi, la connessione del negozio e la prima modifica inviata. Puoi fermarti quando vuoi."
+      },
+      "audit": {
+        "title": "Tutto parte da un URL",
+        "body": "Incolla l’indirizzo del tuo negozio: OneShopLab legge il catalogo e valuta le schede prodotto. Per questa prima lettura non serve alcun accesso da commerciante."
+      },
+      "score": {
+        "title": "Il tuo report",
+        "body": "Il punteggio riassume ciò che vedono i visitatori e i motori di ricerca. Sotto: ogni asse e i prodotti che ti penalizzano."
+      },
+      "connect": {
+        "title": "Collega il tuo negozio",
+        "body": "Finché non è collegato, questo resta un report da ricopiare a mano. Collegato, il negozio riceve le modifiche che approvi e un clic le annulla."
+      },
+      "platform": {
+        "title": "Scegli la tua piattaforma",
+        "body": "Shopify, WooCommerce o Wix: ognuna è guidata passo dopo passo. Poi il catalogo arriva da solo."
+      },
+      "products": {
+        "title": "I tuoi prodotti",
+        "body": "L’intero catalogo, dai più deboli in su. Da qui parte anche la generazione in blocco, quando vorrai trattare tutto insieme."
+      },
+      "product": {
+        "title": "Apri una scheda",
+        "body": "Ogni prodotto ha la sua pagina: da un lato ciò che c’è oggi nel negozio, dall’altro la proposta dell’IA. Niente parte senza di te."
+      },
+      "models": {
+        "title": "I tuoi modelli",
+        "body": "Il modello di testo e la qualità delle immagini si cambiano qui, prodotto per prodotto. Il costo in crediti è mostrato prima di generare, mai dopo."
+      },
+      "generate": {
+        "title": "Genera un titolo",
+        "body": "Genera, confronta con l’esistente, rigenera se serve. Un’istruzione personalizzata poco sopra guida il tono e le parole da evitare."
+      },
+      "apply": {
+        "title": "Mandalo al negozio",
+        "body": "«Applica» mette la generazione in coda; il negozio la ritira in pochi secondi e sostituisce il valore. Annulla ripristina il precedente."
+      },
+      "photos": {
+        "title": "Le foto",
+        "body": "Aggiungi un’immagine generata, riordina, scegli la principale, scrivi i testi alternativi. Vengono proposte solo le azioni che il tuo negozio sa fare."
+      },
+      "settings": {
+        "title": "Impostazioni del negozio",
+        "body": "Lingua, istruzioni applicate a ogni generazione, invio automatico, preferenze per la generazione in blocco: qui c’è tutto ciò che vale per l’intero catalogo."
+      },
+      "tips": {
+        "title": "Il resto è qui",
+        "body": "Crediti, piano, modelli predefiniti e notifiche. Una generazione continua anche se chiudi la scheda: ti avvisiamo quando è pronta."
+      }
+    }
   }
 }

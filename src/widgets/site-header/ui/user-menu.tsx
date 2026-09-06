@@ -98,6 +98,7 @@ export function UserMenu({
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="rounded-full transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
+        data-tour="account-menu"
         aria-label="Open user menu"
         aria-expanded={open}
         aria-haspopup="menu"

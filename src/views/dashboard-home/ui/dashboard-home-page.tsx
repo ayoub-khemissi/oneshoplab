@@ -203,6 +203,7 @@ function EmptyState() {
       <Card.Footer>
         <Link
           href="/dashboard/sites/new"
+          data-tour="audit-cta"
           className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium text-sm inline-flex items-center gap-1.5"
         >
           <Sparkles className="size-4" />
@@ -354,6 +355,7 @@ function AddSiteCard({ canAdd }: { canAdd: boolean }) {
   return (
     <Link
       href={href}
+      data-tour="audit-cta"
       title={canAdd ? undefined : t('siteLimitReached')}
       className="rounded-lg border border-dashed border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors flex flex-col items-center justify-center text-center gap-2 p-5 min-h-[180px] text-[var(--muted)]"
     >

@@ -257,7 +257,7 @@ export function ProductImageEditor({
   });
 
   return (
-    <section data-testid="image-editor" className="flex flex-col gap-3">
+    <section data-testid="image-editor" data-tour="image-editor" className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="inline-flex items-center gap-2 text-lg font-semibold">
           {t('title')}

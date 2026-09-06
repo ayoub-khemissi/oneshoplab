@@ -64,7 +64,10 @@ export function ModelChips() {
   const imageName = modelCopy.qualityLabel(image.id, image.resolution, image.displayName);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
+    <div
+      data-tour="model-chips"
+      className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]"
+    >
       <span data-testid="models-summary" className="truncate">
         {t('modelsSummary', { chat: chatName, image: imageName })}
       </span>

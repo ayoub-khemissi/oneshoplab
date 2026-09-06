@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Enviar as alterações automaticamente",
     "autoSendHint": "Uma geração segue para a sua loja assim que estiver pronta, sem revisão. Pode sempre anular uma alteração depois.",
     "autoSendSaved": "Guardado"
+  },
+  "Tour": {
+    "ariaLabel": "Tour guiado",
+    "counter": "Etapa {n} de {total}",
+    "next": "Seguinte",
+    "back": "Anterior",
+    "skip": "Ignorar o tour",
+    "finish": "Concluir",
+    "notHere": "Isto está noutra página — «Seguinte» leva-o lá.",
+    "replayTitle": "Tour guiado",
+    "replayHint": "Refaça o percurso: a auditoria, a ligação da loja e a primeira alteração.",
+    "replay": "Rever o tour",
+    "replayDone": "Abrirá na sua próxima visita ao painel.",
+    "steps": {
+      "welcome": {
+        "title": "Bem-vindo",
+        "body": "Dois minutos para ver todo o percurso: a auditoria, a ligação da loja e a primeira alteração enviada. Pode parar quando quiser."
+      },
+      "audit": {
+        "title": "Tudo começa num URL",
+        "body": "Cole o endereço da sua loja: o OneShopLab lê o catálogo e avalia as fichas de produto. Esta primeira leitura não exige acesso de comerciante."
+      },
+      "score": {
+        "title": "O seu relatório",
+        "body": "A pontuação resume o que os visitantes e os motores de busca veem. Abaixo: cada eixo e os produtos que o penalizam."
+      },
+      "connect": {
+        "title": "Ligue a sua loja",
+        "body": "Enquanto não estiver ligada, isto é um relatório para copiar à mão. Ligada, a loja recebe as alterações que aprova — e um clique desfá-las."
+      },
+      "platform": {
+        "title": "Escolha a sua plataforma",
+        "body": "Shopify, WooCommerce ou Wix: cada uma é guiada passo a passo. Depois, o catálogo chega sozinho."
+      },
+      "products": {
+        "title": "Os seus produtos",
+        "body": "Todo o catálogo, do mais fraco ao mais forte. É também daqui que parte a geração em massa, quando quiser tratar tudo de uma vez."
+      },
+      "product": {
+        "title": "Abra uma ficha",
+        "body": "Cada produto tem a sua página: de um lado o que a loja tem hoje, do outro o que a IA propõe. Nada é enviado sem si."
+      },
+      "models": {
+        "title": "Os seus modelos",
+        "body": "O modelo de texto e a qualidade de imagem mudam-se aqui, produto a produto. O custo em créditos é mostrado antes de gerar, nunca depois."
+      },
+      "generate": {
+        "title": "Gere um título",
+        "body": "Gere, compare com o que existe, gere de novo se precisar. Uma instrução personalizada logo acima orienta o tom e as palavras a evitar."
+      },
+      "apply": {
+        "title": "Envie para a loja",
+        "body": "«Aplicar» põe a geração em fila; a loja recolhe-a em segundos e substitui o valor. Anular repõe o anterior."
+      },
+      "photos": {
+        "title": "As fotos",
+        "body": "Adicione uma imagem gerada, reordene, escolha a principal, escreva os textos alternativos. Só são propostas as ações que a sua loja sabe fazer."
+      },
+      "settings": {
+        "title": "Definições da loja",
+        "body": "Idioma, instruções aplicadas a todas as gerações, envio automático, preferências de geração em massa: está aqui tudo o que vale para todo o catálogo."
+      },
+      "tips": {
+        "title": "O resto está aqui",
+        "body": "Créditos, plano, modelos por omissão e notificações. Uma geração continua mesmo se fechar o separador: avisamos quando estiver pronta."
+      }
+    }
   }
 }

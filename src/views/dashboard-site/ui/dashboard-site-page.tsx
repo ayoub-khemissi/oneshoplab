@@ -598,7 +598,7 @@ export async function DashboardSitePage({
           totalPages={activityTotalPages}
         />
       ) : activeTab === 'integrations' ? (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" data-tour="integrations-wizard">
           <IntegrationsWizard
             // The wizard seeds client state from these props and never resyncs
             // it, so the summary card kept reading a connection that had no
@@ -640,7 +640,7 @@ export async function DashboardSitePage({
         </div>
       ) : (
         // settings tab
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" data-tour="site-settings">
           <SiteLanguageEditor
             projectId={project.id}
             initialOverride={project.languageOverride ?? null}

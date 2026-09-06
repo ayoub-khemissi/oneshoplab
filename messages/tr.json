@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Değişiklikleri otomatik gönder",
     "autoSendHint": "Bir üretim hazır olur olmaz, inceleme adımı olmadan mağazanıza gider. Her değişikliği sonradan geri alabilirsiniz.",
     "autoSendSaved": "Kaydedildi"
+  },
+  "Tour": {
+    "ariaLabel": "Rehberli tur",
+    "counter": "Adım {n} / {total}",
+    "next": "İleri",
+    "back": "Geri",
+    "skip": "Turu atla",
+    "finish": "Bitir",
+    "notHere": "Bu başka bir sayfada — “İleri” sizi oraya götürür.",
+    "replayTitle": "Rehberli tur",
+    "replayHint": "Yolu baştan izleyin: denetim, mağaza bağlantısı ve ilk değişiklik.",
+    "replay": "Turu tekrar izle",
+    "replayDone": "Panele bir sonraki girişinizde açılacak.",
+    "steps": {
+      "welcome": {
+        "title": "Hoş geldiniz",
+        "body": "Tüm yolu görmek iki dakika: denetim, mağaza bağlantısı ve gönderilen ilk değişiklik. İstediğiniz an durabilirsiniz."
+      },
+      "audit": {
+        "title": "Her şey bir adresle başlar",
+        "body": "Mağaza adresinizi yapıştırın: OneShopLab kataloğunuzu okur ve ürün sayfalarınızı puanlar. Bu ilk okuma için satıcı erişimi gerekmez."
+      },
+      "score": {
+        "title": "Raporunuz",
+        "body": "Puan, ziyaretçilerinizin ve arama motorlarının gördüğünü özetler. Altında: her eksen ve sizi aşağı çeken ürünler."
+      },
+      "connect": {
+        "title": "Mağazanızı bağlayın",
+        "body": "Bağlanmadığı sürece bu, elle kopyalanacak bir rapordur. Bağlandığında mağazanız onayladığınız değişiklikleri alır; tek tıkla geri alınır."
+      },
+      "platform": {
+        "title": "Platformunuzu seçin",
+        "body": "Shopify, WooCommerce ya da Wix: her biri adım adım anlatılır. Kataloğunuz sonra kendiliğinden gelir."
+      },
+      "products": {
+        "title": "Ürünleriniz",
+        "body": "Tüm katalog, en zayıftan başlayarak. Toplu üretim de buradan başlar; her şeyi bir kerede işlemek istediğinizde."
+      },
+      "product": {
+        "title": "Bir ürün açın",
+        "body": "Her ürünün kendi sayfası var: bir yanda mağazadaki mevcut içerik, diğer yanda yapay zekânın önerisi. Siz onaylamadan hiçbir şey gitmez."
+      },
+      "models": {
+        "title": "Modelleriniz",
+        "body": "Metin modeli ve görsel kalitesi burada, ürün ürün değiştirilir. Kredi maliyeti üretimden önce gösterilir, sonra değil."
+      },
+      "generate": {
+        "title": "Bir başlık üretin",
+        "body": "Üretin, mevcutla karşılaştırın, gerekirse yeniden üretin. Hemen üstteki özel yönerge tonu ve kaçınılacak sözcükleri belirler."
+      },
+      "apply": {
+        "title": "Mağazaya gönderin",
+        "body": "“Uygula” üretimi sıraya alır; mağazanız saniyeler içinde alıp değeri değiştirir. Geri al, öncekini geri getirir."
+      },
+      "photos": {
+        "title": "Fotoğraflar",
+        "body": "Üretilen bir görseli ekleyin, sırayı değiştirin, ana görseli seçin, alternatif metinleri yazın. Yalnızca mağazanızın gerçekten yapabildiği işlemler sunulur."
+      },
+      "settings": {
+        "title": "Mağaza ayarları",
+        "body": "Dil, her üretime uygulanan yönergeler, otomatik gönderim, toplu üretim tercihleri: tüm katalog için geçerli olan her şey burada."
+      },
+      "tips": {
+        "title": "Gerisi burada",
+        "body": "Krediler, plan, varsayılan modeller ve bildirimler. Sekmeyi kapatsanız da üretim sürer; hazır olduğunda haber veririz."
+      }
+    }
   }
 }

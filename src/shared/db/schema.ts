@@ -141,6 +141,14 @@ export const users = mysqlTable('users', {
     imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
   } | null>(),
 
+  /** How far the first-store walkthrough got. NULL = never opened it. Kept
+   *  on the account rather than in the browser so the merchant who starts on
+   *  a laptop and finishes on a phone is not walked through it twice. */
+  tourStep: varchar('tour_step', { length: 48 }),
+  /** Finished or dismissed — either way it never opens by itself again.
+   *  Replaying it stays possible, but only when the merchant asks. */
+  tourEndedAt: timestamp('tour_ended_at'),
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
 });

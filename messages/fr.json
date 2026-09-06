@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Envoyer les modifications automatiquement",
     "autoSendHint": "Une génération part vers votre boutique dès qu’elle est prête, sans relecture. Vous pouvez toujours annuler une modification ensuite.",
     "autoSendSaved": "Enregistré"
+  },
+  "Tour": {
+    "ariaLabel": "Tutoriel guidé",
+    "counter": "Étape {n} sur {total}",
+    "next": "Suivant",
+    "back": "Précédent",
+    "skip": "Passer le tutoriel",
+    "finish": "Terminer",
+    "notHere": "Cet élément est sur une autre page — « Suivant » vous y emmène.",
+    "replayTitle": "Tutoriel guidé",
+    "replayHint": "Refaites le parcours : l’audit, la connexion de votre boutique et la première correction.",
+    "replay": "Revoir le tutoriel",
+    "replayDone": "Il s’ouvrira à votre prochaine visite du tableau de bord.",
+    "steps": {
+      "welcome": {
+        "title": "Bienvenue",
+        "body": "Deux minutes pour faire le tour : l’audit, la connexion de votre boutique, puis la première correction envoyée. Vous pouvez arrêter quand vous voulez."
+      },
+      "audit": {
+        "title": "Tout part d’une URL",
+        "body": "Collez l’adresse de votre boutique : OneShopLab lit votre catalogue et note vos fiches produit. Aucun accès marchand n’est requis pour cette première lecture."
+      },
+      "score": {
+        "title": "Votre rapport",
+        "body": "La note résume ce que voient vos visiteurs et les moteurs de recherche. En dessous : chaque axe, et les produits qui vous tirent vers le bas."
+      },
+      "connect": {
+        "title": "Connectez votre boutique",
+        "body": "Tant qu’elle n’est pas connectée, ceci reste un rapport à recopier à la main. Connectée, votre boutique reçoit les corrections que vous validez — et un clic les annule."
+      },
+      "platform": {
+        "title": "Choisissez votre plateforme",
+        "body": "Shopify, WooCommerce ou Wix : chacune est guidée pas à pas. Votre catalogue arrive ensuite tout seul."
+      },
+      "products": {
+        "title": "Vos produits",
+        "body": "Le catalogue entier, du plus faible au plus fort. C’est aussi d’ici que part la génération en masse, quand vous voudrez tout traiter d’un coup."
+      },
+      "product": {
+        "title": "Ouvrez une fiche",
+        "body": "Chaque produit a sa page : le contenu actuel de votre boutique d’un côté, ce que l’IA propose de l’autre. Rien n’est envoyé sans vous."
+      },
+      "models": {
+        "title": "Vos modèles",
+        "body": "Le modèle de texte et la qualité d’image se changent ici, produit par produit. Le coût en crédits est affiché avant de générer, jamais après."
+      },
+      "generate": {
+        "title": "Générez un titre",
+        "body": "Générez, comparez avec l’existant, regénérez si besoin. Une consigne personnalisée juste au-dessus oriente le ton et les mots à éviter."
+      },
+      "apply": {
+        "title": "Envoyez-le dans la boutique",
+        "body": "« Appliquer » met la génération en file ; votre boutique la reprend en quelques secondes et remplace la valeur. Annuler restaure l’ancienne."
+      },
+      "photos": {
+        "title": "Les photos",
+        "body": "Ajoutez une image générée, réordonnez, choisissez la principale, écrivez les textes alternatifs. Seules les actions que votre boutique sait faire sont proposées."
+      },
+      "settings": {
+        "title": "Les réglages de la boutique",
+        "body": "Langue, consignes appliquées à toutes les générations, envoi automatique, préférences de génération en masse : tout ce qui vaut pour l’ensemble du catalogue est ici."
+      },
+      "tips": {
+        "title": "Le reste est ici",
+        "body": "Crédits, plan, modèles par défaut et notifications. Une génération continue même si vous fermez l’onglet : nous vous prévenons quand elle est prête."
+      }
+    }
   }
 }

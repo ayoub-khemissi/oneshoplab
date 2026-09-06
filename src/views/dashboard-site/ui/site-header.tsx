@@ -212,6 +212,7 @@ export function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
         href={`/dashboard/sites/${siteId}?tab=products`}
         active={active === 'products'}
         label={t('tabProducts')}
+        tour="tab-products"
       />
       <TabLink
         href={`/dashboard/sites/${siteId}?tab=jobs`}
@@ -222,11 +223,13 @@ export function TabsNav({ active, siteId }: { active: Tab; siteId: string }) {
         href={`/dashboard/sites/${siteId}?tab=integrations`}
         active={active === 'integrations'}
         label={tIntegrations('tabLabel')}
+        tour="tab-integrations"
       />
       <TabLink
         href={`/dashboard/sites/${siteId}?tab=settings`}
         active={active === 'settings'}
         label={t('tabSettings')}
+        tour="tab-settings"
       />
     </nav>
   );
@@ -236,12 +239,15 @@ function TabLink({
   href,
   active,
   label,
-  badge
+  badge,
+  tour
 }: {
   href: string;
   active: boolean;
   label: string;
   badge?: string;
+  /** Anchor for the first-store walkthrough (@/features/guided-tour). */
+  tour?: string;
 }) {
   const base =
     'px-4 py-3 text-sm font-medium border-b-2 flex grow shrink-0 items-center justify-center gap-2 whitespace-nowrap text-center transition-[padding,font-size,line-height] duration-200 group-data-[compact=true]/sticky:px-2.5 group-data-[compact=true]/sticky:py-1.5 group-data-[compact=true]/sticky:text-xs';
@@ -249,7 +255,7 @@ function TabLink({
     ? 'border-[var(--accent)] text-[var(--foreground)]'
     : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)]';
   return (
-    <Link href={href} className={`${base} ${state}`}>
+    <Link href={href} data-tour={tour} className={`${base} ${state}`}>
       {label}
       {badge && (
         <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-mono">

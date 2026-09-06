@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Änderungen automatisch senden",
     "autoSendHint": "Eine Generierung geht sofort an Ihren Shop, ohne Prüfschritt. Sie können jede Änderung danach rückgängig machen.",
     "autoSendSaved": "Gespeichert"
+  },
+  "Tour": {
+    "ariaLabel": "Geführte Tour",
+    "counter": "Schritt {n} von {total}",
+    "next": "Weiter",
+    "back": "Zurück",
+    "skip": "Tour überspringen",
+    "finish": "Fertig",
+    "notHere": "Das liegt auf einer anderen Seite – „Weiter“ bringt dich hin.",
+    "replayTitle": "Geführte Tour",
+    "replayHint": "Geh den Weg noch einmal: Audit, Shop verbinden und die erste Änderung.",
+    "replay": "Tour wiederholen",
+    "replayDone": "Sie öffnet sich bei deinem nächsten Besuch im Dashboard.",
+    "steps": {
+      "welcome": {
+        "title": "Willkommen",
+        "body": "Zwei Minuten für den ganzen Weg: das Audit, den Shop verbinden und die erste Änderung senden. Du kannst jederzeit aufhören."
+      },
+      "audit": {
+        "title": "Alles beginnt mit einer URL",
+        "body": "Füge die Adresse deines Shops ein: OneShopLab liest deinen Katalog und bewertet deine Produktseiten. Für diesen ersten Blick braucht es keinen Händlerzugang."
+      },
+      "score": {
+        "title": "Dein Bericht",
+        "body": "Die Punktzahl fasst zusammen, was Besucher und Suchmaschinen sehen. Darunter: jede Achse und die Produkte, die dich nach unten ziehen."
+      },
+      "connect": {
+        "title": "Verbinde deinen Shop",
+        "body": "Solange er nicht verbunden ist, bleibt das ein Bericht zum Abtippen. Verbunden erhält dein Shop die Änderungen, die du freigibst – ein Klick macht sie rückgängig."
+      },
+      "platform": {
+        "title": "Wähle deine Plattform",
+        "body": "Shopify, WooCommerce oder Wix – jede wird Schritt für Schritt erklärt. Dein Katalog kommt danach von selbst an."
+      },
+      "products": {
+        "title": "Deine Produkte",
+        "body": "Der ganze Katalog, die schwächsten zuerst. Von hier startet auch die Massen-Generierung, wenn du alles auf einmal bearbeiten willst."
+      },
+      "product": {
+        "title": "Öffne ein Produkt",
+        "body": "Jedes Produkt hat seine Seite: links, was heute im Shop steht, rechts, was die KI vorschlägt. Ohne dich geht nichts raus."
+      },
+      "models": {
+        "title": "Deine Modelle",
+        "body": "Textmodell und Bildqualität änderst du hier, Produkt für Produkt. Die Kosten in Credits stehen vor der Generierung da, nie danach."
+      },
+      "generate": {
+        "title": "Erzeuge einen Titel",
+        "body": "Generieren, mit dem Bestehenden vergleichen, bei Bedarf neu generieren. Eine eigene Anweisung direkt darüber steuert Ton und verbotene Wörter."
+      },
+      "apply": {
+        "title": "Ab in den Shop",
+        "body": "„Anwenden“ stellt die Generierung in die Warteschlange; dein Shop holt sie in Sekunden ab und ersetzt den Wert. Rückgängig stellt den alten wieder her."
+      },
+      "photos": {
+        "title": "Die Fotos",
+        "body": "Ein generiertes Bild hinzufügen, umsortieren, das Hauptbild wählen, Alt-Texte schreiben. Angeboten wird nur, was dein Shop wirklich kann."
+      },
+      "settings": {
+        "title": "Shop-Einstellungen",
+        "body": "Sprache, Anweisungen für jede Generierung, automatisches Senden, Massen-Einstellungen: alles, was für den ganzen Katalog gilt, steht hier."
+      },
+      "tips": {
+        "title": "Der Rest wohnt hier",
+        "body": "Credits, Tarif, Standardmodelle und Benachrichtigungen. Eine Generierung läuft weiter, auch wenn du den Tab schließt – wir sagen Bescheid, wenn sie fertig ist."
+      }
+    }
   }
 }

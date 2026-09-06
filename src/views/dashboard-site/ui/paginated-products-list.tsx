@@ -178,8 +178,10 @@ export function PaginatedProductsList({
       ) : null}
 
       <ul className={`flex flex-col gap-2 ${isPending ? 'opacity-60 transition-opacity' : ''}`}>
-        {products.map((p) => (
-          <li key={p.productId}>
+        {products.map((p, i) => (
+          // The walkthrough points at the first row: any product will do to
+          // show what a product page is, and the first one is on screen.
+          <li key={p.productId} data-tour={i === 0 ? 'product-row' : undefined}>
             {/* Stacks on mobile. As a permanent row, the actions column took
                 about half the width and squeezed the issues into a ribbon of
                 two or three words per line, while `items-center` floated the

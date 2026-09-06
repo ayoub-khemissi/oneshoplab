@@ -133,7 +133,7 @@ export function ApplyToStoreButton({
     status === 'cancelled' || status === 'expired' || status === 'skipped' || status === 'failed';
 
   return (
-    <div className="flex items-center gap-2 flex-wrap text-xs">
+    <div data-tour="apply-to-store" className="flex items-center gap-2 flex-wrap text-xs">
       {status === 'pending' ? (
         <>
           <span className="inline-flex items-center gap-1.5 text-[var(--muted)] font-medium">

@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { AccountBulkPrefsForm } from '@/features/bulk-generate/client';
+import { ReplayTourCard } from '@/features/guided-tour';
 import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
@@ -37,6 +38,8 @@ export default async function AccountPreferencesPage() {
       </header>
 
       <PushSettingsCard />
+
+      <ReplayTourCard />
 
       <ModelPreferencesForm
         initialChatModel={resolveChatModelId(session.user.preferredChatModel)}

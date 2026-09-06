@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Send changes automatically",
     "autoSendHint": "A generation goes to your store as soon as it is ready, with no review step. You can still undo any change afterwards.",
     "autoSendSaved": "Saved"
+  },
+  "Tour": {
+    "ariaLabel": "Guided tour",
+    "counter": "Step {n} of {total}",
+    "next": "Next",
+    "back": "Previous",
+    "skip": "Skip the tour",
+    "finish": "Finish",
+    "notHere": "This is on another page — \"Next\" takes you there.",
+    "replayTitle": "Guided tour",
+    "replayHint": "Walk through the audit, connecting your store and your first change again.",
+    "replay": "Replay the tour",
+    "replayDone": "It will open on your next visit to the dashboard.",
+    "steps": {
+      "welcome": {
+        "title": "Welcome",
+        "body": "Two minutes to see the whole path: the audit, connecting your store, then your first change sent. Stop whenever you like."
+      },
+      "audit": {
+        "title": "It starts with a URL",
+        "body": "Paste your store address: OneShopLab reads your catalogue and scores your product pages. No merchant account needed for this first read."
+      },
+      "score": {
+        "title": "Your report",
+        "body": "The score sums up what your visitors and search engines see. Below it: each axis, and the products that pull you down."
+      },
+      "connect": {
+        "title": "Connect your store",
+        "body": "Until it is connected, this is a report to copy out by hand. Connected, your store receives the changes you approve — and one click undoes them."
+      },
+      "platform": {
+        "title": "Pick your platform",
+        "body": "Shopify, WooCommerce or Wix — each one is walked through step by step. Your catalogue then arrives on its own."
+      },
+      "products": {
+        "title": "Your products",
+        "body": "The whole catalogue, weakest first. Bulk generation starts from here too, when you want to treat everything at once."
+      },
+      "product": {
+        "title": "Open a product",
+        "body": "Every product has its page: what your store has now on one side, what the AI suggests on the other. Nothing is sent without you."
+      },
+      "models": {
+        "title": "Your models",
+        "body": "The text model and the image quality are changed here, product by product. The credit cost is shown before you generate, never after."
+      },
+      "generate": {
+        "title": "Generate a title",
+        "body": "Generate, compare with what you have, regenerate if needed. A custom instruction just above steers the tone and the words to avoid."
+      },
+      "apply": {
+        "title": "Send it to your store",
+        "body": "“Apply” queues the generation; your store picks it up within seconds and replaces the value. Undo restores the previous one."
+      },
+      "photos": {
+        "title": "The photos",
+        "body": "Add a generated image, reorder, pick the main one, write the alt texts. Only the actions your store can actually perform are offered."
+      },
+      "settings": {
+        "title": "Store-wide settings",
+        "body": "Language, instructions applied to every generation, automatic sending, bulk preferences: everything that holds for the whole catalogue is here."
+      },
+      "tips": {
+        "title": "The rest lives here",
+        "body": "Credits, plan, default models and notifications. A generation keeps running even if you close the tab — we tell you when it is ready."
+      }
+    }
   }
 }

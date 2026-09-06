@@ -1913,5 +1913,72 @@
     "autoSendTitle": "Wysyłaj zmiany automatycznie",
     "autoSendHint": "Wygenerowana treść trafia do sklepu od razu, bez sprawdzania. Każdą zmianę możesz później cofnąć.",
     "autoSendSaved": "Zapisano"
+  },
+  "Tour": {
+    "ariaLabel": "Przewodnik",
+    "counter": "Krok {n} z {total}",
+    "next": "Dalej",
+    "back": "Wstecz",
+    "skip": "Pomiń przewodnik",
+    "finish": "Zakończ",
+    "notHere": "To jest na innej stronie — „Dalej” Cię tam przeniesie.",
+    "replayTitle": "Przewodnik",
+    "replayHint": "Przejdź drogę jeszcze raz: audyt, podłączenie sklepu i pierwsza zmiana.",
+    "replay": "Powtórz przewodnik",
+    "replayDone": "Otworzy się przy następnej wizycie w panelu.",
+    "steps": {
+      "welcome": {
+        "title": "Witamy",
+        "body": "Dwie minuty na cały przebieg: audyt, podłączenie sklepu i pierwsza wysłana zmiana. Możesz przerwać w każdej chwili."
+      },
+      "audit": {
+        "title": "Wszystko zaczyna się od adresu",
+        "body": "Wklej adres sklepu: OneShopLab czyta katalog i ocenia karty produktów. To pierwsze odczytanie nie wymaga dostępu sprzedawcy."
+      },
+      "score": {
+        "title": "Twój raport",
+        "body": "Ocena podsumowuje to, co widzą odwiedzający i wyszukiwarki. Niżej: każda oś i produkty, które Cię obniżają."
+      },
+      "connect": {
+        "title": "Podłącz sklep",
+        "body": "Dopóki nie jest podłączony, to tylko raport do przepisania ręcznie. Po podłączeniu sklep otrzymuje zmiany, które zatwierdzisz — a jedno kliknięcie je cofa."
+      },
+      "platform": {
+        "title": "Wybierz platformę",
+        "body": "Shopify, WooCommerce lub Wix — każda krok po kroku. Katalog przychodzi potem sam."
+      },
+      "products": {
+        "title": "Twoje produkty",
+        "body": "Cały katalog, od najsłabszych. Stąd startuje też generowanie masowe, gdy zechcesz zrobić wszystko naraz."
+      },
+      "product": {
+        "title": "Otwórz kartę produktu",
+        "body": "Każdy produkt ma swoją stronę: z jednej strony to, co jest w sklepie, z drugiej propozycja AI. Nic nie wychodzi bez Ciebie."
+      },
+      "models": {
+        "title": "Twoje modele",
+        "body": "Model tekstu i jakość obrazu zmieniasz tutaj, produkt po produkcie. Koszt w kredytach widać przed generowaniem, nigdy po."
+      },
+      "generate": {
+        "title": "Wygeneruj tytuł",
+        "body": "Generuj, porównaj z obecnym, powtórz w razie potrzeby. Własna instrukcja powyżej ustawia ton i słowa, których należy unikać."
+      },
+      "apply": {
+        "title": "Wyślij do sklepu",
+        "body": "„Zastosuj” dodaje wynik do kolejki; sklep pobiera go w kilka sekund i podmienia wartość. Cofnij przywraca poprzednią."
+      },
+      "photos": {
+        "title": "Zdjęcia",
+        "body": "Dodaj wygenerowany obraz, zmień kolejność, wybierz główny, napisz teksty alternatywne. Proponowane są tylko te działania, które Twój sklep potrafi wykonać."
+      },
+      "settings": {
+        "title": "Ustawienia sklepu",
+        "body": "Język, instrukcje stosowane do każdej generacji, automatyczna wysyłka, preferencje generowania masowego: tutaj jest wszystko, co dotyczy całego katalogu."
+      },
+      "tips": {
+        "title": "Reszta jest tutaj",
+        "body": "Kredyty, plan, domyślne modele i powiadomienia. Generowanie trwa nawet po zamknięciu karty — damy znać, gdy będzie gotowe."
+      }
+    }
   }
 }
