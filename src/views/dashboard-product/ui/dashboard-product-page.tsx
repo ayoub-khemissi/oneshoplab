@@ -263,7 +263,12 @@ export async function DashboardProductPage({
           cases the recap has no words for — a conflict or a failure, which
           open the recap modal. */}
       {canApplyToStore ? (
-        <ProductRecapCard rows={recapRows} projectId={projectId} productId={productId} />
+        <ProductRecapCard
+          rows={recapRows}
+          projectId={projectId}
+          productId={productId}
+          nowIso={new Date().toISOString()}
+        />
       ) : null}
       {canApplyToStore && pendingSummary.counts.conflict + pendingSummary.counts.failed > 0 ? (
         <PendingChangesBanner

@@ -32,17 +32,30 @@ const TONES: Record<RecapState, string> = {
 export function ProductRecapCard({
   rows,
   projectId,
-  productId
+  productId,
+  nowIso
 }: {
   rows: RecapRow[];
   projectId: string;
   productId: string;
+  /**
+   * The instant to measure "13 seconds ago" against, decided once by the
+   * server and reused by the browser.
+   *
+   * Without it, next-intl falls back to each side's own clock: the server
+   * wrote "il y a 13 secondes", the browser hydrated a second later and said
+   * 15, and React answered a text mismatch by throwing away and rebuilding
+   * the whole tree — a visible flash, and with it any focus or open panel.
+   * The circled "i" opened from the keyboard closed itself instantly.
+   */
+  nowIso: string;
 }) {
   const t = useTranslations('ProductRecap');
   const format = useFormatter();
   const router = useRouter();
   const [sent, setSent] = useState<number | null>(null);
   const [busy, startTransition] = useTransition();
+  const now = new Date(nowIso);
 
   const toApply = rows.filter((r) => r.state === 'to_apply').length;
 
@@ -75,7 +88,7 @@ export function ProductRecapCard({
               <span className={TONES[row.state]}>{t(`state.${row.state}`)}</span>
               {row.atIso ? (
                 <span className="text-[var(--muted)]">
-                  {format.relativeTime(new Date(row.atIso))}
+                  {format.relativeTime(new Date(row.atIso), now)}
                 </span>
               ) : null}
             </li>

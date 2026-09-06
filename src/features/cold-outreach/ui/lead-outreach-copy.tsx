@@ -3,7 +3,7 @@
 import { Check, ClipboardCopy, MessageSquareText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ContactLang } from '../api/contact-form';
-import { ModalCloseButton, useModalHistory } from '@/shared/ui';
+import { ModalCloseButton } from '@/shared/ui';
 
 export interface OutreachCopyData {
   subject: string;
@@ -75,8 +75,6 @@ function OutreachModal({
   onClose
 }: LeadOutreachCopyProps & { onClose: () => void }) {
   const [lang, setLang] = useState<ContactLang>(primaryLang);
-  // Back closes the modal, not the page (see useModalHistory).
-  useModalHistory(true, onClose);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
