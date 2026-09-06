@@ -1921,7 +1921,7 @@
     "back": "Précédent",
     "skip": "Passer le tutoriel",
     "finish": "Terminer",
-    "notHere": "Cet élément est sur une autre page — « Suivant » vous y emmène.",
+    "notHere": "Cette étape se trouve sur une autre page.",
     "replayTitle": "Tutoriel guidé",
     "replayHint": "Rejouez une partie, ou tout le parcours : l’audit, la connexion de votre boutique, la génération, les photos et les réglages.",
     "replay": "Revoir tout le tutoriel",
@@ -1988,6 +1988,7 @@
       "generate": "La génération",
       "photos": "Les photos",
       "settings": "Réglages et compte"
-    }
+    },
+    "goThere": "M’y emmener"
   }
 }

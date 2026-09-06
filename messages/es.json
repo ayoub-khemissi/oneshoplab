@@ -1921,7 +1921,7 @@
     "back": "Anterior",
     "skip": "Saltar el tutorial",
     "finish": "Finalizar",
-    "notHere": "Esto está en otra página: «Siguiente» te lleva allí.",
+    "notHere": "Este paso está en otra página.",
     "replayTitle": "Tutorial guiado",
     "replayHint": "Repite una parte o todo el recorrido: la auditoría, la conexión de tu tienda, la generación, las fotos y los ajustes.",
     "replay": "Ver todo el tutorial",
@@ -1988,6 +1988,7 @@
       "generate": "La generación",
       "photos": "Las fotos",
       "settings": "Ajustes y cuenta"
-    }
+    },
+    "goThere": "Llévame allí"
   }
 }

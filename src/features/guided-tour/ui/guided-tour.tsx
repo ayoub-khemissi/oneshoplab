@@ -179,6 +179,12 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   if (closed) return null;
 
   const last = index === run.length - 1;
+  // The merchant is somewhere this step does not live — replaying a chapter
+  // from the preferences lands them here every time. The primary button then
+  // takes them to THIS step's page; sending them to the NEXT one would skip
+  // the very step they asked to see.
+  const stepHref = hrefFor(step, { siteId: currentSiteId, productId });
+  const mustTravel = !onRightPage && stepHref !== null;
   const spot = rect ? spotlightOf(rect) : null;
   const vp = viewport();
   const bubble: BubblePlacement = spot
@@ -244,13 +250,18 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
             ) : null}
             <button
               type="button"
-              onClick={() => (last ? finish() : go(run[index + 1].id))}
+              onClick={() => {
+                if (mustTravel) router.push(stepHref);
+                else if (last) finish();
+                else go(run[index + 1].id);
+              }}
               data-testid="tour-next"
-              data-last={last}
+              data-last={!mustTravel && last}
+              data-travel={mustTravel}
               className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-2 text-xs font-medium text-[var(--accent-foreground)] hover:opacity-90"
             >
-              {last ? t('finish') : t('next')}
-              {last ? (
+              {mustTravel ? t('goThere') : last ? t('finish') : t('next')}
+              {!mustTravel && last ? (
                 <Check className="size-3.5" aria-hidden />
               ) : (
                 <ArrowRight className="size-3.5" aria-hidden />

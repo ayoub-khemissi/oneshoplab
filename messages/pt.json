@@ -1921,7 +1921,7 @@
     "back": "Anterior",
     "skip": "Ignorar o tour",
     "finish": "Concluir",
-    "notHere": "Isto está noutra página — «Seguinte» leva-o lá.",
+    "notHere": "Esta etapa está noutra página.",
     "replayTitle": "Tour guiado",
     "replayHint": "Reveja uma parte ou todo o percurso: a auditoria, a ligação da loja, a geração, as fotos e as definições.",
     "replay": "Rever o tour completo",
@@ -1988,6 +1988,7 @@
       "generate": "A geração",
       "photos": "As fotos",
       "settings": "Definições e conta"
-    }
+    },
+    "goThere": "Levar-me lá"
   }
 }

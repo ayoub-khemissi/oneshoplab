@@ -1921,7 +1921,7 @@
     "back": "Indietro",
     "skip": "Salta il tour",
     "finish": "Fine",
-    "notHere": "Si trova in un’altra pagina: «Avanti» ti porta lì.",
+    "notHere": "Questo passaggio si trova su un’altra pagina.",
     "replayTitle": "Tour guidato",
     "replayHint": "Rivedi una parte o tutto il percorso: l’analisi, la connessione del negozio, la generazione, le foto e le impostazioni.",
     "replay": "Rivedi tutto il tour",
@@ -1988,6 +1988,7 @@
       "generate": "La generazione",
       "photos": "Le foto",
       "settings": "Impostazioni e account"
-    }
+    },
+    "goThere": "Portami lì"
   }
 }

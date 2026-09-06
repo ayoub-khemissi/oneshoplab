@@ -1921,7 +1921,7 @@
     "back": "Wstecz",
     "skip": "Pomiń przewodnik",
     "finish": "Zakończ",
-    "notHere": "To jest na innej stronie — „Dalej” Cię tam przeniesie.",
+    "notHere": "Ten krok jest na innej stronie.",
     "replayTitle": "Przewodnik",
     "replayHint": "Powtórz fragment albo całą drogę: audyt, podłączenie sklepu, generowanie, zdjęcia i ustawienia.",
     "replay": "Powtórz cały przewodnik",
@@ -1988,6 +1988,7 @@
       "generate": "Generowanie",
       "photos": "Zdjęcia",
       "settings": "Ustawienia i konto"
-    }
+    },
+    "goThere": "Przenieś mnie tam"
   }
 }

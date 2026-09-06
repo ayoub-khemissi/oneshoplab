@@ -1921,7 +1921,7 @@
     "back": "Previous",
     "skip": "Skip the tour",
     "finish": "Finish",
-    "notHere": "This is on another page — \"Next\" takes you there.",
+    "notHere": "This step lives on another page.",
     "replayTitle": "Guided tour",
     "replayHint": "Replay a part, or the whole path: the audit, connecting your store, generating, the photos and the settings.",
     "replay": "Replay the whole tour",
@@ -1988,6 +1988,7 @@
       "generate": "Generating",
       "photos": "The photos",
       "settings": "Settings and account"
-    }
+    },
+    "goThere": "Take me there"
   }
 }

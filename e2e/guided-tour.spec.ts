@@ -67,10 +67,22 @@ test.describe('the first-store walkthrough', () => {
       await expect(page.getByRole('status')).toBeVisible({ timeout: 2000 });
     }).toPass({ timeout: 30_000 });
 
+    // Replaying from the preferences lands on the dashboard, where this
+    // chapter's first step does not live: the primary button must go to THAT
+    // step's page, not skip ahead to the following one.
+    await page.goto('/fr/dashboard');
+    const tour = page.locator(TOUR);
+    await expect(tour).toHaveAttribute('data-step', 'connect');
+    const travel = page.locator('[data-testid="tour-next"]');
+    await expect(travel).toHaveAttribute('data-travel', 'true');
+    await travel.click();
+    await page.waitForURL(/\/dashboard\/sites\//);
+    // Still on the step it was sent to, never the one after it.
+    await expect(tour).toHaveAttribute('data-step', 'connect');
+
     // Two steps, and the second is the last one of the run — the chapter must
     // not walk on into the products or the generation.
     await page.goto(`/fr/dashboard/sites/${SEED.project.id}`);
-    const tour = page.locator(TOUR);
     await expect(tour).toHaveAttribute('data-step', 'connect');
     const next = page.locator('[data-testid="tour-next"]');
     await expect(next).toHaveAttribute('data-last', 'false');

@@ -1921,7 +1921,7 @@
     "back": "Geri",
     "skip": "Turu atla",
     "finish": "Bitir",
-    "notHere": "Bu başka bir sayfada — “İleri” sizi oraya götürür.",
+    "notHere": "Bu adım başka bir sayfada.",
     "replayTitle": "Rehberli tur",
     "replayHint": "Bir bölümü ya da tüm yolu yeniden izleyin: denetim, mağaza bağlantısı, üretim, fotoğraflar ve ayarlar.",
     "replay": "Turun tamamını yeniden izle",
@@ -1988,6 +1988,7 @@
       "generate": "Üretim",
       "photos": "Fotoğraflar",
       "settings": "Ayarlar ve hesap"
-    }
+    },
+    "goThere": "Oraya götür"
   }
 }

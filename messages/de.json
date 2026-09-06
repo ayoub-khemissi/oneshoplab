@@ -1921,7 +1921,7 @@
     "back": "Zurück",
     "skip": "Tour überspringen",
     "finish": "Fertig",
-    "notHere": "Das liegt auf einer anderen Seite – „Weiter“ bringt dich hin.",
+    "notHere": "Dieser Schritt liegt auf einer anderen Seite.",
     "replayTitle": "Geführte Tour",
     "replayHint": "Spiele einen Teil oder den ganzen Weg noch einmal: Audit, Shop verbinden, Generierung, Fotos und Einstellungen.",
     "replay": "Ganze Tour wiederholen",
@@ -1988,6 +1988,7 @@
       "generate": "Generierung",
       "photos": "Die Fotos",
       "settings": "Einstellungen und Konto"
-    }
+    },
+    "goThere": "Dorthin bringen"
   }
 }
