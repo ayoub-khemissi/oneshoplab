@@ -141,13 +141,36 @@ export default async function globalSetup(): Promise<void> {
       tags: ['mug'],
       status: 'active' as const
     });
-    // The default store is a connected one too: it reports only the minimum
-    // capabilities (no stable image ids), which is a real plugin state — but a
-    // store with NO connection now hides every sync surface, and the spec
-    // about the replace-all fallback needs the editor on screen.
+    // A connected store reporting only the minimum capabilities. It exists
+    // separately because `project` must stay a store that has NEVER connected:
+    // the integrations wizard's "create your first key" step is only offered
+    // there, and giving that project a key silently removed the button.
+    await db.insert(schema.projects).values({
+      id: SEED.minimalProject.id,
+      userId,
+      name: SEED.minimalProject.domain,
+      domain: SEED.minimalProject.domain,
+      url: `https://${SEED.minimalProject.domain}`,
+      source: 'woocommerce'
+    });
+    await db.insert(schema.products).values({
+      id: SEED.minimalProduct.id,
+      projectId: SEED.minimalProject.id,
+      source: 'woocommerce',
+      sourceId: SEED.minimalProduct.sourceId,
+      handle: 'basic-mug',
+      title: 'Basic stoneware mug',
+      descriptionHtml: '<p>Two photos, no ids.</p>',
+      images: [
+        { src: 'https://cdn.test/basic-1.jpg', alt: null, width: 800, height: 800, position: 0 },
+        { src: 'https://cdn.test/basic-2.jpg', alt: null, width: 800, height: 800, position: 1 }
+      ],
+      tags: ['mug'],
+      status: 'active' as const
+    });
     await db.insert(schema.apiKeys).values({
-      id: '11111111-0000-4000-8000-000000000001',
-      projectId: SEED.project.id,
+      id: '99999999-0000-4000-8000-000000000001',
+      projectId: SEED.minimalProject.id,
       userId,
       name: 'E2E plugin (minimum)',
       prefix: 'osl_live_min',

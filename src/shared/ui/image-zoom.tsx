@@ -5,6 +5,7 @@ import { Download } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ModalCloseButton } from './modal-close-button';
+import { useModalHistory } from './use-modal-history';
 
 interface ImageZoomProps {
   url: string;
@@ -38,6 +39,8 @@ export function ImageZoom({
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(open, () => setOpen(false));
 
   // createPortal needs document.body, which only exists after hydration.
   useEffect(() => {

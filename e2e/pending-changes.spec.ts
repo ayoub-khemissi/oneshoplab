@@ -1,5 +1,72 @@
 import { expect, test, type Page } from '@playwright/test';
+import mysql from 'mysql2/promise';
+import { E2E_ENV } from '../playwright.config';
 import { SEED } from './seed';
+
+/**
+ * Put the three seeded changes back: two waiting, one the store refused.
+ *
+ * The "apply a selection" test re-sends the refused one, which supersedes it —
+ * correctly, and the banner then has nothing left to report and disappears.
+ * Every other test in this file needs the refusal to exist, so the fixture is
+ * restored rather than inherited.
+ */
+async function resetChanges() {
+  const conn = await mysql.createConnection({ uri: E2E_ENV.DATABASE_URL });
+  try {
+    const [users] = await conn.execute('SELECT id FROM users WHERE email = ?', [SEED.user.email]);
+    const userId = (users as Array<{ id: string }>)[0].id;
+    await conn.execute('DELETE FROM product_changes WHERE product_id = ?', [
+      SEED.pendingProduct.id
+    ]);
+    const row = (id: string, field: string, value: unknown, prior: unknown) => [
+      id,
+      SEED.pendingProject.id,
+      SEED.pendingProduct.id,
+      SEED.pendingProduct.sourceId,
+      field,
+      JSON.stringify(value),
+      JSON.stringify(prior)
+    ];
+    for (const r of [
+      row(SEED.pendingChanges.title, 'title', 'Hand-thrown stoneware mug', 'Waiting stoneware mug'),
+      row(
+        SEED.pendingChanges.description,
+        'description',
+        '<p>A new description.</p>',
+        '<p>An old description.</p>'
+      )
+    ]) {
+      await conn.execute(
+        `INSERT INTO product_changes
+           (id, project_id, product_id, product_source_id, field, value, value_hash,
+            prior_value_hash, prior_value, status, approved_by)
+         VALUES (?, ?, ?, ?, ?, ?, 'seed-hash', 'seed-prior-hash', ?, 'pending', ?)`,
+        [...r, userId]
+      );
+    }
+    await conn.execute(
+      `INSERT INTO product_changes
+         (id, project_id, product_id, product_source_id, field, value, value_hash,
+          prior_value_hash, prior_value, status, source_job_id, acked_at, ack_payload,
+          approved_by)
+       VALUES (?, ?, ?, ?, 'tags', ?, 'seed-hash', 'seed-prior-hash', ?, 'failed', ?, NOW(), ?, ?)`,
+      [
+        SEED.pendingChanges.failedTags,
+        SEED.pendingProject.id,
+        SEED.pendingProduct.id,
+        SEED.pendingProduct.sourceId,
+        JSON.stringify(['stoneware', 'handmade']),
+        JSON.stringify(['mug']),
+        SEED.pendingChanges.failedJobId,
+        JSON.stringify({ status: 'failed', error: 'HTTP 500' }),
+        userId
+      ]
+    );
+  } finally {
+    await conn.end();
+  }
+}
 
 const PRODUCT_URL = `/fr/dashboard/sites/${SEED.pendingProject.id}/products/${SEED.pendingProduct.id}`;
 
@@ -12,7 +79,10 @@ async function login(page: Page) {
 }
 
 test.describe('changes waiting for the store', () => {
-  test.beforeEach(async ({ page }) => login(page));
+  test.beforeEach(async ({ page }) => {
+    await resetChanges();
+    await login(page);
+  });
 
   test('the dashboard card carries the count and links to the integrations tab', async ({
     page
@@ -72,10 +142,12 @@ test.describe('changes waiting for the store', () => {
     await expect(result).toBeVisible();
     await expect(result).toContainText('2');
 
-    // The refused change was sent again: a fresh waiting row replaces it.
-    await expect(modal.locator('[data-status="failed"]')).toHaveCount(0);
-    await expect(modal.locator('[data-status="pending"]')).toHaveCount(3);
-    await expect(banner).toHaveAttribute('data-count', '3');
+    // The refused change was sent again, so nothing is refused any more — and
+    // the banner exists precisely to report refusals. It goes, and takes its
+    // modal with it: the merchant is told what happened by the result line
+    // above, not by a panel that now has nothing to say.
+    await expect(banner).toHaveCount(0);
+    await expect(modal).toHaveCount(0);
   });
 
   test('the banner hint opens from the keyboard and is announced, Escape closes it', async ({

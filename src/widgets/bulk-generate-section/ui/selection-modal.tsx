@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CandidateRow } from './candidate-row';
 import type { BulkCandidate } from '../model/types';
 import { BulkPrefsEditor, type BulkPrefs } from '@/features/bulk-generate/client';
-import { DebouncedSearchInput, ModalCloseButton } from '@/shared/ui';
+import { DebouncedSearchInput, ModalCloseButton, useModalHistory } from '@/shared/ui';
 import { ModelPickerChips } from '@/features/model-preferences';
 import {
   CHAT_MODEL_REGISTRY,
@@ -76,6 +76,8 @@ export function SelectionModal({
   // Scoped to this run on purpose: a merchant can trust one batch without
   // trusting every future generation on the shop.
   const [autoSend, setAutoSend] = useState(false);
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(true, onCancel);
 
   // Selection is scoped to a FIXED config snapshot: clear it whenever
   // we're on step 1 (incl. after "Edit" from step 2), so step 2 always

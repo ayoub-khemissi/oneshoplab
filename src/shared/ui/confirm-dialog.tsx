@@ -4,6 +4,7 @@ import { AlertDialog, Button } from '@heroui/react';
 import { AlertTriangle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ModalCloseButton } from './modal-close-button';
+import { useModalHistory } from './use-modal-history';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -40,6 +41,9 @@ export function ConfirmDialog({
   isPending = false,
   onConfirm
 }: ConfirmDialogProps) {
+  // Back closes the modal, not the page (see useModalHistory).
+  useModalHistory(isOpen, () => onOpenChange(false));
+
   return (
     <AlertDialog isOpen={isOpen} onOpenChange={onOpenChange}>
       <AlertDialog.Backdrop>

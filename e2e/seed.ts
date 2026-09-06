@@ -16,6 +16,12 @@ export const SEED = {
     sourceId: 'photo-1',
     imageIds: ['m1', 'm2', 'm3']
   },
+  /** A connected store whose plugin reports only the MINIMUM capabilities —
+   *  no stable image ids, so the editor keeps the replace-all path. Kept apart
+   *  from `project`, which must stay a store that has never connected: the
+   *  integrations wizard's "create your first key" step depends on it. */
+  minimalProject: { id: '99999999-1111-4111-8111-999999999999', domain: 'basic-shop.example.com' },
+  minimalProduct: { id: '99999999-2222-4222-8222-999999999999', sourceId: 'basic-1' },
   /** A store with changes still waiting: two pending + one the store refused,
    *  which the modal can send again (it carries a completed source job). */
   pendingProject: { id: '77777777-7777-4777-8777-777777777777', domain: 'pending-shop.example.com' },

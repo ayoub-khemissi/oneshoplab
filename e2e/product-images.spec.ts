@@ -116,13 +116,9 @@ test.describe('product images', () => {
   });
 
   test('a store without stable image ids keeps the replace-all path only', async ({ page }) => {
-    await page.goto(`/fr/dashboard/sites/${SEED.project.id}?tab=products`);
-    const productLink = page
-      .getByRole('link', { name: /Hand-thrown stoneware coffee mug/ })
-      .filter({ visible: true })
-      .first();
-    await page.goto((await productLink.getAttribute('href'))!);
-    await page.waitForURL(/\/products\//);
+    await page.goto(
+      `/fr/dashboard/sites/${SEED.minimalProject.id}/products/${SEED.minimalProduct.id}`
+    );
 
     const editor = page.getByTestId('image-editor');
     await expect(editor).toBeVisible();
