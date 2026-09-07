@@ -44,6 +44,16 @@ pulls (nightly + "Synchroniser").
   (failure: `?error=` ∈ `not_configured | bad_state | unauthorized |
   bad_request` (missing or unverifiable `signedInstance`) `| exchange_failed`
   (signed instance ≠ query instance) `| unreachable | not_found`).
+- **Catalog V1 vs V3** (2026-09-07): Wix Stores runs two incompatible
+  catalogues; new sites are V3 and answer 428 to V1 calls (`Endpoint belongs
+  to CATALOG_V1, but your site is using CATALOG_V3`). The client detects the
+  version once (`GET /stores/v3/provision/version`, or the first V1 428) and
+  routes every method: V3 products are folded into the V1 `WixProduct` shape
+  (`lib/v3-product.ts`) so pull / apply / image ops are written once; V3
+  descriptions are rich content only, so our HTML is converted
+  (`lib/rich-content.ts`); V3 media is one array fully overwritten (add = keep
+  existing ids + new urls); V3 ribbons are set by name; V3 categories come
+  from the product's breadcrumbs, so `collections()` is empty there.
 - **Client** (`api/client.ts`): access token minted with client credentials (`POST /oauth2/token`, app id + secret + `instance_id`, 4 h) on
   demand (`grant_type=refresh_token`, cached 4 min — Wix tokens live 5),
   `Authorization: <token>`; 401/403 → `token_invalid` (status flipped, one

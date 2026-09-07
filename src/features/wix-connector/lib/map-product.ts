@@ -37,6 +37,15 @@ export interface WixProduct {
   variants?: WixVariant[];
   lastUpdated?: string;
   stock?: { inStock?: boolean };
+  // ---- Catalog V3 extras (see lib/v3-product.ts) --------------------------
+  /** Up to four more badges besides `ribbon`. */
+  additionalRibbons?: string[];
+  /** The product's own category name, when the catalogue gave it directly. */
+  categoryName?: string;
+  /** Full public URL, when the catalogue gave it assembled. */
+  pageUrl?: string;
+  /** V3 optimistic-locking token, required on every update. */
+  revision?: string;
 }
 
 /** Wix caps `paging.limit` at 100 for the products query. */
@@ -87,15 +96,20 @@ export function mapWixProduct(p: WixProduct, ctx: WixMapContext): NormalizedProd
   return {
     source: 'wix',
     sourceId: p.id,
-    sourceUrl: joinUrl(p.productPageUrl?.base, p.productPageUrl?.path),
+    sourceUrl: p.pageUrl ?? joinUrl(p.productPageUrl?.base, p.productPageUrl?.path),
     handle: p.slug ?? null,
     title: p.name,
     descriptionHtml: p.description ?? '',
     images,
-    tags: normalizeTags(p.ribbon ? [p.ribbon.trim()] : []),
+    // Wix has no tags: the ribbon(s) stand in — V1 has one, V3 up to five.
+    tags: normalizeTags(
+      [p.ribbon, ...(p.additionalRibbons ?? [])]
+        .map((r) => r?.trim() ?? '')
+        .filter((r) => r.length > 0)
+    ),
     variants,
     vendor: p.brand || null,
-    productType: collectionName ?? null,
+    productType: p.categoryName ?? collectionName ?? null,
     priceMin: priceMin !== null && priceMin > 0 ? priceMin : null,
     priceMax: priceMax !== null && priceMax > 0 ? priceMax : null,
     currency,

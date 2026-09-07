@@ -38,6 +38,7 @@ export function createFakeWixClient(products: WixProduct[] = []): FakeWixClient 
   };
   const client: FakeWixClient = {
     products: map,
+    catalogVersion: async () => 'v1' as const,
     tokenInvalid: false,
     lastOptions: null,
     calls: { productUpdate: [], addMedia: [], removeMedia: [], productById: [] },
