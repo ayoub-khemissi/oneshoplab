@@ -130,8 +130,15 @@ export function ScrollAwareSticky({
       // ScrollHidingHeader wrapper) so this component stays drop-in
       // safe.
       style={{ top: `var(--site-header-h, ${topOffsetPx}px)`, overflowAnchor: 'none' }}
-      className={`group/sticky sticky z-10 -mx-4 md:-mx-10 px-4 md:px-10 bg-[var(--background)]/85 backdrop-blur-md flex flex-col transition-[top,padding,gap] duration-200 ${
-        compact ? 'pt-1.5 pb-0 gap-1 border-b border-[var(--border)]' : 'pt-4 pb-2 gap-4'
+      // On a phone the bar eats the parent's top padding the same way it
+      // already eats the side gutters: <main> is `p-4 md:p-10`, and stacking
+      // that 16px under the site header and on top of the bar's own padding
+      // left ~32px of nothing above the store's name — a third of what a
+      // small screen shows below the header. Desktop keeps its rhythm.
+      className={`group/sticky sticky z-10 -mx-4 md:-mx-10 px-4 md:px-10 -mt-4 md:mt-0 bg-[var(--background)]/85 backdrop-blur-md flex flex-col transition-[top,padding,gap] duration-200 ${
+        compact
+          ? 'pt-1.5 pb-0 gap-1 border-b border-[var(--border)]'
+          : 'pt-2 pb-2 gap-2 md:pt-4 md:gap-4'
       } ${className}`}
     >
       {children}
