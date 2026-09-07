@@ -128,7 +128,19 @@ export function createWixClient(opts: WixClientOptions): WixClient {
         res.status
       );
     if (res.status === 404) return null as T;
-    if (!res.ok) throw new WixClientError('http', `Wix HTTP ${res.status} on ${path}`, res.status);
+    if (!res.ok) {
+      // Wix puts the reason in the body (`message`, or `details.applicationError`):
+      // 428 with nothing else is how a missing permission looked to us.
+      const detail = await res.text().then(
+        (t) => t.replace(/\s+/g, ' ').slice(0, 200),
+        () => ''
+      );
+      throw new WixClientError(
+        'http',
+        `Wix HTTP ${res.status} on ${path}${detail ? ` — ${detail}` : ''}`,
+        res.status
+      );
+    }
     return (await res.json()) as T;
   }
 

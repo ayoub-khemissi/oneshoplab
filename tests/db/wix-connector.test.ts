@@ -50,6 +50,7 @@ import {
   setWixEnv,
   type FakeWixClient
 } from './wix-helpers';
+import { WixClientError } from '@/features/wix-connector';
 import { signInstance } from '@/features/wix-connector/lib/signed-instance';
 
 let userId: string;
@@ -188,6 +189,29 @@ describe('pull / apply / disconnect / actions', () => {
       ['w-1', 'Shirts', ['Hot']],
       ['w-2', 'Shirts', ['New']]
     ]);
+  });
+  it('still pulls the catalogue when collections are refused — the label is not worth the catalogue', async () => {
+    // The very first real install: the app lacked the "read collections"
+    // permission and Wix answered 428. Categories go empty; nothing else does.
+    await connect();
+    fake.collections = async () => {
+      throw new WixClientError('http', 'Wix HTTP 428 on /stores/v1/collections/query', 428);
+    };
+    const res = await pullWixCatalog(projectId);
+    expect(res).toMatchObject({ ok: true, fetched: 2, inserted: 2 });
+    const rows = await db.select().from(products).where(eq(products.projectId, projectId));
+    expect(rows.map((r) => [r.sourceId, r.productType]).sort()).toEqual([
+      ['w-1', null],
+      ['w-2', null]
+    ]);
+  });
+  it('a refused token on collections still stops the pull', async () => {
+    await connect();
+    fake.collections = async () => {
+      throw new WixClientError('token_invalid', 'Wix refused the token (401)', 401);
+    };
+    const res = await pullWixCatalog(projectId);
+    expect(res.ok).toBe(false);
   });
   it('applies title / tags(ribbon) / images, conflicts on a store-side edit, stops on 401', async () => {
     await connect();

@@ -41,7 +41,19 @@ async function fetchAll(
   max: number,
   onPage: (fetched: number) => Promise<void>
 ): Promise<{ products: NormalizedProduct[]; truncated: boolean }> {
-  const ctx = { collections: await client.collections() };
+  // Collections only name the category chip. Wix answers 428 when the app
+  // lacks the "read collections" permission — which happened on the very
+  // first real install — and losing the whole catalogue to a missing label is
+  // the wrong trade. A refused token is a different matter and still stops
+  // the pull.
+  let collections = new Map<string, string>();
+  try {
+    collections = await client.collections();
+  } catch (e) {
+    if (e instanceof WixClientError && e.code !== 'http') throw e;
+    console.warn('[wix] collections unavailable, categories left empty:', (e as Error).message);
+  }
+  const ctx = { collections };
   const products: NormalizedProduct[] = [];
   for (let offset = 0; ; offset += WIX_PRODUCTS_PAGE_SIZE) {
     const page = await client.productsPage(offset);
