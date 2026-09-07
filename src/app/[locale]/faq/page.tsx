@@ -7,7 +7,9 @@ import { SUPPORTED_LOCALES } from '@/i18n/routing';
 
 const SITE_URL = (process.env.APP_URL ?? 'https://oneshoplab.com').replace(/\/$/, '');
 
-// The 12 Q/A keys live in the Faq namespace as q01q/q01a … q12q/q12a.
+// The 16 Q/A keys live in the Faq namespace as q01q/q01a … q16q/q16a.
+// q13–q16 arrived with the store connection: how a change reaches the store,
+// letting it go by itself, photos, and what a disconnected store does.
 // Centralising the IDs here means the page, the JSON-LD and any future
 // per-question deep-link share the same ordering.
 const QIDS = [
@@ -22,7 +24,11 @@ const QIDS = [
   'q09',
   'q10',
   'q11',
-  'q12'
+  'q12',
+  'q13',
+  'q14',
+  'q15',
+  'q16'
 ] as const;
 
 export async function generateMetadata({

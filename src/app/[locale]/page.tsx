@@ -134,10 +134,11 @@ export default async function HomePage({ searchParams }: PageProps) {
     }
   }
 
-  // Home FAQ shows a curated subset (first 6 questions) — keeps the
-  // section scrollable without overwhelming the homepage. Full list
-  // lives at /faq and is linked at the bottom of the section.
-  const HOME_FAQ_IDS = ['q01', 'q02', 'q03', 'q04', 'q05', 'q06'] as const;
+  // Home FAQ shows a curated six — the ones a visitor asks before the
+  // connection makes sense to them: free trial, do I install something, how
+  // changes reach the store, are my originals safe, platforms, tone. Credits
+  // and billing live on the full /faq page, linked below the section.
+  const HOME_FAQ_IDS = ['q01', 'q04', 'q13', 'q05', 'q03', 'q02'] as const;
 
   return (
     <main className="flex-1 relative isolate overflow-hidden">
