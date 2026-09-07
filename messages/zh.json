@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, other {发送 # 项修改到我的店铺}}",
     "autoSendTitle": "自动发送修改",
     "autoSendHint": "生成完成后立即发送到你的店铺，无需审阅。之后仍可撤销任何修改。",
-    "autoSendSaved": "已保存"
+    "autoSendSaved": "已保存",
+    "autoSendPromptTitle": "自动把修改发送到店铺？",
+    "autoSendPromptBody": "店铺已连接。从现在起，每次生成可以在完成后立即发送到店铺，或者等待你逐一批准。随时可以在站点设置中更改，每处修改都可撤销。",
+    "autoSendPromptYes": "是，自动发送",
+    "autoSendPromptNo": "否，我逐一批准",
+    "autoSendPromptDoneOn": "已记录——生成完成后将立即发送。",
+    "autoSendPromptDoneOff": "已记录——未经你批准，不会向店铺发送任何内容。"
   },
   "Tour": {
     "ariaLabel": "引导教程",

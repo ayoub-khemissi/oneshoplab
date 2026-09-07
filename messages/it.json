@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {Invia 1 modifica al mio negozio} other {Invia # modifiche al mio negozio}}",
     "autoSendTitle": "Invia le modifiche automaticamente",
     "autoSendHint": "Una generazione parte verso il tuo negozio appena è pronta, senza revisione. Puoi comunque annullare una modifica in seguito.",
-    "autoSendSaved": "Salvato"
+    "autoSendSaved": "Salvato",
+    "autoSendPromptTitle": "Inviare le modifiche al negozio automaticamente?",
+    "autoSendPromptBody": "Il tuo negozio è collegato. Da ora ogni generazione può arrivarci appena pronta, oppure attendere la tua approvazione, un clic alla volta. Puoi cambiare idea in qualsiasi momento nelle impostazioni del sito, e ogni modifica resta annullabile.",
+    "autoSendPromptYes": "Sì, invia automaticamente",
+    "autoSendPromptNo": "No, approvo ogni invio",
+    "autoSendPromptDoneOn": "Registrato: le generazioni partiranno appena pronte.",
+    "autoSendPromptDoneOff": "Registrato: nulla va al negozio senza la tua approvazione."
   },
   "Tour": {
     "ariaLabel": "Tour guidato",

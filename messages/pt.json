@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {Enviar 1 alteração para a minha loja} other {Enviar # alterações para a minha loja}}",
     "autoSendTitle": "Enviar as alterações automaticamente",
     "autoSendHint": "Uma geração segue para a sua loja assim que estiver pronta, sem revisão. Pode sempre anular uma alteração depois.",
-    "autoSendSaved": "Guardado"
+    "autoSendSaved": "Guardado",
+    "autoSendPromptTitle": "Enviar as alterações para a loja automaticamente?",
+    "autoSendPromptBody": "A sua loja está ligada. A partir de agora, cada geração pode ir para lá assim que estiver pronta — ou esperar pela sua aprovação, um clique de cada vez. Pode mudar de ideias a qualquer momento nas definições do site, e cada alteração continua anulável.",
+    "autoSendPromptYes": "Sim, enviar automaticamente",
+    "autoSendPromptNo": "Não, aprovo cada envio",
+    "autoSendPromptDoneOn": "Registado — as gerações serão enviadas assim que estiverem prontas.",
+    "autoSendPromptDoneOff": "Registado — nada vai para a sua loja sem a sua aprovação."
   },
   "Tour": {
     "ariaLabel": "Tour guiado",

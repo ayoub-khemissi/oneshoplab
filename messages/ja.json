@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, other {# 件の変更をストアへ送信}}",
     "autoSendTitle": "変更を自動で送信する",
     "autoSendHint": "生成が完了した時点で、確認なしにストアへ送信します。あとから取り消すことも可能です。",
-    "autoSendSaved": "保存しました"
+    "autoSendSaved": "保存しました",
+    "autoSendPromptTitle": "変更をストアへ自動送信しますか？",
+    "autoSendPromptBody": "ストアが接続されました。これからは各生成を完了と同時にストアへ送ることも、1件ずつ承認を待つこともできます。サイト設定でいつでも変更でき、どの変更も取り消せます。",
+    "autoSendPromptYes": "はい、自動で送信する",
+    "autoSendPromptNo": "いいえ、1件ずつ承認する",
+    "autoSendPromptDoneOn": "了解しました。生成は完了と同時に送信されます。",
+    "autoSendPromptDoneOff": "了解しました。承認なしにストアへ送られることはありません。"
   },
   "Tour": {
     "ariaLabel": "ガイドツアー",

@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {Envoyer 1 modification à ma boutique} other {Envoyer # modifications à ma boutique}}",
     "autoSendTitle": "Envoyer les modifications automatiquement",
     "autoSendHint": "Une génération part vers votre boutique dès qu’elle est prête, sans relecture. Vous pouvez toujours annuler une modification ensuite.",
-    "autoSendSaved": "Enregistré"
+    "autoSendSaved": "Enregistré",
+    "autoSendPromptTitle": "Envoyer les modifications dans votre boutique automatiquement ?",
+    "autoSendPromptBody": "Votre boutique est connectée. Désormais, chaque génération peut y partir dès qu’elle est prête — ou attendre votre validation, un clic à la fois. Vous pourrez changer d’avis à tout moment dans les réglages du site, et chaque modification reste annulable.",
+    "autoSendPromptYes": "Oui, envoyer automatiquement",
+    "autoSendPromptNo": "Non, je valide chaque envoi",
+    "autoSendPromptDoneOn": "C’est noté — les générations partiront dès qu’elles seront prêtes.",
+    "autoSendPromptDoneOff": "C’est noté — rien ne part vers votre boutique sans votre validation."
   },
   "Tour": {
     "ariaLabel": "Tutoriel guidé",

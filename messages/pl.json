@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, other {Wyślij # zmian do sklepu}}",
     "autoSendTitle": "Wysyłaj zmiany automatycznie",
     "autoSendHint": "Wygenerowana treść trafia do sklepu od razu, bez sprawdzania. Każdą zmianę możesz później cofnąć.",
-    "autoSendSaved": "Zapisano"
+    "autoSendSaved": "Zapisano",
+    "autoSendPromptTitle": "Wysyłać zmiany do sklepu automatycznie?",
+    "autoSendPromptBody": "Sklep jest podłączony. Od teraz każda generacja może trafiać do niego od razu po zakończeniu — albo czekać na Twoje zatwierdzenie, jedno kliknięcie na raz. Możesz to zmienić w każdej chwili w ustawieniach sklepu, a każdą zmianę da się cofnąć.",
+    "autoSendPromptYes": "Tak, wysyłaj automatycznie",
+    "autoSendPromptNo": "Nie, zatwierdzam każdą",
+    "autoSendPromptDoneOn": "Zapisano — generacje będą wysyłane od razu po zakończeniu.",
+    "autoSendPromptDoneOff": "Zapisano — nic nie trafi do sklepu bez Twojej zgody."
   },
   "Tour": {
     "ariaLabel": "Przewodnik",

@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {Enviar 1 cambio a mi tienda} other {Enviar # cambios a mi tienda}}",
     "autoSendTitle": "Enviar los cambios automáticamente",
     "autoSendHint": "Una generación llega a su tienda en cuanto está lista, sin revisión. Siempre puede deshacer un cambio después.",
-    "autoSendSaved": "Guardado"
+    "autoSendSaved": "Guardado",
+    "autoSendPromptTitle": "¿Enviar los cambios a tu tienda automáticamente?",
+    "autoSendPromptBody": "Tu tienda está conectada. A partir de ahora, cada generación puede ir a ella en cuanto esté lista, o esperar tu aprobación, un clic a la vez. Puedes cambiarlo en cualquier momento en los ajustes del sitio, y cada cambio se puede deshacer.",
+    "autoSendPromptYes": "Sí, enviar automáticamente",
+    "autoSendPromptNo": "No, apruebo cada envío",
+    "autoSendPromptDoneOn": "Anotado: las generaciones se enviarán en cuanto estén listas.",
+    "autoSendPromptDoneOff": "Anotado: nada va a tu tienda sin tu aprobación."
   },
   "Tour": {
     "ariaLabel": "Tutorial guiado",

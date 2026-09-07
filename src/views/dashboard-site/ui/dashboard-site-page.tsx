@@ -28,7 +28,9 @@ import { listProductsWithGenerations, listShareLinksForSite } from '@/entities/s
 import { listProjectKeys } from '@/entities/api-key';
 import { getProjectCapabilities } from '@/entities/connection-capability';
 import {
+  AutoSendPrompt,
   AutoSendToggle,
+  shouldAskAutoSend,
   countSendableGenerationsAction,
   hasAppliedChange,
   isAwaitingStore,
@@ -647,6 +649,16 @@ export async function DashboardSitePage({
             returnNotice={parseIntegrationReturn(searchParams)}
             syncRequestedAtIso={project.syncRequestedAt?.toISOString() ?? null}
           />
+          {/* The moment a store becomes connected is the moment "send
+              automatically?" becomes a real question — so it is asked here,
+              once, instead of waiting in the settings to be discovered. */}
+          {shouldAskAutoSend({
+            connected: storeConnected,
+            decidedAt: project.autoApplyDecidedAt,
+            manual: project.source === 'manual'
+          }) ? (
+            <AutoSendPrompt projectId={project.id} />
+          ) : null}
           <PendingChangesList siteId={siteId} initialItems={pendingChanges} />
         </div>
       ) : (

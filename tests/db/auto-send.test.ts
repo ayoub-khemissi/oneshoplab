@@ -134,4 +134,14 @@ describe('autoSendCompletedGenerations', () => {
     const [row] = await db.select().from(projects).where(eq(projects.id, projectId));
     expect(row.autoApply).toBe(false);
   });
+
+  it('either answer counts as a decision, so the prompt never comes back', async () => {
+    const before = await db.select().from(projects).where(eq(projects.id, projectId));
+    expect(before[0].autoApplyDecidedAt).toBeNull();
+
+    await setAutoApply(projectId, userId, false);
+    const [row] = await db.select().from(projects).where(eq(projects.id, projectId));
+    expect(row.autoApply).toBe(false);
+    expect(row.autoApplyDecidedAt).not.toBeNull();
+  });
 });

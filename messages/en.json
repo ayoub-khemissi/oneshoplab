@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {Send 1 change to my store} other {Send # changes to my store}}",
     "autoSendTitle": "Send changes automatically",
     "autoSendHint": "A generation goes to your store as soon as it is ready, with no review step. You can still undo any change afterwards.",
-    "autoSendSaved": "Saved"
+    "autoSendSaved": "Saved",
+    "autoSendPromptTitle": "Send changes to your store automatically?",
+    "autoSendPromptBody": "Your store is connected. From now on, each generation can go to it as soon as it is ready — or wait for your approval, one click at a time. You can change this any time in the site's settings, and every change stays undoable.",
+    "autoSendPromptYes": "Yes, send automatically",
+    "autoSendPromptNo": "No, I approve each one",
+    "autoSendPromptDoneOn": "Done — generations will be sent as soon as they are ready.",
+    "autoSendPromptDoneOff": "Done — nothing goes to your store without your approval."
   },
   "Tour": {
     "ariaLabel": "Guided tour",

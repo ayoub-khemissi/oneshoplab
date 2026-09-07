@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `auto_apply_decided_at` timestamp;

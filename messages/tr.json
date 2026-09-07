@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, other {# değişikliği mağazama gönder}}",
     "autoSendTitle": "Değişiklikleri otomatik gönder",
     "autoSendHint": "Bir üretim hazır olur olmaz, inceleme adımı olmadan mağazanıza gider. Her değişikliği sonradan geri alabilirsiniz.",
-    "autoSendSaved": "Kaydedildi"
+    "autoSendSaved": "Kaydedildi",
+    "autoSendPromptTitle": "Değişiklikler mağazanıza otomatik gönderilsin mi?",
+    "autoSendPromptBody": "Mağazanız bağlandı. Artık her üretim hazır olur olmaz oraya gidebilir — ya da tek tek onayınızı bekleyebilir. Bunu site ayarlarından her zaman değiştirebilirsiniz; her değişiklik geri alınabilir.",
+    "autoSendPromptYes": "Evet, otomatik gönder",
+    "autoSendPromptNo": "Hayır, her birini onaylarım",
+    "autoSendPromptDoneOn": "Kaydedildi — üretimler hazır olur olmaz gönderilecek.",
+    "autoSendPromptDoneOff": "Kaydedildi — onayınız olmadan mağazaya hiçbir şey gitmez."
   },
   "Tour": {
     "ariaLabel": "Rehberli tur",

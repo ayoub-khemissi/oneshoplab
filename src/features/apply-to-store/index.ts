@@ -34,6 +34,7 @@ export {
   listPendingSummaryForUser
 } from './api/queries';
 export { ApplyToStoreButton } from './ui/apply-to-store-button';
+export { AutoSendPrompt } from './ui/auto-send-prompt';
 export { AutoSendToggle } from './ui/auto-send-toggle';
 export { setAutoApplyAction } from './api/auto-send-action';
 export { countSendableGenerationsAction, sendAllGenerationsAction } from './api/send-all';
@@ -57,3 +58,4 @@ export type {
   EditorGeneratedImage,
   EditorStoreImage
 } from './ui/image-editor/product-image-editor';
+export { shouldAskAutoSend } from './lib/auto-send-prompt';

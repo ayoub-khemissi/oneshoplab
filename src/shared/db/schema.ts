@@ -251,6 +251,10 @@ export const projects = mysqlTable(
      *  account-wide: writing into a live catalogue unreviewed is a decision
      *  someone makes for a shop they trust, not for all of them at once. */
     autoApply: boolean('auto_apply').notNull().default(false),
+    /** When the merchant answered "send automatically?" — yes or no. A store
+     *  that has just been connected asks once, right there, and never again:
+     *  the boolean alone cannot tell "declined" from "never asked". */
+    autoApplyDecidedAt: timestamp('auto_apply_decided_at'),
     /** "Notify me" toggles of the Integrations wizard for the connectors
      *  that have not shipped yet (Shopify phase 3, Wix phase 5). NULL =
      *  never asked. Read by the launch announcement, nothing else. */

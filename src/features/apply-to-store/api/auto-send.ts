@@ -89,7 +89,9 @@ export async function setAutoApply(
 ): Promise<boolean> {
   const res = await db
     .update(projects)
-    .set({ autoApply: enabled })
+    // Either answer is a decision: the prompt shown after connecting a store
+    // must not come back once the merchant has said no.
+    .set({ autoApply: enabled, autoApplyDecidedAt: new Date() })
     .where(and(eq(projects.id, projectId), eq(projects.userId, userId)));
   return res[0].affectedRows > 0;
 }

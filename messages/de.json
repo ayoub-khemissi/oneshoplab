@@ -1920,7 +1920,13 @@
     "sendAll": "{count, plural, =1 {1 Änderung an meinen Shop senden} other {# Änderungen an meinen Shop senden}}",
     "autoSendTitle": "Änderungen automatisch senden",
     "autoSendHint": "Eine Generierung geht sofort an Ihren Shop, ohne Prüfschritt. Sie können jede Änderung danach rückgängig machen.",
-    "autoSendSaved": "Gespeichert"
+    "autoSendSaved": "Gespeichert",
+    "autoSendPromptTitle": "Änderungen automatisch in deinen Shop senden?",
+    "autoSendPromptBody": "Dein Shop ist verbunden. Ab jetzt kann jede Generierung dorthin gehen, sobald sie fertig ist – oder auf deine Freigabe warten, ein Klick nach dem anderen. Das lässt sich jederzeit in den Shop-Einstellungen ändern, und jede Änderung bleibt rückgängig.",
+    "autoSendPromptYes": "Ja, automatisch senden",
+    "autoSendPromptNo": "Nein, ich gebe jede frei",
+    "autoSendPromptDoneOn": "Notiert – Generierungen werden gesendet, sobald sie fertig sind.",
+    "autoSendPromptDoneOff": "Notiert – nichts geht ohne deine Freigabe in den Shop."
   },
   "Tour": {
     "ariaLabel": "Geführte Tour",

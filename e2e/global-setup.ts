@@ -175,6 +175,9 @@ export default async function globalSetup(): Promise<void> {
       name: 'E2E plugin (minimum)',
       prefix: 'osl_live_min',
       keyHash: 'm'.repeat(64),
+      // The plugin has talked to us: that, not the key's existence, is what
+      // makes a store connected (see isProjectConnected).
+      lastUsedAt: new Date(),
       permissions: ['catalog:write', 'changes:read', 'changes:ack']
     });
 
@@ -189,6 +192,9 @@ export default async function globalSetup(): Promise<void> {
       name: 'E2E plugin',
       prefix: 'osl_live_e2e',
       keyHash: 'e'.repeat(64),
+      // The plugin has talked to us: that, not the key's existence, is what
+      // makes a store connected (see isProjectConnected).
+      lastUsedAt: new Date(),
       permissions: ['catalog:write', 'changes:read', 'changes:ack']
     });
     await db.insert(schema.connectionCapabilities).values({
@@ -224,6 +230,9 @@ export default async function globalSetup(): Promise<void> {
       name: 'E2E plugin (pending)',
       prefix: 'osl_live_pen',
       keyHash: 'p'.repeat(64),
+      // The plugin has talked to us: that, not the key's existence, is what
+      // makes a store connected (see isProjectConnected).
+      lastUsedAt: new Date(),
       permissions: ['catalog:write', 'changes:read', 'changes:ack']
     });
     await db.insert(schema.products).values({
@@ -281,6 +290,25 @@ export default async function globalSetup(): Promise<void> {
         ackPayload: { status: 'failed', error: 'HTTP 500' }
       })
     ]);
+
+    // A store page without an audit is a 404 (`if (!audit) notFound()`), so
+    // the connected fixtures each carry one: the site page is where the
+    // integrations tab, the settings and the tab bar live, and three specs
+    // were quietly testing a "Page introuvable" until this was noticed.
+    for (const fixture of [SEED.pendingProject, SEED.minimalProject]) {
+      await db.insert(schema.audits).values({
+        id: randomUUID(),
+        projectId: fixture.id,
+        domain: fixture.domain,
+        url: `https://${fixture.domain}`,
+        platform: 'woocommerce',
+        status: 'completed',
+        scores: report.scores,
+        summary: { ...report, detectionSignals: ['seed'], detectionConfidence: 1 },
+        productsSampled: 1,
+        completedAt: new Date()
+      });
+    }
 
     await db.insert(schema.shareLinks).values([
       { id: SEED.shareLinkId, userId, projectId: SEED.project.id, productSourceIds: ['p1', 'p2'], label: 'E2E', showOnHome: true },
