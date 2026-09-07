@@ -1,3 +1,4 @@
+import { productSourceKey } from '@/entities/product';
 import { and, asc, eq, lt, or } from 'drizzle-orm';
 import { buildImagePrompt, startImageOptim } from '@/entities/generation-job';
 import { runAltTextOptim, runChatOptim } from '@/entities/generation-job';
@@ -135,7 +136,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
     );
     return true;
   }
-  const sourceId = matched.sourceId ?? matched.handle ?? '';
+  // The row's key, never the snapshot's (see entities/product/lib/source-key).
+  const sourceId = productSourceKey(productRow);
   const sourceImage = matched.images[0]?.src ?? null;
   if (!sourceId) {
     await markFieldsErrored(job.id, result, nextProductId, 'Product has no source id', wanted);

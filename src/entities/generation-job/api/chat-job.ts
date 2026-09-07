@@ -12,14 +12,14 @@
  * quoted the user (estimateChatCredits) and the `maxTokens` ceiling. This
  * module never decides a price.
  */
-import { and, eq } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { chatCompletion, type ChatMessage } from '@/entities/ai-provider';
 import type { ChatModelRef } from '@/entities/ai-model';
 import { applyCreditTransaction } from '@/entities/credit';
 import { notify } from '@/entities/notification';
+import { findProductIdByKey } from '@/entities/product';
 import { db } from '@/shared/db';
-import { jobs, products, type JobKind } from '@/shared/db/schema';
+import { jobs, type JobKind } from '@/shared/db/schema';
 import { transitionJob } from './transitions';
 
 /**
@@ -66,11 +66,7 @@ export async function runChatJob<T>(opts: ChatJobRequest<T>): Promise<ChatJobRes
   // Resolve the product UUID from (projectId, sourceId) so we can populate the
   // FK column — the past-generations strip and the site Activity tab both pull
   // the product link via the `product` relation on jobs.
-  const productRow = await db.query.products.findFirst({
-    where: and(eq(products.projectId, opts.projectId), eq(products.sourceId, opts.productSourceId)),
-    columns: { id: true }
-  });
-  const productId = productRow?.id ?? null;
+  const productId = await findProductIdByKey(opts.projectId, opts.productSourceId);
 
   // Insert the job row in 'running' BEFORE calling the provider so the product
   // page can detect an in-flight generation after an F5 (chat is sync ~30s and

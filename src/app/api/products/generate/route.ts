@@ -19,6 +19,7 @@ import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/entities/user';
 import { sanitizeUserFacingError } from '@/shared/lib';
 import { InsufficientCreditsError } from '@/entities/credit';
+import { productSourceKey } from '@/entities/product';
 import { db } from '@/shared/db';
 import { products, projects } from '@/shared/db/schema';
 
@@ -225,7 +226,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'product_not_found' }, { status: 404 });
   }
   const { product, projectId, projectInstructions, languageCode } = loaded;
-  const sourceId = product.sourceId ?? product.handle ?? '';
+  // The row's key, never the snapshot's: the page files history under the
+  // row's, and a connected store's snapshot may only know the handle.
+  const keyRow = await db.query.products.findFirst({
+    where: and(eq(products.id, productId), eq(products.projectId, projectId)),
+    columns: { id: true, sourceId: true, handle: true }
+  });
+  const sourceId = keyRow ? productSourceKey(keyRow) : (product.sourceId ?? product.handle ?? '');
   const sourceImage = product.images[0]?.src;
   const context = toProductContext(product);
 
