@@ -9,7 +9,7 @@ import { OAUTH_STATE_TTL_MS, integrationsTabPath, safeLocale } from '@/shared/li
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/** `GET ?projectId[&locale][&token]` — owner only → 302 to the Wix installer. */
+/** `GET ?projectId[&locale]` — owner only → 302 to the Wix installer (external install flow). */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
   const projectId = url.searchParams.get('projectId') ?? '';
@@ -23,12 +23,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     .where(and(eq(projects.id, projectId), eq(projects.userId, session.user.id)));
   if (!project) return NextResponse.json({ error: 'not_found' }, { status: 404 });
 
-  const res = beginWixInstall({
-    projectId,
-    userId: session.user.id,
-    locale,
-    token: url.searchParams.get('token')
-  });
+  const res = beginWixInstall({ projectId, userId: session.user.id, locale });
   if (!res.ok)
     return NextResponse.redirect(
       new URL(integrationsTabPath(locale, projectId, { error: res.reason }), url.origin)

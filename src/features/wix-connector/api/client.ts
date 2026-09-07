@@ -1,12 +1,17 @@
 /**
- * Minimal Wix REST client (fetch, no SDK). Access tokens live 5 minutes and
- * are minted from the permanent refresh token on demand; a 401/403 after a
- * fresh token means the app was removed → `token_invalid`.
+ * Minimal Wix REST client (fetch, no SDK).
+ *
+ * Authentication is OAuth client credentials: there is no per-site secret at
+ * all. An access token is minted from the app id, the app secret and the
+ * site's `instanceId` (`POST /oauth2/token`), lives four hours, and is simply
+ * minted again when it expires. A 401/403 on a fresh token means the app was
+ * removed from the site → `token_invalid`.
  */
 import { WIX_PRODUCTS_PAGE_SIZE, type WixProduct } from '../lib/map-product';
 
 export const WIX_API_BASE = 'https://www.wixapis.com';
-const TOKEN_TTL_MS = 4 * 60 * 1000;
+/** Wix says four hours; renew well before, so a long pull never straddles it. */
+const TOKEN_TTL_MS = 3 * 60 * 60 * 1000 + 30 * 60 * 1000;
 
 export type WixClientErrorCode = 'token_invalid' | 'http' | 'network';
 
@@ -42,7 +47,8 @@ export interface WixProductUpdateInput {
 export interface WixClientOptions {
   appId: string;
   appSecret: string;
-  refreshToken: string;
+  /** The app's installation on this site — the whole credential. */
+  instanceId: string;
   fetchImpl?: typeof fetch;
 }
 
@@ -60,23 +66,28 @@ export interface WixClient {
   collections(): Promise<Map<string, string>>;
 }
 
-/** One-shot code → tokens (install) or refresh → access token; shared shape. */
+/** `POST /oauth2/token`, client credentials: app id + app secret + instance id → access token. */
 export async function wixTokenRequest(
-  body: Record<string, string>,
+  input: { appId: string; appSecret: string; instanceId: string },
   fetchImpl: typeof fetch = fetch
-): Promise<{ accessToken: string; refreshToken: string | null }> {
-  const res = await fetchImpl(`${WIX_API_BASE}/oauth/access`, {
+): Promise<{ accessToken: string }> {
+  const res = await fetchImpl(`${WIX_API_BASE}/oauth2/token`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: input.appId,
+      client_secret: input.appSecret,
+      instance_id: input.instanceId
+    })
   });
   if (res.status === 400 || res.status === 401 || res.status === 403)
     throw new WixClientError('token_invalid', `Wix refused the token (${res.status})`, res.status);
   if (!res.ok) throw new WixClientError('http', `Wix HTTP ${res.status}`, res.status);
-  const json = (await res.json()) as { access_token?: string; refresh_token?: string };
+  const json = (await res.json()) as { access_token?: string };
   if (!json.access_token)
     throw new WixClientError('http', 'Wix token response without access_token');
-  return { accessToken: json.access_token, refreshToken: json.refresh_token ?? null };
+  return { accessToken: json.access_token };
 }
 
 export function createWixClient(opts: WixClientOptions): WixClient {
@@ -87,12 +98,7 @@ export function createWixClient(opts: WixClientOptions): WixClient {
   async function token(): Promise<string> {
     if (accessToken && Date.now() - mintedAt < TOKEN_TTL_MS) return accessToken;
     const t = await wixTokenRequest(
-      {
-        grant_type: 'refresh_token',
-        client_id: opts.appId,
-        client_secret: opts.appSecret,
-        refresh_token: opts.refreshToken
-      },
+      { appId: opts.appId, appSecret: opts.appSecret, instanceId: opts.instanceId },
       fetchImpl
     );
     accessToken = t.accessToken;

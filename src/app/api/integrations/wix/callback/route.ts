@@ -6,7 +6,7 @@ import { integrationsTabPath } from '@/shared/lib';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/** Wix redirects here with `code, instanceId, state` (docs/api/WIX-CONNECTOR.md). */
+/** Wix redirects here with `instanceId, signedInstance, state` (docs/api/WIX-CONNECTOR.md). */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
   const session = await auth();

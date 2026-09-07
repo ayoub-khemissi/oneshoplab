@@ -99,4 +99,5 @@ export function setWixEnv(publicKey: string): void {
   process.env.WIX_APP_ID = 'wix-app-id';
   process.env.WIX_APP_SECRET = 'wix-app-secret-for-tests';
   process.env.WIX_APP_PUBLIC_KEY = publicKey;
+  process.env.WIX_SHARE_URL_ID = 'share-0000';
 }

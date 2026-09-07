@@ -23,7 +23,7 @@ export async function withWixClient<T>(
       makeClient({
         appId: cfg.appId,
         appSecret: cfg.appSecret,
-        refreshToken: secrets.refreshToken
+        instanceId: secrets.instanceId
       }),
       secrets,
       connection

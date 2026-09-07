@@ -1,43 +1,50 @@
 ---
 status: acted
 implemented: partial
-last-verified: 2026-08-30
+last-verified: 2026-09-07
 ---
 
 # Wix connector — Wix app (OAuth), Wix Stores products
 
 Backend implemented 2026-08-30 (`features/wix-connector`, migration
 `0029_shop_oauth_wix`); wizard UI shipped 2026-08-30 (`features/wix-connector/ui`: `WixInstallButton`, `WixConnectionCard`; mocks `wix-*` in `features/integrations/ui/mocks`). Wix has no "custom app" token: the
-merchant installs **our Wix app** on their site, OSL keeps the app's refresh
-token and talks to the Wix Stores REST API on the merchant's behalf.
+merchant installs **our Wix app** on their site; the credential for a site is
+its `instanceId`, from which OSL mints OAuth access tokens (client credentials)
+and talks to the Wix Stores REST API on the merchant's behalf.
+
+> **2026-09-07 — migrated off custom authentication.** Wix no longer offers the
+> redirect flow (`installer/install` → `code` → refresh token) to new apps: the
+> Dev Center has no redirect-URL field any more and the installer answers "no
+> app with this redirect URL". The connector now uses the *external install
+> flow* + client-credentials OAuth described below. `refresh_token_ciphertext`
+> stays null on Wix rows.
 
 ## Env
-`WIX_APP_ID`, `WIX_APP_SECRET` (Dev Center → OAuth), `WIX_APP_PUBLIC_KEY`
+`WIX_APP_ID`, `WIX_APP_SECRET` (Dev Center → Develop → OAuth), `WIX_APP_PUBLIC_KEY`
 (Dev Center → Webhooks, PEM; `\n` escapes accepted so it fits one `.env`
-line). `isWixAppConfigured()` (`@/features/wix-connector`) = id + secret set;
+line), `WIX_SHARE_URL_ID` (the GUID at the end of the app's *Share Install
+Link* — Distribute → Share Install Link, needs a released major version;
+required by the external install flow while the app is unlisted). `isWixAppConfigured()` (`@/features/wix-connector`) = id + secret set;
 without the public key webhooks are refused (401) and the connection lives on
 pulls (nightly + "Synchroniser").
 
 ## Flows
-- **Install** `GET /api/integrations/wix/install?projectId[&locale][&token]`
-  (session + ownership) → signed state cookie `osl_wix_oauth` (10 min, same
-  helper as Shopify) → 302
-  `https://www.wix.com/installer/install?appId&redirectUrl&state[&token]`.
-- **Callback** `GET /api/integrations/wix/callback?code&instanceId&state` →
-  cookie ↔ `state`, session user = state user → `POST
-  https://www.wixapis.com/oauth/access` (`grant_type=authorization_code`) →
-  refresh token sealed (`refresh_token_ciphertext`), `instance_id`,
-  `platform='wix'`, `auth_mode='oauth'`; site name/host from
-  `GET /apps/v1/instance` → pull queued → 302
+- **Install** `GET /api/integrations/wix/install?projectId[&locale]` (session
+  + ownership) → signed state cookie `osl_wix_oauth` (10 min, same helper as
+  Shopify) → 302 `https://www.wix.com/app-installer?appId[&shareUrlId]&postInstallationUrl=<callback?state>`.
+  Nothing per site is registered in the Dev Center: the callback travels in the
+  installation URL.
+- **Callback** `GET /api/integrations/wix/callback?state&appId&tenantId&instanceId&signedInstance`
+  → cookie ↔ `state`, session user = state user → `signedInstance` verified
+  (`lib/signed-instance.ts`: HMAC-SHA256 of the base64url data, keyed with the
+  app secret) and its `instanceId` must equal the plain one → site name/host
+  from `GET /apps/v1/instance` (first token minted here) → `platform='wix'`,
+  `auth_mode='oauth'`, `instance_id` → pull queued → 302
   `/{locale}/dashboard/sites/{projectId}?tab=integrations&connected=wix`
   (failure: `?error=` ∈ `not_configured | bad_state | unauthorized |
-  bad_request | exchange_failed | unreachable | not_found | no_key |
-  invalid_token`). The dashboard redirect is deliberate: the merchant started
-  from OSL. If Wix ever requires the
-  `https://www.wix.com/installer/close-window?access_token=` hop to mark the
-  app installed, do it from the callback before the dashboard redirect — to
-  confirm at the first real install.
-- **Client** (`api/client.ts`): access token minted from the refresh token on
+  bad_request` (missing or unverifiable `signedInstance`) `| exchange_failed`
+  (signed instance ≠ query instance) `| unreachable | not_found`).
+- **Client** (`api/client.ts`): access token minted with client credentials (`POST /oauth2/token`, app id + secret + `instance_id`, 4 h) on
   demand (`grant_type=refresh_token`, cached 4 min — Wix tokens live 5),
   `Authorization: <token>`; 401/403 → `token_invalid` (status flipped, one
   alert). Products: `POST /stores/v1/products/query` (100/page,

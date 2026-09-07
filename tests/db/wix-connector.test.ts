@@ -45,12 +45,12 @@ import { createProduct } from './integration-helpers';
 import { createProject } from './site-helpers';
 import {
   INSTANCE_ID,
-  REFRESH_TOKEN,
   createFakeWixClient,
   fakeWixProduct,
   setWixEnv,
   type FakeWixClient
 } from './wix-helpers';
+import { signInstance } from '@/features/wix-connector/lib/signed-instance';
 
 let userId: string;
 let projectId: string;
@@ -80,38 +80,58 @@ const form = (o: Record<string, string>) => {
   return f;
 };
 
-async function connect() {
+async function connect(opts: { signedInstanceId?: string; tamper?: boolean } = {}) {
   const req = new NextRequest(
     `http://localhost:3030/api/integrations/wix/install?projectId=${projectId}&locale=de`
   );
   const res = await installGet(req);
   const location = new URL(res.headers.get('location')!);
   const cookie = res.cookies.get(WIX_STATE_COOKIE)?.value ?? null;
+  // Wix redirects to our postInstallationUrl — state and all — and appends
+  // its own parameters to it.
+  const postInstall = new URL(location.searchParams.get('postInstallationUrl')!);
   const calls: Array<Record<string, unknown>> = [];
   vi.stubGlobal('fetch', async (_url: string | URL, init?: RequestInit) => {
     calls.push(JSON.parse(String(init?.body ?? '{}')));
-    return Response.json({ access_token: 'short-lived', refresh_token: REFRESH_TOKEN });
+    return Response.json({ access_token: 'short-lived' });
   });
-  const cb = new NextRequest(
-    `http://localhost:3030/api/integrations/wix/callback?code=c0de&instanceId=${INSTANCE_ID}&state=${location.searchParams.get('state')}`,
-    { headers: cookie ? { cookie: `${WIX_STATE_COOKIE}=${cookie}` } : {} }
+  let signed = signInstance(
+    { instanceId: opts.signedInstanceId ?? INSTANCE_ID, uid: 'u1', siteOwnerId: 'u1' },
+    process.env.WIX_APP_SECRET!
   );
-  return { location, calls, to: new URL((await callbackGet(cb)).headers.get('location')!) };
+  if (opts.tamper) signed = signed.replace(/.$/, (c: string) => (c === 'A' ? 'B' : 'A'));
+  postInstall.searchParams.set('appId', 'wix-app-id');
+  postInstall.searchParams.set('tenantId', 'site-1');
+  postInstall.searchParams.set('instanceId', INSTANCE_ID);
+  postInstall.searchParams.set('signedInstance', signed);
+  const cb = new NextRequest(postInstall, {
+    headers: cookie ? { cookie: `${WIX_STATE_COOKIE}=${cookie}` } : {}
+  });
+  return {
+    location,
+    postInstall,
+    calls,
+    to: new URL((await callbackGet(cb)).headers.get('location')!)
+  };
 }
 
-describe('install → callback', () => {
-  it('redirects to the Wix installer, exchanges the code, seals the refresh token, queues a pull', async () => {
-    const { location, calls, to } = await connect();
-    expect(location.origin + location.pathname).toBe('https://www.wix.com/installer/install');
+describe('install → callback (external install flow)', () => {
+  it('sends the merchant to the Wix installer with our callback as postInstallationUrl', async () => {
+    const { location, postInstall } = await connect();
+    expect(location.origin + location.pathname).toBe('https://www.wix.com/app-installer');
     expect(location.searchParams.get('appId')).toBe('wix-app-id');
-    expect(location.searchParams.get('redirectUrl')).toBe(
+    // Unlisted for now: the share link id is how Wix resolves the install path.
+    expect(location.searchParams.get('shareUrlId')).toBe('share-0000');
+    expect(postInstall.origin + postInstall.pathname).toBe(
       'http://localhost:3030/api/integrations/wix/callback'
     );
-    expect(calls[0]).toMatchObject({
-      grant_type: 'authorization_code',
-      code: 'c0de',
-      client_id: 'wix-app-id'
-    });
+    expect(postInstall.searchParams.get('state')).toBeTruthy();
+  });
+
+  it('a verified signedInstance connects the store and queues a pull — no per-site secret kept', async () => {
+    // The in-memory client stands in for Wix here, so no token request is
+    // observable at this level; `wixTokenRequest` has its own unit test.
+    const { to } = await connect();
     expect(to.pathname).toBe(`/de/dashboard/sites/${projectId}`);
     expect(to.searchParams.get('connected')).toBe('wix');
     const c = await getConnection(projectId);
@@ -128,13 +148,25 @@ describe('install → callback', () => {
       .select()
       .from(shopConnections)
       .where(eq(shopConnections.projectId, projectId));
-    expect(raw.refreshTokenCiphertext).toMatch(/^v1:/);
-    expect(raw.refreshTokenCiphertext).not.toContain(REFRESH_TOKEN);
-    expect(fake.lastOptions).toMatchObject({ refreshToken: REFRESH_TOKEN, appId: 'wix-app-id' });
+    expect(raw.refreshTokenCiphertext).toBeNull();
+    expect(fake.lastOptions).toMatchObject({ instanceId: INSTANCE_ID, appId: 'wix-app-id' });
   });
+
+  it('a forged or mismatched signedInstance connects nothing', async () => {
+    // The plain instanceId in the query is text anyone can type; only the
+    // signed copy proves an install, and only when the two agree.
+    const tampered = await connect({ tamper: true });
+    expect(tampered.to.searchParams.get('error')).toBe('bad_request');
+    expect(await getConnection(projectId)).toBeNull();
+
+    const mismatch = await connect({ signedInstanceId: 'someone-elses-instance' });
+    expect(mismatch.to.searchParams.get('error')).toBe('exchange_failed');
+    expect(await getConnection(projectId)).toBeNull();
+  });
+
   it('bad state → error redirect; unconfigured app → 302 error from install', async () => {
     const req = new NextRequest(
-      `http://localhost:3030/api/integrations/wix/callback?code=c&instanceId=i&state=forged`
+      `http://localhost:3030/api/integrations/wix/callback?instanceId=i&signedInstance=x.y&state=forged`
     );
     const to = new URL((await callbackGet(req)).headers.get('location')!);
     expect(to.searchParams.get('error')).toBe('bad_state');

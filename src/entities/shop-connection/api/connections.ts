@@ -116,11 +116,11 @@ export async function connectShopify(input: ConnectShopifyInput): Promise<Connec
 
 /** Wix app install: the refresh token is the durable secret (access tokens live 5 min). */
 export async function connectWix(input: ConnectWixInput): Promise<ConnectWixResult> {
-  const refreshToken = input.refreshToken.trim();
+  // The credential for a Wix site is its instance id — client-credentials
+  // OAuth mints access tokens from it and the app secret. There is nothing
+  // per-site to seal, so `refreshTokenCiphertext` stays null on Wix rows.
   const instanceId = input.instanceId.trim();
-  if (refreshToken.length < 20 || /\s/.test(refreshToken) || !instanceId)
-    return { ok: false, reason: 'invalid_token' };
-  if (!hasSecretBoxKey()) return { ok: false, reason: 'no_key' };
+  if (!instanceId || /\s/.test(instanceId)) return { ok: false, reason: 'invalid_token' };
   if (!(await ownedProject(input.projectId, input.userId)))
     return { ok: false, reason: 'not_found' };
   const row = await upsert(input.projectId, {
@@ -128,7 +128,7 @@ export async function connectWix(input: ConnectWixInput): Promise<ConnectWixResu
     shopDomain: input.shopDomain.trim().toLowerCase().slice(0, 255) || instanceId,
     shopName: input.shopName ?? null,
     accessTokenCiphertext: '',
-    refreshTokenCiphertext: sealSecret(refreshToken),
+    refreshTokenCiphertext: null,
     instanceId,
     keyId: 'v1',
     scopes: input.scopes ?? [],
@@ -222,11 +222,8 @@ export async function withDecryptedWixSecrets<T>(
 ): Promise<T | null> {
   const row = await getRow(projectId);
   if (!row || row.platform !== 'wix' || row.status === 'revoked') return null;
-  if (!row.refreshTokenCiphertext || !row.instanceId) return null;
-  return fn(
-    { instanceId: row.instanceId, refreshToken: openSecret(row.refreshTokenCiphertext) },
-    toPublic(row)
-  );
+  if (!row.instanceId) return null;
+  return fn({ instanceId: row.instanceId }, toPublic(row));
 }
 
 /** Wix webhooks only carry the app instance id. */

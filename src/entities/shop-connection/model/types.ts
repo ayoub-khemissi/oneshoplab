@@ -28,7 +28,6 @@ export interface ConnectWixInput {
   projectId: string;
   userId: string;
   instanceId: string;
-  refreshToken: string;
   /** Site hostname when known, else the instance id (shown on the card). */
   shopDomain: string;
   shopName?: string | null;
@@ -41,7 +40,6 @@ export type ConnectWixResult =
 
 export interface DecryptedWixSecrets {
   instanceId: string;
-  refreshToken: string;
 }
 
 export type ConnectShopifyResult =

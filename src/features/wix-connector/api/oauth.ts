@@ -1,8 +1,19 @@
 /**
- * Wix app install (OAuth, app started from OSL): installer redirect, then
- * `code` → refresh token (`POST /oauth/access`, authorization_code), sealed
- * with the instance id. Webhooks are configured once in the Dev Center
- * (per app, not per site), so nothing is registered here.
+ * Wix app install, started from OneShopLab.
+ *
+ * Wix's external install flow: we send the merchant to
+ * `https://www.wix.com/app-installer?appId&shareUrlId&postInstallationUrl`,
+ * Wix runs its own consent screen, then redirects to `postInstallationUrl`
+ * with `instanceId` and a `signedInstance` proving the install. There is no
+ * code to exchange and no per-site token to keep — the credential for a site
+ * is its `instanceId`, from which access tokens are minted on demand
+ * (`client.ts`). Nothing is registered in the Dev Center per site; webhooks
+ * are configured once, per app.
+ *
+ * A first version used custom authentication (`installer/install` →
+ * `code` → refresh token). Wix no longer offers it to new apps: the Dev
+ * Center has no redirect-URL field at all any more, and the installer
+ * answers "no app with this redirect URL". Hence this flow (2026-09).
  */
 import {
   connectWix,
@@ -12,7 +23,8 @@ import {
 } from '@/entities/shop-connection';
 import { createOauthState, verifyOauthState, type OauthStatePayload } from '@/shared/lib';
 import { wixAppConfig } from '../lib/config';
-import { createWixClient, WixClientError, wixTokenRequest } from './client';
+import { verifySignedInstance } from '../lib/signed-instance';
+import { createWixClient } from './client';
 
 export function wixRedirectUrl(): string {
   const base = (process.env.APP_URL ?? '').replace(/\/+$/, '');
@@ -26,8 +38,6 @@ export function beginWixInstall(input: {
   projectId: string;
   userId: string;
   locale: string;
-  /** Present when Wix started the flow from the App Market (passed through). */
-  token?: string | null;
 }): BeginWixInstallResult {
   const cfg = wixAppConfig();
   if (!cfg) return { ok: false, reason: 'not_configured' };
@@ -35,9 +45,16 @@ export function beginWixInstall(input: {
     { projectId: input.projectId, userId: input.userId, locale: input.locale },
     cfg.appSecret
   );
-  const qs = new URLSearchParams({ appId: cfg.appId, redirectUrl: wixRedirectUrl(), state });
-  if (input.token) qs.set('token', input.token);
-  return { ok: true, url: `https://www.wix.com/installer/install?${qs.toString()}`, cookieValue };
+  // Our state rides on the callback URL: Wix preserves the query string of
+  // `postInstallationUrl` and appends its own parameters to it.
+  const callback = new URL(wixRedirectUrl());
+  callback.searchParams.set('state', state);
+  const qs = new URLSearchParams({ appId: cfg.appId });
+  // Required while the app is unlisted: it is how Wix resolves an install
+  // path that would otherwise come from an App Market listing.
+  if (cfg.shareUrlId) qs.set('shareUrlId', cfg.shareUrlId);
+  qs.set('postInstallationUrl', callback.toString());
+  return { ok: true, url: `https://www.wix.com/app-installer?${qs.toString()}`, cookieValue };
 }
 
 export type CompleteWixInstallFailure =
@@ -75,32 +92,14 @@ export async function completeWixInstall(
   if (!state) return fail('bad_state', null);
   if (!input.sessionUserId || input.sessionUserId !== state.userId)
     return fail('unauthorized', state);
-  const code = input.query.get('code') ?? '';
+  // `instanceId` arrives as plain text next to `signedInstance`; only the
+  // signed copy proves an install happened, and only when the two agree.
   const instanceId = input.query.get('instanceId') ?? '';
-  if (!code || !instanceId) return fail('bad_request', state);
+  const signed = verifySignedInstance(input.query.get('signedInstance'), cfg.appSecret);
+  if (!instanceId || !signed) return fail('bad_request', state);
+  if (signed.instanceId !== instanceId) return fail('exchange_failed', state, 'instance mismatch');
 
   const fetchImpl = deps.fetchImpl ?? fetch;
-  let tokens: Awaited<ReturnType<typeof wixTokenRequest>>;
-  try {
-    tokens = await wixTokenRequest(
-      {
-        grant_type: 'authorization_code',
-        client_id: cfg.appId,
-        client_secret: cfg.appSecret,
-        code
-      },
-      fetchImpl
-    );
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    return fail(
-      e instanceof WixClientError && e.code === 'token_invalid' ? 'exchange_failed' : 'unreachable',
-      state,
-      msg
-    );
-  }
-  if (!tokens.refreshToken) return fail('exchange_failed', state);
-
   const makeClient = deps.makeClient ?? createWixClient;
   let site: { siteDisplayName: string | null; host: string | null } = {
     siteDisplayName: null,
@@ -110,7 +109,7 @@ export async function completeWixInstall(
     site = await makeClient({
       appId: cfg.appId,
       appSecret: cfg.appSecret,
-      refreshToken: tokens.refreshToken,
+      instanceId,
       fetchImpl
     }).siteInfo();
   } catch (e) {
@@ -120,7 +119,6 @@ export async function completeWixInstall(
     projectId: state.projectId,
     userId: state.userId,
     instanceId,
-    refreshToken: tokens.refreshToken,
     shopDomain: site.host ?? instanceId,
     shopName: site.siteDisplayName,
     scopes: ['WIX_STORES.MANAGE_PRODUCTS']
@@ -130,7 +128,7 @@ export async function completeWixInstall(
   return { ok: true, projectId: state.projectId, locale: state.locale };
 }
 
-/** "Disconnect": the refresh token is wiped; the merchant removes the app from Wix themselves. */
+/** "Disconnect": the instance is forgotten on our side; the merchant removes the app from Wix themselves. */
 export async function disconnectWixStore(projectId: string, userId: string): Promise<boolean> {
   return disconnect(projectId, userId);
 }
