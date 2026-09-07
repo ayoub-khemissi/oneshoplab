@@ -233,6 +233,12 @@ export const projects = mysqlTable(
      *  the latest audit summary, ultimately falling back to 'en'. Survives
      *  re-audits (audit refresh never overwrites this column). */
     languageOverride: varchar('language_override', { length: 8 }),
+    /** Language the connected platform reports for the storefront (Shopify
+     *  primary-domain locale, Wix site language, WordPress `get_locale()`),
+     *  reduced to ISO 639-1. Refreshed on every pull/sync; NULL when no store
+     *  is connected or the platform did not say. Beats the audit's content
+     *  guess, loses to languageOverride. */
+    storeLanguage: varchar('store_language', { length: 8 }),
     /** Per-site bulk-generation preferences. NULL = legacy default
      *  (every field on, all 3 image angles) so existing sites are
      *  unchanged. Snapshotted into the bulk job payload at launch so a

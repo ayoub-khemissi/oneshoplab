@@ -116,3 +116,13 @@ shared. Tests: `tests/unit/wix-connector.test.ts` (mapper, JWT with a
 generated RSA key pair, envelope parsing), `tests/db/wix-connector.test.ts`
 (install → callback with `fetch` stubbed, pull, apply incl. conflict + 401,
 actions, webhook route).
+
+## Site language
+
+Every pull also reads `GET /site-properties/v4/properties?fields.paths=language&fields.paths=locale`
+(the app's own scope suffices) and records `properties.language` as the project's
+*store language* (`projects.store_language`, ISO 639-1). It drives every AI
+generation on the site unless the merchant set an explicit override in Settings;
+Shopify (primary-domain locale) and the WooCommerce plugin ≥ 1.8.0
+(`get_locale()` on each sync batch) feed the same column. A refused or failing
+Site Properties call only logs a warning — the catalogue still lands.

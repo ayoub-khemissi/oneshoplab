@@ -710,6 +710,8 @@
     "placeholder": "اختر لغة…",
     "searchPlaceholder": "البحث بالرمز أو الاسم",
     "detectedBadge": "مكتشف",
+    "detectedFromStore": "تم اكتشافها من متجرك: {language}",
+    "detectedFromContent": "تم اكتشافها من المحتوى: {language}",
     "customBadge": "مخصص",
     "empty": "لم يُعثر على اللغة",
     "saveButton": "حفظ",

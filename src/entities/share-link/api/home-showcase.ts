@@ -80,10 +80,11 @@ export async function loadHomeShowcaseCards(
       detectedLanguage?: string | null;
     };
     const allProducts = summary.allProducts ?? [];
-    // Effective language = explicit override on the project takes
-    // precedence, otherwise we trust whatever the audit detected. Null
+    // Effective language = explicit override on the project, then what the
+    // connected platform reports, then whatever the audit detected. Null
     // means we couldn't classify — the card lands in the "other" tier.
-    const effectiveLanguage = project.languageOverride ?? summary.detectedLanguage ?? null;
+    const effectiveLanguage =
+      project.languageOverride ?? project.storeLanguage ?? summary.detectedLanguage ?? null;
     const ids = (link.productSourceIds as string[]) ?? [];
 
     const products: HomeShowcaseCard['products'] = [];

@@ -710,6 +710,8 @@
     "placeholder": "选择语言…",
     "searchPlaceholder": "按代码或名称搜索",
     "detectedBadge": "已检测",
+    "detectedFromStore": "从您的商店检测到：{language}",
+    "detectedFromContent": "从内容检测到：{language}",
     "customBadge": "自定义",
     "empty": "未找到语言",
     "saveButton": "保存",

@@ -107,6 +107,9 @@ Upsert a batch. Body:
 - Side effects: `projects.source` set from `X-OSL-Platform` on first sync
   when unknown; no audit is launched automatically (the plugin or the
   merchant triggers it — audits cost worker time).
+- `locale` (optional, top level): the shop's WordPress locale (`fr_FR`). Reduced to
+  ISO 639-1 and stored as the site's store language, which drives every AI
+  generation unless the merchant set an explicit override in Settings.
 
 ### `DELETE /products/{sourceId}` — `catalog:write`
 Archives (never hard-deletes — generation history must survive). 404 if unknown, 200 idempotent if already archived.

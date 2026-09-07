@@ -70,7 +70,10 @@ export const syncBodySchema = z
     products: z.array(syncProductSchema).max(SYNC_BATCH_SIZE),
     /** What this plugin build can do (IMAGE-OPS.md §7). A plugin older than
      *  the ops release sends nothing → the connection keeps the safe minimum. */
-    capabilities: capabilitiesSchema.optional()
+    capabilities: capabilitiesSchema.optional(),
+    /** WordPress `get_locale()` (`fr_FR`). Optional — plugins before 1.8.0
+     *  send nothing and the site keeps its content-detected language. */
+    locale: z.string().trim().min(2).max(16).optional()
   })
   .superRefine((body, ctx) => {
     const seen = new Set<string>();

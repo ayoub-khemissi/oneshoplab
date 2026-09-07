@@ -710,6 +710,8 @@
     "placeholder": "Bir dil seçin…",
     "searchPlaceholder": "Kod veya ada göre ara",
     "detectedBadge": "Algılandı",
+    "detectedFromStore": "Mağazanızdan algılandı: {language}",
+    "detectedFromContent": "İçerikten algılandı: {language}",
     "customBadge": "Özel",
     "empty": "Dil bulunamadı",
     "saveButton": "Kaydet",

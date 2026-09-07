@@ -1,6 +1,7 @@
 /** Full catalog pull — mirrors shopify-connector/api/pull.ts on the Wix Stores query API. */
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { setStoreLanguage } from '@/entities/audit';
 import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { ProjectSyncLocked, syncProjectProducts, withProjectSyncLock } from '@/entities/product';
 import {
@@ -82,8 +83,12 @@ export async function pullWixCatalog(
       try {
         const max = await planLimit(projectId);
         const { products, truncated } = await fetchAll(client, max, progress);
+        const site = await client.siteInfo();
         const counts = await withProjectSyncLock(projectId, async () => {
           await db.update(projects).set({ source: 'wix' }).where(eq(projects.id, projectId));
+          // The site's own language beats the audit's content guess for every
+          // generation on this site (entities/audit getEffectiveLanguage).
+          await setStoreLanguage(projectId, site.language);
           return syncProjectProducts(projectId, 'wix', products, { archiveMissing: true });
         });
         const finishedAt = new Date();

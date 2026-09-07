@@ -38,7 +38,7 @@ import {
   requestWixPullAction
 } from '@/features/wix-connector/actions';
 import { db } from '@/shared/db';
-import { productChanges, products, shopConnections } from '@/shared/db/schema';
+import { productChanges, products, projects, shopConnections } from '@/shared/db/schema';
 import { WIX_PUBLIC_KEY_PEM, wixWebhookJwt } from '../unit/wix-fixtures';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
@@ -184,6 +184,9 @@ describe('pull / apply / disconnect / actions', () => {
     await connect();
     const res = await pullWixCatalog(projectId);
     expect(res).toMatchObject({ ok: true, fetched: 2, inserted: 2 });
+    // Site Properties said `it` — recorded as the store language.
+    const [proj] = await db.select().from(projects).where(eq(projects.id, projectId));
+    expect(proj.storeLanguage).toBe('it');
     const rows = await db.select().from(products).where(eq(products.projectId, projectId));
     expect(rows.map((r) => [r.sourceId, r.productType, r.tags]).sort()).toEqual([
       ['w-1', 'Shirts', ['Hot']],

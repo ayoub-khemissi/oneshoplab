@@ -710,6 +710,8 @@
     "placeholder": "언어 선택…",
     "searchPlaceholder": "코드 또는 이름으로 검색",
     "detectedBadge": "감지됨",
+    "detectedFromStore": "스토어에서 감지됨: {language}",
+    "detectedFromContent": "콘텐츠에서 감지됨: {language}",
     "customBadge": "사용자 지정",
     "empty": "언어를 찾을 수 없음",
     "saveButton": "저장",

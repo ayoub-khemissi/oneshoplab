@@ -8,8 +8,10 @@ import { audits, projects } from '@/shared/db/schema';
  * Priority:
  *   1. projectId is null → 'en' (legacy anon audits / orphan jobs).
  *   2. projects.languageOverride if non-empty.
- *   3. Latest audit's summary.detectedLanguage for the project.
- *   4. 'en'.
+ *   3. projects.storeLanguage — what the connected platform says the
+ *      storefront speaks (see entities/project setStoreLanguage).
+ *   4. Latest audit's summary.detectedLanguage for the project (content guess).
+ *   5. 'en'.
  *
  * The nullable signature reflects the schema — both audits.projectId and
  * jobs.projectId are nullable.
@@ -19,10 +21,12 @@ export async function getEffectiveLanguage(projectId: string | null): Promise<st
 
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),
-    columns: { languageOverride: true }
+    columns: { languageOverride: true, storeLanguage: true }
   });
   const override = project?.languageOverride?.trim();
   if (override) return override;
+  const store = project?.storeLanguage?.trim();
+  if (store) return store;
 
   // Two-step lookup: pick the latest audit id by tiny projection,
   // then fetch only `summary` by primary key. Avoids filesort on the

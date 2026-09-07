@@ -710,6 +710,8 @@
     "placeholder": "Wybierz język…",
     "searchPlaceholder": "Szukaj po kodzie lub nazwie",
     "detectedBadge": "Wykryto",
+    "detectedFromStore": "Wykryto na podstawie sklepu: {language}",
+    "detectedFromContent": "Wykryto na podstawie treści: {language}",
     "customBadge": "Własny",
     "empty": "Nie znaleziono języka",
     "saveButton": "Zapisz",

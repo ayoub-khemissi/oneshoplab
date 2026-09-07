@@ -14,16 +14,22 @@ import {
 import { Check, Globe } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
-import { LANGUAGES } from '@/shared/i18n';
+import { findLanguage, LANGUAGES } from '@/shared/i18n';
 import { updateProjectLanguageAction } from '../api/actions';
 
 interface SiteLanguageEditorProps {
   projectId: string;
   /** Currently persisted override on the project, or null when on auto-detect. */
   initialOverride: string | null;
-  /** Latest audit-detected language. Surfaced as a "detected: …" badge
-   *  next to the picker when no override is set. */
-  detectedLanguage: string | null;
+  /** Language in force while no override is set: what the connected
+   *  platform reports (`store`), else the audit's content guess (`content`).
+   *  Surfaced as a "detected" badge plus a one-line explanation. */
+  detected: DetectedLanguage | null;
+}
+
+export interface DetectedLanguage {
+  code: string;
+  source: 'store' | 'content';
 }
 
 /**
@@ -35,9 +41,10 @@ interface SiteLanguageEditorProps {
 export function SiteLanguageEditor({
   projectId,
   initialOverride,
-  detectedLanguage
+  detected
 }: SiteLanguageEditorProps) {
   const t = useTranslations('SiteLanguage');
+  const detectedName = detected ? (findLanguage(detected.code)?.name ?? detected.code) : null;
   const { contains } = useFilter({ sensitivity: 'base' });
 
   // The dropdown only reflects what's actually persisted as an override.
@@ -77,13 +84,23 @@ export function SiteLanguageEditor({
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)] font-mono">
                 {t('customBadge')}
               </span>
-            ) : detectedLanguage ? (
+            ) : detected ? (
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] font-mono">
                 {t('detectedBadge')}
               </span>
             ) : null}
           </span>
           <p className="text-xs text-[var(--muted)] max-w-2xl leading-relaxed">{t('hint')}</p>
+          {detected && detectedName ? (
+            <p
+              className="text-xs text-[var(--foreground)] max-w-2xl"
+              data-testid="site-language-detected"
+            >
+              {t(detected.source === 'store' ? 'detectedFromStore' : 'detectedFromContent', {
+                language: detectedName
+              })}
+            </p>
+          ) : null}
         </div>
         <Globe className="size-4 text-[var(--accent)] shrink-0" aria-hidden />
       </div>

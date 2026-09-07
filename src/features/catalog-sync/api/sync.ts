@@ -4,6 +4,7 @@
  */
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { setStoreLanguage } from '@/entities/audit';
 import type { ProjectRow } from '@/entities/api-key';
 import {
   ProjectSyncLocked,
@@ -119,6 +120,10 @@ export async function syncCatalog(input: SyncInput): Promise<SyncResponse> {
     });
     throw e;
   }
+  // The shop's locale rides on every batch; recording it is cheap and keeps
+  // the effective language right even if the merchant switches WordPress
+  // language between two syncs.
+  if (body.locale) await setStoreLanguage(project.id, body.locale);
   // Full mode: one event per completed sync, not per page.
   if (body.mode === 'partial' || body.final) {
     const { session: _s, errors: _e, ...counts } = response;

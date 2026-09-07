@@ -5,6 +5,7 @@
  */
 import { eq } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { setStoreLanguage } from '@/entities/audit';
 import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { ProjectSyncLocked, syncProjectProducts, withProjectSyncLock } from '@/entities/product';
 import {
@@ -47,7 +48,7 @@ async function fetchAll(
   secrets: DecryptedSecrets,
   max: number,
   onPage: (fetched: number) => Promise<void>
-): Promise<{ products: NormalizedProduct[]; truncated: boolean }> {
+): Promise<{ products: NormalizedProduct[]; truncated: boolean; locale: string | null }> {
   const shop = await client.shopInfo();
   const ctx = { shopDomain: secrets.shopDomain, currency: shop.currencyCode };
   const products: NormalizedProduct[] = [];
@@ -55,11 +56,12 @@ async function fetchAll(
   for (;;) {
     const page = await client.productsPage(cursor);
     for (const p of page.products) {
-      if (products.length >= max) return { products, truncated: true };
+      if (products.length >= max) return { products, truncated: true, locale: shop.locale };
       products.push(mapAdminProduct(p, ctx));
     }
     await onPage(products.length);
-    if (!page.hasNextPage || !page.endCursor) return { products, truncated: false };
+    if (!page.hasNextPage || !page.endCursor)
+      return { products, truncated: false, locale: shop.locale };
     cursor = page.endCursor;
   }
 }
@@ -81,9 +83,12 @@ export async function pullShopifyCatalog(
     });
     try {
       const max = await planLimit(projectId);
-      const { products, truncated } = await fetchAll(client, secrets, max, progress);
+      const { products, truncated, locale } = await fetchAll(client, secrets, max, progress);
       const counts = await withProjectSyncLock(projectId, async () => {
         await db.update(projects).set({ source: 'shopify' }).where(eq(projects.id, projectId));
+        // The shop's own locale beats the audit's content guess for every
+        // generation on this site (entities/audit getEffectiveLanguage).
+        await setStoreLanguage(projectId, locale);
         return syncProjectProducts(projectId, 'shopify', products, { archiveMissing: true });
       });
       const finishedAt = new Date();

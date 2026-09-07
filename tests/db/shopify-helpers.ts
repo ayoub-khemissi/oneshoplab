@@ -34,6 +34,7 @@ export const SHOP: ShopInfo = {
   name: 'Atelier',
   myshopifyDomain: 'atelier.myshopify.com',
   currencyCode: 'EUR',
+  locale: 'fr-FR',
   scopes: ['read_products', 'write_products']
 };
 

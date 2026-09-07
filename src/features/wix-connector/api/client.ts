@@ -40,6 +40,8 @@ export interface WixSiteInfo {
   siteDisplayName: string | null;
   /** Hostname of the published site, null when unpublished. */
   host: string | null;
+  /** Site language (ISO 639-1) from Site Properties, null when unavailable. */
+  language: string | null;
 }
 
 export interface WixProductsPage {
@@ -240,7 +242,20 @@ export function createWixClient(opts: WixClientOptions): WixClient {
       } catch {
         host = null;
       }
-      return { siteDisplayName: data?.site?.siteDisplayName ?? null, host };
+      // Site Properties carries the language the storefront is written in.
+      // It only needs the app's own scope, but a refusal must not cost the
+      // caller the rest of the answer — the language is a hint, not a gate.
+      let language: string | null = null;
+      try {
+        const props = await request<{
+          properties?: { language?: string | null; locale?: { languageCode?: string | null } };
+        } | null>('/site-properties/v4/properties?fields.paths=language&fields.paths=locale');
+        language = props?.properties?.language ?? props?.properties?.locale?.languageCode ?? null;
+      } catch (e) {
+        if (e instanceof WixClientError && e.code !== 'http') throw e;
+        console.warn('[wix] site properties unavailable, language unknown:', (e as Error).message);
+      }
+      return { siteDisplayName: data?.site?.siteDisplayName ?? null, host, language };
     },
     productsPage(offset) {
       return byVersion(

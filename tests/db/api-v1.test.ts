@@ -178,13 +178,15 @@ describe('GET /site + auth', () => {
 describe('POST /products/sync', () => {
   it('partial: insert then update / unchanged, never archives', async () => {
     const first = await sync(
-      { mode: 'partial', products: [product('a'), product('b')] },
+      { mode: 'partial', products: [product('a'), product('b')], locale: 'de_DE' },
       { headers: { 'x-osl-platform': 'woocommerce' } }
     );
     expect(first.status).toBe(200);
     expect(first.body).toEqual({ inserted: 2, updated: 0, archived: 0, unchanged: 0, errors: [] });
     const [proj] = await db.select().from(projects).where(eq(projects.id, projectId));
     expect(proj.source).toBe('woocommerce');
+    // WordPress locale → store language (ISO 639-1).
+    expect(proj.storeLanguage).toBe('de');
 
     const second = await sync({
       mode: 'partial',

@@ -710,6 +710,8 @@
     "placeholder": "Pick a language…",
     "searchPlaceholder": "Search by code or name",
     "detectedBadge": "Detected",
+    "detectedFromStore": "Detected from your store: {language}",
+    "detectedFromContent": "Detected from your content: {language}",
     "customBadge": "Custom",
     "empty": "No language found",
     "saveButton": "Save",

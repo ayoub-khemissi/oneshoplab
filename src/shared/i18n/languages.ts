@@ -219,3 +219,17 @@ export function findLanguage(code: string | null | undefined): LanguageEntry | n
 export function languageNameForPrompt(code: string | null | undefined): string {
   return findLanguage(code)?.promptName ?? 'English';
 }
+
+/**
+ * Reduce a platform locale tag to the ISO 639-1 code our catalogue knows.
+ * Shopify says `fr-FR` / `pt-BR`, WordPress `fr_FR` / `de_DE_formal`, Wix
+ * already `fr`; all of them collapse to the leading language subtag. Anything
+ * we cannot map (empty, `C`, three-letter codes, garbage) yields null so the
+ * caller never persists a value the picker could not display.
+ */
+export function languageCodeFromLocale(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const head = raw.trim().split(/[-_.@]/, 1)[0] ?? '';
+  if (!/^[A-Za-z]{2}$/.test(head)) return null;
+  return findLanguage(head)?.code ?? null;
+}

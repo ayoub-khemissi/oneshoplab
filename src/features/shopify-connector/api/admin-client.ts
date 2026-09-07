@@ -40,6 +40,8 @@ export interface ShopInfo {
   name: string;
   myshopifyDomain: string;
   currencyCode: string | null;
+  /** Default locale of the primary domain (`fr-FR`, `en`), null when unset. */
+  locale: string | null;
   /** Access scopes granted to the custom app. */
   scopes: string[];
 }
@@ -196,16 +198,20 @@ export function createAdminClient(opts: AdminClientOptions): ShopifyAdminClient 
 
     async shopInfo() {
       const data = await request<{
-        shop: Omit<ShopInfo, 'scopes'>;
+        shop: Omit<ShopInfo, 'scopes' | 'locale'> & {
+          primaryDomain: { localization: { defaultLocale: string | null } | null } | null;
+        };
         currentAppInstallation: { accessScopes: Array<{ handle: string }> } | null;
       }>(
         `query OslShop {
-  shop { name myshopifyDomain currencyCode }
+  shop { name myshopifyDomain currencyCode primaryDomain { localization { defaultLocale } } }
   currentAppInstallation { accessScopes { handle } }
 }`
       );
+      const { primaryDomain, ...shop } = data.shop;
       return {
-        ...data.shop,
+        ...shop,
+        locale: primaryDomain?.localization?.defaultLocale ?? null,
         scopes: (data.currentAppInstallation?.accessScopes ?? []).map((s) => s.handle)
       };
     },

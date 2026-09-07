@@ -667,7 +667,13 @@ export async function DashboardSitePage({
           <SiteLanguageEditor
             projectId={project.id}
             initialOverride={project.languageOverride ?? null}
-            detectedLanguage={summary.detectedLanguage ?? null}
+            detected={
+              project.storeLanguage
+                ? { code: project.storeLanguage, source: 'store' }
+                : summary.detectedLanguage
+                  ? { code: summary.detectedLanguage, source: 'content' }
+                  : null
+            }
           />
           <SiteInstructionsEditor
             projectId={project.id}

@@ -710,6 +710,8 @@
     "placeholder": "Выберите язык…",
     "searchPlaceholder": "Поиск по коду или названию",
     "detectedBadge": "Определён",
+    "detectedFromStore": "Определён по вашему магазину: {language}",
+    "detectedFromContent": "Определён по содержимому: {language}",
     "customBadge": "Свой",
     "empty": "Язык не найден",
     "saveButton": "Сохранить",

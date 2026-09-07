@@ -13,7 +13,7 @@ import {
   pullShopifyCatalog
 } from '@/features/shopify-connector';
 import { db } from '@/shared/db';
-import { products, shopConnections } from '@/shared/db/schema';
+import { products, projects, shopConnections } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
 import {
@@ -198,6 +198,10 @@ describe('full pull', () => {
     const byId = new Map(rows.map((r) => [r.sourceId, r]));
     expect(byId.get('2')?.title).toBe('Second');
     expect(byId.get('2')?.currency).toBe('EUR');
+    // The shop's primary-domain locale (`fr-FR` in the fake) lands on the
+    // project as the store language, reduced to ISO 639-1.
+    const [proj] = await db.select().from(projects).where(eq(projects.id, projectId));
+    expect(proj.storeLanguage).toBe('fr');
     expect(byId.get('999')?.status).toBe('archived');
     const row = await rawRow();
     expect(row.lastPullAt).not.toBeNull();

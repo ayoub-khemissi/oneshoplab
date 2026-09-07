@@ -47,7 +47,7 @@ export function createFakeWixClient(products: WixProduct[] = []): FakeWixClient 
     },
     async siteInfo() {
       guard();
-      return { siteDisplayName: 'Atelier Wix', host: 'atelier.wixsite.com' };
+      return { siteDisplayName: 'Atelier Wix', host: 'atelier.wixsite.com', language: 'it' };
     },
     async productsPage(offset) {
       guard();
