@@ -239,7 +239,10 @@ export function IntegrationsWizard({
           </div>
         ) : wixApp ? (
           <div className="flex flex-col gap-5">
-            {guide}
+            {/* The action first, the walkthrough under it: on Wix the install
+                is one click and the guide only explains what that click will
+                show. Buried below three numbered steps, the button read as
+                something to do AFTER them. */}
             {wixLive ? (
               <p className="text-sm text-[var(--muted)]">
                 {t('wix.alreadyConnected', { shop: wix.shopName ?? wix.shopDomain })}
@@ -247,6 +250,7 @@ export function IntegrationsWizard({
             ) : (
               <WixInstallButton projectId={projectId} locale={locale} />
             )}
+            {guide}
           </div>
         ) : (
           guide

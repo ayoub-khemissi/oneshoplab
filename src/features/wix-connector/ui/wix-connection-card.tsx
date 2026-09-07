@@ -11,7 +11,7 @@ const POLL_MS = 10_000;
 const TICK_MS = 1_000;
 const PLAN_LIMIT_PREFIX = 'plan_limit:';
 /** The merchant removes the app from their site there (the Wix side of "Disconnect"). */
-export const WIX_MANAGE_APPS_URL = 'https://manage.wix.com/dashboard';
+export const WIX_MANAGE_APPS_URL = 'https://manage.wix.com/';
 
 type CardState = 'connected' | 'syncing' | 'token_invalid' | 'revoked' | 'error';
 

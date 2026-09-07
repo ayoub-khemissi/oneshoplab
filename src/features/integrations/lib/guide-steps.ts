@@ -76,7 +76,9 @@ export const ESTIMATED_MINUTES: Record<IntegrationPlatform, number> = {
 };
 
 /** Where the merchant lands after the install (the guide's "Open" link for Wix). */
-export const WIX_DASHBOARD_URL = 'https://manage.wix.com/dashboard';
+// The plain root, not /dashboard: Wix picks the merchant's site from there,
+// while /dashboard without a site id lands on an error for some accounts.
+export const WIX_DASHBOARD_URL = 'https://manage.wix.com/';
 
 /** Latest plugin zip served from public/downloads by scripts/ops (versioned copy alongside). */
 export const WP_PLUGIN_ZIP_PATH = '/downloads/oneshoplab-wp-plugin.zip';
