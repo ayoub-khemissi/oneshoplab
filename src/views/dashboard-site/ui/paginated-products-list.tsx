@@ -182,42 +182,39 @@ export function PaginatedProductsList({
           // The walkthrough points at the first row: any product will do to
           // show what a product page is, and the first one is on screen.
           <li key={p.productId} data-tour={i === 0 ? 'product-row' : undefined}>
-            {/* Stacks on mobile. As a permanent row, the actions column took
-                about half the width and squeezed the issues into a ribbon of
-                two or three words per line, while `items-center` floated the
-                button in the middle of a tall text block. */}
+            {/* The name comes first and gets the whole width — on a phone it
+                used to share one line with the score, the AI badge and the
+                category, and lost: "C", "App…", "Sus…". Two lines of title,
+                then the chips, then the actions; the button stops being a
+                full-width slab and sits right, where the thumb is. */}
             <Card
               variant="secondary"
-              className={`p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 ${
+              className={`p-3 sm:p-4 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-4 ${
                 p.archived ? 'opacity-60' : ''
               }`}
             >
-              <div className="flex-1 flex flex-col gap-1 min-w-0">
-                <div className="flex items-center gap-3 flex-wrap">
-                  {/* Score and title stay on one line whatever the title's
-                      length, so every card in the list has the same shape; the
-                      badges wrap below on their own. Without this the wrap
-                      point moved from card to card. */}
-                  <div className="flex min-w-0 flex-1 items-center gap-3 sm:flex-none">
-                    {p.archived ? (
-                      <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] inline-flex items-center gap-1 shrink-0">
-                        <Archive className="size-3" aria-hidden />
-                        {t('archivedBadge')}
-                      </span>
-                    ) : (
-                      <ScoreChip score={p.score} />
-                    )}
-                    {p.archived ? (
-                      <span className="font-medium truncate">{p.title}</span>
-                    ) : (
-                      <Link
-                        href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                        className="font-medium hover:underline truncate min-w-0"
-                      >
-                        {p.title}
-                      </Link>
-                    )}
-                  </div>
+              <div className="flex-1 flex flex-col gap-1.5 min-w-0">
+                {p.archived ? (
+                  <span className="font-medium leading-snug line-clamp-2 sm:line-clamp-1">
+                    {p.title}
+                  </span>
+                ) : (
+                  <Link
+                    href={`/dashboard/sites/${siteId}/products/${p.productId}`}
+                    className="font-medium leading-snug hover:underline line-clamp-2 sm:line-clamp-1"
+                  >
+                    {p.title}
+                  </Link>
+                )}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {p.archived ? (
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--muted)]/15 text-[var(--muted)] inline-flex items-center gap-1 shrink-0">
+                      <Archive className="size-3" aria-hidden />
+                      {t('archivedBadge')}
+                    </span>
+                  ) : (
+                    <ScoreChip score={p.score} />
+                  )}
                   {!p.archived && p.aiCompleted ? (
                     <span
                       className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--success)]/10 text-[var(--success)] inline-flex items-center gap-1"
@@ -269,7 +266,7 @@ export function PaginatedProductsList({
                   </p>
                 )}
               </div>
-              <div className="flex items-center gap-2 sm:shrink-0">
+              <div className="flex items-center justify-between gap-2 sm:shrink-0 sm:justify-end">
                 <ArchiveToggle
                   siteId={siteId}
                   productId={p.productId}
@@ -278,7 +275,7 @@ export function PaginatedProductsList({
                 />
                 <Link
                   href={`/dashboard/sites/${siteId}/products/${p.productId}`}
-                  className={`flex-1 justify-center px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity sm:flex-none ${
+                  className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap font-medium inline-flex items-center gap-1.5 transition-opacity ${
                     p.archived
                       ? 'border border-[var(--border)] text-[var(--muted)] hover:text-[var(--foreground)]'
                       : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'

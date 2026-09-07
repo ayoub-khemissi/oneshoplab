@@ -189,11 +189,16 @@ export function BulkGenerateSection({
 
     return (
       <>
-        <div className={`flex flex-col gap-3 p-4 rounded-md border ${cls}`}>
-          <div className="flex items-start gap-3">
-            <Icon className="size-5 mt-0.5 shrink-0" aria-hidden />
-            <div className="flex-1 flex flex-col gap-1">
-              <span className="font-semibold text-[var(--foreground)]">
+        {/* A finished run is one line of status, not a panel: on a phone the
+            old card — icon column, two-line text block, a stacked button column
+            and 16px padding — was taller than the first product it sat above.
+            Title, stats and actions now share one wrapping row; the stats drop
+            under the title only when the width runs out. */}
+        <div className={`flex flex-col gap-2 p-3 rounded-md border ${cls}`}>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Icon className="size-4 shrink-0" aria-hidden />
+            <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-0.5">
+              <span className="text-sm font-semibold text-[var(--foreground)]">
                 {cancelled
                   ? t('summaryCancelled')
                   : insufficient
@@ -206,7 +211,7 @@ export function BulkGenerateSection({
                           ? t('summaryAllSucceeded')
                           : t('summaryMixed')}
               </span>
-              <span className="text-xs text-[var(--muted)] leading-relaxed">
+              <span className="text-xs text-[var(--muted)]">
                 {t('summaryStats', {
                   ok: detail.fullySucceeded,
                   partial: detail.partiallySucceeded,
@@ -215,7 +220,7 @@ export function BulkGenerateSection({
                 })}
               </span>
             </div>
-            <div className="flex flex-col gap-2 shrink-0">
+            <div className="ml-auto flex items-center gap-2 shrink-0">
               {canBulk && hasFailures ? (
                 <button
                   type="button"
@@ -231,7 +236,7 @@ export function BulkGenerateSection({
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
-                  className="px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+                  className="px-2.5 py-1 rounded-md text-xs font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10"
                 >
                   {t('relaunch')}
                 </button>
