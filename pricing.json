@@ -149,7 +149,7 @@
     },
     "square": {
       "aspectRatio": "1:1",
-      "maxResolution": "2K"
+      "maxResolution": "4K"
     },
     "mobile": {
       "aspectRatio": "9:16",

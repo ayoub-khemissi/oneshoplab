@@ -1954,7 +1954,7 @@
       "name": "Banner",
       "hint": "Banners de destaque e de coleção."
     },
-    "clampedNote": "O modelo de imagem limita 1:1 a 2K — um quadrado 4K é gerado em 2K."
+    "clampedNote": "O modelo de imagem limita este formato a {max} — um pedido superior é gerado em {max}."
   },
   "Tour": {
     "ariaLabel": "Tour guiado",

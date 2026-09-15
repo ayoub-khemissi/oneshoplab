@@ -1954,7 +1954,7 @@
       "name": "Bannière",
       "hint": "Bannières de page d'accueil et de collection."
     },
-    "clampedNote": "Le modèle d'image limite le 1:1 au 2K — un carré 4K est généré en 2K."
+    "clampedNote": "Le modèle d'image limite ce format au {max} — une demande supérieure est générée en {max}."
   },
   "Tour": {
     "ariaLabel": "Tutoriel guidé",

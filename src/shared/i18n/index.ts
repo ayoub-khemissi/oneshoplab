@@ -1,6 +1,5 @@
 export {
   findLanguage,
-  flagEmoji,
   languageCodeFromLocale,
   LANGUAGES,
   languageNameForPrompt

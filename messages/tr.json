@@ -1954,7 +1954,7 @@
       "name": "Afiş",
       "hint": "Öne çıkan ve koleksiyon afişleri."
     },
-    "clampedNote": "Görsel modeli 1:1 oranını 2K ile sınırlar — 4K kare 2K olarak üretilir."
+    "clampedNote": "Görsel modeli bu formatı {max} ile sınırlar — daha yükseği {max} olarak üretilir."
   },
   "Tour": {
     "ariaLabel": "Rehberli tur",

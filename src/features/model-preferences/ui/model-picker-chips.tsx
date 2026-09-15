@@ -102,7 +102,9 @@ export function ModelPickerChips({
             onChange={(id) => onPickImageFormat(id as ImageFormatId)}
             note={
               imageRequestParams(imageFormatId, imageQualityId).clamped
-                ? tFormat('clampedNote')
+                ? tFormat('clampedNote', {
+                    max: imageRequestParams(imageFormatId, imageQualityId).resolution
+                  })
                 : undefined
             }
           />

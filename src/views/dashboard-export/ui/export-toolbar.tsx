@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDownUp, Check, Columns3, Search } from 'lucide-react';
+import { ArrowDownUp, Check, Columns3 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useRouter } from '@/i18n/navigation';
@@ -39,19 +39,20 @@ export function ExportToolbar({ base, query }: { base: string; query: ExportQuer
 
   return (
     <div className="flex flex-col gap-3 min-w-0" data-pending={isPending ? '' : undefined}>
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Search className="size-4 text-[var(--muted)] shrink-0" aria-hidden />
-          <DebouncedSearchInput
-            value={query.q ?? ''}
-            onDebouncedChange={(q) => go({ q: q || null })}
-            placeholder={t('searchPlaceholder')}
-            ariaLabel={t('searchLabel')}
-            className="w-full max-w-sm"
-          />
-        </div>
+      {/* Two rows on a phone. Side by side, the search field and the status
+          group cannot both fit 390px: they ended up drawn on top of each
+          other. The field also carries its own search icon, so this block
+          must not add a second one. */}
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+        <DebouncedSearchInput
+          value={query.q ?? ''}
+          onDebouncedChange={(q) => go({ q: q || null })}
+          placeholder={t('searchPlaceholder')}
+          ariaLabel={t('searchLabel')}
+          className="w-full min-w-0 md:max-w-sm"
+        />
         <div
-          className="inline-flex rounded-md border border-[var(--border)] overflow-hidden"
+          className="inline-flex self-start md:self-auto shrink-0 rounded-md border border-[var(--border)] overflow-hidden"
           role="group"
           aria-label={t('statusLabel')}
         >
@@ -62,7 +63,7 @@ export function ExportToolbar({ base, query }: { base: string; query: ExportQuer
               onClick={() => go({ status: s })}
               aria-pressed={query.status === s}
               className={[
-                'px-2.5 py-1.5 text-xs font-medium transition-colors',
+                'px-2.5 py-1.5 text-xs font-medium transition-colors whitespace-nowrap',
                 query.status === s
                   ? 'bg-[var(--accent)] text-[var(--accent-foreground)]'
                   : 'text-[var(--muted)] hover:text-[var(--foreground)]'

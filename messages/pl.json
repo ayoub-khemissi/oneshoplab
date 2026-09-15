@@ -1954,7 +1954,7 @@
       "name": "Baner",
       "hint": "Banery główne i kolekcji."
     },
-    "clampedNote": "Model obrazu ogranicza 1:1 do 2K — kwadrat 4K zostanie wygenerowany w 2K."
+    "clampedNote": "Model obrazu ogranicza ten format do {max} — wyższe żądanie zostanie wygenerowane w {max}."
   },
   "Tour": {
     "ariaLabel": "Przewodnik",

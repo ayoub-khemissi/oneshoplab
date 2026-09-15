@@ -1954,7 +1954,7 @@
       "name": "Banner",
       "hint": "Hero and collection banners."
     },
-    "clampedNote": "The image model caps 1:1 at 2K — a 4K square is generated at 2K."
+    "clampedNote": "The image model caps this shape at {max} — a higher request is rendered at {max}."
   },
   "Tour": {
     "ariaLabel": "Guided tour",

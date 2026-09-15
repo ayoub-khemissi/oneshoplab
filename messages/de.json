@@ -1954,7 +1954,7 @@
       "name": "Banner",
       "hint": "Hero- und Kollektions-Banner."
     },
-    "clampedNote": "Das Bildmodell begrenzt 1:1 auf 2K — ein 4K-Quadrat wird in 2K erzeugt."
+    "clampedNote": "Das Bildmodell begrenzt dieses Format auf {max} – eine höhere Anfrage wird in {max} erzeugt."
   },
   "Tour": {
     "ariaLabel": "Geführte Tour",

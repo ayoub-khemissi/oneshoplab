@@ -104,6 +104,23 @@ test.describe('catalogue export', () => {
     // Sorting must still be reachable without the table header.
     await expect(page.locator('#export-sort')).toBeVisible();
 
+    // Controls must not be drawn on top of each other. The page-scroll check
+    // alone passed while the status filter sat over the search field, so the
+    // collision is asserted explicitly.
+    const search = page.getByRole('searchbox').first();
+    const status = page.getByRole('group', { name: /statut/i });
+    const a = await search.boundingBox();
+    const b = await status.boundingBox();
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    if (a && b) {
+      const overlaps =
+        a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+      expect(overlaps).toBe(false);
+      expect(a.x + a.width).toBeLessThanOrEqual(PHONE.width + 1);
+      expect(b.x + b.width).toBeLessThanOrEqual(PHONE.width + 1);
+    }
+
     // Opening the column picker must not break the layout either.
     await page.getByText(/Colonnes à extraire/i).click();
     await expect(page.getByRole('button', { name: 'Marque', exact: true })).toBeVisible();

@@ -12,7 +12,7 @@ import {
 import { TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
-import { flagEmoji, LANGUAGES } from '@/shared/i18n';
+import { LANGUAGES } from '@/shared/i18n';
 import { updateProjectLanguageAction } from '../api/actions';
 
 export interface SiteLanguageButtonProps {
@@ -35,7 +35,6 @@ export function SiteLanguageButton({ projectId, current }: SiteLanguageButtonPro
   const [selected, setSelected] = useState<string | null>(current);
   const [isPending, startTransition] = useTransition();
 
-  const flag = flagEmoji(selected);
   const known = Boolean(selected);
 
   function save(key: Key | null) {
@@ -69,12 +68,7 @@ export function SiteLanguageButton({ projectId, current }: SiteLanguageButtonPro
         ].join(' ')}
       >
         {known ? (
-          <>
-            <span aria-hidden className="text-sm leading-none">
-              {flag ?? '🌐'}
-            </span>
-            <span className="font-mono uppercase">{selected}</span>
-          </>
+          <span className="font-mono uppercase">{selected}</span>
         ) : (
           <>
             <TriangleAlert className="size-3.5" aria-hidden />
@@ -99,10 +93,7 @@ export function SiteLanguageButton({ projectId, current }: SiteLanguageButtonPro
                 textValue={`${l.name} ${l.promptName} ${l.code}`}
                 className="flex items-center justify-between gap-3"
               >
-                <span>
-                  {flagEmoji(l.code) ? `${flagEmoji(l.code)} ` : ''}
-                  {l.name}
-                </span>
+                <span>{l.name}</span>
                 <ListBox.ItemIndicator />
               </ListBox.Item>
             ))}

@@ -151,7 +151,9 @@ export function ModelPreferencesForm({
             onChange={(id) => setImageFormat(id as ImageFormatId)}
             note={
               imageRequestParams(imageFormat, imageQuality).clamped
-                ? tFormat('clampedNote')
+                ? tFormat('clampedNote', {
+                    max: imageRequestParams(imageFormat, imageQuality).resolution
+                  })
                 : undefined
             }
           />

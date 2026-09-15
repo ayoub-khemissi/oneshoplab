@@ -53,14 +53,19 @@ describe('image formats', () => {
   });
 
   it('clamps the resolution rather than the ratio on an unsupported pair', () => {
-    // GPT-Image 2 cannot render 1:1 above 2K. The merchant picked a shape for
-    // a placement, so the shape survives and the resolution gives way.
-    const square4k = imageRequestParams('square', 'image-4k');
-    expect(square4k.aspectRatio).toBe('1:1');
-    expect(square4k.resolution).toBe('2K');
-    expect(square4k.clamped).toBe(true);
-
-    expect(imageRequestParams('square', 'image-2k').clamped).toBe(false);
+    // Measured against the live API on 2026-09-15, not taken from the docs:
+    // kie documents that 1:1 cannot go to 4K, but the task is accepted and
+    // returns 2880x2880. What IS refused at 2K and 4K is the ratio itself —
+    // 4:5, 3:1, 1:3, 9:21 answer "aspect_ratio is not within the range of
+    // allowed options" — and none of those are offered here. So no shipped
+    // pair is clamped today; the mechanism stays because a ratio added later
+    // may well be capped.
+    for (const format of ['auto', 'square', 'mobile', 'banner']) {
+      for (const quality of ['image-1k', 'image-2k', 'image-4k']) {
+        expect(imageRequestParams(format, quality).clamped).toBe(false);
+      }
+    }
+    expect(imageRequestParams('square', 'image-4k').resolution).toBe('4K');
   });
 
   it('leaves the legacy request shape untouched for an account with no format', () => {

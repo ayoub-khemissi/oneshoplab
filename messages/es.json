@@ -1954,7 +1954,7 @@
       "name": "Banner",
       "hint": "Banners de portada y de colección."
     },
-    "clampedNote": "El modelo de imagen limita 1:1 a 2K — un cuadrado 4K se genera en 2K."
+    "clampedNote": "El modelo de imagen limita este formato a {max}: una petición superior se genera en {max}."
   },
   "Tour": {
     "ariaLabel": "Tutorial guiado",
