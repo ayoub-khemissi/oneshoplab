@@ -1,3 +1,4 @@
+import type { OptimHistoryItem } from '@/entities/generation-job';
 import type { LoadedProduct } from './load-product';
 
 /**
@@ -79,4 +80,33 @@ export function demoLoadedProduct(projectId: string): LoadedProduct {
     projectInstructions: '',
     isManual: false
   };
+}
+
+/**
+ * A generation the sample product already went through.
+ *
+ * Without one there is nothing to send, so the send-to-store control — the
+ * anchor of the tour's tenth step — does not render at all, and the step
+ * lights up nothing. The entry is read-only like the rest of the sheet: the
+ * page is inert, so its buttons cannot be pressed.
+ */
+export function demoOptimHistory(field: 'title' | 'description' | 'tags'): OptimHistoryItem[] {
+  const output: Record<typeof field, string | string[]> = {
+    title: 'Classic Crew Neck T-Shirt — Soft Cotton Blend for Men and Women',
+    description:
+      'Built for everyday wear: a balanced cotton blend that keeps its shape, ' +
+      'reinforced seams at every stress point, and colour that survives the wash.',
+    tags: ['t-shirt', 'cotton', 'unisex', 'everyday']
+  };
+  return [
+    {
+      jobId: `osl-demo-job-${field}`,
+      field,
+      userPrompt: '',
+      output: output[field],
+      createdAt: new Date(),
+      creditsCost: field === 'description' ? 4 : 2,
+      expiredAt: null
+    }
+  ];
 }

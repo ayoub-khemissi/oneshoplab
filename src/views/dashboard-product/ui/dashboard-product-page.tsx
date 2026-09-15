@@ -77,6 +77,8 @@ export async function DashboardProductPage({
   const session = await auth();
   if (!session?.user) redirect('/login');
 
+  // The tour's sample sheet: the real page, a product that does not exist.
+  const isDemo = productId === DEMO_PRODUCT_ID;
   const loaded = await loadProductForUser(session.user.id, siteId, productId);
   if (!loaded) notFound();
   const {
@@ -101,18 +103,32 @@ export async function DashboardProductPage({
   // AI panel — they still need their own queries (a slice of 1-2 rows
   // each is cheap). The bottom "Past generations" strip uses the new
   // unified + paginated query.
-  const [titleHistory, descriptionHistory, tagsHistory, imagesHistory, liveImageJobs, pastGenPage] =
-    await Promise.all([
-      listOptimHistory(projectId, sourceId, 'title'),
-      listOptimHistory(projectId, sourceId, 'description'),
-      listOptimHistory(projectId, sourceId, 'tags'),
-      listOptimHistory(projectId, sourceId, 'images'),
-      listProductImageJobs(projectId, sourceId),
-      listOptimHistoryPaginated(projectId, sourceId, {
-        page: historyPage,
-        perPage: HISTORY_PAGE_SIZE
-      })
-    ]);
+  const [
+    dbTitleHistory,
+    descriptionHistory,
+    tagsHistory,
+    imagesHistory,
+    liveImageJobs,
+    pastGenPage
+  ] = await Promise.all([
+    listOptimHistory(projectId, sourceId, 'title'),
+    listOptimHistory(projectId, sourceId, 'description'),
+    listOptimHistory(projectId, sourceId, 'tags'),
+    listOptimHistory(projectId, sourceId, 'images'),
+    listProductImageJobs(projectId, sourceId),
+    listOptimHistoryPaginated(projectId, sourceId, {
+      page: historyPage,
+      perPage: HISTORY_PAGE_SIZE
+    })
+  ]);
+
+  // The sample sheet ships one past generation per field: the send-to-store
+  // control only renders when there is something to send, and the tour's
+  // tenth step points straight at it.
+  const { demoOptimHistory } = isDemo
+    ? await import('../api/demo-product')
+    : { demoOptimHistory: null };
+  const titleHistory = demoOptimHistory ? demoOptimHistory('title') : dbTitleHistory;
 
   // Resolve the user's effective image quality so we can show the
   // matching credit cost on the Add / Regenerate tiles. Body overrides
@@ -154,7 +170,6 @@ export async function DashboardProductPage({
   const tCredits = await getTranslations('Credits');
   const tExport = await getTranslations('ExportCatalog');
   const tTour = await getTranslations('Tour');
-  const isDemo = productId === DEMO_PRODUCT_ID;
 
   const balance = session.user.creditsBalance ?? 0;
 
@@ -200,7 +215,11 @@ export async function DashboardProductPage({
   // on a store that was connected, and hid the apply button entirely.
   // `connected` is the same status the worker's apply pass requires.
   const canApplyToStore =
-    siteKeys.some((k) => isUsableKey(k)) || connection?.status === 'connected';
+    // The sample sheet is an example of the finished thing: it shows the
+    // send-to-store controls and the photo editor even though nothing is
+    // connected, because the tour's last two steps point at exactly those.
+    // It is inert, so showing them can act on nothing.
+    isDemo || siteKeys.some((k) => isUsableKey(k)) || connection?.status === 'connected';
   const appliesVia = connection?.status === 'connected' ? 'connector' : 'plugin';
   // A change is in flight. A connector applies it within seconds, a polling
   // plugin within minutes — either way the page must reach "applied" on its

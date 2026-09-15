@@ -18,9 +18,11 @@ async function login(page: Page) {
   await page.waitForURL(/\/fr\/dashboard/);
 }
 
-test('the resolver opens the merchant’s own product when there is one', async ({ page }) => {
+test('the resolver opens a real product once one has something to send', async ({ page }) => {
   await login(page);
-  await page.goto(`/fr/dashboard/sites/${SEED.project.id}/products/first`);
+  // pendingProject is the seeded store with a live site key AND a completed
+  // generation, so its product page shows every anchor the tour points at.
+  await page.goto(`/fr/dashboard/sites/${SEED.pendingProject.id}/products/first`);
 
   // A real product id, not the sample.
   await page.waitForURL(/\/products\/(?!first|demo)[\w-]+/);
@@ -28,13 +30,29 @@ test('the resolver opens the merchant’s own product when there is one', async 
   await expect(page.locator('main')).not.toHaveAttribute('inert', /.*/);
 });
 
+test('an unconnected store gets the sample, so no step points at nothing', async ({ page }) => {
+  await login(page);
+  // SEED.project has a catalogue but has never connected: its product page
+  // deliberately hides the send-to-store controls and the photo editor, which
+  // are the anchors of steps 10 and 11.
+  await page.goto(`/fr/dashboard/sites/${SEED.project.id}/products/first`);
+  await page.waitForURL(/\/products\/demo/);
+  await expect(page.getByTestId('demo-product-banner')).toBeVisible();
+});
+
 test('the sample sheet is the real page, and nothing on it can be used', async ({ page }) => {
   await login(page);
   await page.goto(`/fr/dashboard/sites/${SEED.project.id}/products/demo`);
 
   await expect(page.getByTestId('demo-product-banner')).toBeVisible();
-  // The real page: the same anchors the tour points at on a real product.
-  await expect(page.locator('[data-tour="model-chips"]').first()).toBeVisible();
+  // Every anchor the product steps point at has to exist here. Steps 10 and
+  // 11 lit up nothing: the send-to-store controls and the photo editor are
+  // hidden until a store can receive changes, and on the sample nothing is
+  // connected. The sample now shows them — it is inert, so they act on
+  // nothing — and the resolver sends unconnected stores here for that reason.
+  for (const anchor of ['model-chips', 'apply-to-store', 'image-editor']) {
+    await expect(page.locator(`[data-tour="${anchor}"]`).first()).toBeVisible();
+  }
   await expect(page.locator('#field-title')).toBeVisible();
   await expect(page.getByText('Classic Crew Neck T-Shirt for Men and Women').first()).toBeVisible();
   // Bundled photograph, not a third-party CDN.
