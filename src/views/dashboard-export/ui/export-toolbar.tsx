@@ -1,5 +1,6 @@
 'use client';
 
+import { ListBox, Select } from '@heroui/react';
 import { ArrowDownUp, Check, Columns3 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
@@ -81,21 +82,26 @@ export function ExportToolbar({ base, query }: { base: string; query: ExportQuer
           is a card list, so the same control has to exist here. */}
       <div className="flex items-center gap-2 md:hidden min-w-0">
         <ArrowDownUp className="size-4 text-[var(--muted)] shrink-0" aria-hidden />
-        <label className="sr-only" htmlFor="export-sort">
-          {t('sortLabel')}
-        </label>
-        <select
-          id="export-sort"
-          value={query.sort}
-          onChange={(e) => go({ sort: e.target.value })}
-          className="min-w-0 flex-1 rounded-md border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs"
+        <Select
+          aria-label={t('sortLabel')}
+          selectedKey={query.sort}
+          onSelectionChange={(k) => (k == null ? undefined : go({ sort: String(k) }))}
+          className="min-w-0 flex-1"
         >
-          {EXPORT_COLUMNS.filter((c) => c.sortable).map((c) => (
-            <option key={c.key} value={c.key}>
-              {t(`column_${c.key}`)}
-            </option>
-          ))}
-        </select>
+          <Select.Trigger data-testid="export-sort">
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {EXPORT_COLUMNS.filter((c) => c.sortable).map((c) => (
+                <ListBox.Item key={c.key} id={c.key} textValue={t(`column_${c.key}`)}>
+                  {t(`column_${c.key}`)}
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
+        </Select>
         <button
           type="button"
           onClick={() => go({ dir: (query.dir === 'asc' ? 'desc' : 'asc') as SortDirection })}
@@ -109,21 +115,29 @@ export function ExportToolbar({ base, query }: { base: string; query: ExportQuer
           machine's locale, a semicolon across most of Europe. Without this
           choice a French merchant opens the file and sees one column. */}
       <div className="flex items-center gap-2 min-w-0 flex-wrap">
-        <label htmlFor="export-sep" className="text-xs text-[var(--muted)] shrink-0">
-          {t('separatorLabel')}
-        </label>
-        <select
-          id="export-sep"
-          value={query.separator}
-          onChange={(e) => go({ separator: e.target.value as CsvSeparatorId })}
-          className="min-w-0 rounded-md border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs"
+        <span className="text-xs text-[var(--muted)] shrink-0">{t('separatorLabel')}</span>
+        <Select
+          aria-label={t('separatorLabel')}
+          selectedKey={query.separator}
+          onSelectionChange={(k) =>
+            k == null ? undefined : go({ separator: String(k) as CsvSeparatorId })
+          }
+          className="min-w-0"
         >
-          {(Object.keys(CSV_SEPARATORS) as CsvSeparatorId[]).map((id) => (
-            <option key={id} value={id}>
-              {t(`separator_${id}`)}
-            </option>
-          ))}
-        </select>
+          <Select.Trigger data-testid="export-separator">
+            <Select.Value />
+            <Select.Indicator />
+          </Select.Trigger>
+          <Select.Popover>
+            <ListBox>
+              {(Object.keys(CSV_SEPARATORS) as CsvSeparatorId[]).map((id) => (
+                <ListBox.Item key={id} id={id} textValue={t(`separator_${id}`)}>
+                  {t(`separator_${id}`)}
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </Select.Popover>
+        </Select>
       </div>
 
       <details className="rounded-lg border border-[var(--border)]">

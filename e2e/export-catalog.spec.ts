@@ -76,6 +76,28 @@ test.describe('catalogue export', () => {
     await expect(header.getByText('Marque')).toBeVisible();
   });
 
+  test('the separator picker changes the file that is served', async ({ page }) => {
+    await login(page);
+    await page.goto(EXPORT_URL);
+
+    // A real dropdown, not a native select: open it and pick the option.
+    await page.getByTestId('export-separator').click();
+    await page.getByRole('option', { name: /point-virgule/i }).click();
+    await expect(page).toHaveURL(/sep=semicolon/);
+
+    const download = page.waitForEvent('download');
+    await page.getByRole('button', { name: /Extraire \d+ produits/i }).click();
+    const file = await download;
+    expect(file.suggestedFilename()).toMatch(/\.csv$/);
+
+    await page.getByTestId('export-separator').click();
+    await page.getByRole('option', { name: /tabulation/i }).click();
+    await expect(page).toHaveURL(/sep=tab/);
+    const tsv = page.waitForEvent('download');
+    await page.getByRole('button', { name: /Extraire \d+ produits/i }).click();
+    expect((await tsv).suggestedFilename()).toMatch(/\.tsv$/);
+  });
+
   test('downloads a CSV of the catalogue and of one product', async ({ page }) => {
     await login(page);
     await page.goto(EXPORT_URL);
@@ -102,7 +124,7 @@ test.describe('catalogue export', () => {
     await expect(page.getByTestId('export-table')).toBeHidden();
     await expect(page.getByTestId('export-cards').locator('li').first()).toBeVisible();
     // Sorting must still be reachable without the table header.
-    await expect(page.locator('#export-sort')).toBeVisible();
+    await expect(page.getByTestId('export-sort')).toBeVisible();
 
     // Controls must not be drawn on top of each other. The page-scroll check
     // alone passed while the status filter sat over the search field, so the
