@@ -95,6 +95,12 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   // sheet can be shown for that one and no other. Keyed rather than reset:
   // the key stops matching on its own the moment either changes.
   const [missed, setMissed] = useState<string | null>(null);
+  // The overlay measures the viewport and portals into document.body, neither
+  // of which exists on the server. Rendering it during SSR threw
+  // "window is not defined", and React answered by dropping the whole page to
+  // client rendering — a silent cost on every dashboard page, since the tour
+  // mounts there for everyone.
+  const [mounted, setMounted] = useState(false);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const demoRef = useRef<HTMLDivElement | null>(null);
 
@@ -117,6 +123,10 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   // arrows on every render: an effect depending on them directly would fire —
   // and write to the account — on every render of the page underneath.
   const handlers = useRef({ onStep, onEnd });
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     handlers.current = { onStep, onEnd };
   }, [onStep, onEnd]);
@@ -229,7 +239,7 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
     if (href && !fits(target, place)) router.push(href);
   }
 
-  if (closed) return null;
+  if (!mounted || closed) return null;
 
   const last = index === run.length - 1;
   // The merchant is somewhere this step does not live — replaying a chapter

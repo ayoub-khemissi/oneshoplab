@@ -13,3 +13,4 @@ export {
 export { OAUTH_STATE_TTL_MS, createOauthState, verifyOauthState } from './oauth-state';
 export type { OauthStatePayload } from './oauth-state';
 export { integrationsTabPath, safeLocale } from './integrations-redirect';
+export { DEMO_PRODUCT_ID, FIRST_PRODUCT_SEGMENT } from './tour-routes';

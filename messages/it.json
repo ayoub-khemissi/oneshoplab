@@ -2038,7 +2038,8 @@
       "score": "Punteggio della scheda: {score}/100",
       "models": "Modello di testo · Qualità immagine",
       "note": "Prodotto di esempio: i tuoi appariranno qui una volta importato il catalogo."
-    }
+    },
+    "demoSheetNotice": "Prodotto di esempio: il tuo catalogo comparirà qui una volta collegato un negozio. Su questa pagina non si può modificare nulla."
   },
   "ExportCatalog": {
     "back": "Torna al negozio",

@@ -1,4 +1,5 @@
 import { and, eq } from 'drizzle-orm';
+import { DEMO_PRODUCT_ID } from '@/shared/lib';
 import { db } from '@/shared/db';
 import { products, projects } from '@/shared/db/schema';
 
@@ -92,6 +93,13 @@ export async function loadProductForUser(
     where: and(eq(projects.userId, userId), eq(projects.id, siteId))
   });
   if (!project) return null;
+
+  // The tour's sample sheet. Ownership of the site is still checked above —
+  // only the product is synthetic, and it never reaches the database.
+  if (productId === DEMO_PRODUCT_ID) {
+    const { demoLoadedProduct } = await import('./demo-product');
+    return demoLoadedProduct(project.id);
+  }
 
   const productRow = await db.query.products.findFirst({
     where: and(eq(products.id, productId), eq(products.projectId, project.id))

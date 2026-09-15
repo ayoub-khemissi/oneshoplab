@@ -9,6 +9,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  FIRST_PRODUCT_SEGMENT,
   TOUR_CHAPTERS,
   TOUR_STEPS,
   firstStepOf,
@@ -53,11 +54,30 @@ describe('the anchors the tour points at', () => {
 });
 
 describe('the steps that have nothing to point at', () => {
-  it('the product steps carry a sample sheet', () => {
-    // A merchant on their first day has no catalogue: without a demo these
-    // two light up an empty list and explain something off-screen.
+  it('only the product-list step draws a sample, the rest use the real page', () => {
+    // A merchant on their first day has no catalogue. The step pointing at a
+    // row in the list still needs something drawn — there is no row. Every
+    // step that lives ON the product page does not: it navigates to the real
+    // page, showing the site's first product or the built-in sample. A drawn
+    // imitation of a product sheet taught a layout that does not exist.
     const withDemo = TOUR_STEPS.filter((s) => s.demo).map((s) => s.id);
-    expect(withDemo).toEqual(['product', 'models']);
+    expect(withDemo).toEqual(['product']);
+    for (const step of TOUR_STEPS.filter((s) => s.where.kind === 'product')) {
+      expect(step.demo).toBeUndefined();
+    }
+  });
+
+  it('a product step knows where to go even with no product in hand', () => {
+    const models = TOUR_STEPS.find((s) => s.id === 'models')!;
+    // No productId: the resolver route picks one instead of dead-ending.
+    expect(hrefFor(models, { siteId: 'site-1' })).toBe(
+      `/dashboard/sites/site-1/products/${FIRST_PRODUCT_SEGMENT}`
+    );
+    // A product in hand wins: the merchant sees their own.
+    expect(hrefFor(models, { siteId: 'site-1', productId: 'p-9' })).toBe(
+      '/dashboard/sites/site-1/products/p-9'
+    );
+    expect(hrefFor(models, { siteId: null })).toBeNull();
   });
 
   it('the step about the account menu opens it, and has a menu to open', () => {

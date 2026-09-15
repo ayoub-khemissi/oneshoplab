@@ -2038,7 +2038,8 @@
       "score": "Product page score: {score}/100",
       "models": "Text model · Image quality",
       "note": "A sample product: yours appear here once your catalogue is in."
-    }
+    },
+    "demoSheetNotice": "Sample product — your own catalogue will show here once a store is connected. Nothing on this page can be changed."
   },
   "ExportCatalog": {
     "back": "Back to the shop",

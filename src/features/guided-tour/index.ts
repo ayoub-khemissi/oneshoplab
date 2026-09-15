@@ -1,5 +1,6 @@
 export { ReplayTourCard } from './ui/replay-tour-card';
 export { TourGate } from './ui/tour-gate';
+export { DEMO_PRODUCT_ID, FIRST_PRODUCT_SEGMENT } from './model/steps';
 export {
   TOUR_STEPS,
   TOUR_STEP_IDS,

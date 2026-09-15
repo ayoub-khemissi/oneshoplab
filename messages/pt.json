@@ -2038,7 +2038,8 @@
       "score": "Pontuação da ficha: {score}/100",
       "models": "Modelo de texto · Qualidade de imagem",
       "note": "Produto de demonstração: os seus aparecem aqui assim que o catálogo chegar."
-    }
+    },
+    "demoSheetNotice": "Produto de exemplo — o seu catálogo aparecerá aqui assim que ligar uma loja. Nada pode ser alterado nesta página."
   },
   "ExportCatalog": {
     "back": "Voltar à loja",

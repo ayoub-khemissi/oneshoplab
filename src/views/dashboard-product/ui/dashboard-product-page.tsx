@@ -45,6 +45,7 @@ import { altTextCredits, findCachedSuggestions } from '@/entities/generation-job
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
 import { ExportButton } from '@/features/export-catalog/client';
+import { DEMO_PRODUCT_ID } from '@/shared/lib';
 import { PastGenerationsSection } from './past-generations-section';
 import { BackArrow, ScoreBadge } from './score-badge';
 import { SuggestionsCard } from './suggestions-card';
@@ -152,6 +153,8 @@ export async function DashboardProductPage({
   const t = await getTranslations('Product');
   const tCredits = await getTranslations('Credits');
   const tExport = await getTranslations('ExportCatalog');
+  const tTour = await getTranslations('Tour');
+  const isDemo = productId === DEMO_PRODUCT_ID;
 
   const balance = session.user.creditsBalance ?? 0;
 
@@ -224,7 +227,23 @@ export async function DashboardProductPage({
   );
 
   return (
-    <main className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6">
+    <main
+      className="flex-1 p-4 md:p-10 max-w-5xl w-full mx-auto flex flex-col gap-6"
+      // The sample sheet is the real page fed a product that does not exist.
+      // `inert` takes the whole subtree out of reach — no click, no focus, no
+      // form submit — so nothing can be generated from it and no credit spent.
+      // The tour overlay lives in a portal outside this element, so its own
+      // controls keep working.
+      inert={isDemo}
+    >
+      {isDemo ? (
+        <p
+          data-testid="demo-product-banner"
+          className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-3 py-2 text-sm text-[var(--foreground)]"
+        >
+          {tTour('demoSheetNotice')}
+        </p>
+      ) : null}
       <header className="flex items-center justify-between gap-4 flex-wrap">
         <Link
           href={`/dashboard/sites/${siteId}?tab=products`}

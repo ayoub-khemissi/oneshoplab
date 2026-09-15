@@ -2038,7 +2038,8 @@
       "score": "Ocena karty produktu: {score}/100",
       "models": "Model tekstowy · Jakość obrazu",
       "note": "Produkt przykładowy: Twoje pojawią się tutaj po zaimportowaniu katalogu."
-    }
+    },
+    "demoSheetNotice": "Produkt przykładowy — Twój katalog pojawi się tutaj po podłączeniu sklepu. Na tej stronie nic nie da się zmienić."
   },
   "ExportCatalog": {
     "back": "Powrót do sklepu",

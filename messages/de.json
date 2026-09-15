@@ -2038,7 +2038,8 @@
       "score": "Bewertung der Produktseite: {score}/100",
       "models": "Textmodell · Bildqualität",
       "note": "Beispielprodukt: deine eigenen erscheinen hier, sobald dein Katalog da ist."
-    }
+    },
+    "demoSheetNotice": "Beispielprodukt – Ihr Katalog erscheint hier, sobald ein Shop verbunden ist. Auf dieser Seite lässt sich nichts ändern."
   },
   "ExportCatalog": {
     "back": "Zurück zum Shop",

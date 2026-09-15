@@ -2038,7 +2038,8 @@
       "score": "Note de la fiche : {score}/100",
       "models": "Modèle de texte · Qualité d’image",
       "note": "Produit de démonstration : les vôtres apparaîtront ici une fois le catalogue importé."
-    }
+    },
+    "demoSheetNotice": "Produit d'exemple — votre catalogue s'affichera ici une fois une boutique connectée. Rien n'est modifiable sur cette page."
   },
   "ExportCatalog": {
     "back": "Retour à la boutique",

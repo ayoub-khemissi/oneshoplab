@@ -2038,7 +2038,8 @@
       "score": "Ürün sayfası puanı: {score}/100",
       "models": "Metin modeli · Görsel kalitesi",
       "note": "Örnek ürün: kataloğunuz geldiğinde kendi ürünleriniz burada görünür."
-    }
+    },
+    "demoSheetNotice": "Örnek ürün — mağazanızı bağladığınızda kendi kataloğunuz burada görünecek. Bu sayfada hiçbir şey değiştirilemez."
   },
   "ExportCatalog": {
     "back": "Mağazaya dön",

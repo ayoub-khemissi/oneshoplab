@@ -8,6 +8,8 @@
  * thing is decided and tested as data.
  */
 
+import { DEMO_PRODUCT_ID, FIRST_PRODUCT_SEGMENT } from '@/shared/lib';
+
 export const TOUR_STEP_IDS = [
   'welcome',
   'audit',
@@ -140,8 +142,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     chapter: 'generate',
     anchor: 'model-chips',
     where: { kind: 'product' },
-    side: 'bottom',
-    demo: 'models'
+    side: 'bottom'
   },
   {
     id: 'generate',
@@ -180,6 +181,14 @@ export const TOUR_STEPS: readonly TourStep[] = [
     expands: true
   }
 ] as const;
+
+/**
+ * Product id the tour falls back to when the merchant has no catalogue yet.
+ * `/dashboard/sites/<id>/products/first` resolves to a real product when one
+ * exists and to this sample otherwise — either way the tour lands on the real
+ * product page instead of a drawn imitation of it.
+ */
+export { DEMO_PRODUCT_ID, FIRST_PRODUCT_SEGMENT };
 
 export const FIRST_STEP: TourStepId = TOUR_STEPS[0].id;
 
@@ -289,9 +298,10 @@ export function hrefFor(
         ? `/dashboard/sites/${siteId}?tab=${step.where.tab}`
         : `/dashboard/sites/${siteId}`;
     case 'product':
-      return siteId && ctx.productId
-        ? `/dashboard/sites/${siteId}/products/${ctx.productId}`
-        : null;
+      if (!siteId) return null;
+      // No product in hand (the merchant is still on the site page): let the
+      // resolver route choose — the first real product, or the sample.
+      return `/dashboard/sites/${siteId}/products/${ctx.productId ?? FIRST_PRODUCT_SEGMENT}`;
     default:
       return null;
   }
