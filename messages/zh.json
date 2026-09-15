@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "返回店铺",
     "title": "目录导出",
+    "headerLink": "CSV 导出",
+    "downloadCsv": "下载 CSV",
     "subtitle": "浏览 {domain}，并按需下载所需的列，格式为 CSV。",
     "exportCsv": "导出 {count} 个商品",
     "exportOne": "导出该商品",

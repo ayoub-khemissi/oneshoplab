@@ -3,7 +3,7 @@ import { ChevronLeft, Coins, ExternalLink } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { AutoRefresh, InfoHint, ScrollToHash } from '@/shared/ui';
+import { AutoRefresh, InfoHint, ScrollAwareSticky, ScrollToHash } from '@/shared/ui';
 import { CustomInstructionsField, RetryableGenerateProvider } from '@/features/retryable-generate';
 import { ModelChips } from '@/widgets/model-chips';
 import { AppliedToastOnMount } from '@/features/manual-catalog';
@@ -263,28 +263,33 @@ export async function DashboardProductPage({
           {tTour('demoSheetNotice')}
         </p>
       ) : null}
-      <header className="flex items-center justify-between gap-4 flex-wrap">
-        <Link
-          href={`/dashboard/sites/${siteId}?tab=products`}
-          className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5 transition-colors"
-        >
-          <BackArrow />
-          {t('backToDashboard')}
-        </Link>
-        <div className="flex items-center gap-3">
-          <ExportButton
-            compact
-            href={`/api/projects/${siteId}/export?productId=${productId}`}
-            label={tExport('exportOne')}
-          />
-          <ScoreBadge score={product.score} />
-          <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
-            <Coins className="size-3.5" aria-hidden />
-            {balance}
-            <InfoHint topic="credits" label={tCredits('balanceLabel')} />
-          </span>
-        </div>
-      </header>
+      {/* Same sticky bar as the site page. Scrolled a little way down a long
+          product sheet, "back" used to mean scrolling all the way up first. */}
+      <ScrollAwareSticky topOffsetPx={68}>
+        <header className="flex items-center justify-between gap-4 flex-wrap">
+          <Link
+            href={`/dashboard/sites/${siteId}?tab=products`}
+            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5 transition-colors"
+          >
+            <BackArrow />
+            {t('backToDashboard')}
+          </Link>
+          <div className="flex items-center gap-3">
+            <ExportButton
+              compact
+              labelOnDesktop
+              href={`/api/projects/${siteId}/export?productId=${productId}`}
+              label={tExport('downloadCsv')}
+            />
+            <ScoreBadge score={product.score} />
+            <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
+              <Coins className="size-3.5" aria-hidden />
+              {balance}
+              <InfoHint topic="credits" label={tCredits('balanceLabel')} />
+            </span>
+          </div>
+        </header>
+      </ScrollAwareSticky>
 
       <div className="flex flex-col gap-2">
         {product.url ? (

@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "상점으로 돌아가기",
     "title": "카탈로그 내보내기",
+    "headerLink": "CSV 내보내기",
+    "downloadCsv": "CSV 다운로드",
     "subtitle": "{domain}을(를) 둘러보고 필요한 열만 CSV로 내려받으세요.",
     "exportCsv": "상품 {count}개 내보내기",
     "exportOne": "이 상품 내보내기",

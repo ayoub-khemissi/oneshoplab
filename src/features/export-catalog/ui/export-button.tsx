@@ -12,11 +12,16 @@ import { useState } from 'react';
 export function ExportButton({
   href,
   label,
-  compact = false
+  compact = false,
+  labelOnDesktop = false
 }: {
   href: string;
   label: string;
+  /** Icon only. Used per row, where a label would stretch the column. */
   compact?: boolean;
+  /** Compact on a phone, icon + label from `md` up. For headers, where the
+   *  room exists and a bare icon reads as a guess. */
+  labelOnDesktop?: boolean;
 }) {
   const t = useTranslations('ExportCatalog');
   const [state, setState] = useState<'idle' | 'busy' | 'error'>('idle');
@@ -69,16 +74,29 @@ export function ExportButton({
         title={label}
         className={
           compact
-            ? 'inline-flex items-center justify-center size-8 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors disabled:opacity-50'
+            ? [
+                'inline-flex items-center justify-center gap-1.5 h-8 rounded-md border',
+                'border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)]',
+                'hover:border-[var(--accent)] transition-colors disabled:opacity-50',
+                labelOnDesktop ? 'px-2 md:px-2.5' : 'w-8'
+              ].join(' ')
             : 'inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50'
         }
       >
         {busy ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden />
+          <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
         ) : (
-          <Download className="size-4" aria-hidden />
+          <Download className="size-4 shrink-0" aria-hidden />
         )}
-        {compact ? null : <span>{busy ? t('preparing') : label}</span>}
+        {compact ? (
+          labelOnDesktop ? (
+            <span className="hidden md:inline text-sm font-medium whitespace-nowrap">
+              {busy ? t('preparing') : label}
+            </span>
+          ) : null
+        ) : (
+          <span>{busy ? t('preparing') : label}</span>
+        )}
       </button>
       {message ? (
         <span className="inline-flex items-center gap-1 text-xs text-red-500" role="status">

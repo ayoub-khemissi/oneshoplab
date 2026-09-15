@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "Voltar à loja",
     "title": "Exportação do catálogo",
+    "headerLink": "Exportação CSV",
+    "downloadCsv": "Descarregar CSV",
     "subtitle": "Percorra {domain} e descarregue exatamente as colunas de que precisa, em CSV.",
     "exportCsv": "Exportar {count} produtos",
     "exportOne": "Exportar este produto",

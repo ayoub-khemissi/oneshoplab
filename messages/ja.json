@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "ショップに戻る",
     "title": "カタログのエクスポート",
+    "headerLink": "CSV エクスポート",
+    "downloadCsv": "CSV をダウンロード",
     "subtitle": "{domain} を閲覧し、必要な列だけを CSV でダウンロードできます。",
     "exportCsv": "{count} 件の商品をエクスポート",
     "exportOne": "この商品をエクスポート",

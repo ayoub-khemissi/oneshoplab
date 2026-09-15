@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "العودة إلى المتجر",
     "title": "تصدير الكتالوج",
+    "headerLink": "تصدير CSV",
+    "downloadCsv": "تنزيل CSV",
     "subtitle": "تصفّح {domain} ونزّل الأعمدة التي تحتاجها بالضبط بصيغة CSV.",
     "exportCsv": "تصدير {count} منتجًا",
     "exportOne": "تصدير هذا المنتج",

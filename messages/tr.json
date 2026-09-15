@@ -2044,6 +2044,8 @@
   "ExportCatalog": {
     "back": "Mağazaya dön",
     "title": "Katalog dışa aktarma",
+    "headerLink": "CSV dışa aktarma",
+    "downloadCsv": "CSV indir",
     "subtitle": "{domain} içinde gezinin ve ihtiyacınız olan sütunları CSV olarak indirin.",
     "exportCsv": "{count} ürünü dışa aktar",
     "exportOne": "Bu ürünü dışa aktar",
