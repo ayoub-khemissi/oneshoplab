@@ -1,5 +1,5 @@
 import { and, eq, inArray, isNotNull, isNull, lt, or } from 'drizzle-orm';
-import { getImageModel, type ImageQualityId } from '@/entities/ai-model';
+import { getImageModel, imageRequestParams, type ImageQualityId } from '@/entities/ai-model';
 import { getKieClient } from '@/entities/ai-provider';
 import { persistKieJobFailure, persistKieJobSuccess } from '@/entities/generation-job';
 import { buildKieCallbackUrl, type KieClient } from '@/entities/ai-provider';
@@ -143,6 +143,7 @@ async function retryCreateImagePending(
     userPrompt?: string;
     sourceImageUrl?: string;
     imageQualityId?: string;
+    imageFormatId?: string;
   } | null;
 
   if (!payload?.userPrompt || !payload?.sourceImageUrl || !payload?.imageQualityId) {
@@ -168,13 +169,16 @@ async function retryCreateImagePending(
     .where(eq(jobs.id, job.id));
 
   try {
+    // Same ratio/resolution pairing the original createTask used — read
+    // back from the payload so a retry can't silently reframe the image.
+    const size = imageRequestParams(payload.imageFormatId, quality.id);
     const { taskId } = await kie.createTask({
       model: quality.kieModelId,
       input: {
         prompt: payload.userPrompt,
         input_urls: [payload.sourceImageUrl],
-        aspect_ratio: 'auto',
-        resolution: quality.resolution
+        aspect_ratio: size.aspectRatio,
+        resolution: size.resolution
       },
       ...(callBackUrl ? { callBackUrl } : {})
     });

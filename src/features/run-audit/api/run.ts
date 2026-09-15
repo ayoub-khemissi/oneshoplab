@@ -1,3 +1,4 @@
+import { languageFromHtml, textFromHtml } from '@/entities/audit';
 import { detectPlatform, type NormalizedProduct } from '@/entities/store-adapter';
 import type { Platform } from '@/shared/db/schema';
 import { audit, type AuditReport } from '@/entities/audit';
@@ -99,7 +100,15 @@ export async function runAudit(
     productsFetched: products.length,
     truncated: products.length === max,
     products,
-    report: products.length > 0 ? audit(products) : null,
+    report:
+      products.length > 0
+        ? // The home page's own words decide the language; its <html lang>
+          // is only the tie-breaker (themes ship lang="en" on French shops).
+          audit(products, {
+            pageLanguage: languageFromHtml(detection.homeHtml),
+            pageText: textFromHtml(detection.homeHtml)
+          })
+        : null,
     error: fetchError,
     ...STOREFRONT_SOURCE
   };

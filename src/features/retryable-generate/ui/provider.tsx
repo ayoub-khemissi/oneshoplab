@@ -11,6 +11,7 @@ import {
   costForImage,
   estimateChatCredits,
   type ChatModelId,
+  type ImageFormatId,
   type ImageQualityId
 } from '@/entities/ai-model';
 
@@ -19,6 +20,7 @@ interface ProviderProps {
   productId: string;
   initialChatModelId: ChatModelId;
   initialImageQualityId: ImageQualityId;
+  initialImageFormatId: ImageFormatId;
   /** Last instructions persisted on the product — pre-fills the textarea
    *  so the merchant doesn't lose their guidance between visits. */
   initialCustomInstructions?: string;
@@ -56,6 +58,7 @@ export function RetryableGenerateProvider({
   productId,
   initialChatModelId,
   initialImageQualityId,
+  initialImageFormatId,
   initialCustomInstructions = '',
   creditsBalance,
   productArchived = false,
@@ -94,17 +97,22 @@ export function RetryableGenerateProvider({
   const [customInstructions, setCustomInstructions] = useState(initialCustomInstructions);
   const [chatModelId, setChatModelId] = useState<ChatModelId>(initialChatModelId);
   const [imageQualityId, setImageQualityId] = useState<ImageQualityId>(initialImageQualityId);
+  const [imageFormatId, setImageFormatId] = useState<ImageFormatId>(initialImageFormatId);
 
   // Refs so submit() always reads the latest selection without re-creating
   // the callback (which would also re-create every memoized child).
   const chatModelRef = useRef(chatModelId);
   const imageQualityRef = useRef(imageQualityId);
+  const imageFormatRef = useRef(imageFormatId);
   useEffect(() => {
     chatModelRef.current = chatModelId;
   }, [chatModelId]);
   useEffect(() => {
     imageQualityRef.current = imageQualityId;
   }, [imageQualityId]);
+  useEffect(() => {
+    imageFormatRef.current = imageFormatId;
+  }, [imageFormatId]);
 
   const costFor = useCallback(
     (field: GenField): number => {
@@ -141,6 +149,7 @@ export function RetryableGenerateProvider({
     customInstructions,
     chatModelRef,
     imageQualityRef,
+    imageFormatRef,
     setFieldState
   });
 
@@ -153,8 +162,10 @@ export function RetryableGenerateProvider({
       cancel,
       chatModelId,
       imageQualityId,
+      imageFormatId,
       setChatModelId,
       setImageQualityId,
+      setImageFormatId,
       creditsBalance,
       costFor,
       canAfford,
@@ -167,6 +178,7 @@ export function RetryableGenerateProvider({
       cancel,
       chatModelId,
       imageQualityId,
+      imageFormatId,
       creditsBalance,
       costFor,
       canAfford,

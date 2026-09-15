@@ -72,7 +72,7 @@
     "step2Title": "连接店铺",
     "step2Description": "在 WooCommerce 上安装我们的插件，或在 Shopify 和 Wix 上授权我们的应用。只需两分钟。之后 OneShopLab 会读取你真实的商品页面，并且只写回你确认过的内容。",
     "step3Title": "生成并应用",
-    "step3Description": "选择文本模型——{budgetModel}、{balancedModel} 或 {premiumModel}——以及通过 {imageModel} 选择图片质量（1K、2K 或 4K）。未经你确认不会发出，一键即可撤销。",
+    "step3Description": "选择文本模型——{budgetModel}、{balancedModel} 或 {premiumModel}——以及通过 {imageModel} 选择图片质量（1K、2K 或 4K）和格式（原始比例、正方形、移动端或横幅）。未经你确认不会发出，一键即可撤销。",
     "compatibleWith": "兼容平台",
     "seoTitle": "OneShopLab — 连接店铺，用 AI 优化商品目录",
     "seoDescription": "连接 Shopify、WooCommerce 或 Wix：一分钟免费诊断，AI 重写标题、描述、标签和图片。你确认后即写回店铺。",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "店铺语言",
+    "buttonTitle": "网站语言",
+    "unknownTitle": "语言未知，请选择该商店的语言",
+    "unknownShort": "语言？",
     "hint": "决定此店铺所有 AI 生成的语言。输入 ISO 代码(zh)或本地名称(中文)即可查找。",
     "placeholder": "选择语言…",
     "searchPlaceholder": "按代码或名称搜索",
@@ -1053,7 +1056,9 @@
     "q15q": "你们能直接修改店铺里的图片吗？",
     "q15a": "可以，在你的平台允许的范围内：添加生成的图片、调整图库顺序、选择主图、撰写替代文本。OneShopLab 只提供你的连接所声明支持的操作，绝不提供会悄悄失败的操作。替代文本已包含在每张生成图片的价格中。",
     "q16q": "如果店铺断开连接会怎样？",
-    "q16a": "不会发送任何内容。与同步相关的卡片和按钮从界面中消失，新的发送请求被拒绝，等待中的修改在十分钟内联系不到店铺后会被标记为失败——而不是无限转圈。重新连接店铺后一键重发即可。"
+    "q16a": "不会发送任何内容。与同步相关的卡片和按钮从界面中消失，新的发送请求被拒绝，等待中的修改在十分钟内联系不到店铺后会被标记为失败——而不是无限转圈。重新连接店铺后一键重发即可。",
+    "q17q": "可以选择生成图片的格式吗？",
+    "q17a": "可以。在图片质量旁边就能选择格式：源图片的原始比例、正方形（1:1）、移动端（9:16）或横幅（16:9）。图片模型直接按该比例构图，事后不会再裁剪。该选项位于商品页面、账户偏好设置以及店铺的批量生成配置中；从未选择过的账户保持原始比例。"
   },
   "Legal": {
     "privacyTitle": "隐私政策",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "已记录——生成完成后将立即发送。",
     "autoSendPromptDoneOff": "已记录——未经你批准，不会向店铺发送任何内容。"
   },
+  "ImageFormats": {
+    "label": "图片格式",
+    "hint": "生成图片的形状。除非某个展示位需要特定比例，否则保留原始比例。",
+    "auto": {
+      "name": "原始比例",
+      "hint": "保持源图片的比例。"
+    },
+    "square": {
+      "name": "正方形",
+      "hint": "适用于商城网格和目录缩略图。"
+    },
+    "mobile": {
+      "name": "移动端",
+      "hint": "适用于手机全屏、快拍和短视频。"
+    },
+    "banner": {
+      "name": "横幅",
+      "hint": "适用于首图和系列横幅。"
+    },
+    "clampedNote": "图片模型将 1:1 限制在 2K — 4K 正方形将以 2K 生成。"
+  },
   "Tour": {
     "ariaLabel": "引导教程",
     "counter": "第 {n} 步，共 {total} 步",
@@ -2005,6 +2031,60 @@
       "photos": "图片",
       "settings": "设置与账户"
     },
-    "goThere": "带我过去"
+    "goThere": "带我过去",
+    "demo": {
+      "badge": "示例",
+      "title": "无线耳机",
+      "score": "商品页面评分：{score}/100",
+      "models": "文本模型 · 图片质量",
+      "note": "这是示例商品：导入目录后，你的商品会显示在这里。"
+    }
+  },
+  "ExportCatalog": {
+    "back": "返回店铺",
+    "title": "目录导出",
+    "subtitle": "浏览 {domain}，并按需下载所需的列，格式为 CSV。",
+    "exportCsv": "导出 {count} 个商品",
+    "exportOne": "导出该商品",
+    "preparing": "正在准备…",
+    "rateLimited": "导出次数过多，请在 {seconds} 秒后重试",
+    "failed": "导出失败，请重试",
+    "searchPlaceholder": "搜索名称、SKU 或品牌",
+    "searchLabel": "搜索目录",
+    "statusLabel": "商品状态",
+    "status_active": "在售",
+    "status_archived": "已归档",
+    "status_all": "全部",
+    "columnsLabel": "要导出的列",
+    "columnsCount": "已选 {count} 列",
+    "docs": "文件为逗号分隔的 UTF-8 CSV，每个商品一行。图片以指向您店铺的链接形式导出，而非图片文件。单次导出最多包含 {max} 个符合筛选条件的商品。",
+    "results": "{count} 个商品 — 第 {page} 页，共 {pages} 页",
+    "empty": "没有商品符合这些筛选条件。",
+    "sortBy": "按{column}排序",
+    "sortLabel": "排序方式",
+    "sortAsc": "升序",
+    "sortDesc": "降序",
+    "pagination": "目录分页",
+    "pageSize": "每页 {size} 个商品",
+    "column_title": "名称",
+    "column_sku": "SKU",
+    "column_vendor": "品牌",
+    "column_productType": "类型",
+    "column_price": "价格",
+    "column_currency": "货币",
+    "column_status": "状态",
+    "column_tags": "标签",
+    "column_description": "描述",
+    "column_descriptionHtml": "描述（HTML）",
+    "column_imageUrls": "图片链接",
+    "column_imageAlts": "替代文本",
+    "column_imageCount": "图片数",
+    "column_variantCount": "变体",
+    "column_variantSkus": "变体 SKU",
+    "column_handle": "标识",
+    "column_sourceId": "店铺 ID",
+    "column_sourceUrl": "商品网址",
+    "column_sourceUpdatedAt": "店铺更新时间",
+    "column_updatedAt": "更新时间"
   }
 }

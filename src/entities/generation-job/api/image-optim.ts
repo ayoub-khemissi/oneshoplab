@@ -6,7 +6,14 @@ import { db } from '@/shared/db';
 import { jobs, products, users } from '@/shared/db/schema';
 import { transitionJob } from './transitions';
 import { buildKieCallbackUrl, getKieClient } from '@/entities/ai-provider';
-import { costForImage, getImageModel, type ImageQualityId } from '@/entities/ai-model';
+import {
+  costForImage,
+  getImageModel,
+  imageRequestParams,
+  resolveImageFormatId,
+  type ImageFormatId,
+  type ImageQualityId
+} from '@/entities/ai-model';
 
 /** Legacy default — used when no quality is passed. Mirrors `costForImage('image-1k')`. */
 const IMAGE_COST_CREDITS = costForImage('image-1k');
@@ -21,6 +28,9 @@ export interface StartImageOptimOptions {
   appUrl?: string;
   /** Caller-selected image quality. Falls back to the user's preference / default. */
   imageQualityId?: ImageQualityId;
+  /** Caller-selected output ratio (square / mobile / banner). Falls back to
+   *  'auto' — the source photo's own ratio, i.e. the pre-format behaviour. */
+  imageFormatId?: ImageFormatId;
   /** No bell entry and no push when this image lands. Set by the bulk run,
    *  which reports once at the end instead of once per photo per product. */
   silent?: boolean;
@@ -48,6 +58,7 @@ export async function startImageOptim(
   opts: StartImageOptimOptions
 ): Promise<StartImageOptimResult> {
   const quality = getImageModel(opts.imageQualityId);
+  const formatId = resolveImageFormatId(opts.imageFormatId);
   const cost = costForImage(quality.id);
 
   const user = await db.query.users.findFirst({ where: eq(users.id, opts.userId) });
@@ -78,6 +89,7 @@ export async function startImageOptim(
       userPrompt: opts.userPrompt,
       sourceImageUrl: opts.sourceImageUrl,
       imageQualityId: quality.id,
+      imageFormatId: formatId,
       // Read back when the image lands: a bulk run must not fire one push per
       // photo per product. It reports once, at the end, with the tally.
       ...(opts.silent ? { silent: true } : {})
@@ -107,13 +119,17 @@ export async function startImageOptim(
 
   const kie = getKieClient();
   try {
+    // The ratio and the resolution are resolved together: kie refuses some
+    // pairings (1:1 above 2K), so imageRequestParams clamps the resolution
+    // rather than letting createTask reject the whole task.
+    const size = imageRequestParams(formatId, quality.id);
     const { taskId } = await kie.createTask({
       model: quality.kieModelId,
       input: {
         prompt: opts.userPrompt,
         input_urls: [opts.sourceImageUrl],
-        aspect_ratio: 'auto',
-        resolution: quality.resolution
+        aspect_ratio: size.aspectRatio,
+        resolution: size.resolution
       },
       ...(callBackUrl ? { callBackUrl } : {})
     });

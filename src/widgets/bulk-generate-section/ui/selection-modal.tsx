@@ -69,6 +69,7 @@ export function SelectionModal({
   canApplyToStore
 }: SelectionModalProps) {
   const t = useTranslations('BulkGenerate');
+  const tFormat = useTranslations('ImageFormats');
   const locale = useLocale();
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   // 2-step wizard: 1 = config (what + models), 2 = product selection.
@@ -178,7 +179,14 @@ export function SelectionModal({
     );
   const chatName = CHAT_MODEL_REGISTRY[chatModelId]?.displayName ?? chatModelId;
   const imgName = IMAGE_MODEL_REGISTRY[imageQualityId]?.displayName ?? imageQualityId;
-  const recap = [...activeFieldLabels, chatName, imgName].join(' · ');
+  // The ratio only shows in the recap when images are actually part of the
+  // run, and only when it isn't the default — a recap listing "Original"
+  // for every merchant is a word that never varies and so never informs.
+  const formatName =
+    prefs.fields.images && prefs.imageFormat && prefs.imageFormat !== 'auto'
+      ? tFormat(`${prefs.imageFormat}.name`)
+      : null;
+  const recap = [...activeFieldLabels, chatName, imgName, formatName].filter(Boolean).join(' · ');
 
   return (
     <div

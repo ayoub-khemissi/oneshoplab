@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `preferred_image_format` enum('auto','square','mobile','banner') DEFAULT 'auto' NOT NULL;

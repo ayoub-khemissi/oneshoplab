@@ -233,3 +233,16 @@ export function languageCodeFromLocale(raw: string | null | undefined): string |
   if (!/^[A-Za-z]{2}$/.test(head)) return null;
   return findLanguage(head)?.code ?? null;
 }
+
+/**
+ * Flag emoji for a language, built from its country anchor (`fr` → 🇫🇷).
+ * Null for the many languages with no obvious country — the caller shows a
+ * neutral glyph instead of pretending.
+ */
+export function flagEmoji(code: string | null | undefined): string | null {
+  const country = findLanguage(code)?.country;
+  if (!country || country.length !== 2) return null;
+  return String.fromCodePoint(
+    ...[...country.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)
+  );
+}

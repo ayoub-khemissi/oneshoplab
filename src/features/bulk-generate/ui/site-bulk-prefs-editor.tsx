@@ -44,7 +44,8 @@ export function SiteBulkPrefsEditor({
           body: JSON.stringify({
             siteId,
             fields: prefs.fields,
-            imageAngles: prefs.imageAngles
+            imageAngles: prefs.imageAngles,
+            imageFormat: prefs.imageFormat
           })
         });
         if (res.ok) {

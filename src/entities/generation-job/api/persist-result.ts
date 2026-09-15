@@ -7,6 +7,7 @@ import { transitionJob } from './transitions';
 import { notify } from '@/entities/notification';
 import { isR2Configured, uploadFromUrl } from '@/shared/storage';
 import { generateFallbackImage, isImageFallbackConfigured } from '@/entities/ai-provider';
+import { getImageFormat } from '@/entities/ai-model';
 
 const IMAGE_KINDS: JobKind[] = ['kie_image_edit', 'kie_image_generate'];
 
@@ -255,13 +256,20 @@ async function tryImageFallback(
 ): Promise<boolean> {
   const job = await db.query.jobs.findFirst({ where: eq(jobs.id, jobId) });
   if (!job || (job.status !== 'pending' && job.status !== 'running')) return false;
-  const input = job.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
+  const input = job.inputPayload as {
+    userPrompt?: string;
+    sourceImageUrl?: string;
+    imageFormatId?: string;
+  } | null;
   if (!input?.userPrompt) return false;
   try {
     const r = await generateFallbackImage({
       jobId,
       prompt: input.userPrompt,
-      sourceImageUrl: input.sourceImageUrl ?? null
+      sourceImageUrl: input.sourceImageUrl ?? null,
+      // The merchant picked a ratio for a placement; a fallback that ignores
+      // it hands back an image that doesn't fit where it was going.
+      aspectRatio: getImageFormat(input.imageFormatId).aspectRatio
     });
     const prev = (job.result && typeof job.result === 'object' ? job.result : {}) as Record<
       string,

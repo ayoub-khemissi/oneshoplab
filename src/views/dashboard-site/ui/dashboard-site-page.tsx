@@ -9,7 +9,11 @@ import { notFound, redirect } from 'next/navigation';
 import { AutoRefresh, ScrollAwareSticky, ScrollToHash } from '@/shared/ui';
 import { PaginatedProductsList } from './paginated-products-list';
 import { SiteBulkPrefsEditor } from '@/features/bulk-generate/client';
-import { SiteInstructionsEditor, SiteLanguageEditor } from '@/features/manage-project';
+import {
+  SiteInstructionsEditor,
+  SiteLanguageButton,
+  SiteLanguageEditor
+} from '@/features/manage-project';
 import { loadAuditQuota, type UserPlan } from '../api/audit-quota';
 import { buildProductIdByKey, buildProductsView, loadOptimRows } from '../api/products-view';
 import {
@@ -503,6 +507,19 @@ export async function DashboardSitePage({
           auditsLimit={auditsLimit}
           nextSlotAtIso={nextSlotAtIso}
           isManual={project.source === 'manual'}
+          languageSlot={
+            <SiteLanguageButton
+              projectId={project.id}
+              // Null on purpose when nothing is known: the button then turns
+              // into a red warning instead of implying English is right.
+              current={
+                project.languageOverride ??
+                project.storeLanguage ??
+                summary.detectedLanguage ??
+                null
+              }
+            />
+          }
         />
         {/* StatusLine is scrape-flow specific (queued / running /
             failed). Manual projects skip it entirely — they never go

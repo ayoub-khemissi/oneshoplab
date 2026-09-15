@@ -160,6 +160,7 @@ export function useImageJobs({ siteId, productId, initial }: UseImageJobsArgs) {
   async function submitNewImage(opts: {
     angle: ImageAngle;
     customPrompt: string;
+    imageFormatId: string;
     replaceJobId: string | null;
   }) {
     setErrorMsg(null);
@@ -171,6 +172,7 @@ export function useImageJobs({ siteId, productId, initial }: UseImageJobsArgs) {
         productId,
         angle: opts.angle,
         customPrompt: opts.customPrompt,
+        imageFormatId: opts.imageFormatId,
         replaceJobId: opts.replaceJobId
       })
     });

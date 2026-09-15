@@ -35,6 +35,36 @@ export function spotlightOf(target: Rect): Rect {
   };
 }
 
+/**
+ * The box holding both — a menu button and the menu it just opened.
+ *
+ * A step about a dropdown lights the button AND its contents: spotlighting
+ * the button alone leaves the panel in the dark, under the dim, which is the
+ * one thing the step is trying to show.
+ */
+export function union(a: Rect, b: Rect): Rect {
+  const top = Math.min(a.top, b.top);
+  const left = Math.min(a.left, b.left);
+  return {
+    top,
+    left,
+    width: Math.max(a.left + a.width, b.left + b.width) - left,
+    height: Math.max(a.top + a.height, b.top + b.height) - top
+  };
+}
+
+/** The tour's own illustration: centred, then lifted so the bubble that
+ *  explains it still has room underneath. */
+export function demoPanel(viewport: Viewport, width: number, height: number): Rect {
+  const w = Math.min(width, viewport.width - EDGE * 2);
+  return {
+    top: clamp(viewport.height / 2 - height, EDGE, Math.max(EDGE, viewport.height - height - EDGE)),
+    left: Math.max(EDGE, (viewport.width - w) / 2),
+    width: w,
+    height
+  };
+}
+
 export interface BubblePlacement {
   top: number;
   left: number;

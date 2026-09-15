@@ -7,10 +7,11 @@
  * seconds at most, load the rows, score them.
  */
 import { lastSiteKeyUseAt } from '@/entities/api-key';
-import { audit } from '@/entities/audit';
+import { audit, languageFromHtml, textFromHtml } from '@/entities/audit';
 import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { getCatalogState, loadProjectCatalog } from '@/entities/product';
 import { getConnection, requestPull } from '@/entities/shop-connection';
+import { fetchText, rootOf } from '@/entities/store-adapter';
 import {
   decideAuditSource,
   type AuditSourceDecision,
@@ -102,6 +103,25 @@ export async function resolveAuditSource(
  * products back (that would overwrite `sourceImageId` and everything else
  * the connection knows and the scrape does not).
  */
+/**
+ * Read the language the storefront declares, for a catalogue that came from
+ * a connection rather than a scrape. One extra GET per audit, and it fails
+ * open: a shop that is down or slow costs us the hint, never the report.
+ * The platform-reported locale (projects.storeLanguage) still wins over this
+ * when the connector supplied one — see entities/audit getEffectiveLanguage.
+ */
+async function storefrontSample(
+  url: string
+): Promise<{ pageLanguage: string | null; pageText: string | null }> {
+  try {
+    const home = await fetchText(rootOf(url));
+    if (!home.ok) return { pageLanguage: null, pageText: null };
+    return { pageLanguage: languageFromHtml(home.body), pageText: textFromHtml(home.body) };
+  } catch {
+    return { pageLanguage: null, pageText: null };
+  }
+}
+
 export async function runAuditForProject(
   projectId: string | null,
   url: string,
@@ -144,7 +164,7 @@ export async function runAuditForProject(
     productsFetched: products.length,
     truncated: false,
     products,
-    report: audit(products),
+    report: audit(products, await storefrontSample(url)),
     error: null,
     source: 'connection',
     sourceReason: decision.reason,

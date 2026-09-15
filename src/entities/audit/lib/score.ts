@@ -7,6 +7,7 @@ import type {
   Issue,
   ProductInsight
 } from '../model/types';
+import { resolveDetectedLanguage } from './detect-language';
 
 const WORST_N = 10;
 const BEST_N = 5;
@@ -36,6 +37,13 @@ export interface ScoreOptions {
    *  issue, the alt distribution counters, and the 10% per-product
    *  weight (redistributed evenly across the remaining axes). */
   skipAltText?: boolean;
+  /** Language the storefront's markup declares (`<html lang>`), when the
+   *  caller fetched the page. Only used when the text says nothing: themes
+   *  ship `lang="en"` on shops that sell entirely in another language. */
+  pageLanguage?: string | null;
+  /** Visible text of the storefront home page. The strongest language
+   *  sample available — see resolveDetectedLanguage. */
+  pageText?: string | null;
 }
 
 function scoreProduct(p: NormalizedProduct, opts: ScoreOptions = {}): ProductInsight {
@@ -203,37 +211,6 @@ function pickLatestProducts(insights: ProductInsight[], n: number): ProductInsig
 }
 
 /**
- * Crude language detection from a sample of product descriptions/titles —
- * good enough to choose the language for AI-generated copy. We compare
- * frequency of common stopwords across a few European languages.
- */
-function detectLanguage(insights: ProductInsight[]): string | null {
-  const text = insights
-    .slice(0, 20)
-    .map((p) => `${p.title} ${p.descriptionHtml.replace(/<[^>]+>/g, ' ')}`)
-    .join(' ')
-    .toLowerCase();
-  if (text.length < 100) return null;
-
-  const tokens = text.match(/\b[a-zàâäéèêëïîôöùûüç]+\b/g) ?? [];
-  const stopwords: Record<string, string[]> = {
-    en: ['the', 'and', 'with', 'for', 'this', 'that', 'from', 'your'],
-    fr: ['le', 'la', 'les', 'des', 'une', 'avec', 'pour', 'votre', 'cette', 'sans', 'qui', 'que'],
-    es: ['el', 'la', 'los', 'las', 'una', 'con', 'para', 'este', 'que', 'sin'],
-    de: ['der', 'die', 'das', 'und', 'mit', 'für', 'eine', 'einen', 'ist', 'nicht'],
-    it: ['il', 'la', 'i', 'gli', 'le', 'una', 'con', 'per', 'questo', 'che']
-  };
-
-  const scores: Record<string, number> = {};
-  for (const [lang, words] of Object.entries(stopwords)) {
-    scores[lang] = tokens.filter((t) => words.includes(t)).length;
-  }
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  if (sorted[0][1] === 0) return null;
-  return sorted[0][0];
-}
-
-/**
  * Compute an audit report from a normalized product catalog.
  * Pure function — no I/O, no side effects.
  */
@@ -359,6 +336,12 @@ export function audit(products: NormalizedProduct[], opts: ScoreOptions = {}): A
      * than just the worst-N excerpt.
      */
     allProducts: sorted,
-    detectedLanguage: detectLanguage(insights)
+    detectedLanguage: resolveDetectedLanguage({
+      pageText: opts.pageText,
+      products: insights
+        .slice(0, 40)
+        .map((p) => ({ title: p.title, text: htmlToText(p.descriptionHtml) })),
+      declared: opts.pageLanguage
+    })
   };
 }

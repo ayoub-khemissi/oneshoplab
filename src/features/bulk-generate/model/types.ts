@@ -1,4 +1,5 @@
-import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
+import { resolveImageFormatId } from '@/entities/ai-model';
+import type { ChatModelId, ImageFormatId, ImageQualityId } from '@/entities/ai-model';
 
 export const BULK_STALL_TIMEOUT_MS = 15 * 60_000;
 
@@ -22,6 +23,9 @@ export interface BulkInputPayload {
    *  legacy "everything on, 3 angles" default. */
   fields?: Record<BulkFieldKey, boolean>;
   imageAngles?: BulkImageAngle[];
+  /** Output ratio for this run's images. Absent on jobs queued before
+   *  formats existed → 'auto' (the source photo's own ratio). */
+  imageFormat?: ImageFormatId;
   /** Send this run's generations to the store as they land, without changing
    *  the store's own setting. A decision for one batch, not for the shop. */
   autoSend?: boolean;
@@ -48,18 +52,20 @@ const ALL_ANGLES: BulkImageAngle[] = ['lifestyle', 'studio', 'inuse'];
 export interface ResolvedBulkPrefs {
   fields: Record<BulkFieldKey, boolean>;
   imageAngles: BulkImageAngle[];
+  imageFormat: ImageFormatId;
 }
 
 /**
  * Normalize a stored projects.bulkPrefs (or null / a job-payload
  * snapshot) into a complete, sanitized prefs object. NULL / legacy =
- * everything on, all 3 image angles — so sites without saved prefs and
- * bulk jobs queued before this feature behave exactly as before.
+ * everything on, all 3 image angles, 'auto' ratio — so sites without saved
+ * prefs and bulk jobs queued before this feature behave exactly as before.
  */
 export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
   const r = (raw ?? null) as {
     fields?: Partial<Record<BulkFieldKey, unknown>>;
     imageAngles?: unknown;
+    imageFormat?: unknown;
   } | null;
   const f = r?.fields ?? {};
   const fields: Record<BulkFieldKey, boolean> = {
@@ -78,7 +84,11 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
   if (fields.images && imageAngles.length === 0) {
     imageAngles = ALL_ANGLES.slice();
   }
-  return { fields, imageAngles };
+  return {
+    fields,
+    imageAngles,
+    imageFormat: resolveImageFormatId(typeof r?.imageFormat === 'string' ? r.imageFormat : null)
+  };
 }
 
 /** Fields the bulk will actually touch given prefs (order preserved). */

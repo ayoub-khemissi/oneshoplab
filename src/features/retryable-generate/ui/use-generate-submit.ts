@@ -6,7 +6,7 @@ import { useCallback, useRef, type RefObject } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import type { GenField } from './generate-button';
 import { MAX_ATTEMPTS, RETRY_DELAYS_MS, type FieldState } from './state';
-import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
+import type { ChatModelId, ImageFormatId, ImageQualityId } from '@/entities/ai-model';
 import { refreshKeepingScroll, sanitizeUserFacingError } from '@/shared/lib';
 
 interface UseGenerateSubmitArgs {
@@ -15,6 +15,7 @@ interface UseGenerateSubmitArgs {
   customInstructions: string;
   chatModelRef: RefObject<ChatModelId>;
   imageQualityRef: RefObject<ImageQualityId>;
+  imageFormatRef: RefObject<ImageFormatId>;
   setFieldState: (field: GenField, next: FieldState) => void;
 }
 
@@ -24,6 +25,7 @@ export function useGenerateSubmit({
   customInstructions,
   chatModelRef,
   imageQualityRef,
+  imageFormatRef,
   setFieldState
 }: UseGenerateSubmitArgs): {
   submit: (field: GenField) => Promise<void>;
@@ -96,7 +98,8 @@ export function useGenerateSubmit({
               // Send the live selection so an in-flight chip click is
               // honored even before the persist server action lands.
               chatModelId: chatModelRef.current,
-              imageQualityId: imageQualityRef.current
+              imageQualityId: imageQualityRef.current,
+              imageFormatId: imageFormatRef.current
             }),
             signal: ctrl.signal
           });

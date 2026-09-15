@@ -141,6 +141,26 @@
     }
   },
   "defaultImageQuality": "image-1k",
+  "_imageFormatsComment": "Output ratios offered to merchants. `aspectRatio` is passed verbatim to kie's `aspect_ratio` input (and to OpenRouter's image_config.aspect_ratio on the Gemini fallback). `maxResolution` encodes the provider's documented ratio x resolution limits — GPT-Image 2 refuses 1:1 above 2K — so the pipeline clamps instead of failing the job. `auto` keeps the source photo's ratio and is the default, i.e. the historical behaviour.",
+  "imageFormats": {
+    "auto": {
+      "aspectRatio": "auto",
+      "maxResolution": "4K"
+    },
+    "square": {
+      "aspectRatio": "1:1",
+      "maxResolution": "2K"
+    },
+    "mobile": {
+      "aspectRatio": "9:16",
+      "maxResolution": "4K"
+    },
+    "banner": {
+      "aspectRatio": "16:9",
+      "maxResolution": "4K"
+    }
+  },
+  "defaultImageFormat": "auto",
   "imageFallbackModel": {
     "displayName": "Gemini 3.1 Flash Image",
     "provider": "Google",

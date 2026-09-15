@@ -41,6 +41,8 @@ interface SuggestionsCardProps {
   /** The merchant's own image prompt for this product, so the modal opens on
    *  what they wrote last time instead of an empty field. */
   savedImagePrompt: string;
+  /** The account's default output ratio, handed to the per-image modal. */
+  imageFormatId: string;
 }
 
 export async function SuggestionsCard({
@@ -62,7 +64,8 @@ export async function SuggestionsCard({
   changeByJobId,
   canApplyToStore,
   appliesVia,
-  savedImagePrompt
+  savedImagePrompt,
+  imageFormatId
 }: SuggestionsCardProps) {
   const tReport = await getTranslations('Report');
 
@@ -313,6 +316,7 @@ export async function SuggestionsCard({
                     costPerImage={costPerImage}
                     retentionDays={retentionDays}
                     savedPrompt={savedImagePrompt}
+                    imageFormatId={imageFormatId}
                   />
                 }
               />

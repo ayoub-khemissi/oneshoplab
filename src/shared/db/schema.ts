@@ -30,6 +30,11 @@ export const CHAT_MODEL_IDS = [
   'opus-5'
 ] as const;
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
+/** Output ratio for generated images. The ACTIVE lineup lives in pricing.json
+ *  (IMAGE_FORMAT_IDS); retired ids would stay here so old rows remain valid.
+ *  'auto' = keep the source photo's ratio — the behaviour every generation had
+ *  before formats existed, hence the column default. */
+export const IMAGE_FORMAT_IDS = ['auto', 'square', 'mobile', 'banner'] as const;
 export const JOB_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
 export const AUDIT_STATUSES = ['pending', 'running', 'completed', 'failed', 'timed_out'] as const;
 export const PRODUCT_STATUSES = ['active', 'archived'] as const;
@@ -82,6 +87,7 @@ export type Plan = (typeof PLANS)[number];
 export type BillingCycle = (typeof BILLING_CYCLES)[number];
 export type ChatModelDbId = (typeof CHAT_MODEL_IDS)[number];
 export type ImageQualityDbId = (typeof IMAGE_QUALITY_IDS)[number];
+export type ImageFormatDbId = (typeof IMAGE_FORMAT_IDS)[number];
 export type JobStatus = (typeof JOB_STATUSES)[number];
 export type AuditStatus = (typeof AUDIT_STATUSES)[number];
 export type JobKind = (typeof JOB_KINDS)[number];
@@ -127,6 +133,12 @@ export const users = mysqlTable('users', {
   preferredImageQuality: mysqlEnum('preferred_image_quality', IMAGE_QUALITY_IDS)
     .notNull()
     .default('image-1k'),
+  /** Output ratio applied to every image generation that doesn't carry its own
+   *  (the per-image modal can override it for one shot). Defaults to 'auto' so
+   *  existing accounts keep generating in the source photo's ratio. */
+  preferredImageFormat: mysqlEnum('preferred_image_format', IMAGE_FORMAT_IDS)
+    .notNull()
+    .default('auto'),
   /** Account-wide DEFAULT bulk-generation prefs. A site with its own
    *  projects.bulkPrefs overrides this; if both are NULL the legacy
    *  "everything on, 3 angles" default applies. Same shape as
@@ -139,6 +151,8 @@ export const users = mysqlTable('users', {
       images: boolean;
     };
     imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+    /** Absent on rows written before formats existed → 'auto'. */
+    imageFormat?: ImageFormatDbId;
   } | null>(),
 
   /** How far the first-store walkthrough got. NULL = never opened it. Kept
@@ -251,6 +265,8 @@ export const projects = mysqlTable(
         images: boolean;
       };
       imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+      /** Absent on rows written before formats existed → 'auto'. */
+      imageFormat?: ImageFormatDbId;
     } | null>(),
     /** Send every completed generation to the store without waiting for the
      *  merchant to click Apply. Off by default and set per store, never

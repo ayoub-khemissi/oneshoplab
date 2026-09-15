@@ -6,6 +6,7 @@ import {
   costForImage,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
+  resolveImageFormatId,
   type ImageQualityId
 } from '@/entities/ai-model';
 import { listProductImageJobs, persistKieJobFailure } from '@/entities/generation-job';
@@ -159,7 +160,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 //     customPrompt?: string,        // required when angle === 'custom'
 //     replaceJobId?: string,        // when set, soft-hides that job
 //                                   // and starts a fresh one in its place
-//     imageQualityId?: ImageQualityId
+//     imageQualityId?: ImageQualityId,
+//     imageFormatId?: ImageFormatId   // per-image ratio; omitted → account pref
 //   }
 // ---------------------------------------------------------------------------
 
@@ -176,6 +178,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     customPrompt?: unknown;
     replaceJobId?: unknown;
     imageQualityId?: unknown;
+    imageFormatId?: unknown;
   };
   try {
     body = (await req.json()) ?? {};
@@ -243,6 +246,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     body.imageQualityId,
     session.user.preferredImageQuality
   );
+  // The modal offers a per-image ratio; without one the account preference
+  // applies, and without that 'auto' (the source photo's own ratio).
+  const imageFormatId = resolveImageFormatId(
+    typeof body.imageFormatId === 'string' ? body.imageFormatId : session.user.preferredImageFormat
+  );
   const cost = costForImage(imageQualityId);
   if ((session.user.creditsBalance ?? 0) < cost) {
     return NextResponse.json({ error: 'insufficient_credits' }, { status: 402 });
@@ -275,7 +283,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       sourceImageUrl: ctx.sourceImage,
       userPrompt: prompt,
       appUrl: process.env.APP_URL,
-      imageQualityId
+      imageQualityId,
+      imageFormatId
     });
     return NextResponse.json({ ok: true, jobId: result.jobId });
   } catch (e) {

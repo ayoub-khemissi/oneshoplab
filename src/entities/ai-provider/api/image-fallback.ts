@@ -19,6 +19,10 @@ export interface ImageFallbackInput {
   prompt: string;
   /** Source product photo to edit; omitted → text-to-image. */
   sourceImageUrl?: string | null;
+  /** Output ratio ('1:1', '9:16', '16:9'…). 'auto' / omitted keeps the
+   *  source photo's ratio — Gemini's own default when no image_config is
+   *  sent, so the fallback frames the shot the same way kie would have. */
+  aspectRatio?: string | null;
 }
 
 export interface ImageFallbackResult {
@@ -57,6 +61,11 @@ export async function generateFallbackImage(
       model: IMAGE_FALLBACK_MODEL.openrouterId,
       modalities: ['image', 'text'],
       messages: [{ role: 'user', content: parts }],
+      // Gemini image models take the ratio through image_config; anything
+      // else (including 'auto') is left off so the model keeps its default.
+      ...(input.aspectRatio && input.aspectRatio !== 'auto'
+        ? { image_config: { aspect_ratio: input.aspectRatio } }
+        : {}),
       usage: { include: true }
     }),
     // Image models are slow-ish (10-60s); leave headroom.

@@ -39,7 +39,11 @@ export function AccountBulkPrefsForm({
     const key = prefsKey(prefs);
     if (key === lastSavedKey.current) return;
     const id = window.setTimeout(async () => {
-      await save({ fields: prefs.fields, imageAngles: prefs.imageAngles });
+      await save({
+        fields: prefs.fields,
+        imageAngles: prefs.imageAngles,
+        imageFormat: prefs.imageFormat
+      });
       lastSavedKey.current = key;
       setHasDefault(true);
     }, 600);
@@ -58,7 +62,8 @@ export function AccountBulkPrefsForm({
     }
     const legacy = canonicalizePrefs({
       fields: { title: true, description: true, tags: true, alt: true, images: true },
-      imageAngles: ['lifestyle', 'studio', 'inuse']
+      imageAngles: ['lifestyle', 'studio', 'inuse'],
+      imageFormat: 'auto'
     });
     lastSavedKey.current = prefsKey(legacy);
     setPrefs(legacy);

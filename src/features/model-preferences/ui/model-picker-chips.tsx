@@ -4,13 +4,16 @@ import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useModelCopy } from './use-model-copy';
 import type { ReactNode } from 'react';
-import { InfoHint, type InfoHintTopic } from '@/shared/ui';
+import { ImageFormatPicker, InfoHint, type InfoHintTopic } from '@/shared/ui';
 import {
   CHAT_MODEL_REGISTRY,
   IMAGE_MODEL_REGISTRY,
   costForImage,
   estimateChatCredits,
+  imageFormatChoices,
+  imageRequestParams,
   type ChatModelId,
+  type ImageFormatId,
   type ImageQualityId
 } from '@/entities/ai-model';
 
@@ -20,19 +23,28 @@ import {
  * (<ModelChips>, wired to the generate context + account persist) and
  * the bulk modal (local state + account persist), so both look and
  * behave identically.
+ *
+ * The output-ratio row is opt-in: the bulk modal keeps the ratio with the
+ * rest of its per-site config (<BulkPrefsEditor>), so showing it here too
+ * would put the same setting twice on one screen, storing in two places.
  */
 export function ModelPickerChips({
   chatModelId,
   imageQualityId,
+  imageFormatId,
   onPickChat,
-  onPickImage
+  onPickImage,
+  onPickImageFormat
 }: {
   chatModelId: ChatModelId;
   imageQualityId: ImageQualityId;
+  imageFormatId?: ImageFormatId;
   onPickChat: (id: ChatModelId) => void;
   onPickImage: (id: ImageQualityId) => void;
+  onPickImageFormat?: (id: ImageFormatId) => void;
 }) {
   const t = useTranslations('Product');
+  const tFormat = useTranslations('ImageFormats');
   const modelCopy = useModelCopy();
   const firstImage = Object.values(IMAGE_MODEL_REGISTRY)[0];
   const imageModelName = firstImage.modelName;
@@ -80,6 +92,22 @@ export function ModelPickerChips({
           />
         ))}
       </ChipsRow>
+
+      {imageFormatId && onPickImageFormat ? (
+        <ChipsRow label={tFormat('label')}>
+          <ImageFormatPicker
+            size="sm"
+            value={imageFormatId}
+            options={imageFormatChoices(tFormat)}
+            onChange={(id) => onPickImageFormat(id as ImageFormatId)}
+            note={
+              imageRequestParams(imageFormatId, imageQualityId).clamped
+                ? tFormat('clampedNote')
+                : undefined
+            }
+          />
+        </ChipsRow>
+      ) : null}
     </div>
   );
 }
@@ -91,7 +119,9 @@ function ChipsRow({
   children
 }: {
   label: string;
-  topic: InfoHintTopic;
+  /** Omitted on rows with no FieldHelp entry (the format row explains
+   *  itself through the per-option hints). */
+  topic?: InfoHintTopic;
   sublabel?: string;
   children: ReactNode;
 }) {
@@ -100,7 +130,7 @@ function ChipsRow({
       <span className="flex flex-col shrink-0">
         <span className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
           {label}
-          <InfoHint topic={topic} label={label} />
+          {topic ? <InfoHint topic={topic} label={label} /> : null}
         </span>
         {sublabel ? (
           <span className="text-[10px] font-mono text-[var(--muted)]/80">{sublabel}</span>

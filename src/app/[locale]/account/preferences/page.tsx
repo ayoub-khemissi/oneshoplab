@@ -1,4 +1,4 @@
-import { resolveChatModelId } from '@/entities/ai-model';
+import { resolveChatModelId, resolveImageFormatId } from '@/entities/ai-model';
 import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
@@ -44,6 +44,7 @@ export default async function AccountPreferencesPage() {
       <ModelPreferencesForm
         initialChatModel={resolveChatModelId(session.user.preferredChatModel)}
         initialImageQuality={session.user.preferredImageQuality}
+        initialImageFormat={resolveImageFormatId(session.user.preferredImageFormat)}
         copy={{
           chatLabel: t('chatLabel'),
           chatHint: t('chatHint'),

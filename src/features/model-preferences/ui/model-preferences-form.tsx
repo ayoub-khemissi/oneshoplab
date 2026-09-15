@@ -2,6 +2,7 @@
 
 import { Card, Spinner } from '@heroui/react';
 import { Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 // Import from the leaf module (no server-only deps) so this client bundle
 // stays free of mysql2 / drizzle imports leaking through a server barrel.
@@ -10,15 +11,20 @@ import {
   IMAGE_MODEL_REGISTRY,
   costForImage,
   estimateChatCredits,
+  imageFormatChoices,
+  imageRequestParams,
   type ChatModelId,
+  type ImageFormatId,
   type ImageQualityId
 } from '@/entities/ai-model';
+import { ImageFormatPicker } from '@/shared/ui';
 import { updateUserPreferencesAction } from '../api/actions';
 import { useModelCopy } from './use-model-copy';
 
 interface ModelPreferencesFormProps {
   initialChatModel: ChatModelId;
   initialImageQuality: ImageQualityId;
+  initialImageFormat: ImageFormatId;
   /** UI strings (translated by the parent server component). */
   copy: {
     chatLabel: string;
@@ -40,15 +46,21 @@ interface ModelPreferencesFormProps {
 export function ModelPreferencesForm({
   initialChatModel,
   initialImageQuality,
+  initialImageFormat,
   copy
 }: ModelPreferencesFormProps) {
   const modelCopy = useModelCopy();
+  const tFormat = useTranslations('ImageFormats');
   const [chatModel, setChatModel] = useState<ChatModelId>(initialChatModel);
   const [imageQuality, setImageQuality] = useState<ImageQualityId>(initialImageQuality);
+  const [imageFormat, setImageFormat] = useState<ImageFormatId>(initialImageFormat);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const dirty = chatModel !== initialChatModel || imageQuality !== initialImageQuality;
+  const dirty =
+    chatModel !== initialChatModel ||
+    imageQuality !== initialImageQuality ||
+    imageFormat !== initialImageFormat;
 
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
@@ -124,6 +136,28 @@ export function ModelPreferencesForm({
         </div>
         <input type="hidden" name="imageQuality" value={imageQuality} />
         <p className="text-xs text-[var(--muted)]">{copy.imageHint}</p>
+
+        {/* Ratio sits in the image card rather than one of its own: quality
+            and shape are two halves of the same "what does the picture look
+            like" decision, and splitting them into sibling cards would leave
+            a half-empty card next to a tall one. */}
+        <div className="flex flex-col gap-2 border-t border-[var(--border)] pt-4 mt-1">
+          <label className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+            {tFormat('label')}
+          </label>
+          <ImageFormatPicker
+            value={imageFormat}
+            options={imageFormatChoices(tFormat)}
+            onChange={(id) => setImageFormat(id as ImageFormatId)}
+            note={
+              imageRequestParams(imageFormat, imageQuality).clamped
+                ? tFormat('clampedNote')
+                : undefined
+            }
+          />
+          <input type="hidden" name="imageFormat" value={imageFormat} />
+          <p className="text-xs text-[var(--muted)]">{tFormat('hint')}</p>
+        </div>
       </Card>
 
       <div className="flex items-center justify-end gap-3">

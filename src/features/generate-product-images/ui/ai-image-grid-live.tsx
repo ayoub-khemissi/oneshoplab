@@ -24,6 +24,9 @@ interface AiImageGridLiveProps {
   retentionDays: number;
   /** This product's own image prompt, saved last time it was used. */
   savedPrompt?: string;
+  /** Account-wide default output ratio; the modal starts there and can
+   *  override it for a single image. */
+  imageFormatId: string;
 }
 
 /**
@@ -51,7 +54,8 @@ export function AiImageGridLive({
   initial,
   costPerImage,
   retentionDays,
-  savedPrompt = ''
+  savedPrompt = '',
+  imageFormatId
 }: AiImageGridLiveProps) {
   const t = useTranslations('AiImageGrid');
   const {
@@ -96,6 +100,7 @@ export function AiImageGridLive({
           costPerImage={costPerImage}
           isReplace={modalReplaceId !== null}
           initialCustomPrompt={savedPrompt}
+          initialImageFormat={imageFormatId}
           onSavePrompt={(prompt) => {
             void saveProductImagePromptAction(productId, prompt);
           }}

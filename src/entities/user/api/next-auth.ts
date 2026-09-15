@@ -17,6 +17,7 @@ import {
   users,
   verificationTokens,
   type ChatModelDbId,
+  type ImageFormatDbId,
   type ImageQualityDbId,
   type Plan,
   legalConsents
@@ -30,6 +31,7 @@ declare module 'next-auth' {
       creditsBalance: number;
       preferredChatModel: ChatModelDbId;
       preferredImageQuality: ImageQualityDbId;
+      preferredImageFormat: ImageFormatDbId;
     } & DefaultSession['user'];
   }
 }
@@ -195,6 +197,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           session.user.creditsBalance = u.creditsBalance;
           session.user.preferredChatModel = u.preferredChatModel;
           session.user.preferredImageQuality = u.preferredImageQuality;
+          session.user.preferredImageFormat = u.preferredImageFormat;
         }
       }
       return session;

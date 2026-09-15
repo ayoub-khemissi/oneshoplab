@@ -72,7 +72,7 @@
     "step2Title": "Podłączenie sklepu",
     "step2Description": "Zainstaluj naszą wtyczkę w WooCommerce albo autoryzuj naszą aplikację w Shopify i Wix. Zajmuje to dwie minuty. Od tej pory OneShopLab czyta Twoje prawdziwe karty produktów i zapisuje w nich tylko to, co zatwierdzisz.",
     "step3Title": "Generowanie i wdrożenie",
-    "step3Description": "Wybierz model tekstowy — {budgetModel}, {balancedModel} lub {premiumModel} — oraz jakość obrazu (1K, 2K lub 4K) w {imageModel}. Nic nie wychodzi bez Twojej zgody, a jedno kliknięcie cofa zmianę.",
+    "step3Description": "Wybierz model tekstowy — {budgetModel}, {balancedModel} lub {premiumModel} — oraz jakość obrazu (1K, 2K lub 4K) i format (oryginalny, kwadrat, mobilny lub baner) w {imageModel}. Nic nie wychodzi bez Twojej zgody, a jedno kliknięcie cofa zmianę.",
     "compatibleWith": "Kompatybilne z",
     "seoTitle": "OneShopLab — podłącz sklep i zoptymalizuj katalog z AI",
     "seoDescription": "Podłącz Shopify, WooCommerce lub Wix: bezpłatny audyt w minutę, a potem AI przepisuje tytuły, opisy, tagi i zdjęcia. Ty zatwierdzasz, a zmiana trafia do sklepu.",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "Język sklepu",
+    "buttonTitle": "Język witryny",
+    "unknownTitle": "Nieznany język — wybierz język tego sklepu",
+    "unknownShort": "Język?",
     "hint": "Decyduje o języku każdej generacji AI w tym sklepie. Wpisz kod ISO (pl) lub własną nazwę (Polski).",
     "placeholder": "Wybierz język…",
     "searchPlaceholder": "Szukaj po kodzie lub nazwie",
@@ -1053,7 +1056,9 @@
     "q15q": "Czy możecie edytować moje zdjęcia bezpośrednio w sklepie?",
     "q15a": "Tak, w granicach tego, co potrafi Twoja platforma: dodać wygenerowany obraz, zmienić kolejność galerii, wybrać zdjęcie główne, napisać teksty alternatywne. OneShopLab proponuje tylko te działania, które zadeklarowało Twoje połączenie — nigdy takie, które po cichu by zawiodło. Tekst alternatywny jest wliczony w cenę każdego wygenerowanego obrazu.",
     "q16q": "Co się stanie, jeśli sklep zostanie odłączony?",
-    "q16a": "Nic nie jest wysyłane. Karty i przyciski synchronizacji znikają z interfejsu, nowa wysyłka jest odrzucana, a zmiana czekająca w kolejce po dziesięciu minutach bez dostępnego sklepu zostaje oznaczona jako nieudana — zamiast kręcić się w nieskończoność. Podłącz sklep ponownie i wyślij ją jednym kliknięciem."
+    "q16a": "Nic nie jest wysyłane. Karty i przyciski synchronizacji znikają z interfejsu, nowa wysyłka jest odrzucana, a zmiana czekająca w kolejce po dziesięciu minutach bez dostępnego sklepu zostaje oznaczona jako nieudana — zamiast kręcić się w nieskończoność. Podłącz sklep ponownie i wyślij ją jednym kliknięciem.",
+    "q17q": "Czy mogę wybrać format generowanych obrazów?",
+    "q17a": "Tak. Obok jakości obrazu wybierasz format: proporcje zdjęcia źródłowego, kwadrat (1:1), mobilny (9:16) lub baner (16:9). Model od razu kadruje w ten sposób — nic nie jest przycinane później. Wybór znajdziesz na stronie produktu, w preferencjach konta i w konfiguracji generowania masowego sklepu; konta, które go nie zmienią, zachowują proporcje źródłowe."
   },
   "Legal": {
     "privacyTitle": "Polityka prywatności",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "Zapisano — generacje będą wysyłane od razu po zakończeniu.",
     "autoSendPromptDoneOff": "Zapisano — nic nie trafi do sklepu bez Twojej zgody."
   },
+  "ImageFormats": {
+    "label": "Format obrazu",
+    "hint": "Kształt generowanych wizualizacji. Zachowaj oryginał, chyba że dane miejsce wymaga konkretnych proporcji.",
+    "auto": {
+      "name": "Oryginał",
+      "hint": "Zachowuje proporcje zdjęcia źródłowego."
+    },
+    "square": {
+      "name": "Kwadrat",
+      "hint": "Siatki marketplace'ów i miniatury katalogu."
+    },
+    "mobile": {
+      "name": "Mobilny",
+      "hint": "Pełny ekran telefonu, stories i reels."
+    },
+    "banner": {
+      "name": "Baner",
+      "hint": "Banery główne i kolekcji."
+    },
+    "clampedNote": "Model obrazu ogranicza 1:1 do 2K — kwadrat 4K zostanie wygenerowany w 2K."
+  },
   "Tour": {
     "ariaLabel": "Przewodnik",
     "counter": "Krok {n} z {total}",
@@ -2005,6 +2031,60 @@
       "photos": "Zdjęcia",
       "settings": "Ustawienia i konto"
     },
-    "goThere": "Przenieś mnie tam"
+    "goThere": "Przenieś mnie tam",
+    "demo": {
+      "badge": "Przykład",
+      "title": "Słuchawki bezprzewodowe",
+      "score": "Ocena karty produktu: {score}/100",
+      "models": "Model tekstowy · Jakość obrazu",
+      "note": "Produkt przykładowy: Twoje pojawią się tutaj po zaimportowaniu katalogu."
+    }
+  },
+  "ExportCatalog": {
+    "back": "Powrót do sklepu",
+    "title": "Eksport katalogu",
+    "subtitle": "Przeglądaj {domain} i pobierz dokładnie te kolumny, których potrzebujesz, w formacie CSV.",
+    "exportCsv": "Eksportuj {count} produktów",
+    "exportOne": "Eksportuj ten produkt",
+    "preparing": "Przygotowywanie…",
+    "rateLimited": "Zbyt wiele eksportów — spróbuj za {seconds} s",
+    "failed": "Eksport się nie powiódł, spróbuj ponownie",
+    "searchPlaceholder": "Szukaj nazwy, SKU lub marki",
+    "searchLabel": "Szukaj w katalogu",
+    "statusLabel": "Status produktów",
+    "status_active": "Aktywne",
+    "status_archived": "Zarchiwizowane",
+    "status_all": "Wszystkie",
+    "columnsLabel": "Kolumny do eksportu",
+    "columnsCount": "wybrano {count}",
+    "docs": "Plik to CSV UTF-8 rozdzielany przecinkami, jeden wiersz na produkt. Zdjęcia są eksportowane jako linki do Twojego sklepu, nigdy jako pliki. Jeden eksport zawiera do {max} produktów pasujących do filtrów.",
+    "results": "{count} produktów — strona {page} z {pages}",
+    "empty": "Żaden produkt nie pasuje do tych filtrów.",
+    "sortBy": "Sortuj według {column}",
+    "sortLabel": "Sortuj według",
+    "sortAsc": "Rosnąco",
+    "sortDesc": "Malejąco",
+    "pagination": "Strony katalogu",
+    "pageSize": "{size} produktów na stronę",
+    "column_title": "Nazwa",
+    "column_sku": "SKU",
+    "column_vendor": "Marka",
+    "column_productType": "Typ",
+    "column_price": "Cena",
+    "column_currency": "Waluta",
+    "column_status": "Status",
+    "column_tags": "Tagi",
+    "column_description": "Opis",
+    "column_descriptionHtml": "Opis (HTML)",
+    "column_imageUrls": "Linki do zdjęć",
+    "column_imageAlts": "Teksty alternatywne",
+    "column_imageCount": "Zdjęcia",
+    "column_variantCount": "Warianty",
+    "column_variantSkus": "SKU wariantów",
+    "column_handle": "Identyfikator",
+    "column_sourceId": "ID sklepu",
+    "column_sourceUrl": "URL produktu",
+    "column_sourceUpdatedAt": "Zmieniono w sklepie",
+    "column_updatedAt": "Zmieniono"
   }
 }

@@ -60,6 +60,18 @@ export type TourWhere =
   | { kind: 'product' }
   | { kind: 'anywhere' };
 
+/**
+ * What the tour draws for itself when the real thing is not on screen yet.
+ *
+ * An account created ten minutes ago has no catalogue, so the steps about a
+ * product sheet used to light up an empty list and describe something the
+ * merchant could not see. `sheet` is a sample product page, `models` the same
+ * sample with its model line picked out. It is an illustration: the overlay
+ * draws it, nothing is written anywhere, and it is labelled as an example so
+ * nobody goes looking for it in their own products.
+ */
+export type TourDemo = 'sheet' | 'models';
+
 export interface TourStep {
   id: TourStepId;
   chapter: TourChapterId;
@@ -68,6 +80,14 @@ export interface TourStep {
   where: TourWhere;
   /** Preferred side for the bubble; it flips on its own when there is no room. */
   side?: 'top' | 'bottom';
+  /** Shown in place of the anchor when the page has nothing to point at. */
+  demo?: TourDemo;
+  /**
+   * The anchor opens something — a dropdown — and the step is about what is
+   * inside it. The overlay opens it while the step is up and closes it again
+   * on the way out; a spotlight on a shut menu explains nothing.
+   */
+  expands?: boolean;
 }
 
 export const TOUR_STEPS: readonly TourStep[] = [
@@ -112,14 +132,16 @@ export const TOUR_STEPS: readonly TourStep[] = [
     chapter: 'products',
     anchor: 'product-row',
     where: { kind: 'site', tab: 'products' },
-    side: 'bottom'
+    side: 'bottom',
+    demo: 'sheet'
   },
   {
     id: 'models',
     chapter: 'generate',
     anchor: 'model-chips',
     where: { kind: 'product' },
-    side: 'bottom'
+    side: 'bottom',
+    demo: 'models'
   },
   {
     id: 'generate',
@@ -154,7 +176,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
     chapter: 'settings',
     anchor: 'account-menu',
     where: { kind: 'anywhere' },
-    side: 'bottom'
+    side: 'bottom',
+    expands: true
   }
 ] as const;
 

@@ -1,5 +1,6 @@
-import { ArrowLeft, ExternalLink, PenLine, Plus } from 'lucide-react';
+import { ArrowLeft, ExternalLink, FileSpreadsheet, PenLine, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { RelaunchAuditButton } from '@/features/run-audit/client';
 import { SiteFavicon } from '@/shared/ui';
@@ -14,7 +15,8 @@ export function SiteHeaderBar({
   auditsUsed,
   auditsLimit,
   nextSlotAtIso,
-  isManual
+  isManual,
+  languageSlot
 }: {
   domain: string;
   url: string;
@@ -23,6 +25,9 @@ export function SiteHeaderBar({
   auditsUsed: number;
   auditsLimit: number;
   nextSlotAtIso: string | null;
+  /** Compact language control, rendered right after the shop name. Passed in
+   *  as a node so this header stays free of feature imports. */
+  languageSlot?: ReactNode;
   /** Project's source === 'manual': swap the external storefront link
    *  for a plain title + "From scratch" badge, and replace the
    *  Relaunch-audit CTA with "+ Add product" (manual sites have no
@@ -30,6 +35,7 @@ export function SiteHeaderBar({
   isManual: boolean;
 }) {
   const t = useTranslations('Dashboard');
+  const tExport = useTranslations('ExportCatalog');
   return (
     <header className="flex items-center justify-between gap-2 md:gap-3 flex-wrap">
       <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
@@ -70,8 +76,17 @@ export function SiteHeaderBar({
             <ExternalLink className="size-3 md:size-4 opacity-60 shrink-0" aria-hidden />
           </a>
         )}
+        {languageSlot}
       </div>
       <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+        <Link
+          href={`/dashboard/sites/${projectId}/export`}
+          title={tExport('title')}
+          aria-label={tExport('title')}
+          className="inline-flex items-center justify-center size-8 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+        >
+          <FileSpreadsheet className="size-4" aria-hidden />
+        </Link>
         {isManual ? (
           <Link
             href={`/dashboard/sites/${projectId}/products/new`}

@@ -24,12 +24,14 @@ import {
   CHAT_MODEL_IDS,
   CREDIT_PACK_IDS,
   FIELD_IDS,
+  IMAGE_FORMAT_IDS,
   IMAGE_QUALITY_IDS,
   PLAN_IDS,
   PRICING,
   type CreditPackId as PricingCreditPackId,
   type PricingChatModelId,
   type PricingFieldId,
+  type PricingImageFormatId,
   type PricingImageQualityId,
   type PricingPlanId,
   type SystemChatRole
@@ -331,6 +333,66 @@ export function costForImage(qualityId: ImageQualityId, chatModelId?: ChatModelI
 }
 
 export const IMAGE_ANGLES_PER_GEN = PRICING.imageAnglesPerGen;
+
+// ---------------------------------------------------------------------------
+// Image formats (output ratio)
+// ---------------------------------------------------------------------------
+
+export type ImageFormatId = PricingImageFormatId;
+export type ImageResolution = ImageModelInfo['resolution'];
+
+export interface ImageFormatInfo {
+  id: ImageFormatId;
+  /** Passed verbatim to the provider (kie `aspect_ratio`, OpenRouter
+   *  `image_config.aspect_ratio`). `auto` = keep the source photo's ratio. */
+  aspectRatio: string;
+  /** Highest resolution the provider accepts for this ratio. */
+  maxResolution: ImageResolution;
+}
+
+export const IMAGE_FORMAT_REGISTRY: Record<ImageFormatId, ImageFormatInfo> = Object.fromEntries(
+  IMAGE_FORMAT_IDS.map((id) => [id, { id, ...PRICING.imageFormats[id] } satisfies ImageFormatInfo])
+) as Record<ImageFormatId, ImageFormatInfo>;
+
+/** `auto` — the ratio every generation used before formats existed. Keeping it
+ *  the default is what makes this addition invisible to existing accounts. */
+export const DEFAULT_IMAGE_FORMAT: ImageFormatId = PRICING.defaultImageFormat;
+
+/** Map a stored / posted id to a catalog id. Unknown or absent → default. */
+export function resolveImageFormatId(id: string | null | undefined): ImageFormatId {
+  return id && id in IMAGE_FORMAT_REGISTRY ? (id as ImageFormatId) : DEFAULT_IMAGE_FORMAT;
+}
+
+export function getImageFormat(id: string | null | undefined): ImageFormatInfo {
+  return IMAGE_FORMAT_REGISTRY[resolveImageFormatId(id)];
+}
+
+const RESOLUTION_ORDER: ImageResolution[] = ['1K', '2K', '4K'];
+
+/**
+ * The (ratio, resolution) pair to actually send the provider.
+ *
+ * The two knobs are not independent: GPT-Image 2 documents 1:1 as
+ * unconvertible above 2K. Rather than let kie reject the task (which would
+ * fail the job, refund, and leave the merchant with nothing), we ship the
+ * ratio the merchant asked for — that is the placement decision — and clamp
+ * the resolution down to the highest one the provider supports for it.
+ * `clamped` is returned so the UI can say so before the merchant pays.
+ */
+export function imageRequestParams(
+  formatId: string | null | undefined,
+  qualityId: ImageQualityId | string | null | undefined
+): { aspectRatio: string; resolution: ImageResolution; clamped: boolean } {
+  const format = getImageFormat(formatId);
+  const requested = getImageModel(qualityId).resolution;
+  const max = format.maxResolution;
+  const clamped = RESOLUTION_ORDER.indexOf(requested) > RESOLUTION_ORDER.indexOf(max);
+  return {
+    aspectRatio: format.aspectRatio,
+    resolution: clamped ? max : requested,
+    clamped
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Subscription tiers

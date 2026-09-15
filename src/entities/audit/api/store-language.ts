@@ -1,7 +1,7 @@
 import { and, eq, ne, or, isNull } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
-import { languageCodeFromLocale } from '@/shared/i18n';
+import { languageCodeFromLocale } from '@/shared/i18n/languages';
 
 /**
  * Record the language a connected platform reports for its storefront —

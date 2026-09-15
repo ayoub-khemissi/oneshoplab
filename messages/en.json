@@ -72,7 +72,7 @@
     "step2Title": "Connect the store",
     "step2Description": "Install our plugin on WooCommerce, or authorise our app on Shopify and Wix. It takes two minutes. OneShopLab then reads your real product pages, and writes back only what you approved.",
     "step3Title": "Generate and apply",
-    "step3Description": "Pick your text model — {budgetModel}, {balancedModel} or {premiumModel} — and the image quality (1K, 2K or 4K) with {imageModel}. Nothing leaves without your approval, and one click undoes it.",
+    "step3Description": "Pick your text model — {budgetModel}, {balancedModel} or {premiumModel} — and the image quality (1K, 2K or 4K) and format (original, square, mobile or banner) with {imageModel}. Nothing leaves without your approval, and one click undoes it.",
     "compatibleWith": "Compatible with",
     "seoTitle": "OneShopLab — Connect your store, optimise your catalog with AI",
     "seoDescription": "Connect Shopify, WooCommerce or Wix: a free audit in about a minute, then AI rewrites titles, descriptions, tags and photos. You approve, it lands in your store.",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "Site language",
+    "buttonTitle": "Site language",
+    "unknownTitle": "Language unknown — pick the language this shop is written in",
+    "unknownShort": "Language?",
     "hint": "Drives every AI generation on this store. Type the ISO code (fr) or the language's own name (Français) to find it.",
     "placeholder": "Pick a language…",
     "searchPlaceholder": "Search by code or name",
@@ -1053,7 +1056,9 @@
     "q15q": "Can you edit my photos directly in the store?",
     "q15a": "Yes, within what your platform can do: add a generated image, reorder the gallery, pick the main photo, write the alt texts. OneShopLab only offers the actions your connection has declared — never one that would fail silently. The alt text is included in the price of every generated image.",
     "q16q": "What happens if my store gets disconnected?",
-    "q16a": "Nothing is sent. The sync-related cards and buttons disappear from the interface, a new send is refused, and a change left waiting is marked as failed after ten minutes without a reachable store — instead of spinning for ever. Reconnect the store and send it again in one click."
+    "q16a": "Nothing is sent. The sync-related cards and buttons disappear from the interface, a new send is refused, and a change left waiting is marked as failed after ten minutes without a reachable store — instead of spinning for ever. Reconnect the store and send it again in one click.",
+    "q17q": "Can I choose the shape of the generated images?",
+    "q17a": "Yes. Next to the image quality you pick a format: the source photo's own ratio, square (1:1), mobile (9:16) or banner (16:9). The image model frames the shot that way — nothing is cropped afterwards. The choice sits on the product page, in your account preferences and in a store's bulk configuration; accounts that never pick one keep the source ratio."
   },
   "Legal": {
     "privacyTitle": "Privacy Policy",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "Done — generations will be sent as soon as they are ready.",
     "autoSendPromptDoneOff": "Done — nothing goes to your store without your approval."
   },
+  "ImageFormats": {
+    "label": "Image format",
+    "hint": "Shape of the generated visuals. Keep the original unless a placement needs a specific ratio.",
+    "auto": {
+      "name": "Original",
+      "hint": "Keeps the source photo's ratio."
+    },
+    "square": {
+      "name": "Square",
+      "hint": "Marketplace grids and catalogue thumbnails."
+    },
+    "mobile": {
+      "name": "Mobile",
+      "hint": "Full-screen phone, stories and reels."
+    },
+    "banner": {
+      "name": "Banner",
+      "hint": "Hero and collection banners."
+    },
+    "clampedNote": "The image model caps 1:1 at 2K — a 4K square is generated at 2K."
+  },
   "Tour": {
     "ariaLabel": "Guided tour",
     "counter": "Step {n} of {total}",
@@ -2005,6 +2031,60 @@
       "photos": "The photos",
       "settings": "Settings and account"
     },
-    "goThere": "Take me there"
+    "goThere": "Take me there",
+    "demo": {
+      "badge": "Example",
+      "title": "Wireless headphones",
+      "score": "Product page score: {score}/100",
+      "models": "Text model · Image quality",
+      "note": "A sample product: yours appear here once your catalogue is in."
+    }
+  },
+  "ExportCatalog": {
+    "back": "Back to the shop",
+    "title": "Catalogue export",
+    "subtitle": "Browse {domain} and download exactly the columns you need, as a CSV file.",
+    "exportCsv": "Export {count} products",
+    "exportOne": "Export this product",
+    "preparing": "Preparing…",
+    "rateLimited": "Too many exports — try again in {seconds} s",
+    "failed": "The export failed, try again",
+    "searchPlaceholder": "Search a name, an SKU, a brand",
+    "searchLabel": "Search the catalogue",
+    "statusLabel": "Product status",
+    "status_active": "Active",
+    "status_archived": "Archived",
+    "status_all": "All",
+    "columnsLabel": "Columns to export",
+    "columnsCount": "{count} selected",
+    "docs": "The file is a UTF-8 CSV, comma-separated, one line per product. Images are exported as links to your store, never as files. One export carries up to {max} products matching your filters.",
+    "results": "{count} products — page {page} of {pages}",
+    "empty": "No product matches these filters.",
+    "sortBy": "Sort by {column}",
+    "sortLabel": "Sort by",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "pagination": "Catalogue pages",
+    "pageSize": "{size} products per page",
+    "column_title": "Name",
+    "column_sku": "SKU",
+    "column_vendor": "Brand",
+    "column_productType": "Type",
+    "column_price": "Price",
+    "column_currency": "Currency",
+    "column_status": "Status",
+    "column_tags": "Tags",
+    "column_description": "Description",
+    "column_descriptionHtml": "Description (HTML)",
+    "column_imageUrls": "Image links",
+    "column_imageAlts": "Image alt texts",
+    "column_imageCount": "Images",
+    "column_variantCount": "Variants",
+    "column_variantSkus": "Variant SKUs",
+    "column_handle": "Handle",
+    "column_sourceId": "Store ID",
+    "column_sourceUrl": "Product URL",
+    "column_sourceUpdatedAt": "Updated in store",
+    "column_updatedAt": "Updated"
   }
 }

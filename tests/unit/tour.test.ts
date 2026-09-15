@@ -19,7 +19,13 @@ import {
   stepsFor,
   type TourStepId
 } from '@/features/guided-tour/model/steps';
-import { centreBubble, placeBubble, spotlightOf } from '@/features/guided-tour/lib/placement';
+import {
+  centreBubble,
+  demoPanel,
+  placeBubble,
+  spotlightOf,
+  union
+} from '@/features/guided-tour/lib/placement';
 
 const SRC = new URL('../../src', import.meta.url).pathname;
 
@@ -44,6 +50,32 @@ describe('the anchors the tour points at', () => {
       expect(ALL_SOURCE).toMatch(new RegExp(`['"\`]${anchor}['"\`]`));
     }
   );
+});
+
+describe('the steps that have nothing to point at', () => {
+  it('the product steps carry a sample sheet', () => {
+    // A merchant on their first day has no catalogue: without a demo these
+    // two light up an empty list and explain something off-screen.
+    const withDemo = TOUR_STEPS.filter((s) => s.demo).map((s) => s.id);
+    expect(withDemo).toEqual(['product', 'models']);
+  });
+
+  it('the step about the account menu opens it, and has a menu to open', () => {
+    const expanding = TOUR_STEPS.filter((s) => s.expands);
+    expect(expanding.map((s) => s.id)).toEqual(['tips']);
+    // Nothing to open without an anchor to open it on.
+    for (const step of expanding) expect(step.anchor).toBeTruthy();
+  });
+
+  it('the account menu button says whether it is open', () => {
+    // The overlay opens the dropdown by clicking the anchor, and only when it
+    // reads shut: `aria-expanded` is the contract that makes that safe.
+    const menu = ALL_SOURCE.slice(
+      Math.max(0, ALL_SOURCE.indexOf('data-tour="account-menu"') - 600),
+      ALL_SOURCE.indexOf('data-tour="account-menu"') + 600
+    );
+    expect(menu).toMatch(/aria-expanded/);
+  });
 });
 
 describe('reading the URL', () => {
@@ -150,6 +182,39 @@ describe('the bubble stays on screen', () => {
     expect(b.top + 200).toBeLessThanOrEqual(phone.height);
   });
 
+  it('a spotlight on a menu covers the button and the menu it opened', () => {
+    const button = { top: 20, left: 300, width: 40, height: 40 };
+    const menu = { top: 68, left: 150, width: 240, height: 300 };
+    const both = union(button, menu);
+    expect(both).toEqual({ top: 20, left: 150, width: 240, height: 348 });
+    // Nothing of either box falls outside the union.
+    for (const r of [button, menu]) {
+      expect(r.top).toBeGreaterThanOrEqual(both.top);
+      expect(r.left).toBeGreaterThanOrEqual(both.left);
+      expect(r.left + r.width).toBeLessThanOrEqual(both.left + both.width);
+      expect(r.top + r.height).toBeLessThanOrEqual(both.top + both.height);
+    }
+  });
+
+  it('the sample sheet sits on screen, with room for its bubble underneath', () => {
+    const panel = demoPanel(phone, 340, 190);
+    expect(panel.left).toBeGreaterThanOrEqual(0);
+    expect(panel.left + panel.width).toBeLessThanOrEqual(phone.width);
+    expect(panel.top).toBeGreaterThanOrEqual(0);
+    expect(panel.top + panel.height).toBeLessThanOrEqual(phone.height);
+    const b = placeBubble(spotlightOf(panel), phone, 180, 'bottom');
+    expect(b.side).toBe('bottom');
+    expect(b.top).toBeGreaterThan(panel.top + panel.height);
+    expect(b.top + 180).toBeLessThanOrEqual(phone.height);
+  });
+
+  it('the sample sheet never overflows a narrow screen', () => {
+    const tiny = { width: 280, height: 500 };
+    const panel = demoPanel(tiny, 340, 600);
+    expect(panel.left + panel.width).toBeLessThanOrEqual(tiny.width);
+    expect(panel.top).toBeGreaterThanOrEqual(0);
+  });
+
   it('centres itself when there is nothing to point at', () => {
     const b = centreBubble(phone, 200);
     expect(b.left).toBeGreaterThanOrEqual(0);
@@ -169,6 +234,16 @@ describe('the copy', () => {
       expect(tour.steps[step.id]?.title?.length ?? 0).toBeGreaterThan(2);
       expect(tour.steps[step.id]?.body?.length ?? 0).toBeGreaterThan(20);
     }
+  });
+
+  it.each(['en', 'fr'])('%s describes the sample product sheet', (locale) => {
+    // The demo is drawn by the tour, so its words come from here and nowhere
+    // else — a hole would render an empty card next to "open a product".
+    const demo = (messages(locale) as unknown as { demo: Record<string, string> }).demo;
+    for (const key of ['badge', 'title', 'score', 'models', 'note']) {
+      expect(demo?.[key]?.length ?? 0).toBeGreaterThan(1);
+    }
+    expect(demo.score).toContain('{score}');
   });
 });
 

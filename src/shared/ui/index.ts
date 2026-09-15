@@ -18,6 +18,8 @@ export {
   useFieldSwapGroup,
   useFieldView
 } from './field-swap';
+export type { ImageFormatOption } from './image-format-picker';
+export { ImageFormatPicker } from './image-format-picker';
 export { ImageZoom } from './image-zoom';
 export { ModalCloseButton } from './modal-close-button';
 export type { InfoHintProps, InfoHintTopic } from './info-hint';

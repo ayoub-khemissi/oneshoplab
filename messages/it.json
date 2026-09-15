@@ -72,7 +72,7 @@
     "step2Title": "Collegare il negozio",
     "step2Description": "Installa il nostro plugin su WooCommerce, oppure autorizza la nostra app su Shopify e Wix. Ci vogliono due minuti. Da quel momento OneShopLab legge le tue schede prodotto reali e vi scrive solo ciò che hai approvato.",
     "step3Title": "Generare e applicare",
-    "step3Description": "Scegli il modello di testo — {budgetModel}, {balancedModel} o {premiumModel} — e la qualità immagine (1K, 2K o 4K) con {imageModel}. Niente parte senza la tua approvazione e tutto si annulla con un clic.",
+    "step3Description": "Scegli il modello di testo — {budgetModel}, {balancedModel} o {premiumModel} — e la qualità immagine (1K, 2K o 4K) e il formato (originale, quadrato, mobile o banner) con {imageModel}. Niente parte senza la tua approvazione e tutto si annulla con un clic.",
     "compatibleWith": "Compatibile con",
     "seoTitle": "OneShopLab — Collega il negozio e ottimizza il catalogo con l'IA",
     "seoDescription": "Collega Shopify, WooCommerce o Wix: analisi gratuita in un minuto, poi l'IA riscrive titoli, descrizioni, tag e foto. Tu approvi e viene applicato nel tuo negozio.",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "Lingua del sito",
+    "buttonTitle": "Lingua del sito",
+    "unknownTitle": "Lingua sconosciuta: scegli la lingua di questo negozio",
+    "unknownShort": "Lingua?",
     "hint": "Determina la lingua di ogni generazione AI su questo store. Digita il codice ISO (it) o il nome nativo (Italiano) per trovarla.",
     "placeholder": "Scegli una lingua…",
     "searchPlaceholder": "Cerca per codice o nome",
@@ -1053,7 +1056,9 @@
     "q15q": "Potete modificare le mie foto direttamente nel negozio?",
     "q15a": "Sì, nei limiti di ciò che la tua piattaforma consente: aggiungere un’immagine generata, riordinare la galleria, scegliere la foto principale, scrivere i testi alternativi. OneShopLab propone solo le azioni che il tuo collegamento ha dichiarato, mai una che fallirebbe in silenzio. Il testo alternativo è incluso nel prezzo di ogni immagine generata.",
     "q16q": "Cosa succede se il mio negozio viene scollegato?",
-    "q16a": "Non viene inviato nulla. Le schede e i pulsanti di sincronizzazione scompaiono dall’interfaccia, un nuovo invio viene rifiutato e una modifica rimasta in attesa viene segnata come fallita dopo dieci minuti senza negozio raggiungibile, invece di girare all’infinito. Ricollega il negozio e rinviala con un clic."
+    "q16a": "Non viene inviato nulla. Le schede e i pulsanti di sincronizzazione scompaiono dall’interfaccia, un nuovo invio viene rifiutato e una modifica rimasta in attesa viene segnata come fallita dopo dieci minuti senza negozio raggiungibile, invece di girare all’infinito. Ricollega il negozio e rinviala con un clic.",
+    "q17q": "Posso scegliere il formato delle immagini generate?",
+    "q17a": "Sì. Accanto alla qualità immagine scegli un formato: il rapporto della foto originale, quadrato (1:1), mobile (9:16) o banner (16:9). Il modello inquadra direttamente così — nulla viene ritagliato dopo. La scelta si trova nella pagina prodotto, nelle preferenze dell’account e nella configurazione della generazione in blocco di un negozio; gli account che non ne scelgono uno mantengono il rapporto originale."
   },
   "Legal": {
     "privacyTitle": "Informativa sulla privacy",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "Registrato: le generazioni partiranno appena pronte.",
     "autoSendPromptDoneOff": "Registrato: nulla va al negozio senza la tua approvazione."
   },
+  "ImageFormats": {
+    "label": "Formato immagine",
+    "hint": "Forma delle immagini generate. Mantieni l'originale, a meno che una collocazione richieda un rapporto preciso.",
+    "auto": {
+      "name": "Originale",
+      "hint": "Mantiene il rapporto della foto di partenza."
+    },
+    "square": {
+      "name": "Quadrato",
+      "hint": "Griglie dei marketplace e miniature di catalogo."
+    },
+    "mobile": {
+      "name": "Mobile",
+      "hint": "Schermo intero su telefono, storie e reel."
+    },
+    "banner": {
+      "name": "Banner",
+      "hint": "Banner hero e di collezione."
+    },
+    "clampedNote": "Il modello immagine limita l'1:1 a 2K — un quadrato 4K viene generato in 2K."
+  },
   "Tour": {
     "ariaLabel": "Tour guidato",
     "counter": "Passaggio {n} di {total}",
@@ -2005,6 +2031,60 @@
       "photos": "Le foto",
       "settings": "Impostazioni e account"
     },
-    "goThere": "Portami lì"
+    "goThere": "Portami lì",
+    "demo": {
+      "badge": "Esempio",
+      "title": "Cuffie wireless",
+      "score": "Punteggio della scheda: {score}/100",
+      "models": "Modello di testo · Qualità immagine",
+      "note": "Prodotto di esempio: i tuoi appariranno qui una volta importato il catalogo."
+    }
+  },
+  "ExportCatalog": {
+    "back": "Torna al negozio",
+    "title": "Esportazione del catalogo",
+    "subtitle": "Sfoglia {domain} e scarica esattamente le colonne che ti servono, in CSV.",
+    "exportCsv": "Esporta {count} prodotti",
+    "exportOne": "Esporta questo prodotto",
+    "preparing": "Preparazione…",
+    "rateLimited": "Troppe esportazioni: riprova tra {seconds} s",
+    "failed": "Esportazione non riuscita, riprova",
+    "searchPlaceholder": "Cerca un nome, uno SKU, un marchio",
+    "searchLabel": "Cerca nel catalogo",
+    "statusLabel": "Stato dei prodotti",
+    "status_active": "Attivi",
+    "status_archived": "Archiviati",
+    "status_all": "Tutti",
+    "columnsLabel": "Colonne da esportare",
+    "columnsCount": "{count} selezionate",
+    "docs": "Il file è un CSV UTF-8 separato da virgole, una riga per prodotto. Le immagini sono esportate come link al tuo negozio, mai come file. Un'esportazione contiene fino a {max} prodotti corrispondenti ai filtri.",
+    "results": "{count} prodotti — pagina {page} di {pages}",
+    "empty": "Nessun prodotto corrisponde a questi filtri.",
+    "sortBy": "Ordina per {column}",
+    "sortLabel": "Ordina per",
+    "sortAsc": "Crescente",
+    "sortDesc": "Decrescente",
+    "pagination": "Pagine del catalogo",
+    "pageSize": "{size} prodotti per pagina",
+    "column_title": "Nome",
+    "column_sku": "SKU",
+    "column_vendor": "Marchio",
+    "column_productType": "Tipo",
+    "column_price": "Prezzo",
+    "column_currency": "Valuta",
+    "column_status": "Stato",
+    "column_tags": "Tag",
+    "column_description": "Descrizione",
+    "column_descriptionHtml": "Descrizione (HTML)",
+    "column_imageUrls": "Link immagini",
+    "column_imageAlts": "Testi alternativi",
+    "column_imageCount": "Immagini",
+    "column_variantCount": "Varianti",
+    "column_variantSkus": "SKU varianti",
+    "column_handle": "Identificativo",
+    "column_sourceId": "ID negozio",
+    "column_sourceUrl": "URL prodotto",
+    "column_sourceUpdatedAt": "Aggiornato nel negozio",
+    "column_updatedAt": "Aggiornato"
   }
 }

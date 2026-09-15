@@ -68,6 +68,18 @@ const ImageQualitySchema = z.object({
   cost: PositiveNum
 });
 
+/**
+ * One selectable output ratio. `aspectRatio` is the string the provider
+ * expects (kie `aspect_ratio`, OpenRouter `image_config.aspect_ratio`);
+ * `maxResolution` is the highest resolution the provider accepts FOR THAT
+ * RATIO — GPT-Image 2 documents 1:1 as unavailable above 2K — so the
+ * pipeline can clamp instead of shipping a request kie will reject.
+ */
+const ImageFormatSchema = z.object({
+  aspectRatio: z.string().min(1),
+  maxResolution: z.enum(['1K', '2K', '4K'])
+});
+
 const CreditPackSchema = z.object({
   credits: PositiveInt,
   priceEur: z.number().positive()
@@ -84,6 +96,12 @@ export type SystemChatRole = (typeof SYSTEM_CHAT_ROLES)[number];
 
 export const IMAGE_QUALITY_IDS = ['image-1k', 'image-2k', 'image-4k'] as const;
 export type PricingImageQualityId = (typeof IMAGE_QUALITY_IDS)[number];
+
+/** Output ratios offered next to the quality tiers. `auto` = keep the source
+ *  photo's ratio, which is what every generation did before formats existed
+ *  and therefore stays the default. */
+export const IMAGE_FORMAT_IDS = ['auto', 'square', 'mobile', 'banner'] as const;
+export type PricingImageFormatId = (typeof IMAGE_FORMAT_IDS)[number];
 
 export const FIELD_IDS = [
   'title',
@@ -148,6 +166,14 @@ const PricingSchema = z.object({
     >
   ),
   defaultImageQuality: z.enum(IMAGE_QUALITY_IDS),
+  _imageFormatsComment: z.string().optional(),
+  imageFormats: z.object(
+    Object.fromEntries(IMAGE_FORMAT_IDS.map((id) => [id, ImageFormatSchema])) as Record<
+      PricingImageFormatId,
+      typeof ImageFormatSchema
+    >
+  ),
+  defaultImageFormat: z.enum(IMAGE_FORMAT_IDS),
   /** Used when the primary image provider fails (kie), via OpenRouter. */
   imageFallbackModel: z.object({
     displayName: z.string().min(1),

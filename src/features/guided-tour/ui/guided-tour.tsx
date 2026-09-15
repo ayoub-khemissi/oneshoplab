@@ -1,17 +1,19 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ImageIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname as useRawPathname, useSearchParams } from 'next/navigation';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from '@/i18n/navigation';
 import { ModalCloseButton } from '@/shared/ui';
 import {
   centreBubble,
+  demoPanel,
   needsScroll,
   placeBubble,
   spotlightOf,
+  union,
   type BubblePlacement,
   type Rect
 } from '../lib/placement';
@@ -23,6 +25,7 @@ import {
   stepIndex,
   stepsFor,
   type TourChapterId,
+  type TourDemo,
   type TourStepId
 } from '../model/steps';
 
@@ -42,6 +45,16 @@ export interface GuidedTourProps {
 const ANCHOR_POLL_MS = 120;
 const ANCHOR_ATTEMPTS = 34;
 
+/** Attempts to wait before drawing the sample sheet: a page still on its way
+ *  has no anchor either, and a demo that flashes over a merchant who DOES
+ *  have products is its own kind of confusing. */
+const DEMO_AFTER_ATTEMPTS = 8;
+
+/** The sample product sheet: width, and the score it shows. */
+const DEMO_WIDTH = 340;
+const DEMO_HEIGHT = 190;
+const DEMO_SCORE = 41;
+
 /**
  * The first-store walkthrough: a dimmed page with one thing lit up, and a
  * bubble saying what it is for.
@@ -56,7 +69,14 @@ const ANCHOR_ATTEMPTS = 34;
  * Nothing is ever asserted about the DOM. A step whose anchor is missing —
  * a button that only appears after a generation, a card behind a plan — shows
  * its bubble in the middle of the screen and keeps going, rather than
- * pointing at a corner where nothing is.
+ * pointing at a corner where nothing is. When the step carries a demo, it
+ * draws that in the middle instead of a bubble over nothing: on a
+ * ten-minute-old account there is no product to open, and an empty list under
+ * an explanation of product pages teaches nobody anything.
+ *
+ * And a step about a menu opens it. The account menu spotlighted shut is a
+ * lit avatar and a paragraph about things the merchant cannot see; the tour
+ * opens it on the way in and closes it again on the way out.
  */
 export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: GuidedTourProps) {
   // Every "which step is next / how many are there / is this the last one"
@@ -70,7 +90,13 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   const [rect, setRect] = useState<Rect | null>(null);
   const [closed, setClosed] = useState(false);
   const [bubbleHeight, setBubbleHeight] = useState(180);
+  const [demoHeight, setDemoHeight] = useState(DEMO_HEIGHT);
+  // The hunt (this step, on this page) that came up empty, so the sample
+  // sheet can be shown for that one and no other. Keyed rather than reset:
+  // the key stops matching on its own the moment either changes.
+  const [missed, setMissed] = useState<string | null>(null);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
+  const demoRef = useRef<HTMLDivElement | null>(null);
 
   const place = placeOf(rawPath, search.get('tab'));
   const productId = place.kind === 'product' ? place.productId : null;
@@ -102,12 +128,19 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   }, [stepId]);
 
   const anchor = step.anchor;
+  const hunt = `${stepId}|${rawPath}`;
+  // A step about a menu has to open it, and stop wanting it open the moment
+  // the tour is over — hence `closed` here rather than an early return.
+  const expands = step.expands === true && !closed;
 
   // Find the anchor, giving the page a few seconds to render it — a server
   // component still streaming in is the normal case, not the exception.
   useEffect(() => {
     let alive = true;
     let attempts = 0;
+    // Set only when the tour itself opened the menu: what the merchant opened
+    // is theirs to close, and what they close again we do not reopen.
+    let opened = false;
     const tick = () => {
       if (!alive) return;
       attempts += 1;
@@ -115,9 +148,17 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
       if (el && needsScroll(el.getBoundingClientRect(), viewport())) {
         el.scrollIntoView({ block: 'center', behavior: 'smooth' });
       }
-      const found = measureAnchor(anchor);
+      if (el && expands && !opened && el.getAttribute('aria-expanded') === 'false') {
+        el.click();
+        opened = true;
+      }
+      const found = measureAnchor(anchor, expands);
       setRect(found);
-      if (found || !anchor || attempts >= ANCHOR_ATTEMPTS) return;
+      if (!found && attempts >= DEMO_AFTER_ATTEMPTS) setMissed(hunt);
+      // The panel renders on the click's own pass, so the measurement that
+      // includes it belongs to the NEXT tick: keep looking until it is in.
+      const waiting = expands ? !panelOf(el) : !found;
+      if (!anchor || !waiting || attempts >= ANCHOR_ATTEMPTS) return;
       window.setTimeout(tick, ANCHOR_POLL_MS);
     };
     // Deferred by a tick rather than run inline: looking before the paint
@@ -126,20 +167,25 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
     return () => {
       alive = false;
       window.clearTimeout(first);
+      if (!opened || !anchor) return;
+      const el = document.querySelector<HTMLElement>(`[data-tour="${anchor}"]`);
+      // Leaving the step puts the page back as it was found — but only if the
+      // menu is still open, since clicking a shut one would open it instead.
+      if (el?.getAttribute('aria-expanded') === 'true') el.click();
     };
-  }, [anchor, rawPath]);
+  }, [anchor, hunt, expands]);
 
   // The page moves under the tour: sticky headers collapse, images load, the
   // merchant scrolls. The light has to stay on the same element.
   useEffect(() => {
-    const onMove = () => setRect(measureAnchor(anchor));
+    const onMove = () => setRect(measureAnchor(anchor, expands));
     window.addEventListener('scroll', onMove, true);
     window.addEventListener('resize', onMove);
     return () => {
       window.removeEventListener('scroll', onMove, true);
       window.removeEventListener('resize', onMove);
     };
-  }, [anchor]);
+  }, [anchor, expands]);
 
   // The bubble's own height decides whether it fits below the spotlight, and
   // the copy is translated — German runs two lines longer than English on the
@@ -149,6 +195,13 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
     const h = bubbleRef.current?.offsetHeight;
     if (h && Math.abs(h - bubbleHeight) > 1) setBubbleHeight(h);
   }, [bubbleHeight, stepId, rect]);
+
+  // The sample sheet is measured the same way and for the same reason: its
+  // height is what places it, and its copy is translated too.
+  useLayoutEffect(() => {
+    const h = demoRef.current?.offsetHeight;
+    if (h && Math.abs(h - demoHeight) > 1) setDemoHeight(h);
+  }, [demoHeight, stepId, rect]);
 
   // Leaving must always be one gesture away: Escape, the cross, or the link.
   useEffect(() => {
@@ -185,8 +238,15 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
   // the very step they asked to see.
   const stepHref = hrefFor(step, { siteId: currentSiteId, productId });
   const mustTravel = !onRightPage && stepHref !== null;
-  const spot = rect ? spotlightOf(rect) : null;
   const vp = viewport();
+  // Nothing on the page to point at, but this step carries an illustration:
+  // the tour draws its own sample product sheet and lights that up, rather
+  // than explaining a product to someone whose catalogue is still empty. The
+  // moment the real element shows up, it wins.
+  const demo: TourDemo | null = rect === null && missed === hunt ? (step.demo ?? null) : null;
+  const demoBox = demoPanel(vp, DEMO_WIDTH, demoHeight);
+  const target = rect ?? (demo ? demoBox : null);
+  const spot = target ? spotlightOf(target) : null;
   const bubble: BubblePlacement = spot
     ? placeBubble(spot, vp, bubbleHeight, step.side ?? 'bottom')
     : centreBubble(vp, bubbleHeight);
@@ -209,6 +269,7 @@ export function GuidedTour({ initialStep, siteId, chapter, onStep, onEnd }: Guid
           style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }}
         />
       ) : null}
+      {demo ? <DemoSheet box={demoBox} cardRef={demoRef} lit={demo === 'models'} /> : null}
 
       <div
         ref={bubbleRef}
@@ -319,10 +380,94 @@ function Cutout({
   );
 }
 
-/** The anchor's box right now, or null when the page is not showing it. */
-function measureAnchor(anchor: string | undefined): Rect | null {
+/**
+ * The product sheet the tour draws when the merchant has none of their own.
+ *
+ * The steps about a product used to point at an empty list on a fresh
+ * account: a lit rectangle with nothing in it, under a paragraph describing
+ * what it would have contained. This is the example instead — inert, marked
+ * as one, and never written anywhere. `lit` picks out the model line, which
+ * is what the following step is about.
+ */
+function DemoSheet({
+  box,
+  cardRef,
+  lit
+}: {
+  box: Rect;
+  cardRef: RefObject<HTMLDivElement | null>;
+  lit: boolean;
+}) {
+  const t = useTranslations('Tour');
+  return (
+    <div
+      ref={cardRef}
+      data-testid="tour-demo"
+      className="pointer-events-none absolute flex flex-col gap-3 rounded-lg border border-[var(--border)] bg-[var(--background)] p-4 shadow-2xl"
+      style={{ top: box.top, left: box.left, width: box.width }}
+    >
+      <div className="flex items-start gap-3">
+        <div className="grid size-12 shrink-0 place-items-center rounded-md bg-[var(--default)] text-[var(--muted)]">
+          <ImageIcon className="size-5" aria-hidden />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="truncate text-sm font-medium">{t('demo.title')}</span>
+            <span className="rounded bg-[var(--accent)]/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[var(--accent)]">
+              {t('demo.badge')}
+            </span>
+          </div>
+          <span className="font-mono text-xs text-[var(--muted)]">
+            {t('demo.score', { score: DEMO_SCORE })}
+          </span>
+        </div>
+      </div>
+      <div
+        className={`rounded-md border px-2.5 py-1.5 text-[11px] ${
+          lit
+            ? 'border-[var(--accent)] text-[var(--accent)]'
+            : 'border-dashed border-[var(--border)] text-[var(--muted)]'
+        }`}
+      >
+        {t('demo.models')}
+      </div>
+      <p className="text-[11px] leading-relaxed text-[var(--muted)] italic">{t('demo.note')}</p>
+    </div>
+  );
+}
+
+/** The dropdown an anchor opens, while it is open. */
+function panelOf(el: HTMLElement | null): HTMLElement | null {
+  if (!el) return null;
+  const id = el.getAttribute('aria-controls');
+  const named = id ? document.getElementById(id) : null;
+  if (named) return named;
+  // Nothing declares `aria-controls` here: the menu is the panel rendered
+  // beside the button, inside the wrapper that positions it.
+  return (
+    el.parentElement?.querySelector<HTMLElement>(
+      '[role="menu"], [role="listbox"], [role="dialog"]'
+    ) ?? null
+  );
+}
+
+/**
+ * The anchor's box right now, or null when the page is not showing it.
+ *
+ * `withPanel` widens it to cover the dropdown the anchor has open, so the
+ * light falls on the menu and not only on the button that opened it.
+ */
+function measureAnchor(anchor: string | undefined, withPanel = false): Rect | null {
   if (!anchor) return null;
   const el = document.querySelector<HTMLElement>(`[data-tour="${anchor}"]`);
+  const base = boxOf(el);
+  if (!base) return null;
+  if (!withPanel) return base;
+  const panel = boxOf(panelOf(el));
+  return panel ? union(base, panel) : base;
+}
+
+function boxOf(el: HTMLElement | null): Rect | null {
   if (!el) return null;
   const r = el.getBoundingClientRect();
   if (r.width === 0 && r.height === 0) return null;

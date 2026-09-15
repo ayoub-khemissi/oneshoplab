@@ -72,7 +72,7 @@
     "step2Title": "ショップをつなぐ",
     "step2Description": "WooCommerce ではプラグインを入れ、Shopify と Wix ではアプリを許可してください。2分ほどで終わります。以後 OneShopLab は本当の商品ページを読み、あなたが承認したものだけを書き戻します。",
     "step3Title": "生成して反映する",
-    "step3Description": "テキストモデル（{budgetModel}、{balancedModel}、{premiumModel}）と、{imageModel} による画像品質（1K・2K・4K）を選べます。承認なしに送られることはなく、取り消しもワンクリックです。",
+    "step3Description": "テキストモデル（{budgetModel}、{balancedModel}、{premiumModel}）と、{imageModel} による画像品質（1K・2K・4K）とフォーマット（元のまま・正方形・モバイル・バナー）を選べます。承認なしに送られることはなく、取り消しもワンクリックです。",
     "compatibleWith": "対応",
     "seoTitle": "OneShopLab — ショップをつないで、AI でカタログを最適化",
     "seoDescription": "Shopify・WooCommerce・Wix と接続。1分の無料診断のあと、AI がタイトル、説明、タグ、写真を書き直します。承認すればそのままショップに反映されます。",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "ストア言語",
+    "buttonTitle": "サイトの言語",
+    "unknownTitle": "言語が不明です。このショップの言語を選択してください",
+    "unknownShort": "言語は？",
     "hint": "このストアの全AI生成の言語を決定。ISOコード(ja)または自言語名(日本語)を入力。",
     "placeholder": "言語を選択…",
     "searchPlaceholder": "コードまたは名前で検索",
@@ -1053,7 +1056,9 @@
     "q15q": "ストア内の写真を直接編集できますか？",
     "q15a": "はい、プラットフォームが対応する範囲で。生成画像の追加、ギャラリーの並べ替え、メイン写真の選択、代替テキストの作成ができます。OneShopLab は接続側が宣言した操作だけを提示し、静かに失敗する操作は決して出しません。代替テキストは生成画像1枚ごとの価格に含まれています。",
     "q16q": "ストアの接続が切れたらどうなりますか？",
-    "q16a": "何も送信されません。同期関連のカードやボタンは画面から消え、新しい送信は拒否され、待機中の変更は到達可能なストアがないまま10分経つと失敗としてマークされます。無限に回り続けることはありません。ストアを再接続し、ワンクリックで再送してください。"
+    "q16a": "何も送信されません。同期関連のカードやボタンは画面から消え、新しい送信は拒否され、待機中の変更は到達可能なストアがないまま10分経つと失敗としてマークされます。無限に回り続けることはありません。ストアを再接続し、ワンクリックで再送してください。",
+    "q17q": "生成される画像のフォーマットは選べますか？",
+    "q17a": "はい。画像品質の隣でフォーマットを選べます。元の写真の比率、正方形（1:1）、モバイル（9:16）、バナー（16:9）です。画像モデルが最初からその構図で生成するため、あとから切り抜くことはありません。選択は商品ページ、アカウント設定、ストアの一括生成設定にあります。一度も選ばなかったアカウントは元の比率のままです。"
   },
   "Legal": {
     "privacyTitle": "プライバシーポリシー",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "了解しました。生成は完了と同時に送信されます。",
     "autoSendPromptDoneOff": "了解しました。承認なしにストアへ送られることはありません。"
   },
+  "ImageFormats": {
+    "label": "画像フォーマット",
+    "hint": "生成される画像の形です。特定の比率が必要な掲載先でなければ、元のままで構いません。",
+    "auto": {
+      "name": "元のまま",
+      "hint": "元の写真の比率をそのまま使います。"
+    },
+    "square": {
+      "name": "正方形",
+      "hint": "マーケットプレイスのグリッドやカタログのサムネイル向け。"
+    },
+    "mobile": {
+      "name": "モバイル",
+      "hint": "スマホ全画面、ストーリーズやリール向け。"
+    },
+    "banner": {
+      "name": "バナー",
+      "hint": "ヒーローバナーやコレクションバナー向け。"
+    },
+    "clampedNote": "画像モデルは 1:1 を 2K までに制限します。4K の正方形は 2K で生成されます。"
+  },
   "Tour": {
     "ariaLabel": "ガイドツアー",
     "counter": "ステップ {n}／{total}",
@@ -2005,6 +2031,60 @@
       "photos": "写真",
       "settings": "設定とアカウント"
     },
-    "goThere": "そこへ移動"
+    "goThere": "そこへ移動",
+    "demo": {
+      "badge": "サンプル",
+      "title": "ワイヤレスヘッドホン",
+      "score": "商品ページのスコア：{score}/100",
+      "models": "テキストモデル · 画像品質",
+      "note": "これはサンプル商品です。カタログを取り込むと、あなたの商品がここに並びます。"
+    }
+  },
+  "ExportCatalog": {
+    "back": "ショップに戻る",
+    "title": "カタログのエクスポート",
+    "subtitle": "{domain} を閲覧し、必要な列だけを CSV でダウンロードできます。",
+    "exportCsv": "{count} 件の商品をエクスポート",
+    "exportOne": "この商品をエクスポート",
+    "preparing": "準備中…",
+    "rateLimited": "エクスポートが多すぎます。{seconds} 秒後にお試しください",
+    "failed": "エクスポートに失敗しました。もう一度お試しください",
+    "searchPlaceholder": "商品名・SKU・ブランドで検索",
+    "searchLabel": "カタログを検索",
+    "statusLabel": "商品のステータス",
+    "status_active": "有効",
+    "status_archived": "アーカイブ済み",
+    "status_all": "すべて",
+    "columnsLabel": "エクスポートする列",
+    "columnsCount": "{count} 件選択中",
+    "docs": "ファイルはカンマ区切りの UTF-8 CSV で、1 商品につき 1 行です。画像はファイルではなく、ショップへのリンクとして書き出されます。1 回のエクスポートには、絞り込み条件に一致する商品を最大 {max} 件まで含みます。",
+    "results": "{count} 件の商品 — {pages} ページ中 {page} ページ目",
+    "empty": "この条件に一致する商品はありません。",
+    "sortBy": "{column} で並べ替え",
+    "sortLabel": "並べ替え",
+    "sortAsc": "昇順",
+    "sortDesc": "降順",
+    "pagination": "カタログのページ",
+    "pageSize": "1 ページあたり {size} 件",
+    "column_title": "商品名",
+    "column_sku": "SKU",
+    "column_vendor": "ブランド",
+    "column_productType": "種類",
+    "column_price": "価格",
+    "column_currency": "通貨",
+    "column_status": "ステータス",
+    "column_tags": "タグ",
+    "column_description": "説明",
+    "column_descriptionHtml": "説明（HTML）",
+    "column_imageUrls": "画像リンク",
+    "column_imageAlts": "代替テキスト",
+    "column_imageCount": "画像数",
+    "column_variantCount": "バリエーション",
+    "column_variantSkus": "バリエーション SKU",
+    "column_handle": "ハンドル",
+    "column_sourceId": "ショップ ID",
+    "column_sourceUrl": "商品 URL",
+    "column_sourceUpdatedAt": "ショップでの更新",
+    "column_updatedAt": "更新日"
   }
 }

@@ -3,6 +3,8 @@
 import { Checkbox, Label } from '@heroui/react';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
+import { imageFormatChoices, resolveImageFormatId, type ImageFormatId } from '@/entities/ai-model';
+import { ImageFormatPicker } from '@/shared/ui';
 
 /**
  * Shared bulk-generation prefs model + a pure controlled editor.
@@ -18,12 +20,17 @@ export const ALL_ANGLES: ImageAngle[] = ['lifestyle', 'studio', 'inuse'];
 export interface BulkPrefs {
   fields: Record<BulkFieldKey, boolean>;
   imageAngles: ImageAngle[];
+  /** Output ratio for every image this run produces. Optional on the way in
+   *  (prefs saved before formats existed have none) — canonicalizePrefs
+   *  fills it with 'auto', the shape those runs already produced. */
+  imageFormat?: ImageFormatId;
 }
 
 /** Mirror of the server's resolveBulkPrefs: stable field order, angles
- *  filtered to canonical order, images-on + 0 angles → all 3. Keeping
- *  the client shape identical to what the server persists makes the
- *  saved-state key stable (no echo loop, no last-write race). */
+ *  filtered to canonical order, images-on + 0 angles → all 3, unknown or
+ *  missing ratio → 'auto'. Keeping the client shape identical to what the
+ *  server persists makes the saved-state key stable (no echo loop, no
+ *  last-write race). */
 export function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
   const fields: Record<BulkFieldKey, boolean> = {
     title: p.fields.title !== false,
@@ -36,11 +43,15 @@ export function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
   if (fields.images && imageAngles.length === 0) {
     imageAngles = [...ALL_ANGLES];
   }
-  return { fields, imageAngles };
+  return { fields, imageAngles, imageFormat: resolveImageFormatId(p.imageFormat) };
 }
 
 export const prefsKey = (p: BulkPrefs): string =>
-  JSON.stringify({ fields: p.fields, imageAngles: p.imageAngles });
+  JSON.stringify({
+    fields: p.fields,
+    imageAngles: p.imageAngles,
+    imageFormat: resolveImageFormatId(p.imageFormat)
+  });
 
 export const noFieldsSelected = (p: BulkPrefs): boolean =>
   !p.fields.title && !p.fields.description && !p.fields.tags && !p.fields.images;
@@ -92,6 +103,7 @@ export function BulkPrefsEditor({
   const t = useTranslations('BulkGenerate');
   // Image-angle labels are already translated under Report.aiAngle.
   const tAngle = useTranslations('Report');
+  const tFormat = useTranslations('ImageFormats');
   const uid = useId();
 
   const fieldLabels: Record<BulkFieldKey, string> = {
@@ -160,6 +172,20 @@ export function BulkPrefsEditor({
                 />
               );
             })}
+          </div>
+          <span className="text-[11px] font-medium text-[var(--muted)] pl-3 pt-1">
+            {tFormat('label')}
+          </span>
+          <div className="pl-3 pb-1">
+            <ImageFormatPicker
+              size="sm"
+              disabled={disabled}
+              value={resolveImageFormatId(value.imageFormat)}
+              options={imageFormatChoices(tFormat)}
+              onChange={(id) =>
+                onChange(canonicalizePrefs({ ...value, imageFormat: id as ImageFormatId }))
+              }
+            />
           </div>
         </div>
       ) : null}

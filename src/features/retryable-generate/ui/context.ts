@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { ChatModelId, ImageQualityId } from '@/entities/ai-model';
+import type { ChatModelId, ImageFormatId, ImageQualityId } from '@/entities/ai-model';
 import type { GenField } from './generate-button';
 import type { FieldState } from './state';
 
@@ -15,8 +15,12 @@ export interface ContextValue {
   // the chatModelId / imageQualityId sent to /api/products/generate.
   chatModelId: ChatModelId;
   imageQualityId: ImageQualityId;
+  /** Output ratio. Free of cost implications (kie prices per resolution,
+   *  not per shape), so it only travels to the API — it never enters costFor. */
+  imageFormatId: ImageFormatId;
   setChatModelId: (id: ChatModelId) => void;
   setImageQualityId: (id: ImageQualityId) => void;
+  setImageFormatId: (id: ImageFormatId) => void;
   creditsBalance: number;
   costFor: (field: GenField) => number;
   canAfford: (field: GenField) => boolean;

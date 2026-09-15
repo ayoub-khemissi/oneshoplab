@@ -48,6 +48,40 @@ test.describe('the first-store walkthrough', () => {
     await ctx.close();
   });
 
+  test('shows a sample product, and opens the account menu it points at', async ({ browser }) => {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    await page.goto('/fr/signup');
+    await page.fill('input[name="email"]', `tour-demo-${Date.now()}@test.local`);
+    await page.fill('input[name="password"]', 'tour-password-1');
+    await page.getByRole('button', { name: 'Créer mon compte' }).click();
+    await page.waitForURL(/\/fr\/dashboard/);
+
+    const tour = page.locator(TOUR);
+    const next = page.locator('[data-testid="tour-next"]');
+    const stepOn = async (id: string) => {
+      while ((await tour.getAttribute('data-step')) !== id) await next.click();
+    };
+
+    // This account has no store and no catalogue, so the product step has an
+    // empty page to point at: it must draw the example instead.
+    await stepOn('product');
+    await expect(page.locator('[data-testid="tour-demo"]')).toBeVisible();
+
+    // The last step is about what is INSIDE the account menu, so the tour
+    // opens it — a spotlight on a shut dropdown explains nothing.
+    await stepOn('tips');
+    const avatar = page.locator('[data-tour="account-menu"]');
+    await expect(avatar).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('[role="menu"]')).toBeVisible();
+
+    // And leaving the step puts the page back the way it was found.
+    await page.locator('[aria-label="Précédent"]').click();
+    await expect(tour).not.toHaveAttribute('data-step', 'tips');
+    await expect(avatar).toHaveAttribute('aria-expanded', 'false');
+    await ctx.close();
+  });
+
   test('never opens by itself for an account that already runs several stores', async ({
     page
   }) => {

@@ -4,7 +4,8 @@ import { Spinner } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
-import { ModalCloseButton, useModalHistory } from '@/shared/ui';
+import { imageFormatChoices } from '@/entities/ai-model';
+import { ImageFormatPicker, ModalCloseButton, useModalHistory } from '@/shared/ui';
 import type { ImageAngle, NewImagePayload } from './types';
 
 interface NewImageModalProps {
@@ -12,6 +13,9 @@ interface NewImageModalProps {
   isReplace: boolean;
   /** What this product's prompt was last time — the merchant does not retype it. */
   initialCustomPrompt?: string;
+  /** The account's default output ratio; this modal can override it for one
+   *  image without touching the preference. */
+  initialImageFormat: string;
   /** Persists the prompt so the next visit starts where this one left off. */
   onSavePrompt?: (prompt: string) => void;
   onCancel: () => void;
@@ -23,11 +27,15 @@ export function NewImageModal({
   costPerImage,
   isReplace,
   initialCustomPrompt = '',
+  initialImageFormat,
   onSavePrompt,
   onCancel,
   onSubmit
 }: NewImageModalProps) {
   const t = useTranslations('AiImageGrid');
+  const tFormat = useTranslations('ImageFormats');
+  const formatOptions = imageFormatChoices(tFormat);
+  const [imageFormatId, setImageFormatId] = useState<string>(initialImageFormat);
   // A saved prompt means they wrote one before: start on that option rather
   // than making them find it again.
   const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'lifestyle');
@@ -56,7 +64,7 @@ export function NewImageModal({
     setSubmitting(true);
     try {
       if (angle === 'custom') onSavePrompt?.(customPrompt.trim());
-      const ok = await onSubmit({ angle, customPrompt: customPrompt.trim() });
+      const ok = await onSubmit({ angle, customPrompt: customPrompt.trim(), imageFormatId });
       if (!ok) setSubmitting(false);
     } catch {
       setSubmitting(false);
@@ -129,6 +137,17 @@ export function NewImageModal({
           {presets.map(option)}
         </div>
         {option(customOption)}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--muted)]">
+            {tFormat('label')}
+          </span>
+          <ImageFormatPicker
+            size="sm"
+            value={imageFormatId}
+            options={formatOptions}
+            onChange={setImageFormatId}
+          />
+        </div>
         {angle === 'custom' ? (
           <textarea
             value={customPrompt}

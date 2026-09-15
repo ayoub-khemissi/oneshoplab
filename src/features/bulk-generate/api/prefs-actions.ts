@@ -3,6 +3,7 @@
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { IMAGE_FORMAT_IDS } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
 import { resolveBulkPrefs } from '../model/types';
 import { db } from '@/shared/db';
@@ -23,7 +24,9 @@ const Schema = z.union([
       tags: z.boolean(),
       images: z.boolean()
     }),
-    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3)
+    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3),
+    /** Optional so a client that predates formats still validates. */
+    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional()
   })
 ]);
 
@@ -47,7 +50,8 @@ export async function updateUserDefaultBulkPrefsAction(formData: FormData): Prom
       ? null
       : resolveBulkPrefs({
           fields: parsed.data.fields,
-          imageAngles: parsed.data.imageAngles
+          imageAngles: parsed.data.imageAngles,
+          imageFormat: parsed.data.imageFormat
         });
 
   await db.update(users).set({ defaultBulkPrefs: value }).where(eq(users.id, session.user.id));

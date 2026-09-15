@@ -15,6 +15,7 @@ import {
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   imageRetentionDaysForPlan,
+  resolveImageFormatId,
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
@@ -43,6 +44,7 @@ import { generateAltTextAction } from '@/features/generate-alt-text/actions';
 import { altTextCredits, findCachedSuggestions } from '@/entities/generation-job';
 import { isUsableKey } from '@/features/integrations';
 import { touchProjectLastView } from '@/features/manage-project';
+import { ExportButton } from '@/features/export-catalog/client';
 import { PastGenerationsSection } from './past-generations-section';
 import { BackArrow, ScoreBadge } from './score-badge';
 import { SuggestionsCard } from './suggestions-card';
@@ -149,6 +151,7 @@ export async function DashboardProductPage({
 
   const t = await getTranslations('Product');
   const tCredits = await getTranslations('Credits');
+  const tExport = await getTranslations('ExportCatalog');
 
   const balance = session.user.creditsBalance ?? 0;
 
@@ -158,6 +161,9 @@ export async function DashboardProductPage({
   const userChatModel: ChatModelId = resolveChatModelId(session.user.preferredChatModel);
   const userImageQuality: ImageQualityId =
     (session.user.preferredImageQuality as ImageQualityId | undefined) ?? DEFAULT_IMAGE_QUALITY;
+  // Output ratio: 'auto' for anyone who never picked one, i.e. everybody
+  // until this shipped — so nothing about existing accounts changes.
+  const userImageFormat = resolveImageFormatId(session.user.preferredImageFormat);
 
   const { inFlightChatJobs, recentFailedChatJobs, inFlightAlts, inFlightSuggestionStartedAtMs } =
     await loadRecentChatJobs(productId);
@@ -228,6 +234,11 @@ export async function DashboardProductPage({
           {t('backToDashboard')}
         </Link>
         <div className="flex items-center gap-3">
+          <ExportButton
+            compact
+            href={`/api/projects/${siteId}/export?productId=${productId}`}
+            label={tExport('exportOne')}
+          />
           <ScoreBadge score={product.score} />
           <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
             <Coins className="size-3.5" aria-hidden />
@@ -304,6 +315,7 @@ export async function DashboardProductPage({
         productId={productId}
         initialChatModelId={userChatModel}
         initialImageQualityId={userImageQuality}
+        initialImageFormatId={userImageFormat}
         initialCustomInstructions={productInstructions}
         creditsBalance={balance}
         productArchived={archived}
@@ -346,6 +358,7 @@ export async function DashboardProductPage({
             tagsHistory={tagsHistory}
             liveImageJobs={liveImageJobs}
             costPerImage={costPerImage}
+            imageFormatId={userImageFormat}
             retentionDays={retentionDays}
             changeByJobId={changeByJobId}
             canApplyToStore={canApplyToStore}

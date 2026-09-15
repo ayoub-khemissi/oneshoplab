@@ -72,7 +72,7 @@
     "step2Title": "Mağazayı bağla",
     "step2Description": "Eklentimizi WooCommerce'e kur ya da uygulamamıza Shopify ve Wix'te izin ver. İki dakika sürer. Bundan sonra OneShopLab gerçek ürün sayfalarını okur ve oraya yalnızca onayladığın şeyi yazar.",
     "step3Title": "Üret ve uygula",
-    "step3Description": "Metin modelini seç — {budgetModel}, {balancedModel} ya da {premiumModel} — ve görsel kalitesini (1K, 2K veya 4K) {imageModel} ile belirle. Onayın olmadan hiçbir şey gitmez, tek tıkla geri alınır.",
+    "step3Description": "Metin modelini seç — {budgetModel}, {balancedModel} ya da {premiumModel} — ve görsel kalitesini (1K, 2K veya 4K) ile formatını (orijinal, kare, mobil veya afiş) {imageModel} ile belirle. Onayın olmadan hiçbir şey gitmez, tek tıkla geri alınır.",
     "compatibleWith": "Uyumlu olduğu",
     "seoTitle": "OneShopLab — Mağazanı bağla, kataloğunu yapay zekâyla iyileştir",
     "seoDescription": "Shopify, WooCommerce veya Wix'i bağla: bir dakikada ücretsiz analiz, ardından yapay zekâ başlıkları, açıklamaları, etiketleri ve fotoğrafları yeniden yazsın. Sen onayla, mağazana uygulansın.",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "Mağaza dili",
+    "buttonTitle": "Site dili",
+    "unknownTitle": "Dil bilinmiyor — bu mağazanın dilini seçin",
+    "unknownShort": "Dil?",
     "hint": "Bu mağazadaki tüm yapay zekâ üretimlerini yönlendirir. Bulmak için ISO kodunu (tr) veya kendi adını (Türkçe) yazın.",
     "placeholder": "Bir dil seçin…",
     "searchPlaceholder": "Kod veya ada göre ara",
@@ -1053,7 +1056,9 @@
     "q15q": "Fotoğraflarımı doğrudan mağazada düzenleyebilir misiniz?",
     "q15a": "Evet, platformunuzun yapabildiği ölçüde: üretilen bir görsel ekleme, galeriyi yeniden sıralama, ana fotoğrafı seçme, alternatif metinleri yazma. OneShopLab yalnızca bağlantınızın bildirdiği işlemleri sunar — sessizce başarısız olacak bir işlemi asla. Alternatif metin, üretilen her görselin fiyatına dahildir.",
     "q16q": "Mağazamın bağlantısı kesilirse ne olur?",
-    "q16a": "Hiçbir şey gönderilmez. Senkronizasyonla ilgili kartlar ve düğmeler arayüzden kaybolur, yeni bir gönderim reddedilir ve bekleyen bir değişiklik, on dakika boyunca erişilebilir mağaza olmazsa başarısız olarak işaretlenir — sonsuza dek dönmek yerine. Mağazayı yeniden bağlayın ve tek tıkla yeniden gönderin."
+    "q16a": "Hiçbir şey gönderilmez. Senkronizasyonla ilgili kartlar ve düğmeler arayüzden kaybolur, yeni bir gönderim reddedilir ve bekleyen bir değişiklik, on dakika boyunca erişilebilir mağaza olmazsa başarısız olarak işaretlenir — sonsuza dek dönmek yerine. Mağazayı yeniden bağlayın ve tek tıkla yeniden gönderin.",
+    "q17q": "Üretilen görsellerin formatını seçebilir miyim?",
+    "q17a": "Evet. Görsel kalitesinin yanında bir format seçersiniz: kaynak fotoğrafın oranı, kare (1:1), mobil (9:16) veya afiş (16:9). Görsel modeli kareyi doğrudan öyle kurar — sonradan kırpılmaz. Seçim ürün sayfasında, hesap tercihlerinizde ve bir mağazanın toplu üretim ayarlarında bulunur; hiç seçim yapmayan hesaplar kaynak oranını korur."
   },
   "Legal": {
     "privacyTitle": "Gizlilik Politikası",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "Kaydedildi — üretimler hazır olur olmaz gönderilecek.",
     "autoSendPromptDoneOff": "Kaydedildi — onayınız olmadan mağazaya hiçbir şey gitmez."
   },
+  "ImageFormats": {
+    "label": "Görsel formatı",
+    "hint": "Üretilen görsellerin biçimi. Bir yerleşim belirli bir oran gerektirmiyorsa orijinali koruyun.",
+    "auto": {
+      "name": "Orijinal",
+      "hint": "Kaynak fotoğrafın oranını korur."
+    },
+    "square": {
+      "name": "Kare",
+      "hint": "Pazar yeri ızgaraları ve katalog küçük görselleri."
+    },
+    "mobile": {
+      "name": "Mobil",
+      "hint": "Tam ekran telefon, hikâyeler ve reels."
+    },
+    "banner": {
+      "name": "Afiş",
+      "hint": "Öne çıkan ve koleksiyon afişleri."
+    },
+    "clampedNote": "Görsel modeli 1:1 oranını 2K ile sınırlar — 4K kare 2K olarak üretilir."
+  },
   "Tour": {
     "ariaLabel": "Rehberli tur",
     "counter": "Adım {n} / {total}",
@@ -2005,6 +2031,60 @@
       "photos": "Fotoğraflar",
       "settings": "Ayarlar ve hesap"
     },
-    "goThere": "Oraya götür"
+    "goThere": "Oraya götür",
+    "demo": {
+      "badge": "Örnek",
+      "title": "Kablosuz kulaklık",
+      "score": "Ürün sayfası puanı: {score}/100",
+      "models": "Metin modeli · Görsel kalitesi",
+      "note": "Örnek ürün: kataloğunuz geldiğinde kendi ürünleriniz burada görünür."
+    }
+  },
+  "ExportCatalog": {
+    "back": "Mağazaya dön",
+    "title": "Katalog dışa aktarma",
+    "subtitle": "{domain} içinde gezinin ve ihtiyacınız olan sütunları CSV olarak indirin.",
+    "exportCsv": "{count} ürünü dışa aktar",
+    "exportOne": "Bu ürünü dışa aktar",
+    "preparing": "Hazırlanıyor…",
+    "rateLimited": "Çok fazla dışa aktarma — {seconds} sn sonra deneyin",
+    "failed": "Dışa aktarma başarısız oldu, tekrar deneyin",
+    "searchPlaceholder": "Ad, SKU veya marka arayın",
+    "searchLabel": "Katalogda ara",
+    "statusLabel": "Ürün durumu",
+    "status_active": "Aktif",
+    "status_archived": "Arşivlenmiş",
+    "status_all": "Tümü",
+    "columnsLabel": "Dışa aktarılacak sütunlar",
+    "columnsCount": "{count} seçili",
+    "docs": "Dosya, virgülle ayrılmış UTF-8 bir CSV'dir; her ürün bir satırdır. Görseller dosya olarak değil, mağazanıza bağlantı olarak aktarılır. Bir dışa aktarma, filtrelerinize uyan en fazla {max} ürün içerir.",
+    "results": "{count} ürün — sayfa {page} / {pages}",
+    "empty": "Bu filtrelere uyan ürün yok.",
+    "sortBy": "{column} ölçütüne göre sırala",
+    "sortLabel": "Sırala",
+    "sortAsc": "Artan",
+    "sortDesc": "Azalan",
+    "pagination": "Katalog sayfaları",
+    "pageSize": "Sayfa başına {size} ürün",
+    "column_title": "Ad",
+    "column_sku": "SKU",
+    "column_vendor": "Marka",
+    "column_productType": "Tür",
+    "column_price": "Fiyat",
+    "column_currency": "Para birimi",
+    "column_status": "Durum",
+    "column_tags": "Etiketler",
+    "column_description": "Açıklama",
+    "column_descriptionHtml": "Açıklama (HTML)",
+    "column_imageUrls": "Görsel bağlantıları",
+    "column_imageAlts": "Alternatif metinler",
+    "column_imageCount": "Görseller",
+    "column_variantCount": "Varyantlar",
+    "column_variantSkus": "Varyant SKU'ları",
+    "column_handle": "Tanımlayıcı",
+    "column_sourceId": "Mağaza kimliği",
+    "column_sourceUrl": "Ürün URL'si",
+    "column_sourceUpdatedAt": "Mağazada güncellendi",
+    "column_updatedAt": "Güncellendi"
   }
 }

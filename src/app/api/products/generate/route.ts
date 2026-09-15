@@ -9,6 +9,7 @@ import {
   estimateChatCredits,
   IMAGE_MODEL_REGISTRY,
   MAX_CUSTOM_INSTRUCTIONS_CHARS,
+  resolveImageFormatId,
   type ChatModelId,
   type ImageQualityId
 } from '@/entities/ai-model';
@@ -198,6 +199,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     customInstructions?: unknown;
     chatModelId?: unknown;
     imageQualityId?: unknown;
+    imageFormatId?: unknown;
   };
   try {
     body = (await req.json()) ?? {};
@@ -215,6 +217,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const customInstructions = customInstructionsRaw.slice(0, MAX_CUSTOM_INSTRUCTIONS_CHARS);
   const bodyChatModel = typeof body.chatModelId === 'string' ? body.chatModelId : null;
   const bodyImageQuality = typeof body.imageQualityId === 'string' ? body.imageQualityId : null;
+  const bodyImageFormat = typeof body.imageFormatId === 'string' ? body.imageFormatId : null;
 
   if (!siteId || !productId || !VALID_FIELDS.includes(fieldRaw as GenField)) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
@@ -270,6 +273,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       ? (bodyImageQuality as ImageQualityId)
       : (session.user.preferredImageQuality as ImageQualityId | undefined)) ??
     DEFAULT_IMAGE_QUALITY;
+  // Same override-then-preference chain for the output ratio; unknown or
+  // absent resolves to 'auto', which is what this route always sent.
+  const imageFormatId = resolveImageFormatId(bodyImageFormat ?? session.user.preferredImageFormat);
 
   const totalCost = fieldsToRun.reduce((sum, f) => {
     if (f === 'images') return sum + costForImage(imageQualityId) * IMAGE_ANGLES.length;
@@ -306,7 +312,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               sourceImageUrl: sourceImage,
               userPrompt: effectiveImagePrompt(angle, merchantInstructions),
               appUrl: process.env.APP_URL,
-              imageQualityId
+              imageQualityId,
+              imageFormatId
             })
           )
         );

@@ -6,9 +6,11 @@ import { CHAT_MODEL_IDS as ACTIVE_CHAT_MODEL_IDS } from '@/entities/ai-model';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import {
+  IMAGE_FORMAT_IDS,
   IMAGE_QUALITY_IDS,
   users,
   type ChatModelDbId,
+  type ImageFormatDbId,
   type ImageQualityDbId
 } from '@/shared/db/schema';
 
@@ -23,10 +25,12 @@ export async function updateUserPreferencesAction(formData: FormData): Promise<v
 
   const chatModelRaw = String(formData.get('chatModel') ?? '');
   const imageQualityRaw = String(formData.get('imageQuality') ?? '');
+  const imageFormatRaw = String(formData.get('imageFormat') ?? '');
 
   const updates: {
     preferredChatModel?: ChatModelDbId;
     preferredImageQuality?: ImageQualityDbId;
+    preferredImageFormat?: ImageFormatDbId;
   } = {};
 
   if ((ACTIVE_CHAT_MODEL_IDS as readonly string[]).includes(chatModelRaw)) {
@@ -34,6 +38,11 @@ export async function updateUserPreferencesAction(formData: FormData): Promise<v
   }
   if ((IMAGE_QUALITY_IDS as readonly string[]).includes(imageQualityRaw)) {
     updates.preferredImageQuality = imageQualityRaw as ImageQualityDbId;
+  }
+  // Absent from the form (older client, or a caller that only changes the
+  // model) leaves the stored format untouched rather than resetting it.
+  if ((IMAGE_FORMAT_IDS as readonly string[]).includes(imageFormatRaw)) {
+    updates.preferredImageFormat = imageFormatRaw as ImageFormatDbId;
   }
 
   if (Object.keys(updates).length === 0) return;

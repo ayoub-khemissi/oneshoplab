@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import {
   CHAT_MODEL_REGISTRY,
   DEFAULT_IMAGE_QUALITY,
+  IMAGE_FORMAT_IDS,
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,
   type ImageQualityId
@@ -298,7 +299,9 @@ const PrefsSchema = z.union([
       tags: z.boolean(),
       images: z.boolean()
     }),
-    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3)
+    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3),
+    /** Optional so a client that predates formats still validates. */
+    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional()
   })
 ]);
 
@@ -346,7 +349,8 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     // so we persist the canonical shape.
     const resolved = resolveBulkPrefs({
       fields: data.fields,
-      imageAngles: data.imageAngles
+      imageAngles: data.imageAngles,
+      imageFormat: data.imageFormat
     });
     await db.update(projects).set({ bulkPrefs: resolved }).where(eq(projects.id, project.id));
   }

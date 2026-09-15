@@ -59,6 +59,7 @@ export async function startBulkSiteGenerate(opts: {
     customInstructions: opts.customInstructions ?? '',
     fields: prefs.fields,
     imageAngles: prefs.imageAngles,
+    imageFormat: prefs.imageFormat,
     ...(opts.autoSend ? { autoSend: true } : {})
   };
   const result: BulkResult = {
@@ -143,7 +144,13 @@ export async function retryFailedFromBulk(opts: {
     customInstructions: opts.customInstructions,
     totalCreditsBudget: opts.totalCreditsBudget,
     prefs: resolveBulkPrefs(
-      srcInput ? { fields: srcInput.fields, imageAngles: srcInput.imageAngles } : null
+      srcInput
+        ? {
+            fields: srcInput.fields,
+            imageAngles: srcInput.imageAngles,
+            imageFormat: srcInput.imageFormat
+          }
+        : null
     )
   });
   if (!out.ok) return { ok: false, reason: 'already_running' };

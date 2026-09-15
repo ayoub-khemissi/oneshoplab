@@ -64,7 +64,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
   // at launch (legacy jobs with no snapshot → all fields, 3 angles).
   const prefs = resolveBulkPrefs({
     fields: input.fields,
-    imageAngles: input.imageAngles
+    imageAngles: input.imageAngles,
+    imageFormat: input.imageFormat
   });
   const wanted = effectiveFields(prefs);
 
@@ -211,6 +212,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
                 userPrompt: buildImagePrompt(angle, '', merchantInstructions),
                 appUrl: process.env.APP_URL,
                 imageQualityId: input.imageQualityId,
+                imageFormatId: prefs.imageFormat,
                 silent: true
               })
             )

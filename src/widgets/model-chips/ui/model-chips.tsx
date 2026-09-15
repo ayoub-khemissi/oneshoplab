@@ -8,6 +8,7 @@ import {
   CHAT_MODEL_REGISTRY,
   IMAGE_MODEL_REGISTRY,
   type ChatModelId,
+  type ImageFormatId,
   type ImageQualityId
 } from '@/entities/ai-model';
 import { updateUserPreferencesAction } from '@/features/model-preferences';
@@ -28,16 +29,28 @@ import { ModalCloseButton, useModalHistory } from '@/shared/ui';
 export function ModelChips() {
   const t = useTranslations('Product');
   const modelCopy = useModelCopy();
-  const { chatModelId, imageQualityId, setChatModelId, setImageQualityId } = useGenerateContext();
+  const {
+    chatModelId,
+    imageQualityId,
+    imageFormatId,
+    setChatModelId,
+    setImageQualityId,
+    setImageFormatId
+  } = useGenerateContext();
   const [open, setOpen] = useState(false);
   // Back closes the modal, not the page (see useModalHistory).
   useModalHistory(open, () => setOpen(false));
   const [, startPersist] = useTransition();
 
-  function persist(next: { chatModelId?: ChatModelId; imageQualityId?: ImageQualityId }) {
+  function persist(next: {
+    chatModelId?: ChatModelId;
+    imageQualityId?: ImageQualityId;
+    imageFormatId?: ImageFormatId;
+  }) {
     const fd = new FormData();
     fd.set('chatModel', next.chatModelId ?? chatModelId);
     fd.set('imageQuality', next.imageQualityId ?? imageQualityId);
+    fd.set('imageFormat', next.imageFormatId ?? imageFormatId);
     startPersist(() => {
       // Non-blocking: local state already updated and the in-flight
       // generation call still gets the live override via the request
@@ -50,6 +63,7 @@ export function ModelChips() {
     <ModelPickerChips
       chatModelId={chatModelId}
       imageQualityId={imageQualityId}
+      imageFormatId={imageFormatId}
       onPickChat={(id) => {
         setChatModelId(id);
         persist({ chatModelId: id });
@@ -57,6 +71,10 @@ export function ModelChips() {
       onPickImage={(id) => {
         setImageQualityId(id);
         persist({ imageQualityId: id });
+      }}
+      onPickImageFormat={(id) => {
+        setImageFormatId(id);
+        persist({ imageFormatId: id });
       }}
     />
   );

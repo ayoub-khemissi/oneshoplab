@@ -72,7 +72,7 @@
     "step2Title": "Shop verbinden",
     "step2Description": "Installiere unser Plugin in WooCommerce oder autorisiere unsere App in Shopify und Wix. Das dauert zwei Minuten. Danach liest OneShopLab deine echten Produktseiten und schreibt nur zurück, was du freigegeben hast.",
     "step3Title": "Erzeugen und anwenden",
-    "step3Description": "Wähle dein Textmodell — {budgetModel}, {balancedModel} oder {premiumModel} — und die Bildqualität (1K, 2K oder 4K) mit {imageModel}. Nichts geht ohne deine Freigabe raus, und ein Klick macht alles rückgängig.",
+    "step3Description": "Wähle dein Textmodell — {budgetModel}, {balancedModel} oder {premiumModel} — und die Bildqualität (1K, 2K oder 4K) und das Format (Original, quadratisch, mobil oder Banner) mit {imageModel}. Nichts geht ohne deine Freigabe raus, und ein Klick macht alles rückgängig.",
     "compatibleWith": "Kompatibel mit",
     "seoTitle": "OneShopLab — Shop verbinden, Katalog mit KI optimieren",
     "seoDescription": "Verbinde Shopify, WooCommerce oder Wix: kostenlose Analyse in einer Minute, dann schreibt die KI Titel, Beschreibungen, Tags und Fotos neu. Du gibst frei, es landet im Shop.",
@@ -706,6 +706,9 @@
   },
   "SiteLanguage": {
     "label": "Shop-Sprache",
+    "buttonTitle": "Sprache der Website",
+    "unknownTitle": "Sprache unbekannt – wählen Sie die Sprache dieses Shops",
+    "unknownShort": "Sprache?",
     "hint": "Bestimmt jede KI-Generierung in diesem Shop. ISO-Code (de) oder den Eigennamen (Deutsch) eingeben.",
     "placeholder": "Sprache wählen…",
     "searchPlaceholder": "Nach Code oder Name suchen",
@@ -1053,7 +1056,9 @@
     "q15q": "Könnt ihr meine Fotos direkt im Shop bearbeiten?",
     "q15a": "Ja, im Rahmen dessen, was deine Plattform kann: ein generiertes Bild hinzufügen, die Galerie umsortieren, das Hauptbild wählen, Alt-Texte schreiben. OneShopLab bietet nur die Aktionen an, die deine Verbindung gemeldet hat – nie eine, die stillschweigend scheitern würde. Der Alt-Text ist im Preis jedes generierten Bildes enthalten.",
     "q16q": "Was passiert, wenn mein Shop getrennt wird?",
-    "q16a": "Nichts wird gesendet. Die Sync-Karten und -Buttons verschwinden aus der Oberfläche, ein neuer Versand wird abgelehnt, und eine wartende Änderung wird nach zehn Minuten ohne erreichbaren Shop als fehlgeschlagen markiert – statt endlos zu kreisen. Verbinde den Shop neu und sende sie mit einem Klick erneut."
+    "q16a": "Nichts wird gesendet. Die Sync-Karten und -Buttons verschwinden aus der Oberfläche, ein neuer Versand wird abgelehnt, und eine wartende Änderung wird nach zehn Minuten ohne erreichbaren Shop als fehlgeschlagen markiert – statt endlos zu kreisen. Verbinde den Shop neu und sende sie mit einem Klick erneut.",
+    "q17q": "Kann ich das Format der generierten Bilder wählen?",
+    "q17a": "Ja. Neben der Bildqualität wählst du ein Format: das Seitenverhältnis des Ausgangsfotos, quadratisch (1:1), mobil (9:16) oder Banner (16:9). Das Bildmodell rahmt die Aufnahme direkt so – nachträglich wird nichts zugeschnitten. Die Auswahl steht auf der Produktseite, in deinen Kontoeinstellungen und in der Massengenerierung eines Shops; Konten ohne eigene Wahl behalten das Ausgangsformat."
   },
   "Legal": {
     "privacyTitle": "Datenschutzerklärung",
@@ -1930,6 +1935,27 @@
     "autoSendPromptDoneOn": "Notiert – Generierungen werden gesendet, sobald sie fertig sind.",
     "autoSendPromptDoneOff": "Notiert – nichts geht ohne deine Freigabe in den Shop."
   },
+  "ImageFormats": {
+    "label": "Bildformat",
+    "hint": "Form der generierten Bilder. Behalten Sie das Original, sofern eine Platzierung kein bestimmtes Seitenverhältnis verlangt.",
+    "auto": {
+      "name": "Original",
+      "hint": "Behält das Seitenverhältnis des Ausgangsfotos."
+    },
+    "square": {
+      "name": "Quadratisch",
+      "hint": "Marktplatz-Raster und Katalog-Thumbnails."
+    },
+    "mobile": {
+      "name": "Mobil",
+      "hint": "Vollbild am Handy, Stories und Reels."
+    },
+    "banner": {
+      "name": "Banner",
+      "hint": "Hero- und Kollektions-Banner."
+    },
+    "clampedNote": "Das Bildmodell begrenzt 1:1 auf 2K — ein 4K-Quadrat wird in 2K erzeugt."
+  },
   "Tour": {
     "ariaLabel": "Geführte Tour",
     "counter": "Schritt {n} von {total}",
@@ -2005,6 +2031,60 @@
       "photos": "Die Fotos",
       "settings": "Einstellungen und Konto"
     },
-    "goThere": "Dorthin bringen"
+    "goThere": "Dorthin bringen",
+    "demo": {
+      "badge": "Beispiel",
+      "title": "Kabellose Kopfhörer",
+      "score": "Bewertung der Produktseite: {score}/100",
+      "models": "Textmodell · Bildqualität",
+      "note": "Beispielprodukt: deine eigenen erscheinen hier, sobald dein Katalog da ist."
+    }
+  },
+  "ExportCatalog": {
+    "back": "Zurück zum Shop",
+    "title": "Katalog-Export",
+    "subtitle": "Durchsuchen Sie {domain} und laden Sie genau die Spalten herunter, die Sie brauchen, als CSV.",
+    "exportCsv": "{count} Produkte exportieren",
+    "exportOne": "Dieses Produkt exportieren",
+    "preparing": "Wird vorbereitet…",
+    "rateLimited": "Zu viele Exporte – in {seconds} s erneut versuchen",
+    "failed": "Der Export ist fehlgeschlagen, bitte erneut versuchen",
+    "searchPlaceholder": "Name, SKU oder Marke suchen",
+    "searchLabel": "Katalog durchsuchen",
+    "statusLabel": "Produktstatus",
+    "status_active": "Aktiv",
+    "status_archived": "Archiviert",
+    "status_all": "Alle",
+    "columnsLabel": "Zu exportierende Spalten",
+    "columnsCount": "{count} ausgewählt",
+    "docs": "Die Datei ist eine UTF-8-CSV mit Komma als Trennzeichen, eine Zeile pro Produkt. Bilder werden als Links zu Ihrem Shop exportiert, nie als Dateien. Ein Export enthält bis zu {max} Produkte, die Ihren Filtern entsprechen.",
+    "results": "{count} Produkte – Seite {page} von {pages}",
+    "empty": "Kein Produkt entspricht diesen Filtern.",
+    "sortBy": "Nach {column} sortieren",
+    "sortLabel": "Sortieren nach",
+    "sortAsc": "Aufsteigend",
+    "sortDesc": "Absteigend",
+    "pagination": "Katalogseiten",
+    "pageSize": "{size} Produkte pro Seite",
+    "column_title": "Name",
+    "column_sku": "SKU",
+    "column_vendor": "Marke",
+    "column_productType": "Typ",
+    "column_price": "Preis",
+    "column_currency": "Währung",
+    "column_status": "Status",
+    "column_tags": "Schlagwörter",
+    "column_description": "Beschreibung",
+    "column_descriptionHtml": "Beschreibung (HTML)",
+    "column_imageUrls": "Bildlinks",
+    "column_imageAlts": "Alt-Texte",
+    "column_imageCount": "Bilder",
+    "column_variantCount": "Varianten",
+    "column_variantSkus": "Varianten-SKUs",
+    "column_handle": "Kennung",
+    "column_sourceId": "Shop-ID",
+    "column_sourceUrl": "Produkt-URL",
+    "column_sourceUpdatedAt": "Im Shop geändert",
+    "column_updatedAt": "Geändert"
   }
 }

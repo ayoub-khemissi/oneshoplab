@@ -29,6 +29,13 @@ export type {
   StatsValueTiers
 } from './lib/commentary';
 export { getEffectiveLanguage } from './lib/language';
+export {
+  languageFromHtml,
+  languageFromText,
+  resolveDetectedLanguage,
+  textFromHtml,
+  type LanguageEvidence
+} from './lib/detect-language';
 export { setStoreLanguage } from './api/store-language';
 export {
   findLatestAuditForProject,

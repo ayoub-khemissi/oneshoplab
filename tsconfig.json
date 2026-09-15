@@ -32,7 +32,9 @@
     ".next-e2e/types/**/*.ts",
     ".next-e2e/dev/types/**/*.ts",
     ".next-verify/types/**/*.ts",
-    ".next-verify/dev/types/**/*.ts"
+    ".next-verify/dev/types/**/*.ts",
+    ".next-tour/types/**/*.ts",
+    ".next-tour/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "legacy", ".next", ".next-e2e", ".next-verify", "remotion-ads"]
 }
