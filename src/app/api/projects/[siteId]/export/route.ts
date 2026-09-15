@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   buildCatalogCsv,
+  csvContentType,
   exportFilename,
   loadExportRow,
   loadExportRows,
@@ -63,7 +64,7 @@ export async function GET(
     return NextResponse.json({ error: 'not_found' }, { status: 404 });
   }
 
-  const csv = buildCatalogCsv(rows, query.columns);
+  const csv = buildCatalogCsv(rows, query.columns, query.separator);
   const label = productId
     ? `${project.domain ?? project.name}-${rows[0]?.handle ?? 'product'}`
     : (project.domain ?? project.name ?? 'catalogue');
@@ -71,8 +72,8 @@ export async function GET(
   return new Response(csv, {
     status: 200,
     headers: {
-      'Content-Type': 'text/csv; charset=utf-8',
-      'Content-Disposition': `attachment; filename="${exportFilename(label)}"`,
+      'Content-Type': csvContentType(query.separator),
+      'Content-Disposition': `attachment; filename="${exportFilename(label, query.separator)}"`,
       // Never let a shared cache hold a merchant's catalogue.
       'Cache-Control': 'no-store, private',
       'X-Content-Type-Options': 'nosniff',

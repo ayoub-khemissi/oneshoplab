@@ -1,4 +1,5 @@
 import { COLUMN_BY_KEY, DEFAULT_COLUMN_KEYS, EXPORT_COLUMNS } from '../model/columns';
+import { CSV_SEPARATORS, DEFAULT_SEPARATOR, type CsvSeparatorId } from './csv';
 
 export const PAGE_SIZE = 25;
 /** Deep pagination is a scan; nobody browses to page 400 by hand. */
@@ -17,6 +18,7 @@ export interface ExportQuery {
   q: string | null;
   status: StatusFilter;
   columns: string[];
+  separator: CsvSeparatorId;
 }
 
 export type RawParams = Record<string, string | string[] | undefined>;
@@ -55,7 +57,11 @@ export function parseExportQuery(params: RawParams): ExportQuery {
 
   const columns = parseColumns(first(params.columns));
 
-  return { page, sort, dir, q, status, columns };
+  const sepRaw = first(params.sep) ?? '';
+  const separator: CsvSeparatorId =
+    sepRaw in CSV_SEPARATORS ? (sepRaw as CsvSeparatorId) : DEFAULT_SEPARATOR;
+
+  return { page, sort, dir, q, status, columns, separator };
 }
 
 /** Comma-separated keys → known columns, order preserved, duplicates dropped. */
@@ -87,6 +93,7 @@ export function exportHref(
   if (q.status !== 'active') sp.set('status', q.status);
   const cols = q.columns.join(',');
   if (cols !== DEFAULT_COLUMN_KEYS.join(',')) sp.set('columns', cols);
+  if (q.separator !== DEFAULT_SEPARATOR) sp.set('sep', q.separator);
   const s = sp.toString();
   return s ? `${base}?${s}` : base;
 }

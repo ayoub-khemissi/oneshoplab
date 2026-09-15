@@ -1,5 +1,11 @@
 import { take, type TakeResult } from '@/shared/api';
-import { CSV_BOM, toCsv } from '../lib/csv';
+import {
+  CSV_BOM,
+  csvFileExtension,
+  DEFAULT_SEPARATOR,
+  toCsv,
+  type CsvSeparatorId
+} from '../lib/csv';
 import { COLUMN_BY_KEY } from '../model/columns';
 import type { ExportRow } from '../model/columns';
 
@@ -17,11 +23,15 @@ export function takeExportToken(userId: string): TakeResult {
 }
 
 /** Build the CSV document for a set of rows and the merchant's column choice. */
-export function buildCatalogCsv(rows: readonly ExportRow[], columnKeys: readonly string[]): string {
+export function buildCatalogCsv(
+  rows: readonly ExportRow[],
+  columnKeys: readonly string[],
+  separator: CsvSeparatorId = DEFAULT_SEPARATOR
+): string {
   const columns = columnKeys.map((k) => COLUMN_BY_KEY.get(k)).filter((c) => c != null);
   const header = columns.map((c) => c.header);
   const body = rows.map((row) => columns.map((c) => safeValue(c.value, row)));
-  return CSV_BOM + toCsv(header, body);
+  return CSV_BOM + toCsv(header, body, separator);
 }
 
 /**
@@ -36,13 +46,17 @@ function safeValue(read: (row: ExportRow) => string, row: ExportRow): string {
   }
 }
 
-/** `afrometis-com-catalogue-2026-09-15.csv`, safe on every filesystem. */
-export function exportFilename(label: string, stamp: Date = new Date()): string {
+/** `afrometis-com-2026-09-15.csv`, safe on every filesystem. */
+export function exportFilename(
+  label: string,
+  separator: CsvSeparatorId = DEFAULT_SEPARATOR,
+  stamp: Date = new Date()
+): string {
   const slug =
     label
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
       .slice(0, 60) || 'catalogue';
-  return `${slug}-${stamp.toISOString().slice(0, 10)}.csv`;
+  return `${slug}-${stamp.toISOString().slice(0, 10)}.${csvFileExtension(separator)}`;
 }

@@ -1,7 +1,16 @@
 export { buildCatalogCsv, exportFilename, takeExportToken, EXPORT_BUCKET } from './api/export';
 export { loadExportPage, loadExportRow, loadExportRows } from './api/list';
 export type { ExportPage } from './api/list';
-export { csvCell, toCsv, CSV_BOM } from './lib/csv';
+export {
+  csvCell,
+  csvContentType,
+  csvFileExtension,
+  toCsv,
+  CSV_BOM,
+  CSV_SEPARATORS,
+  DEFAULT_SEPARATOR,
+  type CsvSeparatorId
+} from './lib/csv';
 export {
   exportHref,
   nextSortFor,

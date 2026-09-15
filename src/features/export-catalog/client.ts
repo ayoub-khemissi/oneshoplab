@@ -18,7 +18,16 @@ export {
   PAGE_SIZE
 } from './lib/query';
 export type { ExportQuery, RawParams, SortDirection, StatusFilter } from './lib/query';
-export { csvCell, toCsv, CSV_BOM } from './lib/csv';
+export {
+  csvCell,
+  csvContentType,
+  csvFileExtension,
+  toCsv,
+  CSV_BOM,
+  CSV_SEPARATORS,
+  DEFAULT_SEPARATOR,
+  type CsvSeparatorId
+} from './lib/csv';
 export {
   COLUMN_BY_KEY,
   DEFAULT_COLUMN_KEYS,

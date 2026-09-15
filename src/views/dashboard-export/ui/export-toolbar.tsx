@@ -5,10 +5,12 @@ import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import {
+  CSV_SEPARATORS,
   DEFAULT_COLUMN_KEYS,
   EXPORT_COLUMNS,
   exportHref,
   type ExportQuery,
+  type CsvSeparatorId,
   type SortDirection,
   type StatusFilter
 } from '@/features/export-catalog/client';
@@ -101,6 +103,27 @@ export function ExportToolbar({ base, query }: { base: string; query: ExportQuer
         >
           {t(query.dir === 'asc' ? 'sortAsc' : 'sortDesc')}
         </button>
+      </div>
+
+      {/* "CSV" is not one format: Excel splits on the list separator of the
+          machine's locale, a semicolon across most of Europe. Without this
+          choice a French merchant opens the file and sees one column. */}
+      <div className="flex items-center gap-2 min-w-0 flex-wrap">
+        <label htmlFor="export-sep" className="text-xs text-[var(--muted)] shrink-0">
+          {t('separatorLabel')}
+        </label>
+        <select
+          id="export-sep"
+          value={query.separator}
+          onChange={(e) => go({ separator: e.target.value as CsvSeparatorId })}
+          className="min-w-0 rounded-md border border-[var(--border)] bg-transparent px-2 py-1.5 text-xs"
+        >
+          {(Object.keys(CSV_SEPARATORS) as CsvSeparatorId[]).map((id) => (
+            <option key={id} value={id}>
+              {t(`separator_${id}`)}
+            </option>
+          ))}
+        </select>
       </div>
 
       <details className="rounded-lg border border-[var(--border)]">

@@ -6,10 +6,35 @@ Merchant-facing export of a project's catalogue, at
 
 ## What the merchant gets
 
-A UTF-8 CSV (BOM included so Excel on Windows reads the accents), comma
-separated, CRLF line endings, one line per product. Images are exported as
-**links to the merchant's own store**, never as files — the point is a sheet
-they can work with, not an archive.
+A UTF-8 file (BOM included so Excel on Windows reads the accents), CRLF line
+endings, one line per product. Images are exported as **links to the
+merchant's own store**, never as files — the point is a sheet they can work
+with, not an archive.
+
+## Separator, and why it is a choice
+
+"CSV" is not one format. Excel splits on the list separator of the machine's
+locale: a comma on an English Windows, a **semicolon** on a French, German,
+Spanish or Italian one. Hand a French merchant a comma file and every row
+lands in a single column, so `sep=comma|semicolon|tab` is part of the view
+(URL, like the columns) and drives three things at once:
+
+- **Quoting.** A field is quoted when it contains the *active* separator, a
+  double quote, or a line break — and only then. A comma inside a semicolon
+  file is an ordinary character; hard-coding the rule to `,` would both add
+  noise and, the day the separator changed, shift a whole column silently.
+  Quotes inside a quoted field are doubled (`""`), per RFC 4180.
+- **Extension.** `.tsv` for tab, `.csv` otherwise.
+- **Content type.** `text/tab-separated-values` for tab, `text/csv` otherwise.
+
+Values that are NOT the merchant's problem: multi-value cells (image links,
+tags, variant SKUs) are joined with `" | "`, which survives every separator;
+`null` becomes an empty field; dates are ISO-8601.
+
+One thing deliberately left alone: decimal separators. Prices are written as
+stored (`24.00`). A European Excel reading a semicolon file may treat that as
+text rather than a number. Rewriting `.` to `,` would change the data, not
+just its packaging, so it is the merchant's call in the spreadsheet.
 
 ## Shape of the page
 

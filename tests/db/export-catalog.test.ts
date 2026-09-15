@@ -153,6 +153,16 @@ describe('CSV', () => {
     expect(line).toBe('Robe longue,RB-1,https://cdn.example.com/a.jpg');
   });
 
+  it('serves a semicolon file when asked, and quotes for that separator', async () => {
+    await addProduct({ title: 'Robe, longue; noire', sku: 'RB-1' });
+    const query = parseExportQuery({ columns: 'title,sku', sep: 'semicolon' });
+    const csv = buildCatalogCsv(await loadExportRows(projectId, query), query.columns, 'semicolon');
+    const [header, line] = csv.replace(/^\ufeff/, '').split('\r\n');
+    expect(header).toBe('title;sku');
+    // The comma rides along untouched; only the semicolon forces quoting.
+    expect(line).toBe('"Robe, longue; noire";RB-1');
+  });
+
   it('neutralises a formula hidden in a product name', async () => {
     await addProduct({ title: '=cmd|calc', sku: 'X' });
     const query = parseExportQuery({ columns: 'title,sku' });
@@ -173,6 +183,14 @@ describe('download route', () => {
     expect(res.headers.get('Content-Disposition')).toContain('.csv');
     expect(res.headers.get('Cache-Control')).toContain('no-store');
     expect(await res.text()).toContain('Robe longue');
+  });
+
+  it('serves a .tsv with the tab content type', async () => {
+    await addProduct({ title: 'Robe' });
+    const res = await EXPORT(request(`/api/projects/${projectId}/export?sep=tab`), ctx(projectId));
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('tab-separated-values');
+    expect(res.headers.get('Content-Disposition')).toContain('.tsv');
   });
 
   it('exports a single product on request', async () => {
