@@ -93,6 +93,13 @@ test.describe('the sticky tab bar', () => {
     for (const siteId of [SEED.project.id]) {
       await page.goto(`/fr/dashboard/sites/${siteId}?tab=products`);
       await expect(page.locator('[data-compact]')).toBeVisible();
+      // Let the page finish arriving before judging the bar. Measuring while
+      // images and lazy panels are still landing counts the ONE legitimate
+      // compaction that a growing document causes as an oscillation — which
+      // is what made this test fail as the dashboard gained content, while a
+      // settled page traced 0 flips over 2.5s.
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(500);
       expect(await flipsAtBottom(page), `oscillated at the bottom of ${siteId}`).toBe(0);
     }
   });

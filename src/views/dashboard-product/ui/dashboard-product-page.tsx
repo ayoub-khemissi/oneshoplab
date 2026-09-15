@@ -170,6 +170,7 @@ export async function DashboardProductPage({
   const tCredits = await getTranslations('Credits');
   const tExport = await getTranslations('ExportCatalog');
   const tTour = await getTranslations('Tour');
+  const tNav = await getTranslations('Nav');
 
   const balance = session.user.creditsBalance ?? 0;
 
@@ -266,15 +267,23 @@ export async function DashboardProductPage({
       {/* Same sticky bar as the site page. Scrolled a little way down a long
           product sheet, "back" used to mean scrolling all the way up first. */}
       <ScrollAwareSticky topOffsetPx={68}>
-        <header className="flex items-center justify-between gap-4 flex-wrap">
+        {/* One line, always. Wrapping put the score and the balance on a
+            second row, flush left and glued to the bar's bottom edge. The
+            sizes step down on a phone and again when the bar compacts, the
+            same way the site header's tabs do. */}
+        <header className="flex items-center justify-between gap-2 md:gap-4 flex-nowrap min-w-0 transition-[padding] duration-200 group-data-[compact=true]/sticky:pb-2">
           <Link
             href={`/dashboard/sites/${siteId}?tab=products`}
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1.5 transition-colors"
+            title={t('backToDashboard')}
+            className="min-w-0 shrink text-xs md:text-sm text-[var(--muted)] hover:text-[var(--foreground)] inline-flex items-center gap-1 md:gap-1.5 transition-[color,font-size] duration-200 group-data-[compact=true]/sticky:text-xs"
           >
             <BackArrow />
-            {t('backToDashboard')}
+            {/* A phone has no room for the full sentence, and the arrow
+                already says "back". */}
+            <span className="md:hidden truncate">{tNav('dashboard')}</span>
+            <span className="hidden md:inline truncate">{t('backToDashboard')}</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
             <ExportButton
               compact
               labelOnDesktop
@@ -282,8 +291,11 @@ export async function DashboardProductPage({
               label={tExport('downloadCsv')}
             />
             <ScoreBadge score={product.score} />
-            <span className="text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1">
-              <Coins className="size-3.5" aria-hidden />
+            <span className="text-xs md:text-sm text-[var(--muted)] font-mono inline-flex items-center gap-1 whitespace-nowrap transition-[font-size] duration-200 group-data-[compact=true]/sticky:text-xs">
+              <Coins
+                className="size-3 md:size-3.5 shrink-0 transition-[width,height] duration-200"
+                aria-hidden
+              />
               {balance}
               <InfoHint topic="credits" label={tCredits('balanceLabel')} />
             </span>
