@@ -14,3 +14,5 @@ export { productRowToNormalized } from './lib/to-normalized';
 export type { ProductRow, ProductRowToNormalizedOptions } from './lib/to-normalized';
 export { productSourceKey } from './lib/source-key';
 export { findProductIdByKey } from './api/find-by-key';
+export { enqueueImageMirrors, mirrorQueuedImages } from './api/image-mirror';
+export type { MirrorQueuedImagesOptions } from './api/image-mirror';

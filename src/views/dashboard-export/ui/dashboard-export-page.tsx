@@ -59,7 +59,7 @@ export async function DashboardExportPage({
     <main className="w-full max-w-7xl mx-auto px-4 py-6 flex flex-col gap-5 min-w-0">
       <header className="flex flex-col gap-3">
         <Link
-          href={`/dashboard/sites/${project.id}?tab=products`}
+          href={`/dashboard/sites/${project.id}/csv`}
           className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors w-fit"
         >
           <ArrowLeft className="size-3.5" aria-hidden />

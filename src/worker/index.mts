@@ -11,6 +11,7 @@ const { runR2Cleanup } = await import('./r2-cleanup');
 const { processNextBulkProduct, runBulkWatchdog } = await import('@/features/bulk-generate');
 const { runIntegrationSweeps: runApiKeySweeps } = await import('@/entities/api-key');
 const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/product-change');
+const { mirrorQueuedImages } = await import('@/entities/product');
 const { auditProjectsWithSyncedCatalog, rescoreProjectsWithAppliedChanges } =
   await import('@/features/run-audit');
 const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
@@ -108,7 +109,11 @@ async function main(): Promise<void> {
         // grace window it becomes a failure the merchant can actually see.
         failUndeliverableChanges().catch((e: unknown) =>
           console.error('[worker] undeliverable failed', e)
-        )
+        ),
+        // Images a CSV import linked to but did not upload: copy them onto R2
+        // and rewrite products.images[].src. The product keeps its external
+        // link until then, so this only ever swaps a link for a working copy.
+        mirrorQueuedImages().catch((e: unknown) => console.error('[worker] image-mirror failed', e))
       ];
       // Every couple of minutes: re-score the stores whose catalog moved
       // because a change landed, so the product list stops disagreeing with

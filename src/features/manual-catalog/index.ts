@@ -4,6 +4,10 @@ export {
   deleteManualProductAction,
   updateManualProductAction
 } from './api/actions';
-export { ManualProductForm } from './ui/manual-product-form';
+export {
+  ManualProductForm,
+  type ManualProductFormInitial,
+  type ManualProductImage
+} from './ui/manual-product-form';
 export { ApplyAiButton } from './ui/apply-ai-button';
 export { AppliedToastOnMount } from './ui/applied-toast-on-mount';

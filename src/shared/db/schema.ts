@@ -897,6 +897,45 @@ export interface ConnectionCapabilities {
   fields: ProductChangeField[];
 }
 
+export const IMAGE_MIRROR_STATUSES = ['pending', 'done', 'failed'] as const;
+export type ImageMirrorStatus = (typeof IMAGE_MIRROR_STATUSES)[number];
+
+/**
+ * External product images waiting to be copied onto our storage.
+ *
+ * A CSV import (and a manual product created from one) arrives with image
+ * LINKS, which point at servers we do not control. The product is created
+ * at once with that link so the merchant sees their catalogue immediately;
+ * the worker then fetches each image through the hardened fetcher, uploads
+ * it under `products/<projectId>/` like a manual upload, and rewrites the
+ * product's image `src`. A row that fails three times stays `failed` and the
+ * product keeps its external link — visible, never silently dropped.
+ */
+export const imageMirrorQueue = mysqlTable(
+  'image_mirror_queue',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    projectId: varchar('project_id', { length: 36 })
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    productId: varchar('product_id', { length: 36 })
+      .notNull()
+      .references(() => products.id, { onDelete: 'cascade' }),
+    /** The external link as stored in `products.images[].src`; matched on
+     *  value, not position, since the merchant may reorder the gallery. */
+    sourceUrl: varchar('source_url', { length: 2048 }).notNull(),
+    status: mysqlEnum('status', IMAGE_MIRROR_STATUSES).notNull().default('pending'),
+    attempts: int('attempts').notNull().default(0),
+    error: text('error'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
+  },
+  (t) => ({
+    idxStatusCreated: index('idx_image_mirror_status_created').on(t.status, t.createdAt),
+    idxProduct: index('idx_image_mirror_product').on(t.productId)
+  })
+);
+
 export const apiKeys = mysqlTable(
   'api_keys',
   {

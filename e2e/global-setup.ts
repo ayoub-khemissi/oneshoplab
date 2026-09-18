@@ -215,6 +215,32 @@ export default async function globalSetup(): Promise<void> {
     // would now be hidden, and the sweep would eventually fail them.
     const { hashValue } = await import('@/entities/product-change/lib/hash');
     await db.insert(schema.projects).values({
+      id: SEED.manualProject.id,
+      userId,
+      name: 'Atelier manuel',
+      domain: SEED.manualProject.domain,
+      url: `https://${SEED.manualProject.domain}`,
+      source: 'manual'
+    });
+    await db.insert(schema.products).values({
+      id: SEED.manualProduct.id,
+      projectId: SEED.manualProject.id,
+      source: 'manual',
+      sourceId: SEED.manualProduct.id,
+      handle: 'bougie-cire',
+      title: 'Bougie en cire de soja, vanille',
+      descriptionHtml: '<p>Coulée à la main.</p>',
+      images: [{ src: 'https://cdn.example.com/bougie.jpg', alt: 'bougie', width: 800, height: 800, position: 0 }],
+      tags: ['bougie'],
+      variants: [],
+      sku: 'BG-1',
+      priceMin: '18.00',
+      priceMax: '18.00',
+      currency: 'EUR',
+      status: 'active'
+    });
+
+    await db.insert(schema.projects).values({
       id: SEED.pendingProject.id,
       userId,
       name: SEED.pendingProject.domain,

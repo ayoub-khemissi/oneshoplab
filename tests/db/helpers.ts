@@ -23,6 +23,7 @@ export async function resetTables(): Promise<void> {
     'contact_messages',
     'notifications',
     'share_links',
+    'image_mirror_queue',
     'jobs',
     'audits',
     'products',

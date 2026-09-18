@@ -6,9 +6,11 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { recomputeManualAudit } from '@/entities/audit';
+import { enqueueImageMirrors } from '@/entities/product';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
 import { jobs, products, projects } from '@/shared/db/schema';
+import { slugify } from '@/shared/lib';
 import { deleteByKey, keyFromPublicUrl, uploadFromUrl } from '@/shared/storage';
 
 /**
@@ -21,17 +23,6 @@ import { deleteByKey, keyFromPublicUrl, uploadFromUrl } from '@/shared/storage';
  */
 
 const MAX_IMAGES_PER_PRODUCT = 12;
-
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80);
-}
 
 async function loadOwnedManualProject(
   userId: string,
@@ -180,6 +171,13 @@ export async function createManualProductAction(formData: FormData): Promise<voi
   );
 
   revalidatePath(`/dashboard/sites/${projectId}`);
+  // A form filled from a CSV carries image LINKS. The queue ignores our own
+  // uploads, so the usual path pays nothing for this.
+  await enqueueImageMirrors(
+    projectId,
+    productId,
+    data.images.map((i) => i.src)
+  ).catch((e: unknown) => console.error('[manual-catalog] mirror enqueue failed', e));
   redirect(
     `/dashboard/sites/${projectId}/products/${productId}${
       intent === 'optimize' ? '?autoOptimize=1' : ''

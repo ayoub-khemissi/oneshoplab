@@ -24,6 +24,10 @@ export const SEED = {
   minimalProduct: { id: '99999999-2222-4222-8222-999999999999', sourceId: 'basic-1' },
   /** A store with changes still waiting: two pending + one the store refused,
    *  which the modal can send again (it carries a completed source job). */
+  /** A "my own store" project, the only kind the CSV import accepts. Kept
+   *  apart so the connected-store specs never see a manual catalogue. */
+  manualProject: { id: '33333333-3333-4333-8333-333333333333', domain: 'atelier-manuel.example.com' },
+  manualProduct: { id: '33333333-4444-4444-8444-333333333333' },
   pendingProject: { id: '77777777-7777-4777-8777-777777777777', domain: 'pending-shop.example.com' },
   pendingProduct: { id: '88888888-8888-4888-8888-888888888888', sourceId: 'pending-mug' },
   pendingChanges: {

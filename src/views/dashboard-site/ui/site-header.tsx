@@ -80,16 +80,16 @@ export function SiteHeaderBar({
       </div>
       <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
         <Link
-          href={`/dashboard/sites/${projectId}/export`}
-          title={tExport('headerLink')}
-          aria-label={tExport('headerLink')}
+          href={`/dashboard/sites/${projectId}/csv`}
+          title={isManual ? tExport('hubLink') : tExport('headerLink')}
+          aria-label={isManual ? tExport('hubLink') : tExport('headerLink')}
           className="inline-flex items-center justify-center gap-1.5 h-8 px-2 md:px-2.5 rounded-md border border-[var(--border)] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
         >
           <FileSpreadsheet className="size-4 shrink-0" aria-hidden />
           {/* The label is desktop-only: the header already fights for room on
               a phone, and the icon carries an accessible name either way. */}
           <span className="hidden md:inline text-sm font-medium whitespace-nowrap">
-            {tExport('headerLink')}
+            {isManual ? tExport('hubLink') : tExport('headerLink')}
           </span>
         </Link>
         {isManual ? (

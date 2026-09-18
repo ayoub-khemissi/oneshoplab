@@ -3,7 +3,7 @@ import { ArrowLeft, PenLine } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { ManualProductForm } from '@/features/manual-catalog';
+import { NewProductWithImport } from '@/widgets/new-product-import';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
 import { db } from '@/shared/db';
@@ -67,7 +67,7 @@ export default async function NewProductPage({ params }: PageProps) {
         </p>
       </header>
 
-      <ManualProductForm initial={{ projectId: siteId }} />
+      <NewProductWithImport projectId={siteId} />
     </main>
   );
 }
