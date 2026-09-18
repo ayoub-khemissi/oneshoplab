@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
+import { Download } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import {
   autoMap,
@@ -182,12 +183,25 @@ export function ImportWizard({ siteId, exportHref }: { siteId: string; exportHre
               onChange={(e) => void onFile(e.target.files?.[0])}
             />
           </label>
-          <p className="text-xs text-[var(--muted)]">
-            {t('templateHint')}{' '}
-            <Link href={exportHref} className="underline hover:text-[var(--accent)]">
-              {t('templateLink')}
-            </Link>
-          </p>
+          <div className="flex items-center gap-3 flex-wrap text-xs text-[var(--muted)]">
+            {/* A store with no products cannot export a file to copy, so the
+                sample must exist on its own. Three rows, every convention. */}
+            <a
+              href="/api/import/template?sep=semicolon"
+              download
+              data-testid="import-template"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[var(--border)] font-medium text-[var(--foreground)] hover:border-[var(--accent)] transition-colors"
+            >
+              <Download className="size-3.5" aria-hidden />
+              {t('templateDownload')}
+            </a>
+            <span>
+              {t('templateHint')}{' '}
+              <Link href={exportHref} className="underline hover:text-[var(--accent)]">
+                {t('templateLink')}
+              </Link>
+            </span>
+          </div>
 
           {parsed ? (
             <div className="flex flex-col gap-3">

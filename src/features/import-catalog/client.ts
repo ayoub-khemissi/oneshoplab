@@ -47,3 +47,4 @@ export {
   type RowAction,
   type SkipReason
 } from './lib/dedupe';
+export { buildTemplateCsv, TEMPLATE_HEADERS, TEMPLATE_ROWS } from './lib/template';
