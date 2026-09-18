@@ -84,7 +84,7 @@ importers:
         specifier: ^19.0.0
         version: 19.2.5(react@19.2.5)
       sanitize-html:
-        specifier: '2'
+        specifier: ^2.17.7
         version: 2.17.7
       stripe:
         specifier: ^22.1.0
