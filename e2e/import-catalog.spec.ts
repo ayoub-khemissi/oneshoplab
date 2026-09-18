@@ -44,22 +44,25 @@ test.describe('CSV hub', () => {
     await expect(page.getByTestId('csv-hub-import')).toHaveAttribute('href', /\/import$/);
     await expect(page.getByTestId('csv-hub-export')).toHaveAttribute('href', /\/export$/);
 
+    // The crossroads stays: the import panel is there, inert, and says why.
     await page.goto(`/fr/dashboard/sites/${CONNECTED}/csv`);
     await expect(page.getByTestId('csv-hub-import')).toHaveAttribute('aria-disabled', 'true');
     await expect(page.getByTestId('csv-hub-import')).toContainText(/boutique connectée/i);
     await expect(page.getByTestId('csv-hub-export')).toHaveAttribute('href', /\/export$/);
   });
 
-  test('the import page itself is not served for a connected store', async ({ page }) => {
+  test('a connected store that tries the import URL is sent back to the crossroads, told why', async ({ page }) => {
     await login(page);
     await page.goto(`/fr/dashboard/sites/${CONNECTED}/import`);
-    // notFound() inside a streamed dashboard layout renders the not-found
-    // page after the shell has been flushed, so the HTTP status is not the
-    // signal; the absence of the wizard is. The API routes' 404 is asserted
-    // in tests/db/import-catalog.test.ts.
+    await page.waitForURL(/\/csv(\?|$)/);
+    // The wizard never rendered; the crossroads did, with its inert panel and
+    // the explanation as a toast. The API routes' 404 is asserted in
+    // tests/db/import-catalog.test.ts.
     await expect(page.getByTestId('import-file')).toHaveCount(0);
-    await expect(page.getByTestId('import-next-mapping')).toHaveCount(0);
-    await expect(page.getByText(/404|introuvable|not found/i).first()).toBeVisible();
+    await expect(page.getByTestId('csv-hub-import')).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByText(/boutique que vous renseignez vous-même/i).first()).toBeVisible();
+    // The flag is consumed: a refresh does not repeat the toast.
+    await expect(page).not.toHaveURL(/importUnavailable/);
   });
 });
 

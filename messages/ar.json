@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "فاصلة منقوطة (;)",
     "delimiter_tab": "علامة جدولة",
     "detected": "{rows} صفًا، {columns} عمودًا",
+    "issue_bad_encoding": "بعض الأحرف غير قابلة للقراءة: الملف غير محفوظ بترميز UTF-8. أعد حفظه بترميز UTF-8 («CSV UTF-8» في Excel) لتمرّ الأحرف بشكل صحيح.",
     "issue_empty_file": "الملف فارغ.",
     "issue_header_only": "لا يحتوي الملف إلا على صف العناوين، لا شيء للاستيراد.",
     "issue_too_many_rows": "{detail} صفًا: تُحتفظ الصفوف الأولى فقط. قسّم الملف لاستيراد البقية.",

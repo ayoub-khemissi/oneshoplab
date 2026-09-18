@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "세미콜론 (;)",
     "delimiter_tab": "탭",
     "detected": "{rows}행, {columns}열",
+    "issue_bad_encoding": "일부 문자를 읽을 수 없습니다. 파일이 UTF-8로 저장되지 않았습니다. 글자가 제대로 들어오도록 UTF-8(Excel의 “CSV UTF-8”)로 다시 저장하세요.",
     "issue_empty_file": "파일이 비어 있습니다.",
     "issue_header_only": "파일에 헤더 행만 있어 가져올 내용이 없습니다.",
     "issue_too_many_rows": "{detail}행: 앞부분만 유지됩니다. 나머지를 가져오려면 파일을 나누세요.",

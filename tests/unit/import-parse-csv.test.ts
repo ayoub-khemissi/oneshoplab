@@ -70,6 +70,13 @@ describe('parseCsv', () => {
     expect(long.issues.some((i) => i.code === 'cell_too_long')).toBe(true);
   });
 
+  it('tells a Latin-1 file apart from a UTF-8 one', () => {
+    // What the browser produces when it decodes "Crème" saved as Latin-1.
+    const out = parseCsv('title\nCr\uFFFDme solaire\n');
+    expect(out.issues.map((i) => i.code)).toContain('bad_encoding');
+    expect(parseCsv('title\nCrème solaire\n').issues).toEqual([]);
+  });
+
   it('accepts a forced delimiter over the guess', () => {
     const out = parseCsv('a;b\n1;2\n', { delimiter: 'comma' });
     expect(out.headers).toEqual(['a;b']);

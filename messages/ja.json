@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "セミコロン (;)",
     "delimiter_tab": "タブ",
     "detected": "{rows} 行、{columns} 列",
+    "issue_bad_encoding": "一部の文字が読めません。ファイルが UTF-8 で保存されていません。文字が正しく届くよう、UTF-8（Excel では「CSV UTF-8」）で保存し直してください。",
     "issue_empty_file": "ファイルが空です。",
     "issue_header_only": "ファイルにはヘッダー行しかなく、インポートするものがありません。",
     "issue_too_many_rows": "{detail} 行あります。先頭の行のみ保持されます。残りをインポートするにはファイルを分割してください。",

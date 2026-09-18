@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Ponto e vírgula (;)",
     "delimiter_tab": "Tabulação",
     "detected": "{rows} linhas, {columns} colunas",
+    "issue_bad_encoding": "Alguns caracteres estão ilegíveis: o ficheiro não está guardado em UTF-8. Guarde-o novamente como UTF-8 («CSV UTF-8» no Excel) para que os acentos passem.",
     "issue_empty_file": "O ficheiro está vazio.",
     "issue_header_only": "O ficheiro só tem a linha de cabeçalho, nada a importar.",
     "issue_too_many_rows": "{detail} linhas: só as primeiras são mantidas. Divida o ficheiro para importar o resto.",

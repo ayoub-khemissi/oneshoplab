@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Noktalı virgül (;)",
     "delimiter_tab": "Sekme",
     "detected": "{rows} satır, {columns} sütun",
+    "issue_bad_encoding": "Bazı karakterler okunamadı: dosya UTF-8 olarak kaydedilmemiş. Aksanlı harflerin geçmesi için UTF-8 olarak yeniden kaydedin (Excel'de “CSV UTF-8”).",
     "issue_empty_file": "Dosya boş.",
     "issue_header_only": "Dosyada yalnızca başlık satırı var, içe aktarılacak bir şey yok.",
     "issue_too_many_rows": "{detail} satır: yalnızca ilkler tutuldu. Kalanı içe aktarmak için dosyayı bölün.",

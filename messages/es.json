@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Punto y coma (;)",
     "delimiter_tab": "Tabulación",
     "detected": "{rows} filas, {columns} columnas",
+    "issue_bad_encoding": "Algunos caracteres no se pudieron leer: el archivo no está guardado en UTF-8. Vuelve a guardarlo como UTF-8 («CSV UTF-8» en Excel) para que pasen los acentos.",
     "issue_empty_file": "El archivo está vacío.",
     "issue_header_only": "El archivo solo tiene la fila de encabezado, nada que importar.",
     "issue_too_many_rows": "{detail} filas: solo se conservan las primeras. Divide el archivo para importar el resto.",

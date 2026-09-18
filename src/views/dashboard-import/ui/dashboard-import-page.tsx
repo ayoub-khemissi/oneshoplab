@@ -15,9 +15,12 @@ export async function DashboardImportPage({ siteId }: { siteId: string }) {
     where: and(eq(projects.id, siteId), eq(projects.userId, session.user.id)),
     columns: { id: true, name: true, domain: true, source: true }
   });
-  // A connected store has no import: its catalogue lives upstream. Same
-  // answer as a store that does not exist, so a foreign id learns nothing.
-  if (!project || project.source !== 'manual') notFound();
+  if (!project) notFound();
+  // A connected store has no import: its catalogue lives upstream. Back to
+  // the crossroads, where the inert import panel and a toast say why — the
+  // export page alone would leave the merchant guessing what happened.
+  if (project.source !== 'manual')
+    redirect(`/dashboard/sites/${project.id}/csv?importUnavailable=1`);
 
   const t = await getTranslations('ImportCatalog');
   return (

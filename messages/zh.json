@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "分号 (;)",
     "delimiter_tab": "制表符",
     "detected": "{rows} 行，{columns} 列",
+    "issue_bad_encoding": "部分字符无法读取：文件未以 UTF-8 保存。请重新另存为 UTF-8（Excel 中的“CSV UTF-8”），以保留重音字符。",
     "issue_empty_file": "文件为空。",
     "issue_header_only": "文件只有标题行，没有可导入的内容。",
     "issue_too_many_rows": "共 {detail} 行：仅保留前面的行。请拆分文件以导入其余部分。",

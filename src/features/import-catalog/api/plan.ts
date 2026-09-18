@@ -1,5 +1,6 @@
 import { and, eq, ne, sql } from 'drizzle-orm';
 import { maxProductsForPlan } from '@/entities/ai-model';
+import { ApiError } from '@/shared/api';
 import { db } from '@/shared/db';
 import { products, projects, users } from '@/shared/db/schema';
 import { indexExisting, planImport, type ImportPlan } from '../lib/dedupe';
@@ -52,13 +53,19 @@ export async function resolvePlan(projectId: string, req: ImportRequest): Promis
       .from(products)
       .where(and(eq(products.projectId, projectId), ne(products.status, 'archived'))),
     db
-      .select({ plan: users.plan })
+      .select({ plan: users.plan, source: projects.source })
       .from(projects)
       .innerJoin(users, eq(users.id, projects.userId))
       .where(eq(projects.id, projectId))
   ]);
 
-  const room = maxProductsForPlan(owner?.plan) - Number(active);
+  // Belt and braces under the route guard: whoever calls this — a route today,
+  // maybe a server action tomorrow — cannot import into a connected store.
+  if (owner?.source !== 'manual') {
+    throw new ApiError('not_found', 'CSV import is only available for a manual store', 404);
+  }
+
+  const room = maxProductsForPlan(owner.plan) - Number(active);
   const plan = planImport(validations, indexExisting(existingRows), room);
   return { parsed, plan, room };
 }

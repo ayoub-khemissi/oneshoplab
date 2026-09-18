@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Punto e virgola (;)",
     "delimiter_tab": "Tabulazione",
     "detected": "{rows} righe, {columns} colonne",
+    "issue_bad_encoding": "Alcuni caratteri sono illeggibili: il file non è salvato in UTF-8. Salvalo di nuovo come UTF-8 («CSV UTF-8» in Excel) perché gli accenti passino.",
     "issue_empty_file": "Il file è vuoto.",
     "issue_header_only": "Il file ha solo la riga di intestazione, niente da importare.",
     "issue_too_many_rows": "{detail} righe: solo le prime vengono tenute. Dividi il file per importare il resto.",

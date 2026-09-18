@@ -36,6 +36,7 @@ export const IMPORT_LIMITS: ImportLimits = {
 };
 
 export type CsvIssueCode =
+  | 'bad_encoding'
   | 'empty_file'
   | 'header_only'
   | 'too_many_rows'
@@ -131,6 +132,11 @@ export function parseCsv(
   const delimiter = opts.delimiter ?? detectDelimiter(text);
   const sep = CSV_DELIMITERS[delimiter];
   const issues: CsvIssue[] = [];
+
+  // A file saved as Latin-1 (old Excel) decodes with replacement characters
+  // where the accents were. Nothing else in the pipeline would notice — the
+  // merchant would just find "Cr\uFFFDme" in their titles.
+  if (text.includes('\uFFFD')) issues.push({ code: 'bad_encoding' });
 
   const records = tokenize(text, sep, limits, issues);
   if (records.length === 0 || (records.length === 1 && records[0].every((c) => c === ''))) {

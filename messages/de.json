@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Semikolon (;)",
     "delimiter_tab": "Tabulator",
     "detected": "{rows} Zeilen, {columns} Spalten",
+    "issue_bad_encoding": "Einige Zeichen sind unlesbar: die Datei ist nicht als UTF-8 gespeichert. Speichern Sie sie erneut als UTF-8 („CSV UTF-8“ in Excel), damit Umlaute erhalten bleiben.",
     "issue_empty_file": "Die Datei ist leer.",
     "issue_header_only": "Die Datei enthält nur eine Kopfzeile, nichts zu importieren.",
     "issue_too_many_rows": "{detail} Zeilen: nur die ersten werden übernommen. Teilen Sie die Datei, um den Rest zu importieren.",

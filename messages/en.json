@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Semicolon (;)",
     "delimiter_tab": "Tab",
     "detected": "{rows} rows, {columns} columns",
+    "issue_bad_encoding": "Some characters could not be read: the file is not saved as UTF-8. Save it again as UTF-8 (CSV UTF-8 in Excel) so accents come through.",
     "issue_empty_file": "The file is empty.",
     "issue_header_only": "The file only has a header row, nothing to import.",
     "issue_too_many_rows": "{detail} rows: only the first ones are kept. Split the file to import the rest.",

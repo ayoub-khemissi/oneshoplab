@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Point-virgule (;)",
     "delimiter_tab": "Tabulation",
     "detected": "{rows} lignes, {columns} colonnes",
+    "issue_bad_encoding": "Certains caractères sont illisibles : le fichier n'est pas enregistré en UTF-8. Réenregistrez-le en UTF-8 (« CSV UTF-8 » dans Excel) pour que les accents passent.",
     "issue_empty_file": "Le fichier est vide.",
     "issue_header_only": "Le fichier ne contient qu'une ligne d'en-tête, rien à importer.",
     "issue_too_many_rows": "{detail} lignes : seules les premières sont gardées. Découpez le fichier pour importer le reste.",

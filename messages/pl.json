@@ -2128,6 +2128,7 @@
     "delimiter_semicolon": "Średnik (;)",
     "delimiter_tab": "Tabulator",
     "detected": "{rows} wierszy, {columns} kolumn",
+    "issue_bad_encoding": "Niektóre znaki są nieczytelne: plik nie jest zapisany w UTF-8. Zapisz go ponownie jako UTF-8 („CSV UTF-8” w Excelu), aby znaki diakrytyczne przeszły.",
     "issue_empty_file": "Plik jest pusty.",
     "issue_header_only": "Plik zawiera tylko wiersz nagłówka, nie ma czego importować.",
     "issue_too_many_rows": "{detail} wierszy: zachowano tylko pierwsze. Podziel plik, aby zaimportować resztę.",

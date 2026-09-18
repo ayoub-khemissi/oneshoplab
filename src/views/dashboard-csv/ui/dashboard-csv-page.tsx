@@ -6,6 +6,7 @@ import { auth } from '@/entities/user';
 import { Link } from '@/i18n/navigation';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
+import { ImportUnavailableToast } from './import-unavailable-toast';
 
 /**
  * The CSV crossroads: two equal panels, import and export. The export exists
@@ -13,6 +14,8 @@ import { projects } from '@/shared/db/schema';
  * connected catalogue belongs to the store upstream and importing into it
  * would fight the sync. That panel stays on the page, inert, with the reason
  * — a merchant who wonders where the import went should read why, not hunt.
+ * A connected store that typed the import URL is sent back here with a
+ * toast saying the same thing (ImportUnavailableToast).
  */
 export async function DashboardCsvPage({ siteId }: { siteId: string }) {
   const session = await auth();
@@ -29,6 +32,7 @@ export async function DashboardCsvPage({ siteId }: { siteId: string }) {
 
   return (
     <main className="w-full max-w-5xl mx-auto px-4 py-6 flex flex-col gap-6 min-w-0">
+      <ImportUnavailableToast />
       <header className="flex flex-col gap-3">
         <Link
           href={`${base}?tab=products`}

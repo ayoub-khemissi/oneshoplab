@@ -188,6 +188,29 @@ describe('commitImport', () => {
   });
 });
 
+describe('defence in depth', () => {
+  it('the plan itself refuses a connected store, whatever calls it', async () => {
+    await db.update(projects).set({ source: 'shopify' }).where(eq(projects.id, projectId));
+    const req = { csv: csv(`Robe,RB-1,10,,,${IMG}`), mapping: MAPPING };
+    await expect(previewImport(projectId, req)).rejects.toMatchObject({ status: 404 });
+    await expect(commitImport(projectId, req)).rejects.toMatchObject({ status: 404 });
+    const rows = await db.select().from(products).where(eq(products.projectId, projectId));
+    expect(rows).toHaveLength(0);
+  });
+});
+
+describe('defence in depth', () => {
+  it('the plan itself refuses a connected store, whatever calls it', async () => {
+    await db.update(projects).set({ source: 'shopify' }).where(eq(projects.id, projectId));
+    const req = { csv: csv(`Robe,RB-1,10,,,${IMG}`), mapping: MAPPING };
+    await expect(previewImport(projectId, req)).rejects.toMatchObject({ status: 404 });
+    await expect(commitImport(projectId, req)).rejects.toMatchObject({ status: 404 });
+    expect(await db.select().from(products).where(eq(products.projectId, projectId))).toHaveLength(
+      0
+    );
+  });
+});
+
 describe('routes', () => {
   const body = { csv: csv(`Robe,RB-1,10,,,${IMG}`), mapping: MAPPING };
 
