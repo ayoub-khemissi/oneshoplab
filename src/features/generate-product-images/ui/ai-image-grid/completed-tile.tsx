@@ -47,7 +47,7 @@ export function CompletedTile({
       <div className={`relative group rounded-md ${isCutout ? CHECKERBOARD : ''}`}>
         <ImageZoom url={url} alt="Generated" downloadName={`ai-${job.id}.png`} />
         {isCutout ? (
-          <span className="absolute bottom-1.5 left-1.5 z-10 text-[10px] font-mono uppercase tracking-wider bg-black/60 text-white px-1.5 py-0.5 rounded pointer-events-none">
+          <span className="absolute bottom-1.5 left-1.5 z-10 text-[9px] font-mono uppercase tracking-wider bg-black/60 text-white px-1.5 py-0.5 rounded pointer-events-none">
             {t('transparentBadge')}
           </span>
         ) : null}
@@ -95,10 +95,10 @@ export function CompletedTile({
         isPending={isBusy === 'delete'}
         onConfirm={onDelete}
       />
-      <div className="flex items-center justify-between gap-2 min-w-0">
-        {isCutout ? (
-          <span />
-        ) : (
+      {/* Footer: the priced action on its own line, the expiry under it —
+          side by side they wrapped into three unreadable lines on a phone. */}
+      <div className="flex flex-col gap-1">
+        {isCutout ? null : (
           <button
             type="button"
             onClick={onRemoveBg}
@@ -106,21 +106,24 @@ export function CompletedTile({
             aria-label={t('removeBgAria', { cost: costRemoveBg })}
             title={t('removeBgAria', { cost: costRemoveBg })}
             data-testid="remove-bg-button"
-            className="inline-flex items-center gap-1 min-w-0 text-[11px] text-[var(--muted)] hover:text-[var(--accent)] disabled:opacity-50 transition-colors"
+            className="inline-flex w-full items-center justify-between gap-1.5 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 transition-colors"
           >
-            {isBusy === 'removebg' ? (
-              <Spinner size="sm" />
-            ) : (
-              <Eraser className="size-3.5 shrink-0" aria-hidden />
-            )}
-            <span className="truncate">{t('removeBg')}</span>
-            <span className="font-mono inline-flex items-center gap-0.5 shrink-0">
-              <Coins className="size-3" aria-hidden />
-              {costRemoveBg}
+            <span className="inline-flex items-center gap-1.5 min-w-0">
+              {isBusy === 'removebg' ? (
+                <Spinner size="sm" />
+              ) : (
+                <Eraser className="size-3.5 shrink-0" aria-hidden />
+              )}
+              <span className="truncate">{t('removeBg')}</span>
+            </span>
+            <span className="font-mono inline-flex items-center gap-1 shrink-0 text-[var(--muted)]">
+              · <Coins className="size-3" aria-hidden /> {costRemoveBg}
             </span>
           </button>
         )}
-        <ImageExpiry createdAt={job.createdAt} retentionDays={retentionDays} />
+        <div className="flex justify-end">
+          <ImageExpiry createdAt={job.createdAt} retentionDays={retentionDays} />
+        </div>
       </div>
     </div>
   );

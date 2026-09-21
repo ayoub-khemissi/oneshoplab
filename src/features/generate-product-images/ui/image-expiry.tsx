@@ -58,7 +58,7 @@ export function ImageExpiry({ createdAt, retentionDays, expiredAt, className }: 
     const expiryDate = expiredAt ?? expiresAt;
     return (
       <span
-        className={`inline-flex items-center gap-1 text-[10px] text-[var(--muted)] ${className ?? ''}`}
+        className={`inline-flex items-center gap-1 whitespace-nowrap text-[10px] text-[var(--muted)] ${className ?? ''}`}
       >
         <CalendarX className="size-3" aria-hidden />
         <span>{t('expiredOn', { date: formatDate(expiryDate) })}</span>
@@ -69,7 +69,7 @@ export function ImageExpiry({ createdAt, retentionDays, expiredAt, className }: 
   const tone = daysLeft <= 3 ? 'text-[var(--warning)]' : 'text-[var(--muted)]';
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[10px] ${tone} ${className ?? ''}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap text-[10px] ${tone} ${className ?? ''}`}
       title={t('tooltip', { date: formatDate(expiresAt) })}
     >
       <Clock className="size-3" aria-hidden />

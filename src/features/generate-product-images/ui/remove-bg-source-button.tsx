@@ -62,13 +62,14 @@ export function RemoveBgSourceButton({
       aria-label={t('removeBgAria', { cost })}
       title={t('removeBgAria', { cost })}
       data-testid="remove-bg-source-button"
-      className="inline-flex items-center gap-1 min-w-0 text-[11px] text-[var(--muted)] hover:text-[var(--accent)] disabled:opacity-50 transition-colors"
+      className="inline-flex w-full items-center justify-between gap-1.5 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 transition-colors"
     >
-      {busy ? <Spinner size="sm" /> : <Eraser className="size-3.5 shrink-0" aria-hidden />}
-      <span className="truncate">{t('removeBg')}</span>
-      <span className="font-mono inline-flex items-center gap-0.5 shrink-0">
-        <Coins className="size-3" aria-hidden />
-        {cost}
+      <span className="inline-flex items-center gap-1.5 min-w-0">
+        {busy ? <Spinner size="sm" /> : <Eraser className="size-3.5 shrink-0" aria-hidden />}
+        <span className="truncate">{t('removeBg')}</span>
+      </span>
+      <span className="font-mono inline-flex items-center gap-1 shrink-0 text-[var(--muted)]">
+        · <Coins className="size-3" aria-hidden /> {cost}
       </span>
     </button>
   );
