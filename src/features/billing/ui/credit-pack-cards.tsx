@@ -19,6 +19,8 @@ interface CreditPackCardsProps {
      *  account page lists packs without ranking them. */
     bestValueLabel?: string;
   };
+  /** BCP-47 tag for number formatting (falls back to the runtime default). */
+  locale?: string;
 }
 
 /**
@@ -27,7 +29,7 @@ interface CreditPackCardsProps {
  * /login?next=/account/credits, so this component doesn't need to
  * branch on session state.
  */
-export function CreditPackCards({ copy }: CreditPackCardsProps) {
+export function CreditPackCards({ copy, locale }: CreditPackCardsProps) {
   const best = bestValuePack().id;
   return (
     <div className="grid md:grid-cols-3 gap-4">
@@ -39,47 +41,48 @@ export function CreditPackCards({ copy }: CreditPackCardsProps) {
           tagline: ''
         };
         return (
-          <Card
-            key={pack.id}
-            variant="secondary"
-            className={`relative p-5 flex flex-col gap-4 ${isBest ? 'border-2 border-[var(--accent)]' : ''}`}
-          >
+          <div key={pack.id} className="relative flex">
             {isBest ? (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-[var(--accent)] text-[var(--accent-foreground)] font-semibold whitespace-nowrap shadow-sm">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-[var(--accent)] text-[var(--accent-foreground)] font-semibold whitespace-nowrap shadow-sm">
                 {copy.bestValueLabel}
               </span>
             ) : null}
-            <div className="flex flex-col gap-1">
-              <h3 className="text-base font-bold tracking-tight">{packCopy.name}</h3>
-              <p className="text-xs text-[var(--muted)]">{packCopy.tagline}</p>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-3xl font-bold tabular-nums inline-flex items-center gap-1.5">
-                <Coins className="size-6 text-[var(--accent)]" aria-hidden />
-                {pack.credits.toLocaleString()}
-              </span>
-              <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider">
-                {copy.creditsLabel}
-              </span>
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold">€{pack.priceEur.toFixed(2)}</span>
-              <span className="text-xs text-[var(--muted)]">
-                {copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
-              </span>
-            </div>
-            <form action={buyCreditPackAction} className="mt-auto">
-              <input type="hidden" name="packId" value={pack.id} />
-              <button
-                type="submit"
-                disabled={!configured}
-                className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
-              >
-                <Sparkles className="size-3.5" />
-                {configured ? copy.buyLabel : copy.comingSoonLabel}
-              </button>
-            </form>
-          </Card>
+            <Card
+              variant="secondary"
+              className={`p-5 flex flex-col gap-4 w-full ${isBest ? 'border-2 border-[var(--accent)]' : ''}`}
+            >
+              <div className="flex flex-col gap-1">
+                <h3 className="text-base font-bold tracking-tight">{packCopy.name}</h3>
+                <p className="text-xs text-[var(--muted)]">{packCopy.tagline}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-3xl font-bold tabular-nums inline-flex items-center gap-1.5">
+                  <Coins className="size-6 text-[var(--accent)]" aria-hidden />
+                  {pack.credits.toLocaleString(locale)}
+                </span>
+                <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider">
+                  {copy.creditsLabel}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold">€{pack.priceEur.toFixed(2)}</span>
+                <span className="text-xs text-[var(--muted)]">
+                  {copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
+                </span>
+              </div>
+              <form action={buyCreditPackAction} className="mt-auto">
+                <input type="hidden" name="packId" value={pack.id} />
+                <button
+                  type="submit"
+                  disabled={!configured}
+                  className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="size-3.5" />
+                  {configured ? copy.buyLabel : copy.comingSoonLabel}
+                </button>
+              </form>
+            </Card>
+          </div>
         );
       })}
     </div>

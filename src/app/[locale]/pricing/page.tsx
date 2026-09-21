@@ -7,7 +7,7 @@ import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import {
   CatalogSimulator,
@@ -60,6 +60,7 @@ export async function generateMetadata({
 }
 
 export default async function PricingPage() {
+  const locale = await getLocale();
   const t = await getTranslations('Pricing');
   const tCredits = await getTranslations('Credits');
   const session = await auth();
@@ -199,6 +200,7 @@ export default async function PricingPage() {
           </p>
         </div>
         <CreditPackCards
+          locale={locale}
           copy={{
             pack: {
               boost: {
