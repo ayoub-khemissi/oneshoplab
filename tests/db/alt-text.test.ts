@@ -42,6 +42,7 @@ vi.mock('@/entities/ai-provider/api/chat-provider', () => ({
   stripCodeFences: (t: string) => t
 }));
 
+import { countMissingAlt } from '@/features/generate-alt-text';
 import {
   generateAltTextAction,
   generateMissingAltForProductAction,
@@ -292,6 +293,27 @@ describe('planMissingAltTextAction (the batch, priced before it runs)', () => {
 });
 
 describe('generateMissingAltForProductAction (one product of the batch)', () => {
+  it('does not offer, plan or bill again a photo whose alt is already queued', async () => {
+    expect(await countMissingAlt(projectId)).toBe(2);
+    const first = await generateMissingAltForProductAction(product.id);
+    expect(first).toEqual({ ok: true, generated: 2, changeQueued: true });
+    const spent = await ledgerSum(userId);
+
+    // The products row still has no alt (the change is pending, not applied),
+    // yet the button count is 0 and a second click describes nothing.
+    expect(await countMissingAlt(projectId)).toBe(0);
+    expect(await planMissingAltTextAction(projectId)).toEqual({
+      ok: false,
+      error: 'nothing_missing'
+    });
+    expect(await generateMissingAltForProductAction(product.id)).toEqual({
+      ok: false,
+      error: 'nothing_missing'
+    });
+    expect(await ledgerSum(userId)).toBe(spent);
+    expect(await changesOf(product.id)).toHaveLength(1);
+  });
+
   it('queues ONE images change carrying only set_alt ops', async () => {
     const res = await generateMissingAltForProductAction(product.id);
     expect(res).toEqual({ ok: true, generated: 2, changeQueued: true });

@@ -8,6 +8,7 @@ export {
 export type { AltBatchPlan, AltCandidateImage, AltCandidateProduct } from './lib/batch';
 export { canGenerateAlt, canRunAltBatch } from './lib/capability';
 export type { AltImageKind } from './lib/capability';
+export { countMissingAlt } from './api/context';
 export {
   generateAltTextAction,
   generateMissingAltForProductAction,

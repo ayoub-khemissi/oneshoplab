@@ -52,7 +52,7 @@ import {
   toSiteKeySummary,
   type IntegrationPlatform
 } from '@/features/integrations';
-import { canRunAltBatch, countMissingAltFromIssues } from '@/features/generate-alt-text';
+import { canRunAltBatch, countMissingAlt } from '@/features/generate-alt-text';
 import { BulkAltTextCard } from '@/features/generate-alt-text/client';
 import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
@@ -435,14 +435,13 @@ export async function DashboardSitePage({
   // "Generate the missing alt texts": offered on the products tab only, and
   // only when the connection declared it can carry a `set_alt` — a button that
   // would silently do nothing is never shown (IMAGE-OPS.md §7). The count is
-  // the audit's own `missing_alt_text` tally, so the number on the button is
-  // the number in the merchant's report; the action recounts before spending.
+  // live (products table minus the alts already queued as pending changes):
+  // the audit's tally only moves on the next audit, so a button fed by it
+  // kept offering — and re-billing — photos whose alt was already waiting.
   const altCapabilities =
     activeTab === 'products' ? await getProjectCapabilities(project.id) : null;
   const missingAltCount =
-    altCapabilities && canRunAltBatch(altCapabilities)
-      ? countMissingAltFromIssues(summary.allProducts ?? [])
-      : 0;
+    altCapabilities && canRunAltBatch(altCapabilities) ? await countMissingAlt(project.id) : 0;
 
   // The store-wide "changes are waiting" banner sits above the tabs, so it is
   // loaded on every tab — one indexed read on (project_id, status, id).

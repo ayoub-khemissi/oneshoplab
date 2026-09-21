@@ -20,6 +20,7 @@ import {
   loadOwnedProduct,
   missingAltImagesOf,
   ownsProject,
+  pendingAltTargets,
   sourceKeyOf,
   toAltProductContext
 } from './context';
@@ -132,8 +133,13 @@ export async function planMissingAltTextAction(projectId: string): Promise<AltBa
   const capabilities = await getProjectCapabilities(project.data);
   if (!canRunAltBatch(capabilities)) return { ok: false, error: 'unsupported' };
 
-  const rows = await listProjectProducts(project.data);
-  const candidates = rows.map(missingAltImagesOf).filter((c) => c.images.length > 0);
+  const [rows, covered] = await Promise.all([
+    listProjectProducts(project.data),
+    pendingAltTargets(project.data)
+  ]);
+  const candidates = rows
+    .map((row) => missingAltImagesOf(row, covered))
+    .filter((c) => c.images.length > 0);
   const plan = planAltBatch(candidates, ALT_BATCH_MAX_IMAGES);
   if (plan.images === 0) return { ok: false, error: 'nothing_missing' };
 
@@ -178,7 +184,7 @@ export async function generateMissingAltForProductAction(
   const capabilities = await getProjectCapabilities(row.projectId);
   if (!canRunAltBatch(capabilities)) return { ok: false, error: 'unsupported' };
 
-  const candidate = missingAltImagesOf(row.product);
+  const candidate = missingAltImagesOf(row.product, await pendingAltTargets(row.projectId));
   // The cap applies per call too: the client loops, and a hand-rolled caller
   // must not be able to turn one click into a whole catalog.
   const images = candidate.images.slice(0, ALT_BATCH_MAX_IMAGES);
