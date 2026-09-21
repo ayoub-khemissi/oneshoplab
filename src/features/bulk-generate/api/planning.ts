@@ -1,6 +1,7 @@
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import {
   costForImage,
+  costForRemoveBackground,
   estimateChatCredits,
   type ChatModelId,
   type ImageQualityId
@@ -83,7 +84,8 @@ export function estimateBulkCostBreakdown(
     // rather than a number that could overshoot on a product with twelve.
     (p.fields.alt ? altTextCredits() : 0);
   const imagesPerProduct = p.fields.images
-    ? costForImage(imageQualityId) * p.imageAngles.length
+    ? costForImage(imageQualityId) * p.imageAngles.length +
+      (p.transparentPackshot ? costForRemoveBackground() : 0)
     : 0;
   const perProductTotal = chatPerProduct + imagesPerProduct;
   return {
@@ -276,7 +278,8 @@ export async function listBulkCandidatesWithStatus(
     for (const f of pending) {
       cost +=
         f === 'images'
-          ? costForImage(imageQualityId) * prefs.imageAngles.length
+          ? costForImage(imageQualityId) * prefs.imageAngles.length +
+            (prefs.transparentPackshot ? costForRemoveBackground() : 0)
           : estimateChatCredits(chatModelId, f);
     }
     out.push({

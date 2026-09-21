@@ -947,7 +947,10 @@
     "eligibleCount": "{count} produtos elegíveis",
     "estimatedTotal": "≈ {cost} no total",
     "autoSendLabel": "Enviar diretamente para a minha loja",
-    "autoSendHint": "As gerações seguem à medida que chegam, sem revisão. Apenas para esta execução."
+    "autoSendHint": "As gerações seguem à medida que chegam, sem revisão. Apenas para esta execução.",
+    "transparentPackshotLabel": "Versão com fundo transparente do packshot branco",
+    "transparentPackshotHint": "por produto, PNG recortado adicionado ao lado do packshot",
+    "transparentPackshotRecap": "Fundo transparente"
   },
   "Share": {
     "title": "Partilha com prospects",

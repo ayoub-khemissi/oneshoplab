@@ -947,7 +947,10 @@
     "eligibleCount": "{count} infrage kommende Produkte",
     "estimatedTotal": "≈ {cost} gesamt",
     "autoSendLabel": "Direkt an meinen Shop senden",
-    "autoSendHint": "Generierungen gehen sofort raus, ohne Prüfschritt. Nur für diesen Lauf."
+    "autoSendHint": "Generierungen gehen sofort raus, ohne Prüfschritt. Nur für diesen Lauf.",
+    "transparentPackshotLabel": "Version mit transparentem Hintergrund des weißen Packshots",
+    "transparentPackshotHint": "pro Produkt, freigestelltes PNG neben dem Packshot",
+    "transparentPackshotRecap": "Transparenter Hintergrund"
   },
   "Share": {
     "title": "Mit Interessenten teilen",

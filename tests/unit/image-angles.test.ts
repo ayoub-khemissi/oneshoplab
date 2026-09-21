@@ -17,6 +17,17 @@ describe('image angles', () => {
     for (const a of IMAGE_ANGLES) expect(IMAGE_ANGLE_PROMPTS[a]).toBeTruthy();
   });
 
+  it('only keeps the transparent packshot when the packshot angle is in the run', () => {
+    expect(resolveBulkPrefs({ transparentPackshot: true }).transparentPackshot).toBe(true);
+    expect(
+      resolveBulkPrefs({ transparentPackshot: true, imageAngles: ['inuse'] }).transparentPackshot
+    ).toBe(false);
+    expect(
+      resolveBulkPrefs({ transparentPackshot: true, fields: { images: false } }).transparentPackshot
+    ).toBe(false);
+    expect(resolveBulkPrefs(null).transparentPackshot).toBe(false);
+  });
+
   it('legacy bulk prefs saved with studio resolve to packshot', () => {
     const prefs = resolveBulkPrefs({ imageAngles: ['studio', 'inuse'] });
     expect(prefs.imageAngles).toEqual(['packshot', 'inuse']);

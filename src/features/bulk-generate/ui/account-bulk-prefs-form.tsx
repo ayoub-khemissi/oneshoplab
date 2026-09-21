@@ -42,7 +42,8 @@ export function AccountBulkPrefsForm({
       await save({
         fields: prefs.fields,
         imageAngles: prefs.imageAngles,
-        imageFormat: prefs.imageFormat
+        imageFormat: prefs.imageFormat,
+        transparentPackshot: prefs.transparentPackshot === true
       });
       lastSavedKey.current = key;
       setHasDefault(true);

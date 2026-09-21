@@ -60,6 +60,7 @@ export async function startBulkSiteGenerate(opts: {
     fields: prefs.fields,
     imageAngles: prefs.imageAngles,
     imageFormat: prefs.imageFormat,
+    ...(prefs.transparentPackshot ? { transparentPackshot: true } : {}),
     ...(opts.autoSend ? { autoSend: true } : {})
   };
   const result: BulkResult = {
@@ -148,7 +149,8 @@ export async function retryFailedFromBulk(opts: {
         ? {
             fields: srcInput.fields,
             imageAngles: srcInput.imageAngles,
-            imageFormat: srcInput.imageFormat
+            imageFormat: srcInput.imageFormat,
+            transparentPackshot: srcInput.transparentPackshot
           }
         : null
     )

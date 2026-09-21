@@ -65,7 +65,8 @@ export async function processNextBulkProduct(): Promise<boolean> {
   const prefs = resolveBulkPrefs({
     fields: input.fields,
     imageAngles: input.imageAngles,
-    imageFormat: input.imageFormat
+    imageFormat: input.imageFormat,
+    transparentPackshot: input.transparentPackshot
   });
   const wanted = effectiveFields(prefs);
 
@@ -213,7 +214,10 @@ export async function processNextBulkProduct(): Promise<boolean> {
                 appUrl: process.env.APP_URL,
                 imageQualityId: input.imageQualityId,
                 imageFormatId: prefs.imageFormat,
-                silent: true
+                silent: true,
+                // The cut-out is chained by persist-result once the packshot
+                // lands; the per-product estimate already counts it.
+                thenRemoveBg: angle === 'packshot' && prefs.transparentPackshot
               })
             )
           );

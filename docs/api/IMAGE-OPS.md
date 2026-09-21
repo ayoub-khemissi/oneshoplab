@@ -254,5 +254,10 @@ generation.
   every store original; a checkbox in the new-image modal, on by default for
   the white-background preset; cut-outs render over a checkerboard with a
   "Transparent PNG" badge and no regenerate action.
-- **Not done yet**: bulk prefs / "Generate all" option; a size guard for store
+- **Not done yet**: "Generate all" (single product) option; a size guard for store
   originals above 4096 px (kie fails → refund).
+- **Bulk** (added the same day): bulk prefs carry `transparentPackshot`
+  (site / account, `resolveBulkPrefs` keeps it only with images on and the
+  packshot angle picked). The worker starts the packshot with
+  `thenRemoveBg`, the estimate adds `costForRemoveBackground()` per product,
+  the modal recap lists "Transparent background".

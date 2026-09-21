@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from '@heroui/react';
+import { Checkbox, Label, Spinner } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
@@ -186,7 +186,11 @@ export function SelectionModal({
     prefs.fields.images && prefs.imageFormat && prefs.imageFormat !== 'auto'
       ? tFormat(`${prefs.imageFormat}.name`)
       : null;
-  const recap = [...activeFieldLabels, chatName, imgName, formatName].filter(Boolean).join(' · ');
+  const transparentName =
+    prefs.fields.images && prefs.transparentPackshot ? t('transparentPackshotRecap') : null;
+  const recap = [...activeFieldLabels, transparentName, chatName, imgName, formatName]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <div
@@ -352,93 +356,99 @@ export function SelectionModal({
           </>
         )}
 
-        {/* Footer — step-specific. Buttons full-width on mobile. */}
-        <div className="p-4 sm:p-5 border-t border-[var(--border)] flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex flex-col gap-0.5 text-xs">
-            {step === 2 ? (
-              <span className="text-[var(--muted)]">
-                {t.rich('summarySelected', {
-                  count: selected.size,
-                  cost: selectedCost,
-                  coins: () => (
-                    <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
-                  )
-                })}
-              </span>
-            ) : null}
-            {errorMsg ? <span className="text-[var(--danger)]">{errorMsg}</span> : null}
-          </div>
-          <div className="flex items-center gap-2 sm:shrink-0">
-            {step === 1 ? (
-              <>
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  disabled={noFields || launchBlocked || candidates.length === 0}
-                  title={
-                    noFields
-                      ? t('errorNoFields')
-                      : candidates.length === 0
-                        ? t('selectionEmpty')
-                        : undefined
-                  }
-                  className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center"
-                >
-                  {t('next')}
-                </button>
-              </>
-            ) : (
-              <>
-                {canApplyToStore ? (
-                  <label className="mr-auto flex items-start gap-2 text-xs text-[var(--muted)]">
-                    <input
-                      type="checkbox"
-                      checked={autoSend}
-                      onChange={(e) => setAutoSend(e.target.checked)}
-                      data-testid="bulk-auto-send"
-                      className="mt-0.5 accent-[var(--accent)]"
-                    />
-                    <span className="flex flex-col">
-                      <span className="font-medium text-[var(--foreground)]">
-                        {t('autoSendLabel')}
-                      </span>
-                      <span>{t('autoSendHint')}</span>
-                    </span>
-                  </label>
-                ) : (
-                  <span className="mr-auto" />
-                )}
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
-                >
-                  {t('back')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirm}
-                  disabled={
-                    submitting || selected.size === 0 || overBudget || noFields || launchBlocked
-                  }
-                  title={noFields ? t('errorNoFields') : undefined}
-                  className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
-                >
-                  {submitting ? <Spinner size="sm" /> : null}
-                  {t('confirmSelection', {
+        {/* Footer — step-specific. Step 2 stacks the auto-send option on its
+            own row above the summary + actions so neither squeezes the other;
+            buttons go full-width on mobile. */}
+        <div className="p-4 sm:p-5 border-t border-[var(--border)] flex flex-col gap-3">
+          {step === 2 && canApplyToStore ? (
+            <Checkbox
+              id="bulk-auto-send"
+              isSelected={autoSend}
+              onChange={setAutoSend}
+              className="items-start"
+              data-testid="bulk-auto-send"
+            >
+              <Checkbox.Control className="border border-solid border-[var(--field-border)] mt-0.5">
+                <Checkbox.Indicator />
+              </Checkbox.Control>
+              <Checkbox.Content>
+                <Label htmlFor="bulk-auto-send" className="flex flex-col gap-0.5 text-xs">
+                  <span className="text-sm font-medium text-[var(--foreground)]">
+                    {t('autoSendLabel')}
+                  </span>
+                  <span className="text-[var(--muted)]">{t('autoSendHint')}</span>
+                </Label>
+              </Checkbox.Content>
+            </Checkbox>
+          ) : null}
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex flex-col gap-0.5 text-xs min-w-0">
+              {step === 2 ? (
+                <span className="text-[var(--muted)]">
+                  {t.rich('summarySelected', {
                     count: selected.size,
-                    cost: selectedCost
+                    cost: selectedCost,
+                    coins: () => (
+                      <Coins className="size-3 inline-block align-text-bottom" aria-hidden />
+                    )
                   })}
-                </button>
-              </>
-            )}
+                </span>
+              ) : null}
+              {errorMsg ? <span className="text-[var(--danger)]">{errorMsg}</span> : null}
+            </div>
+            <div className="flex items-center gap-2 sm:shrink-0">
+              {step === 1 ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={onCancel}
+                    className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    disabled={noFields || launchBlocked || candidates.length === 0}
+                    title={
+                      noFields
+                        ? t('errorNoFields')
+                        : candidates.length === 0
+                          ? t('selectionEmpty')
+                          : undefined
+                    }
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center"
+                  >
+                    {t('next')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="flex-1 sm:flex-none px-3 py-2 rounded-md text-sm hover:bg-[var(--default)]"
+                  >
+                    {t('back')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirm}
+                    disabled={
+                      submitting || selected.size === 0 || overBudget || noFields || launchBlocked
+                    }
+                    title={noFields ? t('errorNoFields') : undefined}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    {submitting ? <Spinner size="sm" /> : null}
+                    <span>{t('confirmSelection', { count: selected.size })}</span>
+                    <span className="text-xs font-mono inline-flex items-center gap-1 opacity-80">
+                      · <Coins className="size-3" aria-hidden /> {selectedCost}
+                    </span>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

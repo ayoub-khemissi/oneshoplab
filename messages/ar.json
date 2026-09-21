@@ -947,7 +947,10 @@
     "eligibleCount": "{count} منتج مؤهل",
     "estimatedTotal": "≈ {cost} إجمالاً",
     "autoSendLabel": "الإرسال مباشرة إلى متجري",
-    "autoSendHint": "تُرسل النواتج أولًا بأول بلا مراجعة. لهذه العملية فقط."
+    "autoSendHint": "تُرسل النواتج أولًا بأول بلا مراجعة. لهذه العملية فقط.",
+    "transparentPackshotLabel": "نسخة بخلفية شفافة من صورة الخلفية البيضاء",
+    "transparentPackshotHint": "لكل منتج، يُضاف ملف PNG مقتص بجانب صورة الخلفية البيضاء",
+    "transparentPackshotRecap": "خلفية شفافة"
   },
   "Share": {
     "title": "مشاركة مع العملاء المحتملين",

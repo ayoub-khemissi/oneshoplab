@@ -301,7 +301,8 @@ const PrefsSchema = z.union([
     }),
     imageAngles: z.array(z.enum(['packshot', 'inuse', 'lifestyle', 'studio'])).max(3),
     /** Optional so a client that predates formats still validates. */
-    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional()
+    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional(),
+    transparentPackshot: z.boolean().optional()
   })
 ]);
 

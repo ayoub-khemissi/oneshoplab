@@ -3,7 +3,13 @@
 import { Checkbox, Label } from '@heroui/react';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
-import { imageFormatChoices, resolveImageFormatId, type ImageFormatId } from '@/entities/ai-model';
+import { Coins } from 'lucide-react';
+import {
+  costForRemoveBackground,
+  imageFormatChoices,
+  resolveImageFormatId,
+  type ImageFormatId
+} from '@/entities/ai-model';
 import { ImageFormatPicker } from '@/shared/ui';
 
 /**
@@ -26,6 +32,9 @@ export interface BulkPrefs {
    *  (prefs saved before formats existed have none) — canonicalizePrefs
    *  fills it with 'auto', the shape those runs already produced. */
   imageFormat?: ImageFormatId;
+  /** Also produce a transparent-background PNG of the white-background
+   *  packshot. Only meaningful with images on and the packshot angle picked. */
+  transparentPackshot?: boolean;
 }
 
 /** Mirror of the server's resolveBulkPrefs: stable field order, angles
@@ -46,14 +55,21 @@ export function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
   if (fields.images && imageAngles.length === 0) {
     imageAngles = [...ALL_ANGLES];
   }
-  return { fields, imageAngles, imageFormat: resolveImageFormatId(p.imageFormat) };
+  return {
+    fields,
+    imageAngles,
+    imageFormat: resolveImageFormatId(p.imageFormat),
+    transparentPackshot:
+      p.transparentPackshot === true && fields.images && imageAngles.includes('packshot')
+  };
 }
 
 export const prefsKey = (p: BulkPrefs): string =>
   JSON.stringify({
     fields: p.fields,
     imageAngles: p.imageAngles,
-    imageFormat: resolveImageFormatId(p.imageFormat)
+    imageFormat: resolveImageFormatId(p.imageFormat),
+    transparentPackshot: p.transparentPackshot === true
   });
 
 export const noFieldsSelected = (p: BulkPrefs): boolean =>
@@ -176,6 +192,23 @@ export function BulkPrefsEditor({
               );
             })}
           </div>
+          {value.imageAngles.includes('packshot') ? (
+            <div className="pl-3 flex flex-col gap-0.5">
+              <PrefCheckbox
+                id={`${uid}-transparent`}
+                label={t('transparentPackshotLabel')}
+                selected={value.transparentPackshot === true}
+                disabled={disabled}
+                onToggle={(next) =>
+                  onChange(canonicalizePrefs({ ...value, transparentPackshot: next }))
+                }
+              />
+              <span className="text-[11px] text-[var(--muted)] pl-7 inline-flex items-center gap-1">
+                <Coins className="size-3" aria-hidden />
+                {costForRemoveBackground()} · {t('transparentPackshotHint')}
+              </span>
+            </div>
+          ) : null}
           <span className="text-[11px] font-medium text-[var(--muted)] pl-3 pt-1">
             {tFormat('label')}
           </span>

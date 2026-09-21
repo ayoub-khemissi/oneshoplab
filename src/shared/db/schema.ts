@@ -153,6 +153,8 @@ export const users = mysqlTable('users', {
     imageAngles: Array<'packshot' | 'inuse' | 'lifestyle' | 'studio'>;
     /** Absent on rows written before formats existed → 'auto'. */
     imageFormat?: ImageFormatDbId;
+    /** Cut the packshot's background out as well (absent = no). */
+    transparentPackshot?: boolean;
   } | null>(),
 
   /** How far the first-store walkthrough got. NULL = never opened it. Kept
@@ -267,6 +269,8 @@ export const projects = mysqlTable(
       imageAngles: Array<'packshot' | 'inuse' | 'lifestyle' | 'studio'>;
       /** Absent on rows written before formats existed → 'auto'. */
       imageFormat?: ImageFormatDbId;
+      /** Cut the packshot's background out as well (absent = no). */
+      transparentPackshot?: boolean;
     } | null>(),
     /** Send every completed generation to the store without waiting for the
      *  merchant to click Apply. Off by default and set per store, never

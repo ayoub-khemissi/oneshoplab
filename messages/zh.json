@@ -947,7 +947,10 @@
     "eligibleCount": "{count} 个符合条件的产品",
     "estimatedTotal": "≈ 共计 {cost}",
     "autoSendLabel": "直接发送到我的店铺",
-    "autoSendHint": "生成结果随时发出，无需审阅。仅限本次运行。"
+    "autoSendHint": "生成结果随时发出，无需审阅。仅限本次运行。",
+    "transparentPackshotLabel": "纯白背景图的透明背景版本",
+    "transparentPackshotHint": "每个商品，抠图 PNG 添加在白底图旁",
+    "transparentPackshotRecap": "透明背景"
   },
   "Share": {
     "title": "分享给潜在客户",

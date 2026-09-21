@@ -947,7 +947,10 @@
     "eligibleCount": "대상 상품 {count}개",
     "estimatedTotal": "≈ 총 {cost}",
     "autoSendLabel": "스토어로 바로 전송",
-    "autoSendHint": "생성되는 대로 검토 없이 전송합니다. 이번 실행에만 적용됩니다."
+    "autoSendHint": "생성되는 대로 검토 없이 전송합니다. 이번 실행에만 적용됩니다.",
+    "transparentPackshotLabel": "흰 배경 팩샷의 투명 배경 버전",
+    "transparentPackshotHint": "제품당, 배경 제거 PNG를 팩샷 옆에 추가",
+    "transparentPackshotRecap": "투명 배경"
   },
   "Share": {
     "title": "잠재 고객에게 공유",

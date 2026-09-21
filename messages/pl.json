@@ -947,7 +947,10 @@
     "eligibleCount": "{count} kwalifikujących się produktów",
     "estimatedTotal": "≈ {cost} łącznie",
     "autoSendLabel": "Wysyłaj od razu do sklepu",
-    "autoSendHint": "Wyniki wychodzą na bieżąco, bez sprawdzania. Tylko dla tego uruchomienia."
+    "autoSendHint": "Wyniki wychodzą na bieżąco, bez sprawdzania. Tylko dla tego uruchomienia.",
+    "transparentPackshotLabel": "Wersja z przezroczystym tłem białego packshotu",
+    "transparentPackshotHint": "na produkt, wycięty PNG dodany obok packshotu",
+    "transparentPackshotRecap": "Przezroczyste tło"
   },
   "Share": {
     "title": "Udostępnij prospektowi",

@@ -26,6 +26,9 @@ export interface BulkInputPayload {
   /** Output ratio for this run's images. Absent on jobs queued before
    *  formats existed → 'auto' (the source photo's own ratio). */
   imageFormat?: ImageFormatId;
+  /** Also queue a transparent-background cut-out of each white-background
+   *  packshot, billed per product at costForRemoveBackground(). */
+  transparentPackshot?: boolean;
   /** Send this run's generations to the store as they land, without changing
    *  the store's own setting. A decision for one batch, not for the shop. */
   autoSend?: boolean;
@@ -56,6 +59,8 @@ export interface ResolvedBulkPrefs {
   fields: Record<BulkFieldKey, boolean>;
   imageAngles: BulkImageAngle[];
   imageFormat: ImageFormatId;
+  /** True only when images are on and the packshot angle is among them. */
+  transparentPackshot: boolean;
 }
 
 /**
@@ -69,6 +74,7 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
     fields?: Partial<Record<BulkFieldKey, unknown>>;
     imageAngles?: unknown;
     imageFormat?: unknown;
+    transparentPackshot?: unknown;
   } | null;
   const f = r?.fields ?? {};
   const fields: Record<BulkFieldKey, boolean> = {
@@ -92,7 +98,9 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
   return {
     fields,
     imageAngles,
-    imageFormat: resolveImageFormatId(typeof r?.imageFormat === 'string' ? r.imageFormat : null)
+    imageFormat: resolveImageFormatId(typeof r?.imageFormat === 'string' ? r.imageFormat : null),
+    transparentPackshot:
+      r?.transparentPackshot === true && fields.images && imageAngles.includes('packshot')
   };
 }
 

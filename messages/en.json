@@ -947,7 +947,10 @@
     "eligibleCount": "{count} eligible products",
     "estimatedTotal": "≈ {cost} total",
     "autoSendLabel": "Send straight to my store",
-    "autoSendHint": "Generations go out as they land, without a review step. Only for this run."
+    "autoSendHint": "Generations go out as they land, without a review step. Only for this run.",
+    "transparentPackshotLabel": "Transparent-background version of the white packshot",
+    "transparentPackshotHint": "per product, cut-out PNG added next to the packshot",
+    "transparentPackshotRecap": "Transparent background"
   },
   "Share": {
     "title": "Share for prospects",

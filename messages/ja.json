@@ -947,7 +947,10 @@
     "eligibleCount": "対象商品 {count} 件",
     "estimatedTotal": "≈ 合計 {cost}",
     "autoSendLabel": "ストアへ直接送信する",
-    "autoSendHint": "生成でき次第、確認なしに送信します。今回の実行のみ。"
+    "autoSendHint": "生成でき次第、確認なしに送信します。今回の実行のみ。",
+    "transparentPackshotLabel": "白背景パックショットの背景透過バージョン",
+    "transparentPackshotHint": "商品ごと、切り抜きPNGをパックショットの横に追加",
+    "transparentPackshotRecap": "背景透過"
   },
   "Share": {
     "title": "見込み客に共有",

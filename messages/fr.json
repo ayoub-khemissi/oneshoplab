@@ -947,7 +947,10 @@
     "eligibleCount": "{count} produits éligibles",
     "estimatedTotal": "≈ {cost} au total",
     "autoSendLabel": "Envoyer directement à ma boutique",
-    "autoSendHint": "Les générations partent au fur et à mesure, sans relecture. Uniquement pour ce lancement."
+    "autoSendHint": "Les générations partent au fur et à mesure, sans relecture. Uniquement pour ce lancement.",
+    "transparentPackshotLabel": "Version fond transparent du Fond blanc",
+    "transparentPackshotHint": "par produit, PNG détouré ajouté à côté du packshot",
+    "transparentPackshotRecap": "Fond transparent"
   },
   "Share": {
     "title": "Partage prospect",

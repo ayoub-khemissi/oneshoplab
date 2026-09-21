@@ -26,7 +26,8 @@ const Schema = z.union([
     }),
     imageAngles: z.array(z.enum(['packshot', 'inuse', 'lifestyle', 'studio'])).max(3),
     /** Optional so a client that predates formats still validates. */
-    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional()
+    imageFormat: z.enum(IMAGE_FORMAT_IDS).optional(),
+    transparentPackshot: z.boolean().optional()
   })
 ]);
 
@@ -51,7 +52,8 @@ export async function updateUserDefaultBulkPrefsAction(formData: FormData): Prom
       : resolveBulkPrefs({
           fields: parsed.data.fields,
           imageAngles: parsed.data.imageAngles,
-          imageFormat: parsed.data.imageFormat
+          imageFormat: parsed.data.imageFormat,
+          transparentPackshot: parsed.data.transparentPackshot
         });
 
   await db.update(users).set({ defaultBulkPrefs: value }).where(eq(users.id, session.user.id));

@@ -45,7 +45,8 @@ export function SiteBulkPrefsEditor({
             siteId,
             fields: prefs.fields,
             imageAngles: prefs.imageAngles,
-            imageFormat: prefs.imageFormat
+            imageFormat: prefs.imageFormat,
+            transparentPackshot: prefs.transparentPackshot === true
           })
         });
         if (res.ok) {
