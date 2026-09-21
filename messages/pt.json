@@ -780,7 +780,10 @@
     "removeBgOption": "Adicionar também uma versão com fundo transparente (PNG)",
     "removeBgQueued": "Recorte iniciado: o PNG vai aparecer na grelha IA.",
     "errorSourceNotFound": "Imagem de origem não encontrada.",
-    "errorAlreadyTransparent": "Esta imagem já tem a sua versão com fundo transparente."
+    "errorAlreadyTransparent": "Esta imagem já tem a sua versão com fundo transparente.",
+    "replaceTitle": "{count} de {max} imagens",
+    "replaceHint": "Substitua uma para continuar: escolha a que dá lugar.",
+    "replacePickAria": "Substituir esta imagem"
   },
   "Relaunch": {
     "relaunch": "Relançar análise",

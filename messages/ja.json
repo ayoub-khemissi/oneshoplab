@@ -780,7 +780,10 @@
     "removeBgOption": "背景透過バージョン（PNG）も追加する",
     "removeBgQueued": "切り抜きを開始しました。PNGはAIグリッドに表示されます。",
     "errorSourceNotFound": "元画像が見つかりません。",
-    "errorAlreadyTransparent": "この画像にはすでに透過バージョンがあります。"
+    "errorAlreadyTransparent": "この画像にはすでに透過バージョンがあります。",
+    "replaceTitle": "{max}枚中{count}枚",
+    "replaceHint": "続けるには1枚を置き換えてください。空けるものを選んでください。",
+    "replacePickAria": "この画像を置き換える"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",

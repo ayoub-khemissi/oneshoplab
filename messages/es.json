@@ -780,7 +780,10 @@
     "removeBgOption": "Añadir también una versión con fondo transparente (PNG)",
     "removeBgQueued": "Recorte iniciado: el PNG aparecerá en la cuadrícula IA.",
     "errorSourceNotFound": "Imagen de origen no encontrada.",
-    "errorAlreadyTransparent": "Esta imagen ya tiene su versión con fondo transparente."
+    "errorAlreadyTransparent": "Esta imagen ya tiene su versión con fondo transparente.",
+    "replaceTitle": "{count} de {max} imágenes",
+    "replaceHint": "Sustituye una para continuar: elige la que deja su sitio.",
+    "replacePickAria": "Sustituir esta imagen"
   },
   "Relaunch": {
     "relaunch": "Relanzar análisis",

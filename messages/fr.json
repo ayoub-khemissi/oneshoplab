@@ -780,7 +780,10 @@
     "removeBgOption": "Ajouter aussi une version fond transparent (PNG)",
     "removeBgQueued": "Détourage lancé : le PNG arrive dans la grille IA.",
     "errorSourceNotFound": "Image source introuvable.",
-    "errorAlreadyTransparent": "Cette image a déjà sa version fond transparent."
+    "errorAlreadyTransparent": "Cette image a déjà sa version fond transparent.",
+    "replaceTitle": "{count} images sur {max}",
+    "replaceHint": "Remplacez-en une pour continuer : choisissez celle qui laisse sa place.",
+    "replacePickAria": "Remplacer cette image"
   },
   "Relaunch": {
     "relaunch": "Relancer l'analyse",

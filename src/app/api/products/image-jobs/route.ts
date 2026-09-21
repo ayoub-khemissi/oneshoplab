@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
-import { MAX_IMAGES_PER_PRODUCT } from '@/features/generate-product-images';
+import { generationCount, MAX_IMAGES_PER_PRODUCT } from '@/features/generate-product-images';
 import {
   buildImagePrompt,
   IMAGE_ANGLES,
@@ -259,8 +259,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Visible-job cap. The cap is per-product (so a user with many products
   // can still generate plenty in aggregate). Replacing an existing job
   // doesn't grow the count, so we exempt that path.
+  // Cut-outs are declinations of an image already counted — the cap is on
+  // generations, and one cut-out per source is enforced separately.
   const visible = await listProductImageJobs(ctx.projectId, ctx.productSourceId);
-  if (!replaceJobId && visible.length >= MAX_IMAGES_PER_PRODUCT) {
+  if (!replaceJobId && generationCount(visible) >= MAX_IMAGES_PER_PRODUCT) {
     return NextResponse.json(
       { error: 'image_cap_reached', max: MAX_IMAGES_PER_PRODUCT },
       { status: 409 }
@@ -397,13 +399,9 @@ async function removeBackground(
     sourceAlt = own?.alt ?? null;
   }
 
+  // No cap here: a cut-out never adds a generation (see POST). What it must
+  // not do is exist twice for the same source.
   const visible = await listProductImageJobs(ctx.projectId, ctx.productSourceId);
-  if (visible.length >= MAX_IMAGES_PER_PRODUCT) {
-    return NextResponse.json(
-      { error: 'image_cap_reached', max: MAX_IMAGES_PER_PRODUCT },
-      { status: 409 }
-    );
-  }
   // One cut-out per source: the grid would show two identical PNGs.
   const duplicate = visible.some(
     (j) =>

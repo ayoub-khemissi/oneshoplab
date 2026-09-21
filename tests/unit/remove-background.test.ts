@@ -101,3 +101,16 @@ describe('toTransparentPng', () => {
     expect((await toTransparentPng(png)).transparentRatio).toBe(0);
   });
 });
+
+describe('image cap', () => {
+  it('counts generations only — cut-outs never block the + tile', async () => {
+    const { generationCount, MAX_IMAGES_PER_PRODUCT } =
+      await import('../../src/features/generate-product-images/model/limits');
+    const tiles = [
+      ...Array.from({ length: MAX_IMAGES_PER_PRODUCT }, () => ({ derived: null })),
+      { derived: 'remove_bg' as const },
+      { derived: 'remove_bg' as const }
+    ];
+    expect(generationCount(tiles)).toBe(MAX_IMAGES_PER_PRODUCT);
+  });
+});

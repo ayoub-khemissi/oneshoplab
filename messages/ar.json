@@ -780,7 +780,10 @@
     "removeBgOption": "أضف أيضًا نسخة بخلفية شفافة (PNG)",
     "removeBgQueued": "بدأ الاقتصاص: سيظهر ملف PNG في شبكة الذكاء الاصطناعي.",
     "errorSourceNotFound": "لم يتم العثور على الصورة الأصلية.",
-    "errorAlreadyTransparent": "هذه الصورة لديها بالفعل نسخة بخلفية شفافة."
+    "errorAlreadyTransparent": "هذه الصورة لديها بالفعل نسخة بخلفية شفافة.",
+    "replaceTitle": "{count} من {max} صور",
+    "replaceHint": "استبدل واحدة للمتابعة: اختر الصورة التي ستفسح المجال.",
+    "replacePickAria": "استبدال هذه الصورة"
   },
   "Relaunch": {
     "relaunch": "إعادة إطلاق التحليل",

@@ -780,7 +780,10 @@
     "removeBgOption": "Dodaj też wersję z przezroczystym tłem (PNG)",
     "removeBgQueued": "Wycinanie rozpoczęte: PNG pojawi się w siatce AI.",
     "errorSourceNotFound": "Nie znaleziono obrazu źródłowego.",
-    "errorAlreadyTransparent": "Ten obraz ma już wersję z przezroczystym tłem."
+    "errorAlreadyTransparent": "Ten obraz ma już wersję z przezroczystym tłem.",
+    "replaceTitle": "{count} z {max} obrazów",
+    "replaceHint": "Zastąp jeden, aby kontynuować: wybierz ten, który zwolni miejsce.",
+    "replacePickAria": "Zastąp ten obraz"
   },
   "Relaunch": {
     "relaunch": "Wznów analizę",

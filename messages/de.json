@@ -780,7 +780,10 @@
     "removeBgOption": "Zusätzlich eine Version mit transparentem Hintergrund (PNG)",
     "removeBgQueued": "Freistellen gestartet: das PNG erscheint im KI-Raster.",
     "errorSourceNotFound": "Quellbild nicht gefunden.",
-    "errorAlreadyTransparent": "Dieses Bild hat bereits eine transparente Version."
+    "errorAlreadyTransparent": "Dieses Bild hat bereits eine transparente Version.",
+    "replaceTitle": "{count} von {max} Bildern",
+    "replaceHint": "Ersetzen Sie eines, um fortzufahren: Wählen Sie das, das Platz macht.",
+    "replacePickAria": "Dieses Bild ersetzen"
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",

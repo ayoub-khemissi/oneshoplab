@@ -1,12 +1,14 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { AddTile } from './ai-image-grid/add-tile';
 import { ImageTile } from './ai-image-grid/image-tile';
 import { NewImageModal } from './ai-image-grid/new-image-modal';
+import { ReplacePicker } from './ai-image-grid/replace-picker';
 import { useImageJobs } from './ai-image-grid/use-image-jobs';
 import { saveProductImagePromptAction } from '../api/image-prompt-actions';
-import { MAX_IMAGES_PER_PRODUCT } from '../model/limits';
+import { generationCount, MAX_IMAGES_PER_PRODUCT } from '../model/limits';
 import type { ImageJobRow } from '@/entities/generation-job';
 
 interface AiImageGridLiveProps {
@@ -43,9 +45,10 @@ interface AiImageGridLiveProps {
  *    and an ImageExpiry caption (per-image, since each can have a
  *    different generation timestamp once regenerate is in play).
  *  - Failed jobs render a dismissible red tile with the kie error.
- *  - A dashed "+ add image" tile appears below as long as the visible
- *    count is < MAX_IMAGES_PER_PRODUCT. Clicking it opens a modal
- *    that lets the merchant pick a preset angle or write a custom prompt.
+ *  - A dashed "+ add image" tile always closes the grid. Under the cap it
+ *    opens the generation modal (preset angle or custom prompt); at the cap
+ *    it asks which generation to replace and opens that modal in replace
+ *    mode. Cut-outs never count toward the cap.
  *
  * State and mutations live in `./ai-image-grid/use-image-jobs`; the tiles
  * and the modal are the other modules of that folder.
@@ -75,6 +78,8 @@ export function AiImageGridLive({
     removeBackground,
     submitNewImage
   } = useImageJobs({ siteId, productId, initial });
+  const atCap = generationCount(rawJobs) >= MAX_IMAGES_PER_PRODUCT;
+  const [replaceOpen, setReplaceOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
@@ -93,14 +98,26 @@ export function AiImageGridLive({
             onRemoveBg={() => removeBackground(job.id)}
           />
         ))}
-        {rawJobs.length < MAX_IMAGES_PER_PRODUCT ? (
-          <AddTile costPerImage={costPerImage} onClick={openAddModal} />
-        ) : null}
+        <AddTile
+          costPerImage={costPerImage}
+          onClick={() => (atCap ? setReplaceOpen(true) : openAddModal())}
+        />
       </div>
       {rawJobs.length === 0 ? (
         <p className="text-sm text-[var(--muted)] italic">{t('emptyHint')}</p>
       ) : null}
       {errorMsg ? <p className="text-xs text-[var(--danger)]">{errorMsg}</p> : null}
+      {replaceOpen ? (
+        <ReplacePicker
+          jobs={rawJobs}
+          max={MAX_IMAGES_PER_PRODUCT}
+          onCancel={() => setReplaceOpen(false)}
+          onPick={(jobId) => {
+            setReplaceOpen(false);
+            openRegenerateModal(jobId);
+          }}
+        />
+      ) : null}
       {modalOpen ? (
         <NewImageModal
           costPerImage={costPerImage}

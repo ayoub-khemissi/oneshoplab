@@ -780,7 +780,10 @@
     "removeBgOption": "Also add a transparent-background version (PNG)",
     "removeBgQueued": "Cut-out started: the PNG will appear in the AI grid.",
     "errorSourceNotFound": "Source image not found.",
-    "errorAlreadyTransparent": "This image already has its transparent version."
+    "errorAlreadyTransparent": "This image already has its transparent version.",
+    "replaceTitle": "{count} of {max} images",
+    "replaceHint": "Replace one to continue: pick the one that makes room.",
+    "replacePickAria": "Replace this image"
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",

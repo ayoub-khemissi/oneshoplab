@@ -780,7 +780,10 @@
     "removeBgOption": "同时生成透明背景版本（PNG）",
     "removeBgQueued": "抠图已开始：PNG 将出现在 AI 图片网格中。",
     "errorSourceNotFound": "未找到源图片。",
-    "errorAlreadyTransparent": "这张图片已经有透明背景版本。"
+    "errorAlreadyTransparent": "这张图片已经有透明背景版本。",
+    "replaceTitle": "{count} / {max} 张图片",
+    "replaceHint": "请替换一张以继续：选择要让出位置的图片。",
+    "replacePickAria": "替换这张图片"
   },
   "Relaunch": {
     "relaunch": "重新分析",

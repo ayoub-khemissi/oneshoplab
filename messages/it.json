@@ -780,7 +780,10 @@
     "removeBgOption": "Aggiungi anche una versione con sfondo trasparente (PNG)",
     "removeBgQueued": "Scontorno avviato: il PNG apparirà nella griglia IA.",
     "errorSourceNotFound": "Immagine di origine non trovata.",
-    "errorAlreadyTransparent": "Questa immagine ha già la sua versione trasparente."
+    "errorAlreadyTransparent": "Questa immagine ha già la sua versione trasparente.",
+    "replaceTitle": "{count} immagini su {max}",
+    "replaceHint": "Sostituiscine una per continuare: scegli quella che lascia il posto.",
+    "replacePickAria": "Sostituisci questa immagine"
   },
   "Relaunch": {
     "relaunch": "Rilancia analisi",
