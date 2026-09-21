@@ -1125,7 +1125,10 @@
     "privacyNote": "Wir nutzen deine Angaben nur, um dir zu antworten.",
     "altDiscord": "Lieber chatten?",
     "altDiscordLink": "Discord beitreten",
-    "privacyLink": "Datenschutzerklärung"
+    "privacyLink": "Datenschutzerklärung",
+    "volumeSubjectProducts": "Angebot: Katalog mit {products, number} Produkten",
+    "volumeSubject": "Angebot: großer Katalog oder mehrere Shops",
+    "volumeTemplate": "Hallo,\n\nich betreibe einen Shop mit etwa {products} Produkten und wünsche ein passendes Angebot.\n\nShop-URL: \nPlattform (Shopify, WooCommerce, Wix, andere): \nAnzahl Shops: \nBedarf (Texte, Bilder, Aktualisierungsrhythmus): \n\nDanke."
   },
   "Models": {
     "tier": {

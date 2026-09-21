@@ -1125,7 +1125,10 @@
     "privacyNote": "We use your details only to answer you.",
     "altDiscord": "Prefer chatting?",
     "altDiscordLink": "Join the Discord",
-    "privacyLink": "Privacy policy"
+    "privacyLink": "Privacy policy",
+    "volumeSubjectProducts": "Quote: catalog of {products, number} products",
+    "volumeSubject": "Quote: large catalog or multi-store",
+    "volumeTemplate": "Hello,\n\nI run a store of about {products} products and would like a tailored quote.\n\nStore URL: \nPlatform (Shopify, WooCommerce, Wix, other): \nNumber of stores: \nNeeds (copy, images, update frequency): \n\nThank you."
   },
   "Models": {
     "tier": {

@@ -1125,7 +1125,10 @@
     "privacyNote": "Usamos seus dados apenas para responder a você.",
     "altDiscord": "Prefere conversar?",
     "altDiscordLink": "Entrar no Discord",
-    "privacyLink": "Política de privacidade"
+    "privacyLink": "Política de privacidade",
+    "volumeSubjectProducts": "Orçamento: catálogo de {products, number} produtos",
+    "volumeSubject": "Orçamento: catálogo grande ou várias lojas",
+    "volumeTemplate": "Olá,\n\nGiro uma loja com cerca de {products} produtos e gostaria de um orçamento adaptado.\n\nURL da loja: \nPlataforma (Shopify, WooCommerce, Wix, outra): \nNúmero de lojas: \nNecessidades (textos, imagens, frequência de atualização): \n\nObrigado."
   },
   "Models": {
     "tier": {

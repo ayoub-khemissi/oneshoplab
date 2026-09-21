@@ -79,7 +79,10 @@ export function CatalogSimulator({ initial = 200 }: { initial?: number }) {
         {rec.plan === 'custom' ? (
           <span className="text-[var(--muted)]">
             {t('custom', { products: CUSTOM_QUOTE_THRESHOLDS.products })}{' '}
-            <Link href="/contact" className="text-[var(--accent)] underline underline-offset-2">
+            <Link
+              href={{ pathname: '/contact', query: { subject: 'volume', products } }}
+              className="text-[var(--accent)] underline underline-offset-2"
+            >
               {t('customCta')}
             </Link>
           </span>

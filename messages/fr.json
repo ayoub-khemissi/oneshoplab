@@ -1125,7 +1125,10 @@
     "privacyNote": "Vos informations servent uniquement à vous répondre.",
     "altDiscord": "Vous préférez discuter ?",
     "altDiscordLink": "Rejoindre le Discord",
-    "privacyLink": "Politique de confidentialité"
+    "privacyLink": "Politique de confidentialité",
+    "volumeSubjectProducts": "Devis : catalogue de {products, number} produits",
+    "volumeSubject": "Devis : gros catalogue ou multi-boutiques",
+    "volumeTemplate": "Bonjour,\n\nJe gère une boutique d'environ {products} produits et je souhaite un devis adapté.\n\nURL de la boutique : \nPlateforme (Shopify, WooCommerce, Wix, autre) : \nNombre de boutiques : \nBesoins (textes, images, fréquence de mise à jour) : \n\nMerci."
   },
   "Models": {
     "tier": {

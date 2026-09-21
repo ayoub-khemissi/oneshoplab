@@ -1125,7 +1125,10 @@
     "privacyNote": "نستخدم بياناتك فقط للرد عليك.",
     "altDiscord": "تفضّل الدردشة؟",
     "altDiscordLink": "انضم إلى Discord",
-    "privacyLink": "سياسة الخصوصية"
+    "privacyLink": "سياسة الخصوصية",
+    "volumeSubjectProducts": "عرض سعر: كتالوج من {products, number} منتج",
+    "volumeSubject": "عرض سعر: كتالوج كبير أو متاجر متعددة",
+    "volumeTemplate": "مرحبًا،\n\nأدير متجرًا يضم حوالي {products} منتج وأرغب في عرض سعر مخصص.\n\nرابط المتجر: \nالمنصة (Shopify، WooCommerce، Wix، أخرى): \nعدد المتاجر: \nالاحتياجات (نصوص، صور، وتيرة التحديث): \n\nشكرًا."
   },
   "Models": {
     "tier": {

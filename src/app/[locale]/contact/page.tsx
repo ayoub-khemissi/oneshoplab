@@ -48,9 +48,19 @@ export default async function ContactPage({
   // asking only for what it takes to open a partner account.
   const tAffiliate = await getTranslations('Affiliate');
   const isAffiliate = query.subject === 'affiliate';
+  // `?subject=volume[&products=N]` — the pricing page's "custom quote" links.
+  // The simulator passes the catalog size it was asked about, so the
+  // message opens on the number the merchant already typed.
+  const productsRaw = Number(Array.isArray(query.products) ? query.products[0] : query.products);
+  const products = Number.isFinite(productsRaw) && productsRaw > 0 ? Math.floor(productsRaw) : null;
   const prefill = isAffiliate
     ? { subject: tAffiliate('mailSubject'), message: tAffiliate('applyTemplate') }
-    : { subject: '', message: '' };
+    : query.subject === 'volume'
+      ? {
+          subject: products ? t('volumeSubjectProducts', { products }) : t('volumeSubject'),
+          message: t('volumeTemplate', { products: products ?? '…' })
+        }
+      : { subject: '', message: '' };
 
   return (
     <main className="flex-1 px-4 md:px-10 py-8 md:py-14 max-w-2xl w-full mx-auto flex flex-col gap-8">

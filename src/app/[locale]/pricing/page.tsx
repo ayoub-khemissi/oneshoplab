@@ -187,7 +187,10 @@ export default async function PricingPage() {
         data-testid="custom-quote"
       >
         {t('customQuoteLine', CUSTOM_QUOTE_THRESHOLDS)}{' '}
-        <Link href="/contact" className="text-[var(--accent)] underline underline-offset-2">
+        <Link
+          href={{ pathname: '/contact', query: { subject: 'volume' } }}
+          className="text-[var(--accent)] underline underline-offset-2"
+        >
           {t('customQuoteCta')}
         </Link>
       </p>

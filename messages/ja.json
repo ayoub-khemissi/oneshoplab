@@ -1125,7 +1125,10 @@
     "privacyNote": "ご入力情報はお返事のためにのみ使用します。",
     "altDiscord": "チャットの方がよければ",
     "altDiscordLink": "Discord に参加",
-    "privacyLink": "プライバシーポリシー"
+    "privacyLink": "プライバシーポリシー",
+    "volumeSubjectProducts": "お見積り：{products, number}商品のカタログ",
+    "volumeSubject": "お見積り：大規模カタログまたは複数店舗",
+    "volumeTemplate": "こんにちは。\n\n約{products}商品のショップを運営しており、個別のお見積りを希望します。\n\nショップURL：\nプラットフォーム（Shopify、WooCommerce、Wix、その他）：\n店舗数：\n希望内容（テキスト、画像、更新頻度）：\n\nよろしくお願いします。"
   },
   "Models": {
     "tier": {

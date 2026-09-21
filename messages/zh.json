@@ -1125,7 +1125,10 @@
     "privacyNote": "我们仅使用您的信息来回复您。",
     "altDiscord": "更喜欢聊天？",
     "altDiscordLink": "加入 Discord",
-    "privacyLink": "隐私政策"
+    "privacyLink": "隐私政策",
+    "volumeSubjectProducts": "报价：{products, number} 个商品的目录",
+    "volumeSubject": "报价：大型目录或多店铺",
+    "volumeTemplate": "您好，\n\n我经营一家约 {products} 个商品的店铺，希望获得定制报价。\n\n店铺网址：\n平台（Shopify、WooCommerce、Wix、其他）：\n店铺数量：\n需求（文案、图片、更新频率）：\n\n谢谢。"
   },
   "Models": {
     "tier": {

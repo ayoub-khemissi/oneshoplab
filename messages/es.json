@@ -1125,7 +1125,10 @@
     "privacyNote": "Usamos tus datos solo para responderte.",
     "altDiscord": "¿Prefieres chatear?",
     "altDiscordLink": "Únete al Discord",
-    "privacyLink": "Política de privacidad"
+    "privacyLink": "Política de privacidad",
+    "volumeSubjectProducts": "Presupuesto: catálogo de {products, number} productos",
+    "volumeSubject": "Presupuesto: catálogo grande o varias tiendas",
+    "volumeTemplate": "Hola,\n\nGestiono una tienda de unos {products} productos y quiero un presupuesto a medida.\n\nURL de la tienda: \nPlataforma (Shopify, WooCommerce, Wix, otra): \nNúmero de tiendas: \nNecesidades (textos, imágenes, frecuencia de actualización): \n\nGracias."
   },
   "Models": {
     "tier": {

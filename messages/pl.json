@@ -1125,7 +1125,10 @@
     "privacyNote": "Twoje dane wykorzystujemy wyłącznie, aby odpowiedzieć.",
     "altDiscord": "Wolisz czat?",
     "altDiscordLink": "Dołącz do Discorda",
-    "privacyLink": "Polityka prywatności"
+    "privacyLink": "Polityka prywatności",
+    "volumeSubjectProducts": "Wycena: katalog {products, number} produktów",
+    "volumeSubject": "Wycena: duży katalog lub wiele sklepów",
+    "volumeTemplate": "Dzień dobry,\n\nprowadzę sklep z około {products} produktami i proszę o indywidualną wycenę.\n\nAdres sklepu: \nPlatforma (Shopify, WooCommerce, Wix, inna): \nLiczba sklepów: \nPotrzeby (teksty, obrazy, częstotliwość aktualizacji): \n\nDziękuję."
   },
   "Models": {
     "tier": {

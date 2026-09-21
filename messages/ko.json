@@ -1125,7 +1125,10 @@
     "privacyNote": "입력하신 정보는 답변 용도로만 사용합니다.",
     "altDiscord": "채팅이 더 편하신가요?",
     "altDiscordLink": "Discord 참여하기",
-    "privacyLink": "개인정보 처리방침"
+    "privacyLink": "개인정보 처리방침",
+    "volumeSubjectProducts": "견적: 제품 {products, number}개 카탈로그",
+    "volumeSubject": "견적: 대규모 카탈로그 또는 다중 매장",
+    "volumeTemplate": "안녕하세요,\n\n약 {products}개 제품의 매장을 운영 중이며 맞춤 견적을 원합니다.\n\n매장 URL: \n플랫폼(Shopify, WooCommerce, Wix, 기타): \n매장 수: \n필요 사항(텍스트, 이미지, 업데이트 주기): \n\n감사합니다."
   },
   "Models": {
     "tier": {

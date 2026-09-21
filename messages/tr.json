@@ -1125,7 +1125,10 @@
     "privacyNote": "Bilgilerinizi yalnızca size yanıt vermek için kullanırız.",
     "altDiscord": "Sohbet etmeyi mi tercih edersiniz?",
     "altDiscordLink": "Discord’a katılın",
-    "privacyLink": "Gizlilik politikası"
+    "privacyLink": "Gizlilik politikası",
+    "volumeSubjectProducts": "Teklif: {products, number} ürünlük katalog",
+    "volumeSubject": "Teklif: büyük katalog veya çoklu mağaza",
+    "volumeTemplate": "Merhaba,\n\nYaklaşık {products} ürünlük bir mağaza işletiyorum ve özel bir teklif istiyorum.\n\nMağaza adresi: \nPlatform (Shopify, WooCommerce, Wix, diğer): \nMağaza sayısı: \nİhtiyaçlar (metinler, görseller, güncelleme sıklığı): \n\nTeşekkürler."
   },
   "Models": {
     "tier": {
