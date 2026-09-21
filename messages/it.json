@@ -188,7 +188,7 @@
     "costDescription": "Riscrittura descrizione",
     "faqTitle": "Domande",
     "faq1Q": "I crediti si accumulano?",
-    "faq1A": "I crediti dell'abbonamento si azzerano ogni mese. I crediti di iscrizione restano sull'account fino all'utilizzo.",
+    "faq1A": "I crediti dell'abbonamento si azzerano ogni mese. I crediti di iscrizione e quelli acquistati in pack restano sull'account fino all'utilizzo, senza scadenza.",
     "faq2Q": "Posso cambiare modello a ogni generazione?",
     "faq2A": "Sì — imposta il default in Preferenze e ogni generazione lo usa. Modificabile in qualsiasi momento per le esecuzioni future.",
     "faq3Q": "Cosa succede quando finisco i crediti?",

@@ -188,7 +188,7 @@
     "costDescription": "Réécriture description",
     "faqTitle": "Questions",
     "faq1Q": "Les crédits sont-ils reportés ?",
-    "faq1A": "Les crédits d'abonnement se renouvellent chaque mois. Les crédits offerts à l'inscription restent sur votre compte jusqu'à utilisation.",
+    "faq1A": "Les crédits d'abonnement se renouvellent chaque mois. Les crédits offerts à l'inscription et les crédits achetés en pack restent sur votre compte jusqu'à utilisation, sans date d'expiration.",
     "faq2Q": "Puis-je changer de modèle par génération ?",
     "faq2A": "Oui — définissez votre défaut dans les Préférences, et chaque génération utilise ce réglage account-wide. Modifiable à tout moment pour les générations futures.",
     "faq3Q": "Que se passe-t-il quand je n'ai plus de crédits ?",
