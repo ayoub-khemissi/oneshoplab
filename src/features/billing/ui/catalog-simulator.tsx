@@ -21,12 +21,15 @@ const PRESETS = [50, 200, 1000, 5000] as const;
  */
 export function CatalogSimulator({ initial = 200 }: { initial?: number }) {
   const t = useTranslations('Pricing.simulator');
+  const tCredits = useTranslations('Credits');
   const locale = useLocale();
   const [raw, setRaw] = useState(String(initial));
   const products = Math.max(0, Math.floor(Number(raw) || 0));
   const rec = recommendPlanForCatalog(products);
   const planName = rec.plan === 'custom' ? null : PLAN_TIERS.find((p) => p.id === rec.plan)?.name;
-  const packName = rec.packs ? getCreditPack(rec.packs.id)?.name : null;
+  // The pack's localised name (Catalogue / Catalog), not the registry label.
+  const packName =
+    rec.packs && getCreditPack(rec.packs.id) ? tCredits(`pack.${rec.packs.id}.name`) : null;
 
   return (
     <section
