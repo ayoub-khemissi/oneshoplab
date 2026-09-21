@@ -99,7 +99,8 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
             pack: {
               boost: { name: t('pack.boost.name'), tagline: t('pack.boost.tagline') },
               power: { name: t('pack.power.name'), tagline: t('pack.power.tagline') },
-              mega: { name: t('pack.mega.name'), tagline: t('pack.mega.tagline') }
+              mega: { name: t('pack.mega.name'), tagline: t('pack.mega.tagline') },
+              catalog: { name: t('pack.catalog.name'), tagline: t('pack.catalog.tagline') }
             },
             creditsLabel: t('packBucketLabel').toLowerCase(),
             buyLabel: t('buyButton'),

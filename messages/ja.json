@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "クレジット単価最安でストック。"
+      },
+      "catalog": {
+        "name": "カタログ",
+        "tagline": "大規模カタログのフル生成1回分を、1回の購入で。"
       }
     },
     "subscriptionBucketLabel": "サブスク",

@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "Kredi başına en iyi fiyatla stok."
+      },
+      "catalog": {
+        "name": "Katalog",
+        "tagline": "Büyük bir katalogda tam bir tur, tek satın almayla."
       }
     },
     "subscriptionBucketLabel": "Abonelik",

@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "크레딧당 최저가로 비축."
+      },
+      "catalog": {
+        "name": "카탈로그",
+        "tagline": "대규모 카탈로그 전체 1회 생성을 한 번의 구매로."
       }
     },
     "subscriptionBucketLabel": "구독",

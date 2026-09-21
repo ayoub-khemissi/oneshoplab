@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "Stock al mejor precio por crédito."
+      },
+      "catalog": {
+        "name": "Catálogo",
+        "tagline": "Una pasada completa sobre un catálogo grande, en una sola compra."
       }
     },
     "subscriptionBucketLabel": "Suscripción",

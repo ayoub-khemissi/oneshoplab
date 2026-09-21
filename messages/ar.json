@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "مخزون بأفضل سعر للرصيد."
+      },
+      "catalog": {
+        "name": "كتالوج",
+        "tagline": "جولة كاملة على كتالوج كبير بعملية شراء واحدة."
       }
     },
     "subscriptionBucketLabel": "الاشتراك",

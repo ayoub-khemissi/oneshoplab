@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "Zapas po najlepszej cenie za kredyt."
+      },
+      "catalog": {
+        "name": "Katalog",
+        "tagline": "Jeden pełny przebieg dużego katalogu, w jednym zakupie."
       }
     },
     "subscriptionBucketLabel": "Subskrypcja",

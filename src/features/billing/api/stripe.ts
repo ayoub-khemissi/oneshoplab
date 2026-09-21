@@ -1,5 +1,10 @@
 import Stripe from 'stripe';
-import type { BillingCycle, CreditPackId, PlanId } from '@/entities/ai-model';
+import {
+  CREDIT_PACK_IDS,
+  type BillingCycle,
+  type CreditPackId,
+  type PlanId
+} from '@/entities/ai-model';
 
 /**
  * Lazily-instantiated Stripe client. We don't fail at import time when
@@ -64,8 +69,7 @@ export function getStripePackPriceId(packId: CreditPackId): string | null {
 
 /** Inverse: maps a price ID back to a pack id (used by the webhook). */
 export function resolvePackPriceId(priceId: string): CreditPackId | null {
-  const packs: CreditPackId[] = ['boost', 'power', 'mega'];
-  for (const pack of packs) {
+  for (const pack of CREDIT_PACK_IDS) {
     if (getStripePackPriceId(pack) === priceId) return pack;
   }
   return null;

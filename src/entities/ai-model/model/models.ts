@@ -542,7 +542,8 @@ export interface CreditPack {
 const PACK_DISPLAY: Record<CreditPackId, { name: string }> = {
   boost: { name: 'Boost' },
   power: { name: 'Power' },
-  mega: { name: 'Mega' }
+  mega: { name: 'Mega' },
+  catalog: { name: 'Catalog' }
 };
 
 export const CREDIT_PACKS: CreditPack[] = CREDIT_PACK_IDS.map((id) => ({

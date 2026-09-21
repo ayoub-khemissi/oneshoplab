@@ -50,6 +50,11 @@ exports[`credit costs (snapshot — update deliberately) > plans and packs 2`] =
     "id": "mega",
     "price": 59.99,
   },
+  {
+    "credits": 40000,
+    "id": "catalog",
+    "price": 249,
+  },
 ]
 `;
 

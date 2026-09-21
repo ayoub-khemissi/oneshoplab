@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "Fai scorta al miglior prezzo per credito."
+      },
+      "catalog": {
+        "name": "Catalogo",
+        "tagline": "Un passaggio completo su un grande catalogo, in un solo acquisto."
       }
     },
     "subscriptionBucketLabel": "Abbonamento",

@@ -114,7 +114,7 @@ export const FIELD_IDS = [
 ] as const;
 export type PricingFieldId = (typeof FIELD_IDS)[number];
 
-export const CREDIT_PACK_IDS = ['boost', 'power', 'mega'] as const;
+export const CREDIT_PACK_IDS = ['boost', 'power', 'mega', 'catalog'] as const;
 export type CreditPackId = (typeof CREDIT_PACK_IDS)[number];
 
 const PricingSchema = z.object({

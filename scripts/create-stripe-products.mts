@@ -34,7 +34,7 @@ const pricing = JSON.parse(
   readFileSync(join(import.meta.dirname, '..', 'pricing.json'), 'utf8')
 ) as {
   plans: Record<'starter' | 'pro' | 'scale' | 'free', { priceEur: number; credits: number }>;
-  creditPacks: Record<'boost' | 'power' | 'mega', { priceEur: number; credits: number }>;
+  creditPacks: Record<'boost' | 'power' | 'mega' | 'catalog', { priceEur: number; credits: number }>;
 };
 
 const YEARLY_DISCOUNT = 0.2;
@@ -59,14 +59,14 @@ const PLANS: PlanSpec[] = (['starter', 'pro', 'scale'] as const).map((id) => ({
 }));
 
 interface PackSpec {
-  id: 'boost' | 'power' | 'mega';
+  id: 'boost' | 'power' | 'mega' | 'catalog';
   name: string;
   description: string;
   priceEur: number;
   credits: number;
 }
 
-const PACKS: PackSpec[] = (['boost', 'power', 'mega'] as const).map((id) => ({
+const PACKS: PackSpec[] = (['boost', 'power', 'mega', 'catalog'] as const).map((id) => ({
   id,
   name: `OneShopLab ${id[0].toUpperCase() + id.slice(1)} Pack`,
   description: `${pricing.creditPacks[id].credits.toLocaleString()} OneShopLab credits — never expire.`,

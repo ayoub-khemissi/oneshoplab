@@ -695,6 +695,10 @@
       "mega": {
         "name": "Mega",
         "tagline": "Vorrat zum besten Preis pro Credit."
+      },
+      "catalog": {
+        "name": "Katalog",
+        "tagline": "Ein kompletter Durchlauf über einen großen Katalog, mit einem Kauf."
       }
     },
     "subscriptionBucketLabel": "Abonnement",

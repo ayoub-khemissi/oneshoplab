@@ -32,7 +32,7 @@ interface CreditPackCardsProps {
 export function CreditPackCards({ copy, locale }: CreditPackCardsProps) {
   const best = bestValuePack().id;
   return (
-    <div className="grid md:grid-cols-3 gap-4">
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {CREDIT_PACKS.map((pack) => {
         const configured = getStripePackPriceId(pack.id) !== null;
         const isBest = copy.bestValueLabel !== undefined && pack.id === best;

@@ -217,6 +217,10 @@ export default async function PricingPage() {
               mega: {
                 name: tCredits('pack.mega.name'),
                 tagline: tCredits('pack.mega.tagline')
+              },
+              catalog: {
+                name: tCredits('pack.catalog.name'),
+                tagline: tCredits('pack.catalog.tagline')
               }
             },
             creditsLabel: tCredits('packBucketLabel').toLowerCase(),

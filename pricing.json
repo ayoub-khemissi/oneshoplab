@@ -187,6 +187,10 @@
     "mega": {
       "credits": 8000,
       "priceEur": 59.99
+    },
+    "catalog": {
+      "credits": 40000,
+      "priceEur": 249
     }
   }
 }
