@@ -778,7 +778,6 @@
     "removeBgAria": "背景を透過 · {cost}クレジット",
     "transparentBadge": "透過PNG",
     "removeBgOption": "背景透過バージョン（PNG）も追加する",
-    "removeBgOptionCost": "+{cost}クレジット",
     "removeBgQueued": "切り抜きを開始しました。PNGはAIグリッドに表示されます。",
     "errorSourceNotFound": "元画像が見つかりません。",
     "errorAlreadyTransparent": "この画像にはすでに透過バージョンがあります。"

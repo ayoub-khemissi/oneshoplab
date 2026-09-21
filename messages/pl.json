@@ -778,7 +778,6 @@
     "removeBgAria": "Przezroczyste tło · {cost} kredytów",
     "transparentBadge": "Przezroczysty PNG",
     "removeBgOption": "Dodaj też wersję z przezroczystym tłem (PNG)",
-    "removeBgOptionCost": "+{cost} kredytów",
     "removeBgQueued": "Wycinanie rozpoczęte: PNG pojawi się w siatce AI.",
     "errorSourceNotFound": "Nie znaleziono obrazu źródłowego.",
     "errorAlreadyTransparent": "Ten obraz ma już wersję z przezroczystym tłem."

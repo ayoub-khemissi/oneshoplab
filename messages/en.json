@@ -778,7 +778,6 @@
     "removeBgAria": "Transparent background · {cost} credits",
     "transparentBadge": "Transparent PNG",
     "removeBgOption": "Also add a transparent-background version (PNG)",
-    "removeBgOptionCost": "+{cost} credits",
     "removeBgQueued": "Cut-out started: the PNG will appear in the AI grid.",
     "errorSourceNotFound": "Source image not found.",
     "errorAlreadyTransparent": "This image already has its transparent version."

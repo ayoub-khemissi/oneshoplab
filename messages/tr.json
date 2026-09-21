@@ -778,7 +778,6 @@
     "removeBgAria": "Şeffaf arka plan · {cost} kredi",
     "transparentBadge": "Şeffaf PNG",
     "removeBgOption": "Şeffaf arka planlı bir sürüm de ekle (PNG)",
-    "removeBgOptionCost": "+{cost} kredi",
     "removeBgQueued": "Kesme başladı: PNG, yapay zekâ ızgarasında görünecek.",
     "errorSourceNotFound": "Kaynak görsel bulunamadı.",
     "errorAlreadyTransparent": "Bu görselin şeffaf sürümü zaten var."

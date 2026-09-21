@@ -778,7 +778,6 @@
     "removeBgAria": "Transparenter Hintergrund · {cost} Credits",
     "transparentBadge": "Transparentes PNG",
     "removeBgOption": "Zusätzlich eine Version mit transparentem Hintergrund (PNG)",
-    "removeBgOptionCost": "+{cost} Credits",
     "removeBgQueued": "Freistellen gestartet: das PNG erscheint im KI-Raster.",
     "errorSourceNotFound": "Quellbild nicht gefunden.",
     "errorAlreadyTransparent": "Dieses Bild hat bereits eine transparente Version."

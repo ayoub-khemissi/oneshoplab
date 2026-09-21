@@ -186,22 +186,16 @@ export function NewImageModal({
             <Checkbox.Indicator />
           </Checkbox.Control>
           <Checkbox.Content>
-            <Label htmlFor="then-remove-bg" className="text-sm">
-              {t('removeBgOption')}{' '}
-              <span className="text-xs text-[var(--muted)] font-mono">
-                {t('removeBgOptionCost', { cost: costRemoveBg })}
+            <Label htmlFor="then-remove-bg" className="text-sm flex flex-col gap-0.5">
+              <span>{t('removeBgOption')}</span>
+              <span className="text-xs text-[var(--muted)] font-mono inline-flex items-center gap-1">
+                <Coins className="size-3" aria-hidden />
+                {costRemoveBg}
               </span>
             </Label>
           </Checkbox.Content>
         </Checkbox>
-        <div className="flex items-center justify-between gap-3">
-          <span
-            className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider inline-flex items-center gap-1"
-            data-testid="new-image-total-cost"
-          >
-            <Coins className="size-3" aria-hidden />
-            {totalCost}
-          </span>
+        <div className="flex items-center justify-end gap-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -217,7 +211,13 @@ export function NewImageModal({
               className="px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
             >
               {submitting ? <Spinner size="sm" /> : null}
-              {isReplace ? t('confirmRegenerate') : t('confirmAdd')}
+              <span>{isReplace ? t('confirmRegenerate') : t('confirmAdd')}</span>
+              <span
+                className="text-xs font-mono inline-flex items-center gap-1 opacity-80"
+                data-testid="new-image-total-cost"
+              >
+                · <Coins className="size-3" aria-hidden /> {totalCost}
+              </span>
             </button>
           </div>
         </div>

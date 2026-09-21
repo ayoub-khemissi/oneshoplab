@@ -778,7 +778,6 @@
     "removeBgAria": "Fond transparent · {cost} crédits",
     "transparentBadge": "PNG transparent",
     "removeBgOption": "Ajouter aussi une version fond transparent (PNG)",
-    "removeBgOptionCost": "+{cost} crédits",
     "removeBgQueued": "Détourage lancé : le PNG arrive dans la grille IA.",
     "errorSourceNotFound": "Image source introuvable.",
     "errorAlreadyTransparent": "Cette image a déjà sa version fond transparent."

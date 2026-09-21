@@ -778,7 +778,6 @@
     "removeBgAria": "透明背景 · {cost} 积分",
     "transparentBadge": "透明 PNG",
     "removeBgOption": "同时生成透明背景版本（PNG）",
-    "removeBgOptionCost": "+{cost} 积分",
     "removeBgQueued": "抠图已开始：PNG 将出现在 AI 图片网格中。",
     "errorSourceNotFound": "未找到源图片。",
     "errorAlreadyTransparent": "这张图片已经有透明背景版本。"

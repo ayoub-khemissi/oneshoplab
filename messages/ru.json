@@ -778,7 +778,6 @@
     "removeBgAria": "Прозрачный фон · {cost} кредитов",
     "transparentBadge": "Прозрачный PNG",
     "removeBgOption": "Добавить также версию с прозрачным фоном (PNG)",
-    "removeBgOptionCost": "+{cost} кредитов",
     "removeBgQueued": "Вырезание запущено: PNG появится в сетке ИИ.",
     "errorSourceNotFound": "Исходное изображение не найдено.",
     "errorAlreadyTransparent": "У этого изображения уже есть версия с прозрачным фоном."
