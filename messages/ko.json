@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "이 이미지에는 이미 투명 배경 버전이 있습니다.",
     "replaceTitle": "{max}장 중 {count}장",
     "replaceHint": "계속하려면 하나를 교체하세요. 자리를 비울 이미지를 선택하세요.",
-    "replacePickAria": "이 이미지 교체"
+    "replacePickAria": "이 이미지 교체",
+    "backToPicker": "뒤로"
   },
   "Relaunch": {
     "relaunch": "분석 다시 실행",

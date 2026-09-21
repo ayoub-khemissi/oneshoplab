@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "Bu görselin şeffaf sürümü zaten var.",
     "replaceTitle": "{max} görselden {count}",
     "replaceHint": "Devam etmek için birini değiştirin: yer açacak olanı seçin.",
-    "replacePickAria": "Bu görseli değiştir"
+    "replacePickAria": "Bu görseli değiştir",
+    "backToPicker": "Geri"
   },
   "Relaunch": {
     "relaunch": "Analizi yeniden başlat",

@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "هذه الصورة لديها بالفعل نسخة بخلفية شفافة.",
     "replaceTitle": "{count} من {max} صور",
     "replaceHint": "استبدل واحدة للمتابعة: اختر الصورة التي ستفسح المجال.",
-    "replacePickAria": "استبدال هذه الصورة"
+    "replacePickAria": "استبدال هذه الصورة",
+    "backToPicker": "رجوع"
   },
   "Relaunch": {
     "relaunch": "إعادة إطلاق التحليل",

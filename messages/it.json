@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "Questa immagine ha già la sua versione trasparente.",
     "replaceTitle": "{count} immagini su {max}",
     "replaceHint": "Sostituiscine una per continuare: scegli quella che lascia il posto.",
-    "replacePickAria": "Sostituisci questa immagine"
+    "replacePickAria": "Sostituisci questa immagine",
+    "backToPicker": "Indietro"
   },
   "Relaunch": {
     "relaunch": "Rilancia analisi",

@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "这张图片已经有透明背景版本。",
     "replaceTitle": "{count} / {max} 张图片",
     "replaceHint": "请替换一张以继续：选择要让出位置的图片。",
-    "replacePickAria": "替换这张图片"
+    "replacePickAria": "替换这张图片",
+    "backToPicker": "返回"
   },
   "Relaunch": {
     "relaunch": "重新分析",

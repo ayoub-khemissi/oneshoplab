@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "Dieses Bild hat bereits eine transparente Version.",
     "replaceTitle": "{count} von {max} Bildern",
     "replaceHint": "Ersetzen Sie eines, um fortzufahren: Wählen Sie das, das Platz macht.",
-    "replacePickAria": "Dieses Bild ersetzen"
+    "replacePickAria": "Dieses Bild ersetzen",
+    "backToPicker": "Zurück"
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",

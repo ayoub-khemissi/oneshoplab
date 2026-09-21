@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "This image already has its transparent version.",
     "replaceTitle": "{count} of {max} images",
     "replaceHint": "Replace one to continue: pick the one that makes room.",
-    "replacePickAria": "Replace this image"
+    "replacePickAria": "Replace this image",
+    "backToPicker": "Back"
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",

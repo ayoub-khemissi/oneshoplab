@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "Ten obraz ma już wersję z przezroczystym tłem.",
     "replaceTitle": "{count} z {max} obrazów",
     "replaceHint": "Zastąp jeden, aby kontynuować: wybierz ten, który zwolni miejsce.",
-    "replacePickAria": "Zastąp ten obraz"
+    "replacePickAria": "Zastąp ten obraz",
+    "backToPicker": "Wstecz"
   },
   "Relaunch": {
     "relaunch": "Wznów analizę",

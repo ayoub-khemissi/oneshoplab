@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "У этого изображения уже есть версия с прозрачным фоном.",
     "replaceTitle": "{count} из {max} изображений",
     "replaceHint": "Замените одно, чтобы продолжить: выберите то, что освободит место.",
-    "replacePickAria": "Заменить это изображение"
+    "replacePickAria": "Заменить это изображение",
+    "backToPicker": "Назад"
   },
   "Relaunch": {
     "relaunch": "Перезапустить аудит",

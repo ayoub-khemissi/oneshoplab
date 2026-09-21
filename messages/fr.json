@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "Cette image a déjà sa version fond transparent.",
     "replaceTitle": "{count} images sur {max}",
     "replaceHint": "Remplacez-en une pour continuer : choisissez celle qui laisse sa place.",
-    "replacePickAria": "Remplacer cette image"
+    "replacePickAria": "Remplacer cette image",
+    "backToPicker": "Retour"
   },
   "Relaunch": {
     "relaunch": "Relancer l'analyse",

@@ -1,7 +1,7 @@
 'use client';
 
 import { Checkbox, Label, Spinner } from '@heroui/react';
-import { Coins } from 'lucide-react';
+import { ChevronLeft, Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { imageFormatChoices } from '@/entities/ai-model';
@@ -19,6 +19,12 @@ interface NewImageModalProps {
   /** Price of the optional transparent-background version. */
   costRemoveBg: number;
   isReplace: boolean;
+  /** The picture being replaced — shown beside the title so there is no
+   *  doubt about which one goes. */
+  replaceImageUrl?: string | null;
+  /** Set when the modal was reached from the replace picker: a way back to
+   *  choosing another picture, without losing the dialog. */
+  onBack?: () => void;
   /** What this product's prompt was last time — the merchant does not retype it. */
   initialCustomPrompt?: string;
   /** The account's default output ratio; this modal can override it for one
@@ -35,6 +41,8 @@ export function NewImageModal({
   costPerImage,
   costRemoveBg,
   isReplace,
+  replaceImageUrl = null,
+  onBack,
   initialCustomPrompt = '',
   initialImageFormat,
   onSavePrompt,
@@ -145,11 +153,22 @@ export function NewImageModal({
         className={modalPanelClass('md', 'p-5 gap-4 overflow-y-auto')}
       >
         <ModalCloseButton onClose={onCancel} />
-        <div className="pr-10">
-          <h3 className="text-base font-semibold">
-            {isReplace ? t('regenerateTitle') : t('newImageTitle')}
-          </h3>
-          <p className="text-xs text-[var(--muted)] mt-1">{t('modalSubtitle')}</p>
+        <div className="pr-10 flex items-start gap-3">
+          {isReplace && replaceImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={replaceImageUrl}
+              alt=""
+              data-testid="replace-thumbnail"
+              className="size-14 shrink-0 rounded-md object-cover border border-[var(--border)] bg-[var(--default)]"
+            />
+          ) : null}
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold">
+              {isReplace ? t('regenerateTitle') : t('newImageTitle')}
+            </h3>
+            <p className="text-xs text-[var(--muted)] mt-1">{t('modalSubtitle')}</p>
+          </div>
         </div>
         <div className="flex max-h-[38vh] flex-col gap-1.5 overflow-y-auto pr-1">
           {presets.map(option)}
@@ -196,7 +215,20 @@ export function NewImageModal({
             </Label>
           </Checkbox.Content>
         </Checkbox>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center justify-between gap-3">
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              data-testid="replace-back"
+              className="inline-flex items-center gap-1 px-2 py-2 rounded-md text-sm text-[var(--muted)] hover:bg-[var(--default)] hover:text-[var(--foreground)]"
+            >
+              <ChevronLeft className="size-4" aria-hidden />
+              {t('backToPicker')}
+            </button>
+          ) : (
+            <span />
+          )}
           <div className="flex items-center gap-2">
             <button
               type="button"

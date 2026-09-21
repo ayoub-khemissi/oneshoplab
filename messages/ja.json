@@ -783,7 +783,8 @@
     "errorAlreadyTransparent": "この画像にはすでに透過バージョンがあります。",
     "replaceTitle": "{max}枚中{count}枚",
     "replaceHint": "続けるには1枚を置き換えてください。空けるものを選んでください。",
-    "replacePickAria": "この画像を置き換える"
+    "replacePickAria": "この画像を置き換える",
+    "backToPicker": "戻る"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",

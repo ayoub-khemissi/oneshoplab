@@ -80,6 +80,9 @@ export function AiImageGridLive({
   } = useImageJobs({ siteId, productId, initial });
   const atCap = generationCount(rawJobs) >= MAX_IMAGES_PER_PRODUCT;
   const [replaceOpen, setReplaceOpen] = useState(false);
+  // Only a modal reached through the picker offers a way back to it.
+  const [fromPicker, setFromPicker] = useState(false);
+  const replacing = modalReplaceId ? rawJobs.find((j) => j.id === modalReplaceId) : null;
 
   return (
     <div className="flex flex-col gap-2">
@@ -114,6 +117,7 @@ export function AiImageGridLive({
           onCancel={() => setReplaceOpen(false)}
           onPick={(jobId) => {
             setReplaceOpen(false);
+            setFromPicker(true);
             openRegenerateModal(jobId);
           }}
         />
@@ -123,12 +127,25 @@ export function AiImageGridLive({
           costPerImage={costPerImage}
           costRemoveBg={costRemoveBg}
           isReplace={modalReplaceId !== null}
+          replaceImageUrl={replacing?.imageUrl ?? null}
+          onBack={
+            fromPicker
+              ? () => {
+                  closeModal();
+                  setFromPicker(false);
+                  setReplaceOpen(true);
+                }
+              : undefined
+          }
           initialCustomPrompt={savedPrompt}
           initialImageFormat={imageFormatId}
           onSavePrompt={(prompt) => {
             void saveProductImagePromptAction(productId, prompt);
           }}
-          onCancel={closeModal}
+          onCancel={() => {
+            setFromPicker(false);
+            closeModal();
+          }}
           onSubmit={(payload) => submitNewImage({ ...payload, replaceJobId: modalReplaceId })}
         />
       ) : null}
