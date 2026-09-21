@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { CreditPackCards } from '@/features/billing';
 import { InfoHint } from '@/shared/ui';
@@ -14,6 +14,7 @@ interface PageProps {
 }
 
 export default async function AccountCreditsPage({ searchParams }: PageProps) {
+  const locale = await getLocale();
   const session = await auth();
   if (!session?.user) redirect('/login?next=/account/credits');
 
@@ -95,6 +96,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         <h2 className="text-lg font-semibold">{t('packsTitle')}</h2>
         <p className="text-sm text-[var(--muted)] max-w-2xl">{t('packsHint')}</p>
         <CreditPackCards
+          locale={locale}
           copy={{
             pack: {
               boost: { name: t('pack.boost.name'), tagline: t('pack.boost.tagline') },
