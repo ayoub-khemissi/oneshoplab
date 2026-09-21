@@ -174,6 +174,17 @@ export function NewImageModal({
           {presets.map(option)}
         </div>
         {option(customOption)}
+        {angle === 'custom' ? (
+          <textarea
+            value={customPrompt}
+            onChange={(e) => setCustomPrompt(e.target.value)}
+            placeholder={t('customPromptPlaceholder')}
+            maxLength={800}
+            rows={5}
+            className="w-full min-h-36 sm:min-h-28 text-sm rounded-md border border-[var(--border)] bg-[var(--surface)] p-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-y"
+            autoFocus
+          />
+        ) : null}
         <div className="flex flex-col gap-1.5">
           <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--muted)]">
             {tFormat('label')}
@@ -185,17 +196,6 @@ export function NewImageModal({
             onChange={setImageFormatId}
           />
         </div>
-        {angle === 'custom' ? (
-          <textarea
-            value={customPrompt}
-            onChange={(e) => setCustomPrompt(e.target.value)}
-            placeholder={t('customPromptPlaceholder')}
-            maxLength={800}
-            rows={3}
-            className="w-full text-sm rounded-md border border-[var(--border)] bg-[var(--surface)] p-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-y"
-            autoFocus
-          />
-        ) : null}
         <Checkbox
           id="then-remove-bg"
           isSelected={thenRemoveBg}
