@@ -30,7 +30,8 @@ export async function generateAltsForNewImages(): Promise<number> {
       id: jobs.id,
       projectId: jobs.projectId,
       productId: jobs.productId,
-      result: jobs.result
+      result: jobs.result,
+      inputPayload: jobs.inputPayload
     })
     .from(jobs)
     .where(
@@ -60,6 +61,27 @@ export async function generateAltsForNewImages(): Promise<number> {
     // source image that 404s will 404 on every tick until the heat death of
     // the universe, and retrying it forever is how a pass eats a worker.
     if (urls.length === 0 || result.altsFailed) continue;
+    // A cut-out is the same subject as its source: it takes the source's alt
+    // once that one exists (the alt pass may run after the cut-out landed) and
+    // is never described by the model — that would bill us for a sentence we
+    // already have.
+    const cutout = job.inputPayload as { op?: string; sourceJobId?: string } | null;
+    if (cutout?.op === 'remove_bg') {
+      if (cutout.sourceJobId) {
+        const src = await db.query.jobs.findFirst({
+          where: eq(jobs.id, cutout.sourceJobId),
+          columns: { result: true }
+        });
+        const alt = (src?.result as { alts?: string[] } | null)?.alts?.[0];
+        if (alt) {
+          await db
+            .update(jobs)
+            .set({ result: { ...result, alts: [alt] } })
+            .where(eq(jobs.id, job.id));
+        }
+      }
+      continue;
+    }
     if ((result.alts?.length ?? 0) >= urls.length) continue;
     if (!job.projectId || !job.productId) continue;
 

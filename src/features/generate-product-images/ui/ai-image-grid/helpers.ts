@@ -10,6 +10,10 @@ export function errorKeyFromCode(code: string | undefined): string {
       return 'errorNoSourceImage';
     case 'image_cap_reached':
       return 'errorCapReached';
+    case 'source_not_found':
+      return 'errorSourceNotFound';
+    case 'already_transparent':
+      return 'errorAlreadyTransparent';
     default:
       return 'errorGeneric';
   }

@@ -212,7 +212,8 @@
       "allModels": "Все модели",
       "noCard": "Без карты",
       "bulkOps": "Массовая генерация каталога"
-    }
+    },
+    "costRemoveBg": "Прозрачный фон (вырезание)"
   },
   "Preferences": {
     "title": "Настройки генерации",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Ориентир размера",
     "angleScaleHint": "Рядом со знакомым предметом — размер понятен сразу.",
     "angleGiftTitle": "Подарочная подача",
-    "angleGiftHint": "Упаковка и лента рядом, тёплый свет."
+    "angleGiftHint": "Упаковка и лента рядом, тёплый свет.",
+    "removeBg": "Прозрачный фон",
+    "removeBgAria": "Прозрачный фон · {cost} кредитов",
+    "transparentBadge": "Прозрачный PNG",
+    "removeBgOption": "Добавить также версию с прозрачным фоном (PNG)",
+    "removeBgOptionCost": "+{cost} кредитов",
+    "removeBgQueued": "Вырезание запущено: PNG появится в сетке ИИ.",
+    "errorSourceNotFound": "Исходное изображение не найдено.",
+    "errorAlreadyTransparent": "У этого изображения уже есть версия с прозрачным фоном."
   },
   "Relaunch": {
     "relaunch": "Перезапустить аудит",

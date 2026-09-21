@@ -212,7 +212,8 @@
       "allModels": "All models available",
       "noCard": "No card required",
       "bulkOps": "Bulk catalog generation"
-    }
+    },
+    "costRemoveBg": "Transparent background (cut-out)"
   },
   "Preferences": {
     "title": "Generation preferences",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Size reference",
     "angleScaleHint": "Beside a familiar object, so the size reads at a glance.",
     "angleGiftTitle": "Gift setting",
-    "angleGiftHint": "Wrapping and ribbon nearby, warm festive light."
+    "angleGiftHint": "Wrapping and ribbon nearby, warm festive light.",
+    "removeBg": "Transparent background",
+    "removeBgAria": "Transparent background · {cost} credits",
+    "transparentBadge": "Transparent PNG",
+    "removeBgOption": "Also add a transparent-background version (PNG)",
+    "removeBgOptionCost": "+{cost} credits",
+    "removeBgQueued": "Cut-out started: the PNG will appear in the AI grid.",
+    "errorSourceNotFound": "Source image not found.",
+    "errorAlreadyTransparent": "This image already has its transparent version."
   },
   "Relaunch": {
     "relaunch": "Relaunch analysis",

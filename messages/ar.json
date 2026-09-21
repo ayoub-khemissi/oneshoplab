@@ -212,7 +212,8 @@
       "allModels": "كل النماذج متاحة",
       "noCard": "بدون بطاقة",
       "bulkOps": "توليد جماعي للكتالوج"
-    }
+    },
+    "costRemoveBg": "خلفية شفافة (اقتصاص)"
   },
   "Preferences": {
     "title": "تفضيلات التوليد",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "مرجع للحجم",
     "angleScaleHint": "بجانب غرض مألوف ليتّضح الحجم فورًا.",
     "angleGiftTitle": "أجواء هدية",
-    "angleGiftHint": "تغليف وشريط بالقرب، إضاءة دافئة."
+    "angleGiftHint": "تغليف وشريط بالقرب، إضاءة دافئة.",
+    "removeBg": "خلفية شفافة",
+    "removeBgAria": "خلفية شفافة · {cost} رصيد",
+    "transparentBadge": "PNG شفاف",
+    "removeBgOption": "أضف أيضًا نسخة بخلفية شفافة (PNG)",
+    "removeBgOptionCost": "+{cost} رصيد",
+    "removeBgQueued": "بدأ الاقتصاص: سيظهر ملف PNG في شبكة الذكاء الاصطناعي.",
+    "errorSourceNotFound": "لم يتم العثور على الصورة الأصلية.",
+    "errorAlreadyTransparent": "هذه الصورة لديها بالفعل نسخة بخلفية شفافة."
   },
   "Relaunch": {
     "relaunch": "إعادة إطلاق التحليل",

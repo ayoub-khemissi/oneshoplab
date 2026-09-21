@@ -36,7 +36,7 @@ const FieldCapSchema = z.object({
 });
 
 const TierSchema = z.enum(['budget', 'balanced', 'premium']);
-const ProviderSchema = z.enum(['Anthropic', 'Google', 'OpenAI']);
+const ProviderSchema = z.enum(['Anthropic', 'Google', 'OpenAI', 'Recraft']);
 
 const ChatModelSchema = z.object({
   displayName: z.string().min(1),
@@ -179,6 +179,17 @@ const PricingSchema = z.object({
     displayName: z.string().min(1),
     provider: ProviderSchema,
     openrouterId: z.string().min(1)
+  }),
+  _imageToolsComment: z.string().optional(),
+  /** Image post-processing tools (kie market models), priced per call. */
+  imageTools: z.object({
+    removeBackground: z.object({
+      displayName: z.string().min(1),
+      provider: ProviderSchema,
+      kieModelId: z.string().min(1),
+      /** Flat provider cost per call, in provider units. */
+      cost: z.number().int().positive()
+    })
   }),
   creditPacks: z.object(
     Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, CreditPackSchema])) as Record<

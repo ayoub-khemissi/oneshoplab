@@ -212,7 +212,8 @@
       "allModels": "모든 모델 사용 가능",
       "noCard": "카드 불필요",
       "bulkOps": "카탈로그 일괄 생성"
-    }
+    },
+    "costRemoveBg": "투명 배경(배경 제거)"
   },
   "Preferences": {
     "title": "생성 환경설정",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "크기 기준",
     "angleScaleHint": "익숙한 물건 옆에 두어 크기를 한눈에.",
     "angleGiftTitle": "선물 분위기",
-    "angleGiftHint": "포장과 리본을 곁들인 따뜻한 조명."
+    "angleGiftHint": "포장과 리본을 곁들인 따뜻한 조명.",
+    "removeBg": "투명 배경",
+    "removeBgAria": "투명 배경 · {cost} 크레딧",
+    "transparentBadge": "투명 PNG",
+    "removeBgOption": "투명 배경 버전(PNG)도 추가",
+    "removeBgOptionCost": "+{cost} 크레딧",
+    "removeBgQueued": "배경 제거를 시작했습니다. PNG가 AI 그리드에 표시됩니다.",
+    "errorSourceNotFound": "원본 이미지를 찾을 수 없습니다.",
+    "errorAlreadyTransparent": "이 이미지에는 이미 투명 배경 버전이 있습니다."
   },
   "Relaunch": {
     "relaunch": "분석 다시 실행",

@@ -212,7 +212,8 @@
       "allModels": "Tüm modeller mevcut",
       "noCard": "Kart gerekmez",
       "bulkOps": "Toplu katalog üretimi"
-    }
+    },
+    "costRemoveBg": "Şeffaf arka plan (kesme)"
   },
   "Preferences": {
     "title": "Üretim tercihleri",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Boyut referansı",
     "angleScaleHint": "Tanıdık bir nesnenin yanında, boyut bir bakışta anlaşılsın.",
     "angleGiftTitle": "Hediye atmosferi",
-    "angleGiftHint": "Yanında ambalaj ve kurdele, sıcak ışık."
+    "angleGiftHint": "Yanında ambalaj ve kurdele, sıcak ışık.",
+    "removeBg": "Şeffaf arka plan",
+    "removeBgAria": "Şeffaf arka plan · {cost} kredi",
+    "transparentBadge": "Şeffaf PNG",
+    "removeBgOption": "Şeffaf arka planlı bir sürüm de ekle (PNG)",
+    "removeBgOptionCost": "+{cost} kredi",
+    "removeBgQueued": "Kesme başladı: PNG, yapay zekâ ızgarasında görünecek.",
+    "errorSourceNotFound": "Kaynak görsel bulunamadı.",
+    "errorAlreadyTransparent": "Bu görselin şeffaf sürümü zaten var."
   },
   "Relaunch": {
     "relaunch": "Analizi yeniden başlat",

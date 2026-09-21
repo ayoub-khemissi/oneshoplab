@@ -33,6 +33,8 @@ interface SuggestionsCardProps {
   tagsHistory: OptimHistoryItem[];
   liveImageJobs: ImageJobRow[];
   costPerImage: number;
+  /** Price of a transparent-background cut-out (per image). */
+  costRemoveBg: number;
   retentionDays: number;
   /** Apply-to-store state of the latest generation of each field. */
   changeByJobId: Record<string, ChangeSummary>;
@@ -60,6 +62,7 @@ export async function SuggestionsCard({
   tagsHistory,
   liveImageJobs,
   costPerImage,
+  costRemoveBg,
   retentionDays,
   changeByJobId,
   canApplyToStore,
@@ -307,13 +310,19 @@ export async function SuggestionsCard({
                     />
                   ) : null;
                 })()}
-                source={<SourceImageGrid images={product.images} />}
+                source={
+                  <SourceImageGrid
+                    images={product.images}
+                    removeBg={archived ? undefined : { siteId, productId, cost: costRemoveBg }}
+                  />
+                }
                 ai={
                   <AiImageGridLive
                     siteId={siteId}
                     productId={productId}
                     initial={liveImageJobs}
                     costPerImage={costPerImage}
+                    costRemoveBg={costRemoveBg}
                     retentionDays={retentionDays}
                     savedPrompt={savedImagePrompt}
                     imageFormatId={imageFormatId}

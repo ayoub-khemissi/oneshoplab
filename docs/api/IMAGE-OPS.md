@@ -216,3 +216,43 @@ and the UI offers exactly that — never a button that silently does nothing:
 
 The same capability object carries the text side (`fields: ['title','description','tags']`),
 so a future provider that cannot write descriptions simply doesn't show the action.
+
+## Background removal (transparent PNG)
+
+Added 2026-09-21. A paid tool on pictures the merchant already has, not a
+generation.
+
+- **Provider**: `recraft/remove-background` on kie (same `createTask` +
+  webhook + watchdog path as image generation). Measured on 8 real images:
+  3–8 s, 1 kie unit each, clean semantic segmentation (white shirt on white,
+  wall plate matching the background, hair). The documented 5 MB input cap is
+  not enforced (6.9 MB / 2880 px accepted); 256–4096 px stands.
+- **Price**: `costForRemoveBackground()` = `imageTools.removeBackground.cost ×
+  creditMarkupFactor` (1 × 3.5 → 4 credits). No alt text is billed: the
+  cut-out inherits its source's alt (copied at start, or by the alt pass once
+  the source has one).
+- **Job model**: a `kie_image_edit` row with `inputPayload.op = 'remove_bg'`,
+  `sourceImageUrl`, optional `sourceJobId` / `sourceAlt`. Reusing the kind
+  means the grid, apply-to-store, retention, r2-cleanup, refunds and the
+  notifications all treat it as one more image of the product. The grid row
+  exposes `derived: 'remove_bg'` and `sourceJobId`.
+- **Persistence**: `persist-result` downloads kie's temp output, normalises it
+  in memory (`toTransparentPng`: RGBA PNG whatever the container — kie mirrors
+  the input format — and alpha ≥ 250 snapped to 255, Recraft returns the
+  subject at 250–254) and uploads to R2 under `kie/<jobId>/<uuid>.png`. Zero
+  transparent pixels → job failed + refunded (`no_background_removed`). No
+  OpenRouter fallback (nothing to re-generate).
+- **Entry points**: `POST /api/products/image-jobs` with `op: 'remove_bg'` and
+  exactly one of `sourceJobId` (a completed generation of the product) or
+  `sourceImageUrl` (one of the product's own store images — anything else is
+  404: the URL is forwarded to a third party). One cut-out per source
+  (`already_transparent`), per-product image cap applies. A normal generation
+  accepts `thenRemoveBg: true`: the cut-out is queued when the image lands,
+  billed then, skipped if the balance ran dry meanwhile (the quote up front
+  includes it).
+- **UI**: "Transparent background · N" under every completed generation and
+  every store original; a checkbox in the new-image modal, on by default for
+  the white-background preset; cut-outs render over a checkerboard with a
+  "Transparent PNG" badge and no regenerate action.
+- **Not done yet**: bulk prefs / "Generate all" option; a size guard for store
+  originals above 4096 px (kie fails → refund).

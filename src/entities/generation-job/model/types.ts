@@ -21,6 +21,11 @@ export interface ImageJobRow {
   finishedAt: Date | null;
   error: string | null;
   creditsCost: number;
+  /** 'remove_bg' when this row is a transparent cut-out of another picture
+   *  rather than a generation; null for a generation. */
+  derived: 'remove_bg' | null;
+  /** The generation a cut-out was made from (null for store originals). */
+  sourceJobId: string | null;
 }
 
 /** Which product field a chat generation targets. `alt` is per-IMAGE (the

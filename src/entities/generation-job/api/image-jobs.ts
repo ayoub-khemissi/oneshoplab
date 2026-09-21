@@ -51,7 +51,12 @@ export async function listProductImageJobs(
 }
 
 function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
-  const input = r.inputPayload as { userPrompt?: string; sourceImageUrl?: string } | null;
+  const input = r.inputPayload as {
+    userPrompt?: string;
+    sourceImageUrl?: string;
+    op?: string;
+    sourceJobId?: string;
+  } | null;
   const result = r.result as {
     persistedUrls?: string[];
     resultUrls?: string[];
@@ -79,6 +84,8 @@ function toImageJobRow(r: typeof jobs.$inferSelect): ImageJobRow {
     startedAt: r.startedAt,
     finishedAt: r.finishedAt,
     error: r.error ?? null,
-    creditsCost: r.creditsCost
+    creditsCost: r.creditsCost,
+    derived: input?.op === 'remove_bg' ? 'remove_bg' : null,
+    sourceJobId: input?.sourceJobId ?? null
   };
 }

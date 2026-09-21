@@ -19,6 +19,20 @@ export { altTextCredits, runAltTextOptim } from './api/alt-text';
 export { generateAltsForNewImages } from './api/image-alts';
 export type { AltTextOptimRequest } from './api/alt-text';
 export { IMAGE_COST_CREDITS, startImageOptim } from './api/image-optim';
+export {
+  isRemoveBgInput,
+  REMOVE_BG_MAX_DIMENSION,
+  REMOVE_BG_MIN_DIMENSION,
+  REMOVE_BG_OP,
+  startRemoveBackground
+} from './api/remove-background';
+export type {
+  RemoveBgInput,
+  StartRemoveBackgroundOptions,
+  StartRemoveBackgroundResult
+} from './api/remove-background';
+export { snapOpaqueAlpha, toTransparentPng, OPAQUE_ALPHA_FLOOR } from './lib/transparent-png';
+export type { TransparentPngResult } from './lib/transparent-png';
 export type { StartImageOptimOptions, StartImageOptimResult } from './api/image-optim';
 export {
   ALT_TEXT_MAX_CHARS,

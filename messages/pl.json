@@ -212,7 +212,8 @@
       "allModels": "Wszystkie modele",
       "noCard": "Bez karty",
       "bulkOps": "Masowa generacja katalogu"
-    }
+    },
+    "costRemoveBg": "Przezroczyste tło (wycinanie)"
   },
   "Preferences": {
     "title": "Preferencje generowania",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Odniesienie wielkości",
     "angleScaleHint": "Obok znanego przedmiotu, by od razu ocenić rozmiar.",
     "angleGiftTitle": "Klimat prezentu",
-    "angleGiftHint": "Opakowanie i wstążka obok, ciepłe światło."
+    "angleGiftHint": "Opakowanie i wstążka obok, ciepłe światło.",
+    "removeBg": "Przezroczyste tło",
+    "removeBgAria": "Przezroczyste tło · {cost} kredytów",
+    "transparentBadge": "Przezroczysty PNG",
+    "removeBgOption": "Dodaj też wersję z przezroczystym tłem (PNG)",
+    "removeBgOptionCost": "+{cost} kredytów",
+    "removeBgQueued": "Wycinanie rozpoczęte: PNG pojawi się w siatce AI.",
+    "errorSourceNotFound": "Nie znaleziono obrazu źródłowego.",
+    "errorAlreadyTransparent": "Ten obraz ma już wersję z przezroczystym tłem."
   },
   "Relaunch": {
     "relaunch": "Wznów analizę",

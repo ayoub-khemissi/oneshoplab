@@ -46,6 +46,8 @@ export {
   aiProviderNamesForCopy,
   aiSubProcessors,
   costForImage,
+  costForRemoveBackground,
+  REMOVE_BACKGROUND_TOOL,
   estimateChatCredits,
   getChatModel,
   getCreditPack,

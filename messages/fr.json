@@ -212,7 +212,8 @@
       "allModels": "Tous les modèles disponibles",
       "noCard": "Sans carte bancaire",
       "bulkOps": "Génération en masse du catalogue"
-    }
+    },
+    "costRemoveBg": "Fond transparent (détourage)"
   },
   "Preferences": {
     "title": "Préférences de génération",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Mise à l’échelle",
     "angleScaleHint": "À côté d’un objet familier, pour saisir la taille d’un coup d’œil.",
     "angleGiftTitle": "Ambiance cadeau",
-    "angleGiftHint": "Emballage et ruban à proximité, lumière chaleureuse."
+    "angleGiftHint": "Emballage et ruban à proximité, lumière chaleureuse.",
+    "removeBg": "Fond transparent",
+    "removeBgAria": "Fond transparent · {cost} crédits",
+    "transparentBadge": "PNG transparent",
+    "removeBgOption": "Ajouter aussi une version fond transparent (PNG)",
+    "removeBgOptionCost": "+{cost} crédits",
+    "removeBgQueued": "Détourage lancé : le PNG arrive dans la grille IA.",
+    "errorSourceNotFound": "Image source introuvable.",
+    "errorAlreadyTransparent": "Cette image a déjà sa version fond transparent."
   },
   "Relaunch": {
     "relaunch": "Relancer l'analyse",

@@ -1,4 +1,4 @@
-import { modelNamesForCopy } from '@/entities/ai-model';
+import { costForRemoveBackground, modelNamesForCopy } from '@/entities/ai-model';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
@@ -209,10 +209,14 @@ export default async function PricingPage() {
           <p className="text-sm text-[var(--muted)] leading-relaxed">
             {t('whatIsCreditBody', modelNamesForCopy())}
           </p>
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Stat label={t('costFullGen')} value={`~50 ${t('credits')}`} />
             <Stat label={t('costImage1k')} value={`15 ${t('credits')}`} />
             <Stat label={t('costDescription')} value={`~5 ${t('credits')}`} />
+            <Stat
+              label={t('costRemoveBg')}
+              value={`${costForRemoveBackground()} ${t('credits')}`}
+            />
           </div>
         </Card>
       </section>

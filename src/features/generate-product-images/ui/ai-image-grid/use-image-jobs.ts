@@ -157,10 +157,37 @@ export function useImageJobs({ siteId, productId, initial }: UseImageJobsArgs) {
     setModalOpen(true);
   }
 
+  /** Cut the background out of one completed generation → new tile. */
+  async function removeBackground(sourceJobId: string) {
+    setErrorMsg(null);
+    setBusy((b) => ({ ...b, [sourceJobId]: 'removebg' }));
+    try {
+      const res = await fetch('/api/products/image-jobs', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ siteId, productId, op: 'remove_bg', sourceJobId })
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        setErrorMsg(t(errorKeyFromCode(body.error)));
+        return false;
+      }
+      await refresh();
+      refreshKeepingScroll(() => router.refresh());
+      return true;
+    } finally {
+      setBusy((b) => {
+        const { [sourceJobId]: _, ...rest } = b;
+        return rest;
+      });
+    }
+  }
+
   async function submitNewImage(opts: {
     angle: ImageAngle;
     customPrompt: string;
     imageFormatId: string;
+    thenRemoveBg: boolean;
     replaceJobId: string | null;
   }) {
     setErrorMsg(null);
@@ -173,6 +200,7 @@ export function useImageJobs({ siteId, productId, initial }: UseImageJobsArgs) {
         angle: opts.angle,
         customPrompt: opts.customPrompt,
         imageFormatId: opts.imageFormatId,
+        thenRemoveBg: opts.thenRemoveBg,
         replaceJobId: opts.replaceJobId
       })
     });
@@ -203,6 +231,7 @@ export function useImageJobs({ siteId, productId, initial }: UseImageJobsArgs) {
     deleteJob,
     openAddModal,
     openRegenerateModal,
+    removeBackground,
     submitNewImage
   };
 }

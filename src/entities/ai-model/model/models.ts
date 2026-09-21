@@ -37,6 +37,9 @@ import {
   type SystemChatRole
 } from './pricing';
 
+/** Model providers that appear in the catalog (and hence in the legal pages). */
+export type AiProvider = 'OpenAI' | 'Anthropic' | 'Google' | 'Recraft';
+
 /** Markup applied to image generations (provider cost × markup). */
 export const CREDIT_MARKUP = PRICING.creditMarkupFactor;
 /** Markup applied to text generations — text is cheap, so a lower
@@ -126,7 +129,7 @@ export interface ChatModelRef {
 export interface ChatModelInfo extends ChatModelRef {
   id: ChatModelId;
   displayName: string;
-  provider: 'OpenAI' | 'Anthropic' | 'Google';
+  provider: AiProvider;
   tier: 'budget' | 'balanced' | 'premium';
   /** Accepts `image` content blocks — required for alt-text generation. */
   vision: boolean;
@@ -266,7 +269,7 @@ export interface ImageModelInfo {
    *  on the optim page, and as the provider subtitle on the
    *  Preferences page so merchants know which model is doing the work. */
   modelName: string;
-  provider: 'OpenAI' | 'Anthropic' | 'Google';
+  provider: AiProvider;
   displayName: string;
   resolution: '1K' | '2K' | '4K';
   tier: 'budget' | 'balanced' | 'premium';
@@ -333,6 +336,21 @@ export function costForImage(qualityId: ImageQualityId, chatModelId?: ChatModelI
 }
 
 export const IMAGE_ANGLES_PER_GEN = PRICING.imageAnglesPerGen;
+
+// ---------------------------------------------------------------------------
+// Image tools (post-processing, no generation)
+// ---------------------------------------------------------------------------
+
+/** Background removal → transparent PNG, run by Recraft's segmentation model
+ *  through kie. Not a generation: the picture is the merchant's own, so no
+ *  alt text is written (the source's alt travels with it) and the price is
+ *  the provider unit times the image markup, nothing else. */
+export const REMOVE_BACKGROUND_TOOL = PRICING.imageTools.removeBackground;
+
+/** Per-call cost of a background removal in user-facing credits. */
+export function costForRemoveBackground(): number {
+  return Math.ceil(REMOVE_BACKGROUND_TOOL.cost * CREDIT_MARKUP);
+}
 
 // ---------------------------------------------------------------------------
 // Image formats (output ratio)
@@ -602,7 +620,8 @@ export interface AiSubProcessor {
 const PROVIDER_LEGAL: Record<ChatModelInfo['provider'], { entity: string; location: string }> = {
   Anthropic: { entity: 'Anthropic, PBC', location: 'USA' },
   OpenAI: { entity: 'OpenAI, L.L.C.', location: 'USA' },
-  Google: { entity: 'Google LLC', location: 'USA / EU' }
+  Google: { entity: 'Google LLC', location: 'USA / EU' },
+  Recraft: { entity: 'Recraft, Inc.', location: 'USA' }
 };
 
 const GATEWAY_OPENROUTER = { entity: 'OpenRouter, Inc.', location: 'USA' };
@@ -647,6 +666,10 @@ export function aiSubProcessors(): AiSubProcessor[] {
     fallbackProvider,
     `${IMAGE_FALLBACK_MODEL.displayName} (image generation fallback), via OpenRouter`
   );
+  add(
+    REMOVE_BACKGROUND_TOOL.provider,
+    `${REMOVE_BACKGROUND_TOOL.displayName} (background removal on merchant images), via kie.ai`
+  );
   for (const [p, roles] of providerRoles) {
     rows.push({ ...PROVIDER_LEGAL[p], role: roles.join('; ') });
   }
@@ -659,7 +682,8 @@ export function aiProviderNamesForCopy(): { aiGateways: string; aiProviders: str
     ...new Set([
       ...Object.values(CHAT_MODEL_REGISTRY).map((m) => m.provider),
       IMAGE_MODEL.provider,
-      IMAGE_FALLBACK_MODEL.provider
+      IMAGE_FALLBACK_MODEL.provider,
+      REMOVE_BACKGROUND_TOOL.provider
     ])
   ];
   return { aiGateways: 'OpenRouter / kie.ai', aiProviders: providers.join(' / ') };

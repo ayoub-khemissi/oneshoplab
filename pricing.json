@@ -166,6 +166,15 @@
     "provider": "Google",
     "openrouterId": "google/gemini-3.1-flash-image"
   },
+  "_imageToolsComment": "Post-processing tools billed like images (provider units x creditMarkupFactor, no alt text). removeBackground = Recraft segmentation via kie; measured 2026-09-21: 1 kie unit, 3-8 s, transparent PNG/WebP following the input format, the documented 5 MB cap is not enforced (6.9 MB accepted).",
+  "imageTools": {
+    "removeBackground": {
+      "displayName": "Recraft Remove Background",
+      "provider": "Recraft",
+      "kieModelId": "recraft/remove-background",
+      "cost": 1
+    }
+  },
   "creditPacks": {
     "boost": {
       "credits": 500,

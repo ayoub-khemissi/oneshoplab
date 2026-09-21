@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ImageZoom, ProductImageGallery } from '@/shared/ui';
+import { RemoveBgSourceButton } from '@/features/generate-product-images';
 import type { ProductImage, ProductSnapshot } from '../api/load-product';
 
 export function SourcePreview({ product }: { product: ProductSnapshot }) {
@@ -50,7 +51,14 @@ export function SourcePreview({ product }: { product: ProductSnapshot }) {
   );
 }
 
-export function SourceImageGrid({ images }: { images: ProductImage[] }) {
+interface SourceImageGridProps {
+  images: ProductImage[];
+  /** When set, each original gets a "transparent background" action whose
+   *  result lands in the AI grid. Omitted on read-only renders (tour demo). */
+  removeBg?: { siteId: string; productId: string; cost: number };
+}
+
+export function SourceImageGrid({ images, removeBg }: SourceImageGridProps) {
   const t = useTranslations('Report');
   if (images.length === 0) {
     return <p className="text-sm text-[var(--muted)] italic">{t('aiNoImage')}</p>;
@@ -60,12 +68,17 @@ export function SourceImageGrid({ images }: { images: ProductImage[] }) {
   return (
     <div className={`grid gap-2 ${cols}`}>
       {images.map((img, i) => (
-        <ImageZoom
-          key={`${img.src}-${i}`}
-          url={img.src}
-          alt={img.alt ?? ''}
-          downloadName={`source-${i + 1}.jpg`}
-        />
+        <div key={`${img.src}-${i}`} className="flex flex-col gap-1.5 min-w-0">
+          <ImageZoom url={img.src} alt={img.alt ?? ''} downloadName={`source-${i + 1}.jpg`} />
+          {removeBg && /^https:\/\//i.test(img.src) ? (
+            <RemoveBgSourceButton
+              siteId={removeBg.siteId}
+              productId={removeBg.productId}
+              sourceImageUrl={img.src}
+              cost={removeBg.cost}
+            />
+          ) : null}
+        </div>
       ))}
     </div>
   );

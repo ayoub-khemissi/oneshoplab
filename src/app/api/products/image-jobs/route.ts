@@ -5,10 +5,12 @@ import {
   buildImagePrompt,
   IMAGE_ANGLES,
   startImageOptim,
+  startRemoveBackground,
   type ImageAngle
 } from '@/entities/generation-job';
 import {
   costForImage,
+  costForRemoveBackground,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   resolveImageFormatId,
@@ -23,6 +25,7 @@ import { sanitizeUserFacingError } from '@/shared/lib';
 
 interface ProductImage {
   src: string;
+  alt?: string | null;
 }
 
 interface ProductSnapshot {
@@ -43,6 +46,8 @@ interface OwnedContext {
   projectId: string;
   productSourceId: string;
   sourceImage: string | null;
+  /** Every store image of the product — the pool a cut-out may start from. */
+  images: ProductImage[];
   projectInstructions: string;
   productInstructions: string;
 }
@@ -96,8 +101,8 @@ async function loadOwnedContext(
     });
     sourceImage = match?.images?.[0]?.src ?? null;
   }
+  const persisted = (productRow.images ?? []) as ProductImage[];
   if (!sourceImage) {
-    const persisted = (productRow.images ?? []) as ProductImage[];
     sourceImage = persisted[0]?.src ?? null;
   }
 
@@ -106,6 +111,7 @@ async function loadOwnedContext(
     projectId: project.id,
     productSourceId: sourceId,
     sourceImage,
+    images: persisted,
     projectInstructions: project.customInstructions ?? '',
     productInstructions: productRow.customInstructions ?? ''
   };
@@ -184,6 +190,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     replaceJobId?: unknown;
     imageQualityId?: unknown;
     imageFormatId?: unknown;
+    op?: unknown;
+    sourceJobId?: unknown;
+    sourceImageUrl?: unknown;
+    thenRemoveBg?: unknown;
   };
   try {
     body = (await req.json()) ?? {};
@@ -193,6 +203,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const siteId = typeof body.siteId === 'string' ? body.siteId : '';
   const productId = typeof body.productId === 'string' ? body.productId : '';
+  if (body.op === 'remove_bg') {
+    if (!siteId || !productId) {
+      return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+    }
+    return removeBackground(session.user.id, session.user.creditsBalance ?? 0, siteId, productId, {
+      sourceJobId: typeof body.sourceJobId === 'string' ? body.sourceJobId : null,
+      sourceImageUrl: typeof body.sourceImageUrl === 'string' ? body.sourceImageUrl : null
+    });
+  }
+  const thenRemoveBg = body.thenRemoveBg === true;
   const angleRaw = typeof body.angle === 'string' ? body.angle : '';
   const customPromptRaw = typeof body.customPrompt === 'string' ? body.customPrompt : '';
   const replaceJobId = typeof body.replaceJobId === 'string' ? body.replaceJobId : null;
@@ -256,7 +276,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const imageFormatId = resolveImageFormatId(
     typeof body.imageFormatId === 'string' ? body.imageFormatId : session.user.preferredImageFormat
   );
-  const cost = costForImage(imageQualityId);
+  // The chained cut-out is billed when it starts, but a merchant who ticked
+  // it is quoted the sum — refuse up front rather than deliver half of it.
+  const cost = costForImage(imageQualityId) + (thenRemoveBg ? costForRemoveBackground() : 0);
   if ((session.user.creditsBalance ?? 0) < cost) {
     return NextResponse.json({ error: 'insufficient_credits' }, { status: 402 });
   }
@@ -289,7 +311,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       userPrompt: prompt,
       appUrl: process.env.APP_URL,
       imageQualityId,
-      imageFormatId
+      imageFormatId,
+      thenRemoveBg
     });
     return NextResponse.json({ ok: true, jobId: result.jobId });
   } catch (e) {
@@ -311,6 +334,115 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 // DELETE — soft-hide one image job (the row stays for credit/audit history).
 // Query: ?siteId=&productId=&jobId=
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// POST with op: 'remove_bg' — cut the background out of one picture of the
+// product and add the transparent PNG to the grid. Body:
+//   { siteId, productId, op: 'remove_bg',
+//     sourceJobId?: string,       // one of the product's completed generations
+//     sourceImageUrl?: string }   // or one of its own store images
+// Exactly one of the two sources must be given.
+// ---------------------------------------------------------------------------
+
+async function removeBackground(
+  userId: string,
+  creditsBalance: number,
+  siteId: string,
+  productId: string,
+  source: { sourceJobId: string | null; sourceImageUrl: string | null }
+): Promise<NextResponse> {
+  if (Boolean(source.sourceJobId) === Boolean(source.sourceImageUrl)) {
+    return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+  }
+  const ctx = await loadOwnedContext(userId, siteId, productId);
+  if (!ctx) {
+    return NextResponse.json({ error: 'product_not_found' }, { status: 404 });
+  }
+
+  let sourceImageUrl: string;
+  let sourceAlt: string | null = null;
+  if (source.sourceJobId) {
+    const src = await db.query.jobs.findFirst({
+      where: and(
+        eq(jobs.id, source.sourceJobId),
+        eq(jobs.projectId, ctx.projectId),
+        eq(jobs.kind, 'kie_image_edit'),
+        eq(jobs.status, 'completed')
+      )
+    });
+    const input = src?.inputPayload as { productSourceId?: string; op?: string } | null;
+    const result = src?.result as { persistedUrls?: string[]; alts?: string[] } | null;
+    const url = result?.persistedUrls?.[0];
+    if (!src || input?.productSourceId !== ctx.productSourceId || !url) {
+      return NextResponse.json({ error: 'source_not_found' }, { status: 404 });
+    }
+    // Cutting out a cut-out is a no-op that would still cost credits.
+    if (input?.op === 'remove_bg') {
+      return NextResponse.json({ error: 'already_transparent' }, { status: 400 });
+    }
+    sourceImageUrl = url;
+    sourceAlt = result?.alts?.[0] ?? null;
+  } else {
+    // Only a picture that is really this product's: the URL is forwarded to a
+    // third party, so it must come from the store, not from the request.
+    const own = ctx.images.find((img) => img.src === source.sourceImageUrl);
+    const first = ctx.sourceImage === source.sourceImageUrl;
+    if (!own && !first) {
+      return NextResponse.json({ error: 'source_not_found' }, { status: 404 });
+    }
+    if (!/^https:\/\//i.test(source.sourceImageUrl!)) {
+      return NextResponse.json({ error: 'source_not_found' }, { status: 404 });
+    }
+    sourceImageUrl = source.sourceImageUrl!;
+    sourceAlt = own?.alt ?? null;
+  }
+
+  const visible = await listProductImageJobs(ctx.projectId, ctx.productSourceId);
+  if (visible.length >= MAX_IMAGES_PER_PRODUCT) {
+    return NextResponse.json(
+      { error: 'image_cap_reached', max: MAX_IMAGES_PER_PRODUCT },
+      { status: 409 }
+    );
+  }
+  // One cut-out per source: the grid would show two identical PNGs.
+  const duplicate = visible.some(
+    (j) =>
+      j.derived === 'remove_bg' &&
+      (source.sourceJobId
+        ? j.sourceJobId === source.sourceJobId
+        : j.sourceImageUrl === sourceImageUrl)
+  );
+  if (duplicate) {
+    return NextResponse.json({ error: 'already_transparent' }, { status: 409 });
+  }
+
+  const cost = costForRemoveBackground();
+  if (creditsBalance < cost) {
+    return NextResponse.json({ error: 'insufficient_credits' }, { status: 402 });
+  }
+
+  try {
+    const result = await startRemoveBackground({
+      userId,
+      projectId: ctx.projectId,
+      productSourceId: ctx.productSourceId,
+      sourceImageUrl,
+      sourceJobId: source.sourceJobId,
+      sourceAlt,
+      appUrl: process.env.APP_URL
+    });
+    return NextResponse.json({ ok: true, jobId: result.jobId });
+  } catch (e) {
+    if (e instanceof InsufficientCreditsError) {
+      return NextResponse.json({ error: 'insufficient_credits' }, { status: 402 });
+    }
+    console.error('[POST /api/products/image-jobs remove_bg]', e);
+    return NextResponse.json(
+      { error: 'generation_failed', message: sanitizeUserFacingError((e as Error).message) },
+      { status: 500 }
+    );
+  }
+}
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
   const session = await auth();

@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from '@heroui/react';
+import { Checkbox, Label, Spinner } from '@heroui/react';
 import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
@@ -10,6 +10,8 @@ import type { ImageAngle, NewImagePayload } from './types';
 
 interface NewImageModalProps {
   costPerImage: number;
+  /** Price of the optional transparent-background version. */
+  costRemoveBg: number;
   isReplace: boolean;
   /** What this product's prompt was last time — the merchant does not retype it. */
   initialCustomPrompt?: string;
@@ -25,6 +27,7 @@ interface NewImageModalProps {
 /** Modal: pick an angle preset OR write a custom prompt, then submit. */
 export function NewImageModal({
   costPerImage,
+  costRemoveBg,
   isReplace,
   initialCustomPrompt = '',
   initialImageFormat,
@@ -40,6 +43,15 @@ export function NewImageModal({
   // than making them find it again.
   const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'packshot');
   const [customPrompt, setCustomPrompt] = useState(initialCustomPrompt);
+  // On by default for the white-background preset only: that is the picture
+  // marketplaces want both ways. Switching preset resets to that default; the
+  // merchant can still tick it on any style.
+  const [thenRemoveBg, setThenRemoveBg] = useState(angle === 'packshot');
+  const pickAngle = (next: ImageAngle) => {
+    setAngle(next);
+    setThenRemoveBg(next === 'packshot');
+  };
+  const totalCost = costPerImage + (thenRemoveBg ? costRemoveBg : 0);
   const [submitting, setSubmitting] = useState(false);
   // Back closes the modal, not the page (see useModalHistory).
   useModalHistory(true, onCancel);
@@ -64,7 +76,12 @@ export function NewImageModal({
     setSubmitting(true);
     try {
       if (angle === 'custom') onSavePrompt?.(customPrompt.trim());
-      const ok = await onSubmit({ angle, customPrompt: customPrompt.trim(), imageFormatId });
+      const ok = await onSubmit({
+        angle,
+        customPrompt: customPrompt.trim(),
+        imageFormatId,
+        thenRemoveBg
+      });
       if (!ok) setSubmitting(false);
     } catch {
       setSubmitting(false);
@@ -104,7 +121,7 @@ export function NewImageModal({
         name="angle"
         value={a.id}
         checked={angle === a.id}
-        onChange={() => setAngle(a.id)}
+        onChange={() => pickAngle(a.id)}
         className="mt-0.5 accent-[var(--accent)]"
       />
       <div className="flex-1">
@@ -159,10 +176,31 @@ export function NewImageModal({
             autoFocus
           />
         ) : null}
+        <Checkbox
+          id="then-remove-bg"
+          isSelected={thenRemoveBg}
+          onChange={setThenRemoveBg}
+          className="items-start"
+        >
+          <Checkbox.Control className="border border-solid border-[var(--field-border)] mt-0.5">
+            <Checkbox.Indicator />
+          </Checkbox.Control>
+          <Checkbox.Content>
+            <Label htmlFor="then-remove-bg" className="text-sm">
+              {t('removeBgOption')}{' '}
+              <span className="text-xs text-[var(--muted)] font-mono">
+                {t('removeBgOptionCost', { cost: costRemoveBg })}
+              </span>
+            </Label>
+          </Checkbox.Content>
+        </Checkbox>
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider inline-flex items-center gap-1">
+          <span
+            className="text-xs text-[var(--muted)] font-mono uppercase tracking-wider inline-flex items-center gap-1"
+            data-testid="new-image-total-cost"
+          >
             <Coins className="size-3" aria-hidden />
-            {costPerImage}
+            {totalCost}
           </span>
           <div className="flex items-center gap-2">
             <button

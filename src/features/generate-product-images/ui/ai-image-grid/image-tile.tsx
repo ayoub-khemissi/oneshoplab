@@ -12,10 +12,12 @@ interface ImageTileProps {
   job: ImageJobRow;
   now: number;
   costPerImage: number;
+  costRemoveBg: number;
   retentionDays: number;
   isBusy: BusyKind | undefined;
   onDelete: () => void;
   onRegenerate: () => void;
+  onRemoveBg: () => void;
 }
 
 /** Per-job tile — switches presentation based on status. */
@@ -23,10 +25,12 @@ export function ImageTile({
   job,
   now,
   costPerImage,
+  costRemoveBg,
   retentionDays,
   isBusy,
   onDelete,
-  onRegenerate
+  onRegenerate,
+  onRemoveBg
 }: ImageTileProps) {
   // Confirmation guard for the destructive paths only (failed +
   // completed). Pending/running cancellations skip the dialog since
@@ -70,12 +74,14 @@ export function ImageTile({
       job={job}
       url={url}
       costPerImage={costPerImage}
+      costRemoveBg={costRemoveBg}
       retentionDays={retentionDays}
       isBusy={isBusy}
       confirmOpen={confirmOpen}
       setConfirmOpen={setConfirmOpen}
       onDelete={onDelete}
       onRegenerate={onRegenerate}
+      onRemoveBg={onRemoveBg}
     />
   );
 }

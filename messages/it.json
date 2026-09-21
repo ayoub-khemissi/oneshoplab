@@ -212,7 +212,8 @@
       "allModels": "Tutti i modelli disponibili",
       "noCard": "Senza carta",
       "bulkOps": "Generazione in blocco del catalogo"
-    }
+    },
+    "costRemoveBg": "Sfondo trasparente (scontorno)"
   },
   "Preferences": {
     "title": "Preferenze di generazione",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Riferimento di dimensione",
     "angleScaleHint": "Accanto a un oggetto familiare, per capire subito la taglia.",
     "angleGiftTitle": "Atmosfera regalo",
-    "angleGiftHint": "Confezione e nastro accanto, luce calda."
+    "angleGiftHint": "Confezione e nastro accanto, luce calda.",
+    "removeBg": "Sfondo trasparente",
+    "removeBgAria": "Sfondo trasparente · {cost} crediti",
+    "transparentBadge": "PNG trasparente",
+    "removeBgOption": "Aggiungi anche una versione con sfondo trasparente (PNG)",
+    "removeBgOptionCost": "+{cost} crediti",
+    "removeBgQueued": "Scontorno avviato: il PNG apparirà nella griglia IA.",
+    "errorSourceNotFound": "Immagine di origine non trovata.",
+    "errorAlreadyTransparent": "Questa immagine ha già la sua versione trasparente."
   },
   "Relaunch": {
     "relaunch": "Rilancia analisi",

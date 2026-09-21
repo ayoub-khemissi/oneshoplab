@@ -212,7 +212,8 @@
       "allModels": "可用所有模型",
       "noCard": "无需信用卡",
       "bulkOps": "目录批量生成"
-    }
+    },
+    "costRemoveBg": "透明背景（抠图）"
   },
   "Preferences": {
     "title": "生成偏好",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "尺寸参照",
     "angleScaleHint": "与常见物品并列，一眼看出大小。",
     "angleGiftTitle": "礼品氛围",
-    "angleGiftHint": "旁有包装与丝带，暖色灯光。"
+    "angleGiftHint": "旁有包装与丝带，暖色灯光。",
+    "removeBg": "透明背景",
+    "removeBgAria": "透明背景 · {cost} 积分",
+    "transparentBadge": "透明 PNG",
+    "removeBgOption": "同时生成透明背景版本（PNG）",
+    "removeBgOptionCost": "+{cost} 积分",
+    "removeBgQueued": "抠图已开始：PNG 将出现在 AI 图片网格中。",
+    "errorSourceNotFound": "未找到源图片。",
+    "errorAlreadyTransparent": "这张图片已经有透明背景版本。"
   },
   "Relaunch": {
     "relaunch": "重新分析",

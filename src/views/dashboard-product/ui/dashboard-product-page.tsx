@@ -12,6 +12,7 @@ import { loadRecentChatJobs } from '../api/recent-chat-jobs';
 import { AutoOptimizeOnMount } from '@/features/retryable-generate';
 import {
   costForImage,
+  costForRemoveBackground,
   DEFAULT_IMAGE_QUALITY,
   IMAGE_MODEL_REGISTRY,
   imageRetentionDaysForPlan,
@@ -140,6 +141,7 @@ export async function DashboardProductPage({
       ? (session.user.preferredImageQuality as ImageQualityId)
       : DEFAULT_IMAGE_QUALITY;
   const costPerImage = costForImage(effectiveImageQuality);
+  const costRemoveBg = costForRemoveBackground();
   // Plan-specific image retention drives the per-tile expiry caption
   // and is enforced server-side by the R2 cleanup worker.
   const retentionDays = imageRetentionDaysForPlan(session.user.plan ?? 'free');
@@ -413,6 +415,7 @@ export async function DashboardProductPage({
             tagsHistory={tagsHistory}
             liveImageJobs={liveImageJobs}
             costPerImage={costPerImage}
+            costRemoveBg={costRemoveBg}
             imageFormatId={userImageFormat}
             retentionDays={retentionDays}
             changeByJobId={changeByJobId}

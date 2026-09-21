@@ -5,7 +5,8 @@ import { db } from '@/shared/db';
 import { jobs, products, projects, type JobKind } from '@/shared/db/schema';
 import { transitionJob } from './transitions';
 import { notify } from '@/entities/notification';
-import { isR2Configured, uploadFromUrl } from '@/shared/storage';
+import { isR2Configured, uploadBuffer, uploadFromUrl } from '@/shared/storage';
+import { toTransparentPng } from '../lib/transparent-png';
 import { generateFallbackImage, isImageFallbackConfigured } from '@/entities/ai-provider';
 import { getImageFormat } from '@/entities/ai-model';
 
@@ -46,6 +47,50 @@ async function persistToR2WithRetry(
   return null;
 }
 
+/**
+ * Background-removal results are normalised before they are stored: RGBA PNG
+ * whatever container kie answered with, alpha snapped to fully opaque on the
+ * subject. Same retry policy as the plain copy, same "temp URL never stored"
+ * rule. In memory end to end — no tempfile.
+ */
+async function persistTransparentPngWithRetry(
+  sourceUrl: string,
+  key: string,
+  attempts = 4
+): Promise<string | null> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(sourceUrl);
+      if (!res.ok) throw new Error(`download failed: HTTP ${res.status}`);
+      const input = Buffer.from(await res.arrayBuffer());
+      const out = await toTransparentPng(input);
+      if (out.transparentRatio === 0) {
+        // The tool found nothing to remove: storing an opaque copy would sell
+        // the merchant a "transparent" image that is not. Fail → refund.
+        throw new NoBackgroundRemovedError();
+      }
+      const r = await uploadBuffer(out.png, key, 'image/png');
+      return r.publicUrl;
+    } catch (e) {
+      if (e instanceof NoBackgroundRemovedError) throw e;
+      const last = i === attempts - 1;
+      console.error(
+        `[persist-result] transparent PNG attempt ${i + 1}/${attempts} failed for ${key}${last ? ' (giving up)' : ''}`,
+        (e as Error).message
+      );
+      if (last) return null;
+      await new Promise((res) => setTimeout(res, 500 * (i + 1)));
+    }
+  }
+  return null;
+}
+
+class NoBackgroundRemovedError extends Error {
+  constructor() {
+    super('no_background_removed');
+  }
+}
+
 export interface KieSuccessMeta {
   /** kie.data.costTime — seconds spent on kie's side generating. Authoritative
    *  for image jobs since wall-clock between our insert and our update can
@@ -80,6 +125,18 @@ export async function persistKieJobSuccess(
     parsed.kieCostTimeSeconds = meta.costTimeSeconds;
   }
 
+  // A cut-out (op = remove_bg) is stored as a normalised transparent PNG and
+  // inherits its source's alt; a generation is copied byte for byte.
+  const jobRow = isImageJob(jobKind)
+    ? await db.query.jobs.findFirst({ where: eq(jobs.id, jobId), columns: { inputPayload: true } })
+    : null;
+  const input = (jobRow?.inputPayload ?? null) as {
+    op?: string;
+    sourceAlt?: string;
+    thenRemoveBg?: boolean;
+  } | null;
+  const isCutout = input?.op === 'remove_bg';
+
   if (isImageJob(jobKind)) {
     const tempUrls = Array.isArray(parsed.resultUrls)
       ? (parsed.resultUrls as unknown[]).filter((u): u is string => typeof u === 'string')
@@ -94,7 +151,25 @@ export async function persistKieJobSuccess(
         const persistedUrls: string[] = [];
         for (const url of tempUrls) {
           const key = `kie/${jobId}/${randomUUID()}.png`;
-          const publicUrl = await persistToR2WithRetry(url, key);
+          let publicUrl: string | null;
+          if (isCutout) {
+            try {
+              publicUrl = await persistTransparentPngWithRetry(url, key);
+            } catch (e) {
+              if (e instanceof NoBackgroundRemovedError) {
+                await persistKieJobFailure(
+                  jobId,
+                  jobKind,
+                  'no_background_removed',
+                  'fallback_failed'
+                );
+                return;
+              }
+              throw e;
+            }
+          } else {
+            publicUrl = await persistToR2WithRetry(url, key);
+          }
           if (!publicUrl) {
             console.error(
               `[persist-result] R2 persist failed after retries for job ${jobId} — failing it (no temp URL kept)`
@@ -107,6 +182,7 @@ export async function persistKieJobSuccess(
           persistedUrls.push(publicUrl);
         }
         parsed.persistedUrls = persistedUrls;
+        if (isCutout && input?.sourceAlt) parsed.alts = [input.sourceAlt];
       } else {
         // Dev only — R2 is always configured in production, so this
         // branch never runs there. Keep temp URLs so local dev can
@@ -129,6 +205,53 @@ export async function persistKieJobSuccess(
 
   if (isImageJob(jobKind)) {
     await emitImageNotification(jobId, 'image_completed', null);
+    if (input?.thenRemoveBg && !isCutout) {
+      await chainRemoveBackground(jobId, parsed);
+    }
+  }
+}
+
+/**
+ * The merchant asked for a transparent version of the picture they were
+ * generating: queue it now that the source exists. Billed at this point, so
+ * a balance that has meanwhile run dry means no cut-out and no debit — the
+ * generation itself is untouched. Dynamic import: remove-background.ts fails
+ * jobs through this module, and a static cycle would hoist an undefined.
+ */
+async function chainRemoveBackground(
+  jobId: string,
+  result: Record<string, unknown>
+): Promise<void> {
+  const url = Array.isArray(result.persistedUrls) ? (result.persistedUrls[0] as string) : null;
+  if (!url) return;
+  const job = await db.query.jobs.findFirst({
+    where: eq(jobs.id, jobId),
+    columns: { projectId: true, inputPayload: true }
+  });
+  if (!job?.projectId) return;
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, job.projectId),
+    columns: { userId: true }
+  });
+  const input = job.inputPayload as { productSourceId?: string; silent?: boolean } | null;
+  if (!project?.userId || !input?.productSourceId) return;
+  try {
+    const { startRemoveBackground } = await import('./remove-background');
+    await startRemoveBackground({
+      userId: project.userId,
+      projectId: job.projectId,
+      productSourceId: input.productSourceId,
+      sourceImageUrl: url,
+      sourceJobId: jobId,
+      sourceAlt: Array.isArray(result.alts) ? ((result.alts[0] as string) ?? null) : null,
+      appUrl: process.env.APP_URL,
+      silent: input.silent
+    });
+  } catch (e) {
+    console.warn(
+      `[persist-result] chained remove_bg skipped for job ${jobId}:`,
+      (e as Error).message
+    );
   }
 }
 
@@ -261,7 +384,8 @@ async function tryImageFallback(
     sourceImageUrl?: string;
     imageFormatId?: string;
   } | null;
-  if (!input?.userPrompt) return false;
+  // A cut-out has nothing to re-generate — straight to refund.
+  if (!input?.userPrompt || (input as { op?: string }).op === 'remove_bg') return false;
   try {
     const r = await generateFallbackImage({
       jobId,

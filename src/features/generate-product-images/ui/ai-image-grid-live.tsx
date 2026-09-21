@@ -18,6 +18,8 @@ interface AiImageGridLiveProps {
   /** Visible cost per image at the user's current quality setting.
    *  Drives the cost label on the Add and Regenerate buttons. */
   costPerImage: number;
+  /** Price of a transparent-background cut-out (per image). */
+  costRemoveBg: number;
   /** How long images stay in R2 before the cleanup worker removes
    *  them. Plan-specific (Free/Starter 30d, Pro 60d, Scale 90d) so the
    *  per-image expiry caption matches what the merchant has paid for. */
@@ -53,6 +55,7 @@ export function AiImageGridLive({
   productId,
   initial,
   costPerImage,
+  costRemoveBg,
   retentionDays,
   savedPrompt = '',
   imageFormatId
@@ -69,6 +72,7 @@ export function AiImageGridLive({
     deleteJob,
     openAddModal,
     openRegenerateModal,
+    removeBackground,
     submitNewImage
   } = useImageJobs({ siteId, productId, initial });
 
@@ -81,10 +85,12 @@ export function AiImageGridLive({
             job={job}
             now={now}
             costPerImage={costPerImage}
+            costRemoveBg={costRemoveBg}
             retentionDays={retentionDays}
             isBusy={busy[job.id]}
             onDelete={() => deleteJob(job.id)}
             onRegenerate={() => openRegenerateModal(job.id)}
+            onRemoveBg={() => removeBackground(job.id)}
           />
         ))}
         {rawJobs.length < MAX_IMAGES_PER_PRODUCT ? (
@@ -98,6 +104,7 @@ export function AiImageGridLive({
       {modalOpen ? (
         <NewImageModal
           costPerImage={costPerImage}
+          costRemoveBg={costRemoveBg}
           isReplace={modalReplaceId !== null}
           initialCustomPrompt={savedPrompt}
           initialImageFormat={imageFormatId}

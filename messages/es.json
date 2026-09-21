@@ -212,7 +212,8 @@
       "allModels": "Todos los modelos disponibles",
       "noCard": "Sin tarjeta",
       "bulkOps": "Generación masiva del catálogo"
-    }
+    },
+    "costRemoveBg": "Fondo transparente (recorte)"
   },
   "Preferences": {
     "title": "Preferencias de generación",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Referencia de tamaño",
     "angleScaleHint": "Junto a un objeto familiar, para captar el tamaño.",
     "angleGiftTitle": "Ambiente de regalo",
-    "angleGiftHint": "Envoltorio y lazo cerca, luz cálida."
+    "angleGiftHint": "Envoltorio y lazo cerca, luz cálida.",
+    "removeBg": "Fondo transparente",
+    "removeBgAria": "Fondo transparente · {cost} créditos",
+    "transparentBadge": "PNG transparente",
+    "removeBgOption": "Añadir también una versión con fondo transparente (PNG)",
+    "removeBgOptionCost": "+{cost} créditos",
+    "removeBgQueued": "Recorte iniciado: el PNG aparecerá en la cuadrícula IA.",
+    "errorSourceNotFound": "Imagen de origen no encontrada.",
+    "errorAlreadyTransparent": "Esta imagen ya tiene su versión con fondo transparente."
   },
   "Relaunch": {
     "relaunch": "Relanzar análisis",

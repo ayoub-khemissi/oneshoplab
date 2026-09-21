@@ -212,7 +212,8 @@
       "allModels": "全モデル利用可",
       "noCard": "カード不要",
       "bulkOps": "カタログ一括生成"
-    }
+    },
+    "costRemoveBg": "背景透過（切り抜き）"
   },
   "Preferences": {
     "title": "生成設定",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "サイズの目安",
     "angleScaleHint": "身近な物と並べ、大きさが一目で伝わる。",
     "angleGiftTitle": "ギフトの雰囲気",
-    "angleGiftHint": "包装やリボンを添えた暖かい光。"
+    "angleGiftHint": "包装やリボンを添えた暖かい光。",
+    "removeBg": "背景を透過",
+    "removeBgAria": "背景を透過 · {cost}クレジット",
+    "transparentBadge": "透過PNG",
+    "removeBgOption": "背景透過バージョン（PNG）も追加する",
+    "removeBgOptionCost": "+{cost}クレジット",
+    "removeBgQueued": "切り抜きを開始しました。PNGはAIグリッドに表示されます。",
+    "errorSourceNotFound": "元画像が見つかりません。",
+    "errorAlreadyTransparent": "この画像にはすでに透過バージョンがあります。"
   },
   "Relaunch": {
     "relaunch": "分析を再実行",

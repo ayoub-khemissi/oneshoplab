@@ -212,7 +212,8 @@
       "allModels": "Alle Modelle verfügbar",
       "noCard": "Ohne Kreditkarte",
       "bulkOps": "Massengenerierung für Katalog"
-    }
+    },
+    "costRemoveBg": "Transparenter Hintergrund (Freisteller)"
   },
   "Preferences": {
     "title": "Generierungseinstellungen",
@@ -772,7 +773,15 @@
     "angleScaleTitle": "Größenvergleich",
     "angleScaleHint": "Neben einem vertrauten Objekt, damit die Größe sofort klar ist.",
     "angleGiftTitle": "Geschenk-Stimmung",
-    "angleGiftHint": "Verpackung und Schleife daneben, warmes Licht."
+    "angleGiftHint": "Verpackung und Schleife daneben, warmes Licht.",
+    "removeBg": "Transparenter Hintergrund",
+    "removeBgAria": "Transparenter Hintergrund · {cost} Credits",
+    "transparentBadge": "Transparentes PNG",
+    "removeBgOption": "Zusätzlich eine Version mit transparentem Hintergrund (PNG)",
+    "removeBgOptionCost": "+{cost} Credits",
+    "removeBgQueued": "Freistellen gestartet: das PNG erscheint im KI-Raster.",
+    "errorSourceNotFound": "Quellbild nicht gefunden.",
+    "errorAlreadyTransparent": "Dieses Bild hat bereits eine transparente Version."
   },
   "Relaunch": {
     "relaunch": "Analyse erneut starten",
