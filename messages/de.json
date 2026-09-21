@@ -213,7 +213,21 @@
       "noCard": "Ohne Kreditkarte",
       "bulkOps": "Massengenerierung für Katalog"
     },
-    "costRemoveBg": "Transparenter Hintergrund (Freisteller)"
+    "costRemoveBg": "Transparenter Hintergrund (Freisteller)",
+    "simulator": {
+      "title": "Wie viele Produkte hat Ihr Katalog?",
+      "hint": "Schätzung für einen vollständigen Durchlauf: Titel, Beschreibung, Tags und 3 Bilder pro Produkt mit den Standardeinstellungen.",
+      "label": "Anzahl Produkte",
+      "presetsAria": "Übliche Kataloggrößen",
+      "credits": "≈ {credits, number} Credits, um alles einmal zu generieren",
+      "recommended": "Empfohlener Tarif: {plan}",
+      "recommendedPacks": "Empfohlener Tarif: {plan} + {count, plural, =1 {1 Paket} other {# Pakete}} {pack} ({extra, number} zusätzliche Credits)",
+      "custom": "Ab {products, number} Produkten erstellen wir das Angebot mit Ihnen.",
+      "customCta": "Kontakt aufnehmen"
+    },
+    "packsNote": "In einem Monat mehr nötig? Credit-Pakete, ohne Tarifwechsel.",
+    "customQuoteLine": "Mehr als {stores, number} Shops oder ein Katalog mit mehr als {products, number} Produkten?",
+    "customQuoteCta": "Sprechen wir darüber, auf Anfrage."
   },
   "Preferences": {
     "title": "Generierungseinstellungen",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "wird bei jeder Erneuerung zurückgesetzt",
     "packBucketLabel": "Pakete",
     "packBucketHint": "verfallen nie",
-    "errorPaymentFailed": "Zahlungsdienst nicht erreichbar. Versuche es gleich noch einmal."
+    "errorPaymentFailed": "Zahlungsdienst nicht erreichbar. Versuche es gleich noch einmal.",
+    "perCredit": "{price} € / Credit",
+    "bestPerCredit": "Bester Preis pro Credit"
   },
   "CookieBanner": {
     "accept": "Akzeptieren",

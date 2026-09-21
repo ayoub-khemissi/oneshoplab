@@ -213,7 +213,21 @@
       "noCard": "No card required",
       "bulkOps": "Bulk catalog generation"
     },
-    "costRemoveBg": "Transparent background (cut-out)"
+    "costRemoveBg": "Transparent background (cut-out)",
+    "simulator": {
+      "title": "How many products in your catalog?",
+      "hint": "Estimate for one full pass: title, description, tags and 3 images per product, at the default settings.",
+      "label": "Number of products",
+      "presetsAria": "Common catalog sizes",
+      "credits": "≈ {credits, number} credits to generate everything once",
+      "recommended": "Recommended plan: {plan}",
+      "recommendedPacks": "Recommended plan: {plan} + {count, plural, =1 {1 pack} other {# packs}} {pack} ({extra, number} extra credits)",
+      "custom": "Past {products, number} products, we build the offer with you.",
+      "customCta": "Contact us"
+    },
+    "packsNote": "Need more some month? Credit packs, no plan change.",
+    "customQuoteLine": "More than {stores, number} stores or a catalog of more than {products, number} products?",
+    "customQuoteCta": "Let's talk, custom quote."
   },
   "Preferences": {
     "title": "Generation preferences",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "resets every renewal",
     "packBucketLabel": "Packs",
     "packBucketHint": "never expire",
-    "errorPaymentFailed": "Couldn't reach the payment processor. Try again in a moment."
+    "errorPaymentFailed": "Couldn't reach the payment processor. Try again in a moment.",
+    "perCredit": "€{price} / credit",
+    "bestPerCredit": "Best price per credit"
   },
   "CookieBanner": {
     "accept": "Accept",

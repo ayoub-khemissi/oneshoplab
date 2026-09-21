@@ -556,6 +556,72 @@ export function getCreditPack(id: string | null | undefined): CreditPack | null 
   return CREDIT_PACKS.find((p) => p.id === id) ?? null;
 }
 
+/** Price of one credit bought through a pack, in EUR. */
+export function packPerCreditEur(pack: CreditPack): number {
+  return pack.priceEur / pack.credits;
+}
+
+/** The pack with the lowest price per credit — the one to send volume to. */
+export function bestValuePack(): CreditPack {
+  return CREDIT_PACKS.reduce((best, p) =>
+    packPerCreditEur(p) < packPerCreditEur(best) ? p : best
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Catalog simulator ("how many products?") and custom-quote threshold
+// ---------------------------------------------------------------------------
+
+/** Credits of one full product generation at the defaults — the unit the
+ *  pricing page reasons in ("≈ N full generations"). */
+export const FULL_GENERATION_CREDITS = FULL_GEN_COST;
+
+/** Above this, the tiers stop making sense and the page says "talk to us":
+ *  more stores than Scale allows, or a catalog whose single full pass costs
+ *  more than two Scale months. */
+export const CUSTOM_QUOTE_THRESHOLDS = {
+  stores: PRICING.plans.scale.siteLimit,
+  products: 1000
+} as const;
+
+/** Credits needed to generate every product of a catalog once. */
+export function catalogCredits(productCount: number): number {
+  const n = Math.max(0, Math.floor(productCount));
+  return n * FULL_GEN_COST;
+}
+
+export interface CatalogRecommendation {
+  products: number;
+  credits: number;
+  /** Smallest tier whose monthly credits cover the catalog; 'scale' with
+   *  extra packs when none does; 'custom' past the quote threshold. */
+  plan: PlanId | 'custom';
+  /** Credits beyond the recommended tier's monthly allowance. */
+  extraCredits: number;
+  /** How many best-value packs cover `extraCredits`. */
+  packs: { id: CreditPackId; count: number } | null;
+}
+
+export function recommendPlanForCatalog(productCount: number): CatalogRecommendation {
+  const products = Math.max(0, Math.floor(productCount));
+  const credits = catalogCredits(products);
+  if (products > CUSTOM_QUOTE_THRESHOLDS.products) {
+    return { products, credits, plan: 'custom', extraCredits: 0, packs: null };
+  }
+  const fits = PLAN_TIERS.find((t) => t.credits >= credits);
+  if (fits) return { products, credits, plan: fits.id, extraCredits: 0, packs: null };
+  const scale = PLAN_TIERS[PLAN_TIERS.length - 1];
+  const extraCredits = credits - scale.credits;
+  const pack = bestValuePack();
+  return {
+    products,
+    credits,
+    plan: scale.id,
+    extraCredits,
+    packs: { id: pack.id, count: Math.ceil(extraCredits / pack.credits) }
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Names for marketing copy
 // ---------------------------------------------------------------------------

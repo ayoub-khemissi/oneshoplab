@@ -62,6 +62,9 @@ interface PricingCardsProps {
     ctaSwitchToYearly: string;
     ctaUpgrade: string;
     ctaDowngrade: string;
+    /** "Need more one month? Credit packs, no plan change." — anchors to
+     *  #packs, so only the page that has that section passes it. */
+    packsNote?: string;
   };
 }
 
@@ -224,6 +227,15 @@ function PlanCard({
         </div>
 
         <PlanHighlights tier={tier} />
+
+        {tier.recurring && copy.packsNote ? (
+          <a
+            href="#packs"
+            className="text-xs text-[var(--muted)] hover:text-[var(--accent)] underline underline-offset-2 decoration-[var(--border)] hover:decoration-[var(--accent)]"
+          >
+            {copy.packsNote}
+          </a>
+        ) : null}
 
         <CardCta
           tier={tier}

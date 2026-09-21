@@ -15,3 +15,4 @@ export {
 } from './api/actions';
 export { CreditPackCards } from './ui/credit-pack-cards';
 export { PricingCards } from './ui/pricing-cards';
+export { CatalogSimulator } from './ui/catalog-simulator';

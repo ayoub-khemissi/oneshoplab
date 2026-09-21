@@ -213,7 +213,21 @@
       "noCard": "Sans carte bancaire",
       "bulkOps": "Génération en masse du catalogue"
     },
-    "costRemoveBg": "Fond transparent (détourage)"
+    "costRemoveBg": "Fond transparent (détourage)",
+    "simulator": {
+      "title": "Combien de produits dans votre catalogue ?",
+      "hint": "Estimation pour tout générer une fois : titre, description, tags et 3 images par produit, avec les réglages par défaut.",
+      "label": "Nombre de produits",
+      "presetsAria": "Tailles de catalogue courantes",
+      "credits": "≈ {credits, number} crédits pour tout générer une fois",
+      "recommended": "Formule conseillée : {plan}",
+      "recommendedPacks": "Formule conseillée : {plan} + {count, plural, =1 {1 pack} other {# packs}} {pack} ({extra, number} crédits en plus)",
+      "custom": "Au-delà de {products, number} produits, on construit l'offre avec vous.",
+      "customCta": "Nous contacter"
+    },
+    "packsNote": "Besoin de plus un mois donné ? Des packs de crédits, sans changer de formule.",
+    "customQuoteLine": "Plus de {stores, number} boutiques ou un catalogue de plus de {products, number} produits ?",
+    "customQuoteCta": "Parlons-en, sur devis."
   },
   "Preferences": {
     "title": "Préférences de génération",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "remis à zéro à chaque renouvellement",
     "packBucketLabel": "Packs",
     "packBucketHint": "n'expirent jamais",
-    "errorPaymentFailed": "Impossible de joindre le service de paiement. Réessayez dans un instant."
+    "errorPaymentFailed": "Impossible de joindre le service de paiement. Réessayez dans un instant.",
+    "perCredit": "{price} € / crédit",
+    "bestPerCredit": "Meilleur prix au crédit"
   },
   "CookieBanner": {
     "accept": "Accepter",

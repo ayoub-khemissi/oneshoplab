@@ -5,8 +5,14 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  bestValuePack,
+  catalogCredits,
   CHAT_MODEL_REGISTRY,
   costForImage,
+  CUSTOM_QUOTE_THRESHOLDS,
+  FULL_GENERATION_CREDITS,
+  packPerCreditEur,
+  recommendPlanForCatalog,
   DEFAULT_CHAT_MODEL,
   estimateChatCredits,
   getCreditPack,
@@ -106,6 +112,52 @@ describe('catalog invariants', () => {
       expect(yearly).toBeCloseTo(p.priceEur * 12 * (1 - YEARLY_DISCOUNT), 2);
       expect(yearly).toBeLessThan(p.priceEur * 12);
       expect(yearlyMonthlyEquivalent(p.priceEur)).toBeCloseTo(yearly / 12, 1);
+    }
+  });
+});
+
+describe('catalog simulator', () => {
+  it('prices a catalog as N full generations at the defaults', () => {
+    expect(catalogCredits(0)).toBe(0);
+    expect(catalogCredits(10)).toBe(10 * FULL_GENERATION_CREDITS);
+    expect(catalogCredits(2.9)).toBe(2 * FULL_GENERATION_CREDITS);
+    expect(catalogCredits(-5)).toBe(0);
+    // A plan's advertised "≈ N full generations" is exactly this unit.
+    const pro = PLAN_TIERS.find((p) => p.id === 'pro')!;
+    expect(pro.approxFullGenerations).toBe(Math.floor(pro.credits / FULL_GENERATION_CREDITS));
+  });
+
+  it('recommends the smallest tier that covers one full pass', () => {
+    expect(recommendPlanForCatalog(1).plan).toBe('free');
+    const starter = PLAN_TIERS.find((p) => p.id === 'starter')!;
+    expect(recommendPlanForCatalog(starter.approxFullGenerations).plan).toBe('starter');
+    expect(recommendPlanForCatalog(starter.approxFullGenerations + 1).plan).toBe('pro');
+    const pro = PLAN_TIERS.find((p) => p.id === 'pro')!;
+    expect(recommendPlanForCatalog(pro.approxFullGenerations + 1).plan).toBe('scale');
+  });
+
+  it('tops Scale up with the best-value pack rather than inventing a fifth tier', () => {
+    const scale = PLAN_TIERS.find((p) => p.id === 'scale')!;
+    const rec = recommendPlanForCatalog(scale.approxFullGenerations + 100);
+    expect(rec.plan).toBe('scale');
+    expect(rec.extraCredits).toBe(rec.credits - scale.credits);
+    expect(rec.packs?.id).toBe(bestValuePack().id);
+    expect(rec.packs!.count * bestValuePack().credits).toBeGreaterThanOrEqual(rec.extraCredits);
+    expect((rec.packs!.count - 1) * bestValuePack().credits).toBeLessThan(rec.extraCredits);
+  });
+
+  it('sends catalogs past the threshold to a custom quote', () => {
+    expect(CUSTOM_QUOTE_THRESHOLDS.products).toBe(1000);
+    expect(recommendPlanForCatalog(1000).plan).not.toBe('custom');
+    const rec = recommendPlanForCatalog(1001);
+    expect(rec).toMatchObject({ plan: 'custom', extraCredits: 0, packs: null });
+    expect(rec.credits).toBe(catalogCredits(1001));
+  });
+
+  it('the best-value pack really is the cheapest per credit', () => {
+    const best = bestValuePack();
+    for (const id of CREDIT_PACK_IDS) {
+      expect(packPerCreditEur(getCreditPack(id)!)).toBeGreaterThanOrEqual(packPerCreditEur(best));
     }
   });
 });

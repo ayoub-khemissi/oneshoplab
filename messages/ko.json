@@ -213,7 +213,21 @@
       "noCard": "카드 불필요",
       "bulkOps": "카탈로그 일괄 생성"
     },
-    "costRemoveBg": "투명 배경(배경 제거)"
+    "costRemoveBg": "투명 배경(배경 제거)",
+    "simulator": {
+      "title": "카탈로그에 제품이 몇 개인가요?",
+      "hint": "전체 1회 생성 기준 추정: 기본 설정으로 제품당 제목, 설명, 태그, 이미지 3장.",
+      "label": "제품 수",
+      "presetsAria": "일반적인 카탈로그 규모",
+      "credits": "≈ 전체를 한 번 생성하는 데 {credits, number} 크레딧",
+      "recommended": "추천 플랜: {plan}",
+      "recommendedPacks": "추천 플랜: {plan} + {pack} 팩 {count, number}개 (추가 {extra, number} 크레딧)",
+      "custom": "{products, number}개 제품을 넘으면 함께 제안을 만듭니다.",
+      "customCta": "문의하기"
+    },
+    "packsNote": "어떤 달에 더 필요하세요? 플랜 변경 없이 크레딧 팩으로.",
+    "customQuoteLine": "매장 {stores, number}개 이상이거나 제품 {products, number}개 이상의 카탈로그인가요?",
+    "customQuoteCta": "상담해 주세요, 맞춤 견적."
   },
   "Preferences": {
     "title": "생성 환경설정",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "갱신마다 초기화",
     "packBucketLabel": "팩",
     "packBucketHint": "만료 없음",
-    "errorPaymentFailed": "결제 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요."
+    "errorPaymentFailed": "결제 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+    "perCredit": "{price} € / 크레딧",
+    "bestPerCredit": "크레딧당 최저가"
   },
   "CookieBanner": {
     "accept": "수락",

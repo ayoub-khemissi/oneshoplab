@@ -213,7 +213,21 @@
       "noCard": "カード不要",
       "bulkOps": "カタログ一括生成"
     },
-    "costRemoveBg": "背景透過（切り抜き）"
+    "costRemoveBg": "背景透過（切り抜き）",
+    "simulator": {
+      "title": "カタログの商品数は？",
+      "hint": "1回のフル生成の目安：デフォルト設定で商品ごとにタイトル、説明、タグ、画像3枚。",
+      "label": "商品数",
+      "presetsAria": "よくあるカタログ規模",
+      "credits": "≈ すべてを1回生成するのに{credits, number}クレジット",
+      "recommended": "おすすめプラン：{plan}",
+      "recommendedPacks": "おすすめプラン：{plan} + {pack}パック{count, number}個（追加{extra, number}クレジット）",
+      "custom": "{products, number}商品を超える場合は、一緒にプランを組み立てます。",
+      "customCta": "お問い合わせ"
+    },
+    "packsNote": "ある月だけ足りない？プラン変更なしでクレジットパックを。",
+    "customQuoteLine": "{stores, number}店舗以上、または{products, number}商品を超えるカタログですか？",
+    "customQuoteCta": "ご相談ください（個別見積もり）。"
   },
   "Preferences": {
     "title": "生成設定",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "更新ごとにリセット",
     "packBucketLabel": "パック",
     "packBucketHint": "失効なし",
-    "errorPaymentFailed": "決済サービスに接続できませんでした。しばらくしてから再度お試しください。"
+    "errorPaymentFailed": "決済サービスに接続できませんでした。しばらくしてから再度お試しください。",
+    "perCredit": "{price} € / クレジット",
+    "bestPerCredit": "クレジット単価が最安"
   },
   "CookieBanner": {
     "accept": "同意する",

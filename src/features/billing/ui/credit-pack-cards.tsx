@@ -1,6 +1,6 @@
 import { Card } from '@heroui/react';
 import { Coins, Sparkles } from 'lucide-react';
-import { CREDIT_PACKS } from '@/entities/ai-model';
+import { bestValuePack, CREDIT_PACKS, packPerCreditEur } from '@/entities/ai-model';
 import { buyCreditPackAction } from '../api/actions';
 import { getStripePackPriceId } from '../api/stripe';
 
@@ -15,6 +15,9 @@ interface CreditPackCardsProps {
     buyLabel: string;
     comingSoonLabel: string;
     perCreditLabel: (perCredit: string) => string;
+    /** Badge on the pack with the lowest price per credit. Optional: the
+     *  account page lists packs without ranking them. */
+    bestValueLabel?: string;
   };
 }
 
@@ -25,16 +28,27 @@ interface CreditPackCardsProps {
  * branch on session state.
  */
 export function CreditPackCards({ copy }: CreditPackCardsProps) {
+  const best = bestValuePack().id;
   return (
     <div className="grid md:grid-cols-3 gap-4">
       {CREDIT_PACKS.map((pack) => {
         const configured = getStripePackPriceId(pack.id) !== null;
+        const isBest = copy.bestValueLabel !== undefined && pack.id === best;
         const packCopy = copy.pack[pack.id] ?? {
           name: pack.name,
           tagline: ''
         };
         return (
-          <Card key={pack.id} variant="secondary" className="p-5 flex flex-col gap-4">
+          <Card
+            key={pack.id}
+            variant="secondary"
+            className={`relative p-5 flex flex-col gap-4 ${isBest ? 'border-2 border-[var(--accent)]' : ''}`}
+          >
+            {isBest ? (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-[var(--accent)] text-[var(--accent-foreground)] font-semibold whitespace-nowrap shadow-sm">
+                {copy.bestValueLabel}
+              </span>
+            ) : null}
             <div className="flex flex-col gap-1">
               <h3 className="text-base font-bold tracking-tight">{packCopy.name}</h3>
               <p className="text-xs text-[var(--muted)]">{packCopy.tagline}</p>
@@ -51,7 +65,7 @@ export function CreditPackCards({ copy }: CreditPackCardsProps) {
             <div className="flex items-baseline gap-1.5">
               <span className="text-2xl font-bold">€{pack.priceEur.toFixed(2)}</span>
               <span className="text-xs text-[var(--muted)]">
-                {copy.perCreditLabel((pack.priceEur / pack.credits).toFixed(4))}
+                {copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
               </span>
             </div>
             <form action={buyCreditPackAction} className="mt-auto">

@@ -213,7 +213,21 @@
       "noCard": "Bez karty",
       "bulkOps": "Masowa generacja katalogu"
     },
-    "costRemoveBg": "Przezroczyste tło (wycinanie)"
+    "costRemoveBg": "Przezroczyste tło (wycinanie)",
+    "simulator": {
+      "title": "Ile produktów ma Twój katalog?",
+      "hint": "Szacunek dla jednego pełnego przebiegu: tytuł, opis, tagi i 3 obrazy na produkt, przy ustawieniach domyślnych.",
+      "label": "Liczba produktów",
+      "presetsAria": "Typowe rozmiary katalogu",
+      "credits": "≈ {credits, number} kredytów, aby wygenerować wszystko raz",
+      "recommended": "Polecany plan: {plan}",
+      "recommendedPacks": "Polecany plan: {plan} + {count, plural, =1 {1 pakiet} few {# pakiety} other {# pakietów}} {pack} ({extra, number} dodatkowych kredytów)",
+      "custom": "Powyżej {products, number} produktów budujemy ofertę razem z Tobą.",
+      "customCta": "Skontaktuj się"
+    },
+    "packsNote": "Potrzebujesz więcej w danym miesiącu? Pakiety kredytów, bez zmiany planu.",
+    "customQuoteLine": "Ponad {stores, number} sklepów lub katalog z ponad {products, number} produktami?",
+    "customQuoteCta": "Porozmawiajmy, wycena indywidualna."
   },
   "Preferences": {
     "title": "Preferencje generowania",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "resetuje się przy każdym odnowieniu",
     "packBucketLabel": "Pakiety",
     "packBucketHint": "nie wygasają",
-    "errorPaymentFailed": "Nie udało się połączyć z systemem płatności. Spróbuj ponownie za chwilę."
+    "errorPaymentFailed": "Nie udało się połączyć z systemem płatności. Spróbuj ponownie za chwilę.",
+    "perCredit": "{price} € / kredyt",
+    "bestPerCredit": "Najlepsza cena za kredyt"
   },
   "CookieBanner": {
     "accept": "Akceptuj",

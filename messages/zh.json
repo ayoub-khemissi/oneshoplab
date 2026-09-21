@@ -213,7 +213,21 @@
       "noCard": "无需信用卡",
       "bulkOps": "目录批量生成"
     },
-    "costRemoveBg": "透明背景（抠图）"
+    "costRemoveBg": "透明背景（抠图）",
+    "simulator": {
+      "title": "您的目录有多少商品？",
+      "hint": "完整生成一次的估算：默认设置下每个商品的标题、描述、标签和 3 张图片。",
+      "label": "商品数量",
+      "presetsAria": "常见目录规模",
+      "credits": "≈ 全部生成一次需要 {credits, number} 积分",
+      "recommended": "推荐方案：{plan}",
+      "recommendedPacks": "推荐方案：{plan} + {count, number} 个 {pack} 积分包（额外 {extra, number} 积分）",
+      "custom": "超过 {products, number} 个商品，我们与您一起制定方案。",
+      "customCta": "联系我们"
+    },
+    "packsNote": "某个月需要更多？购买积分包，无需更换方案。",
+    "customQuoteLine": "超过 {stores, number} 家店铺，或目录超过 {products, number} 个商品？",
+    "customQuoteCta": "联系我们，定制报价。"
   },
   "Preferences": {
     "title": "生成偏好",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "每次续订重置",
     "packBucketLabel": "积分包",
     "packBucketHint": "永不过期",
-    "errorPaymentFailed": "无法连接到支付服务。请稍后重试。"
+    "errorPaymentFailed": "无法连接到支付服务。请稍后重试。",
+    "perCredit": "{price} € / 积分",
+    "bestPerCredit": "积分单价最优"
   },
   "CookieBanner": {
     "accept": "接受",

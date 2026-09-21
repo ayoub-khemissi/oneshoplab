@@ -213,7 +213,21 @@
       "noCard": "Sin tarjeta",
       "bulkOps": "Generación masiva del catálogo"
     },
-    "costRemoveBg": "Fondo transparente (recorte)"
+    "costRemoveBg": "Fondo transparente (recorte)",
+    "simulator": {
+      "title": "¿Cuántos productos tiene tu catálogo?",
+      "hint": "Estimación para una pasada completa: título, descripción, etiquetas y 3 imágenes por producto, con los ajustes por defecto.",
+      "label": "Número de productos",
+      "presetsAria": "Tamaños de catálogo habituales",
+      "credits": "≈ {credits, number} créditos para generarlo todo una vez",
+      "recommended": "Plan recomendado: {plan}",
+      "recommendedPacks": "Plan recomendado: {plan} + {count, plural, =1 {1 pack} other {# packs}} {pack} ({extra, number} créditos adicionales)",
+      "custom": "Más allá de {products, number} productos, construimos la oferta contigo.",
+      "customCta": "Contáctanos"
+    },
+    "packsNote": "¿Necesitas más algún mes? Packs de créditos, sin cambiar de plan.",
+    "customQuoteLine": "¿Más de {stores, number} tiendas o un catálogo de más de {products, number} productos?",
+    "customQuoteCta": "Hablemos, presupuesto a medida."
   },
   "Preferences": {
     "title": "Preferencias de generación",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "se reinicia en cada renovación",
     "packBucketLabel": "Packs",
     "packBucketHint": "no caducan",
-    "errorPaymentFailed": "No se pudo contactar al procesador de pagos. Intenta de nuevo en un momento."
+    "errorPaymentFailed": "No se pudo contactar al procesador de pagos. Intenta de nuevo en un momento.",
+    "perCredit": "{price} € / crédito",
+    "bestPerCredit": "Mejor precio por crédito"
   },
   "CookieBanner": {
     "accept": "Aceptar",

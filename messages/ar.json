@@ -213,7 +213,21 @@
       "noCard": "بدون بطاقة",
       "bulkOps": "توليد جماعي للكتالوج"
     },
-    "costRemoveBg": "خلفية شفافة (اقتصاص)"
+    "costRemoveBg": "خلفية شفافة (اقتصاص)",
+    "simulator": {
+      "title": "كم عدد المنتجات في كتالوجك؟",
+      "hint": "تقدير لجولة كاملة واحدة: العنوان والوصف والوسوم و3 صور لكل منتج بالإعدادات الافتراضية.",
+      "label": "عدد المنتجات",
+      "presetsAria": "أحجام الكتالوج الشائعة",
+      "credits": "≈ {credits, number} رصيد لتوليد كل شيء مرة واحدة",
+      "recommended": "الخطة الموصى بها: {plan}",
+      "recommendedPacks": "الخطة الموصى بها: {plan} + {count, plural, =1 {حزمة واحدة} other {# حزم}} {pack} ({extra, number} رصيد إضافي)",
+      "custom": "بعد {products, number} منتج، نبني العرض معك.",
+      "customCta": "تواصل معنا"
+    },
+    "packsNote": "تحتاج المزيد في شهر ما؟ حزم رصيد دون تغيير الخطة.",
+    "customQuoteLine": "أكثر من {stores, number} متجرًا أو كتالوج يضم أكثر من {products, number} منتج؟",
+    "customQuoteCta": "لنتحدث، عرض سعر مخصص."
   },
   "Preferences": {
     "title": "تفضيلات التوليد",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "يُصفّر مع كل تجديد",
     "packBucketLabel": "الحزم",
     "packBucketHint": "لا تنتهي",
-    "errorPaymentFailed": "تعذّر الاتصال بخدمة الدفع. حاول مرة أخرى بعد قليل."
+    "errorPaymentFailed": "تعذّر الاتصال بخدمة الدفع. حاول مرة أخرى بعد قليل.",
+    "perCredit": "{price} € / رصيد",
+    "bestPerCredit": "أفضل سعر للرصيد"
   },
   "CookieBanner": {
     "accept": "قبول",

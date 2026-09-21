@@ -1,10 +1,20 @@
-import { costForRemoveBackground, modelNamesForCopy } from '@/entities/ai-model';
+import {
+  costForRemoveBackground,
+  CUSTOM_QUOTE_THRESHOLDS,
+  modelNamesForCopy
+} from '@/entities/ai-model';
 import { Card } from '@heroui/react';
 import { eq } from 'drizzle-orm';
 import { ChevronDown, Coins } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { CreditPackCards, getStripePriceId, PricingCards } from '@/features/billing';
+import { Link } from '@/i18n/navigation';
+import {
+  CatalogSimulator,
+  CreditPackCards,
+  getStripePriceId,
+  PricingCards
+} from '@/features/billing';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
@@ -140,6 +150,8 @@ export default async function PricingPage() {
         <p className="text-lg text-[var(--muted)] leading-relaxed">{t('subtitle')}</p>
       </header>
 
+      <CatalogSimulator />
+
       <PricingCards
         signedIn={signedIn}
         available={available}
@@ -163,11 +175,23 @@ export default async function PricingPage() {
           ctaSwitchToMonthly: t('ctaSwitchToMonthly'),
           ctaSwitchToYearly: t('ctaSwitchToYearly'),
           ctaUpgrade: t('ctaUpgrade'),
-          ctaDowngrade: t('ctaDowngrade')
+          ctaDowngrade: t('ctaDowngrade'),
+          packsNote: t('packsNote')
         }}
       />
 
-      <section className="flex flex-col gap-3 max-w-4xl mx-auto w-full">
+      {/* Past the tiers: one line, not a fifth card. */}
+      <p
+        className="text-sm text-[var(--muted)] text-center max-w-2xl mx-auto -mt-6"
+        data-testid="custom-quote"
+      >
+        {t('customQuoteLine', CUSTOM_QUOTE_THRESHOLDS)}{' '}
+        <Link href="/contact" className="text-[var(--accent)] underline underline-offset-2">
+          {t('customQuoteCta')}
+        </Link>
+      </p>
+
+      <section id="packs" className="flex flex-col gap-3 max-w-4xl mx-auto w-full scroll-mt-24">
         <div className="flex flex-col gap-2 text-center">
           <h2 className="text-2xl font-bold tracking-tight">{tCredits('packsTitle')}</h2>
           <p className="text-sm text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
@@ -193,7 +217,8 @@ export default async function PricingPage() {
             creditsLabel: tCredits('packBucketLabel').toLowerCase(),
             buyLabel: tCredits('buyButton'),
             comingSoonLabel: tCredits('comingSoon'),
-            perCreditLabel: (perCredit: string) => `(€${perCredit} / credit)`
+            perCreditLabel: (perCredit: string) => tCredits('perCredit', { price: perCredit }),
+            bestValueLabel: tCredits('bestPerCredit')
           }}
         />
       </section>

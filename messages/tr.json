@@ -213,7 +213,21 @@
       "noCard": "Kart gerekmez",
       "bulkOps": "Toplu katalog üretimi"
     },
-    "costRemoveBg": "Şeffaf arka plan (kesme)"
+    "costRemoveBg": "Şeffaf arka plan (kesme)",
+    "simulator": {
+      "title": "Kataloğunuzda kaç ürün var?",
+      "hint": "Tam bir tur için tahmin: varsayılan ayarlarla ürün başına başlık, açıklama, etiketler ve 3 görsel.",
+      "label": "Ürün sayısı",
+      "presetsAria": "Yaygın katalog boyutları",
+      "credits": "≈ Her şeyi bir kez üretmek için {credits, number} kredi",
+      "recommended": "Önerilen plan: {plan}",
+      "recommendedPacks": "Önerilen plan: {plan} + {count, plural, =1 {1 paket} other {# paket}} {pack} ({extra, number} ek kredi)",
+      "custom": "{products, number} ürünün ötesinde teklifi sizinle birlikte oluştururuz.",
+      "customCta": "Bize ulaşın"
+    },
+    "packsNote": "Bir ay daha fazlası mı gerekli? Plan değiştirmeden kredi paketleri.",
+    "customQuoteLine": "{stores, number} mağazadan fazla ya da {products, number} üründen büyük bir katalog mu?",
+    "customQuoteCta": "Konuşalım, özel teklif."
   },
   "Preferences": {
     "title": "Üretim tercihleri",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "her yenilemede sıfırlanır",
     "packBucketLabel": "Paketler",
     "packBucketHint": "süresiz",
-    "errorPaymentFailed": "Ödeme servisine ulaşılamadı. Birkaç saniye sonra tekrar deneyin."
+    "errorPaymentFailed": "Ödeme servisine ulaşılamadı. Birkaç saniye sonra tekrar deneyin.",
+    "perCredit": "{price} € / kredi",
+    "bestPerCredit": "Kredi başına en iyi fiyat"
   },
   "CookieBanner": {
     "accept": "Kabul et",

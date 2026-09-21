@@ -8,6 +8,7 @@ export {
   PRICING,
   SYSTEM_CHAT_ROLES
 } from './model/pricing';
+export type { CatalogRecommendation } from './model/models';
 export type {
   PricingChatModelId,
   PricingConfig,
@@ -51,6 +52,12 @@ export {
   estimateChatCredits,
   getChatModel,
   getCreditPack,
+  bestValuePack,
+  catalogCredits,
+  CUSTOM_QUOTE_THRESHOLDS,
+  FULL_GENERATION_CREDITS,
+  packPerCreditEur,
+  recommendPlanForCatalog,
   getImageFormat,
   getImageModel,
   imageRequestParams,

@@ -213,7 +213,21 @@
       "noCard": "Senza carta",
       "bulkOps": "Generazione in blocco del catalogo"
     },
-    "costRemoveBg": "Sfondo trasparente (scontorno)"
+    "costRemoveBg": "Sfondo trasparente (scontorno)",
+    "simulator": {
+      "title": "Quanti prodotti ha il tuo catalogo?",
+      "hint": "Stima per un passaggio completo: titolo, descrizione, tag e 3 immagini per prodotto, con le impostazioni predefinite.",
+      "label": "Numero di prodotti",
+      "presetsAria": "Dimensioni di catalogo comuni",
+      "credits": "≈ {credits, number} crediti per generare tutto una volta",
+      "recommended": "Piano consigliato: {plan}",
+      "recommendedPacks": "Piano consigliato: {plan} + {count, plural, =1 {1 pack} other {# pack}} {pack} ({extra, number} crediti aggiuntivi)",
+      "custom": "Oltre {products, number} prodotti, costruiamo l'offerta con te.",
+      "customCta": "Contattaci"
+    },
+    "packsNote": "Serve di più in un mese? Pack di crediti, senza cambiare piano.",
+    "customQuoteLine": "Più di {stores, number} negozi o un catalogo con più di {products, number} prodotti?",
+    "customQuoteCta": "Parliamone, su preventivo."
   },
   "Preferences": {
     "title": "Preferenze di generazione",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "si azzera a ogni rinnovo",
     "packBucketLabel": "Pacchetti",
     "packBucketHint": "non scadono",
-    "errorPaymentFailed": "Servizio di pagamento non raggiungibile. Riprova tra un istante."
+    "errorPaymentFailed": "Servizio di pagamento non raggiungibile. Riprova tra un istante.",
+    "perCredit": "{price} € / credito",
+    "bestPerCredit": "Miglior prezzo per credito"
   },
   "CookieBanner": {
     "accept": "Accetta",

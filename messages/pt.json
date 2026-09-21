@@ -213,7 +213,21 @@
       "noCard": "Sem cartão",
       "bulkOps": "Geração em massa do catálogo"
     },
-    "costRemoveBg": "Fundo transparente (recorte)"
+    "costRemoveBg": "Fundo transparente (recorte)",
+    "simulator": {
+      "title": "Quantos produtos tem o seu catálogo?",
+      "hint": "Estimativa para uma passagem completa: título, descrição, tags e 3 imagens por produto, com as definições padrão.",
+      "label": "Número de produtos",
+      "presetsAria": "Tamanhos de catálogo comuns",
+      "credits": "≈ {credits, number} créditos para gerar tudo uma vez",
+      "recommended": "Plano recomendado: {plan}",
+      "recommendedPacks": "Plano recomendado: {plan} + {count, plural, =1 {1 pack} other {# packs}} {pack} ({extra, number} créditos extra)",
+      "custom": "Acima de {products, number} produtos, construímos a oferta consigo.",
+      "customCta": "Contacte-nos"
+    },
+    "packsNote": "Precisa de mais num mês? Packs de créditos, sem mudar de plano.",
+    "customQuoteLine": "Mais de {stores, number} lojas ou um catálogo com mais de {products, number} produtos?",
+    "customQuoteCta": "Falemos, sob orçamento."
   },
   "Preferences": {
     "title": "Preferências de geração",
@@ -687,7 +701,9 @@
     "subscriptionBucketHint": "reinicia a cada renovação",
     "packBucketLabel": "Pacotes",
     "packBucketHint": "não expiram",
-    "errorPaymentFailed": "Não foi possível contatar o serviço de pagamento. Tente novamente em instantes."
+    "errorPaymentFailed": "Não foi possível contatar o serviço de pagamento. Tente novamente em instantes.",
+    "perCredit": "{price} € / crédito",
+    "bestPerCredit": "Melhor preço por crédito"
   },
   "CookieBanner": {
     "accept": "Aceitar",
