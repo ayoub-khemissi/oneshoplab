@@ -14,7 +14,12 @@ import {
   type ImageQualityId
 } from '@/entities/ai-model';
 import { runChatOptim, type ProductContext } from '@/entities/generation-job';
-import { startImageOptim } from '@/entities/generation-job';
+import {
+  DEFAULT_IMAGE_ANGLES,
+  IMAGE_ANGLE_PROMPTS,
+  startImageOptim,
+  type DefaultImageAngle
+} from '@/entities/generation-job';
 import type { CopyOptimField } from '@/entities/generation-job';
 import { getEffectiveLanguage } from '@/entities/audit';
 import { auth } from '@/entities/user';
@@ -23,18 +28,6 @@ import { InsufficientCreditsError } from '@/entities/credit';
 import { productSourceKey } from '@/entities/product';
 import { db } from '@/shared/db';
 import { products, projects } from '@/shared/db/schema';
-
-const IMAGE_ANGLES = ['lifestyle', 'studio', 'inuse'] as const;
-type ImageAngle = (typeof IMAGE_ANGLES)[number];
-
-const IMAGE_ANGLE_PROMPTS: Record<ImageAngle, string> = {
-  lifestyle:
-    'A lifestyle photo of this product in a natural outdoor setting, soft golden-hour lighting, slight shallow depth of field. The product remains identical to the source — only the surrounding scene changes. Photorealistic, high quality.',
-  studio:
-    'A clean studio shot of this product on a minimalist warm-neutral background, professional product photography lighting, soft shadow underneath. The product is identical to the source.',
-  inuse:
-    'A candid lifestyle scene of someone naturally using or wearing this product in an everyday context, authentic and human, warm tones. The product is identical to the source.'
-};
 
 const FIELD_DEFAULT_PROMPT: Record<CopyOptimField, string> = {
   title:
@@ -83,7 +76,7 @@ function effectiveChatPrompt(field: CopyOptimField, custom: string): string {
     : FIELD_DEFAULT_PROMPT[field];
 }
 
-function effectiveImagePrompt(angle: ImageAngle, custom: string): string {
+function effectiveImagePrompt(angle: DefaultImageAngle, custom: string): string {
   const trimmed = custom.trim();
   return trimmed ? `${IMAGE_ANGLE_PROMPTS[angle]} ${trimmed}` : IMAGE_ANGLE_PROMPTS[angle];
 }
@@ -278,7 +271,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const imageFormatId = resolveImageFormatId(bodyImageFormat ?? session.user.preferredImageFormat);
 
   const totalCost = fieldsToRun.reduce((sum, f) => {
-    if (f === 'images') return sum + costForImage(imageQualityId) * IMAGE_ANGLES.length;
+    if (f === 'images') return sum + costForImage(imageQualityId) * DEFAULT_IMAGE_ANGLES.length;
     return sum + estimateChatCredits(chatModelId, f);
   }, 0);
   if ((session.user.creditsBalance ?? 0) < totalCost) {
@@ -304,7 +297,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       if (f === 'images') {
         if (!sourceImage) continue;
         await Promise.allSettled(
-          IMAGE_ANGLES.map((angle) =>
+          DEFAULT_IMAGE_ANGLES.map((angle) =>
             startImageOptim({
               userId: session.user!.id,
               projectId,

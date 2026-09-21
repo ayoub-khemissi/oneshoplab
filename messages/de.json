@@ -524,7 +524,7 @@
     "aiDescription": "Umgeschriebene Beschreibung",
     "aiTags": "Vorgeschlagene Tags",
     "aiInstagram": "Social-Post-Vorschlag",
-    "aiImagesLabel": "3 Bilder: Lifestyle | Studio | Im Einsatz",
+    "aiImagesLabel": "3 Bilder: Weißer Hintergrund | Im Einsatz | Lifestyle",
     "aiNoImage": "Kein Bild",
     "aiNoProducts": "Konnte aus diesem Shop noch keine Produkte extrahieren.",
     "aiTextFailed": "KI-Vorschläge fehlgeschlagen.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "Tags",
     "sourceImagesLabel": "Produktbilder",
     "aiAngle": {
+      "packshot": "Weißer Hintergrund",
       "lifestyle": "Lifestyle outdoor",
       "studio": "Studio",
       "inuse": "Im Einsatz"

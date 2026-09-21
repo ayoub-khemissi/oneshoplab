@@ -38,7 +38,7 @@ export function NewImageModal({
   const [imageFormatId, setImageFormatId] = useState<string>(initialImageFormat);
   // A saved prompt means they wrote one before: start on that option rather
   // than making them find it again.
-  const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'lifestyle');
+  const [angle, setAngle] = useState<ImageAngle>(initialCustomPrompt ? 'custom' : 'packshot');
   const [customPrompt, setCustomPrompt] = useState(initialCustomPrompt);
   const [submitting, setSubmitting] = useState(false);
   // Back closes the modal, not the page (see useModalHistory).
@@ -75,10 +75,10 @@ export function NewImageModal({
   // option that opens a field and scrolling away from your own text to find
   // the confirm button is a bad way to write a prompt.
   const presets: Array<{ id: ImageAngle; label: string; description: string }> = [
+    { id: 'packshot', label: t('anglePackshotTitle'), description: t('anglePackshotHint') },
+    { id: 'inuse', label: t('angleInUseTitle'), description: t('angleInUseHint') },
     { id: 'lifestyle', label: t('angleLifestyleTitle'), description: t('angleLifestyleHint') },
     { id: 'studio', label: t('angleStudioTitle'), description: t('angleStudioHint') },
-    { id: 'inuse', label: t('angleInUseTitle'), description: t('angleInUseHint') },
-    { id: 'packshot', label: t('anglePackshotTitle'), description: t('anglePackshotHint') },
     { id: 'flatlay', label: t('angleFlatlayTitle'), description: t('angleFlatlayHint') },
     { id: 'macro', label: t('angleMacroTitle'), description: t('angleMacroHint') },
     { id: 'scale', label: t('angleScaleTitle'), description: t('angleScaleHint') },

@@ -524,7 +524,7 @@
     "aiDescription": "Przepisany opis",
     "aiTags": "Sugerowane tagi",
     "aiInstagram": "Sugestia posta social",
-    "aiImagesLabel": "3 obrazy: Lifestyle | Studio | W użyciu",
+    "aiImagesLabel": "3 obrazy: Białe tło | W użyciu | Lifestyle",
     "aiNoImage": "Brak obrazu",
     "aiNoProducts": "Nie udało się jeszcze wyciągnąć produktów z tego sklepu.",
     "aiTextFailed": "Sugestie AI nie zostały wygenerowane.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "Tagi",
     "sourceImagesLabel": "Obrazy produktu",
     "aiAngle": {
+      "packshot": "Białe tło",
       "lifestyle": "Lifestyle plener",
       "studio": "Studio",
       "inuse": "W użyciu"

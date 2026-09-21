@@ -46,8 +46,11 @@ export const ALL_FIELDS: BulkFieldKey[] = ['title', 'description', 'tags', 'imag
 /** Deliberately the original three, not the full single-image catalogue: bulk
  *  multiplies every angle by every product, so eight of them would quietly turn
  *  a run into an eight-figure credit bill. */
-export type BulkImageAngle = 'lifestyle' | 'studio' | 'inuse';
-const ALL_ANGLES: BulkImageAngle[] = ['lifestyle', 'studio', 'inuse'];
+export type BulkImageAngle = 'packshot' | 'inuse' | 'lifestyle';
+export const BULK_ANGLES: BulkImageAngle[] = ['packshot', 'inuse', 'lifestyle'];
+const ALL_ANGLES = BULK_ANGLES;
+/** `studio` was in the default trio before `packshot` replaced it. */
+const LEGACY_ANGLE_MAP: Record<string, BulkImageAngle> = { studio: 'packshot' };
 
 export interface ResolvedBulkPrefs {
   fields: Record<BulkFieldKey, boolean>;
@@ -75,7 +78,9 @@ export function resolveBulkPrefs(raw: unknown): ResolvedBulkPrefs {
     alt: f.alt !== false,
     images: f.images !== false
   };
-  const rawAngles = Array.isArray(r?.imageAngles) ? r.imageAngles : null;
+  const rawAngles = Array.isArray(r?.imageAngles)
+    ? r.imageAngles.map((a) => (typeof a === 'string' && LEGACY_ANGLE_MAP[a]) || a)
+    : null;
   let imageAngles = rawAngles
     ? ALL_ANGLES.filter((a) => rawAngles.includes(a))
     : ALL_ANGLES.slice();

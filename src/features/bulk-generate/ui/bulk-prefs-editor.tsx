@@ -14,8 +14,10 @@ import { ImageFormatPicker } from '@/shared/ui';
  */
 
 export type BulkFieldKey = 'title' | 'description' | 'tags' | 'alt' | 'images';
-export type ImageAngle = 'lifestyle' | 'studio' | 'inuse';
-export const ALL_ANGLES: ImageAngle[] = ['lifestyle', 'studio', 'inuse'];
+export type ImageAngle = 'packshot' | 'inuse' | 'lifestyle';
+export const ALL_ANGLES: ImageAngle[] = ['packshot', 'inuse', 'lifestyle'];
+/** Prefs saved before `packshot` replaced `studio` in the default trio. */
+const LEGACY_ANGLE_MAP: Record<string, ImageAngle> = { studio: 'packshot' };
 
 export interface BulkPrefs {
   fields: Record<BulkFieldKey, boolean>;
@@ -39,7 +41,8 @@ export function canonicalizePrefs(p: BulkPrefs): BulkPrefs {
     alt: p.fields.alt !== false,
     images: p.fields.images !== false
   };
-  let imageAngles = ALL_ANGLES.filter((a) => p.imageAngles.includes(a));
+  const wanted = (p.imageAngles as string[]).map((a) => LEGACY_ANGLE_MAP[a] ?? a);
+  let imageAngles = ALL_ANGLES.filter((a) => wanted.includes(a));
   if (fields.images && imageAngles.length === 0) {
     imageAngles = [...ALL_ANGLES];
   }

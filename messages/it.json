@@ -524,7 +524,7 @@
     "aiDescription": "Descrizione riscritta",
     "aiTags": "Tag suggeriti",
     "aiInstagram": "Suggerimento post social",
-    "aiImagesLabel": "3 immagini: Lifestyle | Studio | In uso",
+    "aiImagesLabel": "3 immagini: Sfondo bianco | In uso | Lifestyle",
     "aiNoImage": "Nessuna immagine",
     "aiNoProducts": "Non ho ancora estratto prodotti da questo store.",
     "aiTextFailed": "I suggerimenti AI sono falliti.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "Tag",
     "sourceImagesLabel": "Immagini del prodotto",
     "aiAngle": {
+      "packshot": "Sfondo bianco",
       "lifestyle": "Lifestyle outdoor",
       "studio": "Studio",
       "inuse": "In uso"

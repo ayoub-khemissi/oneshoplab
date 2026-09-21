@@ -299,7 +299,7 @@ const PrefsSchema = z.union([
       tags: z.boolean(),
       images: z.boolean()
     }),
-    imageAngles: z.array(z.enum(['lifestyle', 'studio', 'inuse'])).max(3),
+    imageAngles: z.array(z.enum(['packshot', 'inuse', 'lifestyle', 'studio'])).max(3),
     /** Optional so a client that predates formats still validates. */
     imageFormat: z.enum(IMAGE_FORMAT_IDS).optional()
   })

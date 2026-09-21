@@ -524,7 +524,7 @@
     "aiDescription": "Переписанное описание",
     "aiTags": "Предложенные теги",
     "aiInstagram": "Идея соц-поста",
-    "aiImagesLabel": "3 изображения: Lifestyle | Студия | В использовании",
+    "aiImagesLabel": "3 изображения: Белый фон | В использовании | Lifestyle",
     "aiNoImage": "Нет изображения",
     "aiNoProducts": "Пока не удалось извлечь товары из этого магазина.",
     "aiTextFailed": "ИИ-предложения не сгенерировались.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "Теги",
     "sourceImagesLabel": "Изображения товара",
     "aiAngle": {
+      "packshot": "Белый фон",
       "lifestyle": "Lifestyle на природе",
       "studio": "Студия",
       "inuse": "В использовании"

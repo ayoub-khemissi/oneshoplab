@@ -136,7 +136,7 @@ describe('retryFailedFromBulk', () => {
     const site = await createProject(user);
     const prefs = resolveBulkPrefs({
       fields: { title: true, description: false, tags: false, images: true },
-      imageAngles: ['studio']
+      imageAngles: ['packshot']
     });
     const first = await startBulkSiteGenerate({
       projectId: site,

@@ -524,7 +524,7 @@
     "aiDescription": "書き換え後の説明",
     "aiTags": "推奨タグ",
     "aiInstagram": "ソーシャル投稿案",
-    "aiImagesLabel": "3枚: ライフスタイル | スタジオ | 使用中",
+    "aiImagesLabel": "3枚: 白背景 | 使用中 | ライフスタイル",
     "aiNoImage": "画像なし",
     "aiNoProducts": "まだこのストアから商品を抽出できていません。",
     "aiTextFailed": "AI提案の生成に失敗しました。",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "タグ",
     "sourceImagesLabel": "商品画像",
     "aiAngle": {
+      "packshot": "白背景",
       "lifestyle": "屋外ライフスタイル",
       "studio": "スタジオ",
       "inuse": "使用中"

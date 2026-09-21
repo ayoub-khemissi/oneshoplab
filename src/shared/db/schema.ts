@@ -150,7 +150,7 @@ export const users = mysqlTable('users', {
       tags: boolean;
       images: boolean;
     };
-    imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+    imageAngles: Array<'packshot' | 'inuse' | 'lifestyle' | 'studio'>;
     /** Absent on rows written before formats existed → 'auto'. */
     imageFormat?: ImageFormatDbId;
   } | null>(),
@@ -264,7 +264,7 @@ export const projects = mysqlTable(
         tags: boolean;
         images: boolean;
       };
-      imageAngles: Array<'lifestyle' | 'studio' | 'inuse'>;
+      imageAngles: Array<'packshot' | 'inuse' | 'lifestyle' | 'studio'>;
       /** Absent on rows written before formats existed → 'auto'. */
       imageFormat?: ImageFormatDbId;
     } | null>(),

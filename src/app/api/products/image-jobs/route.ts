@@ -1,7 +1,12 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse, type NextRequest } from 'next/server';
 import { MAX_IMAGES_PER_PRODUCT } from '@/features/generate-product-images';
-import { buildImagePrompt, IMAGE_ANGLES, startImageOptim } from '@/entities/generation-job';
+import {
+  buildImagePrompt,
+  IMAGE_ANGLES,
+  startImageOptim,
+  type ImageAngle
+} from '@/entities/generation-job';
 import {
   costForImage,
   DEFAULT_IMAGE_QUALITY,
@@ -156,7 +161,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 // POST — kick off one new image generation. Body:
 //   {
 //     siteId, productId,
-//     angle: 'lifestyle' | 'studio' | 'inuse' | 'custom',
+//     angle: ImageAngle | 'custom',   // any IMAGE_ANGLES preset
 //     customPrompt?: string,        // required when angle === 'custom'
 //     replaceJobId?: string,        // when set, soft-hides that job
 //                                   // and starts a fresh one in its place
@@ -261,7 +266,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ctx.productInstructions
   );
   const prompt = buildImagePrompt(
-    isCustom ? 'custom' : (angleRaw as 'lifestyle' | 'studio' | 'inuse'),
+    isCustom ? 'custom' : (angleRaw as ImageAngle),
     customPrompt,
     merchantInstructions
   );

@@ -524,7 +524,7 @@
     "aiDescription": "重写后的描述",
     "aiTags": "建议标签",
     "aiInstagram": "社交帖建议",
-    "aiImagesLabel": "3 张图：生活场景 | 影棚 | 使用中",
+    "aiImagesLabel": "3 张图：纯白背景 | 使用中 | 生活场景",
     "aiNoImage": "无图片",
     "aiNoProducts": "尚未能从该店铺提取产品。",
     "aiTextFailed": "AI 建议未能生成。",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "标签",
     "sourceImagesLabel": "产品图片",
     "aiAngle": {
+      "packshot": "纯白背景",
       "lifestyle": "户外生活场景",
       "studio": "影棚",
       "inuse": "使用中"

@@ -524,7 +524,7 @@
     "aiDescription": "다시 쓴 설명",
     "aiTags": "추천 태그",
     "aiInstagram": "소셜 포스트 제안",
-    "aiImagesLabel": "3장: 라이프스타일 | 스튜디오 | 사용 중",
+    "aiImagesLabel": "3장: 흰 배경 | 사용 중 | 라이프스타일",
     "aiNoImage": "이미지 없음",
     "aiNoProducts": "이 스토어에서 아직 제품을 추출하지 못했습니다.",
     "aiTextFailed": "AI 제안 생성 실패.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "태그",
     "sourceImagesLabel": "제품 이미지",
     "aiAngle": {
+      "packshot": "흰 배경",
       "lifestyle": "야외 라이프스타일",
       "studio": "스튜디오",
       "inuse": "사용 중"

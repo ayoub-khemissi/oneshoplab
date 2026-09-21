@@ -524,7 +524,7 @@
     "aiDescription": "Yeniden yazılmış açıklama",
     "aiTags": "Önerilen etiketler",
     "aiInstagram": "Sosyal post önerisi",
-    "aiImagesLabel": "3 görsel: Lifestyle | Stüdyo | Kullanımda",
+    "aiImagesLabel": "3 görsel: Beyaz arka plan | Kullanımda | Lifestyle",
     "aiNoImage": "Görsel yok",
     "aiNoProducts": "Bu mağazadan henüz ürün çekilemedi.",
     "aiTextFailed": "Yapay zekâ önerileri üretilemedi.",
@@ -551,6 +551,7 @@
     "sourceTagsLabel": "Etiketler",
     "sourceImagesLabel": "Ürün görselleri",
     "aiAngle": {
+      "packshot": "Beyaz arka plan",
       "lifestyle": "Açık hava lifestyle",
       "studio": "Stüdyo",
       "inuse": "Kullanımda"

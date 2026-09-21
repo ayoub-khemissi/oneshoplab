@@ -30,8 +30,14 @@ export {
   sanitizeAltText
 } from './lib/prompts';
 export type { ProductContext } from './lib/prompts';
-export { IMAGE_ANGLES, IMAGE_ANGLE_PROMPTS, buildImagePrompt } from './lib/image-prompts';
-export type { ImageAngle } from './lib/image-prompts';
+export {
+  DEFAULT_IMAGE_ANGLES,
+  IMAGE_ANGLES,
+  IMAGE_ANGLE_PROMPTS,
+  LEGACY_DEFAULT_ANGLE_MAP,
+  buildImagePrompt
+} from './lib/image-prompts';
+export type { DefaultImageAngle, ImageAngle } from './lib/image-prompts';
 export {
   findCachedSuggestions,
   getOrGenerateSuggestions,

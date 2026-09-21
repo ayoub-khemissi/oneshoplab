@@ -1,5 +1,5 @@
 export type ImageAngle =
-  'lifestyle' | 'studio' | 'inuse' | 'packshot' | 'flatlay' | 'macro' | 'scale' | 'gift' | 'custom';
+  'packshot' | 'inuse' | 'lifestyle' | 'studio' | 'flatlay' | 'macro' | 'scale' | 'gift' | 'custom';
 
 export type BusyKind = 'delete' | 'regenerate';
 
