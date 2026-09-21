@@ -120,7 +120,8 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     key: 'product-pages-not-converting',
     date: '2026-04-27',
-    cover: null,
+    updated: '2026-09-21',
+    cover: '/blog/product-page-before-after.webp',
     translations: {
       fr: {
         slug: 'fiches-produits-ne-convertissent-pas',
