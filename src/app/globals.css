@@ -451,3 +451,27 @@
     box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 45%, transparent);
   }
 }
+
+/* Phones: every dialog takes the whole screen, and leaves through the cross
+   pinned to its top-right corner. HeroUI's <Modal> / <AlertDialog> here; the
+   hand-rolled dialogs get the same rule from shared/ui/modal-shell.ts. */
+@media (max-width: 639px) {
+  .modal__container,
+  .alert-dialog__container {
+    width: 100%;
+    max-width: none;
+    height: var(--visual-viewport-height, 100dvh);
+    padding: 0;
+  }
+  .modal__dialog,
+  .alert-dialog__dialog {
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  .modal__body {
+    flex: 1 1 auto;
+  }
+}

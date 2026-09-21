@@ -3,7 +3,12 @@
 import { Spinner } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { ModalCloseButton, useModalHistory } from '@/shared/ui';
+import {
+  MODAL_OVERLAY_CLASS,
+  modalPanelClass,
+  ModalCloseButton,
+  useModalHistory
+} from '@/shared/ui';
 import { createShareLinkAction } from '../api/actions';
 import type { CandidateProduct, ShareLinkRow } from '@/entities/share-link';
 
@@ -93,16 +98,8 @@ export function CreateModal({
   const canSubmit = selected.size === 2 && !submitting;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onCancel}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col"
-      >
+    <div role="dialog" aria-modal="true" className={MODAL_OVERLAY_CLASS} onClick={onCancel}>
+      <div onClick={(e) => e.stopPropagation()} className={modalPanelClass('lg')}>
         <ModalCloseButton onClose={onCancel} />
         <div className="p-5 pr-12 border-b border-[var(--border)] flex flex-col gap-1">
           <h3 className="text-base font-semibold">{t('modalTitle')}</h3>

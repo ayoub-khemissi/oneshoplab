@@ -22,6 +22,8 @@ export type { ImageFormatOption } from './image-format-picker';
 export { ImageFormatPicker } from './image-format-picker';
 export { ImageZoom } from './image-zoom';
 export { ModalCloseButton } from './modal-close-button';
+export { MODAL_OVERLAY_CLASS, modalPanelClass } from './modal-shell';
+export type { ModalPanelWidth } from './modal-shell';
 export type { InfoHintProps, InfoHintTopic } from './info-hint';
 export { InfoHint } from './info-hint';
 export { LocalePicker } from './locale-picker';

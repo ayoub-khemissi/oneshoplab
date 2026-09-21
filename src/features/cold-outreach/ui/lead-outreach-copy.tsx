@@ -3,7 +3,12 @@
 import { Check, ClipboardCopy, MessageSquareText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ContactLang } from '../api/contact-form';
-import { ModalCloseButton, useModalHistory } from '@/shared/ui';
+import {
+  MODAL_OVERLAY_CLASS,
+  modalPanelClass,
+  ModalCloseButton,
+  useModalHistory
+} from '@/shared/ui';
 
 export interface OutreachCopyData {
   subject: string;
@@ -94,16 +99,8 @@ function OutreachModal({
   const copy = copies[lang];
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-lg w-full max-h-[88vh] flex flex-col text-left"
-      >
+    <div role="dialog" aria-modal="true" className={MODAL_OVERLAY_CLASS} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className={modalPanelClass('lg', 'text-left')}>
         <ModalCloseButton onClose={onClose} />
         {/* Header ---------------------------------------------------- */}
         <div className="p-4 pr-12 border-b border-[var(--border)] flex flex-col gap-0.5 min-w-0">

@@ -5,7 +5,13 @@ import { Coins } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { imageFormatChoices } from '@/entities/ai-model';
-import { ImageFormatPicker, ModalCloseButton, useModalHistory } from '@/shared/ui';
+import {
+  ImageFormatPicker,
+  MODAL_OVERLAY_CLASS,
+  modalPanelClass,
+  ModalCloseButton,
+  useModalHistory
+} from '@/shared/ui';
 import type { ImageAngle, NewImagePayload } from './types';
 
 interface NewImageModalProps {
@@ -132,16 +138,11 @@ export function NewImageModal({
   );
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onCancel}
-    >
+    <div role="dialog" aria-modal="true" className={MODAL_OVERLAY_CLASS} onClick={onCancel}>
       <div
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-md w-full p-5 flex flex-col gap-4"
+        className={modalPanelClass('md', 'p-5 gap-4 overflow-y-auto')}
       >
         <ModalCloseButton onClose={onCancel} />
         <div className="pr-10">

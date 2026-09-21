@@ -7,7 +7,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { CandidateRow } from './candidate-row';
 import type { BulkCandidate } from '../model/types';
 import { BulkPrefsEditor, type BulkPrefs } from '@/features/bulk-generate/client';
-import { DebouncedSearchInput, ModalCloseButton, useModalHistory } from '@/shared/ui';
+import {
+  DebouncedSearchInput,
+  MODAL_OVERLAY_CLASS,
+  modalPanelClass,
+  ModalCloseButton,
+  useModalHistory
+} from '@/shared/ui';
 import { ModelPickerChips } from '@/features/model-preferences';
 import {
   CHAT_MODEL_REGISTRY,
@@ -193,16 +199,8 @@ export function SelectionModal({
     .join(' · ');
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
-      onClick={onCancel}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col"
-      >
+    <div role="dialog" aria-modal="true" className={MODAL_OVERLAY_CLASS} onClick={onCancel}>
+      <div onClick={(e) => e.stopPropagation()} className={modalPanelClass('2xl')}>
         <ModalCloseButton onClose={onCancel} label={t('cancel')} />
         {/* Header + stepper ---------------------------------------- */}
         <div className="p-4 pr-12 sm:p-5 sm:pr-12 border-b border-[var(--border)] flex items-center gap-2 min-w-0">
