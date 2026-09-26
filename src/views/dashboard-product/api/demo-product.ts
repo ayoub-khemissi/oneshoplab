@@ -1,5 +1,5 @@
 import type { OptimHistoryItem } from '@/entities/generation-job';
-import type { LoadedProduct } from './load-product';
+import type { LoadedProduct } from '../model/types';
 
 /**
  * The product page the tour shows when the merchant has no catalogue yet.

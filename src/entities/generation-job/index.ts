@@ -9,7 +9,8 @@ export {
 } from './api/transitions';
 export type { DbExecutor, TransitionOptions, TransitionResult } from './api/transitions';
 export { listProductImageJobs } from './api/image-jobs';
-export { persistKieJobFailure, persistKieJobSuccess } from './api/persist-result';
+export { persistKieJobSuccess } from './api/persist-result';
+export { persistKieJobFailure } from './api/job-failure';
 export type { KieSuccessMeta } from './api/persist-result';
 export { listOptimHistory, listOptimHistoryPaginated } from './api/optim-history';
 export type { OptimHistoryItem } from './api/optim-history';

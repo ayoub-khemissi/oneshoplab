@@ -10,6 +10,9 @@ import {
   type NotificationKind
 } from '@/shared/db/schema';
 import { pushPayloadFor } from '../lib/notification-push';
+import type { NotificationRow } from '../model/types';
+
+export type { NotificationRow } from '../model/types';
 
 /** Per-user retention cap. We keep the 20 most recent notifications
  *  and trim older rows on every insert — the bell isn't an archive,
@@ -191,18 +194,6 @@ export async function markReadByAudit(
       )
     );
   return { updated: r[0].affectedRows };
-}
-
-export interface NotificationRow {
-  id: string;
-  kind: NotificationKind;
-  jobId: string | null;
-  auditId: string | null;
-  productId: string | null;
-  projectId: string | null;
-  payload: Record<string, unknown> | null;
-  isRead: boolean;
-  createdAt: Date;
 }
 
 /** Read the most recent notifications for the bell dropdown, plus

@@ -1,4 +1,4 @@
-import type { NotificationRow } from '../api/notifications';
+import type { NotificationRow } from '../model/types';
 
 /**
  * The element a notice is really about, on the page it leads to.
