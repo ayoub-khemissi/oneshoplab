@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Pour Shopify · WooCommerce · Wix",
     "headline": "Connectez votre boutique.<br></br><gradient>L'IA fait le reste.</gradient>",
-    "lead": "Audit gratuit en une minute. L'IA réécrit vos titres, vos descriptions et vos photos — vous validez, les modifications partent dans votre boutique. Zéro copier-coller.",
+    "lead": "Audit gratuit en une minute. L'IA réécrit vos fiches, vous validez, c'est en ligne.",
     "urlLabel": "URL de la boutique",
     "urlHint": "URL publique de la vitrine. La plateforme est détectée automatiquement.",
     "errorInvalidUrl": "Merci de saisir une URL valide.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Je renseigne ma boutique",
     "heroOrSeparator": "ou",
     "heroCompatManualChip": "Ou la mienne",
-    "heroUrlPlaceholder": "votreboutique.com"
+    "heroUrlPlaceholder": "votreboutique.com",
+    "heroVideoLabel": "L'histoire d'une nuit de commerçant : une boutique auditée, réécrite et en ligne au matin avec OneShopLab",
+    "heroVideoSoundOn": "Activer le son",
+    "heroVideoSoundOff": "Couper le son"
   },
   "Nav": {
     "signIn": "Se connecter",

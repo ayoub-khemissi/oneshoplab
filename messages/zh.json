@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "适用于 Shopify · WooCommerce · Wix",
     "headline": "连接你的店铺，<br></br><gradient>其余交给 AI。</gradient>",
-    "lead": "约一分钟完成免费诊断。AI 重写标题、描述和图片——你确认后，改动直接写回店铺。无需复制粘贴。",
+    "lead": "一分钟免费诊断。AI 重写商品页，你确认后即刻上线。",
     "urlLabel": "店铺 URL",
     "urlHint": "店铺前台的公开 URL。我们自动识别平台。",
     "errorInvalidUrl": "请输入有效的 URL。",
@@ -79,7 +79,10 @@
     "heroScratchCta": "我创建店铺",
     "heroOrSeparator": "或",
     "heroCompatManualChip": "或自己的",
-    "heroUrlPlaceholder": "你的店铺.com"
+    "heroUrlPlaceholder": "你的店铺.com",
+    "heroVideoLabel": "一位店主的夜晚：借助 OneShopLab，店铺在天亮前完成审核、改写并上线",
+    "heroVideoSoundOn": "开启声音",
+    "heroVideoSoundOff": "关闭声音"
   },
   "Nav": {
     "signIn": "登录",

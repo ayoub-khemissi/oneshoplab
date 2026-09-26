@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "لـ Shopify · WooCommerce · Wix",
     "headline": "اربط متجرك.<br></br><gradient>والذكاء الاصطناعي يتكفّل بالباقي.</gradient>",
-    "lead": "تدقيق مجاني في دقيقة تقريبًا. الذكاء الاصطناعي يعيد كتابة العناوين والأوصاف والصور — أنت توافق، والتعديلات تصل إلى متجرك. بلا نسخ ولصق.",
+    "lead": "تدقيق مجاني في دقيقة. الذكاء الاصطناعي يعيد كتابة صفحات منتجاتك، توافق، وتُنشر.",
     "urlLabel": "رابط المتجر",
     "urlHint": "الرابط العام لواجهة المتجر. نكتشف المنصة تلقائيًا.",
     "errorInvalidUrl": "يرجى إدخال رابط صحيح.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "سأُعدّ متجري",
     "heroOrSeparator": "أو",
     "heroCompatManualChip": "أو متجرك",
-    "heroUrlPlaceholder": "متجرك.com"
+    "heroUrlPlaceholder": "متجرك.com",
+    "heroVideoLabel": "ليلة تاجر: متجر يتم تدقيقه وإعادة كتابته ونشره بحلول الصباح مع OneShopLab",
+    "heroVideoSoundOn": "تشغيل الصوت",
+    "heroVideoSoundOff": "كتم الصوت"
   },
   "Nav": {
     "signIn": "تسجيل الدخول",

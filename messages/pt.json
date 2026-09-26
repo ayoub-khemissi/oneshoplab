@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Para Shopify · WooCommerce · Wix",
     "headline": "Ligue a sua loja.<br></br><gradient>A IA faz o resto.</gradient>",
-    "lead": "Auditoria gratuita em cerca de um minuto. A IA reescreve títulos, descrições e fotos — você aprova e as alterações chegam à sua loja. Sem copiar e colar.",
+    "lead": "Auditoria gratuita em um minuto. A IA reescreve suas fichas, você aprova e elas entram no ar.",
     "urlLabel": "URL da loja",
     "urlHint": "URL pública da vitrine. Detetamos a plataforma automaticamente.",
     "errorInvalidUrl": "Insira um URL válido.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Configuro a minha loja",
     "heroOrSeparator": "ou",
     "heroCompatManualChip": "Ou a tua",
-    "heroUrlPlaceholder": "sualoja.com"
+    "heroUrlPlaceholder": "sualoja.com",
+    "heroVideoLabel": "A noite de um lojista: uma loja auditada, reescrita e no ar pela manhã com o OneShopLab",
+    "heroVideoSoundOn": "Ativar som",
+    "heroVideoSoundOff": "Desativar som"
   },
   "Nav": {
     "signIn": "Entrar",

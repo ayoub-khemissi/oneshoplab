@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix용",
     "headline": "쇼핑몰만 연결하세요.<br></br><gradient>나머지는 AI가 합니다.</gradient>",
-    "lead": "약 1분이면 끝나는 무료 진단. AI가 제목과 설명, 사진을 다시 쓰고 승인하면 변경 사항이 쇼핑몰에 반영됩니다. 복사·붙여넣기는 필요 없습니다.",
+    "lead": "1분 무료 진단. AI가 상품 페이지를 다시 쓰고, 승인하면 바로 게시됩니다.",
     "urlLabel": "스토어 URL",
     "urlHint": "스토어 공개 URL. 플랫폼은 자동으로 감지합니다.",
     "errorInvalidUrl": "유효한 URL을 입력하세요.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "스토어를 등록할게요",
     "heroOrSeparator": "또는",
     "heroCompatManualChip": "또는 본인의 스토어",
-    "heroUrlPlaceholder": "내상점.com"
+    "heroUrlPlaceholder": "내상점.com",
+    "heroVideoLabel": "어느 판매자의 밤: OneShopLab으로 스토어를 진단하고 다시 쓰고 아침에 게시",
+    "heroVideoSoundOn": "소리 켜기",
+    "heroVideoSoundOff": "소리 끄기"
   },
   "Nav": {
     "signIn": "로그인",

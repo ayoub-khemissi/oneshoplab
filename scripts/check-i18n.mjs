@@ -16,8 +16,10 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+// fileURLToPath, not .pathname: on Windows the latter is /C:/…, which join() turns into C:\C:\….
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const MESSAGES = join(ROOT, 'messages');
 const SRC = join(ROOT, 'src');
 

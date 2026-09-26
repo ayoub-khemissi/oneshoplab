@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Для Shopify · WooCommerce · Wix",
     "headline": "Подключите магазин.<br></br><gradient>Остальное сделает ИИ.</gradient>",
-    "lead": "Бесплатный аудит примерно за минуту. ИИ переписывает заголовки, описания и фотографии — вы подтверждаете, изменения попадают в магазин. Без копирования вручную.",
+    "lead": "Бесплатный аудит за минуту. ИИ переписывает карточки товаров, вы подтверждаете — и они на сайте.",
     "urlLabel": "URL магазина",
     "urlHint": "Публичный URL витрины. Платформа определяется автоматически.",
     "errorInvalidUrl": "Введите корректный URL.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Я наполню свой магазин",
     "heroOrSeparator": "или",
     "heroCompatManualChip": "Или ваш",
-    "heroUrlPlaceholder": "vashmagazin.com"
+    "heroUrlPlaceholder": "vashmagazin.com",
+    "heroVideoLabel": "Ночь продавца: магазин проверен, переписан и опубликован к утру с OneShopLab",
+    "heroVideoSoundOn": "Включить звук",
+    "heroVideoSoundOff": "Выключить звук"
   },
   "Nav": {
     "signIn": "Войти",

@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Für Shopify · WooCommerce · Wix",
     "headline": "Verbinde deinen Shop.<br></br><gradient>Die KI macht den Rest.</gradient>",
-    "lead": "Kostenlose Analyse in etwa einer Minute. Die KI schreibt Titel, Beschreibungen und Fotos neu — du gibst frei, die Änderungen landen in deinem Shop. Kein Copy-Paste.",
+    "lead": "Kostenlose Analyse in einer Minute. Die KI schreibt deine Produktseiten neu, du gibst frei, sie gehen live.",
     "urlLabel": "Shop-URL",
     "urlHint": "Öffentliche Shop-URL. Plattform wird automatisch erkannt.",
     "errorInvalidUrl": "Bitte eine gültige URL eingeben.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Ich pflege meinen Shop ein",
     "heroOrSeparator": "oder",
     "heroCompatManualChip": "Oder dein eigener",
-    "heroUrlPlaceholder": "ihrshop.com"
+    "heroUrlPlaceholder": "ihrshop.com",
+    "heroVideoLabel": "Die Nacht eines Händlers: ein Shop, analysiert, neu geschrieben und am Morgen live mit OneShopLab",
+    "heroVideoSoundOn": "Ton an",
+    "heroVideoSoundOff": "Ton aus"
   },
   "Nav": {
     "signIn": "Anmelden",

@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "For Shopify · WooCommerce · Wix",
     "headline": "Connect your store.<br></br><gradient>The AI does the rest.</gradient>",
-    "lead": "Free audit in about a minute. The AI rewrites your titles, descriptions and photos — you approve, the changes land in your store. No copy-pasting.",
+    "lead": "Free audit in a minute. The AI rewrites your product pages, you approve, they go live.",
     "urlLabel": "Store URL",
     "urlHint": "Public storefront URL. We auto-detect the platform.",
     "errorInvalidUrl": "Please enter a valid URL.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "I'll set up my store",
     "heroOrSeparator": "or",
     "heroCompatManualChip": "Or your own",
-    "heroUrlPlaceholder": "yourstore.com"
+    "heroUrlPlaceholder": "yourstore.com",
+    "heroVideoLabel": "Story of a merchant's night: a store audited, rewritten and live by morning with OneShopLab",
+    "heroVideoSoundOn": "Sound on",
+    "heroVideoSoundOff": "Sound off"
   },
   "Nav": {
     "signIn": "Sign in",

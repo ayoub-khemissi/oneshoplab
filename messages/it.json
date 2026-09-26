@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Per Shopify · WooCommerce · Wix",
     "headline": "Collega il tuo negozio.<br></br><gradient>All'IA il resto.</gradient>",
-    "lead": "Analisi gratuita in circa un minuto. L'IA riscrive titoli, descrizioni e foto: tu approvi e le modifiche arrivano nel tuo negozio. Senza copia-incolla.",
+    "lead": "Analisi gratuita in un minuto. L'IA riscrive le tue schede, tu approvi e vanno online.",
     "urlLabel": "URL del negozio",
     "urlHint": "URL pubblico della vetrina. Rileviamo la piattaforma in automatico.",
     "errorInvalidUrl": "Inserisci un URL valido.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Inserisco il mio negozio",
     "heroOrSeparator": "oppure",
     "heroCompatManualChip": "Oppure il tuo",
-    "heroUrlPlaceholder": "tuonegozio.com"
+    "heroUrlPlaceholder": "tuonegozio.com",
+    "heroVideoLabel": "La notte di un commerciante: un negozio analizzato, riscritto e online al mattino con OneShopLab",
+    "heroVideoSoundOn": "Attiva audio",
+    "heroVideoSoundOff": "Disattiva audio"
   },
   "Nav": {
     "signIn": "Accedi",

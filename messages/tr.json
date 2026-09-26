@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix için",
     "headline": "Mağazanı bağla.<br></br><gradient>Gerisini yapay zekâ halleder.</gradient>",
-    "lead": "Yaklaşık bir dakikada ücretsiz analiz. Yapay zekâ başlıkları, açıklamaları ve fotoğrafları yeniden yazar — sen onaylarsın, değişiklikler mağazana iner. Kopyala-yapıştır yok.",
+    "lead": "Bir dakikada ücretsiz analiz. Yapay zekâ ürün sayfalarını yeniden yazar, sen onaylarsın, yayına girer.",
     "urlLabel": "Mağaza URL'si",
     "urlHint": "Mağazanın herkese açık URL'si. Platformu otomatik algılarız.",
     "errorInvalidUrl": "Lütfen geçerli bir URL girin.",
@@ -79,7 +79,10 @@
     "heroScratchCta": "Mağazamı oluşturuyorum",
     "heroOrSeparator": "veya",
     "heroCompatManualChip": "Veya seninki",
-    "heroUrlPlaceholder": "magazaniz.com"
+    "heroUrlPlaceholder": "magazaniz.com",
+    "heroVideoLabel": "Bir satıcının gecesi: OneShopLab ile denetlenen, yeniden yazılan ve sabaha yayında olan bir mağaza",
+    "heroVideoSoundOn": "Sesi aç",
+    "heroVideoSoundOff": "Sesi kapat"
   },
   "Nav": {
     "signIn": "Giriş yap",

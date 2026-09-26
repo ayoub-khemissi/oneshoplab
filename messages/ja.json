@@ -57,7 +57,7 @@
   "Home": {
     "eyebrow": "Shopify · WooCommerce · Wix 向け",
     "headline": "つなぐのはショップだけ。<br></br><gradient>あとは AI が。</gradient>",
-    "lead": "約1分の無料診断。AI がタイトル・説明・写真を書き直し、あなたが承認すると変更がショップに反映されます。コピペは不要です。",
+    "lead": "1分で無料診断。AI が商品ページを書き直し、承認すればそのまま公開。",
     "urlLabel": "ストアのURL",
     "urlHint": "公開されているストアのURL。プラットフォームは自動検出します。",
     "errorInvalidUrl": "正しいURLを入力してください。",
@@ -79,7 +79,10 @@
     "heroScratchCta": "ストアを登録する",
     "heroOrSeparator": "または",
     "heroCompatManualChip": "あるいは自分のストア",
-    "heroUrlPlaceholder": "あなたの店.com"
+    "heroUrlPlaceholder": "あなたの店.com",
+    "heroVideoLabel": "ある店主の夜：OneShopLab でストアを診断・リライトし、朝には公開",
+    "heroVideoSoundOn": "音声をオン",
+    "heroVideoSoundOff": "音声をオフ"
   },
   "Nav": {
     "signIn": "ログイン",

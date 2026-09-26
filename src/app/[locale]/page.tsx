@@ -7,6 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ShopifyLogo, WixLogo, WoocommerceLogo } from '@/shared/ui';
+import { HeroVideo } from '@/widgets/hero-video';
 import { ShowcaseSection } from '@/widgets/showcase-section';
 import { getStripePriceId, PricingCards } from '@/features/billing';
 import { siteLimitForPlan, type BillingCycle, type PlanId } from '@/entities/ai-model';
@@ -148,117 +149,111 @@ export default async function HomePage({ searchParams }: PageProps) {
         <div className="hero-spotlight" aria-hidden />
       </div>
 
-      <section className="relative z-10 max-w-5xl w-full mx-auto px-6 py-12 md:py-16 min-h-[calc(100svh-5rem)] flex flex-col items-center justify-center text-center gap-5">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)] font-mono">
-            {t('compatibleWith')}
-          </span>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--default)] text-[var(--default-foreground)] font-medium inline-flex items-center gap-2 border border-[var(--border)]">
-              <ShopifyLogo className="size-4" />
-              Shopify
-            </span>
-            <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--default)] text-[var(--default-foreground)] font-medium inline-flex items-center gap-2 border border-[var(--border)]">
-              <WoocommerceLogo className="size-4" />
-              WooCommerce
-            </span>
-            <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--default)] text-[var(--default-foreground)] font-medium inline-flex items-center gap-2 border border-[var(--border)]">
-              <WixLogo className="size-4" />
-              Wix
-            </span>
-            {/* 4th chip — signals that OneShopLab also accepts
-                  manually-entered stores, so the chips row reads as
-                  "works with these 3 platforms or yours" rather than
-                  "only these 3". */}
-            <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-medium inline-flex items-center gap-2 border border-[var(--accent)]/30">
-              <PenLine className="size-3.5" />
-              {t('heroCompatManualChip')}
-            </span>
-          </div>
-        </div>
+      <section className="relative z-10 max-w-7xl w-full mx-auto px-6 pt-4 pb-16 md:pt-10 lg:pt-12 lg:pb-20 lg:min-h-[calc(100svh-5rem)] grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.12fr)] gap-10 lg:gap-12 items-center">
+        <div className="@container flex flex-col items-center text-center lg:items-start lg:text-left gap-5">
+          {/* Mobile keeps the original reading order — chips, headline, form,
+                "or", lead, trust — via `order-*`; desktop reads eyebrow,
+                headline, lead, form, with the chips under the video. */}
+          <CompatChips
+            className="lg:hidden"
+            manualLabel={t('heroCompatManualChip')}
+            label={t('compatibleWith')}
+          />
+          <span className="eyebrow hidden lg:inline-flex">{t('eyebrow')}</span>
 
-        <h1 className="text-4xl sm:text-5xl md:text-[3.25rem] lg:text-6xl font-bold tracking-tight max-w-3xl leading-[1.08]">
-          {t.rich('headline', {
-            gradient: (chunks) => <span className="text-gradient-brand">{chunks}</span>,
-            br: () => <br />
-          })}
-        </h1>
+          <HeroHeadline raw={t.raw('headline') as string} />
 
-        <form
-          action={startAuditAction}
-          className="w-full max-w-xl flex flex-col items-center gap-2"
-        >
-          <div
-            className={`relative w-full flex items-center rounded-full bg-[var(--surface)] border ${
-              errorMessage ? 'border-[var(--danger)]' : 'border-[var(--border)]'
-            } shadow-[0_2px_24px_-12px_oklch(0.20_0.02_250/0.18)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/15 transition-all`}
-          >
-            <label htmlFor="hero-url" className="sr-only">
-              {t('urlLabel')}
-            </label>
-            {/* type="text" not "url": native url validation rejects a
-                  bare domain (no scheme) and silently blocks mobile users.
-                  normalizeUrl() prepends the scheme + validates server-side. */}
-            <input
-              id="hero-url"
-              name="url"
-              type="text"
-              inputMode="url"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              placeholder={t('heroUrlPlaceholder')}
-              aria-invalid={Boolean(errorMessage)}
-              className="flex-1 min-w-0 px-5 sm:px-6 py-4 bg-transparent text-base outline-none rounded-full placeholder:text-[var(--field-placeholder)]"
-            />
-            <button
-              type="submit"
-              className="m-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
-            >
-              <Sparkles className="size-4" />
-              <span className="hidden sm:inline">{t('auditButton')}</span>
-              <ArrowRight className="size-4 sm:hidden" />
-            </button>
-          </div>
-          <p className={`text-xs ${errorMessage ? 'text-[var(--danger)]' : 'text-[var(--muted)]'}`}>
-            {errorMessage ?? t('urlHint')}
+          <p className="order-4 lg:order-none text-base md:text-lg text-[var(--muted)] max-w-xl leading-relaxed">
+            {t('lead')}
           </p>
-        </form>
 
-        {/* Equal-weight alternative entry point. Centered "or" with
-              flanking rules so the two CTAs read as parallel options;
-              the manual CTA matches the URL button's size + shape so
-              users without an existing storefront aren't pushed into
-              a fallback link, they pick the path that fits them. */}
-        <div className="w-full max-w-xl flex items-center gap-3" aria-hidden>
-          <span className="flex-1 h-px bg-[var(--border)]" />
-          <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)] font-mono">
-            {t('heroOrSeparator')}
-          </span>
-          <span className="flex-1 h-px bg-[var(--border)]" />
+          <form
+            action={startAuditAction}
+            className="order-2 lg:order-none w-full max-w-xl flex flex-col items-center lg:items-start gap-2"
+          >
+            <div
+              className={`relative w-full flex items-center rounded-full bg-[var(--surface)] border ${
+                errorMessage ? 'border-[var(--danger)]' : 'border-[var(--border)]'
+              } shadow-[0_2px_24px_-12px_oklch(0.20_0.02_250/0.18)] focus-within:border-[var(--accent)] focus-within:ring-2 focus-within:ring-[var(--accent)]/15 transition-all`}
+            >
+              <label htmlFor="hero-url" className="sr-only">
+                {t('urlLabel')}
+              </label>
+              {/* type="text" not "url": native url validation rejects a
+                    bare domain (no scheme) and silently blocks mobile users.
+                    normalizeUrl() prepends the scheme + validates server-side. */}
+              <input
+                id="hero-url"
+                name="url"
+                type="text"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                required
+                placeholder={t('heroUrlPlaceholder')}
+                aria-invalid={Boolean(errorMessage)}
+                className="flex-1 min-w-0 px-5 sm:px-6 py-4 bg-transparent text-base outline-none rounded-full placeholder:text-[var(--field-placeholder)]"
+              />
+              <button
+                type="submit"
+                className="m-1.5 px-4 sm:px-5 py-2.5 rounded-full bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity font-medium inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              >
+                <Sparkles className="size-4" />
+                <span className="hidden sm:inline">{t('auditButton')}</span>
+                <ArrowRight className="size-4 sm:hidden" />
+              </button>
+            </div>
+            <p
+              className={`text-xs px-2 ${errorMessage ? 'text-[var(--danger)]' : 'text-[var(--muted)]'}`}
+            >
+              {errorMessage ?? t('urlHint')}
+            </p>
+          </form>
+
+          {/* Equal-weight alternative entry point for merchants without a
+                storefront yet. Mobile: "or" between two rules, then a full
+                pill matching the URL button; desktop: one compact line. */}
+          <div className="order-3 lg:order-none w-full max-w-xl flex flex-col lg:flex-row items-center gap-4 lg:gap-3">
+            <div className="w-full lg:w-auto flex items-center gap-3" aria-hidden>
+              <span className="flex-1 h-px bg-[var(--border)] lg:hidden" />
+              <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)] font-mono">
+                {t('heroOrSeparator')}
+              </span>
+              <span className="flex-1 h-px bg-[var(--border)] lg:hidden" />
+            </div>
+            <Link
+              // Direct hand-off — the auth middleware bounces logged-out
+              // visitors through /login?next=… and back, so the link
+              // works regardless of session state.
+              href="/dashboard/sites/new/scratch"
+              className="inline-flex items-center gap-2 px-5 py-3 text-base lg:px-4 lg:py-2 lg:text-sm rounded-full bg-[var(--surface)] border border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors font-medium shadow-[0_2px_24px_-12px_oklch(0.20_0.02_250/0.18)]"
+            >
+              <PenLine className="size-4" />
+              {t('heroScratchCta')}
+              <ArrowRight className="size-4 opacity-80" aria-hidden />
+            </Link>
+          </div>
+
+          <ul className="order-5 lg:order-none flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-sm text-[var(--muted)]">
+            <TrustBullet>{t('trustNoSignup')}</TrustBullet>
+            <TrustBullet>{t('trustNoCard')}</TrustBullet>
+            <TrustBullet>{t('trustFreeCredits')}</TrustBullet>
+          </ul>
         </div>
-        <Link
-          // Direct hand-off — the auth middleware bounces logged-out
-          // visitors through /login?next=… and back, so the link
-          // works regardless of session state.
-          href="/dashboard/sites/new/scratch"
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[var(--surface)] border border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors font-medium text-base shadow-[0_2px_24px_-12px_oklch(0.20_0.02_250/0.18)]"
-        >
-          <PenLine className="size-4" />
-          {t('heroScratchCta')}
-          <ArrowRight className="size-4 opacity-80" aria-hidden />
-        </Link>
 
-        <p className="text-base md:text-lg text-[var(--muted)] max-w-xl leading-relaxed">
-          {t('lead')}
-        </p>
-
-        <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[var(--muted)]">
-          <TrustBullet>{t('trustNoSignup')}</TrustBullet>
-          <TrustBullet>{t('trustNoCard')}</TrustBullet>
-          <TrustBullet>{t('trustFreeCredits')}</TrustBullet>
-        </ul>
+        <div className="w-full max-w-md mx-auto lg:max-w-none flex flex-col gap-6">
+          <HeroVideo
+            label={t('heroVideoLabel')}
+            soundOnLabel={t('heroVideoSoundOn')}
+            soundOffLabel={t('heroVideoSoundOff')}
+          />
+          <CompatChips
+            className="hidden lg:flex"
+            manualLabel={t('heroCompatManualChip')}
+            label={t('compatibleWith')}
+          />
+        </div>
       </section>
 
       <ShowcaseSection />
@@ -367,6 +362,81 @@ export default async function HomePage({ searchParams }: PageProps) {
         </div>
       </section>
     </main>
+  );
+}
+
+// Width of a string in em of Geist Bold at tracking-tight, per character class —
+// calibrated against browser measurements of every locale's headline (+4% margin).
+function headlineEm(line: string): number {
+  let em = 0;
+  for (const ch of line) {
+    if (/[\u3000-\u30ff\u3400-\u9fff\uac00-\ud7af\uff00-\uffef]/.test(ch)) em += 0.97;
+    else if (/[\u0600-\u06ff]/.test(ch)) em += 0.42;
+    else if (ch === ' ') em += 0.23;
+    else if (/[.,'’!?:;]/.test(ch)) em += 0.25;
+    else if (/[\u0400-\u04ff]/.test(ch)) em += ch === ch.toUpperCase() ? 0.66 : 0.58;
+    else em += ch === ch.toUpperCase() ? 0.62 : 0.53;
+  }
+  return em * 1.04;
+}
+
+/**
+ * "Connect your store. / The AI does the rest." — the first sentence always
+ * holds on one line (its size shrinks to the column in long locales), the
+ * gradient one may wrap, so the headline never runs past three lines.
+ */
+function HeroHeadline({ raw }: { raw: string }) {
+  const match = raw.match(/^(.*?)<br><\/br><gradient>(.*)<\/gradient>$/);
+  const first = match?.[1] ?? raw.replace(/<[^>]+>/g, ' ');
+  const second = match?.[2] ?? '';
+  return (
+    <h1
+      className="order-1 lg:order-none font-bold tracking-tight leading-[1.08] w-full [--h1-max:2.5rem] sm:[--h1-max:3rem] xl:[--h1-max:3.5rem]"
+      style={{ fontSize: `min(var(--h1-max), calc(100cqi / ${headlineEm(first).toFixed(2)}))` }}
+    >
+      <span className="block whitespace-nowrap">{first}</span>
+      {second ? <span className="block text-gradient-brand">{second}</span> : null}
+    </h1>
+  );
+}
+
+function CompatChips({
+  label,
+  manualLabel,
+  className
+}: {
+  label: string;
+  manualLabel: string;
+  className: string;
+}) {
+  const chip =
+    'text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--default)] text-[var(--default-foreground)] font-medium inline-flex items-center gap-2 border border-[var(--border)]';
+  return (
+    <div className={`flex-col items-center gap-2.5 ${className}`}>
+      <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted)] font-mono">
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <span className={chip}>
+          <ShopifyLogo className="size-4" />
+          Shopify
+        </span>
+        <span className={chip}>
+          <WoocommerceLogo className="size-4" />
+          WooCommerce
+        </span>
+        <span className={chip}>
+          <WixLogo className="size-4" />
+          Wix
+        </span>
+        {/* 4th chip — signals that OneShopLab also accepts manually-entered
+            stores, so the row reads as "these 3 platforms or yours". */}
+        <span className="text-sm pl-3 pr-4 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-medium inline-flex items-center gap-2 border border-[var(--accent)]/30">
+          <PenLine className="size-3.5" />
+          {manualLabel}
+        </span>
+      </div>
+    </div>
   );
 }
 
