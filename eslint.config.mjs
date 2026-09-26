@@ -28,6 +28,7 @@ const eslintConfig = [
       'node_modules/**',
       'drizzle/**',
       'remotion-ads/**',
+      'remotion-promo/**',
       'tools/**',
       'legacy/**',
       'scripts/**',

@@ -1,0 +1,17 @@
+[project]
+name = "osl-promo-audio"
+version = "0.1.0"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy<2.3",
+  "scipy",
+  "soundfile",
+  "pyloudnorm",
+  "kokoro>=0.9.4",
+  "faster-whisper",
+  "matplotlib",
+  "en-core-web-sm",
+]
+
+[tool.uv.sources]
+en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }

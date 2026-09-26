@@ -36,5 +36,13 @@
     ".next-tour/types/**/*.ts",
     ".next-tour/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "legacy", ".next", ".next-e2e", ".next-verify", "remotion-ads"]
+  "exclude": [
+    "node_modules",
+    "legacy",
+    ".next",
+    ".next-e2e",
+    ".next-verify",
+    "remotion-ads",
+    "remotion-promo"
+  ]
 }

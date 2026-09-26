@@ -1,0 +1,62 @@
+{
+  "_note": "Single source of truth for timing. 60 fps, 120 BPM → 30 frames per beat, 120 per bar. Change a timing here, then re-run `pnpm vo` (if a line moved) and `pnpm audio` before `pnpm render`, or the sound drifts.",
+  "fps": 60,
+  "bpm": 120,
+  "durationInFrames": 2700,
+  "scenes": {
+    "night": { "from": 0, "to": 360 },
+    "grind": { "from": 360, "to": 720 },
+    "pause": { "from": 720, "to": 960 },
+    "connect": { "from": 960, "to": 1320 },
+    "audit": { "from": 1320, "to": 1560 },
+    "generate": { "from": 1560, "to": 2160 },
+    "morning": { "from": 2160, "to": 2400 },
+    "cta": { "from": 2400, "to": 2700 }
+  },
+  "vo": {
+    "voice": "af_heart",
+    "speed": 0.98,
+    "lines": [
+      { "id": "v01", "at": 30, "text": "One forty-seven, a.m." },
+      { "id": "v02", "at": 140, "text": "Sam's store has three hundred products. And zero sales today." },
+      { "id": "v03", "at": 390, "text": "So it's titles. Descriptions. Photos. One page at a time." },
+      { "id": "v04", "at": 760, "text": "There's a better way." },
+      { "id": "v05", "at": 985, "text": "Connect your Shopify, WooCommerce or Wix store." },
+      { "id": "v06", "at": 1190, "text": "In about a minute, every product is audited." },
+      { "id": "v07", "at": 1580, "text": "The AI rewrites your titles, descriptions and photos." },
+      { "id": "v08", "at": 1820, "text": "You approve. It lands in your store." },
+      { "id": "v09", "at": 1990, "text": "Your whole catalog, in one click." },
+      { "id": "v10", "at": 2185, "text": "Sam wakes up to this." },
+      { "id": "v11", "at": 2420, "text": "OneShopLab. Connect your store. The AI does the rest." }
+    ]
+  },
+  "cues": {
+    "_note": "Frame cues shared by the visuals and the SFX track.",
+    "notifMom": 80,
+    "notifStore": 200,
+    "grindTypingFrom": 400,
+    "clockJumps": [480, 560, 640],
+    "freeze": 720,
+    "dotCollapse": 760,
+    "bloom": 956,
+    "urlTypeFrom": 1000,
+    "urlSubmit": 1080,
+    "detect": 1110,
+    "linkFrom": 1140,
+    "syncCounterFrom": 1180,
+    "scoresFrom": 1350,
+    "scoreStep": 12,
+    "titleRewrite": 1620,
+    "imageWipe": 1720,
+    "approveClick": 1860,
+    "applied": 1880,
+    "scoreJump": 1890,
+    "bulkFrom": 1990,
+    "bulkStep": 6,
+    "ordersFrom": 2220,
+    "orderStep": 26,
+    "logoDraw": 2410,
+    "tagline": 2470,
+    "url": 2560
+  }
+}

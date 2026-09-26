@@ -1,0 +1,489 @@
+{
+  "voice": "af_heart",
+  "lines": [
+    {
+      "id": "v01",
+      "text": "One forty-seven, a.m.",
+      "at": 30,
+      "speed": 1.04,
+      "durationInFrames": 103,
+      "words": [
+        {
+          "w": "One",
+          "from": 0,
+          "to": 19
+        },
+        {
+          "w": "forty-seven,",
+          "from": 19,
+          "to": 71
+        },
+        {
+          "w": "a.m.",
+          "from": 71,
+          "to": 94
+        }
+      ]
+    },
+    {
+      "id": "v02",
+      "text": "Sam's store has three hundred products. And zero sales today.",
+      "at": 140,
+      "speed": 0.98,
+      "durationInFrames": 223,
+      "words": [
+        {
+          "w": "Sam's",
+          "from": 0,
+          "to": 20
+        },
+        {
+          "w": "store",
+          "from": 20,
+          "to": 40
+        },
+        {
+          "w": "has",
+          "from": 40,
+          "to": 55
+        },
+        {
+          "w": "three",
+          "from": 55,
+          "to": 75
+        },
+        {
+          "w": "hundred",
+          "from": 75,
+          "to": 101
+        },
+        {
+          "w": "products.",
+          "from": 101,
+          "to": 133
+        },
+        {
+          "w": "And",
+          "from": 133,
+          "to": 147
+        },
+        {
+          "w": "zero",
+          "from": 147,
+          "to": 164
+        },
+        {
+          "w": "sales",
+          "from": 164,
+          "to": 185
+        },
+        {
+          "w": "today.",
+          "from": 185,
+          "to": 208
+        }
+      ]
+    },
+    {
+      "id": "v03",
+      "text": "So it's titles. Descriptions. Photos. One page at a time.",
+      "at": 390,
+      "speed": 0.98,
+      "durationInFrames": 231,
+      "words": [
+        {
+          "w": "So",
+          "from": 0,
+          "to": 8
+        },
+        {
+          "w": "it's",
+          "from": 8,
+          "to": 42
+        },
+        {
+          "w": "titles.",
+          "from": 42,
+          "to": 42
+        },
+        {
+          "w": "Descriptions.",
+          "from": 62,
+          "to": 83
+        },
+        {
+          "w": "Photos.",
+          "from": 109,
+          "to": 125
+        },
+        {
+          "w": "One",
+          "from": 152,
+          "to": 167
+        },
+        {
+          "w": "page",
+          "from": 167,
+          "to": 182
+        },
+        {
+          "w": "at",
+          "from": 182,
+          "to": 194
+        },
+        {
+          "w": "a",
+          "from": 194,
+          "to": 202
+        },
+        {
+          "w": "time.",
+          "from": 202,
+          "to": 217
+        }
+      ]
+    },
+    {
+      "id": "v04",
+      "text": "There's a better way.",
+      "at": 760,
+      "speed": 0.98,
+      "durationInFrames": 66,
+      "words": [
+        {
+          "w": "There's",
+          "from": 0,
+          "to": 13
+        },
+        {
+          "w": "a",
+          "from": 13,
+          "to": 18
+        },
+        {
+          "w": "better",
+          "from": 18,
+          "to": 30
+        },
+        {
+          "w": "way.",
+          "from": 30,
+          "to": 50
+        }
+      ]
+    },
+    {
+      "id": "v05",
+      "text": "Connect your Shopify, WooCommerce or Wix store.",
+      "at": 985,
+      "speed": 0.98,
+      "durationInFrames": 164,
+      "words": [
+        {
+          "w": "Connect",
+          "from": 0,
+          "to": 17
+        },
+        {
+          "w": "your",
+          "from": 17,
+          "to": 28
+        },
+        {
+          "w": "Shopify,",
+          "from": 28,
+          "to": 60
+        },
+        {
+          "w": "WooCommerce",
+          "from": 80,
+          "to": 103
+        },
+        {
+          "w": "or",
+          "from": 120,
+          "to": 122
+        },
+        {
+          "w": "Wix",
+          "from": 122,
+          "to": 134
+        },
+        {
+          "w": "store.",
+          "from": 134,
+          "to": 150
+        }
+      ]
+    },
+    {
+      "id": "v06",
+      "text": "In about a minute, every product is audited.",
+      "at": 1190,
+      "speed": 0.98,
+      "durationInFrames": 153,
+      "words": [
+        {
+          "w": "In",
+          "from": 0,
+          "to": 8
+        },
+        {
+          "w": "about",
+          "from": 8,
+          "to": 23
+        },
+        {
+          "w": "a",
+          "from": 23,
+          "to": 32
+        },
+        {
+          "w": "minute,",
+          "from": 32,
+          "to": 46
+        },
+        {
+          "w": "every",
+          "from": 64,
+          "to": 79
+        },
+        {
+          "w": "product",
+          "from": 79,
+          "to": 101
+        },
+        {
+          "w": "is",
+          "from": 101,
+          "to": 115
+        },
+        {
+          "w": "audited.",
+          "from": 115,
+          "to": 142
+        }
+      ]
+    },
+    {
+      "id": "v07",
+      "text": "The AI rewrites your titles, descriptions and photos.",
+      "at": 1580,
+      "speed": 0.98,
+      "durationInFrames": 192,
+      "words": [
+        {
+          "w": "The",
+          "from": 0,
+          "to": 7
+        },
+        {
+          "w": "AI",
+          "from": 7,
+          "to": 28
+        },
+        {
+          "w": "rewrites",
+          "from": 28,
+          "to": 56
+        },
+        {
+          "w": "your",
+          "from": 56,
+          "to": 62
+        },
+        {
+          "w": "titles,",
+          "from": 62,
+          "to": 86
+        },
+        {
+          "w": "descriptions",
+          "from": 109,
+          "to": 127
+        },
+        {
+          "w": "and",
+          "from": 149,
+          "to": 152
+        },
+        {
+          "w": "photos.",
+          "from": 152,
+          "to": 172
+        }
+      ]
+    },
+    {
+      "id": "v08",
+      "text": "You approve. It lands in your store.",
+      "at": 1820,
+      "speed": 0.98,
+      "durationInFrames": 118,
+      "words": [
+        {
+          "w": "You",
+          "from": 0,
+          "to": 8
+        },
+        {
+          "w": "approve.",
+          "from": 8,
+          "to": 32
+        },
+        {
+          "w": "It",
+          "from": 32,
+          "to": 58
+        },
+        {
+          "w": "lands",
+          "from": 58,
+          "to": 72
+        },
+        {
+          "w": "in",
+          "from": 72,
+          "to": 82
+        },
+        {
+          "w": "your",
+          "from": 82,
+          "to": 88
+        },
+        {
+          "w": "store.",
+          "from": 88,
+          "to": 101
+        }
+      ]
+    },
+    {
+      "id": "v09",
+      "text": "Your whole catalog, in one click.",
+      "at": 1990,
+      "speed": 0.98,
+      "durationInFrames": 114,
+      "words": [
+        {
+          "w": "Your",
+          "from": 0,
+          "to": 8
+        },
+        {
+          "w": "whole",
+          "from": 8,
+          "to": 22
+        },
+        {
+          "w": "catalog,",
+          "from": 22,
+          "to": 48
+        },
+        {
+          "w": "in",
+          "from": 48,
+          "to": 73
+        },
+        {
+          "w": "one",
+          "from": 73,
+          "to": 86
+        },
+        {
+          "w": "click.",
+          "from": 86,
+          "to": 100
+        }
+      ]
+    },
+    {
+      "id": "v10",
+      "text": "Sam wakes up to this.",
+      "at": 2185,
+      "speed": 0.98,
+      "durationInFrames": 77,
+      "words": [
+        {
+          "w": "Sam",
+          "from": 0,
+          "to": 18
+        },
+        {
+          "w": "wakes",
+          "from": 18,
+          "to": 31
+        },
+        {
+          "w": "up",
+          "from": 31,
+          "to": 44
+        },
+        {
+          "w": "to",
+          "from": 44,
+          "to": 53
+        },
+        {
+          "w": "this.",
+          "from": 53,
+          "to": 64
+        }
+      ]
+    },
+    {
+      "id": "v11",
+      "text": "OneShopLab. Connect your store. The AI does the rest.",
+      "at": 2420,
+      "speed": 0.98,
+      "durationInFrames": 212,
+      "words": [
+        {
+          "w": "OneShopLab.",
+          "from": 0,
+          "to": 40
+        },
+        {
+          "w": "Connect",
+          "from": 40,
+          "to": 68
+        },
+        {
+          "w": "your",
+          "from": 68,
+          "to": 87
+        },
+        {
+          "w": "store.",
+          "from": 87,
+          "to": 112
+        },
+        {
+          "w": "The",
+          "from": 112,
+          "to": 127
+        },
+        {
+          "w": "AI",
+          "from": 127,
+          "to": 140
+        },
+        {
+          "w": "does",
+          "from": 140,
+          "to": 158
+        },
+        {
+          "w": "the",
+          "from": 158,
+          "to": 174
+        },
+        {
+          "w": "rest.",
+          "from": 174,
+          "to": 196
+        }
+      ]
+    }
+  ]
+}

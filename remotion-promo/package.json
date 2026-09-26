@@ -1,0 +1,35 @@
+{
+  "name": "oneshoplab-remotion-promo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OneShopLab 45 s motion-design promo (9:16 + 16:9). Isolated from the main Next.js app — own package.json, like remotion-ads.",
+  "scripts": {
+    "studio": "remotion studio",
+    "vo": "python -m uv run --project audio audio/vo.py",
+    "audio": "python -m uv run --project audio audio/build.py",
+    "render": "remotion render Promo-Vertical out/oneshoplab-promo-vertical.mp4",
+    "render:landscape": "remotion render Promo-Landscape out/oneshoplab-promo-landscape.mp4",
+    "still": "remotion still Promo-Vertical",
+    "hero:audio": "python -m uv run --project audio audio/hero_audio.py",
+    "hero": "node scripts/hero.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.478",
+    "@remotion/google-fonts": "4.0.478",
+    "@remotion/layout-utils": "4.0.478",
+    "@remotion/media": "4.0.478",
+    "@remotion/noise": "4.0.478",
+    "@remotion/paths": "4.0.478",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "4.0.478",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.478",
+    "@remotion/renderer": "4.0.478",
+    "@types/react": "^19.3.0",
+    "typescript": "^5.9.3"
+  }
+}
