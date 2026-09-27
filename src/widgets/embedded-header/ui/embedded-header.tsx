@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { bellLabels, NotificationBell } from '@/entities/notification/client';
 import { auth } from '@/entities/user';
 import type { Locale } from '@/i18n/routing';
+import { ScrollHidingHeader } from '@/shared/ui';
 
 /**
  * The header inside the Shopify admin. The admin already frames the page, so
@@ -19,36 +20,40 @@ export async function EmbeddedHeader() {
   const item =
     'inline-flex items-center gap-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors';
 
+  // Same sticky shell as the site header: the pages' sticky sub-headers are
+  // positioned under it (--site-header-h).
   return (
-    <header className="w-full border-b border-[var(--border)] bg-[var(--background)]">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
-        <nav className="flex items-center gap-4 text-sm min-w-0">
-          <Link href="/dashboard" className={item}>
-            <LayoutGrid className="size-4" aria-hidden />
-            {t('dashboard')}
-          </Link>
-          {/* The embedded home has its own root layout, outside the locale
-              router: Next loads it as a new document, which needs no session. */}
-          <NextLink href={`/shopify?locale=${locale}`} className={item}>
-            <CreditCard className="size-4" aria-hidden />
-            {t('subscription')}
-          </NextLink>
-        </nav>
-        {user ? (
-          <div className="flex items-center gap-2">
-            <NotificationBell ariaLabel={t('notifications.title')} labels={bellLabels(t)} />
-            <Link
-              href="/account/credits"
-              title={t('credits')}
-              aria-label={`${user.creditsBalance ?? 0} ${t('credits')}`}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-semibold hover:bg-[var(--accent)]/20 transition-colors"
-            >
-              <Coins className="size-3.5" aria-hidden />
-              {(user.creditsBalance ?? 0).toLocaleString(locale)}
+    <ScrollHidingHeader>
+      <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
+          <nav className="flex items-center gap-4 text-sm min-w-0">
+            <Link href="/dashboard" className={item}>
+              <LayoutGrid className="size-4" aria-hidden />
+              {t('dashboard')}
             </Link>
-          </div>
-        ) : null}
-      </div>
-    </header>
+            {/* The embedded home has its own root layout, outside the locale
+              router: Next loads it as a new document, which needs no session. */}
+            <NextLink href={`/shopify?locale=${locale}`} className={item}>
+              <CreditCard className="size-4" aria-hidden />
+              {t('subscription')}
+            </NextLink>
+          </nav>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <NotificationBell ariaLabel={t('notifications.title')} labels={bellLabels(t)} />
+              <Link
+                href="/account/credits"
+                title={t('credits')}
+                aria-label={`${user.creditsBalance ?? 0} ${t('credits')}`}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-mono font-semibold hover:bg-[var(--accent)]/20 transition-colors"
+              >
+                <Coins className="size-3.5" aria-hidden />
+                {(user.creditsBalance ?? 0).toLocaleString(locale)}
+              </Link>
+            </div>
+          ) : null}
+        </div>
+      </header>
+    </ScrollHidingHeader>
   );
 }
