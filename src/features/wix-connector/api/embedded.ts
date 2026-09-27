@@ -18,6 +18,7 @@ import {
   createStoreLinkToken,
   emailTaken,
   getConnection,
+  getConnectionByInstanceId,
   getWixInstance,
   loadStoreSummary,
   markWixInstanceLinked,
@@ -182,18 +183,35 @@ export async function ensureWixInstall(
   });
   const instance = await getAppInstance(client);
   if (!instance) throw new Error('Wix does not know this app instance');
-  const row = await recordWixInstall(instanceId, {
+  let row = await recordWixInstall(instanceId, {
     siteName: instance.site.siteDisplayName,
     siteHost: hostOf(instance.site.url),
     ownerEmail: instance.site.ownerEmail,
     siteLocale: instance.site.locale
   });
+  if (!row.userId) row = await adoptWebsiteConnection(row);
   if (row.userId) {
     const projectId = (await ownedProject(row)) ?? (await projectFor(row.userId, row));
     await attachWixSite(row, row.userId, projectId, deps);
     return { row: (await getWixInstance(instanceId))!, instance };
   }
   return { row, instance };
+}
+
+/**
+ * A site connected from the website before the registry existed: its
+ * connection already says whose it is, so the dashboard page opens on that
+ * account instead of offering to create another one.
+ */
+async function adoptWebsiteConnection(row: WixInstanceRow): Promise<WixInstanceRow> {
+  const connection = await getConnectionByInstanceId(row.instanceId);
+  if (!connection || connection.status === 'revoked') return row;
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, connection.projectId)
+  });
+  if (!project) return row;
+  await markWixInstanceLinked(row.instanceId, project.userId, project.id);
+  return (await getWixInstance(row.instanceId)) ?? row;
 }
 
 /** The row's project while it still belongs to the row's user (it may have been deleted). */

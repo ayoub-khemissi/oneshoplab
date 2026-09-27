@@ -32,6 +32,7 @@ vi.mock('@/features/wix-connector/api/client', async (importOriginal) => {
 import { PRICING } from '@/entities/ai-model';
 import { applyCreditTransaction } from '@/entities/credit';
 import {
+  connectWix,
   getConnection,
   getWixInstance,
   recordShopifyInstall,
@@ -272,6 +273,22 @@ describe('install, onboarding and linking', () => {
     await ensureWixInstall(INSTANCE);
     await linkWixSiteToUser(createWixLinkToken(INSTANCE), existing);
     expect(await channel(existing)).toBe('stripe');
+  });
+
+  it('a site connected from the website before the registry opens on its account', async () => {
+    const owner = await createUser();
+    const projectId = crypto.randomUUID();
+    await db.insert(projects).values({ id: projectId, userId: owner, name: 'Atelier' });
+    await connectWix({
+      projectId,
+      userId: owner,
+      instanceId: INSTANCE,
+      shopDomain: 'atelier.wixsite.com',
+      shopName: 'Atelier Wix'
+    });
+    const { row } = await ensureWixInstall(INSTANCE);
+    expect(row).toMatchObject({ userId: owner, projectId });
+    expect(await channel(owner)).toBe('wix');
   });
 
   it('a reinstalled site is reconnected to its account on the next visit', async () => {
