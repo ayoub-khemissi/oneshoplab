@@ -226,6 +226,16 @@ export async function handleShopifyWebhook(
   // connection at all still gets a 404, because that one IS a misconfiguration.
   const known = await getConnection(req.projectId);
   if (known) return { status: 200, body: { ok: true, action: 'disconnected' } };
+  // A deleted site takes its connection row with it, but its subscriptions
+  // live on in Shopify. Signed by our app: acknowledge, or Shopify retries
+  // every event and counts each one as a failed delivery.
+  const cfg = shopifyAppConfig();
+  if (
+    cfg &&
+    verifyShopifyHmac(req.rawBody, req.headers.get(SHOPIFY_HMAC_HEADER), cfg.clientSecret)
+  ) {
+    return { status: 200, body: { ok: true, action: 'gone' } };
+  }
   return { status: 404, body: { ok: false, error: 'not_found' } };
 }
 

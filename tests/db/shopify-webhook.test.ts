@@ -3,7 +3,11 @@ import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/webhooks/shopify/[projectId]/route';
 import { getConnection, revokeConnection } from '@/entities/shop-connection';
-import { connectShopifyStore, handleShopifyWebhook } from '@/features/shopify-connector';
+import {
+  computeShopifyHmac,
+  connectShopifyStore,
+  handleShopifyWebhook
+} from '@/features/shopify-connector';
 import { db } from '@/shared/db';
 import { products } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
@@ -153,6 +157,30 @@ describe('a subscription we no longer serve', () => {
     });
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ ok: true, action: 'disconnected' });
+  });
+
+  it("acknowledges our app's signed events for a deleted site instead of a 404", async () => {
+    // Deleting a site drops its connection row; its Shopify subscriptions stay.
+    process.env.SHOPIFY_APP_CLIENT_ID = 'client-id';
+    process.env.SHOPIFY_APP_CLIENT_SECRET = 'shpss_' + 'd'.repeat(32);
+    const rawBody = JSON.stringify({ id: 1 });
+    const signed = await handleShopifyWebhook({
+      projectId: randomUUID(),
+      rawBody,
+      headers: new Headers({
+        'x-shopify-topic': 'products/update',
+        'x-shopify-hmac-sha256': computeShopifyHmac(rawBody, 'shpss_' + 'd'.repeat(32))
+      })
+    });
+    expect(signed).toMatchObject({ status: 200, body: { ok: true, action: 'gone' } });
+    const forged = await handleShopifyWebhook({
+      projectId: randomUUID(),
+      rawBody,
+      headers: new Headers({ 'x-shopify-hmac-sha256': computeShopifyHmac(rawBody, 'other') })
+    });
+    expect(forged.status).toBe(404);
+    delete process.env.SHOPIFY_APP_CLIENT_ID;
+    delete process.env.SHOPIFY_APP_CLIENT_SECRET;
   });
 
   it('a project that never had a connection is still a 404', async () => {
