@@ -92,25 +92,35 @@ from $5.99. Leave the "outside the Billing API" box unchecked.
 
 ## App testing information
 
-- **Test account:** "My app doesn't require an account to use it". The app
-  creates the merchant's account from the store on first open.
+- **Test account:** `appreview@oneshoplab.com`, 3,000 credits, created
+  2026-09-27. The password was given to the owner only and is not in the
+  repo. Account description: "OneShopLab account with 3,000 credits. In the
+  embedded app, click "Link to my account" and sign in with it, or sign in
+  at https://oneshoplab.com/en/login. "Create my workspace" also works
+  without it."
 - **Screencast URL:** the unlisted YouTube walkthrough, recorded with the full
   app inside the admin ("Open OneShopLab" stays in the admin).
 - **Testing instructions (≤2800):**
 
 ```
-OneShopLab audits a store's product catalog and rewrites titles, descriptions, tags, alt text and photos with AI. Nothing is published to the store without the merchant's approval.
+OneShopLab audits a store's product catalog and rewrites titles, descriptions, tags, alt text and photos with AI. Nothing is published to the store without the merchant's approval. Every AI generation spends credits.
 
-1. Install the app and open it from the Shopify admin.
-2. Click "Create my workspace". The account is created from the store owner's email with 150 free credits. No password or separate login is needed.
+To test this app:
+1. Install the app on a development store and open it from the Shopify admin (Apps > OneShopLab).
+2. Choose one of the two ways in:
+   - "Link to my account": a new tab opens; sign in with the test account above, click "Link the store", come back and click "Done, refresh".
+   - "Create my workspace": the account is created from the store owner's email with 150 free credits. No password needed.
 3. The home page shows the catalog score, synced products, pending changes and credits. Products are pulled automatically; "Sync now" pulls them again. The score appears about a minute after the first sync.
-4. Click "Open OneShopLab". The full app opens inside the Shopify admin.
+4. Click "Open OneShopLab": the full app opens inside the Shopify admin, limited to this store.
    - Overview: the catalog score and what holds each area back.
-   - Products: pick a product, then "Generate all" (title, description, tags and 3 photos).
-   - Compare the suggestions with the original, then click "Apply to my store" under a suggestion. The change is written to the Shopify product within a few seconds.
-5. Plans and billing: back on the home page, choose a plan (monthly or yearly) or buy a one-time credit pack. Every charge goes through the Shopify Billing API.
-   On development stores all charges are test charges. They activate the plan or pack normally, but the credits they grant are capped at 500 per account in total and never refilled, so the app can't be used for free from development stores. The app shows this notice. Charges on paying stores grant the full amount.
+   - Products: open a product, then click "Generate all" (title, description, tags and 3 photos, about a minute).
+   - Compare each suggestion with the original, then click "Apply to my store". Within a few seconds the change is written to the Shopify product (check it in Products).
+5. Plans and billing: click "Subscription" in the app header. Choose a plan (monthly or yearly) or buy a one-time credit pack. Every charge goes through the Shopify Billing API.
+   On development stores all charges are test charges: they activate the plan or pack normally, but the credits they grant are capped at 500 per account in total and never refilled, so the app can't be used for free from development stores. The app shows this notice. Charges on paying stores grant the full amount.
 6. "Go back to the free plan" cancels the subscription. Uninstalling the app cancels it too.
 
-Mandatory compliance webhooks are handled at /api/webhooks/shopify/gdpr/* (HMAC verified).
+Notes:
+- No theme changes and no storefront scripts: the app only edits products through the GraphQL Admin API.
+- Mandatory compliance webhooks are handled (HMAC verified).
+- Support: contact@oneshoplab.com
 ```
