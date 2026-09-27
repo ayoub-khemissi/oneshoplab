@@ -80,8 +80,14 @@ function embeddedResponse(req: NextRequest): NextResponse {
 
 export default async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
-  if (pathname === '/shopify' || pathname.startsWith('/shopify/')) return embeddedResponse(req);
+  if (pathname === '/shopify' || pathname.startsWith('/shopify/')) {
+    // Shopify always opens the app with ?shop=. Without it we are outside the
+    // admin, where App Bridge cannot start: send the visitor to the site.
+    if (!req.nextUrl.searchParams.get('shop')) return NextResponse.redirect(new URL('/', req.url));
+    return embeddedResponse(req);
+  }
   const { locale, rest } = splitLocale(pathname);
+  if (locale && rest === '/shopify') return NextResponse.redirect(new URL(`/${locale}`, req.url));
 
   // Bare paths (no locale prefix) are handled by next-intl's locale
   // negotiation first. Auth checks run on the subsequent request once

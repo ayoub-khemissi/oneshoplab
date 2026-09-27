@@ -141,7 +141,9 @@ async function handleStaticAsset(request) {
   const network = fetch(request)
     .then((response) => {
       if (response && response.ok) {
-        caches.open(CACHE).then((cache) => cache.put(request, response.clone()));
+        // Clone now: by the time the cache opens, the page may have read the body.
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(request, copy));
       }
       return response;
     })

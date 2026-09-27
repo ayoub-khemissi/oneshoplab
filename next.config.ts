@@ -52,9 +52,13 @@ const config: NextConfig = {
     return [
       {
         // Everything but the embedded Shopify app may never be framed; the
-        // embedded app gets a per-shop frame-ancestors from src/proxy.ts.
+        // embedded app gets a per-shop frame-ancestors from src/proxy.ts and
+        // its own CSP from nginx (App Bridge comes from cdn.shopify.com).
         source: '/:path((?!shopify$|shopify/).*)',
-        headers: [{ key: 'X-Frame-Options', value: 'DENY' }]
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY }
+        ]
       },
       {
         source: '/:path*',
@@ -68,8 +72,7 @@ const config: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
-          },
-          { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY }
+          }
         ]
       }
     ];
