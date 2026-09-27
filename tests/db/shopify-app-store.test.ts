@@ -175,12 +175,13 @@ async function subRow(userId: string) {
   return db.query.subscriptions.findFirst({ where: eq(subscriptions.userId, userId) });
 }
 
-function activeSub(n: number, name: string): Sub {
+/** A paid (non-test) subscription unless `test` says otherwise. */
+function activeSub(n: number, name: string, test = false): Sub {
   return {
     id: `gid://shopify/AppSubscription/${n}`,
     name,
     status: 'ACTIVE',
-    test: true,
+    test,
     currentPeriodEnd: '2026-10-27T00:00:00Z'
   };
 }
@@ -355,7 +356,7 @@ describe('Shopify Billing', () => {
       id: gid,
       name: 'OneShopLab Power pack (2000 credits)',
       status: 'ACTIVE',
-      test: true
+      test: false
     });
     const body = JSON.stringify({ app_purchase_one_time: { admin_graphql_api_id: gid } });
     expect(
@@ -369,7 +370,7 @@ describe('Shopify Billing', () => {
       id: declined,
       name: 'OneShopLab Mega pack (8000 credits)',
       status: 'DECLINED',
-      test: true
+      test: false
     });
     expect(await confirmShopifyReturn(SHOP, 'pack', '78', deps)).toBe('not_active');
     expect(await confirmShopifyReturn(SHOP, 'pack', '../x', deps)).toBe('bad_charge');
@@ -437,6 +438,61 @@ describe('Shopify Billing', () => {
     expect(await subRow(userId)).toMatchObject({ plan: 'free', status: 'canceled' });
     expect((await getShopifyShop(SHOP))?.uninstalledAt).toBeTruthy();
     expect(await shopifyManageUrlFor(userId)).toBeNull();
+  });
+});
+
+describe('test charges (development stores)', () => {
+  it('activates the plan but caps its credits per account, with no refill', async () => {
+    const { userId } = await onboarded();
+    shopify.active = [activeSub(1, 'OneShopLab Scale (monthly)', true)];
+    expect(await confirmShopifyReturn(SHOP, 'subscription', null, deps)).toBe('activated');
+    expect(await confirmShopifyReturn(SHOP, 'subscription', null, deps)).toBe('unchanged');
+    expect(await buckets(userId)).toMatchObject({ sub: 0, pack: 150 + 500 });
+    const sub = await subRow(userId);
+    expect(sub).toMatchObject({ plan: 'scale', status: 'active', nextCreditRefillAt: null });
+    expect((await db.query.users.findFirst({ where: eq(users.id, userId) }))?.plan).toBe('scale');
+
+    // The cap is per account: a test pack, a cancel + resubscribe add nothing.
+    const gid = 'gid://shopify/AppPurchaseOneTime/90';
+    shopify.purchases.set(gid, {
+      id: gid,
+      name: 'OneShopLab Catalog pack (40000 credits)',
+      status: 'ACTIVE',
+      test: true
+    });
+    expect(await confirmShopifyReturn(SHOP, 'pack', '90', deps)).toBe('granted');
+    await cancelShopifySubscription(SHOP, deps);
+    shopify.active = [activeSub(2, 'OneShopLab Scale (monthly)', true)];
+    await confirmShopifyReturn(SHOP, 'subscription', null, deps);
+    expect((await buckets(userId)).total).toBe(150 + 500);
+    expect(await ledgerSum(userId)).toBe(150 + 500);
+  });
+
+  it('splits the cap across small test purchases', async () => {
+    const { userId } = await onboarded();
+    for (const [n, name] of [
+      [91, 'OneShopLab Boost pack (500 credits)'],
+      [92, 'OneShopLab Boost pack (500 credits)']
+    ] as const) {
+      const gid = `gid://shopify/AppPurchaseOneTime/${n}`;
+      shopify.purchases.set(gid, { id: gid, name, status: 'ACTIVE', test: true });
+      await confirmShopifyReturn(SHOP, 'pack', String(n), deps);
+    }
+    expect((await buckets(userId)).pack).toBe(150 + 500);
+  });
+
+  it('never refills a test subscription', async () => {
+    const { userId } = await onboarded();
+    shopify.active = [activeSub(1, 'OneShopLab Pro (monthly)', true)];
+    await confirmShopifyReturn(SHOP, 'subscription', null, deps);
+    // A row scheduled before this rule existed.
+    await db
+      .update(subscriptions)
+      .set({ nextCreditRefillAt: new Date(Date.now() - 1000) })
+      .where(eq(subscriptions.userId, userId));
+    expect(await refillShopifySubscriptions(deps)).toBe(0);
+    expect((await subRow(userId))?.nextCreditRefillAt).toBeNull();
+    expect((await buckets(userId)).sub).toBe(0);
   });
 });
 

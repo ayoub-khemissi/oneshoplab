@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Monatlich",
     "cycleYearly": "Jährlich",
     "yearlySave": "-20 %",
-    "testMode": "Entwicklungsshop: Zahlungen laufen im Testmodus, nichts wird berechnet.",
+    "testMode": "Entwicklungsshop: Zahlungen laufen im Testmodus, nichts wird berechnet. Test-Credits sind auf {cap, number} pro Konto begrenzt.",
     "perYear": "/ Jahr",
     "perMonth": "/ Monat",
     "creditsPerMonth": "{credits, number} Credits / Monat",
@@ -2308,7 +2308,8 @@
     "actionFailed": "Das hat nicht geklappt. Bitte erneut versuchen.",
     "redirecting": "Weiterleitung zu Shopify…",
     "syncRequested": "Synchronisierung angefordert.",
-    "canceled": "Abonnement gekündigt."
+    "canceled": "Abonnement gekündigt.",
+    "billedYearly": "{price} jährlich abgerechnet"
   },
   "ShopifyLink": {
     "title": "Shopify-Shop verknüpfen",

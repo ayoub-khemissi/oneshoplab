@@ -2291,7 +2291,7 @@
     "cycleMonthly": "按月",
     "cycleYearly": "按年",
     "yearlySave": "-20%",
-    "testMode": "开发店铺：付款为测试模式，不会产生费用。",
+    "testMode": "开发店铺：付款为测试模式，不会产生费用。测试积分每个账户最多 {cap, number}。",
     "perYear": "/ 年",
     "perMonth": "/ 月",
     "creditsPerMonth": "每月 {credits, number} 积分",
@@ -2308,7 +2308,8 @@
     "actionFailed": "操作失败，请重试。",
     "redirecting": "正在跳转到 Shopify…",
     "syncRequested": "已请求同步。",
-    "canceled": "订阅已取消。"
+    "canceled": "订阅已取消。",
+    "billedYearly": "按年收费 {price}"
   },
   "ShopifyLink": {
     "title": "关联您的 Shopify 店铺",

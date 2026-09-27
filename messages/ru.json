@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Ежемесячно",
     "cycleYearly": "Ежегодно",
     "yearlySave": "-20%",
-    "testMode": "Магазин разработки: платежи в тестовом режиме, ничего не списывается.",
+    "testMode": "Магазин разработки: платежи в тестовом режиме, ничего не списывается. Тестовые кредиты ограничены {cap, number} на аккаунт.",
     "perYear": "/ год",
     "perMonth": "/ мес.",
     "creditsPerMonth": "{credits, number} кредитов / мес.",
@@ -2308,7 +2308,8 @@
     "actionFailed": "Не получилось. Попробуйте ещё раз.",
     "redirecting": "Переход в Shopify…",
     "syncRequested": "Синхронизация запрошена.",
-    "canceled": "Подписка отменена."
+    "canceled": "Подписка отменена.",
+    "billedYearly": "{price} в год"
   },
   "ShopifyLink": {
     "title": "Привязка магазина Shopify",

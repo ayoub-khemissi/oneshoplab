@@ -11,7 +11,7 @@
  */
 import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { and, count, eq, isNotNull } from 'drizzle-orm';
-import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
+import { SHOPIFY_TEST_CREDIT_CAP, SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { applyCreditTransaction } from '@/entities/credit';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
 import {
@@ -384,6 +384,7 @@ export interface EmbeddedReadyState {
   score: number | null;
   pendingChanges: number;
   testCharges: boolean;
+  testCreditCap: number;
 }
 
 export type EmbeddedState =
@@ -451,6 +452,7 @@ export async function loadEmbeddedState(row: ShopifyShopRow): Promise<EmbeddedSt
     pulling: Boolean(connection?.pullRequestedAt) || connection?.pullProgress?.phase === 'running',
     score: typeof overall === 'number' ? overall : null,
     pendingChanges: pending?.n ?? 0,
-    testCharges: row.partnerDevelopment
+    testCharges: row.partnerDevelopment,
+    testCreditCap: SHOPIFY_TEST_CREDIT_CAP
   };
 }

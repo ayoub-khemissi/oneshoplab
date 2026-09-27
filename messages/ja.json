@@ -2291,7 +2291,7 @@
     "cycleMonthly": "月払い",
     "cycleYearly": "年払い",
     "yearlySave": "-20%",
-    "testMode": "開発ストア：支払いはテストモードで、請求は発生しません。",
+    "testMode": "開発ストア：支払いはテストモードで、請求は発生しません。テストクレジットは 1 アカウントあたり {cap, number} までです。",
     "perYear": "/ 年",
     "perMonth": "/ 月",
     "creditsPerMonth": "月 {credits, number} クレジット",
@@ -2308,7 +2308,8 @@
     "actionFailed": "失敗しました。もう一度お試しください。",
     "redirecting": "Shopify へ移動中…",
     "syncRequested": "同期をリクエストしました。",
-    "canceled": "サブスクリプションを解約しました。"
+    "canceled": "サブスクリプションを解約しました。",
+    "billedYearly": "年額 {price} で請求"
   },
   "ShopifyLink": {
     "title": "Shopify ストアを連携",

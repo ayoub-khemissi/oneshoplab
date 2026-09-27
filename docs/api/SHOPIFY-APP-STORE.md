@@ -132,6 +132,41 @@ look; every decision re-reads the charge from the Admin API.
   `/account/credits` replace every buy button with "Manage in Shopify", which
   links to the embedded app.
 
+### Test charges (development stores)
+
+On a development store, and on any store before it's transferred to a paying
+merchant, Shopify only allows **test** charges, which cost nothing. Anyone can
+open a free development store and install a listed app. So a test charge
+activates the plan or pack as usual, but credits at most
+`shopifyBilling.testCreditCap` (500) **per account in total**: the plan's
+credits, the upgrade differences and the packs together, with no monthly
+refill. `grantTestCredits` counts the `shopify_test_grant` ledger rows. The
+embedded app's test banner states the cap, and so do the review
+instructions below.
+
+### Review instructions (paste into the App Store submission)
+
+> OneShopLab audits a store's product catalog and rewrites titles,
+> descriptions, tags and photos with AI. Nothing is published without the
+> merchant's approval. Every AI generation spends credits.
+>
+> 1. Install the app. It opens in the Shopify admin. Click **Create my
+>    workspace**. The account is created from the store owner's email with
+>    150 free credits; no password is needed.
+> 2. The dashboard shows the catalog score, synced products, pending
+>    changes and credits. **Sync** pulls the products again.
+> 3. **Open OneShopLab** opens the full app in a new tab, already signed in,
+>    to generate and approve improvements. Approved changes are written back
+>    to the store's products.
+> 4. Billing uses the Shopify Billing API only: plans (monthly or yearly)
+>    and one-time credit packs. On development stores every charge is a
+>    **test charge**. It activates the plan or pack normally, but the
+>    credits it grants are **capped at 500 per account in total** and never
+>    refilled, so the app can't be used for free from development stores.
+>    The app shows this notice. Charges on paying stores grant the full
+>    amount.
+> 5. **Go back to the free plan** cancels the subscription.
+
 ### Stripe yearly fix (same change)
 
 A Stripe yearly plan used to get its credits once a year. It now gets

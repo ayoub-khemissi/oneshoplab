@@ -205,7 +205,9 @@ const PricingSchema = z.object({
         CreditPackId,
         z.ZodNumber
       >
-    )
+    ),
+    /** Credits a development store's test charges may grant, per account, in total. */
+    testCreditCap: z.number().int().nonnegative()
   }),
   creditPacks: z.object(
     Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, CreditPackSchema])) as Record<

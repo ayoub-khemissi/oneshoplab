@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Aylık",
     "cycleYearly": "Yıllık",
     "yearlySave": "-%20",
-    "testMode": "Geliştirme mağazası: ödemeler test modunda, hiçbir ücret alınmaz.",
+    "testMode": "Geliştirme mağazası: ödemeler test modunda, hiçbir ücret alınmaz. Test kredileri hesap başına {cap, number} ile sınırlıdır.",
     "perYear": "/ yıl",
     "perMonth": "/ ay",
     "creditsPerMonth": "Ayda {credits, number} kredi",
@@ -2308,7 +2308,8 @@
     "actionFailed": "Olmadı. Tekrar deneyin.",
     "redirecting": "Shopify'a yönlendiriliyor…",
     "syncRequested": "Senkronizasyon istendi.",
-    "canceled": "Abonelik iptal edildi."
+    "canceled": "Abonelik iptal edildi.",
+    "billedYearly": "Yıllık {price} faturalandırılır"
   },
   "ShopifyLink": {
     "title": "Shopify mağazanızı bağlayın",

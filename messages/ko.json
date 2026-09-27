@@ -2291,7 +2291,7 @@
     "cycleMonthly": "월간",
     "cycleYearly": "연간",
     "yearlySave": "-20%",
-    "testMode": "개발 스토어: 결제는 테스트 모드이며 청구되지 않습니다.",
+    "testMode": "개발 스토어: 결제는 테스트 모드이며 청구되지 않습니다. 테스트 크레딧은 계정당 {cap, number}으로 제한됩니다.",
     "perYear": "/ 년",
     "perMonth": "/ 월",
     "creditsPerMonth": "월 {credits, number} 크레딧",
@@ -2308,7 +2308,8 @@
     "actionFailed": "실패했습니다. 다시 시도하세요.",
     "redirecting": "Shopify로 이동 중…",
     "syncRequested": "동기화를 요청했습니다.",
-    "canceled": "구독이 취소되었습니다."
+    "canceled": "구독이 취소되었습니다.",
+    "billedYearly": "연 {price} 청구"
   },
   "ShopifyLink": {
     "title": "Shopify 스토어 연결",

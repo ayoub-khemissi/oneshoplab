@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Mensile",
     "cycleYearly": "Annuale",
     "yearlySave": "-20%",
-    "testMode": "Negozio di sviluppo: i pagamenti sono in modalità test, non viene addebitato nulla.",
+    "testMode": "Negozio di sviluppo: i pagamenti sono in modalità test, non viene addebitato nulla. I crediti di test sono limitati a {cap, number} per account.",
     "perYear": "/ anno",
     "perMonth": "/ mese",
     "creditsPerMonth": "{credits, number} crediti / mese",
@@ -2308,7 +2308,8 @@
     "actionFailed": "Non ha funzionato. Riprova.",
     "redirecting": "Reindirizzamento a Shopify…",
     "syncRequested": "Sincronizzazione richiesta.",
-    "canceled": "Abbonamento annullato."
+    "canceled": "Abbonamento annullato.",
+    "billedYearly": "Fatturato {price} all'anno"
   },
   "ShopifyLink": {
     "title": "Collega il tuo negozio Shopify",

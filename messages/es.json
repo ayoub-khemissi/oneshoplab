@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Mensual",
     "cycleYearly": "Anual",
     "yearlySave": "-20 %",
-    "testMode": "Tienda de desarrollo: los pagos están en modo de prueba, no se cobra nada.",
+    "testMode": "Tienda de desarrollo: los pagos están en modo de prueba, no se cobra nada. Los créditos de prueba se limitan a {cap, number} por cuenta.",
     "perYear": "/ año",
     "perMonth": "/ mes",
     "creditsPerMonth": "{credits, number} créditos / mes",
@@ -2308,7 +2308,8 @@
     "actionFailed": "No ha funcionado. Inténtalo de nuevo.",
     "redirecting": "Redirigiendo a Shopify…",
     "syncRequested": "Sincronización solicitada.",
-    "canceled": "Suscripción cancelada."
+    "canceled": "Suscripción cancelada.",
+    "billedYearly": "Facturado {price} al año"
   },
   "ShopifyLink": {
     "title": "Vincular tu tienda Shopify",

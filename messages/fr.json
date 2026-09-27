@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Mensuel",
     "cycleYearly": "Annuel",
     "yearlySave": "-20 %",
-    "testMode": "Boutique de développement : les paiements sont en mode test, rien n'est facturé.",
+    "testMode": "Boutique de développement : les paiements sont en mode test, rien n'est facturé. Les crédits de test sont limités à {cap, number} par compte.",
     "perYear": "/ an",
     "perMonth": "/ mois",
     "creditsPerMonth": "{credits, number} crédits / mois",
@@ -2308,7 +2308,8 @@
     "actionFailed": "L'action a échoué. Réessayez.",
     "redirecting": "Redirection vers Shopify…",
     "syncRequested": "Synchronisation demandée.",
-    "canceled": "Abonnement annulé."
+    "canceled": "Abonnement annulé.",
+    "billedYearly": "Facturé {price} par an"
   },
   "ShopifyLink": {
     "title": "Relier votre boutique Shopify",

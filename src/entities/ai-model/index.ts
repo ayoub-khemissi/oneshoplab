@@ -54,6 +54,7 @@ export {
   getCreditPack,
   parseShopifyPlanChargeName,
   SHOPIFY_BILLING_CURRENCY,
+  SHOPIFY_TEST_CREDIT_CAP,
   shopifyPackPrice,
   shopifyPlanChargeName,
   shopifyPlanPrice,

@@ -14,13 +14,14 @@
  * Shopify is the source of truth: return URLs and webhooks only tell us to
  * look, every decision re-reads the charge from the Admin API.
  */
-import { and, eq, isNotNull, lte } from 'drizzle-orm';
+import { and, eq, isNotNull, lte, sum } from 'drizzle-orm';
 import {
   CREDIT_PACKS,
   getCreditPack,
   parseShopifyPlanChargeName,
   PLAN_TIERS,
   SHOPIFY_BILLING_CURRENCY,
+  SHOPIFY_TEST_CREDIT_CAP,
   shopifyPackPrice,
   shopifyPlanChargeName,
   shopifyPlanPrice,
@@ -37,7 +38,7 @@ import {
   withDecryptedToken
 } from '@/entities/shop-connection';
 import { db } from '@/shared/db';
-import { subscriptions, users } from '@/shared/db/schema';
+import { creditTransactions, subscriptions, users } from '@/shared/db/schema';
 import { createAdminClient, ShopifyAdminError, type ShopifyAdminClient } from './admin-client';
 import { shopifyTokenProvider } from './token';
 
@@ -267,6 +268,43 @@ export async function cancelShopifySubscription(
   }
 }
 
+// ------------------------------------------------------------------ test charges
+
+const TEST_GRANT_REASON = 'shopify_test_grant';
+
+/**
+ * Development stores can only pay in test mode, so a test charge proves the
+ * flow, not a payment. It activates the plan or pack, but its credits are
+ * capped per account (`shopifyBilling.testCreditCap`) and never refilled.
+ * Otherwise any Shopify partner would get plans and packs for free. The
+ * embedded app says so, and so do the review instructions.
+ */
+async function grantTestCredits(
+  userId: string,
+  requested: number,
+  idempotencyKey: string,
+  metadata: Record<string, unknown>
+): Promise<number> {
+  const [row] = await db
+    .select({ s: sum(creditTransactions.delta) })
+    .from(creditTransactions)
+    .where(
+      and(eq(creditTransactions.userId, userId), eq(creditTransactions.reason, TEST_GRANT_REASON))
+    );
+  const already = Number(row?.s ?? 0);
+  const amount = Math.min(requested, Math.max(0, SHOPIFY_TEST_CREDIT_CAP - already));
+  if (amount <= 0) return 0;
+  await applyCreditTransaction({
+    userId,
+    delta: amount,
+    bucket: 'pack',
+    reason: TEST_GRANT_REASON,
+    idempotencyKey,
+    metadata: { ...metadata, requested, test: true }
+  });
+  return amount;
+}
+
 // ------------------------------------------------------------------ applying what Shopify says
 
 export type BillingApplyOutcome =
@@ -323,7 +361,8 @@ export async function applyShopifySubscription(
     currentPeriodEnd: periodEnd,
     shopifySubscriptionGid: sub.id,
     shopifyShopDomain: shop,
-    ...(isNew ? { nextCreditRefillAt: nextRefill(now, parsed.cycle) } : {})
+    // Test charges are never refilled (see grantTestCredits).
+    ...(isNew ? { nextCreditRefillAt: sub.test ? null : nextRefill(now, parsed.cycle) } : {})
   };
   if (existing) {
     await db.update(subscriptions).set(values).where(eq(subscriptions.userId, owner.user.id));
@@ -336,6 +375,18 @@ export async function applyShopifySubscription(
 
   if (!isNew) return 'unchanged';
   const idempotencyKey = `shopify-sub-${sub.id}`;
+  if (sub.test) {
+    const requested = previousPaid
+      ? Math.max(0, tier.credits - previousPaid.credits)
+      : tier.credits;
+    await grantTestCredits(owner.user.id, requested, idempotencyKey, {
+      channel: 'shopify',
+      shop,
+      subscriptionGid: sub.id,
+      plan: parsed.plan
+    });
+    return 'activated';
+  }
   if (!previousPaid) {
     await applyCreditTransaction({
       userId: owner.user.id,
@@ -371,6 +422,15 @@ export async function grantShopifyPack(
   if (!pack) return 'unknown_pack';
   const owner = await ownerOf(shop);
   if (!owner) return 'no_owner';
+  if (purchase.test) {
+    await grantTestCredits(owner.user.id, pack.credits, `shopify-pack-${purchase.id}`, {
+      channel: 'shopify',
+      shop,
+      purchaseGid: purchase.id,
+      packId: pack.id
+    });
+    return 'granted';
+  }
   await applyCreditTransaction({
     userId: owner.user.id,
     delta: pack.credits,
@@ -537,6 +597,13 @@ export async function refillShopifySubscriptions(deps: BillingDeps = {}): Promis
       );
       if (!active || active.id !== s.shopifySubscriptionGid) {
         await applyShopifySubscription(shop, active, deps);
+        continue;
+      }
+      if (active.test) {
+        await db
+          .update(subscriptions)
+          .set({ nextCreditRefillAt: null })
+          .where(eq(subscriptions.id, s.id));
         continue;
       }
       const tier = PLAN_TIERS.find((t) => t.id === s.plan);

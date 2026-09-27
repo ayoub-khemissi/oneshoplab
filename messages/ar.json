@@ -2291,7 +2291,7 @@
     "cycleMonthly": "شهري",
     "cycleYearly": "سنوي",
     "yearlySave": "-20%",
-    "testMode": "متجر تطوير: المدفوعات في وضع الاختبار، ولا يُفوتر شيء.",
+    "testMode": "متجر تطوير: المدفوعات في وضع الاختبار ولا يُفوتر شيء. رصيد الاختبار محدود بـ {cap, number} لكل حساب.",
     "perYear": "/ سنة",
     "perMonth": "/ شهر",
     "creditsPerMonth": "{credits, number} رصيد / شهر",
@@ -2308,7 +2308,8 @@
     "actionFailed": "لم ينجح ذلك. حاول مرة أخرى.",
     "redirecting": "جارٍ التحويل إلى Shopify…",
     "syncRequested": "طُلبت المزامنة.",
-    "canceled": "أُلغي الاشتراك."
+    "canceled": "أُلغي الاشتراك.",
+    "billedYearly": "يُفوتر {price} سنويًا"
   },
   "ShopifyLink": {
     "title": "ربط متجر Shopify الخاص بك",

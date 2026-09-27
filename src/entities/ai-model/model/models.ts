@@ -523,6 +523,8 @@ export function yearlyPriceEur(monthlyPriceEur: number): number {
 // ---------------------------------------------------------------------------
 
 export const SHOPIFY_BILLING_CURRENCY = PRICING.shopifyBilling.currency;
+/** Credits test charges (development stores) may grant per account, in total. */
+export const SHOPIFY_TEST_CREDIT_CAP = PRICING.shopifyBilling.testCreditCap;
 
 /** Price Shopify charges for a plan and cycle, in USD. */
 export function shopifyPlanPrice(plan: Exclude<PlanId, 'free'>, cycle: BillingCycle): number {

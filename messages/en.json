@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Monthly",
     "cycleYearly": "Yearly",
     "yearlySave": "-20%",
-    "testMode": "Development store: charges run in test mode, nothing is billed.",
+    "testMode": "Development store: charges run in test mode, nothing is billed. Test credits are limited to {cap, number} per account.",
     "perYear": "/ year",
     "perMonth": "/ month",
     "creditsPerMonth": "{credits, number} credits / month",
@@ -2308,7 +2308,8 @@
     "actionFailed": "That didn't work. Try again.",
     "redirecting": "Redirecting to Shopify…",
     "syncRequested": "Sync requested.",
-    "canceled": "Subscription cancelled."
+    "canceled": "Subscription cancelled.",
+    "billedYearly": "Billed {price} per year"
   },
   "ShopifyLink": {
     "title": "Link your Shopify store",

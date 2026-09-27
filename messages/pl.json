@@ -2291,7 +2291,7 @@
     "cycleMonthly": "Miesięcznie",
     "cycleYearly": "Rocznie",
     "yearlySave": "-20%",
-    "testMode": "Sklep deweloperski: płatności są w trybie testowym, nic nie jest pobierane.",
+    "testMode": "Sklep deweloperski: płatności są w trybie testowym, nic nie jest pobierane. Kredyty testowe są ograniczone do {cap, number} na konto.",
     "perYear": "/ rok",
     "perMonth": "/ mies.",
     "creditsPerMonth": "{credits, number} kredytów / mies.",
@@ -2308,7 +2308,8 @@
     "actionFailed": "Nie udało się. Spróbuj ponownie.",
     "redirecting": "Przekierowanie do Shopify…",
     "syncRequested": "Synchronizacja zlecona.",
-    "canceled": "Subskrypcja anulowana."
+    "canceled": "Subskrypcja anulowana.",
+    "billedYearly": "Rozliczane {price} rocznie"
   },
   "ShopifyLink": {
     "title": "Połącz swój sklep Shopify",

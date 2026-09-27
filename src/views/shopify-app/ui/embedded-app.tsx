@@ -42,6 +42,7 @@ type ReadyState = {
   score: number | null;
   pendingChanges: number;
   testCharges: boolean;
+  testCreditCap: number;
 };
 type OnboardingState = {
   kind: 'onboarding';
@@ -82,6 +83,10 @@ function scoreTone(score: number | null): string {
     : score < 75
       ? 'text-[var(--warning)]'
       : 'text-[var(--success)]';
+}
+
+function usd(amount: number): string {
+  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: amount % 1 ? 2 : 0 })}`;
 }
 
 function fetchState() {
@@ -345,7 +350,7 @@ export function EmbeddedApp({
             </div>
             {s.testCharges ? (
               <p className="rounded-md bg-[var(--default)] px-3 py-2 text-xs text-[var(--muted)]">
-                {t('testMode')}
+                {t('testMode', { cap: s.testCreditCap })}
               </p>
             ) : null}
             <div className="grid gap-3 md:grid-cols-3">
@@ -363,12 +368,19 @@ export function EmbeddedApp({
                     } bg-white`}
                   >
                     <span className="text-sm font-semibold">{tier.name}</span>
+                    {/* Like the site: yearly shows its monthly equivalent, the
+                        yearly total underneath. */}
                     <span className="text-2xl font-bold tracking-tight">
-                      ${price.toLocaleString('en-US', { minimumFractionDigits: price % 1 ? 2 : 0 })}
+                      {usd(cycle === 'yearly' ? Math.round((price / 12) * 100) / 100 : price)}
                       <span className="ml-1 text-xs font-normal text-[var(--muted)]">
-                        {cycle === 'yearly' ? t('perYear') : t('perMonth')}
+                        {t('perMonth')}
                       </span>
                     </span>
+                    {cycle === 'yearly' ? (
+                      <span className="-mt-1 text-xs text-[var(--muted)]">
+                        {t('billedYearly', { price: usd(price) })}
+                      </span>
+                    ) : null}
                     <span className="inline-flex items-center gap-1 text-xs text-[var(--muted)]">
                       <Coins className="size-3" aria-hidden />{' '}
                       {t('creditsPerMonth', { credits: tier.credits })}
