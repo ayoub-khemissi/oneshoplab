@@ -11,7 +11,7 @@ import { SUPPORTED_LOCALES, type Locale } from '@/i18n/routing';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { recomputeManualAudit } from '@/entities/audit';
 import { normalizeUrl } from '@/features/run-audit';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 
@@ -104,6 +104,7 @@ async function createScratchSiteAction(formData: FormData): Promise<void> {
 }
 
 export default async function NewScratchSitePage({ searchParams }: PageProps) {
+  await enforceEmbeddedScope();
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 

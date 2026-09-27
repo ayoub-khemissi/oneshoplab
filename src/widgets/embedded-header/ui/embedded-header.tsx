@@ -27,7 +27,14 @@ export async function EmbeddedHeader() {
       <header className="w-full border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
           <nav className="flex items-center gap-4 text-sm min-w-0">
-            <Link href="/dashboard" className={item}>
+            <Link
+              href={
+                session?.embedded?.projectId
+                  ? `/dashboard/sites/${session.embedded.projectId}`
+                  : '/dashboard'
+              }
+              className={item}
+            >
               <LayoutGrid className="size-4" aria-hidden />
               {t('dashboard')}
             </Link>

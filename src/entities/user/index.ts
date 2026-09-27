@@ -9,4 +9,9 @@ export {
   getAnonToken
 } from './api/anon';
 export { isAdminEmail } from './lib/admin';
-export { sessionFromShopifyIdToken } from './api/embedded-session';
+export {
+  embeddedProjectId,
+  enforceEmbeddedScope,
+  outsideEmbeddedScope,
+  sessionFromShopifyIdToken
+} from './api/embedded-session';

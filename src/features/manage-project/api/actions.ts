@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { MAX_CUSTOM_INSTRUCTIONS_CHARS } from '@/entities/ai-model';
 import { touchProjectLastView as touchLastView } from '@/entities/project';
-import { auth } from '@/entities/user';
+import { auth, outsideEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 import { findLanguage } from '@/shared/i18n';
@@ -96,7 +96,7 @@ export async function deleteProjectAction(formData: FormData): Promise<void> {
   if (!session?.user?.id) return;
 
   const projectId = String(formData.get('projectId') ?? '');
-  if (!projectId) return;
+  if (!projectId || (await outsideEmbeddedScope(projectId))) return;
 
   const project = await db.query.projects.findFirst({
     where: and(eq(projects.id, projectId), eq(projects.userId, session.user.id))

@@ -8,7 +8,7 @@ import {
   toShopifyConnectionView,
   type ShopifyConnectionView
 } from '@/entities/shop-connection';
-import { auth } from '@/entities/user';
+import { auth, outsideEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { products } from '@/shared/db/schema';
 import { connectShopifyStore, disconnectShopifyStore, requestShopifyPull } from './validate';
@@ -70,6 +70,7 @@ export async function disconnectShopifyAction(
   if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
   const projectId = idSchema.safeParse(formData.get('projectId'));
   if (!projectId.success) return { ok: false, error: 'bad_request' };
+  if (await outsideEmbeddedScope(projectId.data)) return { ok: false, error: 'not_found' };
   const ok = await disconnectShopifyStore(projectId.data, session.user.id);
   revalidatePath(`/dashboard/sites/${projectId.data}`);
   return ok ? { ok: true } : { ok: false, error: 'not_found' };

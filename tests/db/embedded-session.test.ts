@@ -10,10 +10,27 @@ vi.mock('next/headers', () => ({
   headers: async () =>
     new Headers(request.authorization ? { authorization: request.authorization } : {})
 }));
+class RedirectSignal extends Error {
+  constructor(public readonly to: string) {
+    super(`redirect:${to}`);
+  }
+}
+vi.mock('next/navigation', () => ({
+  redirect: (to: string) => {
+    throw new RedirectSignal(to);
+  }
+}));
+vi.mock('next-intl/server', () => ({ getLocale: async () => 'fr' }));
 
 import { signShopifyIdTokenForTests } from '@/entities/shop-connection';
 // The module itself: the @/entities/user barrel loads next-auth, which vitest cannot.
-import { embeddedSession, sessionFromShopifyIdToken } from '@/entities/user/api/embedded-session';
+import {
+  embeddedSession,
+  enforceEmbeddedScope,
+  outsideEmbeddedScope,
+  sessionFromShopifyIdToken
+} from '@/entities/user/api/embedded-session';
+import { createProject } from './site-helpers';
 import { db } from '@/shared/db';
 import { shopifyShops, users } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
@@ -58,6 +75,7 @@ describe('sessionFromShopifyIdToken', () => {
     const session = await sessionFromShopifyIdToken(token(), NOW);
     expect(session?.user).toMatchObject({ id: userId, plan: 'pro', creditsBalance: 42 });
     expect(session?.expires).toBe(new Date((NOW + 60) * 1000).toISOString());
+    expect(session?.embedded).toEqual({ shop: SHOP, projectId: null });
   });
 
   it('refuses a forged or expired token, an unlinked shop and an uninstalled app', async () => {
@@ -86,5 +104,37 @@ describe('embeddedSession', () => {
     expect(await embeddedSession()).toBeNull();
     request.authorization = 'Bearer osl_live_sitekey';
     expect(await embeddedSession()).toBeNull();
+  });
+});
+
+describe("embedded scope: only the shop's own site", () => {
+  it("lets the shop's site through and refuses every other one", async () => {
+    const own = await createProject(userId, 'Atelier');
+    const other = await createProject(userId, 'Another business');
+    await db.update(shopifyShops).set({ projectId: own });
+    request.authorization = `Bearer ${token()}`;
+    expect(await outsideEmbeddedScope(own)).toBe(false);
+    expect(await outsideEmbeddedScope(other)).toBe(true);
+    expect(await outsideEmbeddedScope(null)).toBe(true);
+
+    await expect(enforceEmbeddedScope(own)).resolves.toBeUndefined();
+    await expect(enforceEmbeddedScope(other)).rejects.toMatchObject({
+      to: `/fr/dashboard/sites/${own}`
+    });
+    // The sites list and "add a site" have no place inside the admin either.
+    await expect(enforceEmbeddedScope()).rejects.toMatchObject({
+      to: `/fr/dashboard/sites/${own}`
+    });
+  });
+
+  it('sends an unlinked shop to the embedded home', async () => {
+    request.authorization = `Bearer ${token()}`;
+    await expect(enforceEmbeddedScope()).rejects.toMatchObject({ to: '/shopify' });
+  });
+
+  it('changes nothing outside the admin', async () => {
+    const any = await createProject(userId, 'Any');
+    expect(await outsideEmbeddedScope(any)).toBe(false);
+    await expect(enforceEmbeddedScope()).resolves.toBeUndefined();
   });
 });

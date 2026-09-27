@@ -26,6 +26,8 @@ import {
 
 declare module 'next-auth' {
   interface Session {
+    /** Set inside the Shopify admin: the app only reaches this shop's site. */
+    embedded?: { shop: string; projectId: string | null };
     user: {
       id: string;
       plan: Plan;

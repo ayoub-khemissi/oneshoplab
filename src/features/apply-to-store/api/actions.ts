@@ -11,7 +11,7 @@ import {
   createReverseChange,
   dismissChange
 } from '@/entities/product-change';
-import { auth } from '@/entities/user';
+import { auth, outsideEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import {
   jobs,
@@ -227,6 +227,7 @@ export async function applyPendingChangesAction(
   const project = uuid.safeParse(projectId);
   const ids = z.array(ulidSchema).min(1).max(MAX_APPLY_SELECTION).safeParse(changeIds);
   if (!project.success || !ids.success) return { ok: false, error: 'bad_request' };
+  if (await outsideEmbeddedScope(project.data)) return { ok: false, error: 'not_found' };
 
   const [owned] = await db
     .select({ id: projects.id })

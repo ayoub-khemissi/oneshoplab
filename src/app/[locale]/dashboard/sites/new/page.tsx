@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { siteLimitForPlan } from '@/entities/ai-model';
 import { launchAuditForUser, normalizeUrl } from '@/features/run-audit';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 
@@ -46,6 +46,7 @@ async function addSiteAction(formData: FormData): Promise<void> {
 }
 
 export default async function AddSitePage({ searchParams }: PageProps) {
+  await enforceEmbeddedScope();
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 

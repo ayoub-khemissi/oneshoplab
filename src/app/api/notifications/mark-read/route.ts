@@ -29,7 +29,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   if (body.all === true) {
-    const r = await markAllRead(session.user.id);
+    const r = await markAllRead(session.user.id, session.embedded?.projectId);
     return NextResponse.json({ ok: true, updated: r.updated });
   }
   if (typeof body.jobId === 'string' && body.jobId.length > 0) {

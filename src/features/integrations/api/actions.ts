@@ -19,7 +19,7 @@ import {
   toWixConnectionView
 } from '@/entities/shop-connection';
 import { cooldownRemainingMs } from '../lib/sync-schedule';
-import { auth } from '@/entities/user';
+import { auth, outsideEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { INTEGRATION_INTEREST_PLATFORMS, products, projects } from '@/shared/db/schema';
 import { isUsableKey, toSiteKeySummary } from '../lib/key-state';
@@ -39,6 +39,7 @@ export async function createSiteKeyAction(formData: FormData): Promise<KeyAction
   if (!session?.user?.id) return { ok: false, error: 'unauthorized' };
   const projectId = idSchema.safeParse(formData.get('projectId'));
   if (!projectId.success) return { ok: false, error: 'bad_request' };
+  if (await outsideEmbeddedScope(projectId.data)) return { ok: false, error: 'not_found' };
   const name = String(formData.get('name') ?? '')
     .trim()
     .slice(0, MAX_KEY_NAME);

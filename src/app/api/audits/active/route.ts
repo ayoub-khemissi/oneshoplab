@@ -18,8 +18,13 @@ export async function GET() {
 
   const userId = session.user.id;
 
+  const embedded = session.embedded;
+  // Inside the Shopify admin: the shop's own site only.
+  if (embedded && !embedded.projectId) return NextResponse.json([]);
   const userProjects = await db.query.projects.findMany({
-    where: eq(projects.userId, userId),
+    where: embedded?.projectId
+      ? and(eq(projects.userId, userId), eq(projects.id, embedded.projectId))
+      : eq(projects.userId, userId),
     columns: { id: true, name: true, domain: true }
   });
   if (userProjects.length === 0) return NextResponse.json([]);

@@ -15,7 +15,8 @@ export async function GET(): Promise<NextResponse> {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
-  const result = await listForBell(session.user.id);
+  // Inside the Shopify admin: the shop's own site only.
+  const result = await listForBell(session.user.id, undefined, session.embedded?.projectId);
   return NextResponse.json(result, {
     headers: {
       // Disable any caching layer: the bell is per-user real-time

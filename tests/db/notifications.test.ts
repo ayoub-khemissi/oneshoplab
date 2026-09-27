@@ -9,6 +9,7 @@ import { db } from '@/shared/db';
 import { jobs, notifications } from '@/shared/db/schema';
 import { listForBell, markAllRead, markReadByJob, notify } from '@/entities/notification';
 import { createUser, resetTables } from './helpers';
+import { createProject } from './site-helpers';
 
 async function makeJob(): Promise<string> {
   const id = randomUUID();
@@ -49,6 +50,23 @@ describe('notify / listForBell', () => {
     const rows = await db.query.notifications.findMany({ where: eq(notifications.userId, a) });
     expect(rows).toHaveLength(20);
     expect(rows.some((r) => (r.payload as { last?: boolean } | null)?.last)).toBe(true);
+  });
+});
+
+describe('inside the Shopify admin', () => {
+  it("lists and clears the shop's own site only", async () => {
+    const a = await createUser();
+    const own = await createProject(a, 'Own');
+    const other = await createProject(a, 'Other business');
+    await notify({ userId: a, kind: 'audit_completed', projectId: own });
+    await notify({ userId: a, kind: 'audit_completed', projectId: other });
+    expect((await listForBell(a)).rows).toHaveLength(2);
+    const scoped = await listForBell(a, undefined, own);
+    expect(scoped.rows.map((r) => r.projectId)).toEqual([own]);
+    expect((await listForBell(a, undefined, null)).rows).toHaveLength(0);
+
+    expect((await markAllRead(a, own)).updated).toBe(1);
+    expect((await listForBell(a)).unreadCount).toBe(1);
   });
 });
 

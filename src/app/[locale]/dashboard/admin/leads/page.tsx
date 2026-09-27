@@ -13,7 +13,7 @@ import {
 } from '@/features/lead-qualification';
 import { isAdminEmail } from '@/entities/user';
 import { buildLeadOutreach, freshAuditsByDomain } from '@/features/cold-outreach';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import {
   leads,
@@ -64,6 +64,7 @@ const STATUS_TONES: Record<LeadStatus, string> = {
 };
 
 export default async function LeadsAdminPage({ searchParams }: PageProps) {
+  await enforceEmbeddedScope();
   const session = await auth();
   if (!session?.user) redirect('/login?next=/dashboard/admin/leads');
   if (!isAdminEmail(session.user.email)) redirect('/dashboard');

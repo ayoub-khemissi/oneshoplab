@@ -111,6 +111,19 @@ fetched downloads (`shared/embedded`). Billing links (pricing, credits,
 subscription) point to `/shopify` in the same frame
 (`shopifyBillingLink`), so no Stripe screen can open inside the admin.
 
+**One shop, one site.** Inside the admin, the app reaches only the shop's
+own site. An owner may have linked other stores: other businesses, other
+platforms. The shop's staff must neither see them nor act on them.
+- The embedded session carries `embedded: { shop, projectId }`.
+- `enforceEmbeddedScope` redirects to the shop's site, or to `/shopify`
+  before linking. It runs in the sites list, every site page
+  (`sites/[siteId]/layout.tsx`), "add a site" and admin.
+- The bell, mark-all-read and the audit toasts are filtered to that site.
+- `outsideEmbeddedScope` refuses deleting a site, creating a site key,
+  disconnecting a store and sending changes for any other site.
+- Other site ids are random UUIDs and are never shown inside the admin.
+- Credits, plan and account pages stay account-wide.
+
 **Framing, App Bridge first (2.2.3).** A framed document says so
 (`Sec-Fetch-Dest: iframe`).
 - `next.config.ts` drops X-Frame-Options for it.

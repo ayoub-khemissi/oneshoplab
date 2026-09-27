@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { and, desc, eq, inArray, isNotNull, notInArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNotNull, notInArray, sql, type SQL } from 'drizzle-orm';
 import { isPushConfigured, sendPushToUser } from '@/entities/push-subscription';
 import { db } from '@/shared/db';
 import {
@@ -152,11 +152,24 @@ async function trimOldest(userId: string): Promise<void> {
 
 /** Mark every unread notification for `userId` as read. Fires when the
  *  merchant clicks the bell icon. */
-export async function markAllRead(userId: string): Promise<{ updated: number }> {
+/**
+ * Inside the Shopify admin the bell shows the shop's own site only
+ * (`projectId`); `undefined` means every site of the user, `null` none yet.
+ */
+function scopeWhere(userId: string, projectId?: string | null): SQL | undefined {
+  if (projectId === undefined) return eq(notifications.userId, userId);
+  if (projectId === null) return sql`false`;
+  return and(eq(notifications.userId, userId), eq(notifications.projectId, projectId));
+}
+
+export async function markAllRead(
+  userId: string,
+  projectId?: string | null
+): Promise<{ updated: number }> {
   const r = await db
     .update(notifications)
     .set({ isRead: true })
-    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+    .where(and(scopeWhere(userId, projectId), eq(notifications.isRead, false)));
   return { updated: r[0].affectedRows };
 }
 
@@ -201,7 +214,8 @@ export async function markReadByAudit(
  *  because the trim policy guarantees no user holds more than that. */
 export async function listForBell(
   userId: string,
-  limit = KEEP_PER_USER
+  limit = KEEP_PER_USER,
+  projectId?: string | null
 ): Promise<{ rows: NotificationRow[]; unreadCount: number }> {
   const cap = Math.max(1, Math.min(KEEP_PER_USER, limit));
   const rows = await db
@@ -217,7 +231,7 @@ export async function listForBell(
       createdAt: notifications.createdAt
     })
     .from(notifications)
-    .where(eq(notifications.userId, userId))
+    .where(scopeWhere(userId, projectId))
     .orderBy(desc(notifications.createdAt))
     .limit(cap);
   // Count unread off the same scan — the trim policy means there
