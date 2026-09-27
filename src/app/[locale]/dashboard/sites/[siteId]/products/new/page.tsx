@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { NewProductWithImport } from '@/widgets/new-product-import';
 import { Link } from '@/i18n/navigation';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 
@@ -30,6 +30,8 @@ interface PageProps {
 
 export default async function NewProductPage({ params }: PageProps) {
   const { siteId } = await params;
+  // Inside the Shopify admin: the shop's own site only (before any data is read).
+  await enforceEmbeddedScope(siteId);
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 

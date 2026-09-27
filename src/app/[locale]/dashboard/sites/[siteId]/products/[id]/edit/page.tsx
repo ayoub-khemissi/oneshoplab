@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirect, notFound } from 'next/navigation';
 import { ManualProductForm } from '@/features/manual-catalog';
 import { Link } from '@/i18n/navigation';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { products, projects } from '@/shared/db/schema';
 
@@ -30,6 +30,8 @@ interface PageProps {
 
 export default async function EditManualProductPage({ params }: PageProps) {
   const { siteId, id } = await params;
+  // Inside the Shopify admin: the shop's own site only (before any data is read).
+  await enforceEmbeddedScope(siteId);
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/entities/user';
+import { auth, enforceEmbeddedScope } from '@/entities/user';
 import { pickTourProductId } from '@/views/dashboard-product';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +18,8 @@ export default async function FirstProductPage({
   params: Promise<{ siteId: string }>;
 }) {
   const { siteId } = await params;
+  // Inside the Shopify admin: the shop's own site only (before any data is read).
+  await enforceEmbeddedScope(siteId);
   const session = await auth();
   if (!session?.user?.id) redirect('/login');
 
