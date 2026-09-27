@@ -9,5 +9,5 @@
  * address is where humans should write, hence Reply-To.
  */
 export function getAppContactEmail(): string {
-  return process.env.APP_CONTACT_EMAIL?.trim() || 'contact@get-oneshoplab.com';
+  return process.env.APP_CONTACT_EMAIL?.trim() || 'contact@oneshoplab.com';
 }
