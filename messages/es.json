@@ -714,7 +714,8 @@
     "errorPaymentFailed": "No se pudo contactar al procesador de pagos. Intenta de nuevo en un momento.",
     "perCredit": "{price} € / crédito",
     "bestPerCredit": "Mejor precio por crédito",
-    "perCreditUsd": "{price} $ / crédito"
+    "perCreditUsd": "{price} $ / crédito",
+    "balanceHintUsd": "1 crédito ≈ 0,006 $ en valor de venta. Se usa para pagar las generaciones IA en la página de optimización."
   },
   "CookieBanner": {
     "accept": "Aceptar",

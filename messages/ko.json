@@ -714,7 +714,8 @@
     "errorPaymentFailed": "결제 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.",
     "perCredit": "{price} € / 크레딧",
     "bestPerCredit": "크레딧당 최저가",
-    "perCreditUsd": "{price} $ / 크레딧"
+    "perCreditUsd": "{price} $ / 크레딧",
+    "balanceHintUsd": "1 크레딧 ≈ 0.006 $ (소매가). 최적화 페이지에서 AI 생성에 사용."
   },
   "CookieBanner": {
     "accept": "수락",

@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Couldn't reach the payment processor. Try again in a moment.",
     "perCredit": "€{price} / credit",
     "bestPerCredit": "Best price per credit",
-    "perCreditUsd": "${price} / credit"
+    "perCreditUsd": "${price} / credit",
+    "balanceHintUsd": "1 credit ≈ $0.006 in retail value. Used to pay for AI generations on the optimisation page."
   },
   "CookieBanner": {
     "accept": "Accept",

@@ -714,7 +714,8 @@
     "errorPaymentFailed": "تعذّر الاتصال بخدمة الدفع. حاول مرة أخرى بعد قليل.",
     "perCredit": "{price} € / رصيد",
     "bestPerCredit": "أفضل سعر للرصيد",
-    "perCreditUsd": "{price} $ / رصيد"
+    "perCreditUsd": "{price} $ / رصيد",
+    "balanceHintUsd": "الرصيد الواحد ≈ 0,006 $ بالقيمة. يُستخدم لدفع توليدات الذكاء الاصطناعي في صفحة التحسين."
   },
   "CookieBanner": {
     "accept": "قبول",

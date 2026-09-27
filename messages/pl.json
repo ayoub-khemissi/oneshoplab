@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Nie udało się połączyć z systemem płatności. Spróbuj ponownie za chwilę.",
     "perCredit": "{price} € / kredyt",
     "bestPerCredit": "Najlepsza cena za kredyt",
-    "perCreditUsd": "{price} $ / kredyt"
+    "perCreditUsd": "{price} $ / kredyt",
+    "balanceHintUsd": "1 kredyt ≈ 0,006 $ w wartości detalicznej. Używany do opłacania generacji AI na stronie optymalizacji."
   },
   "CookieBanner": {
     "accept": "Akceptuj",

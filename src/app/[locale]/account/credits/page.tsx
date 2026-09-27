@@ -81,7 +81,10 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
               {buckets.total.toLocaleString()}
             </span>
           </div>
-          <p className="text-xs text-[var(--muted)] max-w-md">{t('balanceHint')}</p>
+          <p className="text-xs text-[var(--muted)] max-w-md">
+            {/* Billed by Shopify: its dollars, not the site's euros. */}
+            {shopifyManage ? t('balanceHintUsd') : t('balanceHint')}
+          </p>
         </div>
         <div className="flex flex-wrap gap-3 text-xs">
           <BucketChip

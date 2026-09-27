@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Ödeme servisine ulaşılamadı. Birkaç saniye sonra tekrar deneyin.",
     "perCredit": "{price} € / kredi",
     "bestPerCredit": "Kredi başına en iyi fiyat",
-    "perCreditUsd": "{price} $ / kredi"
+    "perCreditUsd": "{price} $ / kredi",
+    "balanceHintUsd": "1 kredi ≈ 0,006 $ perakende değerinde. Optimizasyon sayfasında yapay zekâ üretimleri için kullanılır."
   },
   "CookieBanner": {
     "accept": "Kabul et",

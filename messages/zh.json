@@ -714,7 +714,8 @@
     "errorPaymentFailed": "无法连接到支付服务。请稍后重试。",
     "perCredit": "{price} € / 积分",
     "bestPerCredit": "积分单价最优",
-    "perCreditUsd": "{price} $ / 积分"
+    "perCreditUsd": "{price} $ / 积分",
+    "balanceHintUsd": "1 积分 ≈ 0.006 $(零售价值)。用于在优化页支付 AI 生成。"
   },
   "CookieBanner": {
     "accept": "接受",

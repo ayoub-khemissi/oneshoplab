@@ -714,7 +714,8 @@
     "errorPaymentFailed": "決済サービスに接続できませんでした。しばらくしてから再度お試しください。",
     "perCredit": "{price} € / クレジット",
     "bestPerCredit": "クレジット単価が最安",
-    "perCreditUsd": "{price} $ / クレジット"
+    "perCreditUsd": "{price} $ / クレジット",
+    "balanceHintUsd": "1クレジット ≈ 0.006 $(小売価値)。最適化ページのAI生成に使用。"
   },
   "CookieBanner": {
     "accept": "同意する",

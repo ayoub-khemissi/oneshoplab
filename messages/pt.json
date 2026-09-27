@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Não foi possível contatar o serviço de pagamento. Tente novamente em instantes.",
     "perCredit": "{price} € / crédito",
     "bestPerCredit": "Melhor preço por crédito",
-    "perCreditUsd": "{price} $ / crédito"
+    "perCreditUsd": "{price} $ / crédito",
+    "balanceHintUsd": "1 crédito ≈ 0,006 $ em valor de venda. Usado para pagar gerações IA na página de otimização."
   },
   "CookieBanner": {
     "accept": "Aceitar",

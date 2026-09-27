@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Zahlungsdienst nicht erreichbar. Versuche es gleich noch einmal.",
     "perCredit": "{price} € / Credit",
     "bestPerCredit": "Bester Preis pro Credit",
-    "perCreditUsd": "{price} $ / Credit"
+    "perCreditUsd": "{price} $ / Credit",
+    "balanceHintUsd": "1 Credit ≈ 0,006 $ im Verkaufswert. Wird für KI-Generierungen auf der Optimierungsseite verwendet."
   },
   "CookieBanner": {
     "accept": "Akzeptieren",

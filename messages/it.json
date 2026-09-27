@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Servizio di pagamento non raggiungibile. Riprova tra un istante.",
     "perCredit": "{price} € / credito",
     "bestPerCredit": "Miglior prezzo per credito",
-    "perCreditUsd": "{price} $ / credito"
+    "perCreditUsd": "{price} $ / credito",
+    "balanceHintUsd": "1 credito ≈ $0,006 in valore commerciale. Usato per pagare le generazioni AI nella pagina di ottimizzazione."
   },
   "CookieBanner": {
     "accept": "Accetta",

@@ -714,7 +714,8 @@
     "errorPaymentFailed": "Impossible de joindre le service de paiement. Réessayez dans un instant.",
     "perCredit": "{price} € / crédit",
     "bestPerCredit": "Meilleur prix au crédit",
-    "perCreditUsd": "{price} $ / crédit"
+    "perCreditUsd": "{price} $ / crédit",
+    "balanceHintUsd": "1 crédit ≈ $0.006 de valeur retail. Utilisés pour les générations IA sur la page d'optimisation."
   },
   "CookieBanner": {
     "accept": "Accepter",
