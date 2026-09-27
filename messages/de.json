@@ -713,7 +713,8 @@
     "packBucketHint": "verfallen nie",
     "errorPaymentFailed": "Zahlungsdienst nicht erreichbar. Versuche es gleich noch einmal.",
     "perCredit": "{price} € / Credit",
-    "bestPerCredit": "Bester Preis pro Credit"
+    "bestPerCredit": "Bester Preis pro Credit",
+    "perCreditUsd": "{price} $ / Credit"
   },
   "CookieBanner": {
     "accept": "Akzeptieren",

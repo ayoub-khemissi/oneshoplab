@@ -713,7 +713,8 @@
     "packBucketHint": "لا تنتهي",
     "errorPaymentFailed": "تعذّر الاتصال بخدمة الدفع. حاول مرة أخرى بعد قليل.",
     "perCredit": "{price} € / رصيد",
-    "bestPerCredit": "أفضل سعر للرصيد"
+    "bestPerCredit": "أفضل سعر للرصيد",
+    "perCreditUsd": "{price} $ / رصيد"
   },
   "CookieBanner": {
     "accept": "قبول",

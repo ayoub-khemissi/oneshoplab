@@ -713,7 +713,8 @@
     "packBucketHint": "süresiz",
     "errorPaymentFailed": "Ödeme servisine ulaşılamadı. Birkaç saniye sonra tekrar deneyin.",
     "perCredit": "{price} € / kredi",
-    "bestPerCredit": "Kredi başına en iyi fiyat"
+    "bestPerCredit": "Kredi başına en iyi fiyat",
+    "perCreditUsd": "{price} $ / kredi"
   },
   "CookieBanner": {
     "accept": "Kabul et",

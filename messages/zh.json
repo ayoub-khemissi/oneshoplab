@@ -713,7 +713,8 @@
     "packBucketHint": "永不过期",
     "errorPaymentFailed": "无法连接到支付服务。请稍后重试。",
     "perCredit": "{price} € / 积分",
-    "bestPerCredit": "积分单价最优"
+    "bestPerCredit": "积分单价最优",
+    "perCreditUsd": "{price} $ / 积分"
   },
   "CookieBanner": {
     "accept": "接受",

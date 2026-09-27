@@ -1,6 +1,11 @@
 import { Card } from '@heroui/react';
 import { Coins, Sparkles } from 'lucide-react';
-import { bestValuePack, CREDIT_PACKS, packPerCreditEur } from '@/entities/ai-model';
+import {
+  bestValuePack,
+  CREDIT_PACKS,
+  packPerCreditEur,
+  shopifyPackPrice
+} from '@/entities/ai-model';
 import { buyCreditPackAction } from '../api/actions';
 import { getStripePackPriceId } from '../api/stripe';
 
@@ -15,6 +20,8 @@ interface CreditPackCardsProps {
     buyLabel: string;
     comingSoonLabel: string;
     perCreditLabel: (perCredit: string) => string;
+    /** Same in dollars: merchants billed by Shopify pay its USD prices. */
+    perCreditUsdLabel: (perCredit: string) => string;
     /** Badge on the pack with the lowest price per credit. Optional: the
      *  account page lists packs without ranking them. */
     bestValueLabel?: string;
@@ -31,6 +38,10 @@ interface CreditPackCardsProps {
  * /login?next=/account/credits, so this component doesn't need to
  * branch on session state.
  */
+function usd(amount: number): string {
+  return `$${amount % 1 ? amount.toFixed(2) : amount}`;
+}
+
 export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCardsProps) {
   const best = bestValuePack().id;
   return (
@@ -66,17 +77,24 @@ export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCards
                   {copy.creditsLabel}
                 </span>
               </div>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-2xl font-bold">€{pack.priceEur.toFixed(2)}</span>
+              {/* Billed by Shopify: its USD prices, not the site's euros. */}
+              <div className="flex flex-col gap-0.5">
+                <span className="text-2xl font-bold">
+                  {shopifyManage ? usd(shopifyPackPrice(pack.id)) : `€${pack.priceEur.toFixed(2)}`}
+                </span>
                 <span className="text-xs text-[var(--muted)]">
-                  {copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
+                  (
+                  {shopifyManage
+                    ? copy.perCreditUsdLabel((shopifyPackPrice(pack.id) / pack.credits).toFixed(4))
+                    : copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
+                  )
                 </span>
               </div>
               {shopifyManage ? (
                 <a
                   href={shopifyManage.url}
                   target={shopifyManage.url.startsWith('/') ? undefined : '_top'}
-                  className="mt-auto w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-1.5"
+                  className="mt-auto w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium text-center hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-1.5"
                 >
                   {shopifyManage.label}
                 </a>
@@ -86,7 +104,7 @@ export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCards
                   <button
                     type="submit"
                     disabled={!configured}
-                    className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
+                    className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium text-center hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
                   >
                     <Sparkles className="size-3.5" />
                     {configured ? copy.buyLabel : copy.comingSoonLabel}

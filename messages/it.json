@@ -713,7 +713,8 @@
     "packBucketHint": "non scadono",
     "errorPaymentFailed": "Servizio di pagamento non raggiungibile. Riprova tra un istante.",
     "perCredit": "{price} € / credito",
-    "bestPerCredit": "Miglior prezzo per credito"
+    "bestPerCredit": "Miglior prezzo per credito",
+    "perCreditUsd": "{price} $ / credito"
   },
   "CookieBanner": {
     "accept": "Accetta",

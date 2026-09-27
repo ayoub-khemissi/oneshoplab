@@ -713,7 +713,8 @@
     "packBucketHint": "no caducan",
     "errorPaymentFailed": "No se pudo contactar al procesador de pagos. Intenta de nuevo en un momento.",
     "perCredit": "{price} € / crédito",
-    "bestPerCredit": "Mejor precio por crédito"
+    "bestPerCredit": "Mejor precio por crédito",
+    "perCreditUsd": "{price} $ / crédito"
   },
   "CookieBanner": {
     "accept": "Aceptar",

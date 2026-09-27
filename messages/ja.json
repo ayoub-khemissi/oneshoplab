@@ -713,7 +713,8 @@
     "packBucketHint": "失効なし",
     "errorPaymentFailed": "決済サービスに接続できませんでした。しばらくしてから再度お試しください。",
     "perCredit": "{price} € / クレジット",
-    "bestPerCredit": "クレジット単価が最安"
+    "bestPerCredit": "クレジット単価が最安",
+    "perCreditUsd": "{price} $ / クレジット"
   },
   "CookieBanner": {
     "accept": "同意する",

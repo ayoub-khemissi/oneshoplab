@@ -713,7 +713,8 @@
     "packBucketHint": "never expire",
     "errorPaymentFailed": "Couldn't reach the payment processor. Try again in a moment.",
     "perCredit": "€{price} / credit",
-    "bestPerCredit": "Best price per credit"
+    "bestPerCredit": "Best price per credit",
+    "perCreditUsd": "${price} / credit"
   },
   "CookieBanner": {
     "accept": "Accept",

@@ -123,10 +123,11 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
               mega: { name: t('pack.mega.name'), tagline: t('pack.mega.tagline') },
               catalog: { name: t('pack.catalog.name'), tagline: t('pack.catalog.tagline') }
             },
-            creditsLabel: t('packBucketLabel').toLowerCase(),
+            creditsLabel: tPricing('credits'),
             buyLabel: t('buyButton'),
             comingSoonLabel: t('comingSoon'),
-            perCreditLabel: (perCredit: string) => `(€${perCredit} / credit)`
+            perCreditLabel: (perCredit: string) => t('perCredit', { price: perCredit }),
+            perCreditUsdLabel: (perCredit: string) => t('perCreditUsd', { price: perCredit })
           }}
         />
       </section>

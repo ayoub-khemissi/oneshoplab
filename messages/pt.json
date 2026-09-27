@@ -713,7 +713,8 @@
     "packBucketHint": "não expiram",
     "errorPaymentFailed": "Não foi possível contatar o serviço de pagamento. Tente novamente em instantes.",
     "perCredit": "{price} € / crédito",
-    "bestPerCredit": "Melhor preço por crédito"
+    "bestPerCredit": "Melhor preço por crédito",
+    "perCreditUsd": "{price} $ / crédito"
   },
   "CookieBanner": {
     "accept": "Aceitar",

@@ -713,7 +713,8 @@
     "packBucketHint": "nie wygasają",
     "errorPaymentFailed": "Nie udało się połączyć z systemem płatności. Spróbuj ponownie za chwilę.",
     "perCredit": "{price} € / kredyt",
-    "bestPerCredit": "Najlepsza cena za kredyt"
+    "bestPerCredit": "Najlepsza cena za kredyt",
+    "perCreditUsd": "{price} $ / kredyt"
   },
   "CookieBanner": {
     "accept": "Akceptuj",

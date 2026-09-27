@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { AccountBulkPrefsForm } from '@/features/bulk-generate/client';
 import { ReplayTourCard } from '@/features/guided-tour';
+import { isEmbeddedRequest } from '@/shared/embedded';
 import { ModelPreferencesForm } from '@/features/model-preferences';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/entities/user';
@@ -20,6 +21,7 @@ export default async function AccountPreferencesPage() {
   if (!session?.user) redirect('/login');
 
   const t = await getTranslations('Preferences');
+  const embedded = await isEmbeddedRequest();
   const tb = await getTranslations('BulkGenerate');
   const plan = (session.user.plan ?? 'free') as string;
   const canBulk = plan === 'pro' || plan === 'scale';
@@ -39,7 +41,9 @@ export default async function AccountPreferencesPage() {
 
       <PushSettingsCard />
 
-      <ReplayTourCard />
+      {/* The walkthrough crosses the sites list and "add a site", which do not
+          exist inside the Shopify admin. */}
+      {embedded ? null : <ReplayTourCard />}
 
       <ModelPreferencesForm
         initialChatModel={resolveChatModelId(session.user.preferredChatModel)}

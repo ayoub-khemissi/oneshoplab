@@ -14,7 +14,9 @@ import { TourMount } from './tour-mount';
  */
 export async function TourGate() {
   const session = await auth();
-  if (!session?.user?.id) return null;
+  // No walkthrough inside the Shopify admin: its steps cross pages that do
+  // not exist there (sites list, "add a site").
+  if (!session?.user?.id || session.embedded) return null;
   const state = await loadTourState(session.user.id);
   if (!state) return null;
   return (

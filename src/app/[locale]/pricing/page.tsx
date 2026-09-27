@@ -244,10 +244,12 @@ export default async function PricingPage() {
                 tagline: tCredits('pack.catalog.tagline')
               }
             },
-            creditsLabel: tCredits('packBucketLabel').toLowerCase(),
+            creditsLabel: t('credits'),
             buyLabel: tCredits('buyButton'),
             comingSoonLabel: tCredits('comingSoon'),
             perCreditLabel: (perCredit: string) => tCredits('perCredit', { price: perCredit }),
+            perCreditUsdLabel: (perCredit: string) =>
+              tCredits('perCreditUsd', { price: perCredit }),
             bestValueLabel: tCredits('bestPerCredit')
           }}
         />
