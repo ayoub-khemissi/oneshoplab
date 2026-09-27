@@ -80,6 +80,15 @@ function embeddedResponse(req: NextRequest): NextResponse {
 
 export default async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+  // Shopify opens the configured App URL with ?embedded=1&shop=…; an App URL
+  // still set to the site root lands here: hand it to the embedded app.
+  if (
+    (pathname === '/' || LOCALE_SET.has(pathname.slice(1))) &&
+    req.nextUrl.searchParams.get('embedded') === '1' &&
+    req.nextUrl.searchParams.get('shop')
+  ) {
+    return NextResponse.redirect(new URL(`/shopify${search}`, req.url));
+  }
   if (pathname === '/shopify' || pathname.startsWith('/shopify/')) {
     // Shopify always opens the app with ?shop=. Without it we are outside the
     // admin, where App Bridge cannot start: send the visitor to the site.
