@@ -71,7 +71,8 @@ printf '  %-14s %s\n' "served build" "${served:-unknown}"
   echo "✗ the running process serves build '${served}', not $(cat .next/BUILD_ID)" >&2; exit 1; }
 # Inside the Shopify admin, nginx must put App Bridge first in every framed
 # page (scripts/ops/nginx/oneshoplab-embedded.conf, App Store requirement 2.2.3).
-framed=$(curl -s -H 'Sec-Fetch-Dest: iframe' 'https://oneshoplab.com/shopify?shop=health.myshopify.com' | head -c 400)
+# (|| true: head closes the pipe early and curl then exits 23 under pipefail)
+framed=$(curl -s -H 'Sec-Fetch-Dest: iframe' 'https://oneshoplab.com/shopify?shop=health.myshopify.com' | head -c 400 || true)
 [[ "$framed" == *'<head><meta name="shopify-api-key"'*'app-bridge.js'* ]] || {
   echo "✗ App Bridge is not injected first in framed pages (nginx embedded config)" >&2; exit 1; }
 printf '  %-14s %s\n' "app bridge" "first in <head>"
