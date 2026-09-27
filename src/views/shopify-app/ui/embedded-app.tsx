@@ -519,7 +519,7 @@ function Logo() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/osl-light.svg"
+      src="/osl-dark.svg"
       alt="OneShopLab"
       width={36}
       height={36}
