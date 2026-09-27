@@ -37,12 +37,12 @@ OneShopLab scores every product page and shows what holds it back: thin descript
 - Thumbnail: a 1600×900 frame of the same video, cut without the Shopify
   badge (feature media must not show the Shopify logo).
 
-**Screenshots (1600×900, alt text ≤64):** retaken in embedded mode once the
-full app runs inside the admin. The alt texts:
+**Screenshots (1600×900, alt text ≤64):** taken in embedded mode, with the
+app's own pages as they appear inside the admin. The alt texts:
 1. Store overview with the overall catalog score
 2. Product list with a score and the issues found on each product
 3. AI-rewritten SEO title and description next to the original
-4. Generated product photos: white background, in use, lifestyle
+4. Product gallery with a generated lifestyle photo
 5. Lifestyle and in-use photos generated for a home decor product
 
 No screenshot may show prices (4.2.2). The embedded home with the plans is
@@ -94,8 +94,8 @@ from $5.99. Leave the "outside the Billing API" box unchecked.
 
 - **Test account:** "My app doesn't require an account to use it". The app
   creates the merchant's account from the store on first open.
-- **Screencast URL:** the unlisted YouTube walkthrough. Re-record it once
-  the full app opens inside the admin.
+- **Screencast URL:** the unlisted YouTube walkthrough, recorded with the full
+  app inside the admin ("Open OneShopLab" stays in the admin).
 - **Testing instructions (≤2800):**
 
 ```
