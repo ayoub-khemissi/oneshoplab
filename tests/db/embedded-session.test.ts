@@ -28,7 +28,8 @@ import {
   embeddedSession,
   enforceEmbeddedScope,
   outsideEmbeddedScope,
-  sessionFromShopifyIdToken
+  sessionFromShopifyIdToken,
+  sessionOutsideScope
 } from '@/entities/user/api/embedded-session';
 import { createProject } from './site-helpers';
 import { db } from '@/shared/db';
@@ -116,6 +117,10 @@ describe("embedded scope: only the shop's own site", () => {
     expect(await outsideEmbeddedScope(own)).toBe(false);
     expect(await outsideEmbeddedScope(other)).toBe(true);
     expect(await outsideEmbeddedScope(null)).toBe(true);
+    const session = await embeddedSession();
+    expect(sessionOutsideScope(session, own)).toBe(false);
+    expect(sessionOutsideScope(session, other)).toBe(true);
+    expect(sessionOutsideScope(null, other)).toBe(false);
 
     await expect(enforceEmbeddedScope(own)).resolves.toBeUndefined();
     await expect(enforceEmbeddedScope(other)).rejects.toMatchObject({

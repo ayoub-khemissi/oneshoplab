@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { auth } from '@/entities/user';
+import { auth, sessionOutsideScope } from '@/entities/user';
 import { take } from '@/shared/api';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
@@ -35,7 +35,7 @@ export async function guardImportRoute(siteId: string): Promise<GuardResult> {
     where: and(eq(projects.id, siteId), eq(projects.userId, userId)),
     columns: { id: true, source: true }
   });
-  if (!project || project.source !== 'manual') {
+  if (!project || project.source !== 'manual' || sessionOutsideScope(session, siteId)) {
     return { ok: false, response: NextResponse.json({ error: 'not_found' }, { status: 404 }) };
   }
   const limit = take(`import:${userId}`, IMPORT_BUCKET);

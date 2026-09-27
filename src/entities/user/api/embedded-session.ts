@@ -94,3 +94,8 @@ export async function enforceEmbeddedScope(siteId?: string): Promise<void> {
   if (projectId === undefined || (projectId && siteId === projectId)) return;
   redirect(projectId ? `/${await getLocale()}/dashboard/sites/${projectId}` : '/shopify');
 }
+
+/** Same rule, when the caller already holds the session (API routes). */
+export function sessionOutsideScope(session: Session | null, projectId: string): boolean {
+  return Boolean(session?.embedded && session.embedded.projectId !== projectId);
+}

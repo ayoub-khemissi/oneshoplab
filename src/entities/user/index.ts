@@ -13,5 +13,6 @@ export {
   embeddedProjectId,
   enforceEmbeddedScope,
   outsideEmbeddedScope,
+  sessionOutsideScope,
   sessionFromShopifyIdToken
 } from './api/embedded-session';

@@ -10,7 +10,7 @@ import {
   takeExportToken,
   type RawParams
 } from '@/features/export-catalog';
-import { auth } from '@/entities/user';
+import { auth, sessionOutsideScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 
@@ -40,7 +40,7 @@ export async function GET(
     where: eq(projects.id, siteId),
     columns: { id: true, userId: true, domain: true, name: true }
   });
-  if (!project || project.userId !== userId) {
+  if (!project || project.userId !== userId || sessionOutsideScope(session, siteId)) {
     return NextResponse.json({ error: 'not_found' }, { status: 404 });
   }
 

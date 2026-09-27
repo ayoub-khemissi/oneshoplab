@@ -123,6 +123,8 @@ platforms. The shop's staff must neither see them nor act on them.
 - The bell, mark-all-read and the audit toasts are filtered to that site.
 - `outsideEmbeddedScope` refuses deleting a site, creating a site key,
   disconnecting a store and sending changes for any other site.
+- `sessionOutsideScope` does the same in the CSV export and import routes
+  and in the bulk generation routes.
 - Other site ids are random UUIDs and are never shown inside the admin.
 - Credits, plan and account pages stay account-wide.
 

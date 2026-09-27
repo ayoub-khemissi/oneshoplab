@@ -21,7 +21,7 @@ import {
   retryFailedFromBulk,
   startBulkSiteGenerate
 } from '@/features/bulk-generate';
-import { auth } from '@/entities/user';
+import { auth, sessionOutsideScope } from '@/entities/user';
 import { db } from '@/shared/db';
 import { projects } from '@/shared/db/schema';
 
@@ -111,6 +111,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const siteId = typeof body.siteId === 'string' ? body.siteId : '';
   if (!siteId) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
+  }
+  if (sessionOutsideScope(session, siteId)) {
+    return NextResponse.json({ error: 'not_found' }, { status: 404 });
   }
 
   const project = await db.query.projects.findFirst({
@@ -245,6 +248,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!siteId) {
     return NextResponse.json({ error: 'bad_request' }, { status: 400 });
   }
+  if (sessionOutsideScope(session, siteId)) {
+    return NextResponse.json({ error: 'not_found' }, { status: 404 });
+  }
 
   const project = await db.query.projects.findFirst({
     where: and(eq(projects.id, siteId), eq(projects.userId, session.user.id))
@@ -338,7 +344,7 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     where: and(eq(projects.id, data.siteId), eq(projects.userId, session.user.id)),
     columns: { id: true }
   });
-  if (!project) {
+  if (!project || sessionOutsideScope(session, data.siteId)) {
     return NextResponse.json({ error: 'site_not_found' }, { status: 404 });
   }
 
