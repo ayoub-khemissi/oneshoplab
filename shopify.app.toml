@@ -1,21 +1,32 @@
-# OneShopLab — Shopify app configuration (Shopify CLI: `shopify app deploy`).
-# Keep in sync with docs/api/SHOPIFY-APP-STORE.md. The client id is public;
-# the secret lives only in .env (SHOPIFY_APP_CLIENT_SECRET).
-# client_id = "…"  ← fill with SHOPIFY_APP_CLIENT_ID before `shopify app config link`
+# OneShopLab — Shopify app configuration, pushed with the Shopify CLI:
+#   npx @shopify/cli@latest app deploy --allow-updates
+# (it prints a device-login link for the Dev Dashboard account; first pushed
+# as version oneshoplab-6 on 2026-09-27)
+# A deploy replaces the app's whole configuration with this file: keep it in
+# sync with docs/api/SHOPIFY-APP-STORE.md. The client id is public; the secret
+# lives only in .env (SHOPIFY_APP_CLIENT_SECRET).
 
+client_id = "a0e73ac54ac812b328f60fda04371316"
 name = "OneShopLab"
+handle = "oneshoplab"
 application_url = "https://oneshoplab.com/shopify"
 embedded = true
+
+[build]
+automatically_update_urls_on_dev = false
 
 [access_scopes]
 scopes = "read_products,write_products,write_files"
 # Shopify-managed installation: the merchant installs from the App Store, the
-# embedded app exchanges its ID token for an offline token (token exchange).
+# embedded app exchanges its ID token for an expiring offline token.
 use_legacy_install_flow = false
 
 [auth]
-# Only used by the website's "connect my store" flow (authorization code grant).
-redirect_urls = ["https://oneshoplab.com/api/integrations/shopify/callback"]
+# The website's "connect my store" flow (authorization code grant), prod + staging.
+redirect_urls = [
+  "https://oneshoplab.com/api/integrations/shopify/callback",
+  "https://staging.oneshoplab.com/api/integrations/shopify/callback"
+]
 
 [webhooks]
 api_version = "2026-07"

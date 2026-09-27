@@ -25,3 +25,6 @@ test-results/
 .next-e2e/
 # Verification build (scripts/deploy.sh, NEXT_DIST_DIR) — never committed.
 .next-verify/
+
+# Shopify CLI working files (app deploy)
+.shopify/
