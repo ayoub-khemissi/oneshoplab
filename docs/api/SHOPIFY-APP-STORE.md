@@ -51,6 +51,12 @@ App Store requirements that shape everything here:
      to `billing_channel = 'shopify'`. A live Stripe plan keeps running on the
      web until it ends; the embedded app then says the plan is managed on
      oneshoplab.com.
+   - **The website's "connect my store"** (authorization code grant) installs
+     the same public app, so it does the same: the shop is registered in
+     `shopify_shops` for the account (unless another account holds it
+     installed) and `adoptShopifyBilling` applies the same rule. When the shop
+     facts can't be read, the store still connects and the account stays on
+     web billing. Uninstalling the last shop puts it back on Stripe.
 5. **Ready**: the page shows score, synced products, pending changes, credits,
    a Sync button, and "Open OneShopLab". That button opens the site's
    dashboard in the same frame with a fresh ID token (see below). The page

@@ -22,9 +22,10 @@ import { GET as callbackGet } from '@/app/api/integrations/shopify/callback/rout
 import { POST as gdprPost } from '@/app/api/webhooks/shopify/gdpr/[topic]/route';
 import { POST as webhookPost } from '@/app/api/webhooks/shopify/[projectId]/route';
 import { getConnection, listGdprRequests, readShopifyTokenGrant } from '@/entities/shop-connection';
-import { SHOPIFY_STATE_COOKIE } from '@/features/shopify-connector';
+import { getShopifyShop } from '@/entities/shop-connection';
+import { SHOPIFY_STATE_COOKIE, onShopifyAppUninstalled } from '@/features/shopify-connector';
 import { db } from '@/shared/db';
-import { shopConnections } from '@/shared/db/schema';
+import { shopConnections, shopifyShops, subscriptions, users } from '@/shared/db/schema';
 import { createUser, resetTables } from './helpers';
 import { TOKEN, createFakeClient, shopifyHeaders, type FakeAdminClient } from './shopify-helpers';
 import { createProject } from './site-helpers';
@@ -182,6 +183,87 @@ describe('GET /api/integrations/shopify/callback', () => {
     session.userId = null;
     expect((await callback(q, cookie)).searchParams.get('error')).toBe('unauthorized');
     expect(await getConnection(projectId)).toBeNull();
+  });
+});
+
+async function billingChannel(id = userId) {
+  const u = await db.query.users.findFirst({ where: eq(users.id, id) });
+  return u?.billingChannel;
+}
+
+// App Store 1.2.1: the website's "connect my store" installs the same public
+// app as the App Store, so its merchants must pay through Shopify too.
+describe('website OAuth install → Shopify Billing', () => {
+  it('registers the shop for the account and moves it to Shopify Billing', async () => {
+    await connectViaOauth();
+    const row = await getShopifyShop(SHOP);
+    expect(row).toMatchObject({
+      userId,
+      projectId,
+      shopName: 'Atelier',
+      shopEmail: 'owner@atelier.test',
+      partnerDevelopment: false,
+      uninstalledAt: null,
+      pendingTokenCiphertext: null
+    });
+    expect(row!.linkedAt).not.toBeNull();
+    expect(await billingChannel()).toBe('shopify');
+  });
+  it('a live Stripe plan keeps running on the web', async () => {
+    await db.insert(subscriptions).values({
+      id: crypto.randomUUID(),
+      userId,
+      plan: 'pro',
+      status: 'active',
+      billingCycle: 'monthly'
+    });
+    await connectViaOauth();
+    expect((await getShopifyShop(SHOP))?.userId).toBe(userId);
+    expect(await billingChannel()).toBe('stripe');
+  });
+  it('an ended Stripe plan does not hold the account on the web', async () => {
+    await db.insert(subscriptions).values({
+      id: crypto.randomUUID(),
+      userId,
+      plan: 'pro',
+      status: 'canceled',
+      billingCycle: 'monthly'
+    });
+    await connectViaOauth();
+    expect(await billingChannel()).toBe('shopify');
+  });
+  it('a shop another account owns stays theirs, and this account stays on the web', async () => {
+    const other = await createUser();
+    await db.insert(shopifyShops).values({ shopDomain: SHOP, userId: other, scopes: [] });
+    await connectViaOauth();
+    expect((await getConnection(projectId))?.status).toBe('connected');
+    expect((await getShopifyShop(SHOP))?.userId).toBe(other);
+    expect(await billingChannel()).toBe('stripe');
+  });
+  it('takes over a shop its previous owner uninstalled', async () => {
+    const other = await createUser();
+    await db
+      .insert(shopifyShops)
+      .values({ shopDomain: SHOP, userId: other, scopes: [], uninstalledAt: new Date() });
+    await connectViaOauth();
+    expect(await getShopifyShop(SHOP)).toMatchObject({ userId, projectId, uninstalledAt: null });
+    expect(await billingChannel()).toBe('shopify');
+  });
+  it('shop facts unreachable: the store connects, the account stays on the web', async () => {
+    fake.request = async () => {
+      throw new Error('boom');
+    };
+    await connectViaOauth();
+    expect((await getConnection(projectId))?.status).toBe('connected');
+    expect(await getShopifyShop(SHOP)).toBeNull();
+    expect(await billingChannel()).toBe('stripe');
+  });
+  it('uninstalling the last shop puts the account back on the web', async () => {
+    await connectViaOauth();
+    expect(await billingChannel()).toBe('shopify');
+    await onShopifyAppUninstalled(SHOP);
+    expect((await getShopifyShop(SHOP))?.uninstalledAt).not.toBeNull();
+    expect(await billingChannel()).toBe('stripe');
   });
 });
 

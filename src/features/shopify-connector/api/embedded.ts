@@ -34,10 +34,10 @@ import {
   productChanges,
   products,
   projects,
-  subscriptions,
   users
 } from '@/shared/db/schema';
 import { shopifyAppConfig, type ShopifyAppConfig } from '../lib/oauth';
+import { adoptShopifyBilling } from './app-billing';
 import { parseShopifyTokenResponse, type ShopifyTokenResponse } from '../lib/token-grant';
 import { verifyShopifyIdToken } from '../lib/id-token';
 import { createAdminClient, SHOPIFY_API_VERSION, ShopifyAdminError } from './admin-client';
@@ -348,18 +348,6 @@ export async function linkShopToUser(
   await attachShopToProject(row, userId, projectId, grant, cfg, opts);
   await adoptShopifyBilling(userId);
   return { ok: true, projectId, shopName: row.shopName };
-}
-
-/**
- * A linked account buys through Shopify from now on (App Store 1.2.1), except
- * a live Stripe plan, which keeps running on the web until it ends.
- */
-async function adoptShopifyBilling(userId: string): Promise<void> {
-  const sub = await db.query.subscriptions.findFirst({ where: eq(subscriptions.userId, userId) });
-  const liveStripe =
-    !!sub && sub.channel === 'stripe' && sub.plan !== 'free' && sub.status !== 'canceled';
-  if (liveStripe) return;
-  await db.update(users).set({ billingChannel: 'shopify' }).where(eq(users.id, userId));
 }
 
 // ------------------------------------------------------------------ state for the embedded page

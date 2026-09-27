@@ -44,6 +44,19 @@ import { shopifyTokenProvider } from './token';
 
 type PaidPlan = Exclude<PlanId, 'free'>;
 
+/**
+ * An account that installs the app — from the admin or from the website's
+ * "connect my store" — buys through Shopify from now on (App Store 1.2.1),
+ * except a live Stripe plan, which keeps running on the web until it ends.
+ */
+export async function adoptShopifyBilling(userId: string): Promise<void> {
+  const sub = await db.query.subscriptions.findFirst({ where: eq(subscriptions.userId, userId) });
+  const liveStripe =
+    !!sub && sub.channel === 'stripe' && sub.plan !== 'free' && sub.status !== 'canceled';
+  if (liveStripe) return;
+  await db.update(users).set({ billingChannel: 'shopify' }).where(eq(users.id, userId));
+}
+
 export interface BillingDeps {
   makeClient?: typeof createAdminClient;
   now?: Date;

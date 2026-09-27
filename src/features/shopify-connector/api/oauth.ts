@@ -6,7 +6,10 @@
  */
 import {
   connectShopify,
+  getShopifyShop,
+  markShopifyShopLinked,
   normalizeShopDomain,
+  recordShopifyInstall,
   requestPull,
   setLastError,
   type ShopifyTokenGrant
@@ -21,6 +24,8 @@ import {
 } from '../lib/oauth';
 import { parseShopifyTokenResponse, type ShopifyTokenResponse } from '../lib/token-grant';
 import { createAdminClient, SHOPIFY_API_VERSION, ShopifyAdminError } from './admin-client';
+import { adoptShopifyBilling } from './app-billing';
+import { fetchShopFacts } from './embedded';
 import { registerShopifyWebhooks } from './webhooks';
 
 export function shopifyRedirectUri(): string {
@@ -177,5 +182,47 @@ export async function completeShopifyInstall(
     );
   }
   await requestPull(state.projectId);
+  if (
+    await registerWebInstall(
+      shopDomain,
+      state.userId,
+      state.projectId,
+      token.grant.accessToken,
+      makeClient
+    )
+  ) {
+    await adoptShopifyBilling(state.userId);
+  }
   return { ok: true, projectId: state.projectId, locale: state.locale, webhooks };
+}
+
+/**
+ * The website's "connect my store" installs the same public app as the App
+ * Store, so the shop joins the same registry: uninstall, test charges and
+ * Shopify Billing (1.2.1) then work the same for both ways in. A shop another
+ * account already owns stays theirs. False when the shop could not be
+ * registered — the account then keeps web billing rather than a Shopify
+ * billing it could not use.
+ */
+async function registerWebInstall(
+  shopDomain: string,
+  userId: string,
+  projectId: string,
+  accessToken: string,
+  makeClient: typeof createAdminClient
+): Promise<boolean> {
+  const existing = await getShopifyShop(shopDomain);
+  if (existing?.userId && existing.userId !== userId && !existing.uninstalledAt) return false;
+  try {
+    await recordShopifyInstall(
+      shopDomain,
+      await fetchShopFacts(shopDomain, accessToken, makeClient),
+      null
+    );
+  } catch (e) {
+    await setLastError(projectId, `shop registry: ${e instanceof Error ? e.message : String(e)}`);
+    return false;
+  }
+  await markShopifyShopLinked(shopDomain, userId, projectId);
+  return true;
 }

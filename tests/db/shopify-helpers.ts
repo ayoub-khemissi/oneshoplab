@@ -73,7 +73,21 @@ export function createFakeClient(products: AdminProduct[] = []): FakeAdminClient
       productById: []
     },
     throttle: () => null,
-    async request() {
+    async request<T>(query: string): Promise<T> {
+      guard();
+      // The shop facts the install registry keeps (fetchShopFacts).
+      if (query.includes('OslShopFacts')) {
+        return {
+          shop: {
+            name: SHOP.name,
+            email: 'owner@atelier.test',
+            contactEmail: null,
+            primaryDomain: { host: 'atelier.test' },
+            plan: { partnerDevelopment: false }
+          },
+          currentAppInstallation: { accessScopes: SHOP.scopes.map((handle) => ({ handle })) }
+        } as T;
+      }
       throw new Error('raw request not supported by the fake');
     },
     async shopInfo() {
