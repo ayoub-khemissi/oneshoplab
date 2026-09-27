@@ -52,3 +52,6 @@ export {
   recordShopifyInstall
 } from './api/shopify-shops';
 export type { ShopifyShopFacts, ShopifyShopRow } from './api/shopify-shops';
+export { shopifyAppCredentials } from './lib/app-credentials';
+export { bearerFrom, signShopifyIdTokenForTests, verifyShopifyIdToken } from './lib/id-token';
+export type { ShopifyIdToken } from './lib/id-token';

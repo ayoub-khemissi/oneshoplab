@@ -3,6 +3,7 @@
  * Env: SHOPIFY_APP_CLIENT_ID / SHOPIFY_APP_CLIENT_SECRET / SHOPIFY_APP_SCOPES.
  */
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { shopifyAppCredentials } from '@/entities/shop-connection';
 
 export const SHOPIFY_STATE_COOKIE = 'osl_shopify_oauth';
 // `write_files` is what lets us set the alt text of a photo already on the
@@ -29,18 +30,13 @@ export interface ShopifyAppConfig {
 }
 
 export function shopifyAppConfig(): ShopifyAppConfig | null {
-  const clientId = process.env.SHOPIFY_APP_CLIENT_ID?.trim();
-  const clientSecret = process.env.SHOPIFY_APP_CLIENT_SECRET?.trim();
-  if (!clientId || !clientSecret) return null;
+  const creds = shopifyAppCredentials();
+  if (!creds) return null;
   const scopes = (process.env.SHOPIFY_APP_SCOPES ?? '')
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
-  return {
-    clientId,
-    clientSecret,
-    scopes: scopes.length ? scopes : [...DEFAULT_SHOPIFY_APP_SCOPES]
-  };
+  return { ...creds, scopes: scopes.length ? scopes : [...DEFAULT_SHOPIFY_APP_SCOPES] };
 }
 
 export function isShopifyAppConfigured(): boolean {

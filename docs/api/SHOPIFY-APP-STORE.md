@@ -24,10 +24,10 @@ App Store requirements that shape everything here:
 
 1. The merchant installs from the App Store. With Shopify-managed install
    (`use_legacy_install_flow = false`), Shopify grants the scopes from the TOML
-   and opens `application_url` = `https://oneshoplab.com/shopify` in the admin
-   iframe.
+   and opens `application_url` = `https://oneshoplab.com` in the admin
+   iframe. The root with `?embedded=1&shop=` redirects to `/shopify`.
 2. `/shopify` (`src/app/shopify/*`, its own root layout) loads App Bridge
-   (the `shopify-api-key` meta tag, then the synchronous
+   (nginx injects the `shopify-api-key` meta tag and the synchronous
    `cdn.shopify.com/shopifycloud/app-bridge.js` script, first in `<head>`).
    The client (`views/shopify-app`) calls `/api/shopify/app/*`, sending
    `Authorization: Bearer <idToken>`.
@@ -52,10 +52,9 @@ App Store requirements that shape everything here:
      web until it ends; the embedded app then says the plan is managed on
      oneshoplab.com.
 5. **Ready**: the page shows score, synced products, pending changes, credits,
-   a Sync button, and "Open OneShopLab". That button signs the merchant in
-   through a 2-minute single-use SSO token (`/api/shopify/sso`, next-auth
-   provider `shopify-sso`) and opens the dashboard in a new tab. The page also
-   holds plans, packs and cancel, when billed by Shopify.
+   a Sync button, and "Open OneShopLab". That button opens the site's
+   dashboard in the same frame with a fresh ID token (see below). The page
+   also holds plans, packs and cancel, when billed by Shopify.
 
 ## Expiring offline tokens
 
@@ -83,20 +82,50 @@ else as "Jeton hors ligne obsolète".
   reaches its 90 days.
 - Custom-app tokens have no refresh token and are left untouched.
 
-## Framing and headers
+## The full app inside the admin (requirement 2.2.2)
 
-- `src/proxy.ts` answers `/shopify` without the locale redirect. It sets
-  `Content-Security-Policy: frame-ancestors https://{shop} https://admin.shopify.com`,
-  with the shop taken from the `shop` query param.
-- `next.config.ts` keeps `X-Frame-Options: DENY` on every path **except**
+The web app itself runs inside the Shopify admin: the same pages and the same
+code, no second interface. Three pieces make that work.
+
+**Session without cookies (1.1.1).** Inside the admin, the Shopify ID token
+is the session.
+- A first document load carries it as `?id_token=`. The embedded home's
+  "Open OneShopLab" and every admin reload add it.
+- App Bridge adds it as `Authorization: Bearer` to every same-origin
+  `fetch`: Next's client navigations and server actions.
+- `src/proxy.ts` turns `?id_token=` into that header, sets
+  `x-osl-embedded: 1` (never trusted from the client), skips the cookie
+  login gate, and sends `/login`, `/signup` and `/forgot-password` to
   `/shopify`.
-- nginx: the server block adds `X-Frame-Options DENY` and an enforced CSP
-  itself. `location = /shopify` and `location ^~ /shopify/` in
-  `/etc/nginx/conf.d/oneshoplab.conf` (and the staging vhost) include
-  `snippets/oneshoplab-shopify-embedded.conf` instead. That snippet has the
-  same security headers, no XFO, and `cdn.shopify.com` in `script-src`. Any
-  `add_header` in a location drops the server-level ones: keep the snippet
-  complete.
+- `auth()` (`entities/user/api/next-auth.ts`) first resolves a valid Bearer
+  ID token to the account the shop is linked to
+  (`embedded-session.ts`, cached per request). Otherwise it falls back to
+  Auth.js. An unlinked shop or an uninstalled app gets no session.
+
+**Chrome.** With `x-osl-embedded`, the locale layout swaps `SiteHeader` for
+`EmbeddedHeader` (Dashboard, Plan & billing → `/shopify`, bell, credits).
+It drops the footer, cookie banner, analytics and service worker, and mounts
+`EmbeddedLinkGuard`. That guard turns plain `<a>` clicks that would reload
+the frame without a session into router navigations, and `/api/*` files into
+fetched downloads (`shared/embedded`). Billing links (pricing, credits,
+subscription) point to `/shopify` in the same frame
+(`shopifyBillingLink`), so no Stripe screen can open inside the admin.
+
+**Framing, App Bridge first (2.2.3).** A framed document says so
+(`Sec-Fetch-Dest: iframe`).
+- `next.config.ts` drops X-Frame-Options for it.
+- The proxy answers with `frame-ancestors https://admin.shopify.com https://*.myshopify.com`.
+- nginx does the rest for framed documents only
+  (`scripts/ops/nginx/oneshoplab-embedded.conf` →
+  `/etc/nginx/conf.d/00-oneshoplab-embedded.conf`):
+  - no XFO, and a frame-ancestors in its enforced CSP;
+  - `cdn.shopify.com` in script-src;
+  - the upstream answers uncompressed and `sub_filter` injects
+    `<meta name="shopify-api-key">` + the App Bridge script as the first tags
+    of `<head>`. Next.js emits its own scripts first, so the app cannot do it
+    itself.
+
+Change the App Bridge key in that file if the app's client id changes.
 
 ## Billing (`features/shopify-connector/api/app-billing.ts`)
 

@@ -6,11 +6,14 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Analytics, CookieBanner, GaRedirectEvents, MetaPixel } from '@/shared/analytics';
 import { AuditToastWatcher } from '@/widgets/audit-toast-watcher';
+import { EmbeddedHeader } from '@/widgets/embedded-header';
 import { SiteFooter } from '@/widgets/site-footer';
 import { SiteHeader } from '@/widgets/site-header';
 import { ThemeProvider } from '@/shared/ui';
 import { ServiceWorkerRegistration, ThemeColorSync } from '@/shared/pwa';
 import { getAppContactEmail } from '@/shared/config';
+import { isEmbeddedRequest } from '@/shared/embedded';
+import { EmbeddedLinkGuard } from '@/shared/embedded/client';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../manifest';
 import '../globals.css';
@@ -180,6 +183,9 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const dir = RTL_LOCALES.has(locale as never) ? 'rtl' : 'ltr';
+  // Inside the Shopify admin: no site chrome, no tracking, no service worker
+  // (the admin frames the page and the store is the session).
+  const embedded = await isEmbeddedRequest();
 
   return (
     <html
@@ -212,7 +218,7 @@ export default async function LocaleLayout({
           style={{ height: 'env(safe-area-inset-bottom)' }}
           aria-hidden="true"
         />
-        <ServiceWorkerRegistration />
+        {embedded ? null : <ServiceWorkerRegistration />}
         {/* JSON-LD: site identity for rich results. Kept in the body so it's
             covered by the existing CSP and emitted on every locale page. */}
         <script
@@ -242,15 +248,19 @@ export default async function LocaleLayout({
               system bars with what the screen actually shows. */}
           <ThemeColorSync />
           <NextIntlClientProvider>
-            <SiteHeader />
+            {embedded ? <EmbeddedHeader /> : <SiteHeader />}
             <div className="flex-1 flex flex-col">{children}</div>
-            <SiteFooter />
+            {embedded ? <EmbeddedLinkGuard /> : <SiteFooter />}
             <Toast.Provider placement="bottom end" className="bottom-8 right-8" />
             <AuditToastWatcher />
-            <CookieBanner />
-            <Analytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-            <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
-            <GaRedirectEvents />
+            {embedded ? null : (
+              <>
+                <CookieBanner />
+                <Analytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+                <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
+                <GaRedirectEvents />
+              </>
+            )}
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

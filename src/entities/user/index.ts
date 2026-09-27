@@ -9,4 +9,4 @@ export {
   getAnonToken
 } from './api/anon';
 export { isAdminEmail } from './lib/admin';
-export { createSsoToken, verifySsoToken } from './lib/sso-token';
+export { sessionFromShopifyIdToken } from './api/embedded-session';

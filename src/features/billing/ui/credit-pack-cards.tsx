@@ -75,7 +75,7 @@ export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCards
               {shopifyManage ? (
                 <a
                   href={shopifyManage.url}
-                  target="_top"
+                  target={shopifyManage.url.startsWith('/') ? undefined : '_top'}
                   className="mt-auto w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-1.5"
                 >
                   {shopifyManage.label}

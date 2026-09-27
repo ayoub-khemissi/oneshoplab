@@ -564,6 +564,19 @@ export async function shopifyManageUrlFor(userId: string): Promise<string | null
   return shop ? embeddedAppUrl(shop.shopDomain) : null;
 }
 
+/**
+ * Where plan and packs are managed for this merchant, or null for web
+ * billing. Inside the admin it is always the embedded home (same frame): no
+ * Stripe screen may open there (App Store requirement 1.2.1).
+ */
+export async function shopifyBillingLink(
+  userId: string,
+  embedded: boolean
+): Promise<string | null> {
+  if (embedded) return '/shopify';
+  return shopifyManageUrlFor(userId);
+}
+
 // ------------------------------------------------------------------ monthly refills
 
 /**

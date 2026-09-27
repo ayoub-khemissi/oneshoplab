@@ -3,7 +3,8 @@ import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { CreditPackCards, ShopifyBillingNotice } from '@/features/billing';
-import { shopifyManageUrlFor } from '@/features/shopify-connector';
+import { shopifyBillingLink } from '@/features/shopify-connector';
+import { isEmbeddedRequest } from '@/shared/embedded';
 import { InfoHint } from '@/shared/ui';
 import { auth } from '@/entities/user';
 import { getCreditBuckets } from '@/entities/credit';
@@ -22,7 +23,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const t = await getTranslations('Credits');
   const tPricing = await getTranslations('Pricing');
-  const shopifyUrl = await shopifyManageUrlFor(session.user.id);
+  const shopifyUrl = await shopifyBillingLink(session.user.id, await isEmbeddedRequest());
   const shopifyManage = shopifyUrl
     ? { url: shopifyUrl, label: tPricing('shopifyManagedCta') }
     : null;

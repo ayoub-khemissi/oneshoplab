@@ -1,8 +1,13 @@
 import { getToken } from 'next-auth/jwt';
 import createMiddleware from 'next-intl/middleware';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { REFERRAL_COOKIE, refFromSearchParams } from './entities/referral/lib/ref';
 import { routing, SUPPORTED_LOCALES } from './i18n/routing';
+import {
+  EMBEDDED_REQUEST_HEADER,
+  SHOPIFY_FRAME_ANCESTORS,
+  embeddedRequestInfo
+} from './shared/embedded/lib';
 
 /** A promoter's click is worth ninety days, the industry's window. */
 const REFERRAL_MAX_AGE = 90 * 24 * 60 * 60;
@@ -63,25 +68,43 @@ function matchesRoute(path: string, prefixes: readonly string[]): boolean {
 }
 
 /**
- * The embedded app is framed by the Shopify admin: it must say which
- * ancestors may frame it (the shop and admin.shopify.com), and nothing else
- * may. Locale routing does not apply there — Shopify passes `locale`.
+ * Inside the Shopify admin every page is framed by the admin: it says who may
+ * frame it (next.config.ts drops X-Frame-Options for framed requests). The
+ * embedded home narrows it to the one shop when Shopify names it.
  */
-function embeddedResponse(req: NextRequest): NextResponse {
-  const res = NextResponse.next();
+function frameAncestors(req: NextRequest): string {
   const shop = (req.nextUrl.searchParams.get('shop') ?? '').toLowerCase();
   const shopOk = /^[a-z0-9][a-z0-9-]{0,98}\.myshopify\.com$/.test(shop);
-  res.headers.set(
-    'Content-Security-Policy',
-    `frame-ancestors ${shopOk ? `https://${shop} ` : ''}https://admin.shopify.com`
-  );
+  return `frame-ancestors ${shopOk ? `https://${shop} https://admin.shopify.com` : SHOPIFY_FRAME_ANCESTORS}`;
+}
+
+function framed<T extends NextResponse>(req: NextRequest, res: T): T {
+  res.headers.set('Content-Security-Policy', frameAncestors(req));
   return res;
+}
+
+/**
+ * The request the pages see inside the admin: the session travels as a
+ * Bearer header (App Bridge adds it to fetches; a document load brings it as
+ * `?id_token=`), and `x-osl-embedded` tells layouts to drop the site chrome.
+ * The flag is always set here, never trusted from the client.
+ */
+function embeddedRequest(req: NextRequest, bearer: string | null): NextRequest {
+  const headers = new Headers(req.headers);
+  headers.set(EMBEDDED_REQUEST_HEADER, '1');
+  if (bearer && !headers.get('authorization')) headers.set('authorization', `Bearer ${bearer}`);
+  return new NextRequest(req.url, { headers, method: req.method });
 }
 
 export default async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
-  // Shopify opens the configured App URL with ?embedded=1&shop=…; an App URL
-  // still set to the site root lands here: hand it to the embedded app.
+  const embedded = embeddedRequestInfo({
+    secFetchDest: req.headers.get('sec-fetch-dest'),
+    authorization: req.headers.get('authorization'),
+    idTokenParam: req.nextUrl.searchParams.get('id_token')
+  });
+  // Shopify opens the App URL (the site root) with ?embedded=1&shop=…: the
+  // embedded home takes it from there.
   if (
     (pathname === '/' || LOCALE_SET.has(pathname.slice(1))) &&
     req.nextUrl.searchParams.get('embedded') === '1' &&
@@ -90,11 +113,13 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/shopify${search}`, req.url));
   }
   if (pathname === '/shopify' || pathname.startsWith('/shopify/')) {
-    // Shopify always opens the app with ?shop=. Without it we are outside the
-    // admin, where App Bridge cannot start: send the visitor to the site.
-    if (!req.nextUrl.searchParams.get('shop')) return NextResponse.redirect(new URL('/', req.url));
-    return embeddedResponse(req);
+    // Outside the admin App Bridge cannot start: send the visitor to the site.
+    if (!embedded.embedded && !req.nextUrl.searchParams.get('shop')) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    return framed(req, NextResponse.next());
   }
+  if (embedded.embedded) return framed(req, await embeddedRoute(req, embedded.bearer));
   const { locale, rest } = splitLocale(pathname);
   if (locale && rest === '/shopify') return NextResponse.redirect(new URL(`/${locale}`, req.url));
 
@@ -144,6 +169,22 @@ export default async function middleware(req: NextRequest) {
   }
 
   return rememberReferral(req, intlMiddleware(req) as NextResponse);
+}
+
+/**
+ * A page inside the admin. No cookie session exists there, so the login gate
+ * is skipped (`auth()` reads the Bearer token) and the sign-in pages lead to
+ * the embedded home, which links the shop to an account.
+ */
+async function embeddedRoute(req: NextRequest, bearer: string | null): Promise<NextResponse> {
+  const { locale, rest } = splitLocale(req.nextUrl.pathname);
+  if (locale && matchesRoute(rest, GUEST_ONLY)) {
+    const home = new URL('/shopify', req.url);
+    const shop = req.nextUrl.searchParams.get('shop');
+    if (shop) home.searchParams.set('shop', shop);
+    return NextResponse.redirect(home);
+  }
+  return intlMiddleware(embeddedRequest(req, bearer)) as NextResponse;
 }
 
 export const config = {

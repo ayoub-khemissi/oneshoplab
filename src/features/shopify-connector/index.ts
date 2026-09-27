@@ -97,6 +97,7 @@ export {
   packChargeName,
   parsePackChargeName,
   refillShopifySubscriptions,
+  shopifyBillingLink,
   shopifyManageUrlFor,
   startShopifyPackPurchase,
   startShopifySubscription

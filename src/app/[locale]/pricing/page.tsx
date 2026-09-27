@@ -16,7 +16,8 @@ import {
   PricingCards,
   ShopifyBillingNotice
 } from '@/features/billing';
-import { shopifyManageUrlFor } from '@/features/shopify-connector';
+import { shopifyBillingLink } from '@/features/shopify-connector';
+import { isEmbeddedRequest } from '@/shared/embedded';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
@@ -83,7 +84,9 @@ export default async function PricingPage() {
   // "Current plan" / "Upgrade" / "Downgrade" / "Switch cycle" rather
   // than a uniform "Subscribe" — and route those changes through the
   // customer portal instead of opening a duplicate checkout.
-  const shopifyUrl = session?.user?.id ? await shopifyManageUrlFor(session.user.id) : null;
+  const shopifyUrl = session?.user?.id
+    ? await shopifyBillingLink(session.user.id, await isEmbeddedRequest())
+    : null;
   const shopifyManage = shopifyUrl ? { url: shopifyUrl, label: t('shopifyManagedCta') } : null;
 
   let current: {

@@ -9,7 +9,10 @@
 client_id = "a0e73ac54ac812b328f60fda04371316"
 name = "OneShopLab"
 handle = "oneshoplab"
-application_url = "https://oneshoplab.com/shopify"
+# The site root: every page of the app runs inside the admin, and the admin
+# rebuilds the frame URL from this + the current path on reload. The root
+# with ?embedded=1 hands over to the embedded home (/shopify).
+application_url = "https://oneshoplab.com"
 embedded = true
 
 [build]

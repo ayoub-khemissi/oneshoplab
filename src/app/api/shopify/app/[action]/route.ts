@@ -1,5 +1,4 @@
 import { requestPull } from '@/entities/shop-connection';
-import { createSsoToken } from '@/entities/user';
 import {
   authenticateEmbedded,
   bearerFrom,
@@ -99,15 +98,6 @@ export async function POST(
       if (!row.projectId) return Response.json({ error: 'not_linked' }, { status: 409 });
       await requestPull(row.projectId);
       return Response.json({ ok: true });
-    }
-    case 'open': {
-      if (!row.userId || !row.projectId)
-        return Response.json({ error: 'not_linked' }, { status: 409 });
-      const next = `/${localeOf(body.locale)}/dashboard/sites/${row.projectId}`;
-      const t = createSsoToken(row.userId);
-      return Response.json({
-        url: `${appUrl()}/api/shopify/sso?t=${encodeURIComponent(t)}&next=${encodeURIComponent(next)}`
-      });
     }
     case 'subscribe': {
       const plan = String(body.plan ?? '');

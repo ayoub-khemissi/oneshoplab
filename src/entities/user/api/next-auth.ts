@@ -4,15 +4,14 @@ import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { REFERRAL_COOKIE, normalizeRefId, trackReferralSignup } from '@/entities/referral';
-import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
+import NextAuth, { type DefaultSession, type NextAuthConfig, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { applyCreditTransaction } from '@/entities/credit';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
 import { db } from '@/shared/db';
-import { getIdempotent, putIdempotent } from '@/shared/api';
-import { verifySsoToken } from '../lib/sso-token';
+import { embeddedSession, sessionUser } from './embedded-session';
 import {
   accounts,
   sessions,
@@ -79,26 +78,6 @@ const providers: NextAuthConfig['providers'] = [
   })
 ];
 
-// One-click sign-in from the Shopify embedded app (see ../lib/sso-token.ts).
-providers.push(
-  Credentials({
-    id: 'shopify-sso',
-    name: 'Shopify',
-    credentials: { token: { label: 'Token', type: 'text' } },
-    async authorize(credentials) {
-      const ticket = verifySsoToken(String(credentials?.token ?? ''));
-      if (!ticket) return null;
-      // Single use: the jti is spent in the same table API idempotency uses.
-      const seen = await getIdempotent('shopify-sso', ticket.jti, 'sso');
-      if (seen.kind !== 'miss') return null;
-      await putIdempotent('shopify-sso', ticket.jti, 'sso', 200, null);
-      const user = await db.query.users.findFirst({ where: eq(users.id, ticket.userId) });
-      if (!user) return null;
-      return { id: user.id, email: user.email, name: user.name ?? null, image: user.image ?? null };
-    }
-  })
-);
-
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   providers.push(
     Google({
@@ -113,7 +92,7 @@ export function isGoogleAuthEnabled(): boolean {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const nextAuth = NextAuth({
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -210,23 +189,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token?.id) {
         const u = await db.query.users.findFirst({ where: eq(users.id, String(token.id)) });
-        if (u) {
-          session.user.id = u.id;
-          session.user.email = u.email;
-          session.user.name = u.name;
-          session.user.image = u.image;
-          session.user.plan = u.plan;
-          session.user.creditsBalance = u.creditsBalance;
-          session.user.preferredChatModel = u.preferredChatModel;
-          session.user.preferredImageQuality = u.preferredImageQuality;
-          session.user.preferredImageFormat = u.preferredImageFormat;
-        }
+        if (u) Object.assign(session.user, sessionUser(u));
       }
       return session;
     }
   },
   trustHost: true
 });
+
+export const { handlers, signIn, signOut } = nextAuth;
+
+/**
+ * The session of the current request. Inside the Shopify admin there is no
+ * cookie (App Store requirement 1.1.1): the Shopify ID token App Bridge sends
+ * is the session there (./embedded-session.ts). Everywhere else, Auth.js.
+ */
+export async function auth(): Promise<Session | null> {
+  return (await embeddedSession()) ?? nextAuth.auth();
+}
 
 // Kept in its own framework-free module so server actions and tests can
 // hash passwords without importing next-auth; re-exported for callers.

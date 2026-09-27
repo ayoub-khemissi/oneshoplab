@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ArrowRight,
   ArrowUpRight,
   Coins,
   Gauge,
@@ -30,6 +31,7 @@ declare global {
 type ReadyState = {
   kind: 'ready';
   shop: string;
+  projectId: string;
   shopName: string | null;
   billingChannel: 'stripe' | 'shopify';
   plan: string;
@@ -95,10 +97,13 @@ function fetchState() {
 
 export function EmbeddedApp({
   shopHint,
+  framed,
   contactEmail
 }: {
   locale: string;
   shopHint: string | null;
+  /** The document is framed (by the admin): true even when the URL names no shop. */
+  framed: boolean;
   contactEmail: string;
 }) {
   const t = useTranslations('ShopifyApp');
@@ -108,8 +113,8 @@ export function EmbeddedApp({
   const [busy, setBusy] = useState<string | null>(null);
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [linkOpened, setLinkOpened] = useState(false);
-  // The admin always opens the app URL with `?shop=`; without it we are not in Shopify.
-  const inShopify = Boolean(shopHint);
+  // The admin opens the app URL with `?shop=`; the in-app header links here framed.
+  const inShopify = Boolean(shopHint) || framed;
 
   const applyState = useCallback((r: Awaited<ReturnType<typeof fetchState>>) => {
     if (!r || !r.ok) {
@@ -131,6 +136,17 @@ export function EmbeddedApp({
       alive = false;
     };
   }, [applyState]);
+
+  /**
+   * The full app, in this same frame. A document load carries no Bearer
+   * header: the fresh ID token rides along as `id_token`, which the proxy
+   * turns into the request's session (src/proxy.ts).
+   */
+  async function openInFrame(path: string, shop: string) {
+    setBusy('open');
+    const token = window.shopify ? await window.shopify.idToken() : '';
+    window.location.assign(`${path}?${new URLSearchParams({ id_token: token, shop })}`);
+  }
 
   async function act(action: string, body: Record<string, unknown> = {}) {
     setBusy(action + (body.plan ?? body.pack ?? ''));
@@ -276,8 +292,12 @@ export function EmbeddedApp({
             <p className="text-xs text-[var(--muted)]">{t('planCurrent', { plan: planName })}</p>
           </div>
         </div>
-        <Button primary busy={busy === 'open'} onClick={() => void act('open')}>
-          {t('openApp')} <ArrowUpRight className="size-4" aria-hidden />
+        <Button
+          primary
+          busy={busy === 'open'}
+          onClick={() => void openInFrame(`/${locale}/dashboard/sites/${s.projectId}`, s.shop)}
+        >
+          {t('openApp')} <ArrowRight className="size-4" aria-hidden />
         </Button>
       </header>
 
@@ -440,9 +460,6 @@ export function EmbeddedApp({
       ) : (
         <Card>
           <p className="text-sm">{t('managedOnWeb')}</p>
-          <Button onClick={() => void act('open')}>
-            {t('manageOnWeb')} <ArrowUpRight className="size-4" aria-hidden />
-          </Button>
         </Card>
       )}
     </Shell>

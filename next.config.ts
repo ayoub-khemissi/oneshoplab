@@ -7,7 +7,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const CSP_REPORT_ONLY = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://connect.facebook.net",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.shopify.com https://js.stripe.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
@@ -51,10 +51,11 @@ const config: NextConfig = {
   async headers() {
     return [
       {
-        // Everything but the embedded Shopify app may never be framed; the
-        // embedded app gets a per-shop frame-ancestors from src/proxy.ts and
-        // its own CSP from nginx (App Bridge comes from cdn.shopify.com).
+        // Never framed — except inside the Shopify admin (the embedded app):
+        // a framed document says so (Sec-Fetch-Dest: iframe) and src/proxy.ts
+        // answers with a frame-ancestors limited to the admin.
         source: '/:path((?!shopify$|shopify/).*)',
+        missing: [{ type: 'header', key: 'sec-fetch-dest', value: 'iframe' }],
         headers: [
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Content-Security-Policy-Report-Only', value: CSP_REPORT_ONLY }

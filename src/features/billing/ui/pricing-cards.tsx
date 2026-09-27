@@ -351,7 +351,7 @@ function CardCta({
     return (
       <a
         href={shopifyManage.url}
-        target="_top"
+        target={shopifyManage.url.startsWith('/') ? undefined : '_top'}
         className={`${baseClasses} ${isFeatured ? featuredClasses : outlineClasses}`}
       >
         {shopifyManage.label}
