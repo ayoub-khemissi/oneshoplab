@@ -14,5 +14,7 @@ export {
   enforceEmbeddedScope,
   outsideEmbeddedScope,
   sessionOutsideScope,
-  sessionFromShopifyIdToken
+  sessionFromEmbeddedToken,
+  sessionFromShopifyIdToken,
+  sessionFromWixToken
 } from './api/embedded-session';

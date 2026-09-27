@@ -9,6 +9,7 @@ export async function resetTables(): Promise<void> {
     'webhook_deliveries',
     'outbound_webhooks',
     'shopify_shops',
+    'wix_instances',
     'shop_connections',
     'gdpr_requests',
     'api_key_events',

@@ -17,10 +17,11 @@ import { wixAppConfig } from '../lib/config';
 import { mapWixProduct } from '../lib/map-product';
 import { parseWixWebhookClaims, verifyWixJwt, type WixWebhookEvent } from '../lib/webhook-jwt';
 import { createWixClient, WixClientError } from './client';
+import { onWixAppRemoved, syncWixBilling } from './app-billing';
 import { flagTokenInvalid, withWixClient } from './shared';
 
 export interface WixWebhookOutcome {
-  status: 200 | 401 | 404;
+  status: 200 | 401 | 404 | 503;
   body: { ok: boolean; action?: string; replay?: boolean; error?: string };
 }
 
@@ -52,6 +53,36 @@ async function applyEvent(
   return action ?? 'ignored';
 }
 
+/**
+ * App instance events concern the install and its billing, not a catalogue:
+ * they can arrive before any connection exists (an App Market install not
+ * linked yet). Wix is re-read rather than trusted (`syncWixBilling`).
+ */
+async function applyAppInstanceEvent(
+  event: WixWebhookEvent,
+  makeClient: typeof createWixClient
+): Promise<WixWebhookOutcome | null> {
+  if (event.kind === 'app_installed') return { status: 200, body: { ok: true, action: 'noted' } };
+  if (event.kind === 'billing') {
+    try {
+      const res = await syncWixBilling(event.instanceId, { makeClient });
+      return { status: 200, body: { ok: true, action: res ? `billing:${res.plan}` : 'no_owner' } };
+    } catch (e) {
+      // 5xx: Wix retries, and the next dashboard visit syncs anyway.
+      const message = e instanceof Error ? e.message : String(e);
+      console.error('[wix billing] webhook', event.instanceId, message);
+      return { status: 503, body: { ok: false, error: message } };
+    }
+  }
+  if (event.kind === 'app_removed') {
+    await onWixAppRemoved(event.instanceId);
+    // A linked site also has a connection to revoke: fall through to it.
+    if (!(await getConnectionByInstanceId(event.instanceId)))
+      return { status: 200, body: { ok: true, action: 'uninstalled' } };
+  }
+  return null;
+}
+
 export async function handleWixWebhook(
   rawBody: string,
   makeClient: typeof createWixClient = createWixClient
@@ -62,6 +93,8 @@ export async function handleWixWebhook(
   if (!claims) return { status: 401, body: { ok: false, error: 'bad_signature' } };
   const event = parseWixWebhookClaims(claims);
   if (!event) return { status: 200, body: { ok: true, action: 'ignored' } };
+  const appEvent = await applyAppInstanceEvent(event, makeClient);
+  if (appEvent) return appEvent;
   const connection = await getConnectionByInstanceId(event.instanceId);
   if (!connection) return { status: 404, body: { ok: false, error: 'not_found' } };
   const projectId = connection.projectId;

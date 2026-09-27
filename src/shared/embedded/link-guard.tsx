@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { embeddedLinkAction, filenameFromDisposition } from './lib';
+import { WIX_TOKEN_PARAM, embeddedLinkAction, filenameFromDisposition } from './lib';
 
 async function download(href: string): Promise<void> {
   const res = await fetch(href);
@@ -22,9 +22,10 @@ async function download(href: string): Promise<void> {
 }
 
 /**
- * Mounted only inside the Shopify admin: turns the plain links that would
- * reload the frame without a session into router navigations and fetched
- * downloads (see `embeddedLinkAction`).
+ * Mounted only inside a store admin: turns the plain links that would
+ * reload the frame without a session into router navigations, fetched
+ * downloads, or (Wix) a home link carrying the session token (see
+ * `embeddedLinkAction`).
  */
 export function EmbeddedLinkGuard() {
   const router = useRouter();
@@ -43,6 +44,15 @@ export function EmbeddedLinkGuard() {
         window.location.origin
       );
       if (action === 'ignore') return;
+      if (action === 'home') {
+        const token = window.__oslWixToken;
+        if (!token) return;
+        event.preventDefault();
+        const url = new URL(anchor.href);
+        url.searchParams.set(WIX_TOKEN_PARAM, token);
+        window.location.assign(url.pathname + url.search);
+        return;
+      }
       event.preventDefault();
       if (action === 'download') void download(anchor.href);
       else router.push(anchor.href.slice(window.location.origin.length));

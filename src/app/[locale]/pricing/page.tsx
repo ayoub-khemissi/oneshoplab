@@ -16,8 +16,8 @@ import {
   PricingCards,
   ShopifyBillingNotice
 } from '@/features/billing';
-import { shopifyBillingLink } from '@/features/shopify-connector';
-import { isEmbeddedRequest } from '@/shared/embedded';
+import { embeddedHost } from '@/shared/embedded';
+import { storeManageFor } from '@/widgets/store-billing';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
@@ -84,10 +84,12 @@ export default async function PricingPage() {
   // "Current plan" / "Upgrade" / "Downgrade" / "Switch cycle" rather
   // than a uniform "Subscribe" — and route those changes through the
   // customer portal instead of opening a duplicate checkout.
-  const shopifyUrl = session?.user?.id
-    ? await shopifyBillingLink(session.user.id, await isEmbeddedRequest())
+  const store = session?.user?.id
+    ? await storeManageFor(session.user.id, await embeddedHost())
     : null;
-  const shopifyManage = shopifyUrl ? { url: shopifyUrl, label: t('shopifyManagedCta') } : null;
+  const storeManage = store
+    ? { ...store, label: store.store === 'wix' ? t('wixManagedCta') : t('shopifyManagedCta') }
+    : null;
 
   let current: {
     plan: PlanId;
@@ -159,13 +161,13 @@ export default async function PricingPage() {
         <p className="text-lg text-[var(--muted)] leading-relaxed">{t('subtitle')}</p>
       </header>
 
-      {shopifyManage ? (
+      {storeManage ? (
         <ShopifyBillingNotice
-          url={shopifyManage.url}
+          url={storeManage.url}
           copy={{
-            title: t('shopifyManagedTitle'),
-            body: t('shopifyManagedBody'),
-            cta: t('shopifyManagedCta')
+            title: storeManage.store === 'wix' ? t('wixManagedTitle') : t('shopifyManagedTitle'),
+            body: storeManage.store === 'wix' ? t('wixManagedBody') : t('shopifyManagedBody'),
+            cta: storeManage.label
           }}
         />
       ) : null}
@@ -176,7 +178,7 @@ export default async function PricingPage() {
         signedIn={signedIn}
         available={available}
         current={current}
-        shopifyManage={shopifyManage}
+        storeManage={storeManage}
         copy={{
           perMonth: t('perMonth'),
           perMonthBilledYearly: t('perMonthBilledYearly'),
@@ -224,7 +226,7 @@ export default async function PricingPage() {
         </div>
         <CreditPackCards
           locale={locale}
-          shopifyManage={shopifyManage}
+          storeManage={storeManage}
           copy={{
             pack: {
               boost: {

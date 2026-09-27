@@ -233,7 +233,10 @@
     "customQuoteCta": "상담해 주세요, 맞춤 견적.",
     "shopifyManagedTitle": "요금제는 Shopify에서 청구됩니다",
     "shopifyManagedBody": "Shopify에서 OneShopLab을 설치했으므로 요금제와 팩은 앱에서 구매하며 Shopify 청구서로 결제됩니다.",
-    "shopifyManagedCta": "Shopify에서 관리"
+    "shopifyManagedCta": "Shopify에서 관리",
+    "wixManagedTitle": "요금제는 Wix에서 청구됩니다",
+    "wixManagedBody": "Wix에서 OneShopLab을 설치하셨습니다. 요금제와 팩은 앱에서 구매하며 다른 Wix 구매와 함께 청구됩니다.",
+    "wixManagedCta": "Wix에서 관리"
   },
   "Preferences": {
     "title": "생성 환경설정",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "스토어가 연결되지 않음",
       "notConnectedBody": "Shopify 스토어와의 연결이 끊어졌습니다. Shopify 관리자에서 OneShopLab 홈을 열면 자동으로 복구됩니다.",
-      "reconnect": "다시 연결"
+      "reconnect": "다시 연결",
+      "notConnectedBodyWix": "Wix 사이트와의 연결이 끊어졌습니다. Wix 대시보드에서 OneShopLab 홈을 열면 자동으로 복구됩니다."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "이 파일에 사용할 수 있는 행이 없습니다. 최소한 이름이 필요합니다.",
     "prefillDone": "{row}행으로 양식을 채웠습니다. 확인 후 저장하세요. 다른 {more}행은 무시되었습니다. 해당 행은 대량 가져오기를 이용하세요."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "불러오는 중…",
     "errorTitle": "OneShopLab이 응답하지 않습니다",
     "errorBody": "페이지를 새로고침하세요. 계속되면 {email}로 문의해 주세요.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Shopify로 이동 중…",
     "syncRequested": "동기화를 요청했습니다.",
     "canceled": "구독이 취소되었습니다.",
-    "billedYearly": "연 {price} 청구"
+    "billedYearly": "연 {price} 청구",
+    "outsideWix": "Wix 대시보드에서 OneShopLab을 여세요(앱 > OneShopLab).",
+    "billedByWix": "다른 Wix 구매와 함께 Wix에서 청구됩니다.",
+    "testModeWix": "테스트 모드: OneShopLab이 Wix App Market에 게시되기 전까지 구매 금액은 0달러입니다. 테스트 크레딧은 계정당 {cap, number}개로 제한됩니다.",
+    "checkoutOpened": "방금 열린 Wix 탭에서 구매를 완료한 후 여기로 돌아오세요.",
+    "downgradeWix": "더 낮은 요금제나 월간 결제로 변경하려면 먼저 Wix에서 요금제를 취소한 후 여기에서 새 요금제를 선택하세요.",
+    "manageInWix": "Wix에서 구독 관리",
+    "planOnOtherSiteWix": "요금제가 계정의 다른 Wix 사이트에서 청구되고 있습니다. 해당 크레딧은 여기서도 사용할 수 있습니다.",
+    "managedElsewhere": "요금제는 가입한 곳에서 관리됩니다.",
+    "storesMissingWix": "이 사이트에 Wix Stores가 설치되어 있지 않습니다. 상품을 OneShopLab으로 가져오려면 Wix 대시보드에서 추가하세요."
   },
   "ShopifyLink": {
     "title": "Shopify 스토어 연결",
@@ -2327,5 +2340,16 @@
     "invalid": "이 링크는 만료되었습니다. Shopify 관리자의 OneShopLab 앱에서 연결을 다시 시작하세요.",
     "linkedElsewhere": "이 스토어는 이미 다른 OneShopLab 계정에 연결되어 있습니다.",
     "notInstalled": "이 스토어에 OneShopLab 앱이 더 이상 설치되어 있지 않습니다."
+  },
+  "WixLink": {
+    "title": "Wix 사이트 연결",
+    "body": "사이트 {site}을(를) 계정 {email}에 연결할까요?",
+    "confirm": "사이트 연결",
+    "success": "{site}이(가) 계정에 연결되었습니다.",
+    "backToWix": "Wix로 돌아가기",
+    "invalid": "이 링크가 만료되었습니다. Wix 대시보드의 OneShopLab 앱에서 연결을 다시 시작하세요.",
+    "linkedElsewhere": "이 사이트는 이미 다른 OneShopLab 계정에 연결되어 있습니다.",
+    "notInstalled": "이 사이트에 더 이상 OneShopLab 앱이 설치되어 있지 않습니다.",
+    "thisSite": "이 사이트"
   }
 }

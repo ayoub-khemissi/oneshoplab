@@ -556,6 +556,42 @@ export function parseShopifyPlanChargeName(
   return { plan: tier.id as Exclude<PlanId, 'free'>, cycle: m[2] as BillingCycle };
 }
 
+// ---------------------------------------------------------------------------
+// Wix Billing (App Market installs)
+// ---------------------------------------------------------------------------
+
+export const WIX_BILLING_CURRENCY = PRICING.wixBilling.currency;
+/** Test purchases (0.00 during development) share Shopify's cap, per account. */
+export const APP_STORE_TEST_CREDIT_CAP = PRICING.shopifyBilling.testCreditCap;
+
+/** A Wix plan GUID stands for a paid plan (monthly and yearly) or a credit pack. */
+export type WixProductKey = Exclude<PlanId, 'free'> | CreditPackId;
+
+/** Price Wix charges for a plan and cycle, in USD. */
+export function wixPlanPrice(plan: Exclude<PlanId, 'free'>, cycle: BillingCycle): number {
+  const monthly = PRICING.wixBilling.plans[plan];
+  return cycle === 'yearly'
+    ? Math.round(monthly * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100
+    : monthly;
+}
+
+/** Price Wix charges for a credit pack, in USD. */
+export function wixPackPrice(pack: CreditPackId): number {
+  return PRICING.wixBilling.packs[pack];
+}
+
+/** The Wix plan GUID to check out, null while the plan is not created in Wix. */
+export function wixProductId(key: WixProductKey): string | null {
+  return PRICING.wixBilling.productIds[key] ?? null;
+}
+
+/** A Wix plan GUID back to what it sells (webhooks, purchase history). */
+export function wixProductKey(productId: string | null | undefined): WixProductKey | null {
+  if (!productId) return null;
+  const hit = Object.entries(PRICING.wixBilling.productIds).find(([, id]) => id === productId);
+  return hit ? (hit[0] as WixProductKey) : null;
+}
+
 /** Monthly-equivalent display price for a yearly cycle. */
 export function yearlyMonthlyEquivalent(monthlyPriceEur: number): number {
   return Math.round(monthlyPriceEur * (1 - YEARLY_DISCOUNT) * 100) / 100;

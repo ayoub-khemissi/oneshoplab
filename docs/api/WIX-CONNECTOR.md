@@ -6,6 +6,9 @@ last-verified: 2026-09-07
 
 # Wix connector — Wix app (OAuth), Wix Stores products
 
+> The App Market side (dashboard page, Wix Billing, site registry) is in
+> `WIX-APP-MARKET.md`; the website install below joins that registry too.
+
 Backend implemented 2026-08-30 (`features/wix-connector`, migration
 `0029_shop_oauth_wix`); wizard UI shipped 2026-08-30 (`features/wix-connector/ui`: `WixInstallButton`, `WixConnectionCard`; mocks `wix-*` in `features/integrations/ui/mocks`). Wix has no "custom app" token: the
 merchant installs **our Wix app** on their site; the credential for a site is

@@ -67,13 +67,11 @@ export type { GdprOutcome } from './api/gdpr';
 export {
   authenticateEmbedded,
   createShopLinkToken,
-  emailTaken,
   ensureEmbeddedInstall,
   exchangeIdToken,
   fetchShopFacts,
   linkShopToUser,
   loadEmbeddedState,
-  maskEmail,
   onboardShopifyShop,
   verifyShopLinkToken
 } from './api/embedded';

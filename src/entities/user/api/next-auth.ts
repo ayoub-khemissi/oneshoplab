@@ -24,10 +24,16 @@ import {
   legalConsents
 } from '@/shared/db/schema';
 
+import type { EmbeddedHost } from '@/shared/embedded';
+
 declare module 'next-auth' {
   interface Session {
-    /** Set inside the Shopify admin: the app only reaches this shop's site. */
-    embedded?: { shop: string; projectId: string | null };
+    /**
+     * Set inside a store admin (Shopify admin, Wix dashboard): the app only
+     * reaches this store's site. `shop` is the shop domain on Shopify, the
+     * app instance id on Wix.
+     */
+    embedded?: { host: EmbeddedHost; shop: string; projectId: string | null };
     user: {
       id: string;
       plan: Plan;

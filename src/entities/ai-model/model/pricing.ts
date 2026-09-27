@@ -209,6 +209,28 @@ const PricingSchema = z.object({
     /** Credits a development store's test charges may grant, per account, in total. */
     testCreditCap: z.number().int().nonnegative()
   }),
+  _wixBillingComment: z.string().optional(),
+  /** Wix Billing prices and plan GUIDs (App Market installs). */
+  wixBilling: z.object({
+    currency: z.literal('USD'),
+    plans: z.object({
+      starter: z.number().positive(),
+      pro: z.number().positive(),
+      scale: z.number().positive()
+    }),
+    packs: z.object(
+      Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, z.number().positive()])) as Record<
+        CreditPackId,
+        z.ZodNumber
+      >
+    ),
+    /** Plan GUIDs from the Wix app dashboard; null until the plan exists there. */
+    productIds: z.object(
+      Object.fromEntries(
+        ['starter', 'pro', 'scale', ...CREDIT_PACK_IDS].map((id) => [id, z.string().nullable()])
+      ) as Record<'starter' | 'pro' | 'scale' | CreditPackId, z.ZodNullable<z.ZodString>>
+    )
+  }),
   creditPacks: z.object(
     Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, CreditPackSchema])) as Record<
       CreditPackId,

@@ -233,7 +233,10 @@
     "customQuoteCta": "Let's talk, custom quote.",
     "shopifyManagedTitle": "Your plan is billed by Shopify",
     "shopifyManagedBody": "You installed OneShopLab from Shopify: plans and packs are bought in the app, straight on your Shopify invoice.",
-    "shopifyManagedCta": "Manage in Shopify"
+    "shopifyManagedCta": "Manage in Shopify",
+    "wixManagedTitle": "Your plan is billed by Wix",
+    "wixManagedBody": "You installed OneShopLab from Wix: plans and packs are bought in the app, with your other Wix purchases.",
+    "wixManagedCta": "Manage in Wix"
   },
   "Preferences": {
     "title": "Generation preferences",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "Store not connected",
       "notConnectedBody": "The connection to your Shopify store is broken. Open the OneShopLab home in your Shopify admin: it is restored automatically.",
-      "reconnect": "Reconnect"
+      "reconnect": "Reconnect",
+      "notConnectedBodyWix": "The connection to your Wix site is broken. Open the OneShopLab home in your Wix dashboard: it is restored automatically."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "No usable row in this file: it needs at least a name.",
     "prefillDone": "Form filled from row {row}. Check it, then save. {more} other rows were ignored — use the bulk import for those."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "Loading…",
     "errorTitle": "OneShopLab is not responding",
     "errorBody": "Reload the page. If it keeps happening, write to us at {email}.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Redirecting to Shopify…",
     "syncRequested": "Sync requested.",
     "canceled": "Subscription cancelled.",
-    "billedYearly": "Billed {price} per year"
+    "billedYearly": "Billed {price} per year",
+    "outsideWix": "Open OneShopLab from your Wix dashboard (Apps > OneShopLab).",
+    "billedByWix": "Billed by Wix, with your other Wix purchases.",
+    "testModeWix": "Test mode: until OneShopLab is published on the Wix App Market, purchases cost $0. Test credits are limited to {cap, number} per account.",
+    "checkoutOpened": "Complete your purchase in the Wix tab that just opened, then come back here.",
+    "downgradeWix": "To move to a lower plan or to monthly billing, cancel your plan in Wix first, then choose the new one here.",
+    "manageInWix": "Manage my subscriptions in Wix",
+    "planOnOtherSiteWix": "Your plan is billed on another Wix site of your account. Its credits are available here too.",
+    "managedElsewhere": "Your plan is managed where you subscribed to it.",
+    "storesMissingWix": "Wix Stores is not installed on this site. Add it from your Wix dashboard to bring your products into OneShopLab."
   },
   "ShopifyLink": {
     "title": "Link your Shopify store",
@@ -2327,5 +2340,16 @@
     "invalid": "This link has expired. Start the link again from the OneShopLab app in your Shopify admin.",
     "linkedElsewhere": "This store is already linked to another OneShopLab account.",
     "notInstalled": "The OneShopLab app is no longer installed on this store."
+  },
+  "WixLink": {
+    "title": "Link your Wix site",
+    "body": "Link the site {site} to your account {email}?",
+    "confirm": "Link the site",
+    "success": "{site} is linked to your account.",
+    "backToWix": "Back to Wix",
+    "invalid": "This link has expired. Start the link again from the OneShopLab app in your Wix dashboard.",
+    "linkedElsewhere": "This site is already linked to another OneShopLab account.",
+    "notInstalled": "The OneShopLab app is no longer installed on this site.",
+    "thisSite": "this site"
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertTriangle,
   ArrowRight,
   ArrowUpRight,
   Coins,
@@ -12,15 +13,19 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
   SIGNUP_FREE_CREDITS,
   shopifyPackPrice,
   shopifyPlanPrice,
+  wixPackPrice,
+  wixPlanPrice,
   type BillingCycle
 } from '@/entities/ai-model';
+import type { EmbeddedHost } from '@/shared/embedded/client';
+import { Button, Card, Logo, Shell, Stat } from './parts';
 
 declare global {
   interface Window {
@@ -33,10 +38,12 @@ type ReadyState = {
   shop: string;
   projectId: string;
   shopName: string | null;
-  billingChannel: 'stripe' | 'shopify';
+  billingChannel: 'stripe' | 'shopify' | 'wix';
   plan: string;
   cycle: string | null;
   subscriptionStatus: string | null;
+  /** Wix only: the plan was bought on another Wix site of the account. */
+  planOnOtherSite?: boolean;
   credits: number;
   products: number;
   lastPullAtIso: string | null;
@@ -52,30 +59,32 @@ type OnboardingState = {
   shopName: string | null;
   email: string | null;
   emailTaken: boolean;
+  /** Wix only: Wix Stores is not on the site. */
+  storesMissing?: boolean;
 };
 type State = ReadyState | OnboardingState;
+type PaidPlan = 'starter' | 'pro' | 'scale';
 
 const PAID = PLAN_TIERS.filter((t) => t.id !== 'free');
+const RANK = (plan: string) => PLAN_TIERS.findIndex((t) => t.id === plan);
+/** Where a Wix user cancels an app plan (Wix bills; we cannot cancel for them). */
+const WIX_SUBSCRIPTIONS_URL = 'https://manage.wix.com/account/subscriptions';
 
-async function call<T>(
-  path: string,
-  init: RequestInit = {}
-): Promise<{ ok: boolean; status: number; data: T }> {
-  const token = window.shopify ? await window.shopify.idToken() : '';
-  const res = await fetch(path, {
-    ...init,
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${token}`,
-      ...(init.headers ?? {})
-    }
-  });
-  const data = (await res.json().catch(() => ({}))) as T;
-  return { ok: res.ok, status: res.status, data };
+/**
+ * What differs between the admins: where the session comes from, which API
+ * answers, how a checkout opens, and the store's own prices.
+ */
+interface HostAdapter {
+  api: string;
+  /** Query parameter a document load carries the session in. */
+  tokenParam: string;
+  token(): Promise<string>;
+  planPrice(plan: PaidPlan, cycle: BillingCycle): number;
+  packPrice(pack: (typeof CREDIT_PACKS)[number]['id']): number;
 }
 
-function toast(msg: string) {
-  window.shopify?.toast?.show(msg);
+function usd(amount: number): string {
+  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: amount % 1 ? 2 : 0 })}`;
 }
 
 function scoreTone(score: number | null): string {
@@ -87,36 +96,77 @@ function scoreTone(score: number | null): string {
       : 'text-[var(--success)]';
 }
 
-function usd(amount: number): string {
-  return `$${amount.toLocaleString('en-US', { minimumFractionDigits: amount % 1 ? 2 : 0 })}`;
-}
-
-function fetchState() {
-  return call<State>('/api/shopify/app/state').catch(() => null);
-}
-
 export function EmbeddedApp({
+  host,
   shopHint,
   framed,
-  contactEmail
+  contactEmail,
+  wixToken = null
 }: {
+  host: EmbeddedHost;
   locale: string;
   shopHint: string | null;
-  /** The document is framed (by the admin): true even when the URL names no shop. */
+  /** The document is framed (by the admin): true even when the URL names no store. */
   framed: boolean;
   contactEmail: string;
+  /** Wix: our session token, minted by the page from Wix's signed instance. */
+  wixToken?: string | null;
 }) {
-  const t = useTranslations('ShopifyApp');
+  const t = useTranslations('EmbeddedApp');
   const locale = useLocale();
   const [state, setState] = useState<State | null>(null);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [linkOpened, setLinkOpened] = useState(false);
-  // The admin opens the app URL with `?shop=`; the in-app header links here framed.
-  const inShopify = Boolean(shopHint) || framed;
+  const [checkoutOpened, setCheckoutOpened] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const wixTokenRef = useRef(wixToken);
+  const wix = host === 'wix';
+  // Shopify opens the app URL with `?shop=`; Wix with a signed instance.
+  const inAdmin = wix ? Boolean(wixToken) : Boolean(shopHint) || framed;
 
-  const applyState = useCallback((r: Awaited<ReturnType<typeof fetchState>>) => {
+  const adapter: HostAdapter = wix
+    ? {
+        api: '/api/wix/app',
+        tokenParam: 'osl_token',
+        token: async () => wixTokenRef.current ?? '',
+        planPrice: wixPlanPrice,
+        packPrice: wixPackPrice
+      }
+    : {
+        api: '/api/shopify/app',
+        tokenParam: 'id_token',
+        token: async () => (window.shopify ? await window.shopify.idToken() : ''),
+        planPrice: shopifyPlanPrice,
+        packPrice: shopifyPackPrice
+      };
+  const adapterRef = useRef(adapter);
+  adapterRef.current = adapter;
+
+  const call = useCallback(async <T,>(path: string, init: RequestInit = {}) => {
+    const token = await adapterRef.current.token();
+    const res = await fetch(`${adapterRef.current.api}/${path}`, {
+      ...init,
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
+        ...(init.headers ?? {})
+      }
+    });
+    const data = (await res.json().catch(() => ({}))) as T;
+    return { ok: res.ok, status: res.status, data };
+  }, []);
+
+  const toast = useCallback(
+    (msg: string) => {
+      if (!wix && window.shopify?.toast) window.shopify.toast.show(msg);
+      else setNotice(msg);
+    },
+    [wix]
+  );
+
+  const applyState = useCallback((r: { ok: boolean; data: State } | null) => {
     if (!r || !r.ok) {
       setError(true);
       return;
@@ -125,9 +175,11 @@ export function EmbeddedApp({
     setState(r.data);
     if (r.data.kind === 'ready' && r.data.cycle === 'yearly') setCycle('yearly');
   }, []);
-  const load = useCallback(async () => applyState(await fetchState()), [applyState]);
+  const fetchState = useCallback(() => call<State>('state').catch(() => null), [call]);
+  const load = useCallback(async () => applyState(await fetchState()), [applyState, fetchState]);
 
   useEffect(() => {
+    if (!inAdmin) return;
     let alive = true;
     void fetchState().then((r) => {
       if (alive) applyState(r);
@@ -135,36 +187,69 @@ export function EmbeddedApp({
     return () => {
       alive = false;
     };
-  }, [applyState]);
+  }, [applyState, fetchState, inAdmin]);
+
+  // Wix: renew our session before it expires; a checkout in another tab
+  // brings the merchant back here, so read the state again on return.
+  useEffect(() => {
+    if (!wix || !inAdmin) return;
+    const renew = setInterval(
+      () => {
+        void call<{ token?: string }>('session', { method: 'POST' }).then((r) => {
+          if (r.ok && r.data.token) wixTokenRef.current = r.data.token;
+        });
+      },
+      20 * 60 * 1000
+    );
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void load();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(renew);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [wix, inAdmin, call, load]);
 
   /**
    * The full app, in this same frame. A document load carries no Bearer
-   * header: the fresh ID token rides along as `id_token`, which the proxy
-   * turns into the request's session (src/proxy.ts).
+   * header: the session rides along in the URL, which the proxy turns into
+   * the request's session (src/proxy.ts).
    */
   async function openInFrame(path: string, shop: string) {
     setBusy('open');
-    const token = window.shopify ? await window.shopify.idToken() : '';
-    window.location.assign(`${path}?${new URLSearchParams({ id_token: token, shop })}`);
+    const token = await adapter.token();
+    const q = new URLSearchParams({ [adapter.tokenParam]: token });
+    if (!wix) q.set('shop', shop);
+    window.location.assign(`${path}?${q}`);
   }
 
   async function act(action: string, body: Record<string, unknown> = {}) {
     setBusy(action + (body.plan ?? body.pack ?? ''));
+    setNotice(null);
     try {
-      const r = await call<{ url?: string; confirmationUrl?: string; error?: string }>(
-        `/api/shopify/app/${action}`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ locale, ...body })
-        }
-      );
+      const r = await call<{
+        url?: string;
+        confirmationUrl?: string;
+        checkoutUrl?: string;
+        error?: string;
+      }>(action, {
+        method: 'POST',
+        body: JSON.stringify({ locale, ...body })
+      });
       if (!r.ok) {
-        toast(t('actionFailed'));
+        toast(r.data.error === 'downgrade' ? t('downgradeWix') : t('actionFailed'));
         return;
       }
       if (r.data.confirmationUrl) {
         toast(t('redirecting'));
         window.open(r.data.confirmationUrl, '_top');
+        return;
+      }
+      if (r.data.checkoutUrl) {
+        // Wix checkout opens in a new tab; back here, the state is read again.
+        window.open(r.data.checkoutUrl, '_blank', 'noopener');
+        setCheckoutOpened(true);
         return;
       }
       if (r.data.url) {
@@ -180,10 +265,16 @@ export function EmbeddedApp({
     }
   }
 
-  if (!inShopify) {
+  const noticeBar = notice ? (
+    <p role="status" className="rounded-md bg-[var(--default)] px-3 py-2 text-sm">
+      {notice}
+    </p>
+  ) : null;
+
+  if (!inAdmin) {
     return (
       <Shell>
-        <p className="text-sm text-[var(--muted)]">{t('outsideShopify')}</p>
+        <p className="text-sm text-[var(--muted)]">{wix ? t('outsideWix') : t('outsideShopify')}</p>
       </Shell>
     );
   }
@@ -212,12 +303,19 @@ export function EmbeddedApp({
     const canCreate = Boolean(state.email) && !state.emailTaken;
     return (
       <Shell>
+        {noticeBar}
         <Card className="max-w-xl">
           <div className="flex items-center gap-3">
             <Logo />
             <h1 className="text-xl font-semibold tracking-tight">{t('welcomeTitle')}</h1>
           </div>
           <p className="text-sm leading-relaxed text-[var(--muted)]">{t('welcomeBody')}</p>
+          {state.storesMissing ? (
+            <p className="flex items-start gap-2 rounded-md bg-[var(--warning)]/10 px-3 py-2 text-sm">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" aria-hidden />
+              {t('storesMissingWix')}
+            </p>
+          ) : null}
           {canCreate ? (
             <>
               <p className="text-sm">
@@ -280,8 +378,11 @@ export function EmbeddedApp({
   const s = state;
   const lastSync = s.lastPullAtIso ? new Date(s.lastPullAtIso).toLocaleString(locale) : null;
   const planName = PLAN_TIERS.find((p) => p.id === s.plan)?.name ?? t('freePlan');
+  const billedHere = s.billingChannel === host;
+  const paidActive = s.plan !== 'free' && s.subscriptionStatus === 'active';
   return (
     <Shell>
+      {noticeBar}
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <Logo />
@@ -337,13 +438,15 @@ export function EmbeddedApp({
         <p className="text-sm text-[var(--muted)]">{t('openAppHint')}</p>
       </Card>
 
-      {s.billingChannel === 'shopify' ? (
+      {billedHere && !s.planOnOtherSite ? (
         <>
           <Card>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold">{t('planTitle')}</h2>
-                <p className="text-xs text-[var(--muted)]">{t('billedByShopify')}</p>
+                <p className="text-xs text-[var(--muted)]">
+                  {wix ? t('billedByWix') : t('billedByShopify')}
+                </p>
               </div>
               <div className="inline-flex rounded-lg bg-[var(--default)] p-1 text-sm" role="group">
                 {(['monthly', 'yearly'] as const).map((c) => (
@@ -370,16 +473,29 @@ export function EmbeddedApp({
             </div>
             {s.testCharges ? (
               <p className="rounded-md bg-[var(--default)] px-3 py-2 text-xs text-[var(--muted)]">
-                {t('testMode', { cap: s.testCreditCap })}
+                {wix
+                  ? t('testModeWix', { cap: s.testCreditCap })
+                  : t('testMode', { cap: s.testCreditCap })}
               </p>
+            ) : null}
+            {checkoutOpened ? (
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-[var(--muted)]">{t('checkoutOpened')}</span>
+                <Button onClick={() => void load()}>{t('linkDone')}</Button>
+              </div>
             ) : null}
             <div className="grid gap-3 md:grid-cols-3">
               {PAID.map((tier) => {
                 const current =
-                  s.plan === tier.id &&
-                  (s.cycle ?? 'monthly') === cycle &&
-                  s.subscriptionStatus === 'active';
-                const price = shopifyPlanPrice(tier.id as 'starter' | 'pro' | 'scale', cycle);
+                  s.plan === tier.id && (s.cycle ?? 'monthly') === cycle && paidActive;
+                // Wix bills a lower plan (or yearly → monthly) as a cancellation
+                // plus a new purchase: that goes through Wix, not this page.
+                const lower =
+                  wix &&
+                  paidActive &&
+                  (RANK(tier.id) < RANK(s.plan) ||
+                    (tier.id === s.plan && s.cycle === 'yearly' && cycle === 'monthly'));
+                const price = adapter.planPrice(tier.id as PaidPlan, cycle);
                 return (
                   <div
                     key={tier.id}
@@ -406,8 +522,8 @@ export function EmbeddedApp({
                       {t('creditsPerMonth', { credits: tier.credits })}
                     </span>
                     <Button
-                      primary={!current}
-                      disabled={current}
+                      primary={!current && !lower}
+                      disabled={current || lower}
                       busy={busy === `subscribe${tier.id}`}
                       onClick={() => void act('subscribe', { plan: tier.id, cycle })}
                     >
@@ -417,7 +533,20 @@ export function EmbeddedApp({
                 );
               })}
             </div>
-            {s.plan !== 'free' && s.subscriptionStatus === 'active' ? (
+            {paidActive && wix ? (
+              <p className="text-xs text-[var(--muted)]">
+                {t('downgradeWix')}{' '}
+                <a
+                  className="underline underline-offset-2"
+                  href={WIX_SUBSCRIPTIONS_URL}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  {t('manageInWix')}
+                </a>
+              </p>
+            ) : null}
+            {paidActive && !wix ? (
               <button
                 type="button"
                 className="self-start text-xs text-[var(--muted)] underline underline-offset-2"
@@ -450,7 +579,7 @@ export function EmbeddedApp({
                     busy={busy === `purchase${p.id}`}
                     onClick={() => void act('purchase', { pack: p.id })}
                   >
-                    {t('buyPack')} · ${shopifyPackPrice(p.id)}
+                    {t('buyPack')} · {usd(adapter.packPrice(p.id))}
                   </Button>
                 </div>
               ))}
@@ -459,88 +588,15 @@ export function EmbeddedApp({
         </>
       ) : (
         <Card>
-          <p className="text-sm">{t('managedOnWeb')}</p>
+          <p className="text-sm">
+            {s.planOnOtherSite
+              ? t('planOnOtherSiteWix')
+              : s.billingChannel === 'stripe'
+                ? t('managedOnWeb')
+                : t('managedElsewhere')}
+          </p>
         </Card>
       )}
     </Shell>
-  );
-}
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4 md:p-6">{children}</main>
-  );
-}
-
-function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <section
-      className={`flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-white p-4 shadow-sm md:p-5 ${className}`}
-    >
-      {children}
-    </section>
-  );
-}
-
-function Stat({
-  icon,
-  label,
-  children
-}: {
-  icon: React.ReactNode;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-1 rounded-xl border border-[var(--border)] bg-white p-3 shadow-sm">
-      <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
-        {icon}
-        {label}
-      </span>
-      <span className="text-xl font-semibold tabular-nums">{children}</span>
-    </div>
-  );
-}
-
-function Button({
-  children,
-  onClick,
-  primary = false,
-  busy = false,
-  disabled = false
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  primary?: boolean;
-  busy?: boolean;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={busy || disabled}
-      className={`inline-flex items-center justify-center gap-2 self-start rounded-lg px-4 py-2 text-sm font-medium transition-opacity disabled:cursor-not-allowed disabled:opacity-60 ${
-        primary
-          ? 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90'
-          : 'border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--default)]'
-      }`}
-    >
-      {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-      {children}
-    </button>
-  );
-}
-
-function Logo() {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/osl-dark.svg"
-      alt="OneShopLab"
-      width={36}
-      height={36}
-      className="size-9 rounded-lg"
-    />
   );
 }

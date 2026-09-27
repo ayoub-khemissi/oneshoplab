@@ -19,7 +19,11 @@ import {
   connectWix,
   disconnect,
   getConnectionForUser,
-  requestPull
+  getWixInstance,
+  markWixInstanceLinked,
+  recordWixInstall,
+  requestPull,
+  settleBillingChannel
 } from '@/entities/shop-connection';
 import { createOauthState, verifyOauthState, type OauthStatePayload } from '@/shared/lib';
 import { wixAppConfig } from '../lib/config';
@@ -125,7 +129,32 @@ export async function completeWixInstall(
   });
   if (!saved.ok) return fail(saved.reason, state);
   await requestPull(state.projectId);
+  await registerWebInstall(instanceId, state.userId, state.projectId, site);
   return { ok: true, projectId: state.projectId, locale: state.locale };
+}
+
+/**
+ * The website's install is the same Wix app as the App Market's, so the site
+ * joins the same registry: uninstall and Wix Billing (App Market guideline
+ * "Accepting payments") then work the same for both ways in. A site another
+ * account already holds installed stays theirs.
+ */
+async function registerWebInstall(
+  instanceId: string,
+  userId: string,
+  projectId: string,
+  site: { siteDisplayName: string | null; host: string | null; language?: string | null }
+): Promise<void> {
+  const existing = await getWixInstance(instanceId);
+  if (existing?.userId && existing.userId !== userId && !existing.uninstalledAt) return;
+  await recordWixInstall(instanceId, {
+    siteName: site.siteDisplayName,
+    siteHost: site.host,
+    ownerEmail: existing?.ownerEmail ?? null,
+    siteLocale: site.language ?? existing?.siteLocale ?? null
+  });
+  await markWixInstanceLinked(instanceId, userId, projectId);
+  await settleBillingChannel(userId, 'wix');
 }
 
 /** "Disconnect": the instance is forgotten on our side; the merchant removes the app from Wix themselves. */

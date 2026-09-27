@@ -9,7 +9,7 @@ export interface WixWebhookEvent {
   instanceId: string;
   /** Raw event type / slug as sent (`ProductChanged`, `wix.stores.v1.product_updated`…). */
   eventType: string;
-  kind: 'created' | 'updated' | 'deleted' | 'app_removed' | 'other';
+  kind: 'created' | 'updated' | 'deleted' | 'app_removed' | 'app_installed' | 'billing' | 'other';
   productId: string | null;
 }
 
@@ -49,6 +49,9 @@ function parseMaybeJson(v: unknown): Record<string, unknown> {
 
 function kindOf(eventType: string, envelope: Record<string, unknown>): WixWebhookEvent['kind'] {
   const t = eventType.toLowerCase();
+  // App instance events first: "PaidPlanChanged" is not a product update.
+  if (/paid_?plan|plan_?(reactivated|converted|transferred)/.test(t)) return 'billing';
+  if (t === 'appinstalled' || t.endsWith('app_installed')) return 'app_installed';
   if (t === 'appremoved' || t.endsWith('app_removed') || t.endsWith('.removed'))
     return 'app_removed';
   if (t.includes('delet') || envelope.deletedEvent) return 'deleted';

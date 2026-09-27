@@ -4,7 +4,9 @@ import {
   bestValuePack,
   CREDIT_PACKS,
   packPerCreditEur,
-  shopifyPackPrice
+  shopifyPackPrice,
+  wixPackPrice,
+  type CreditPackId
 } from '@/entities/ai-model';
 import { buyCreditPackAction } from '../api/actions';
 import { getStripePackPriceId } from '../api/stripe';
@@ -20,7 +22,7 @@ interface CreditPackCardsProps {
     buyLabel: string;
     comingSoonLabel: string;
     perCreditLabel: (perCredit: string) => string;
-    /** Same in dollars: merchants billed by Shopify pay its USD prices. */
+    /** Same in dollars: merchants billed by a store (Shopify, Wix) pay its USD prices. */
     perCreditUsdLabel: (perCredit: string) => string;
     /** Badge on the pack with the lowest price per credit. Optional: the
      *  account page lists packs without ranking them. */
@@ -28,8 +30,8 @@ interface CreditPackCardsProps {
   };
   /** BCP-47 tag for number formatting (falls back to the runtime default). */
   locale?: string;
-  /** Merchants billed through Shopify buy packs in the embedded app. */
-  shopifyManage?: { url: string; label: string } | null;
+  /** Merchants billed by a store (Shopify, Wix) buy packs in its app. */
+  storeManage?: { url: string; label: string; store: 'shopify' | 'wix' } | null;
 }
 
 /**
@@ -38,11 +40,15 @@ interface CreditPackCardsProps {
  * /login?next=/account/credits, so this component doesn't need to
  * branch on session state.
  */
+function storePackPrice(store: 'shopify' | 'wix', pack: CreditPackId): number {
+  return store === 'wix' ? wixPackPrice(pack) : shopifyPackPrice(pack);
+}
+
 function usd(amount: number): string {
   return `$${amount % 1 ? amount.toFixed(2) : amount}`;
 }
 
-export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCardsProps) {
+export function CreditPackCards({ copy, locale, storeManage }: CreditPackCardsProps) {
   const best = bestValuePack().id;
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -77,26 +83,30 @@ export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCards
                   {copy.creditsLabel}
                 </span>
               </div>
-              {/* Billed by Shopify: its USD prices, not the site's euros. */}
+              {/* Billed by a store: its USD prices, not the site's euros. */}
               <div className="flex flex-col gap-0.5">
                 <span className="text-2xl font-bold">
-                  {shopifyManage ? usd(shopifyPackPrice(pack.id)) : `€${pack.priceEur.toFixed(2)}`}
+                  {storeManage
+                    ? usd(storePackPrice(storeManage.store, pack.id))
+                    : `€${pack.priceEur.toFixed(2)}`}
                 </span>
                 <span className="text-xs text-[var(--muted)]">
                   (
-                  {shopifyManage
-                    ? copy.perCreditUsdLabel((shopifyPackPrice(pack.id) / pack.credits).toFixed(4))
+                  {storeManage
+                    ? copy.perCreditUsdLabel(
+                        (storePackPrice(storeManage.store, pack.id) / pack.credits).toFixed(4)
+                      )
                     : copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
                   )
                 </span>
               </div>
-              {shopifyManage ? (
+              {storeManage ? (
                 <a
-                  href={shopifyManage.url}
-                  target={shopifyManage.url.startsWith('/') ? undefined : '_top'}
+                  href={storeManage.url}
+                  target={storeManage.url.startsWith('/') ? undefined : '_top'}
                   className="mt-auto w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium text-center hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-1.5"
                 >
-                  {shopifyManage.label}
+                  {storeManage.label}
                 </a>
               ) : (
                 <form action={buyCreditPackAction} className="mt-auto">

@@ -13,3 +13,5 @@ export type {
   CreditTxResult
 } from './api/ledger';
 export { nextRefill } from './lib/refill';
+export { TEST_GRANT_REASONS, grantTestCredits } from './api/test-grants';
+export type { TestGrantReason } from './api/test-grants';

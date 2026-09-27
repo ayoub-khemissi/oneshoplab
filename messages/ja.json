@@ -233,7 +233,10 @@
     "customQuoteCta": "ご相談ください（個別見積もり）。",
     "shopifyManagedTitle": "プランは Shopify で請求されます",
     "shopifyManagedBody": "OneShopLab を Shopify からインストールしたため、プランとパックはアプリ内で購入し、Shopify の請求書で支払います。",
-    "shopifyManagedCta": "Shopify で管理"
+    "shopifyManagedCta": "Shopify で管理",
+    "wixManagedTitle": "プランは Wix が請求しています",
+    "wixManagedBody": "OneShopLab を Wix からインストールしたため、プランとパックはアプリ内で購入し、Wix の他のご購入とまとめて請求されます。",
+    "wixManagedCta": "Wix で管理"
   },
   "Preferences": {
     "title": "生成設定",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "ストアが接続されていません",
       "notConnectedBody": "Shopify ストアとの接続が切れています。Shopify 管理画面で OneShopLab のホームを開くと、自動的に復旧します。",
-      "reconnect": "再接続"
+      "reconnect": "再接続",
+      "notConnectedBodyWix": "Wix サイトとの接続が切れています。Wix ダッシュボードで OneShopLab のホームを開くと、自動的に復旧します。"
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "このファイルに使える行がありません。少なくとも商品名が必要です。",
     "prefillDone": "{row} 行目からフォームを入力しました。確認して保存してください。他の {more} 行は無視されました。それらには一括インポートをご利用ください。"
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "読み込み中…",
     "errorTitle": "OneShopLab が応答しません",
     "errorBody": "ページを再読み込みしてください。解決しない場合は {email} までご連絡ください。",
@@ -2316,7 +2320,16 @@
     "redirecting": "Shopify へ移動中…",
     "syncRequested": "同期をリクエストしました。",
     "canceled": "サブスクリプションを解約しました。",
-    "billedYearly": "年額 {price} で請求"
+    "billedYearly": "年額 {price} で請求",
+    "outsideWix": "Wix ダッシュボードから OneShopLab を開いてください（アプリ > OneShopLab）。",
+    "billedByWix": "Wix の他のご購入とまとめて Wix が請求します。",
+    "testModeWix": "テストモード：OneShopLab が Wix App Market に公開されるまで、購入は 0 ドルです。テスト用クレジットは 1 アカウントあたり {cap, number} までです。",
+    "checkoutOpened": "開いた Wix のタブで購入を完了してから、ここに戻ってください。",
+    "downgradeWix": "下位プランや月払いに変更するには、まず Wix でプランを解約してから、ここで新しいプランを選んでください。",
+    "manageInWix": "Wix でサブスクリプションを管理",
+    "planOnOtherSiteWix": "プランはアカウント内の別の Wix サイトで請求されています。そのクレジットはここでも使えます。",
+    "managedElsewhere": "プランは申し込んだ場所で管理できます。",
+    "storesMissingWix": "このサイトには Wix Stores がインストールされていません。商品を OneShopLab に取り込むには、Wix ダッシュボードから追加してください。"
   },
   "ShopifyLink": {
     "title": "Shopify ストアを連携",
@@ -2327,5 +2340,16 @@
     "invalid": "このリンクは期限切れです。Shopify 管理画面の OneShopLab アプリから連携をやり直してください。",
     "linkedElsewhere": "このストアは別の OneShopLab アカウントに連携済みです。",
     "notInstalled": "このストアには OneShopLab アプリがインストールされていません。"
+  },
+  "WixLink": {
+    "title": "Wix サイトを連携",
+    "body": "サイト {site} をアカウント {email} に連携しますか？",
+    "confirm": "サイトを連携",
+    "success": "{site} をアカウントに連携しました。",
+    "backToWix": "Wix に戻る",
+    "invalid": "このリンクは期限切れです。Wix ダッシュボードの OneShopLab アプリから連携をやり直してください。",
+    "linkedElsewhere": "このサイトは既に別の OneShopLab アカウントに連携されています。",
+    "notInstalled": "このサイトには OneShopLab アプリがインストールされていません。",
+    "thisSite": "このサイト"
   }
 }

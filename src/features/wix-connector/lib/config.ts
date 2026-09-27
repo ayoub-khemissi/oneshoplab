@@ -3,7 +3,9 @@
  * WIX_APP_PUBLIC_KEY (webhook JWT, PEM — `\n` escapes accepted),
  * WIX_SHARE_URL_ID (the GUID at the end of the app's share install link —
  * required by Wix's external install flow while the app is not listed on
- * the App Market; optional once it is).
+ * the App Market; optional once it is), WIX_APP_PUBLISHED=1 once the App
+ * Market listing is live (before that Wix prices every plan at 0.00, and the
+ * app says purchases are test purchases).
  */
 export const WIX_STATE_COOKIE = 'osl_wix_oauth';
 
@@ -14,6 +16,8 @@ export interface WixAppConfig {
   publicKey: string | null;
   /** Null for a listed app; unlisted apps cannot install without it. */
   shareUrlId: string | null;
+  /** Listed on the App Market: real prices. Before, every purchase is at 0.00. */
+  published: boolean;
 }
 
 export function wixAppConfig(): WixAppConfig | null {
@@ -22,7 +26,8 @@ export function wixAppConfig(): WixAppConfig | null {
   if (!appId || !appSecret) return null;
   const publicKey = process.env.WIX_APP_PUBLIC_KEY?.trim().replace(/\\n/g, '\n') || null;
   const shareUrlId = process.env.WIX_SHARE_URL_ID?.trim() || null;
-  return { appId, appSecret, publicKey, shareUrlId };
+  const published = process.env.WIX_APP_PUBLISHED?.trim() === '1';
+  return { appId, appSecret, publicKey, shareUrlId, published };
 }
 
 export function isWixAppConfigured(): boolean {

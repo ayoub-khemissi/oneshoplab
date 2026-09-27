@@ -68,7 +68,7 @@ interface PricingCardsProps {
   };
   /** Set for merchants billed through Shopify: every plan change happens in
    *  the embedded app, so paid CTAs become one link there. */
-  shopifyManage?: { url: string; label: string } | null;
+  storeManage?: { url: string; label: string; store: 'shopify' | 'wix' } | null;
 }
 
 export function PricingCards({
@@ -76,7 +76,7 @@ export function PricingCards({
   available,
   current,
   copy,
-  shopifyManage
+  storeManage
 }: PricingCardsProps) {
   // Default the cycle toggle to whatever the merchant is already on so the
   // page lands with their current plan visually highlighted as "Current
@@ -105,7 +105,7 @@ export function PricingCards({
             available={tier.id === 'free' ? true : (available[`${tier.id}_${cycle}`] ?? false)}
             current={current}
             copy={copy}
-            shopifyManage={shopifyManage}
+            storeManage={storeManage}
           />
         ))}
       </section>
@@ -168,7 +168,7 @@ function PlanCard({
   available,
   current,
   copy,
-  shopifyManage
+  storeManage
 }: {
   tier: PlanTier;
   cycle: BillingCycle;
@@ -176,7 +176,7 @@ function PlanCard({
   available: boolean;
   current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
-  shopifyManage?: PricingCardsProps['shopifyManage'];
+  storeManage?: PricingCardsProps['storeManage'];
 }) {
   // Format numbers with the next-intl locale (same value SSR + client,
   // sourced from the URL/provider) instead of the runtime default,
@@ -257,7 +257,7 @@ function PlanCard({
           current={current}
           copy={copy}
           isFeatured={isFeatured}
-          shopifyManage={shopifyManage}
+          storeManage={storeManage}
         />
       </Card>
     </div>
@@ -321,7 +321,7 @@ function CardCta({
   current,
   copy,
   isFeatured,
-  shopifyManage
+  storeManage
 }: {
   tier: PlanTier;
   cycle: BillingCycle;
@@ -330,7 +330,7 @@ function CardCta({
   current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
   isFeatured: boolean;
-  shopifyManage?: PricingCardsProps['shopifyManage'];
+  storeManage?: PricingCardsProps['storeManage'];
 }) {
   const baseClasses =
     'mt-auto px-4 py-2.5 rounded-md font-medium text-sm transition-opacity hover:opacity-90 text-center inline-flex items-center justify-center gap-1.5';
@@ -347,14 +347,14 @@ function CardCta({
   const isCurrentPlan = hasLiveSubscription && current!.plan === tier.id;
   const isCurrentCycle = isCurrentPlan && current!.cycle === cycle;
 
-  if (shopifyManage && !isCurrentCycle && (tier.priceEur > 0 || hasLiveSubscription)) {
+  if (storeManage && !isCurrentCycle && (tier.priceEur > 0 || hasLiveSubscription)) {
     return (
       <a
-        href={shopifyManage.url}
-        target={shopifyManage.url.startsWith('/') ? undefined : '_top'}
+        href={storeManage.url}
+        target={storeManage.url.startsWith('/') ? undefined : '_top'}
         className={`${baseClasses} ${isFeatured ? featuredClasses : outlineClasses}`}
       >
-        {shopifyManage.label}
+        {storeManage.label}
       </a>
     );
   }

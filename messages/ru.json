@@ -233,7 +233,10 @@
     "customQuoteCta": "Обсудим, по запросу.",
     "shopifyManagedTitle": "Ваш тариф оплачивается через Shopify",
     "shopifyManagedBody": "Вы установили OneShopLab из Shopify: тарифы и пакеты покупаются в приложении, прямо в счёте Shopify.",
-    "shopifyManagedCta": "Управлять в Shopify"
+    "shopifyManagedCta": "Управлять в Shopify",
+    "wixManagedTitle": "Ваш тариф оплачивается через Wix",
+    "wixManagedBody": "Вы установили OneShopLab из Wix: тарифы и пакеты покупаются в приложении вместе с другими покупками в Wix.",
+    "wixManagedCta": "Управлять в Wix"
   },
   "Preferences": {
     "title": "Настройки генерации",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "Магазин не подключён",
       "notConnectedBody": "Связь с вашим магазином Shopify прервана. Откройте главную страницу OneShopLab в админке Shopify: связь восстановится автоматически.",
-      "reconnect": "Переподключить"
+      "reconnect": "Переподключить",
+      "notConnectedBodyWix": "Связь с вашим сайтом Wix прервана. Откройте главную OneShopLab в панели управления Wix — она восстановится автоматически."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "В файле нет пригодной строки: нужно хотя бы название.",
     "prefillDone": "Форма заполнена из строки {row}. Проверьте и сохраните. Ещё {more} строк проигнорировано — используйте для них массовый импорт."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "Загрузка…",
     "errorTitle": "OneShopLab не отвечает",
     "errorBody": "Перезагрузите страницу. Если проблема повторяется, напишите нам на {email}.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Переход в Shopify…",
     "syncRequested": "Синхронизация запрошена.",
     "canceled": "Подписка отменена.",
-    "billedYearly": "{price} в год"
+    "billedYearly": "{price} в год",
+    "outsideWix": "Откройте OneShopLab из панели управления Wix (Приложения > OneShopLab).",
+    "billedByWix": "Оплата через Wix вместе с другими покупками в Wix.",
+    "testModeWix": "Тестовый режим: пока OneShopLab не опубликовано в Wix App Market, покупки стоят 0 $. Тестовые кредиты ограничены {cap, number} на аккаунт.",
+    "checkoutOpened": "Завершите покупку в только что открывшейся вкладке Wix и вернитесь сюда.",
+    "downgradeWix": "Чтобы перейти на тариф ниже или на помесячную оплату, сначала отмените тариф в Wix, затем выберите новый здесь.",
+    "manageInWix": "Управлять подписками в Wix",
+    "planOnOtherSiteWix": "Ваш тариф оплачивается на другом сайте Wix вашего аккаунта. Его кредиты доступны и здесь.",
+    "managedElsewhere": "Тариф управляется там, где вы его оформили.",
+    "storesMissingWix": "На этом сайте не установлен Wix Stores. Добавьте его в панели управления Wix, чтобы перенести товары в OneShopLab."
   },
   "ShopifyLink": {
     "title": "Привязка магазина Shopify",
@@ -2327,5 +2340,16 @@
     "invalid": "Срок действия ссылки истёк. Начните привязку заново из приложения OneShopLab в админке Shopify.",
     "linkedElsewhere": "Этот магазин уже привязан к другому аккаунту OneShopLab.",
     "notInstalled": "Приложение OneShopLab больше не установлено в этом магазине."
+  },
+  "WixLink": {
+    "title": "Привяжите сайт Wix",
+    "body": "Привязать сайт {site} к аккаунту {email}?",
+    "confirm": "Привязать сайт",
+    "success": "{site} привязан к вашему аккаунту.",
+    "backToWix": "Вернуться в Wix",
+    "invalid": "Срок действия ссылки истёк. Начните привязку заново в приложении OneShopLab в панели управления Wix.",
+    "linkedElsewhere": "Этот сайт уже привязан к другому аккаунту OneShopLab.",
+    "notInstalled": "Приложение OneShopLab больше не установлено на этом сайте.",
+    "thisSite": "этот сайт"
   }
 }

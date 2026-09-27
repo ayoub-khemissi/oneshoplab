@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { headers } from 'next/headers';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { EmbeddedApp } from '@/views/shopify-app';
+import { EmbeddedApp } from '@/views/embedded-app';
 import { routing, type Locale } from '@/i18n/routing';
 import { getAppContactEmail } from '@/shared/config/app-contact';
 
@@ -30,8 +30,9 @@ export default async function ShopifyEmbeddedPage({
   // Reached from the embedded header, the URL names no shop: the frame does.
   const framed = (await headers()).get('sec-fetch-dest') === 'iframe';
   return (
-    <NextIntlClientProvider locale={locale} messages={{ ShopifyApp: messages.ShopifyApp }}>
+    <NextIntlClientProvider locale={locale} messages={{ EmbeddedApp: messages.EmbeddedApp }}>
       <EmbeddedApp
+        host="shopify"
         locale={locale}
         shopHint={shop}
         framed={framed}

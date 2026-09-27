@@ -233,7 +233,10 @@
     "customQuoteCta": "联系我们，定制报价。",
     "shopifyManagedTitle": "您的方案由 Shopify 收费",
     "shopifyManagedBody": "您是从 Shopify 安装的 OneShopLab：方案和积分包在应用内购买，直接计入您的 Shopify 账单。",
-    "shopifyManagedCta": "在 Shopify 中管理"
+    "shopifyManagedCta": "在 Shopify 中管理",
+    "wixManagedTitle": "您的方案由 Wix 计费",
+    "wixManagedBody": "您是从 Wix 安装的 OneShopLab：方案和积分包在应用内购买，与您在 Wix 的其他购买一起结算。",
+    "wixManagedCta": "在 Wix 中管理"
   },
   "Preferences": {
     "title": "生成偏好",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "店铺未连接",
       "notConnectedBody": "与您的 Shopify 店铺的连接已中断。在 Shopify 后台打开 OneShopLab 首页即可自动恢复。",
-      "reconnect": "重新连接"
+      "reconnect": "重新连接",
+      "notConnectedBodyWix": "与您的 Wix 网站的连接已中断。在 Wix 控制台中打开 OneShopLab 首页即可自动恢复。"
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "此文件中没有可用的行：至少需要一个名称。",
     "prefillDone": "已用第 {row} 行填充表单。请检查后保存。另有 {more} 行被忽略，请使用批量导入处理。"
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "加载中…",
     "errorTitle": "OneShopLab 没有响应",
     "errorBody": "请刷新页面。如果问题持续，请发邮件至 {email}。",
@@ -2316,7 +2320,16 @@
     "redirecting": "正在跳转到 Shopify…",
     "syncRequested": "已请求同步。",
     "canceled": "订阅已取消。",
-    "billedYearly": "按年收费 {price}"
+    "billedYearly": "按年收费 {price}",
+    "outsideWix": "请从 Wix 控制台打开 OneShopLab（应用 > OneShopLab）。",
+    "billedByWix": "由 Wix 计费，与您在 Wix 的其他购买一起结算。",
+    "testModeWix": "测试模式：在 OneShopLab 上架 Wix App Market 之前，购买费用为 0 美元。每个账户的测试积分上限为 {cap, number}。",
+    "checkoutOpened": "请在刚打开的 Wix 标签页中完成购买，然后返回此处。",
+    "downgradeWix": "如需降级到更低的方案或改为按月计费，请先在 Wix 中取消当前方案，再在此处选择新方案。",
+    "manageInWix": "在 Wix 中管理我的订阅",
+    "planOnOtherSiteWix": "您的方案在账户中的另一个 Wix 网站上计费，其积分在此同样可用。",
+    "managedElsewhere": "请在您订阅方案的地方管理方案。",
+    "storesMissingWix": "此网站未安装 Wix Stores。请在 Wix 控制台中添加，以便将商品导入 OneShopLab。"
   },
   "ShopifyLink": {
     "title": "关联您的 Shopify 店铺",
@@ -2327,5 +2340,16 @@
     "invalid": "此链接已过期。请在 Shopify 后台的 OneShopLab 应用中重新发起关联。",
     "linkedElsewhere": "此店铺已关联到另一个 OneShopLab 账户。",
     "notInstalled": "此店铺已不再安装 OneShopLab 应用。"
+  },
+  "WixLink": {
+    "title": "关联您的 Wix 网站",
+    "body": "将网站 {site} 关联到您的账户 {email}？",
+    "confirm": "关联网站",
+    "success": "{site} 已关联到您的账户。",
+    "backToWix": "返回 Wix",
+    "invalid": "此链接已过期。请在 Wix 控制台的 OneShopLab 应用中重新发起关联。",
+    "linkedElsewhere": "此网站已关联到另一个 OneShopLab 账户。",
+    "notInstalled": "此网站已不再安装 OneShopLab 应用。",
+    "thisSite": "此网站"
   }
 }

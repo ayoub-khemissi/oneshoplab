@@ -4,9 +4,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { REFERRAL_COOKIE, refFromSearchParams } from './entities/referral/lib/ref';
 import { routing, SUPPORTED_LOCALES } from './i18n/routing';
 import {
+  EMBEDDED_HOST_HEADER,
   EMBEDDED_REQUEST_HEADER,
   SHOPIFY_FRAME_ANCESTORS,
-  embeddedRequestInfo
+  WIX_FRAME_ANCESTORS,
+  WIX_TOKEN_PARAM,
+  embeddedHomePath,
+  embeddedHostOf,
+  embeddedRequestInfo,
+  type EmbeddedHost
 } from './shared/embedded/lib';
 
 /** A promoter's click is worth ninety days, the industry's window. */
@@ -44,7 +50,7 @@ const GUEST_ONLY = ['/login', '/signup', '/forgot-password'];
 // Routes that require a session. Hitting them while logged out sends
 // the visitor to /login with `?next=<original>` so they land back on
 // their target after authenticating.
-const AUTH_REQUIRED = ['/dashboard', '/account', '/shopify-link'];
+const AUTH_REQUIRED = ['/dashboard', '/account', '/shopify-link', '/wix-link'];
 
 const LOCALE_SET = new Set<string>(SUPPORTED_LOCALES);
 
@@ -68,18 +74,19 @@ function matchesRoute(path: string, prefixes: readonly string[]): boolean {
 }
 
 /**
- * Inside the Shopify admin every page is framed by the admin: it says who may
+ * Inside a store admin every page is framed by the admin: it says who may
  * frame it (next.config.ts drops X-Frame-Options for framed requests). The
- * embedded home narrows it to the one shop when Shopify names it.
+ * Shopify home narrows it to the one shop when Shopify names it.
  */
-function frameAncestors(req: NextRequest): string {
+function frameAncestors(req: NextRequest, host: EmbeddedHost): string {
+  if (host === 'wix') return `frame-ancestors ${WIX_FRAME_ANCESTORS}`;
   const shop = (req.nextUrl.searchParams.get('shop') ?? '').toLowerCase();
   const shopOk = /^[a-z0-9][a-z0-9-]{0,98}\.myshopify\.com$/.test(shop);
   return `frame-ancestors ${shopOk ? `https://${shop} https://admin.shopify.com` : SHOPIFY_FRAME_ANCESTORS}`;
 }
 
-function framed<T extends NextResponse>(req: NextRequest, res: T): T {
-  res.headers.set('Content-Security-Policy', frameAncestors(req));
+function framed<T extends NextResponse>(req: NextRequest, res: T, host: EmbeddedHost): T {
+  res.headers.set('Content-Security-Policy', frameAncestors(req, host));
   return res;
 }
 
@@ -89,9 +96,10 @@ function framed<T extends NextResponse>(req: NextRequest, res: T): T {
  * `?id_token=`), and `x-osl-embedded` tells layouts to drop the site chrome.
  * The flag is always set here, never trusted from the client.
  */
-function embeddedRequest(req: NextRequest, bearer: string | null): NextRequest {
+function embeddedRequest(req: NextRequest, bearer: string | null, host: EmbeddedHost): NextRequest {
   const headers = new Headers(req.headers);
   headers.set(EMBEDDED_REQUEST_HEADER, '1');
+  headers.set(EMBEDDED_HOST_HEADER, host);
   if (bearer && !headers.get('authorization')) headers.set('authorization', `Bearer ${bearer}`);
   return new NextRequest(req.url, { headers, method: req.method });
 }
@@ -101,7 +109,13 @@ export default async function middleware(req: NextRequest) {
   const embedded = embeddedRequestInfo({
     secFetchDest: req.headers.get('sec-fetch-dest'),
     authorization: req.headers.get('authorization'),
-    idTokenParam: req.nextUrl.searchParams.get('id_token')
+    idTokenParam: req.nextUrl.searchParams.get('id_token'),
+    wixTokenParam: req.nextUrl.searchParams.get(WIX_TOKEN_PARAM)
+  });
+  const host = embeddedHostOf({
+    bearer: embedded.bearer,
+    pathname,
+    referer: req.headers.get('referer')
   });
   // Shopify opens the App URL (the site root) with ?embedded=1&shop=…: the
   // embedded home takes it from there.
@@ -117,11 +131,23 @@ export default async function middleware(req: NextRequest) {
     if (!embedded.embedded && !req.nextUrl.searchParams.get('shop')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
-    return framed(req, NextResponse.next());
+    return framed(req, NextResponse.next(), 'shopify');
   }
-  if (embedded.embedded) return framed(req, await embeddedRoute(req, embedded.bearer));
+  if (pathname === '/wix' || pathname.startsWith('/wix/')) {
+    // The external pricing page is public, read-only (Wix links to it).
+    if (pathname === '/wix/pricing') return NextResponse.next();
+    // Outside the Wix dashboard there is no signed instance to start from.
+    if (!embedded.embedded && !req.nextUrl.searchParams.get('instance')) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    return framed(req, NextResponse.next(), 'wix');
+  }
+  if (embedded.embedded) {
+    return framed(req, await embeddedRoute(req, embedded.bearer, host), host);
+  }
   const { locale, rest } = splitLocale(pathname);
-  if (locale && rest === '/shopify') return NextResponse.redirect(new URL(`/${locale}`, req.url));
+  if (locale && (rest === '/shopify' || rest === '/wix'))
+    return NextResponse.redirect(new URL(`/${locale}`, req.url));
 
   // Bare paths (no locale prefix) are handled by next-intl's locale
   // negotiation first. Auth checks run on the subsequent request once
@@ -174,17 +200,21 @@ export default async function middleware(req: NextRequest) {
 /**
  * A page inside the admin. No cookie session exists there, so the login gate
  * is skipped (`auth()` reads the Bearer token) and the sign-in pages lead to
- * the embedded home, which links the shop to an account.
+ * the admin's embedded home, which links the store to an account.
  */
-async function embeddedRoute(req: NextRequest, bearer: string | null): Promise<NextResponse> {
+async function embeddedRoute(
+  req: NextRequest,
+  bearer: string | null,
+  host: EmbeddedHost
+): Promise<NextResponse> {
   const { locale, rest } = splitLocale(req.nextUrl.pathname);
   if (locale && matchesRoute(rest, GUEST_ONLY)) {
-    const home = new URL('/shopify', req.url);
+    const home = new URL(embeddedHomePath(host), req.url);
     const shop = req.nextUrl.searchParams.get('shop');
-    if (shop) home.searchParams.set('shop', shop);
+    if (shop && host === 'shopify') home.searchParams.set('shop', shop);
     return NextResponse.redirect(home);
   }
-  return intlMiddleware(embeddedRequest(req, bearer)) as NextResponse;
+  return intlMiddleware(embeddedRequest(req, bearer, host)) as NextResponse;
 }
 
 export const config = {

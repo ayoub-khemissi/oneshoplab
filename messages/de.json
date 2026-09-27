@@ -233,7 +233,10 @@
     "customQuoteCta": "Sprechen wir darüber, auf Anfrage.",
     "shopifyManagedTitle": "Ihr Tarif wird über Shopify abgerechnet",
     "shopifyManagedBody": "Sie haben OneShopLab über Shopify installiert: Tarife und Pakete kaufen Sie in der App, direkt auf Ihrer Shopify-Rechnung.",
-    "shopifyManagedCta": "In Shopify verwalten"
+    "shopifyManagedCta": "In Shopify verwalten",
+    "wixManagedTitle": "Dein Tarif wird von Wix abgerechnet",
+    "wixManagedBody": "Du hast OneShopLab über Wix installiert: Tarife und Pakete kaufst du in der App, zusammen mit deinen anderen Wix-Käufen.",
+    "wixManagedCta": "In Wix verwalten"
   },
   "Preferences": {
     "title": "Generierungseinstellungen",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "Shop nicht verbunden",
       "notConnectedBody": "Die Verbindung zu Ihrem Shopify-Shop ist unterbrochen. Öffnen Sie die OneShopLab-Startseite in Ihrem Shopify-Admin: sie wird automatisch wiederhergestellt.",
-      "reconnect": "Neu verbinden"
+      "reconnect": "Neu verbinden",
+      "notConnectedBodyWix": "Die Verbindung zu deiner Wix-Website ist unterbrochen. Öffne die OneShopLab-Startseite in deinem Wix-Dashboard: Sie wird automatisch wiederhergestellt."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "Keine verwertbare Zeile in dieser Datei: mindestens ein Name ist nötig.",
     "prefillDone": "Formular aus Zeile {row} ausgefüllt. Prüfen und speichern. {more} weitere Zeilen wurden ignoriert – nutzen Sie dafür den Massenimport."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "Wird geladen…",
     "errorTitle": "OneShopLab antwortet nicht",
     "errorBody": "Laden Sie die Seite neu. Wenn das Problem bleibt, schreiben Sie uns an {email}.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Weiterleitung zu Shopify…",
     "syncRequested": "Synchronisierung angefordert.",
     "canceled": "Abonnement gekündigt.",
-    "billedYearly": "{price} jährlich abgerechnet"
+    "billedYearly": "{price} jährlich abgerechnet",
+    "outsideWix": "Öffne OneShopLab über dein Wix-Dashboard (Apps > OneShopLab).",
+    "billedByWix": "Abgerechnet von Wix, zusammen mit deinen anderen Wix-Käufen.",
+    "testModeWix": "Testmodus: Bis OneShopLab im Wix App Market veröffentlicht ist, kosten Käufe 0 $. Testguthaben ist auf {cap, number} Credits pro Konto begrenzt.",
+    "checkoutOpened": "Schließe den Kauf im gerade geöffneten Wix-Tab ab und komm dann hierher zurück.",
+    "downgradeWix": "Um zu einem kleineren Tarif oder zur monatlichen Abrechnung zu wechseln, kündige deinen Tarif zuerst in Wix und wähle dann hier den neuen.",
+    "manageInWix": "Meine Abos in Wix verwalten",
+    "planOnOtherSiteWix": "Dein Tarif wird über eine andere Wix-Website deines Kontos abgerechnet. Seine Credits sind auch hier verfügbar.",
+    "managedElsewhere": "Dein Tarif wird dort verwaltet, wo du ihn abgeschlossen hast.",
+    "storesMissingWix": "Wix Stores ist auf dieser Website nicht installiert. Füge es in deinem Wix-Dashboard hinzu, um deine Produkte in OneShopLab zu holen."
   },
   "ShopifyLink": {
     "title": "Shopify-Shop verknüpfen",
@@ -2327,5 +2340,16 @@
     "invalid": "Dieser Link ist abgelaufen. Starten Sie die Verknüpfung erneut in der OneShopLab-App in Ihrem Shopify-Admin.",
     "linkedElsewhere": "Dieser Shop ist bereits mit einem anderen OneShopLab-Konto verknüpft.",
     "notInstalled": "Die OneShopLab-App ist in diesem Shop nicht mehr installiert."
+  },
+  "WixLink": {
+    "title": "Wix-Website verknüpfen",
+    "body": "Die Website {site} mit deinem Konto {email} verknüpfen?",
+    "confirm": "Website verknüpfen",
+    "success": "{site} ist mit deinem Konto verknüpft.",
+    "backToWix": "Zurück zu Wix",
+    "invalid": "Dieser Link ist abgelaufen. Starte die Verknüpfung erneut in der OneShopLab-App in deinem Wix-Dashboard.",
+    "linkedElsewhere": "Diese Website ist bereits mit einem anderen OneShopLab-Konto verknüpft.",
+    "notInstalled": "Die OneShopLab-App ist auf dieser Website nicht mehr installiert.",
+    "thisSite": "diese Website"
   }
 }

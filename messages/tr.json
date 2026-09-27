@@ -233,7 +233,10 @@
     "customQuoteCta": "Konuşalım, özel teklif.",
     "shopifyManagedTitle": "Planınız Shopify tarafından faturalandırılıyor",
     "shopifyManagedBody": "OneShopLab'i Shopify'dan yüklediniz: planlar ve paketler uygulama içinden, doğrudan Shopify faturanızla satın alınır.",
-    "shopifyManagedCta": "Shopify'da yönet"
+    "shopifyManagedCta": "Shopify'da yönet",
+    "wixManagedTitle": "Planınız Wix tarafından faturalandırılıyor",
+    "wixManagedBody": "OneShopLab’ı Wix’ten yüklediniz: planlar ve paketler, diğer Wix satın alımlarınızla birlikte uygulamada satın alınır.",
+    "wixManagedCta": "Wix’te yönet"
   },
   "Preferences": {
     "title": "Üretim tercihleri",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "Mağaza bağlı değil",
       "notConnectedBody": "Shopify mağazanızla bağlantı koptu. Shopify yönetim panelinizde OneShopLab ana sayfasını açın: bağlantı otomatik olarak yeniden kurulur.",
-      "reconnect": "Yeniden bağlan"
+      "reconnect": "Yeniden bağlan",
+      "notConnectedBodyWix": "Wix sitenizle bağlantı koptu. Wix panelinizde OneShopLab ana sayfasını açın: bağlantı otomatik olarak yeniden kurulur."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "Bu dosyada kullanılabilir satır yok: en az bir ad gerekir.",
     "prefillDone": "Form {row}. satırdan dolduruldu. Kontrol edip kaydedin. Diğer {more} satır yok sayıldı — onlar için toplu içe aktarmayı kullanın."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "Yükleniyor…",
     "errorTitle": "OneShopLab yanıt vermiyor",
     "errorBody": "Sayfayı yenileyin. Sorun devam ederse {email} adresine yazın.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Shopify'a yönlendiriliyor…",
     "syncRequested": "Senkronizasyon istendi.",
     "canceled": "Abonelik iptal edildi.",
-    "billedYearly": "Yıllık {price} faturalandırılır"
+    "billedYearly": "Yıllık {price} faturalandırılır",
+    "outsideWix": "OneShopLab’ı Wix panelinizden açın (Uygulamalar > OneShopLab).",
+    "billedByWix": "Diğer Wix satın alımlarınızla birlikte Wix tarafından faturalandırılır.",
+    "testModeWix": "Test modu: OneShopLab Wix App Market’te yayınlanana kadar satın alımlar 0 $. Test kredileri hesap başına {cap, number} ile sınırlıdır.",
+    "checkoutOpened": "Satın alımı az önce açılan Wix sekmesinde tamamlayın, sonra buraya dönün.",
+    "downgradeWix": "Daha düşük bir plana veya aylık faturalamaya geçmek için önce planınızı Wix’te iptal edin, sonra yenisini burada seçin.",
+    "manageInWix": "Aboneliklerimi Wix’te yönet",
+    "planOnOtherSiteWix": "Planınız hesabınızdaki başka bir Wix sitesinde faturalandırılıyor. Kredileri burada da kullanılabilir.",
+    "managedElsewhere": "Planınız, abone olduğunuz yerde yönetilir.",
+    "storesMissingWix": "Bu sitede Wix Stores yüklü değil. Ürünlerinizi OneShopLab’a getirmek için Wix panelinizden ekleyin."
   },
   "ShopifyLink": {
     "title": "Shopify mağazanızı bağlayın",
@@ -2327,5 +2340,16 @@
     "invalid": "Bu bağlantının süresi doldu. Bağlamayı Shopify yönetim panelinizdeki OneShopLab uygulamasından yeniden başlatın.",
     "linkedElsewhere": "Bu mağaza zaten başka bir OneShopLab hesabına bağlı.",
     "notInstalled": "OneShopLab uygulaması artık bu mağazada yüklü değil."
+  },
+  "WixLink": {
+    "title": "Wix sitenizi bağlayın",
+    "body": "{site} sitesi {email} hesabınıza bağlansın mı?",
+    "confirm": "Siteyi bağla",
+    "success": "{site} hesabınıza bağlandı.",
+    "backToWix": "Wix’e dön",
+    "invalid": "Bu bağlantının süresi doldu. Bağlamayı Wix panelinizdeki OneShopLab uygulamasından yeniden başlatın.",
+    "linkedElsewhere": "Bu site zaten başka bir OneShopLab hesabına bağlı.",
+    "notInstalled": "OneShopLab uygulaması artık bu sitede yüklü değil.",
+    "thisSite": "bu site"
   }
 }

@@ -351,6 +351,13 @@
       "when": 1790479232655,
       "tag": "0049_shopify_expiring_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "5",
+      "when": 1790505344986,
+      "tag": "0050_wix_app_market",
+      "breakpoints": true
     }
   ]
 }

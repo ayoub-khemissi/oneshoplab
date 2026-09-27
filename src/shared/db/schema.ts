@@ -19,7 +19,7 @@ export const PLANS = ['free', 'starter', 'pro', 'scale'] as const;
 export const BILLING_CYCLES = ['monthly', 'yearly'] as const;
 /** Who bills the account: our Stripe, or Shopify (App Store installs: the
  *  App Store forbids off-platform billing, requirement 1.2.1). */
-export const BILLING_CHANNELS = ['stripe', 'shopify'] as const;
+export const BILLING_CHANNELS = ['stripe', 'shopify', 'wix'] as const;
 export type BillingChannel = (typeof BILLING_CHANNELS)[number];
 /** Every id ever stored in users.preferred_chat_model. The ACTIVE lineup
  *  lives in pricing.json (src/entities/ai-model/model/pricing.ts CHAT_MODEL_IDS); retired
@@ -734,6 +734,11 @@ export const subscriptions = mysqlTable('subscriptions', {
   /** Shopify Billing: the AppSubscription gid and the shop it was sold on. */
   shopifySubscriptionGid: varchar('shopify_subscription_gid', { length: 128 }),
   shopifyShopDomain: varchar('shopify_shop_domain', { length: 255 }),
+  /** Wix Billing: the site (app instance) the plan was bought on, and what
+   *  identifies that purchase (plan GUID, cycle, purchase date) — renewals
+   *  keep it, a new purchase changes it. */
+  wixInstanceId: varchar('wix_instance_id', { length: 64 }),
+  wixPurchaseKey: varchar('wix_purchase_key', { length: 191 }),
   /** Monthly credit refills that no billing event announces: Stripe yearly
    *  plans (one invoice a year) and every Shopify plan (Shopify sends no
    *  per-cycle event). Null when the channel's own renewal event grants. */
@@ -742,6 +747,37 @@ export const subscriptions = mysqlTable('subscriptions', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
 });
+
+/**
+ * One row per Wix site that installed the app — from the Wix App Market or
+ * from OneShopLab's own "connect my store". The Wix counterpart of
+ * `shopify_shops`, without any token: a site's credential is its instance
+ * id. Holds who owns the install before the merchant picked an account
+ * (`userId` null) and the owner's email for "Create my workspace".
+ */
+export const wixInstances = mysqlTable(
+  'wix_instances',
+  {
+    instanceId: varchar('instance_id', { length: 64 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 }).references(() => users.id, { onDelete: 'set null' }),
+    projectId: varchar('project_id', { length: 36 }).references(() => projects.id, {
+      onDelete: 'set null'
+    }),
+    siteName: varchar('site_name', { length: 255 }),
+    /** Hostname of the published site, null while unpublished. */
+    siteHost: varchar('site_host', { length: 255 }),
+    ownerEmail: varchar('owner_email', { length: 255 }),
+    siteLocale: varchar('site_locale', { length: 16 }),
+    installedAt: timestamp('installed_at').notNull().defaultNow(),
+    linkedAt: timestamp('linked_at'),
+    uninstalledAt: timestamp('uninstalled_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
+  },
+  (t) => ({
+    idxUser: index('idx_wix_instances_user').on(t.userId)
+  })
+);
 
 /**
  * One row per shop that installed the public app from Shopify (embedded

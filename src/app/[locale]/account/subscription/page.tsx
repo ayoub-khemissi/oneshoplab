@@ -19,8 +19,8 @@ import { getCreditBuckets } from '@/entities/credit';
 import { db } from '@/shared/db';
 import { subscriptions } from '@/shared/db/schema';
 import { createPortalSessionAction } from '@/features/billing';
-import { shopifyBillingLink } from '@/features/shopify-connector';
-import { isEmbeddedRequest } from '@/shared/embedded';
+import { embeddedHost } from '@/shared/embedded';
+import { storeManageFor } from '@/widgets/store-billing';
 import { formatDate } from '@/shared/lib';
 
 export const dynamic = 'force-dynamic';
@@ -45,21 +45,20 @@ export default async function SubscriptionPage() {
   const t = await getTranslations('Subscription');
   const locale = await getLocale();
 
-  const [sub, buckets, shopifyUrl, tPricing] = await Promise.all([
+  const [sub, buckets, store, tPricing] = await Promise.all([
     db.query.subscriptions.findFirst({
       where: eq(subscriptions.userId, session.user.id)
     }),
     getCreditBuckets(session.user.id),
-    isEmbeddedRequest().then((embedded) => shopifyBillingLink(session.user.id, embedded)),
+    embeddedHost().then((host) => storeManageFor(session.user.id, host)),
     getTranslations('Pricing')
   ]);
 
   const plan = session.user.plan ?? 'free';
   const planTier = PLAN_TIERS.find((p) => p.id === plan);
   const planName = planTier?.name ?? 'Free';
-  // Billed by Shopify (or inside the admin): every plan change happens there.
-  const isPaid =
-    !shopifyUrl && plan !== 'free' && sub?.channel === 'stripe' && sub.stripeCustomerId;
+  // Billed by a store (or inside its admin): every plan change happens there.
+  const isPaid = !store && plan !== 'free' && sub?.channel === 'stripe' && sub.stripeCustomerId;
 
   const status = sub?.status ?? 'active';
   const statusInfo = STATUS_TONE[status] ?? { tone: 'muted', key: 'statusUnknown' };
@@ -113,14 +112,14 @@ export default async function SubscriptionPage() {
         ) : null}
 
         <div className="flex flex-wrap gap-2 pt-1">
-          {shopifyUrl ? (
+          {store ? (
             <a
-              href={shopifyUrl}
-              target={shopifyUrl.startsWith('/') ? undefined : '_top'}
+              href={store.url}
+              target={store.url.startsWith('/') ? undefined : '_top'}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors text-sm font-medium"
             >
               <Sparkles className="size-3.5" aria-hidden />
-              {tPricing('shopifyManagedCta')}
+              {store.store === 'wix' ? tPricing('wixManagedCta') : tPricing('shopifyManagedCta')}
             </a>
           ) : (
             <Link

@@ -27,11 +27,14 @@ function cardState(c: WixConnectionView): CardState {
 export function WixConnectionCard({
   projectId,
   initial,
-  onDisconnected
+  onDisconnected,
+  canDisconnect = true
 }: {
   projectId: string;
   initial: WixConnectionView;
   onDisconnected?: () => void;
+  /** Inside the Wix dashboard the app itself is the link: no disconnect there. */
+  canDisconnect?: boolean;
 }) {
   const t = useTranslations('Integrations.wix');
   const [conn, setConn] = useState(initial);
@@ -180,15 +183,17 @@ export function WixConnectionCard({
             <RefreshCw className="size-3.5" aria-hidden />
             {state === 'syncing' ? t('syncRunning') : t('syncNow')}
           </button>
-          <button
-            type="button"
-            onClick={() => setConfirm(true)}
-            disabled={pending}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:border-[var(--danger)] hover:text-[var(--danger)] disabled:opacity-50"
-          >
-            <Unplug className="size-3.5" aria-hidden />
-            {t('disconnect')}
-          </button>
+          {canDisconnect ? (
+            <button
+              type="button"
+              onClick={() => setConfirm(true)}
+              disabled={pending}
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:border-[var(--danger)] hover:text-[var(--danger)] disabled:opacity-50"
+            >
+              <Unplug className="size-3.5" aria-hidden />
+              {t('disconnect')}
+            </button>
+          ) : null}
           {failed ? (
             <span role="alert" className="text-xs text-[var(--danger)]">
               {t('actionFailed')}

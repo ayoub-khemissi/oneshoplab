@@ -21,7 +21,7 @@ const {
   runShopifyRequestedPulls
 } = await import('@/features/shopify-connector');
 const { refillStripeYearlySubscriptions } = await import('@/features/billing/api/refill');
-const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
+const { refillWixSubscriptions, runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
 // Straight to the module, NOT the feature barrel: that barrel exports React
 // components, and pulling @heroui/react into the tsx worker crash-loops it.
@@ -158,7 +158,7 @@ async function main(): Promise<void> {
           sweepWebhookDeliveries().catch((e) => console.error('[worker] webhook-sweep failed', e))
         );
         // Monthly credit refills no billing event announces: Stripe yearly
-        // plans and every Shopify-billed plan.
+        // plans and every Shopify- or Wix-billed plan.
         tasks.push(
           refillStripeYearlySubscriptions().catch((e) =>
             console.error('[worker] stripe yearly refill failed', e)
@@ -168,6 +168,9 @@ async function main(): Promise<void> {
           refillShopifySubscriptions().catch((e) =>
             console.error('[worker] shopify refill failed', e)
           )
+        );
+        tasks.push(
+          refillWixSubscriptions().catch((e) => console.error('[worker] wix refill failed', e))
         );
       }
       await Promise.allSettled(tasks);

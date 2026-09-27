@@ -233,7 +233,10 @@
     "customQuoteCta": "Parliamone, su preventivo.",
     "shopifyManagedTitle": "Il tuo piano è fatturato da Shopify",
     "shopifyManagedBody": "Hai installato OneShopLab da Shopify: piani e pacchetti si acquistano nell'app, direttamente sulla tua fattura Shopify.",
-    "shopifyManagedCta": "Gestisci in Shopify"
+    "shopifyManagedCta": "Gestisci in Shopify",
+    "wixManagedTitle": "Il tuo piano è fatturato da Wix",
+    "wixManagedBody": "Hai installato OneShopLab da Wix: piani e pacchetti si acquistano nell’app, insieme agli altri acquisti Wix.",
+    "wixManagedCta": "Gestisci su Wix"
   },
   "Preferences": {
     "title": "Preferenze di generazione",
@@ -1663,7 +1666,8 @@
     "embedded": {
       "notConnectedTitle": "Negozio non collegato",
       "notConnectedBody": "Il collegamento al tuo negozio Shopify si è interrotto. Apri la home di OneShopLab nel tuo admin Shopify: viene ripristinato automaticamente.",
-      "reconnect": "Ricollega"
+      "reconnect": "Ricollega",
+      "notConnectedBodyWix": "La connessione al tuo sito Wix si è interrotta. Apri la home di OneShopLab nella dashboard di Wix: viene ripristinata automaticamente."
     }
   },
   "ApplyToStore": {
@@ -2261,7 +2265,7 @@
     "prefillNothing": "Nessuna riga utilizzabile in questo file: serve almeno un nome.",
     "prefillDone": "Modulo compilato dalla riga {row}. Controlla e salva. Altre {more} righe sono state ignorate: usa l'import in blocco per quelle."
   },
-  "ShopifyApp": {
+  "EmbeddedApp": {
     "loading": "Caricamento…",
     "errorTitle": "OneShopLab non risponde",
     "errorBody": "Ricarica la pagina. Se il problema persiste, scrivici a {email}.",
@@ -2316,7 +2320,16 @@
     "redirecting": "Reindirizzamento a Shopify…",
     "syncRequested": "Sincronizzazione richiesta.",
     "canceled": "Abbonamento annullato.",
-    "billedYearly": "Fatturato {price} all'anno"
+    "billedYearly": "Fatturato {price} all'anno",
+    "outsideWix": "Apri OneShopLab dalla dashboard di Wix (App > OneShopLab).",
+    "billedByWix": "Fatturato da Wix, insieme agli altri acquisti Wix.",
+    "testModeWix": "Modalità test: finché OneShopLab non è pubblicata sul Wix App Market, gli acquisti costano 0 $. I crediti di test sono limitati a {cap, number} per account.",
+    "checkoutOpened": "Completa l’acquisto nella scheda Wix appena aperta, poi torna qui.",
+    "downgradeWix": "Per passare a un piano inferiore o alla fatturazione mensile, annulla prima il piano su Wix, poi scegli qui quello nuovo.",
+    "manageInWix": "Gestisci i miei abbonamenti su Wix",
+    "planOnOtherSiteWix": "Il tuo piano è fatturato su un altro sito Wix del tuo account. I suoi crediti sono disponibili anche qui.",
+    "managedElsewhere": "Il tuo piano si gestisce dove l’hai sottoscritto.",
+    "storesMissingWix": "Wix Stores non è installato su questo sito. Aggiungilo dalla dashboard di Wix per portare i tuoi prodotti in OneShopLab."
   },
   "ShopifyLink": {
     "title": "Collega il tuo negozio Shopify",
@@ -2327,5 +2340,16 @@
     "invalid": "Questo link è scaduto. Riavvia il collegamento dall'app OneShopLab nel tuo admin Shopify.",
     "linkedElsewhere": "Questo negozio è già collegato a un altro account OneShopLab.",
     "notInstalled": "L'app OneShopLab non è più installata su questo negozio."
+  },
+  "WixLink": {
+    "title": "Collega il tuo sito Wix",
+    "body": "Collegare il sito {site} al tuo account {email}?",
+    "confirm": "Collega il sito",
+    "success": "{site} è collegato al tuo account.",
+    "backToWix": "Torna a Wix",
+    "invalid": "Questo link è scaduto. Riavvia il collegamento dall’app OneShopLab nella dashboard di Wix.",
+    "linkedElsewhere": "Questo sito è già collegato a un altro account OneShopLab.",
+    "notInstalled": "L’app OneShopLab non è più installata su questo sito.",
+    "thisSite": "questo sito"
   }
 }

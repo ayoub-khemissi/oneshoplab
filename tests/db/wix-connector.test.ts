@@ -25,7 +25,7 @@ import { GET as installGet } from '@/app/api/integrations/wix/install/route';
 import { GET as callbackGet } from '@/app/api/integrations/wix/callback/route';
 import { POST as webhookPost } from '@/app/api/webhooks/wix/route';
 import { createChange } from '@/entities/product-change';
-import { getConnection, listForApply } from '@/entities/shop-connection';
+import { getConnection, getWixInstance, listForApply } from '@/entities/shop-connection';
 import {
   WIX_STATE_COOKIE,
   applyWixChanges,
@@ -38,7 +38,7 @@ import {
   requestWixPullAction
 } from '@/features/wix-connector/actions';
 import { db } from '@/shared/db';
-import { productChanges, products, projects, shopConnections } from '@/shared/db/schema';
+import { productChanges, products, projects, shopConnections, users } from '@/shared/db/schema';
 import { WIX_PUBLIC_KEY_PEM, wixWebhookJwt } from '../unit/wix-fixtures';
 import { createUser, resetTables } from './helpers';
 import { createProduct } from './integration-helpers';
@@ -151,6 +151,19 @@ describe('install → callback (external install flow)', () => {
       .where(eq(shopConnections.projectId, projectId));
     expect(raw.refreshTokenCiphertext).toBeNull();
     expect(fake.lastOptions).toMatchObject({ instanceId: INSTANCE_ID, appId: 'wix-app-id' });
+  });
+
+  it('the website install joins the site registry and moves the account to Wix Billing', async () => {
+    // Same Wix app as the App Market's: its merchants pay through Wix too.
+    await connect();
+    expect(await getWixInstance(INSTANCE_ID)).toMatchObject({
+      userId,
+      projectId,
+      siteHost: 'atelier.wixsite.com',
+      uninstalledAt: null
+    });
+    const u = await db.query.users.findFirst({ where: eq(users.id, userId) });
+    expect(u?.billingChannel).toBe('wix');
   });
 
   it('a forged or mismatched signedInstance connects nothing', async () => {

@@ -14,14 +14,13 @@
  * Shopify is the source of truth: return URLs and webhooks only tell us to
  * look, every decision re-reads the charge from the Admin API.
  */
-import { and, eq, isNotNull, lte, sum } from 'drizzle-orm';
+import { and, eq, isNotNull, lte } from 'drizzle-orm';
 import {
   CREDIT_PACKS,
   getCreditPack,
   parseShopifyPlanChargeName,
   PLAN_TIERS,
   SHOPIFY_BILLING_CURRENCY,
-  SHOPIFY_TEST_CREDIT_CAP,
   shopifyPackPrice,
   shopifyPlanChargeName,
   shopifyPlanPrice,
@@ -29,16 +28,17 @@ import {
   type CreditPackId,
   type PlanId
 } from '@/entities/ai-model';
-import { applyCreditTransaction, nextRefill } from '@/entities/credit';
+import { applyCreditTransaction, grantTestCredits, nextRefill } from '@/entities/credit';
 import {
   getShopifyShop,
   installedShopifyShopsFor,
+  settleBillingChannel,
   markShopifyShopUninstalled,
   openPendingGrant,
   withDecryptedToken
 } from '@/entities/shop-connection';
 import { db } from '@/shared/db';
-import { creditTransactions, subscriptions, users } from '@/shared/db/schema';
+import { subscriptions, users } from '@/shared/db/schema';
 import { createAdminClient, ShopifyAdminError, type ShopifyAdminClient } from './admin-client';
 import { shopifyTokenProvider } from './token';
 
@@ -47,14 +47,10 @@ type PaidPlan = Exclude<PlanId, 'free'>;
 /**
  * An account that installs the app — from the admin or from the website's
  * "connect my store" — buys through Shopify from now on (App Store 1.2.1),
- * except a live Stripe plan, which keeps running on the web until it ends.
+ * except a paid plan still running elsewhere (see `settleBillingChannel`).
  */
 export async function adoptShopifyBilling(userId: string): Promise<void> {
-  const sub = await db.query.subscriptions.findFirst({ where: eq(subscriptions.userId, userId) });
-  const liveStripe =
-    !!sub && sub.channel === 'stripe' && sub.plan !== 'free' && sub.status !== 'canceled';
-  if (liveStripe) return;
-  await db.update(users).set({ billingChannel: 'shopify' }).where(eq(users.id, userId));
+  await settleBillingChannel(userId, 'shopify');
 }
 
 export interface BillingDeps {
@@ -283,39 +279,20 @@ export async function cancelShopifySubscription(
 
 // ------------------------------------------------------------------ test charges
 
-const TEST_GRANT_REASON = 'shopify_test_grant';
-
-/**
- * Development stores can only pay in test mode, so a test charge proves the
- * flow, not a payment. It activates the plan or pack, but its credits are
- * capped per account (`shopifyBilling.testCreditCap`) and never refilled.
- * Otherwise any Shopify partner would get plans and packs for free. The
- * embedded app says so, and so do the review instructions.
- */
-async function grantTestCredits(
+/** See `grantTestCredits` (`@/entities/credit`): capped, never refilled. */
+function shopifyTestGrant(
   userId: string,
   requested: number,
   idempotencyKey: string,
   metadata: Record<string, unknown>
 ): Promise<number> {
-  const [row] = await db
-    .select({ s: sum(creditTransactions.delta) })
-    .from(creditTransactions)
-    .where(
-      and(eq(creditTransactions.userId, userId), eq(creditTransactions.reason, TEST_GRANT_REASON))
-    );
-  const already = Number(row?.s ?? 0);
-  const amount = Math.min(requested, Math.max(0, SHOPIFY_TEST_CREDIT_CAP - already));
-  if (amount <= 0) return 0;
-  await applyCreditTransaction({
+  return grantTestCredits({
     userId,
-    delta: amount,
-    bucket: 'pack',
-    reason: TEST_GRANT_REASON,
+    requested,
+    reason: 'shopify_test_grant',
     idempotencyKey,
-    metadata: { ...metadata, requested, test: true }
+    metadata
   });
-  return amount;
 }
 
 // ------------------------------------------------------------------ applying what Shopify says
@@ -392,7 +369,7 @@ export async function applyShopifySubscription(
     const requested = previousPaid
       ? Math.max(0, tier.credits - previousPaid.credits)
       : tier.credits;
-    await grantTestCredits(owner.user.id, requested, idempotencyKey, {
+    await shopifyTestGrant(owner.user.id, requested, idempotencyKey, {
       channel: 'shopify',
       shop,
       subscriptionGid: sub.id,
@@ -436,7 +413,7 @@ export async function grantShopifyPack(
   const owner = await ownerOf(shop);
   if (!owner) return 'no_owner';
   if (purchase.test) {
-    await grantTestCredits(owner.user.id, pack.credits, `shopify-pack-${purchase.id}`, {
+    await shopifyTestGrant(owner.user.id, pack.credits, `shopify-pack-${purchase.id}`, {
       channel: 'shopify',
       shop,
       purchaseGid: purchase.id,
@@ -555,10 +532,9 @@ export async function onShopifyAppUninstalled(shop: string): Promise<void> {
   if (ended.affectedRows > 0) {
     await db.update(users).set({ plan: 'free' }).where(eq(users.id, owner.user.id));
   }
-  // No installed shop left: the account is a plain web account again.
-  if ((await installedShopifyShopsFor(owner.user.id)).length === 0) {
-    await db.update(users).set({ billingChannel: 'stripe' }).where(eq(users.id, owner.user.id));
-  }
+  // No installed shop left: the account goes back to web billing (or to its
+  // Wix site, when it has one).
+  await settleBillingChannel(owner.user.id);
 }
 
 /**

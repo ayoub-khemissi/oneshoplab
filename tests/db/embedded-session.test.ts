@@ -76,7 +76,7 @@ describe('sessionFromShopifyIdToken', () => {
     const session = await sessionFromShopifyIdToken(token(), NOW);
     expect(session?.user).toMatchObject({ id: userId, plan: 'pro', creditsBalance: 42 });
     expect(session?.expires).toBe(new Date((NOW + 60) * 1000).toISOString());
-    expect(session?.embedded).toEqual({ shop: SHOP, projectId: null });
+    expect(session?.embedded).toEqual({ host: 'shopify', shop: SHOP, projectId: null });
   });
 
   it('refuses a forged or expired token, an unlinked shop and an uninstalled app', async () => {

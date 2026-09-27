@@ -57,7 +57,7 @@ import { BulkAltTextCard } from '@/features/generate-alt-text/client';
 import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
-import { isEmbeddedRequest } from '@/shared/embedded';
+import { embeddedHost } from '@/shared/embedded';
 import { EmbeddedStoreConnection } from './embedded-store-connection';
 import { StoreSetupGuide } from '@/widgets/store-setup-guide';
 import {
@@ -127,7 +127,8 @@ export async function DashboardSitePage({
             ? 'settings'
             : 'overview';
   // Inside the Shopify admin this site is the whole app: no way "back".
-  const embedded = await isEmbeddedRequest();
+  const host = await embeddedHost();
+  const embedded = host !== null;
   const activityPage = Math.max(1, Number.parseInt(rawActivityPage ?? '1', 10) || 1);
   const productsPage = Math.max(1, Number.parseInt(rawProductsPage ?? '1', 10) || 1);
   const productsQuery = (rawQuery ?? '').trim();
@@ -631,12 +632,18 @@ export async function DashboardSitePage({
           page={activityPage}
           totalPages={activityTotalPages}
         />
-      ) : activeTab === 'integrations' && embedded ? (
+      ) : activeTab === 'integrations' && host ? (
         <EmbeddedStoreConnection
+          host={host}
           projectId={project.id}
           shopify={
             shopConnection && shopConnection.platform === 'shopify'
               ? toShopifyConnectionView(shopConnection, activeProductCount)
+              : null
+          }
+          wix={
+            shopConnection && shopConnection.platform === 'wix'
+              ? toWixConnectionView(shopConnection, activeProductCount)
               : null
           }
         />

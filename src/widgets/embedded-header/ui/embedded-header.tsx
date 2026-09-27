@@ -1,16 +1,17 @@
 import { Coins, CreditCard, LayoutGrid } from 'lucide-react';
-import NextLink from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { bellLabels, NotificationBell } from '@/entities/notification/client';
 import { auth } from '@/entities/user';
 import type { Locale } from '@/i18n/routing';
+import { EmbeddedHomeLink } from '@/shared/embedded/client';
 import { ScrollHidingHeader } from '@/shared/ui';
 
 /**
- * The header inside the Shopify admin. The admin already frames the page, so
- * no site navigation, no sign-in or sign-out (the store is the session), and
- * plans and packs live on the embedded home, billed by Shopify.
+ * The header inside a store admin (Shopify, Wix). The admin already frames
+ * the page, so no site navigation, no sign-in or sign-out (the store is the
+ * session), and plans and packs live on the embedded home, billed by the
+ * store.
  */
 export async function EmbeddedHeader() {
   const t = await getTranslations('Nav');
@@ -38,12 +39,14 @@ export async function EmbeddedHeader() {
               <LayoutGrid className="size-4" aria-hidden />
               {t('dashboard')}
             </Link>
-            {/* The embedded home has its own root layout, outside the locale
-              router: Next loads it as a new document, which needs no session. */}
-            <NextLink href={`/shopify?locale=${locale}`} className={item}>
+            <EmbeddedHomeLink
+              host={session?.embedded?.host ?? 'shopify'}
+              locale={locale}
+              className={item}
+            >
               <CreditCard className="size-4" aria-hidden />
               {t('subscription')}
-            </NextLink>
+            </EmbeddedHomeLink>
           </nav>
           {user ? (
             <div className="flex items-center gap-2">

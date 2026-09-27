@@ -12,7 +12,7 @@ import { SiteHeader } from '@/widgets/site-header';
 import { ThemeProvider } from '@/shared/ui';
 import { ServiceWorkerRegistration, ThemeColorSync } from '@/shared/pwa';
 import { getAppContactEmail } from '@/shared/config';
-import { isEmbeddedRequest } from '@/shared/embedded';
+import { WIX_BRIDGE_SCRIPT, embeddedHost } from '@/shared/embedded';
 import { EmbeddedLinkGuard } from '@/shared/embedded/client';
 import { RTL_LOCALES, routing, SUPPORTED_LOCALES } from '@/i18n/routing';
 import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '../manifest';
@@ -183,9 +183,10 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const dir = RTL_LOCALES.has(locale as never) ? 'rtl' : 'ltr';
-  // Inside the Shopify admin: no site chrome, no tracking, no service worker
-  // (the admin frames the page and the store is the session).
-  const embedded = await isEmbeddedRequest();
+  // Inside a store admin (Shopify, Wix): no site chrome, no tracking, no
+  // service worker (the admin frames the page and the store is the session).
+  const host = await embeddedHost();
+  const embedded = host !== null;
 
   return (
     <html
@@ -194,6 +195,12 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
+      {host === 'wix' ? (
+        <head>
+          {/* Wix's App Bridge equivalent: our session on every fetch (wix-bridge.ts). */}
+          <script dangerouslySetInnerHTML={{ __html: WIX_BRIDGE_SCRIPT }} />
+        </head>
+      ) : null}
       <body className="min-h-screen flex flex-col antialiased font-sans">
         {/*
           Installed, the app owns the whole screen (`viewportFit: 'cover'`), so

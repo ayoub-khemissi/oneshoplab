@@ -55,3 +55,31 @@ export type { ShopifyShopFacts, ShopifyShopRow } from './api/shopify-shops';
 export { shopifyAppCredentials } from './lib/app-credentials';
 export { bearerFrom, signShopifyIdTokenForTests, verifyShopifyIdToken } from './lib/id-token';
 export type { ShopifyIdToken } from './lib/id-token';
+export {
+  getWixInstance,
+  installedWixInstancesFor,
+  markWixInstanceLinked,
+  markWixInstanceUninstalled,
+  recordWixInstall
+} from './api/wix-instances';
+export type { WixInstanceFacts, WixInstanceRow } from './api/wix-instances';
+export {
+  WIX_SESSION_ISSUER,
+  WIX_SESSION_TTL_SECONDS,
+  isWixSessionToken,
+  signWixSessionToken,
+  verifyWixSessionToken,
+  wixAppSecret
+} from './lib/wix-session-token';
+export type { WixSessionToken } from './lib/wix-session-token';
+export { settleBillingChannel } from './api/billing-channel';
+export type { StoreBillingChannel } from './api/billing-channel';
+export {
+  createAccountFromStore,
+  emailTaken,
+  loadStoreSummary,
+  projectForStore
+} from './api/store-account';
+export type { StoreSummary } from './api/store-account';
+export { createStoreLinkToken, maskEmail, verifyStoreLinkToken } from './lib/store-link-token';
+export type { StoreLinkHost } from './lib/store-link-token';

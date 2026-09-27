@@ -9,14 +9,18 @@
  *            ─▶ or an existing one          (createShopLinkToken → linkShopToUser)
  *            ─▶ project + shop connection   (same path as the OAuth install)
  */
-import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
-import { and, count, eq, isNotNull } from 'drizzle-orm';
-import { SHOPIFY_TEST_CREDIT_CAP, SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
-import { applyCreditTransaction } from '@/entities/credit';
-import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
+import { and, eq } from 'drizzle-orm';
+import { SHOPIFY_TEST_CREDIT_CAP } from '@/entities/ai-model';
 import {
   connectShopify,
+  createAccountFromStore,
+  createStoreLinkToken,
+  emailTaken,
   getConnection,
+  loadStoreSummary,
+  maskEmail,
+  projectForStore,
+  verifyStoreLinkToken,
   getShopifyShop,
   markShopifyShopLinked,
   openPendingGrant,
@@ -28,14 +32,7 @@ import {
   type ShopifyTokenGrant
 } from '@/entities/shop-connection';
 import { db } from '@/shared/db';
-import {
-  audits,
-  legalConsents,
-  productChanges,
-  products,
-  projects,
-  users
-} from '@/shared/db/schema';
+import { projects } from '@/shared/db/schema';
 import { shopifyAppConfig, type ShopifyAppConfig } from '../lib/oauth';
 import { adoptShopifyBilling } from './app-billing';
 import { parseShopifyTokenResponse, type ShopifyTokenResponse } from '../lib/token-grant';
@@ -197,25 +194,12 @@ async function attachShopToProject(
 }
 
 /** The user's project for this shop, created when they have none yet. */
-async function projectFor(userId: string, row: ShopifyShopRow): Promise<string> {
-  const domain = row.primaryDomain ?? row.shopDomain;
-  for (const d of [row.primaryDomain, row.shopDomain]) {
-    if (!d) continue;
-    const found = await db.query.projects.findFirst({
-      where: and(eq(projects.userId, userId), eq(projects.domain, d))
-    });
-    if (found) return found.id;
-  }
-  const id = randomUUID();
-  await db.insert(projects).values({
-    id,
-    userId,
-    name: row.shopName?.trim() || domain,
-    domain,
-    url: `https://${domain}`,
+function projectFor(userId: string, row: ShopifyShopRow): Promise<string> {
+  return projectForStore(userId, {
+    domains: [row.primaryDomain, row.shopDomain],
+    name: row.shopName,
     source: 'shopify'
   });
-  return id;
 }
 
 // ------------------------------------------------------------------ onboarding
@@ -223,12 +207,6 @@ async function projectFor(userId: string, row: ShopifyShopRow): Promise<string> 
 export type OnboardResult =
   | { ok: true; userId: string; projectId: string }
   | { ok: false; reason: 'not_installed' | 'already_linked' | 'no_email' | 'email_taken' };
-
-export async function emailTaken(email: string | null): Promise<boolean> {
-  if (!email) return false;
-  const u = await db.query.users.findFirst({ where: eq(users.email, email.toLowerCase().trim()) });
-  return Boolean(u);
-}
 
 /**
  * First visit of a merchant who has no OneShopLab account: the account is
@@ -250,29 +228,11 @@ export async function onboardShopifyShop(
   if (!email) return { ok: false, reason: 'no_email' };
   if (await emailTaken(email)) return { ok: false, reason: 'email_taken' };
 
-  const userId = randomUUID();
-  await db.insert(users).values({
-    id: userId,
+  const userId = await createAccountFromStore({
     email,
-    name: row.shopName?.trim() || null,
-    plan: 'free',
-    billingChannel: 'shopify',
-    locale: opts.locale ?? null
-  });
-  await applyCreditTransaction({
-    userId,
-    delta: SIGNUP_FREE_CREDITS,
-    bucket: 'pack',
-    reason: 'signup_grant',
-    idempotencyKey: `grant-signup-${userId}`
-  });
-  await db.insert(legalConsents).values({
-    id: randomUUID(),
-    userId,
-    kind: 'signup_tos',
-    version: LEGAL_TERMS_VERSION,
-    source: `user:${userId}`,
-    locale: opts.locale ?? null
+    name: row.shopName,
+    locale: opts.locale ?? null,
+    billingChannel: 'shopify'
   });
   const projectId = await projectFor(userId, row);
   await attachShopToProject(row, userId, projectId, token, cfg, opts);
@@ -281,45 +241,16 @@ export async function onboardShopifyShop(
 
 // ------------------------------------------------------------------ linking an existing account
 
-const LINK_TTL_MS = 15 * 60 * 1000;
-
-function linkSecret(): string {
-  const s = process.env.AUTH_SECRET;
-  if (!s) throw new Error('AUTH_SECRET is not set');
-  return s;
-}
-
 /** Short-lived, signed invitation to attach this shop to whoever logs in. */
 export function createShopLinkToken(shop: string, now: number = Date.now()): string {
-  const payload = Buffer.from(
-    JSON.stringify({ shop, exp: now + LINK_TTL_MS, n: randomBytes(8).toString('base64url') })
-  ).toString('base64url');
-  const mac = createHmac('sha256', linkSecret()).update(`shop-link.${payload}`).digest('base64url');
-  return `${payload}.${mac}`;
+  return createStoreLinkToken('shopify', shop, now);
 }
 
 export function verifyShopLinkToken(
   token: string | null | undefined,
   now: number = Date.now()
 ): string | null {
-  if (!token) return null;
-  const [payload, mac] = token.split('.');
-  if (!payload || !mac) return null;
-  const expected = Buffer.from(
-    createHmac('sha256', linkSecret()).update(`shop-link.${payload}`).digest('base64url')
-  );
-  const given = Buffer.from(mac);
-  if (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;
-  try {
-    const p = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
-      shop?: string;
-      exp?: number;
-    };
-    if (typeof p.shop !== 'string' || typeof p.exp !== 'number' || p.exp < now) return null;
-    return p.shop;
-  } catch {
-    return null;
-  }
+  return verifyStoreLinkToken('shopify', token, now);
 }
 
 export type LinkResult =
@@ -352,19 +283,12 @@ export async function linkShopToUser(
 
 // ------------------------------------------------------------------ state for the embedded page
 
-export function maskEmail(email: string | null): string | null {
-  if (!email) return null;
-  const [local, domain] = email.split('@');
-  if (!domain) return null;
-  return `${local.slice(0, 1)}${'•'.repeat(Math.max(2, Math.min(6, local.length - 1)))}@${domain}`;
-}
-
 export interface EmbeddedReadyState {
   kind: 'ready';
   shop: string;
   shopName: string | null;
   projectId: string;
-  billingChannel: 'stripe' | 'shopify';
+  billingChannel: 'stripe' | 'shopify' | 'wix';
   plan: string;
   cycle: string | null;
   subscriptionStatus: string | null;
@@ -399,51 +323,23 @@ export async function loadEmbeddedState(row: ShopifyShopRow): Promise<EmbeddedSt
       emailTaken: await emailTaken(row.shopEmail)
     };
   }
-  const [user, project, connection] = await Promise.all([
-    db.query.users.findFirst({ where: eq(users.id, row.userId) }),
-    db.query.projects.findFirst({ where: eq(projects.id, row.projectId) }),
-    getConnection(row.projectId)
-  ]);
-  const sub = user
-    ? await db.query.subscriptions.findFirst({ where: (s, { eq: e }) => e(s.userId, user.id) })
-    : null;
-  const [[productCount], [pending], latest] = await Promise.all([
-    db
-      .select({ n: count() })
-      .from(products)
-      .where(and(eq(products.projectId, row.projectId), eq(products.status, 'active'))),
-    db
-      .select({ n: count() })
-      .from(productChanges)
-      .where(
-        and(eq(productChanges.projectId, row.projectId), eq(productChanges.status, 'pending'))
-      ),
-    db.query.audits.findFirst({
-      where: and(
-        eq(audits.projectId, row.projectId),
-        eq(audits.status, 'completed'),
-        isNotNull(audits.scores)
-      ),
-      orderBy: (a, { desc }) => [desc(a.createdAt)]
-    })
-  ]);
-  const overall = (latest?.scores as { overall?: number } | null)?.overall;
+  const summary = await loadStoreSummary(row.userId, row.projectId);
   return {
     kind: 'ready',
     shop: row.shopDomain,
-    shopName: row.shopName ?? project?.name ?? null,
+    shopName: row.shopName ?? summary.projectName,
     projectId: row.projectId,
-    billingChannel: user?.billingChannel ?? 'stripe',
-    plan: user?.plan ?? 'free',
-    cycle: sub?.billingCycle ?? null,
-    subscriptionStatus: sub?.status ?? null,
-    currentPeriodEndIso: sub?.currentPeriodEnd?.toISOString() ?? null,
-    credits: user?.creditsBalance ?? 0,
-    products: productCount?.n ?? 0,
-    lastPullAtIso: connection?.lastPullAt?.toISOString() ?? null,
-    pulling: Boolean(connection?.pullRequestedAt) || connection?.pullProgress?.phase === 'running',
-    score: typeof overall === 'number' ? overall : null,
-    pendingChanges: pending?.n ?? 0,
+    billingChannel: summary.billingChannel,
+    plan: summary.plan,
+    cycle: summary.cycle,
+    subscriptionStatus: summary.subscriptionStatus,
+    currentPeriodEndIso: summary.currentPeriodEndIso,
+    credits: summary.credits,
+    products: summary.products,
+    lastPullAtIso: summary.lastPullAtIso,
+    pulling: summary.pulling,
+    score: summary.score,
+    pendingChanges: summary.pendingChanges,
     testCharges: row.partnerDevelopment,
     testCreditCap: SHOPIFY_TEST_CREDIT_CAP
   };

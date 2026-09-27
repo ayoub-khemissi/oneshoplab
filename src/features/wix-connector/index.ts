@@ -32,3 +32,48 @@ export type {
   CompleteWixInstallFailure,
   CompleteWixInstallResult
 } from './api/oauth';
+export {
+  getAppInstance,
+  getCheckoutUrl,
+  getPurchaseHistory,
+  sendSetupFinished
+} from './api/app-management';
+export type { WixAppInstance, WixPaymentCycle, WixPurchase } from './api/app-management';
+export {
+  onWixAppRemoved,
+  refillWixSubscriptions,
+  startWixCheckout,
+  syncWixBilling,
+  wixBillingLink,
+  wixDashboardAppUrl,
+  wixManageUrlFor
+} from './api/app-billing';
+export type {
+  WixBillingDeps,
+  WixBillingSync,
+  WixCheckoutResult,
+  WixCheckoutTarget,
+  WixPlanOutcome
+} from './api/app-billing';
+export {
+  WIX_SCOPES,
+  attachWixSite,
+  authenticateWixEmbedded,
+  createWixLinkToken,
+  ensureWixInstall,
+  linkWixSiteToUser,
+  loadWixEmbeddedState,
+  onboardWixSite,
+  renewWixSession,
+  verifyWixLinkToken,
+  wixSessionFromInstance
+} from './api/embedded';
+export type {
+  WixEmbeddedAuth,
+  WixEmbeddedDeps,
+  WixEmbeddedState,
+  WixInstall,
+  WixLinkResult,
+  WixOnboardResult
+} from './api/embedded';
+export { signInstance, verifySignedInstance } from './lib/signed-instance';

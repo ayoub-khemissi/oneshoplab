@@ -3,8 +3,8 @@ import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { CreditPackCards, ShopifyBillingNotice } from '@/features/billing';
-import { shopifyBillingLink } from '@/features/shopify-connector';
-import { isEmbeddedRequest } from '@/shared/embedded';
+import { embeddedHost } from '@/shared/embedded';
+import { storeManageFor } from '@/widgets/store-billing';
 import { InfoHint } from '@/shared/ui';
 import { auth } from '@/entities/user';
 import { getCreditBuckets } from '@/entities/credit';
@@ -23,9 +23,12 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const t = await getTranslations('Credits');
   const tPricing = await getTranslations('Pricing');
-  const shopifyUrl = await shopifyBillingLink(session.user.id, await isEmbeddedRequest());
-  const shopifyManage = shopifyUrl
-    ? { url: shopifyUrl, label: tPricing('shopifyManagedCta') }
+  const store = await storeManageFor(session.user.id, await embeddedHost());
+  const storeManage = store
+    ? {
+        ...store,
+        label: store.store === 'wix' ? tPricing('wixManagedCta') : tPricing('shopifyManagedCta')
+      }
     : null;
 
   const buckets = await getCreditBuckets(session.user.id);
@@ -83,7 +86,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
           </div>
           <p className="text-xs text-[var(--muted)] max-w-md">
             {/* Billed by Shopify: its dollars, not the site's euros. */}
-            {shopifyManage ? t('balanceHintUsd') : t('balanceHint')}
+            {storeManage ? t('balanceHintUsd') : t('balanceHint')}
           </p>
         </div>
         <div className="flex flex-wrap gap-3 text-xs">
@@ -102,13 +105,19 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         </div>
       </Card>
 
-      {shopifyManage ? (
+      {storeManage ? (
         <ShopifyBillingNotice
-          url={shopifyManage.url}
+          url={storeManage.url}
           copy={{
-            title: tPricing('shopifyManagedTitle'),
-            body: tPricing('shopifyManagedBody'),
-            cta: tPricing('shopifyManagedCta')
+            title:
+              storeManage.store === 'wix'
+                ? tPricing('wixManagedTitle')
+                : tPricing('shopifyManagedTitle'),
+            body:
+              storeManage.store === 'wix'
+                ? tPricing('wixManagedBody')
+                : tPricing('shopifyManagedBody'),
+            cta: storeManage.label
           }}
         />
       ) : null}
@@ -118,7 +127,7 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         <p className="text-sm text-[var(--muted)] max-w-2xl">{t('packsHint')}</p>
         <CreditPackCards
           locale={locale}
-          shopifyManage={shopifyManage}
+          storeManage={storeManage}
           copy={{
             pack: {
               boost: { name: t('pack.boost.name'), tagline: t('pack.boost.tagline') },
