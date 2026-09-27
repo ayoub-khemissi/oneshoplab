@@ -39,7 +39,7 @@ const GUEST_ONLY = ['/login', '/signup', '/forgot-password'];
 // Routes that require a session. Hitting them while logged out sends
 // the visitor to /login with `?next=<original>` so they land back on
 // their target after authenticating.
-const AUTH_REQUIRED = ['/dashboard', '/account'];
+const AUTH_REQUIRED = ['/dashboard', '/account', '/shopify-link'];
 
 const LOCALE_SET = new Set<string>(SUPPORTED_LOCALES);
 
@@ -62,8 +62,25 @@ function matchesRoute(path: string, prefixes: readonly string[]): boolean {
   return prefixes.some((p) => path === p || path.startsWith(p + '/'));
 }
 
+/**
+ * The embedded app is framed by the Shopify admin: it must say which
+ * ancestors may frame it (the shop and admin.shopify.com), and nothing else
+ * may. Locale routing does not apply there — Shopify passes `locale`.
+ */
+function embeddedResponse(req: NextRequest): NextResponse {
+  const res = NextResponse.next();
+  const shop = (req.nextUrl.searchParams.get('shop') ?? '').toLowerCase();
+  const shopOk = /^[a-z0-9][a-z0-9-]{0,98}\.myshopify\.com$/.test(shop);
+  res.headers.set(
+    'Content-Security-Policy',
+    `frame-ancestors ${shopOk ? `https://${shop} ` : ''}https://admin.shopify.com`
+  );
+  return res;
+}
+
 export default async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+  if (pathname === '/shopify' || pathname.startsWith('/shopify/')) return embeddedResponse(req);
   const { locale, rest } = splitLocale(pathname);
 
   // Bare paths (no locale prefix) are handled by next-intl's locale

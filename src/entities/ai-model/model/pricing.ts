@@ -191,6 +191,22 @@ const PricingSchema = z.object({
       cost: z.number().int().positive()
     })
   }),
+  _shopifyBillingComment: z.string().optional(),
+  /** Shopify Billing prices (App Store installs). */
+  shopifyBilling: z.object({
+    currency: z.literal('USD'),
+    plans: z.object({
+      starter: z.number().positive(),
+      pro: z.number().positive(),
+      scale: z.number().positive()
+    }),
+    packs: z.object(
+      Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, z.number().positive()])) as Record<
+        CreditPackId,
+        z.ZodNumber
+      >
+    )
+  }),
   creditPacks: z.object(
     Object.fromEntries(CREDIT_PACK_IDS.map((id) => [id, CreditPackSchema])) as Record<
       CreditPackId,

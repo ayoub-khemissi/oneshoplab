@@ -2,7 +2,6 @@
 
 import { PlatformLogo } from '@/shared/ui';
 import { Card } from '@heroui/react';
-import { ChevronDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 import type { ShopifyConnectionView, WixConnectionView } from '@/entities/shop-connection/client';
@@ -57,6 +56,7 @@ export function IntegrationsWizard({
   initialStatus,
   interest,
   shopifyAppConfigured,
+  shopifyAppStoreUrl = null,
   wixAppConfigured,
   returnNotice,
   syncRequestedAtIso
@@ -74,6 +74,8 @@ export function IntegrationsWizard({
   interest: IntegrationInterestMap;
   /** `isShopifyAppConfigured()` / `isWixAppConfigured()`, computed by the view (env is server-only). */
   shopifyAppConfigured: boolean;
+  /** `SHOPIFY_APP_STORE_URL`: once the listing is live, installs start there. */
+  shopifyAppStoreUrl?: string | null;
   wixAppConfigured: boolean;
   returnNotice: IntegrationReturn;
   /** Last manual sync request on this store, to hold the button for a minute. */
@@ -218,24 +220,13 @@ export function IntegrationsWizard({
                 {t('shopify.alreadyConnected', { shop: shopify.shopName ?? shopify.shopDomain })}
               </p>
             ) : (
-              <ShopifyInstallCard projectId={projectId} domain={domain} locale={locale} />
+              <ShopifyInstallCard
+                projectId={projectId}
+                domain={domain}
+                locale={locale}
+                appStoreUrl={shopifyAppStoreUrl}
+              />
             )}
-            <details data-testid="shopify-token-method" className="group">
-              <summary className="cursor-pointer select-none text-sm font-medium text-[var(--accent)] inline-flex items-center gap-1">
-                <ChevronDown
-                  className="size-4 transition-transform group-open:rotate-180"
-                  aria-hidden
-                />
-                {t('shopifyApp.otherMethod')}
-              </summary>
-              <div className="mt-4 flex flex-col gap-5">
-                <p className="text-sm text-[var(--muted)] leading-relaxed">
-                  {t('shopifyApp.otherMethodBody')}
-                </p>
-                {guide}
-                {shopifyTokenForm}
-              </div>
-            </details>
           </div>
         ) : wixApp ? (
           <div className="flex flex-col gap-5">

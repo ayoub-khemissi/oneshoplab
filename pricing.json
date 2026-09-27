@@ -175,6 +175,12 @@
       "cost": 1
     }
   },
+  "_shopifyBillingComment": "Prices charged through Shopify Billing to merchants who installed the app from the Shopify admin (the App Store forbids off-platform billing). Shopify bills app charges in USD. Rule: same value as the euro price (EUR/USD 1.1382 on 2026-09-27) with Shopify's 2.9% processing fee absorbed, rounded to .99, so a Shopify merchant pays what a web customer pays and the net per sale matches Stripe. Offers rank by price per credit exactly as on the site. Yearly = monthly x 12 x (1 - yearly discount), like Stripe. Revisit if EUR/USD moves by more than ~5%.",
+  "shopifyBilling": {
+    "currency": "USD",
+    "plans": { "starter": 46.99, "pro": 104.99, "scale": 234.99 },
+    "packs": { "boost": 5.99, "power": 20.99, "mega": 69.99, "catalog": 289 }
+  },
   "creditPacks": {
     "boost": {
       "credits": 500,

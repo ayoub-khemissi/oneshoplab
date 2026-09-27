@@ -2,7 +2,8 @@ import { Card } from '@heroui/react';
 import { CheckCircle2, AlertCircle, Coins } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { CreditPackCards } from '@/features/billing';
+import { CreditPackCards, ShopifyBillingNotice } from '@/features/billing';
+import { shopifyManageUrlFor } from '@/features/shopify-connector';
 import { InfoHint } from '@/shared/ui';
 import { auth } from '@/entities/user';
 import { getCreditBuckets } from '@/entities/credit';
@@ -20,6 +21,11 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
 
   const params = await searchParams;
   const t = await getTranslations('Credits');
+  const tPricing = await getTranslations('Pricing');
+  const shopifyUrl = await shopifyManageUrlFor(session.user.id);
+  const shopifyManage = shopifyUrl
+    ? { url: shopifyUrl, label: tPricing('shopifyManagedCta') }
+    : null;
 
   const buckets = await getCreditBuckets(session.user.id);
   const banner =
@@ -92,11 +98,23 @@ export default async function AccountCreditsPage({ searchParams }: PageProps) {
         </div>
       </Card>
 
+      {shopifyManage ? (
+        <ShopifyBillingNotice
+          url={shopifyManage.url}
+          copy={{
+            title: tPricing('shopifyManagedTitle'),
+            body: tPricing('shopifyManagedBody'),
+            cta: tPricing('shopifyManagedCta')
+          }}
+        />
+      ) : null}
+
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{t('packsTitle')}</h2>
         <p className="text-sm text-[var(--muted)] max-w-2xl">{t('packsHint')}</p>
         <CreditPackCards
           locale={locale}
+          shopifyManage={shopifyManage}
           copy={{
             pack: {
               boost: { name: t('pack.boost.name'), tagline: t('pack.boost.tagline') },

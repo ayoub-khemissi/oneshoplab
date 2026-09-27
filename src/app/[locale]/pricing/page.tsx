@@ -13,8 +13,10 @@ import {
   CatalogSimulator,
   CreditPackCards,
   getStripePriceId,
-  PricingCards
+  PricingCards,
+  ShopifyBillingNotice
 } from '@/features/billing';
+import { shopifyManageUrlFor } from '@/features/shopify-connector';
 import {
   CREDIT_PACKS,
   PLAN_TIERS,
@@ -81,6 +83,9 @@ export default async function PricingPage() {
   // "Current plan" / "Upgrade" / "Downgrade" / "Switch cycle" rather
   // than a uniform "Subscribe" — and route those changes through the
   // customer portal instead of opening a duplicate checkout.
+  const shopifyUrl = session?.user?.id ? await shopifyManageUrlFor(session.user.id) : null;
+  const shopifyManage = shopifyUrl ? { url: shopifyUrl, label: t('shopifyManagedCta') } : null;
+
   let current: {
     plan: PlanId;
     cycle: BillingCycle | null;
@@ -151,12 +156,24 @@ export default async function PricingPage() {
         <p className="text-lg text-[var(--muted)] leading-relaxed">{t('subtitle')}</p>
       </header>
 
+      {shopifyManage ? (
+        <ShopifyBillingNotice
+          url={shopifyManage.url}
+          copy={{
+            title: t('shopifyManagedTitle'),
+            body: t('shopifyManagedBody'),
+            cta: t('shopifyManagedCta')
+          }}
+        />
+      ) : null}
+
       <CatalogSimulator />
 
       <PricingCards
         signedIn={signedIn}
         available={available}
         current={current}
+        shopifyManage={shopifyManage}
         copy={{
           perMonth: t('perMonth'),
           perMonthBilledYearly: t('perMonthBilledYearly'),
@@ -204,6 +221,7 @@ export default async function PricingPage() {
         </div>
         <CreditPackCards
           locale={locale}
+          shopifyManage={shopifyManage}
           copy={{
             pack: {
               boost: {

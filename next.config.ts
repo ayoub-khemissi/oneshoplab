@@ -51,9 +51,14 @@ const config: NextConfig = {
   async headers() {
     return [
       {
+        // Everything but the embedded Shopify app may never be framed; the
+        // embedded app gets a per-shop frame-ancestors from src/proxy.ts.
+        source: '/:path((?!shopify$|shopify/).*)',
+        headers: [{ key: 'X-Frame-Options', value: 'DENY' }]
+      },
+      {
         source: '/:path*',
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {

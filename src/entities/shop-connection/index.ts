@@ -37,3 +37,13 @@ export { listGdprRequests, recordGdprRequest } from './api/gdpr';
 export type { GdprRequestRow } from './api/gdpr';
 export type { ShopifyConnectionView, WixConnectionView } from './model/view';
 export { toShopifyConnectionView, toWixConnectionView } from './model/view';
+export {
+  deleteShopifyShop,
+  getShopifyShop,
+  installedShopifyShopsFor,
+  markShopifyShopLinked,
+  markShopifyShopUninstalled,
+  openPendingToken,
+  recordShopifyInstall
+} from './api/shopify-shops';
+export type { ShopifyShopFacts, ShopifyShopRow } from './api/shopify-shops';

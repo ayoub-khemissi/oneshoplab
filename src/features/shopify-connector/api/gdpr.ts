@@ -4,7 +4,11 @@
  * `shop/redact` (48 h after uninstall) also wipes every connection row of
  * that shop. HMAC key = the app's client secret.
  */
-import { recordGdprRequest, revokeByShopDomain } from '@/entities/shop-connection';
+import {
+  deleteShopifyShop,
+  recordGdprRequest,
+  revokeByShopDomain
+} from '@/entities/shop-connection';
 import { GDPR_TOPICS, type GdprTopic } from '@/shared/db/schema';
 import { shopifyAppConfig } from '../lib/oauth';
 import { SHOPIFY_HMAC_HEADER, verifyShopifyHmac } from '../lib/webhook-hmac';
@@ -48,6 +52,7 @@ export async function handleShopifyGdprWebhook(req: {
   await recordGdprRequest(shopDomain, topic, payload);
   if (topic === 'shop/redact' && shopDomain) {
     const n = await revokeByShopDomain(shopDomain, 'shop/redact');
+    await deleteShopifyShop(shopDomain);
     return { status: 200, body: { ok: true, action: `revoked:${n}` } };
   }
   return { status: 200, body: { ok: true, action: 'logged' } };

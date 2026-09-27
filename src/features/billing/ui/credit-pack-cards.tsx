@@ -21,6 +21,8 @@ interface CreditPackCardsProps {
   };
   /** BCP-47 tag for number formatting (falls back to the runtime default). */
   locale?: string;
+  /** Merchants billed through Shopify buy packs in the embedded app. */
+  shopifyManage?: { url: string; label: string } | null;
 }
 
 /**
@@ -29,7 +31,7 @@ interface CreditPackCardsProps {
  * /login?next=/account/credits, so this component doesn't need to
  * branch on session state.
  */
-export function CreditPackCards({ copy, locale }: CreditPackCardsProps) {
+export function CreditPackCards({ copy, locale, shopifyManage }: CreditPackCardsProps) {
   const best = bestValuePack().id;
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -70,17 +72,27 @@ export function CreditPackCards({ copy, locale }: CreditPackCardsProps) {
                   {copy.perCreditLabel(packPerCreditEur(pack).toFixed(4))}
                 </span>
               </div>
-              <form action={buyCreditPackAction} className="mt-auto">
-                <input type="hidden" name="packId" value={pack.id} />
-                <button
-                  type="submit"
-                  disabled={!configured}
-                  className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
+              {shopifyManage ? (
+                <a
+                  href={shopifyManage.url}
+                  target="_top"
+                  className="mt-auto w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-1.5"
                 >
-                  <Sparkles className="size-3.5" />
-                  {configured ? copy.buyLabel : copy.comingSoonLabel}
-                </button>
-              </form>
+                  {shopifyManage.label}
+                </a>
+              ) : (
+                <form action={buyCreditPackAction} className="mt-auto">
+                  <input type="hidden" name="packId" value={pack.id} />
+                  <button
+                    type="submit"
+                    disabled={!configured}
+                    className="w-full px-4 py-2 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
+                  >
+                    <Sparkles className="size-3.5" />
+                    {configured ? copy.buyLabel : copy.comingSoonLabel}
+                  </button>
+                </form>
+              )}
             </Card>
           </div>
         );

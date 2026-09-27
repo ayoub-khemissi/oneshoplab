@@ -661,6 +661,7 @@ export async function DashboardSitePage({
             }}
             interest={project.integrationInterest ?? {}}
             shopifyAppConfigured={isShopifyAppConfigured()}
+            shopifyAppStoreUrl={process.env.SHOPIFY_APP_STORE_URL?.trim() || null}
             wixAppConfigured={isWixAppConfigured()}
             returnNotice={parseIntegrationReturn(searchParams)}
             syncRequestedAtIso={project.syncRequestedAt?.toISOString() ?? null}

@@ -66,9 +66,18 @@ interface PricingCardsProps {
      *  #packs, so only the page that has that section passes it. */
     packsNote?: string;
   };
+  /** Set for merchants billed through Shopify: every plan change happens in
+   *  the embedded app, so paid CTAs become one link there. */
+  shopifyManage?: { url: string; label: string } | null;
 }
 
-export function PricingCards({ signedIn, available, current, copy }: PricingCardsProps) {
+export function PricingCards({
+  signedIn,
+  available,
+  current,
+  copy,
+  shopifyManage
+}: PricingCardsProps) {
   // Default the cycle toggle to whatever the merchant is already on so the
   // page lands with their current plan visually highlighted as "Current
   // plan" rather than offering a cycle they didn't pick.
@@ -96,6 +105,7 @@ export function PricingCards({ signedIn, available, current, copy }: PricingCard
             available={tier.id === 'free' ? true : (available[`${tier.id}_${cycle}`] ?? false)}
             current={current}
             copy={copy}
+            shopifyManage={shopifyManage}
           />
         ))}
       </section>
@@ -157,7 +167,8 @@ function PlanCard({
   signedIn,
   available,
   current,
-  copy
+  copy,
+  shopifyManage
 }: {
   tier: PlanTier;
   cycle: BillingCycle;
@@ -165,6 +176,7 @@ function PlanCard({
   available: boolean;
   current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
+  shopifyManage?: PricingCardsProps['shopifyManage'];
 }) {
   // Format numbers with the next-intl locale (same value SSR + client,
   // sourced from the URL/provider) instead of the runtime default,
@@ -245,6 +257,7 @@ function PlanCard({
           current={current}
           copy={copy}
           isFeatured={isFeatured}
+          shopifyManage={shopifyManage}
         />
       </Card>
     </div>
@@ -307,7 +320,8 @@ function CardCta({
   available,
   current,
   copy,
-  isFeatured
+  isFeatured,
+  shopifyManage
 }: {
   tier: PlanTier;
   cycle: BillingCycle;
@@ -316,6 +330,7 @@ function CardCta({
   current: PricingCardsProps['current'];
   copy: PricingCardsProps['copy'];
   isFeatured: boolean;
+  shopifyManage?: PricingCardsProps['shopifyManage'];
 }) {
   const baseClasses =
     'mt-auto px-4 py-2.5 rounded-md font-medium text-sm transition-opacity hover:opacity-90 text-center inline-flex items-center justify-center gap-1.5';
@@ -331,6 +346,18 @@ function CardCta({
   const hasLiveSubscription = !!current && current.plan !== 'free' && current.status !== 'canceled';
   const isCurrentPlan = hasLiveSubscription && current!.plan === tier.id;
   const isCurrentCycle = isCurrentPlan && current!.cycle === cycle;
+
+  if (shopifyManage && !isCurrentCycle && (tier.priceEur > 0 || hasLiveSubscription)) {
+    return (
+      <a
+        href={shopifyManage.url}
+        target="_top"
+        className={`${baseClasses} ${isFeatured ? featuredClasses : outlineClasses}`}
+      >
+        {shopifyManage.label}
+      </a>
+    );
+  }
 
   if (tier.priceEur === 0) {
     // Free tier card. Behavior splits on whether the user is on a paid

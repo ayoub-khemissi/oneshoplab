@@ -11,6 +11,8 @@ import { applyCreditTransaction } from '@/entities/credit';
 import { SIGNUP_FREE_CREDITS } from '@/entities/ai-model';
 import { LEGAL_TERMS_VERSION } from '@/entities/legal-consent';
 import { db } from '@/shared/db';
+import { getIdempotent, putIdempotent } from '@/shared/api';
+import { verifySsoToken } from '../lib/sso-token';
 import {
   accounts,
   sessions,
@@ -76,6 +78,26 @@ const providers: NextAuthConfig['providers'] = [
     }
   })
 ];
+
+// One-click sign-in from the Shopify embedded app (see ../lib/sso-token.ts).
+providers.push(
+  Credentials({
+    id: 'shopify-sso',
+    name: 'Shopify',
+    credentials: { token: { label: 'Token', type: 'text' } },
+    async authorize(credentials) {
+      const ticket = verifySsoToken(String(credentials?.token ?? ''));
+      if (!ticket) return null;
+      // Single use: the jti is spent in the same table API idempotency uses.
+      const seen = await getIdempotent('shopify-sso', ticket.jti, 'sso');
+      if (seen.kind !== 'miss') return null;
+      await putIdempotent('shopify-sso', ticket.jti, 'sso', 200, null);
+      const user = await db.query.users.findFirst({ where: eq(users.id, ticket.userId) });
+      if (!user) return null;
+      return { id: user.id, email: user.email, name: user.name ?? null, image: user.image ?? null };
+    }
+  })
+);
 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   providers.push(

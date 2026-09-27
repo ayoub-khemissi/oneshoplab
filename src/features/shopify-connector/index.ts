@@ -27,6 +27,7 @@ export { SHOPIFY_HMAC_HEADER, computeShopifyHmac, verifyShopifyHmac } from './li
 export { pullShopifyCatalog, runShopifyNightlyPulls, runShopifyRequestedPulls } from './api/pull';
 export type { PullResult } from './api/pull';
 export {
+  handleShopifyAppWebhook,
   OAUTH_WEBHOOK_TOPICS,
   WEBHOOK_TOPICS,
   deleteShopifyWebhooks,
@@ -63,3 +64,48 @@ export type {
 } from './api/oauth';
 export { GDPR_ROUTE_TOPICS, handleShopifyGdprWebhook } from './api/gdpr';
 export type { GdprOutcome } from './api/gdpr';
+export {
+  authenticateEmbedded,
+  createShopLinkToken,
+  emailTaken,
+  ensureEmbeddedInstall,
+  exchangeIdToken,
+  fetchShopFacts,
+  linkShopToUser,
+  loadEmbeddedState,
+  maskEmail,
+  onboardShopifyShop,
+  verifyShopLinkToken
+} from './api/embedded';
+export type {
+  EmbeddedAuth,
+  EmbeddedDeps,
+  EmbeddedReadyState,
+  EmbeddedState,
+  LinkResult,
+  OnboardResult
+} from './api/embedded';
+export {
+  activeShopifySubscription,
+  applyShopifySubscription,
+  cancelShopifySubscription,
+  confirmShopifyReturn,
+  embeddedAppUrl,
+  grantShopifyPack,
+  handleShopifyBillingWebhook,
+  onShopifyAppUninstalled,
+  packChargeName,
+  parsePackChargeName,
+  refillShopifySubscriptions,
+  shopifyManageUrlFor,
+  startShopifyPackPurchase,
+  startShopifySubscription
+} from './api/app-billing';
+export type {
+  BillingApplyOutcome,
+  BillingDeps,
+  ShopifyAppSubscription,
+  StartChargeResult
+} from './api/app-billing';
+export { bearerFrom, signShopifyIdTokenForTests, verifyShopifyIdToken } from './lib/id-token';
+export type { ShopifyIdToken } from './lib/id-token';

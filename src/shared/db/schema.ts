@@ -17,6 +17,10 @@ import {
 export const PLATFORMS = ['shopify', 'woocommerce', 'wix', 'manual', 'unknown'] as const;
 export const PLANS = ['free', 'starter', 'pro', 'scale'] as const;
 export const BILLING_CYCLES = ['monthly', 'yearly'] as const;
+/** Who bills the account: our Stripe, or Shopify (App Store installs: the
+ *  App Store forbids off-platform billing, requirement 1.2.1). */
+export const BILLING_CHANNELS = ['stripe', 'shopify'] as const;
+export type BillingChannel = (typeof BILLING_CHANNELS)[number];
 /** Every id ever stored in users.preferred_chat_model. The ACTIVE lineup
  *  lives in pricing.json (src/entities/ai-model/model/pricing.ts CHAT_MODEL_IDS); retired
  *  ids stay here so old rows remain valid and are remapped on read via
@@ -107,6 +111,9 @@ export const users = mysqlTable('users', {
 
   // App-specific extensions
   plan: mysqlEnum('plan', PLANS).notNull().default('free'),
+  /** 'shopify' once the account was created from the Shopify admin (embedded
+   *  app): plans and packs are then sold through Shopify Billing only. */
+  billingChannel: mysqlEnum('billing_channel', BILLING_CHANNELS).notNull().default('stripe'),
   /**
    * Total spendable credits = credits_balance_subscription + credits_balance_pack.
    * Maintained by applyCreditTransaction so existing reads (header chip,
@@ -722,9 +729,54 @@ export const subscriptions = mysqlTable('subscriptions', {
   billingCycle: mysqlEnum('billing_cycle', BILLING_CYCLES),
   status: varchar('status', { length: 64 }).notNull().default('active'),
   currentPeriodEnd: timestamp('current_period_end'),
+  /** Which system charges this subscription. */
+  channel: mysqlEnum('channel', BILLING_CHANNELS).notNull().default('stripe'),
+  /** Shopify Billing: the AppSubscription gid and the shop it was sold on. */
+  shopifySubscriptionGid: varchar('shopify_subscription_gid', { length: 128 }),
+  shopifyShopDomain: varchar('shopify_shop_domain', { length: 255 }),
+  /** Monthly credit refills that no billing event announces: Stripe yearly
+   *  plans (one invoice a year) and every Shopify plan (Shopify sends no
+   *  per-cycle event). Null when the channel's own renewal event grants. */
+  nextCreditRefillAt: timestamp('next_credit_refill_at'),
+  lastCreditRefillAt: timestamp('last_credit_refill_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
 });
+
+/**
+ * One row per shop that installed the public app from Shopify (embedded
+ * install, token exchange). Holds the shop-level state the per-project
+ * `shop_connections` row cannot: who owns the install before the merchant
+ * picked an account (`userId` null), the sealed offline token while it is
+ * unlinked, and the facts Shopify Billing needs (test charges on
+ * development stores).
+ */
+export const shopifyShops = mysqlTable(
+  'shopify_shops',
+  {
+    shopDomain: varchar('shop_domain', { length: 255 }).primaryKey(),
+    userId: varchar('user_id', { length: 36 }).references(() => users.id, { onDelete: 'set null' }),
+    projectId: varchar('project_id', { length: 36 }).references(() => projects.id, {
+      onDelete: 'set null'
+    }),
+    /** Offline token, sealed (secret-box). Kept here only until the shop is
+     *  linked to a project; then `shop_connections` owns the token. */
+    pendingTokenCiphertext: text('pending_token_ciphertext'),
+    scopes: json('scopes').$type<string[]>(),
+    shopName: varchar('shop_name', { length: 255 }),
+    shopEmail: varchar('shop_email', { length: 255 }),
+    primaryDomain: varchar('primary_domain', { length: 255 }),
+    partnerDevelopment: boolean('partner_development').notNull().default(false),
+    installedAt: timestamp('installed_at').notNull().defaultNow(),
+    linkedAt: timestamp('linked_at'),
+    uninstalledAt: timestamp('uninstalled_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow()
+  },
+  (t) => ({
+    idxUser: index('idx_shopify_shops_user').on(t.userId)
+  })
+);
 
 // ============================================================================
 // RELATIONS (for Drizzle's relational query API)

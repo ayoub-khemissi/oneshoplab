@@ -518,6 +518,42 @@ export function yearlyPriceEur(monthlyPriceEur: number): number {
   return Math.round(monthlyPriceEur * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100;
 }
 
+// ---------------------------------------------------------------------------
+// Shopify Billing (App Store installs)
+// ---------------------------------------------------------------------------
+
+export const SHOPIFY_BILLING_CURRENCY = PRICING.shopifyBilling.currency;
+
+/** Price Shopify charges for a plan and cycle, in USD. */
+export function shopifyPlanPrice(plan: Exclude<PlanId, 'free'>, cycle: BillingCycle): number {
+  const monthly = PRICING.shopifyBilling.plans[plan];
+  return cycle === 'yearly'
+    ? Math.round(monthly * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100
+    : monthly;
+}
+
+/** Price Shopify charges for a credit pack, in USD. */
+export function shopifyPackPrice(pack: CreditPackId): number {
+  return PRICING.shopifyBilling.packs[pack];
+}
+
+/** The name the merchant reads on their Shopify invoice — also how a
+ *  subscription is recognised again (`OneShopLab Pro (yearly)`). */
+export function shopifyPlanChargeName(plan: Exclude<PlanId, 'free'>, cycle: BillingCycle): string {
+  const tier = PLAN_TIERS.find((t) => t.id === plan);
+  return `OneShopLab ${tier?.name ?? plan} (${cycle})`;
+}
+
+export function parseShopifyPlanChargeName(
+  name: string
+): { plan: Exclude<PlanId, 'free'>; cycle: BillingCycle } | null {
+  const m = /^OneShopLab (\w+) \((monthly|yearly)\)$/.exec(name.trim());
+  if (!m) return null;
+  const tier = PLAN_TIERS.find((t) => t.name.toLowerCase() === m[1].toLowerCase());
+  if (!tier || tier.id === 'free') return null;
+  return { plan: tier.id as Exclude<PlanId, 'free'>, cycle: m[2] as BillingCycle };
+}
+
 /** Monthly-equivalent display price for a yearly cycle. */
 export function yearlyMonthlyEquivalent(monthlyPriceEur: number): number {
   return Math.round(monthlyPriceEur * (1 - YEARLY_DISCOUNT) * 100) / 100;

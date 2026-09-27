@@ -70,7 +70,12 @@ export interface MediaMove {
   newPosition: number;
 }
 
-export type WebhookTopic = 'PRODUCTS_UPDATE' | 'PRODUCTS_DELETE' | 'APP_UNINSTALLED';
+export type WebhookTopic =
+  | 'PRODUCTS_UPDATE'
+  | 'PRODUCTS_DELETE'
+  | 'APP_UNINSTALLED'
+  | 'APP_SUBSCRIPTIONS_UPDATE'
+  | 'APP_PURCHASES_ONE_TIME_UPDATE';
 
 interface GraphQLError {
   message: string;

@@ -8,7 +8,9 @@ import { createHash } from 'node:crypto';
 import { archiveProductBySourceId, syncProjectProducts } from '@/entities/product';
 import {
   getConnection,
+  getShopifyShop,
   markTokenInvalid,
+  normalizeShopDomain,
   revokeConnection,
   setLastError,
   setWebhookIds,
@@ -18,6 +20,7 @@ import {
 } from '@/entities/shop-connection';
 import { getIdempotent, putIdempotent } from '@/shared/api';
 import { mapAdminProduct } from '../lib/map-product';
+import { shopifyAppConfig } from '../lib/oauth';
 import { SHOPIFY_HMAC_HEADER, verifyShopifyHmac } from '../lib/webhook-hmac';
 import {
   createAdminClient,
@@ -25,10 +28,18 @@ import {
   type ShopifyAdminClient,
   type WebhookTopic
 } from './admin-client';
+import { handleShopifyBillingWebhook, onShopifyAppUninstalled } from './app-billing';
 
 export const WEBHOOK_TOPICS: readonly WebhookTopic[] = ['PRODUCTS_UPDATE', 'PRODUCTS_DELETE'];
 /** Public-app installs also learn about their own removal (custom apps have no such event). */
-export const OAUTH_WEBHOOK_TOPICS: readonly WebhookTopic[] = [...WEBHOOK_TOPICS, 'APP_UNINSTALLED'];
+export const OAUTH_WEBHOOK_TOPICS: readonly WebhookTopic[] = [
+  ...WEBHOOK_TOPICS,
+  'APP_UNINSTALLED',
+  // Shopify Billing (App Store installs): plan approvals, cancellations and
+  // pack purchases the merchant confirmed after closing our page.
+  'APP_SUBSCRIPTIONS_UPDATE',
+  'APP_PURCHASES_ONE_TIME_UPDATE'
+];
 
 export function webhookCallbackUrl(projectId: string): string {
   const base = (process.env.APP_URL ?? '').replace(/\/+$/, '');
@@ -95,7 +106,7 @@ export interface WebhookRequest {
   headers: Headers;
 }
 export interface WebhookOutcome {
-  status: 200 | 401 | 404;
+  status: 200 | 400 | 401 | 404;
   body: { ok: boolean; action?: string; replay?: boolean; error?: string };
 }
 
@@ -177,7 +188,12 @@ export async function handleShopifyWebhook(
       const topic = req.headers.get('x-shopify-topic')?.trim().toLowerCase() ?? '';
       if (topic === 'app/uninstalled') {
         await revokeConnection(req.projectId, 'app/uninstalled');
+        await onShopifyAppUninstalled(secrets.shopDomain);
         return { status: 200, body: { ok: true, action: 'revoked' } };
+      }
+      if (topic === 'app_subscriptions/update' || topic === 'app_purchases_one_time/update') {
+        const action = await handleShopifyBillingWebhook(secrets.shopDomain, topic, req.rawBody);
+        return { status: 200, body: { ok: true, action } };
       }
       const sourceId = sourceIdOf(req.rawBody);
       if (!sourceId) return { status: 200, body: { ok: true, action: 'ignored' } };
@@ -205,4 +221,41 @@ export async function handleShopifyWebhook(
   const known = await getConnection(req.projectId);
   if (known) return { status: 200, body: { ok: true, action: 'disconnected' } };
   return { status: 404, body: { ok: false, error: 'not_found' } };
+}
+
+/**
+ * App-level subscriptions declared in shopify.app.toml (`/api/webhooks/shopify/app`).
+ * Unlike the per-project ones above they exist for every shop that installed
+ * the app, linked to an account or not, and are signed with the client secret.
+ * Every action is idempotent: the per-project copy of the same event may
+ * arrive too.
+ */
+export async function handleShopifyAppWebhook(req: {
+  rawBody: string;
+  headers: Headers;
+}): Promise<WebhookOutcome> {
+  const cfg = shopifyAppConfig();
+  if (!cfg) return { status: 401, body: { ok: false, error: 'not_configured' } };
+  if (!verifyShopifyHmac(req.rawBody, req.headers.get(SHOPIFY_HMAC_HEADER), cfg.clientSecret)) {
+    return { status: 401, body: { ok: false, error: 'bad_hmac' } };
+  }
+  const shop = normalizeShopDomain(req.headers.get('x-shopify-shop-domain') ?? '');
+  if (!shop) return { status: 400, body: { ok: false, error: 'bad_shop' } };
+  const topic = req.headers.get('x-shopify-topic')?.trim().toLowerCase() ?? '';
+  if (topic === 'app/uninstalled') {
+    const row = await getShopifyShop(shop);
+    if (row?.projectId) {
+      const connection = await getConnection(row.projectId);
+      if (connection?.platform === 'shopify' && connection.shopDomain === shop) {
+        await revokeConnection(row.projectId, 'app/uninstalled');
+      }
+    }
+    await onShopifyAppUninstalled(shop);
+    return { status: 200, body: { ok: true, action: 'revoked' } };
+  }
+  if (topic === 'app_subscriptions/update' || topic === 'app_purchases_one_time/update') {
+    const action = await handleShopifyBillingWebhook(shop, topic, req.rawBody);
+    return { status: 200, body: { ok: true, action } };
+  }
+  return { status: 200, body: { ok: true, action: 'ignored' } };
 }

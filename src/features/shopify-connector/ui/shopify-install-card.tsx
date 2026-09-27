@@ -24,16 +24,45 @@ export function shopifyInstallUrl(projectId: string, shop: string, locale: strin
 export function ShopifyInstallCard({
   projectId,
   domain,
-  locale
+  locale,
+  appStoreUrl = null
 }: {
   projectId: string;
   /** Project domain or URL: prefills the shop address when it is a myshopify host. */
   domain: string | null;
   locale: string;
+  /** Listed app: install from the App Store, then link the account inside Shopify. */
+  appStoreUrl?: string | null;
 }) {
   const t = useTranslations('Integrations.shopifyApp');
   const [shop, setShop] = useState(() => prefillShopDomain(domain));
   const [invalid, setInvalid] = useState(false);
+
+  if (appStoreUrl) {
+    return (
+      <div
+        data-testid="shopify-install-card"
+        className="rounded-md border border-[var(--accent)]/40 bg-[var(--accent)]/5 p-5 flex flex-col gap-4"
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-base font-semibold inline-flex items-center gap-2">
+            <Store className="size-5 text-[var(--accent)]" aria-hidden />
+            {t('title')}
+          </span>
+          <p className="text-sm text-[var(--muted)] leading-relaxed">{t('appStoreBody')}</p>
+        </div>
+        <a
+          href={appStoreUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="self-start inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-sm font-semibold hover:opacity-90"
+        >
+          {t('appStoreCta')}
+          <ExternalLink className="size-4" aria-hidden />
+        </a>
+      </div>
+    );
+  }
 
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

@@ -8,6 +8,7 @@ export async function resetTables(): Promise<void> {
   for (const t of [
     'webhook_deliveries',
     'outbound_webhooks',
+    'shopify_shops',
     'shop_connections',
     'gdpr_requests',
     'api_key_events',

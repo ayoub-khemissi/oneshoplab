@@ -11,6 +11,7 @@ import {
   getStripeWebhookSecret,
   resolvePackPriceId,
   resolvePriceId,
+  scheduleStripeRefill,
   syncSubscriptionFromStripe
 } from '@/features/billing';
 import { getCreditPack, PLAN_TIERS, type PlanId } from '@/entities/ai-model';
@@ -226,6 +227,12 @@ async function handleInvoicePaid(stripe: Stripe, invoice: Stripe.Invoice): Promi
         periodStart: invoice.period_start ?? null
       }
     });
+    // A yearly invoice grants one month: the worker refills the others.
+    await scheduleStripeRefill(
+      userId,
+      newResolved.cycle,
+      invoice.period_start ? new Date(invoice.period_start * 1000) : new Date()
+    );
     return;
   }
 

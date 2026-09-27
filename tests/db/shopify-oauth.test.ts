@@ -120,7 +120,7 @@ describe('GET /api/integrations/shopify/install', () => {
 });
 
 describe('GET /api/integrations/shopify/callback', () => {
-  it('exchanges the code, stores an oauth connection, registers 3 webhooks, queues a pull', async () => {
+  it('exchanges the code, stores an oauth connection, registers 5 webhooks, queues a pull', async () => {
     const { cookie, location } = await install({ projectId, shop: SHOP, locale: 'fr' });
     const state = new URL(location!).searchParams.get('state')!;
     const calls = stubExchange({ access_token: TOKEN, scope: 'write_products,read_products' });
@@ -144,7 +144,9 @@ describe('GET /api/integrations/shopify/callback', () => {
     expect(fake.calls.webhookCreate.map((w) => w.topic)).toEqual([
       'PRODUCTS_UPDATE',
       'PRODUCTS_DELETE',
-      'APP_UNINSTALLED'
+      'APP_UNINSTALLED',
+      'APP_SUBSCRIPTIONS_UPDATE',
+      'APP_PURCHASES_ONE_TIME_UPDATE'
     ]);
     const [raw] = await db
       .select()

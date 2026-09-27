@@ -14,18 +14,19 @@ const { runIntegrationSweeps: runChangeSweeps } = await import('@/entities/produ
 const { mirrorQueuedImages } = await import('@/entities/product');
 const { auditProjectsWithSyncedCatalog, rescoreProjectsWithAppliedChanges } =
   await import('@/features/run-audit');
-const { runShopifyApplies, runShopifyNightlyPulls, runShopifyRequestedPulls } =
-  await import('@/features/shopify-connector');
+const {
+  refillShopifySubscriptions,
+  runShopifyApplies,
+  runShopifyNightlyPulls,
+  runShopifyRequestedPulls
+} = await import('@/features/shopify-connector');
+const { refillStripeYearlySubscriptions } = await import('@/features/billing/api/refill');
 const { runWixApplies, runWixNightlyPulls, runWixRequestedPulls } =
   await import('@/features/wix-connector');
 // Straight to the module, NOT the feature barrel: that barrel exports React
 // components, and pulling @heroui/react into the tsx worker crash-loops it.
-const { failUndeliverableChanges } = await import(
-  '@/features/apply-to-store/api/undeliverable'
-);
-const { autoSendCompletedGenerations } = await import(
-  '@/features/apply-to-store/api/auto-send'
-);
+const { failUndeliverableChanges } = await import('@/features/apply-to-store/api/undeliverable');
+const { autoSendCompletedGenerations } = await import('@/features/apply-to-store/api/auto-send');
 const { generateAltsForNewImages } = await import('@/entities/generation-job');
 const { drainWebhookDeliveries, sweepWebhookDeliveries } =
   await import('@/features/webhook-delivery');
@@ -46,10 +47,7 @@ const RESCORE_INTERVAL_MS = 2 * 60 * 1000;
  * measured at 114 seconds in production on 2026-09-04. Connecting is the moment
  * they are watching hardest; it is the worst possible place to make them wait.
  */
-async function auditAfterPulls(
-  runPulls: () => Promise<number>,
-  label: string
-): Promise<void> {
+async function auditAfterPulls(runPulls: () => Promise<number>, label: string): Promise<void> {
   try {
     if ((await runPulls()) > 0) await auditProjectsWithSyncedCatalog();
   } catch (e) {
@@ -158,6 +156,18 @@ async function main(): Promise<void> {
         );
         tasks.push(
           sweepWebhookDeliveries().catch((e) => console.error('[worker] webhook-sweep failed', e))
+        );
+        // Monthly credit refills no billing event announces: Stripe yearly
+        // plans and every Shopify-billed plan.
+        tasks.push(
+          refillStripeYearlySubscriptions().catch((e) =>
+            console.error('[worker] stripe yearly refill failed', e)
+          )
+        );
+        tasks.push(
+          refillShopifySubscriptions().catch((e) =>
+            console.error('[worker] shopify refill failed', e)
+          )
         );
       }
       await Promise.allSettled(tasks);

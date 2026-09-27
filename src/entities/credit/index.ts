@@ -12,3 +12,4 @@ export type {
   CreditTxOptions,
   CreditTxResult
 } from './api/ledger';
+export { nextRefill } from './lib/refill';

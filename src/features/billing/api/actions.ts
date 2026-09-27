@@ -43,9 +43,22 @@ async function stripePriceValueParam(stripe: Stripe, priceId: string): Promise<s
  * On checkout completion, the Stripe webhook (/api/stripe/webhook) flips the
  * `subscriptions` row and grants the monthly credits.
  */
+/**
+ * Accounts opened from the Shopify admin are billed by Shopify only (App
+ * Store requirement 1.2.1): no Stripe checkout for them, from any button.
+ */
+async function isShopifyBilled(userId: string): Promise<boolean> {
+  const u = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: { billingChannel: true }
+  });
+  return u?.billingChannel === 'shopify';
+}
+
 export async function createCheckoutSessionAction(formData: FormData): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/pricing');
+  if (await isShopifyBilled(session.user.id)) redirect('/pricing?error=shopify_billing');
 
   const planRaw = String(formData.get('plan') ?? '');
   const cycleRaw = String(formData.get('cycle') ?? 'yearly');
@@ -150,6 +163,7 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
 export async function buyCreditPackAction(formData: FormData): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) redirect('/login?next=/account/credits');
+  if (await isShopifyBilled(session.user.id)) redirect('/account/credits?error=shopify_billing');
 
   const packIdRaw = String(formData.get('packId') ?? '');
   const pack = getCreditPack(packIdRaw);
