@@ -220,6 +220,18 @@ describe('embedded install and onboarding', () => {
     });
   });
 
+  it('gives a linked shop a new site when its site was deleted on the website', async () => {
+    const { userId, projectId } = await onboarded();
+    await db.delete(projects).where(eq(projects.id, projectId));
+    expect((await getShopifyShop(SHOP))?.projectId).toBeNull();
+
+    const row = await ensureEmbeddedInstall(auth, deps);
+    expect(row.userId).toBe(userId);
+    expect(row.projectId).toBeTruthy();
+    expect(row.projectId).not.toBe(projectId);
+    expect((await getConnection(row.projectId!))?.status).toBe('connected');
+  });
+
   it('refuses to create a second account for an email already registered', async () => {
     const existing = await createUser();
     await db.update(users).set({ email: 'owner@atelier.test' }).where(eq(users.id, existing));

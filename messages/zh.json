@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, other {另有 # 个更早的密钥未显示}}",
     "nextCheck": "下次检查还有 {time}",
     "syncNowAsk": "立即同步",
-    "syncNowCooldown": "还需 {seconds} 秒"
+    "syncNowCooldown": "还需 {seconds} 秒",
+    "embedded": {
+      "notConnectedTitle": "店铺未连接",
+      "notConnectedBody": "与您的 Shopify 店铺的连接已中断。在 Shopify 后台打开 OneShopLab 首页即可自动恢复。",
+      "reconnect": "重新连接"
+    }
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

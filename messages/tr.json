@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, other {# daha eski anahtar gösterilmiyor}}",
     "nextCheck": "Sonraki kontrol {time} sonra",
     "syncNowAsk": "Şimdi eşitle",
-    "syncNowCooldown": "{seconds} sn kaldı"
+    "syncNowCooldown": "{seconds} sn kaldı",
+    "embedded": {
+      "notConnectedTitle": "Mağaza bağlı değil",
+      "notConnectedBody": "Shopify mağazanızla bağlantı koptu. Shopify yönetim panelinizde OneShopLab ana sayfasını açın: bağlantı otomatik olarak yeniden kurulur.",
+      "reconnect": "Yeniden bağlan"
+    }
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",

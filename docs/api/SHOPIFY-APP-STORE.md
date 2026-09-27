@@ -128,6 +128,18 @@ platforms. The shop's staff must neither see them nor act on them.
 - Other site ids are random UUIDs and are never shown inside the admin.
 - Credits, plan and account pages stay account-wide.
 
+**When the store isn't (or is no longer) connected.**
+- No account yet: the embedded home onboards the shop (create or link an
+  account).
+- The site was deleted on the website: `ensureEmbeddedInstall` gives the
+  linked shop a new site on its next open. No second link is needed.
+- The connection broke (token refused, revoked): the "Store connection" tab
+  shows the card, without disconnect (the app is removed from Shopify's
+  apps page), plus "Reconnect" → `/shopify`, which exchanges a fresh token
+  and reattaches. The website's install flows (store address, OAuth, access
+  token) never appear inside the admin.
+- The site header has no "Back to dashboard" there: the site is the whole app.
+
 **Framing, App Bridge first (2.2.3).** A framed document says so
 (`Sec-Fetch-Dest: iframe`).
 - `next.config.ts` drops X-Frame-Options for it.

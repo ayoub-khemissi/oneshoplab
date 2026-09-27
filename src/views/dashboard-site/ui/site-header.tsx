@@ -16,7 +16,8 @@ export function SiteHeaderBar({
   auditsLimit,
   nextSlotAtIso,
   isManual,
-  languageSlot
+  languageSlot,
+  showBack = true
 }: {
   domain: string;
   url: string;
@@ -33,21 +34,25 @@ export function SiteHeaderBar({
    *  Relaunch-audit CTA with "+ Add product" (manual sites have no
    *  remote catalog to re-scrape). */
   isManual: boolean;
+  /** Off inside the Shopify admin: there the dashboard IS this site. */
+  showBack?: boolean;
 }) {
   const t = useTranslations('Dashboard');
   const tExport = useTranslations('ExportCatalog');
   return (
     <header className="flex items-center justify-between gap-2 md:gap-3 flex-wrap">
       <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-        <Link
-          href="/dashboard"
-          title={t('backToDashboard')}
-          aria-label={t('backToDashboard')}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors shrink-0"
-        >
-          <ArrowLeft className="size-3.5" />
-          <span className="hidden md:inline">{t('backToDashboard')}</span>
-        </Link>
+        {showBack ? (
+          <Link
+            href="/dashboard"
+            title={t('backToDashboard')}
+            aria-label={t('backToDashboard')}
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--accent)] transition-colors shrink-0"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span className="hidden md:inline">{t('backToDashboard')}</span>
+          </Link>
+        ) : null}
         {isManual ? (
           <div
             title={domain}

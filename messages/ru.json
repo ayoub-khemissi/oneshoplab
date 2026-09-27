@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, one {# более старый ключ не показан} few {# более старых ключа не показаны} other {# более старых ключей не показаны}}",
     "nextCheck": "Следующая проверка через {time}",
     "syncNowAsk": "Синхронизировать сейчас",
-    "syncNowCooldown": "Ещё {seconds} с"
+    "syncNowCooldown": "Ещё {seconds} с",
+    "embedded": {
+      "notConnectedTitle": "Магазин не подключён",
+      "notConnectedBody": "Связь с вашим магазином Shopify прервана. Откройте главную страницу OneShopLab в админке Shopify: связь восстановится автоматически.",
+      "reconnect": "Переподключить"
+    }
   },
   "ApplyToStore": {
     "apply": "Применить в магазине",

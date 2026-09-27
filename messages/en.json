@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, =1 {1 older key is not shown} other {# older keys are not shown}}",
     "nextCheck": "Next check in {time}",
     "syncNowAsk": "Sync now",
-    "syncNowCooldown": "{seconds}s to go"
+    "syncNowCooldown": "{seconds}s to go",
+    "embedded": {
+      "notConnectedTitle": "Store not connected",
+      "notConnectedBody": "The connection to your Shopify store is broken. Open the OneShopLab home in your Shopify admin: it is restored automatically.",
+      "reconnect": "Reconnect"
+    }
   },
   "ApplyToStore": {
     "apply": "Apply to my store",

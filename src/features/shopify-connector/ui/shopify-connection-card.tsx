@@ -41,10 +41,13 @@ export function ShopifyConnectionCard({
   projectId,
   initial,
   appsUrl,
-  onDisconnected
+  onDisconnected,
+  canDisconnect = true
 }: {
   projectId: string;
   initial: ShopifyConnectionView;
+  /** Off inside the Shopify admin: the app is removed from Shopify's own apps page. */
+  canDisconnect?: boolean;
   /** Deep link to the Shopify apps page: custom apps (token) or installed apps (OAuth) — the app itself must be removed there. */
   appsUrl: string;
   onDisconnected?: () => void;
@@ -208,15 +211,17 @@ export function ShopifyConnectionCard({
             <RefreshCw className="size-3.5" aria-hidden />
             {state === 'syncing' ? t('syncRunning') : t('syncNow')}
           </button>
-          <button
-            type="button"
-            onClick={() => setConfirm(true)}
-            disabled={pending}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:border-[var(--danger)] hover:text-[var(--danger)] disabled:opacity-50"
-          >
-            <Unplug className="size-3.5" aria-hidden />
-            {viaApp ? t('uninstall') : t('disconnect')}
-          </button>
+          {canDisconnect ? (
+            <button
+              type="button"
+              onClick={() => setConfirm(true)}
+              disabled={pending}
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-3 py-1.5 text-xs font-medium hover:border-[var(--danger)] hover:text-[var(--danger)] disabled:opacity-50"
+            >
+              <Unplug className="size-3.5" aria-hidden />
+              {viaApp ? t('uninstall') : t('disconnect')}
+            </button>
+          ) : null}
           {failed ? (
             <span role="alert" className="text-xs text-[var(--danger)]">
               {t('actionFailed')}

@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, other {# مفتاح أقدم غير معروض}}",
     "nextCheck": "الفحص التالي بعد {time}",
     "syncNowAsk": "زامن الآن",
-    "syncNowCooldown": "بقي {seconds} ثانية"
+    "syncNowCooldown": "بقي {seconds} ثانية",
+    "embedded": {
+      "notConnectedTitle": "المتجر غير متصل",
+      "notConnectedBody": "انقطع الاتصال بمتجر Shopify الخاص بك. افتح الصفحة الرئيسية لـ OneShopLab في لوحة إدارة Shopify: يُستعاد الاتصال تلقائيًا.",
+      "reconnect": "إعادة الاتصال"
+    }
   },
   "ApplyToStore": {
     "apply": "تطبيق في متجري",

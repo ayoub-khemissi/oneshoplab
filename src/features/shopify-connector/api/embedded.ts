@@ -143,14 +143,18 @@ export async function ensureEmbeddedInstall(
   if (!token) throw new ShopifyAdminError('token_invalid', 'token exchange refused');
   const facts = await fetchShopFacts(auth.shop, token.grant.accessToken, deps.makeClient);
   const row = await recordShopifyInstall(auth.shop, facts, token.grant);
-  if (row.userId && row.projectId) {
-    const project = await db.query.projects.findFirst({
-      where: and(eq(projects.id, row.projectId), eq(projects.userId, row.userId))
-    });
-    if (project) {
-      await attachShopToProject(row, row.userId, project.id, token.grant, auth.cfg, deps);
-      return (await getShopifyShop(auth.shop))!;
-    }
+  if (row.userId) {
+    // The shop already belongs to an account: reconnect its site, or give it
+    // a new one when the merchant deleted it on the website. Asking them to
+    // link the same account again would be a step for nothing.
+    const project = row.projectId
+      ? await db.query.projects.findFirst({
+          where: and(eq(projects.id, row.projectId), eq(projects.userId, row.userId))
+        })
+      : null;
+    const projectId = project?.id ?? (await projectFor(row.userId, row));
+    await attachShopToProject(row, row.userId, projectId, token.grant, auth.cfg, deps);
+    return (await getShopifyShop(auth.shop))!;
   }
   return row;
 }

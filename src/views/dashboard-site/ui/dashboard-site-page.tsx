@@ -57,6 +57,8 @@ import { BulkAltTextCard } from '@/features/generate-alt-text/client';
 import { isShopifyAppConfigured, SHOPIFY_API_VERSION } from '@/features/shopify-connector';
 import { isWixAppConfigured } from '@/features/wix-connector';
 import { IntegrationsWizard } from '@/widgets/integrations-wizard';
+import { isEmbeddedRequest } from '@/shared/embedded';
+import { EmbeddedStoreConnection } from './embedded-store-connection';
 import { StoreSetupGuide } from '@/widgets/store-setup-guide';
 import {
   getConnectionForUser,
@@ -124,6 +126,8 @@ export async function DashboardSitePage({
           : rawTab === 'settings'
             ? 'settings'
             : 'overview';
+  // Inside the Shopify admin this site is the whole app: no way "back".
+  const embedded = await isEmbeddedRequest();
   const activityPage = Math.max(1, Number.parseInt(rawActivityPage ?? '1', 10) || 1);
   const productsPage = Math.max(1, Number.parseInt(rawProductsPage ?? '1', 10) || 1);
   const productsQuery = (rawQuery ?? '').trim();
@@ -519,6 +523,7 @@ export async function DashboardSitePage({
               }
             />
           }
+          showBack={!embedded}
         />
         {/* StatusLine is scrape-flow specific (queued / running /
             failed). Manual projects skip it entirely — they never go
@@ -625,6 +630,15 @@ export async function DashboardSitePage({
           siteId={siteId}
           page={activityPage}
           totalPages={activityTotalPages}
+        />
+      ) : activeTab === 'integrations' && embedded ? (
+        <EmbeddedStoreConnection
+          projectId={project.id}
+          shopify={
+            shopConnection && shopConnection.platform === 'shopify'
+              ? toShopifyConnectionView(shopConnection, activeProductCount)
+              : null
+          }
         />
       ) : activeTab === 'integrations' ? (
         <div className="flex flex-col gap-4" data-tour="integrations-wizard">

@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, other {さらに古いキー # 件は表示していません}}",
     "nextCheck": "次の確認まで {time}",
     "syncNowAsk": "今すぐ同期",
-    "syncNowCooldown": "あと {seconds} 秒"
+    "syncNowCooldown": "あと {seconds} 秒",
+    "embedded": {
+      "notConnectedTitle": "ストアが接続されていません",
+      "notConnectedBody": "Shopify ストアとの接続が切れています。Shopify 管理画面で OneShopLab のホームを開くと、自動的に復旧します。",
+      "reconnect": "再接続"
+    }
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

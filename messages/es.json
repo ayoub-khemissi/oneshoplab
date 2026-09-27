@@ -1657,7 +1657,12 @@
     "keysPastMore": "{count, plural, =1 {1 clave más antigua no se muestra} other {# claves más antiguas no se muestran}}",
     "nextCheck": "Próxima comprobación en {time}",
     "syncNowAsk": "Sincronizar ahora",
-    "syncNowCooldown": "Faltan {seconds} s"
+    "syncNowCooldown": "Faltan {seconds} s",
+    "embedded": {
+      "notConnectedTitle": "Tienda no conectada",
+      "notConnectedBody": "La conexión con tu tienda Shopify se ha roto. Abre el inicio de OneShopLab en tu admin de Shopify: se restablece automáticamente.",
+      "reconnect": "Reconectar"
+    }
   },
   "ApplyToStore": {
     "apply": "Aplicar en mi tienda",
