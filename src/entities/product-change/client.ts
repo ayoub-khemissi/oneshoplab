@@ -19,3 +19,4 @@ export type {
   PriorImageRef,
   SimulatedImage
 } from './lib/image-ops';
+export { withoutTakenAppends } from './lib/taken-appends';

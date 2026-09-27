@@ -13,11 +13,13 @@ import { isImageOpsPayload } from './image-ops';
  * image came from.
  */
 export function appliedGeneratedSources(
-  changes: ReadonlyArray<{ field: string; status: string; value: unknown }>
+  changes: ReadonlyArray<{ field: string; status: string; value: unknown }>,
+  /** `pending` too when the question is "already on its way to the store". */
+  statuses: readonly string[] = ['applied']
 ): Set<string> {
   const taken = new Set<string>();
   for (const change of changes) {
-    if (change.field !== 'images' || change.status !== 'applied') continue;
+    if (change.field !== 'images' || !statuses.includes(change.status)) continue;
     // Replace-all path: the value is the gallery itself.
     if (Array.isArray(change.value)) {
       for (const image of change.value) {

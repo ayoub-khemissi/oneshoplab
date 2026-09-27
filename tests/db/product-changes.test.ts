@@ -160,6 +160,67 @@ describe('product changes', () => {
     );
   });
 
+  it('never queues the same photo twice, and moves a late alt onto the queued change', async () => {
+    const gen = 'https://cdn.oneshoplab.com/kie/job/gen.png';
+    const withImages = await createProduct(projectId, {
+      sourceId: 'dup',
+      images: [
+        {
+          src: 'https://cdn.test/1.jpg',
+          alt: 'One',
+          width: null,
+          height: null,
+          sourceImageId: 'm1'
+        }
+      ]
+    });
+    const send = (value: unknown) =>
+      createChange({
+        projectId,
+        productId: withImages.id,
+        productSourceId: withImages.sourceId,
+        field: 'images',
+        value,
+        approvedBy: userId
+      });
+    // "Send this generation" on its tile…
+    const first = await send({ v: 1, ops: [{ op: 'append', image: { src: gen, alt: null } }] });
+    // …then the photo editor's "Add to the gallery", alt typed meanwhile.
+    const again = await send({
+      v: 1,
+      ops: [{ op: 'append', image: { src: gen, alt: 'Two boards' } }]
+    });
+    expect(first.ok && again.ok && again.change.id).toBe(first.ok && first.change.id);
+    const rows = await db
+      .select()
+      .from(productChanges)
+      .where(eq(productChanges.productId, withImages.id));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].value).toEqual({
+      v: 1,
+      ops: [{ op: 'append', image: { src: gen, alt: 'Two boards' } }]
+    });
+    expect(rows[0].valueHash).toBe(hashValue(rows[0].value));
+
+    // Once applied it stays taken; a new photo in the same batch still goes.
+    await db
+      .update(productChanges)
+      .set({ status: 'applied' })
+      .where(eq(productChanges.id, rows[0].id));
+    const other = 'https://cdn.oneshoplab.com/kie/job/other.png';
+    const mixed = await send({
+      v: 1,
+      ops: [
+        { op: 'append', image: { src: gen, alt: null } },
+        { op: 'append', image: { src: other, alt: null } }
+      ]
+    });
+    expect(mixed.ok && mixed.change.value).toEqual({
+      v: 1,
+      ops: [{ op: 'append', image: { src: other, alt: null } }]
+    });
+  });
+
   it('rejects an images value that is malformed or empties the gallery', async () => {
     const p = await createProduct(projectId, {
       sourceId: 'guard',

@@ -98,7 +98,9 @@ export async function appliedGeneratedImagesFor(productId: string): Promise<Set<
     .where(and(eq(productChanges.productId, productId), eq(productChanges.field, 'images')))
     .orderBy(desc(productChanges.id))
     .limit(PENDING_LIST_LIMIT);
-  return appliedGeneratedSources(rows);
+  // Pending too: a generation already sent must not be offered again while
+  // it waits for the store (it would be appended twice).
+  return appliedGeneratedSources(rows, ['applied', 'pending']);
 }
 
 /** Onboarding: has this store ever received a change? One indexed read. */

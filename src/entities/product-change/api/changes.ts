@@ -1,10 +1,17 @@
-import { and, asc, eq, gt, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, inArray, lte } from 'drizzle-orm';
 import { emitProjectEvent } from '@/entities/outbound-webhook';
 import { db } from '@/shared/db';
 import { productChanges, products, projects, type ProductChangeField } from '@/shared/db/schema';
 import { ulid } from '@/shared/lib';
 import { hashValue } from '../lib/hash';
-import { checkImageChangeValue } from '../lib/image-ops';
+import { appliedGeneratedSources } from '../lib/applied-images';
+import {
+  checkImageChangeValue,
+  isImageOpsPayload,
+  type ImageOp,
+  type ImageOpsPayload as ImageOpsPayloadValue
+} from '../lib/image-ops';
+import { withoutTakenAppends } from '../lib/taken-appends';
 import { reflectAppliedChange } from './reflect';
 import type {
   AckChangeInput,
@@ -91,6 +98,11 @@ export async function createChange(input: CreateChangeInput): Promise<CreateChan
   if (!product) return { ok: false, reason: 'not_found' };
 
   const priorValue = priorFieldValue(product, input.field);
+  if (input.field === 'images' && isImageOpsPayload(input.value)) {
+    const dedup = await dedupeImageAppends(input.productId, input.value);
+    if (dedup.existing) return { ok: true, change: dedup.existing };
+    input = { ...input, value: dedup.value };
+  }
   if (input.field === 'images') {
     const check = checkImageChangeValue(input.value, product.images ?? []);
     if (!check.ok) return { ok: false, reason: 'invalid_value', rejection: check.rejection };
@@ -115,6 +127,79 @@ export async function createChange(input: CreateChangeInput): Promise<CreateChan
   if (!change) return { ok: false, reason: 'not_found' };
   await emitProjectEvent(input.projectId, 'change.approved', changeToWire(change));
   return { ok: true, change };
+}
+
+const TAKEN_STATUSES = ['pending', 'applied'] as const;
+
+function opImage(op: ImageOp): { src: string; alt?: string | null } | undefined {
+  return 'image' in op ? op.image : undefined;
+}
+
+function carriesSrc(op: ImageOp, src: string | undefined): boolean {
+  return (
+    (op.op === 'append' || op.op === 'replace' || op.op === 'set_featured') &&
+    opImage(op)?.src === src
+  );
+}
+
+/**
+ * See `withoutTakenAppends`. An alt typed on the repeat is not lost: it moves
+ * onto the pending change that already carries the photo. When nothing is
+ * left to send, the caller gets that existing change back.
+ */
+async function dedupeImageAppends(
+  productId: string,
+  value: ImageOpsPayloadValue
+): Promise<
+  { value: ImageOpsPayloadValue; existing: null } | { value: null; existing: ProductChangeRow }
+> {
+  const rows = await db
+    .select()
+    .from(productChanges)
+    .where(
+      and(
+        eq(productChanges.productId, productId),
+        eq(productChanges.field, 'images'),
+        inArray(productChanges.status, [...TAKEN_STATUSES])
+      )
+    )
+    .orderBy(desc(productChanges.id))
+    .limit(200);
+  const taken = appliedGeneratedSources(rows, TAKEN_STATUSES);
+  if (taken.size === 0) return { value, existing: null };
+  const { payload, dropped } = withoutTakenAppends(value, taken);
+  for (const { src, alt } of dropped) {
+    if (!alt) continue;
+    const holder = rows.find(
+      (r) =>
+        r.status === 'pending' &&
+        isImageOpsPayload(r.value) &&
+        r.value.ops.some((op) => carriesSrc(op, src) && !opImage(op)?.alt)
+    );
+    if (!holder || !isImageOpsPayload(holder.value)) continue;
+    const next = {
+      ...holder.value,
+      ops: holder.value.ops.map((op) =>
+        carriesSrc(op, src) && 'image' in op && op.image
+          ? { ...op, image: { ...op.image, alt } }
+          : op
+      )
+    } as ImageOpsPayloadValue;
+    await db
+      .update(productChanges)
+      .set({ value: next, valueHash: hashValue(next) })
+      .where(and(eq(productChanges.id, holder.id), eq(productChanges.status, 'pending')));
+    holder.value = next;
+  }
+  if (payload) return { value: payload, existing: null };
+  const src = dropped[0]?.src;
+  const holder =
+    rows.find((r) => isImageOpsPayload(r.value) && r.value.ops.some((op) => carriesSrc(op, src))) ??
+    rows[0];
+  const fresh = await db.query.productChanges.findFirst({
+    where: eq(productChanges.id, holder.id)
+  });
+  return { value: null, existing: fresh ?? holder };
 }
 
 /** Oldest first, cursor = last id (ULIDs sort by time). Index-only scan. */
