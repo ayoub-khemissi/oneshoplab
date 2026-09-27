@@ -567,12 +567,15 @@ export const APP_STORE_TEST_CREDIT_CAP = PRICING.shopifyBilling.testCreditCap;
 /** A Wix plan GUID stands for a paid plan (monthly and yearly) or a credit pack. */
 export type WixProductKey = Exclude<PlanId, 'free'> | CreditPackId;
 
-/** Price Wix charges for a plan and cycle, in USD. */
+/**
+ * Price Wix charges for a plan and cycle, in USD. Wix takes the yearly price
+ * as a per-month amount (rounded to the cent) billed twelve times at once.
+ */
 export function wixPlanPrice(plan: Exclude<PlanId, 'free'>, cycle: BillingCycle): number {
   const monthly = PRICING.wixBilling.plans[plan];
-  return cycle === 'yearly'
-    ? Math.round(monthly * 12 * (1 - YEARLY_DISCOUNT) * 100) / 100
-    : monthly;
+  if (cycle !== 'yearly') return monthly;
+  const perMonth = Math.round(monthly * (1 - YEARLY_DISCOUNT) * 100) / 100;
+  return Math.round(perMonth * 12 * 100) / 100;
 }
 
 /** Price Wix charges for a credit pack, in USD. */

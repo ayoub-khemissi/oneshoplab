@@ -130,6 +130,12 @@ describe('Wix prices', () => {
     }
   });
 
+  it('match the Wix dashboard to the cent', () => {
+    expect(wixPlanPrice('starter', 'yearly')).toBe(566.28);
+    expect(wixPlanPrice('pro', 'yearly')).toBe(1267.08);
+    expect(wixPlanPrice('scale', 'yearly')).toBe(2803.08);
+  });
+
   it('rank offers by price per credit exactly as the site does', () => {
     const offers = [
       ...paid.map((t) => ({
