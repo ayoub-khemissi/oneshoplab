@@ -7,12 +7,14 @@ export type {
   DecryptedWixSecrets,
   ShopConnection,
   ShopConnectionRow,
-  ShopPullProgress
+  ShopPullProgress,
+  ShopifyTokenGrant
 } from './model/types';
 export { SHOPIFY_DOMAIN_RE, normalizeShopDomain } from './lib/domain';
 export {
   NIGHTLY_PULL_INTERVAL_MS,
   claimConnectionAlert,
+  claimShopifyTokenRefresh,
   connectShopify,
   connectWix,
   disconnect,
@@ -31,7 +33,10 @@ export {
   setWebhookIds,
   touchWebhook,
   withDecryptedToken,
-  withDecryptedWixSecrets
+  withDecryptedWixSecrets,
+  readShopifyTokenGrant,
+  releaseShopifyTokenRefresh,
+  saveShopifyTokenGrant
 } from './api/connections';
 export { listGdprRequests, recordGdprRequest } from './api/gdpr';
 export type { GdprRequestRow } from './api/gdpr';
@@ -43,7 +48,7 @@ export {
   installedShopifyShopsFor,
   markShopifyShopLinked,
   markShopifyShopUninstalled,
-  openPendingToken,
+  openPendingGrant,
   recordShopifyInstall
 } from './api/shopify-shops';
 export type { ShopifyShopFacts, ShopifyShopRow } from './api/shopify-shops';

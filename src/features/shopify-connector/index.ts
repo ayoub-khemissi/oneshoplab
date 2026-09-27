@@ -109,3 +109,6 @@ export type {
 } from './api/app-billing';
 export { bearerFrom, signShopifyIdTokenForTests, verifyShopifyIdToken } from './lib/id-token';
 export type { ShopifyIdToken } from './lib/id-token';
+export { requestShopifyTokenRefresh, shopifyTokenProvider } from './api/token';
+export type { RefreshOutcome, TokenDeps } from './api/token';
+export { parseShopifyTokenResponse } from './lib/token-grant';

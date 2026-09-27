@@ -22,6 +22,22 @@ export interface ConnectShopifyInput {
   apiVersion: string;
   /** Default `custom_app`; the OAuth callback passes `oauth`. */
   authMode?: ShopConnectionAuthMode;
+  /** Public app: the expiring offline token's refresh side. */
+  refreshToken?: string | null;
+  accessTokenExpiresAt?: Date | null;
+  refreshTokenExpiresAt?: Date | null;
+}
+
+/**
+ * What Shopify's token endpoint grants. A public app's offline token expires
+ * after an hour and comes with a refresh token (90 days, rotated on every
+ * refresh); a custom-app token has neither and never expires.
+ */
+export interface ShopifyTokenGrant {
+  accessToken: string;
+  refreshToken: string | null;
+  expiresAt: Date | null;
+  refreshExpiresAt: Date | null;
 }
 
 export interface ConnectWixInput {
@@ -51,6 +67,9 @@ export interface DecryptedSecrets {
   accessToken: string;
   webhookSecret: string | null;
   apiVersion: string;
+  /** Set for expiring tokens: the Shopify connector refreshes before use. */
+  refreshToken: string | null;
+  accessTokenExpiresAt: Date | null;
 }
 
 export type { ShopPullProgress };

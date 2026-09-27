@@ -759,8 +759,9 @@ export const shopifyShops = mysqlTable(
     projectId: varchar('project_id', { length: 36 }).references(() => projects.id, {
       onDelete: 'set null'
     }),
-    /** Offline token, sealed (secret-box). Kept here only until the shop is
-     *  linked to a project; then `shop_connections` owns the token. */
+    /** Offline token grant (access + refresh token and their expiries, as
+     *  JSON), sealed. Kept here only until the shop is linked to a project;
+     *  then `shop_connections` owns the token. */
     pendingTokenCiphertext: text('pending_token_ciphertext'),
     scopes: json('scopes').$type<string[]>(),
     shopName: varchar('shop_name', { length: 255 }),
@@ -1248,8 +1249,17 @@ export const shopConnections = mysqlTable(
     installedViaOauthAt: timestamp('installed_via_oauth_at'),
     /** Wix only: app instance id (webhooks carry it; one per site install). */
     instanceId: varchar('instance_id', { length: 64 }),
-    /** Wix only: permanent refresh token, sealed; the 5-min access tokens are never stored. */
+    /** Shopify public app: the refresh token of the expiring offline token
+     *  (rotated on every refresh, 90 days), sealed. NULL for custom-app
+     *  tokens, which never expire, and on Wix rows. */
     refreshTokenCiphertext: text('refresh_token_ciphertext'),
+    /** Shopify expiring offline token: when the access token (1 h) and the
+     *  refresh token (90 days) run out. NULL = a token that never expires. */
+    accessTokenExpiresAt: timestamp('access_token_expires_at'),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+    /** Held while one process refreshes the token: Shopify wants one refresh
+     *  per store at a time (web and worker both call the Admin API). */
+    tokenRefreshLockUntil: timestamp('token_refresh_lock_until'),
     /** Custom-app "API secret key", sealed like the token. NULL = the
      *  merchant did not paste it: webhooks are not registered, only pulls run. */
     webhookSecretCiphertext: text('webhook_secret_ciphertext'),

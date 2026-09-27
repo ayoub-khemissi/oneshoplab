@@ -19,7 +19,8 @@ import type {
   DecryptedSecrets,
   DecryptedWixSecrets,
   ShopConnection,
-  ShopConnectionRow
+  ShopConnectionRow,
+  ShopifyTokenGrant
 } from '../model/types';
 
 /** Best-effort webhook event (spec: `connection.status_changed`). */
@@ -100,14 +101,17 @@ export async function connectShopify(input: ConnectShopifyInput): Promise<Connec
     shopDomain,
     shopName: input.shopName ?? null,
     accessTokenCiphertext: sealSecret(accessToken),
-    refreshTokenCiphertext: null,
     instanceId: null,
     keyId: 'v1',
     scopes: input.scopes ?? [],
     apiVersion: input.apiVersion,
     authMode,
     installedViaOauthAt: authMode === 'oauth' ? new Date() : null,
-    webhookSecretCiphertext: apiSecret ? sealSecret(apiSecret) : null
+    webhookSecretCiphertext: apiSecret ? sealSecret(apiSecret) : null,
+    refreshTokenCiphertext: input.refreshToken ? sealSecret(input.refreshToken) : null,
+    accessTokenExpiresAt: input.accessTokenExpiresAt ?? null,
+    refreshTokenExpiresAt: input.refreshTokenExpiresAt ?? null,
+    tokenRefreshLockUntil: null
   });
   if (!row) return { ok: false, reason: 'not_found' };
   await adoptProjectSource(input.projectId, 'shopify');
@@ -135,7 +139,10 @@ export async function connectWix(input: ConnectWixInput): Promise<ConnectWixResu
     apiVersion: 'v1',
     authMode: 'oauth',
     installedViaOauthAt: new Date(),
-    webhookSecretCiphertext: null
+    webhookSecretCiphertext: null,
+    accessTokenExpiresAt: null,
+    refreshTokenExpiresAt: null,
+    tokenRefreshLockUntil: null
   });
   if (!row) return { ok: false, reason: 'not_found' };
   return { ok: true, connection: toPublic(row) };
@@ -155,6 +162,9 @@ type UpsertValues = Pick<
   | 'authMode'
   | 'installedViaOauthAt'
   | 'webhookSecretCiphertext'
+  | 'accessTokenExpiresAt'
+  | 'refreshTokenExpiresAt'
+  | 'tokenRefreshLockUntil'
 >;
 
 /** One row per project: a reconnect (any platform) replaces the previous connection. */
@@ -210,9 +220,71 @@ export async function withDecryptedToken<T>(
     shopDomain: row.shopDomain,
     accessToken: openSecret(row.accessTokenCiphertext),
     webhookSecret: row.webhookSecretCiphertext ? openSecret(row.webhookSecretCiphertext) : null,
-    apiVersion: row.apiVersion
+    apiVersion: row.apiVersion,
+    refreshToken: row.refreshTokenCiphertext ? openSecret(row.refreshTokenCiphertext) : null,
+    accessTokenExpiresAt: row.accessTokenExpiresAt ?? null
   };
   return fn(secrets, toPublic(row));
+}
+
+/** The stored Shopify token grant, read again (after another process refreshed it). */
+export async function readShopifyTokenGrant(projectId: string): Promise<ShopifyTokenGrant | null> {
+  const row = await getRow(projectId);
+  if (!row || row.platform !== 'shopify' || !row.accessTokenCiphertext) return null;
+  return {
+    accessToken: openSecret(row.accessTokenCiphertext),
+    refreshToken: row.refreshTokenCiphertext ? openSecret(row.refreshTokenCiphertext) : null,
+    expiresAt: row.accessTokenExpiresAt ?? null,
+    refreshExpiresAt: row.refreshTokenExpiresAt ?? null
+  };
+}
+
+/**
+ * Takes the per-store refresh lock. False while another process holds it;
+ * a lock older than `ttlMs` is considered abandoned.
+ */
+export async function claimShopifyTokenRefresh(
+  projectId: string,
+  now: Date,
+  ttlMs = 30_000
+): Promise<boolean> {
+  const [res] = await db
+    .update(shopConnections)
+    .set({ tokenRefreshLockUntil: new Date(now.getTime() + ttlMs) })
+    .where(
+      and(
+        eq(shopConnections.projectId, projectId),
+        or(
+          isNull(shopConnections.tokenRefreshLockUntil),
+          lt(shopConnections.tokenRefreshLockUntil, now)
+        )
+      )
+    );
+  return res.affectedRows > 0;
+}
+
+/** Stores a refreshed grant and releases the lock in the same write. */
+export async function saveShopifyTokenGrant(
+  projectId: string,
+  grant: ShopifyTokenGrant
+): Promise<void> {
+  await db
+    .update(shopConnections)
+    .set({
+      accessTokenCiphertext: sealSecret(grant.accessToken),
+      ...(grant.refreshToken ? { refreshTokenCiphertext: sealSecret(grant.refreshToken) } : {}),
+      accessTokenExpiresAt: grant.expiresAt,
+      ...(grant.refreshExpiresAt ? { refreshTokenExpiresAt: grant.refreshExpiresAt } : {}),
+      tokenRefreshLockUntil: null
+    })
+    .where(eq(shopConnections.projectId, projectId));
+}
+
+export async function releaseShopifyTokenRefresh(projectId: string): Promise<void> {
+  await db
+    .update(shopConnections)
+    .set({ tokenRefreshLockUntil: null })
+    .where(eq(shopConnections.projectId, projectId));
 }
 
 /** Wix twin of `withDecryptedToken`: refresh token + instance id, scoped to `fn`. */
@@ -330,6 +402,9 @@ export async function touchWebhook(projectId: string): Promise<void> {
 const REVOKED_VALUES = {
   accessTokenCiphertext: '',
   refreshTokenCiphertext: null,
+  accessTokenExpiresAt: null,
+  refreshTokenExpiresAt: null,
+  tokenRefreshLockUntil: null,
   webhookSecretCiphertext: null,
   webhookIds: null,
   status: 'revoked' as const,

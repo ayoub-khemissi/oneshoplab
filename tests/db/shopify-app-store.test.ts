@@ -23,7 +23,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 import { applyCreditTransaction } from '@/entities/credit';
-import { getConnection, getShopifyShop } from '@/entities/shop-connection';
+import { getConnection, getShopifyShop, readShopifyTokenGrant } from '@/entities/shop-connection';
 import { POST as appWebhookPost } from '@/app/api/webhooks/shopify/app/route';
 import { buyCreditPackAction, createCheckoutSessionAction } from '@/features/billing/api/actions';
 import {
@@ -128,10 +128,20 @@ const makeClient = () => {
     request: async <T>(q: string, v?: Record<string, unknown>) => handle(q, v) as T
   };
 };
-const fetchImpl = (async () =>
-  new Response(JSON.stringify({ access_token: TOKEN, scope: CFG.scopes.join(',') }), {
-    status: 200
-  })) as unknown as typeof fetch;
+const exchangeBodies: URLSearchParams[] = [];
+const fetchImpl = (async (_url: string, init?: RequestInit) => {
+  exchangeBodies.push(new URLSearchParams(String(init?.body ?? '')));
+  return new Response(
+    JSON.stringify({
+      access_token: TOKEN,
+      scope: CFG.scopes.join(','),
+      expires_in: 3600,
+      refresh_token: 'shprt_' + 'e'.repeat(32),
+      refresh_token_expires_in: 7776000
+    }),
+    { status: 200 }
+  );
+}) as unknown as typeof fetch;
 const deps = { makeClient, fetchImpl };
 const auth = { shop: SHOP, idToken: 'id-token', cfg: CFG };
 
@@ -197,6 +207,8 @@ describe('embedded install and onboarding', () => {
     const project = await db.query.projects.findFirst({ where: eq(projects.id, projectId) });
     expect(project?.domain).toBe('atelier.fr');
     expect((await getConnection(projectId))?.status).toBe('connected');
+    expect(exchangeBodies.at(-1)?.get('expiring')).toBe('1');
+    expect((await readShopifyTokenGrant(projectId))?.refreshToken).toBe('shprt_' + 'e'.repeat(32));
     const linked = await getShopifyShop(SHOP);
     expect(linked).toMatchObject({ userId, projectId });
     expect(linked?.pendingTokenCiphertext).toBeNull();

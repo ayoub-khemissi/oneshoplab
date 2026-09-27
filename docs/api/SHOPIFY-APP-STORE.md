@@ -57,6 +57,32 @@ App Store requirements that shape everything here:
    provider `shopify-sso`) and opens the dashboard in a new tab. The page also
    holds plans, packs and cancel, when billed by Shopify.
 
+## Expiring offline tokens
+
+Shopify requires public apps created after 2026-04-01 to use expiring offline
+tokens; all public apps must from 2027-01-01. The Dev Dashboard flags anything
+else as "Jeton hors ligne obsolète".
+
+- Both grants ask for them: token exchange sends `expiring=1`, and the
+  website code exchange sends `expiring: 1`. The access token lives 1 h. The
+  refresh token lives 90 days and rotates on every refresh.
+- `shop_connections` stores `refresh_token_ciphertext`,
+  `access_token_expires_at`, `refresh_token_expires_at` and
+  `token_refresh_lock_until`. The pending grant of an unlinked shop is sealed
+  as JSON in `shopify_shops.pending_token_ciphertext`.
+- Every Admin client built on a stored connection receives
+  `tokenProvider: shopifyTokenProvider(projectId, secrets)` (`api/token.ts`).
+  The provider keeps a token that has more than 5 minutes left. Otherwise it
+  refreshes it. Only one process refreshes a store at a time: the others
+  wait for the stored result.
+- A dead refresh token (401) raises `token_invalid`, like a refused API
+  call. That triggers the usual alert, and the next embedded visit
+  re-exchanges. A transient failure while the token still works keeps the
+  current token.
+- Nightly pulls touch every connected store, so a refresh token never
+  reaches its 90 days.
+- Custom-app tokens have no refresh token and are left untouched.
+
 ## Framing and headers
 
 - `src/proxy.ts` answers `/shopify` without the locale redirect. It sets

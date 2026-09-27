@@ -8,7 +8,8 @@ import {
   connectShopify,
   normalizeShopDomain,
   requestPull,
-  setLastError
+  setLastError,
+  type ShopifyTokenGrant
 } from '@/entities/shop-connection';
 import { createOauthState, verifyOauthState, type OauthStatePayload } from '@/shared/lib';
 import {
@@ -18,6 +19,7 @@ import {
   shopifyAuthorizeUrl,
   verifyShopifyQueryHmac
 } from '../lib/oauth';
+import { parseShopifyTokenResponse, type ShopifyTokenResponse } from '../lib/token-grant';
 import { createAdminClient, SHOPIFY_API_VERSION, ShopifyAdminError } from './admin-client';
 import { registerShopifyWebhooks } from './webhooks';
 
@@ -73,32 +75,26 @@ export type CompleteShopifyInstallResult =
       error?: string;
     };
 
-interface TokenResponse {
-  access_token?: string;
-  scope?: string;
-}
-
 async function exchangeCode(
   shopDomain: string,
   code: string,
   cfg: { clientId: string; clientSecret: string },
   fetchImpl: typeof fetch
-): Promise<{ accessToken: string; scopes: string[] } | null> {
+): Promise<{ grant: ShopifyTokenGrant; scopes: string[] } | null> {
   const res = await fetchImpl(`https://${shopDomain}/admin/oauth/access_token`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ client_id: cfg.clientId, client_secret: cfg.clientSecret, code })
+    // expiring: 1 → an offline token that expires after an hour, with a
+    // refresh token (mandatory for our public app, see api/token.ts).
+    body: JSON.stringify({
+      client_id: cfg.clientId,
+      client_secret: cfg.clientSecret,
+      code,
+      expiring: 1
+    })
   });
   if (!res.ok) return null;
-  const body = (await res.json()) as TokenResponse;
-  if (!body.access_token) return null;
-  return {
-    accessToken: body.access_token,
-    scopes: (body.scope ?? '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-  };
+  return parseShopifyTokenResponse((await res.json()) as ShopifyTokenResponse);
 }
 
 export async function completeShopifyInstall(
@@ -138,7 +134,8 @@ export async function completeShopifyInstall(
   const makeClient = deps.makeClient ?? createAdminClient;
   let shopName: string | null = null;
   try {
-    shopName = (await makeClient({ shopDomain, accessToken: token.accessToken }).shopInfo()).name;
+    shopName = (await makeClient({ shopDomain, accessToken: token.grant.accessToken }).shopInfo())
+      .name;
   } catch (e) {
     if (e instanceof ShopifyAdminError && e.code === 'token_invalid')
       return fail('exchange_failed', state, e.message);
@@ -149,7 +146,10 @@ export async function completeShopifyInstall(
     projectId: state.projectId,
     userId: state.userId,
     shopDomain,
-    accessToken: token.accessToken,
+    accessToken: token.grant.accessToken,
+    refreshToken: token.grant.refreshToken,
+    accessTokenExpiresAt: token.grant.expiresAt,
+    refreshTokenExpiresAt: token.grant.refreshExpiresAt,
     apiSecret: cfg.clientSecret,
     shopName,
     scopes: token.scopes,

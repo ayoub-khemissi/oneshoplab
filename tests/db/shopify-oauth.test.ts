@@ -21,7 +21,7 @@ import { GET as installGet } from '@/app/api/integrations/shopify/install/route'
 import { GET as callbackGet } from '@/app/api/integrations/shopify/callback/route';
 import { POST as gdprPost } from '@/app/api/webhooks/shopify/gdpr/[topic]/route';
 import { POST as webhookPost } from '@/app/api/webhooks/shopify/[projectId]/route';
-import { getConnection, listGdprRequests } from '@/entities/shop-connection';
+import { getConnection, listGdprRequests, readShopifyTokenGrant } from '@/entities/shop-connection';
 import { SHOPIFY_STATE_COOKIE } from '@/features/shopify-connector';
 import { db } from '@/shared/db';
 import { shopConnections } from '@/shared/db/schema';
@@ -123,14 +123,25 @@ describe('GET /api/integrations/shopify/callback', () => {
   it('exchanges the code, stores an oauth connection, registers 5 webhooks, queues a pull', async () => {
     const { cookie, location } = await install({ projectId, shop: SHOP, locale: 'fr' });
     const state = new URL(location!).searchParams.get('state')!;
-    const calls = stubExchange({ access_token: TOKEN, scope: 'write_products,read_products' });
+    const calls = stubExchange({
+      access_token: TOKEN,
+      scope: 'write_products,read_products',
+      expires_in: 3600,
+      refresh_token: 'shprt_' + 'r'.repeat(32),
+      refresh_token_expires_in: 7776000
+    });
+    const before = Date.now();
     const to = await callback({ code: 'c0de', shop: SHOP, state, timestamp: '1' }, cookie);
     expect(to.pathname).toBe(`/fr/dashboard/sites/${projectId}`);
     expect(to.searchParams.get('connected')).toBe('shopify');
     expect(calls[0]).toMatchObject({
       url: `https://${SHOP}/admin/oauth/access_token`,
-      body: { client_id: 'client-id', client_secret: CLIENT_SECRET, code: 'c0de' }
+      body: { client_id: 'client-id', client_secret: CLIENT_SECRET, code: 'c0de', expiring: 1 }
     });
+    const grant = await readShopifyTokenGrant(projectId);
+    expect(grant?.refreshToken).toBe('shprt_' + 'r'.repeat(32));
+    expect(grant!.expiresAt!.getTime()).toBeGreaterThanOrEqual(before + 3600_000 - 1000);
+    expect(grant!.refreshExpiresAt!.getTime()).toBeGreaterThan(before + 89 * 86400_000);
     const c = await getConnection(projectId);
     expect(c).toMatchObject({
       status: 'connected',

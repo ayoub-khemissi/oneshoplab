@@ -2,6 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { shopifyShops } from '@/shared/db/schema';
 import { openSecret, sealSecret } from '@/shared/lib';
+import type { ShopifyTokenGrant } from '../model/types';
 
 export type ShopifyShopRow = typeof shopifyShops.$inferSelect;
 
@@ -26,7 +27,7 @@ export async function getShopifyShop(shopDomain: string): Promise<ShopifyShopRow
 export async function recordShopifyInstall(
   shopDomain: string,
   facts: ShopifyShopFacts,
-  accessToken: string | null
+  grant: ShopifyTokenGrant | null
 ): Promise<ShopifyShopRow> {
   const existing = await getShopifyShop(shopDomain);
   const values = {
@@ -41,14 +42,14 @@ export async function recordShopifyInstall(
     await db.insert(shopifyShops).values({
       shopDomain,
       ...values,
-      pendingTokenCiphertext: accessToken ? sealSecret(accessToken) : null
+      pendingTokenCiphertext: grant ? sealGrant(grant) : null
     });
   } else {
     await db
       .update(shopifyShops)
       .set({
         ...values,
-        ...(accessToken ? { pendingTokenCiphertext: sealSecret(accessToken) } : {}),
+        ...(grant ? { pendingTokenCiphertext: sealGrant(grant) } : {}),
         // A reinstall keeps the owner and project: the embedded app reconnects
         // them with the fresh token instead of asking the merchant again.
         ...(existing.uninstalledAt ? { installedAt: new Date() } : {})
@@ -58,10 +59,43 @@ export async function recordShopifyInstall(
   return (await getShopifyShop(shopDomain))!;
 }
 
-export function openPendingToken(row: ShopifyShopRow): string | null {
+function sealGrant(g: ShopifyTokenGrant): string {
+  return sealSecret(
+    JSON.stringify({
+      a: g.accessToken,
+      r: g.refreshToken,
+      e: g.expiresAt?.toISOString() ?? null,
+      re: g.refreshExpiresAt?.toISOString() ?? null
+    })
+  );
+}
+
+/** The pending grant; a row sealed before expiring tokens holds the bare token. */
+export function openPendingGrant(row: ShopifyShopRow): ShopifyTokenGrant | null {
   if (!row.pendingTokenCiphertext) return null;
+  let raw: string;
   try {
-    return openSecret(row.pendingTokenCiphertext);
+    raw = openSecret(row.pendingTokenCiphertext);
+  } catch {
+    return null;
+  }
+  if (!raw.startsWith('{')) {
+    return { accessToken: raw, refreshToken: null, expiresAt: null, refreshExpiresAt: null };
+  }
+  try {
+    const j = JSON.parse(raw) as {
+      a?: string;
+      r?: string | null;
+      e?: string | null;
+      re?: string | null;
+    };
+    if (!j.a) return null;
+    return {
+      accessToken: j.a,
+      refreshToken: j.r ?? null,
+      expiresAt: j.e ? new Date(j.e) : null,
+      refreshExpiresAt: j.re ? new Date(j.re) : null
+    };
   } catch {
     return null;
   }

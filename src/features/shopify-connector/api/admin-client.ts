@@ -94,6 +94,8 @@ interface UserError {
 export interface AdminClientOptions {
   shopDomain: string;
   accessToken: string;
+  /** Stored connections: yields a fresh token before each call (api/token.ts). */
+  tokenProvider?: () => Promise<string>;
   apiVersion?: string;
   fetchImpl?: typeof fetch;
   sleepImpl?: (ms: number) => Promise<unknown>;
@@ -148,13 +150,14 @@ export function createAdminClient(opts: AdminClientOptions): ShopifyAdminClient 
   async function request<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
     for (let attempt = 0; ; attempt++) {
       await waitForBudget();
+      const accessToken = opts.tokenProvider ? await opts.tokenProvider() : opts.accessToken;
       let res: Response;
       try {
         res = await fetchImpl(url, {
           method: 'POST',
           headers: {
             'content-type': 'application/json',
-            'x-shopify-access-token': opts.accessToken
+            'x-shopify-access-token': accessToken
           },
           body: JSON.stringify({ query, variables })
         });

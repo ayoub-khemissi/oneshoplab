@@ -21,6 +21,7 @@ import { db } from '@/shared/db';
 import { projects, users } from '@/shared/db/schema';
 import { mapAdminProduct } from '../lib/map-product';
 import { createAdminClient, ShopifyAdminError, type ShopifyAdminClient } from './admin-client';
+import { shopifyTokenProvider } from './token';
 import { alertSyncFailed, alertTokenInvalid, syncFailureReason } from './alerts';
 
 export type PullResult =
@@ -79,6 +80,7 @@ export async function pullShopifyCatalog(
     const client = makeClient({
       shopDomain: secrets.shopDomain,
       accessToken: secrets.accessToken,
+      tokenProvider: shopifyTokenProvider(projectId, secrets),
       apiVersion: secrets.apiVersion
     });
     try {

@@ -28,6 +28,7 @@ import {
   type ShopifyAdminClient,
   type WebhookTopic
 } from './admin-client';
+import { shopifyTokenProvider } from './token';
 import { handleShopifyBillingWebhook, onShopifyAppUninstalled } from './app-billing';
 
 export const WEBHOOK_TOPICS: readonly WebhookTopic[] = ['PRODUCTS_UPDATE', 'PRODUCTS_DELETE'];
@@ -46,10 +47,15 @@ export function webhookCallbackUrl(projectId: string): string {
   return `${base}/api/webhooks/shopify/${projectId}`;
 }
 
-function clientFor(secrets: DecryptedSecrets, make: typeof createAdminClient): ShopifyAdminClient {
+function clientFor(
+  projectId: string,
+  secrets: DecryptedSecrets,
+  make: typeof createAdminClient
+): ShopifyAdminClient {
   return make({
     shopDomain: secrets.shopDomain,
     accessToken: secrets.accessToken,
+    tokenProvider: shopifyTokenProvider(projectId, secrets),
     apiVersion: secrets.apiVersion
   });
 }
@@ -61,7 +67,7 @@ export async function registerShopifyWebhooks(
 ): Promise<string[] | null> {
   const ids = await withDecryptedToken(projectId, async (secrets, connection) => {
     if (!secrets.webhookSecret) return null;
-    const client = clientFor(secrets, makeClient);
+    const client = clientFor(projectId, secrets, makeClient);
     const url = webhookCallbackUrl(projectId);
     const created: string[] = [];
     const topics = connection.authMode === 'oauth' ? OAUTH_WEBHOOK_TOPICS : WEBHOOK_TOPICS;
@@ -91,7 +97,7 @@ export async function deleteShopifyWebhooks(
     await withDecryptedToken(projectId, async (secrets, connection) => {
       const ids = connection.webhookIds ?? [];
       if (ids.length === 0) return;
-      const client = clientFor(secrets, makeClient);
+      const client = clientFor(projectId, secrets, makeClient);
       for (const id of ids) await client.webhookSubscriptionDelete(id);
       await setWebhookIds(projectId, null);
     });
@@ -136,7 +142,7 @@ async function applyTopic(
     return archiveProductBySourceId(projectId, sourceId);
   }
   if (topic !== 'products/update' && topic !== 'products/create') return 'ignored';
-  const client = clientFor(secrets, makeClient);
+  const client = clientFor(projectId, secrets, makeClient);
   const [shop, product] = await Promise.all([client.shopInfo(), client.productById(sourceId)]);
   if (!product) return archiveProductBySourceId(projectId, sourceId);
   const normalized = mapAdminProduct(product, {

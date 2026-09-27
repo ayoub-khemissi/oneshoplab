@@ -18,6 +18,7 @@ import {
   type CreateMediaInput,
   type ShopifyAdminClient
 } from './admin-client';
+import { shopifyTokenProvider } from './token';
 import { alertTokenInvalid } from './alerts';
 import { createShopifyImageOps } from './image-ops';
 
@@ -65,6 +66,7 @@ export async function applyShopifyChanges(
     const client = makeClient({
       shopDomain: secrets.shopDomain,
       accessToken: secrets.accessToken,
+      tokenProvider: shopifyTokenProvider(projectId, secrets),
       apiVersion: secrets.apiVersion
     });
     return applyPendingChanges(

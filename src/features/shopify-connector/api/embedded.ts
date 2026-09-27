@@ -19,12 +19,13 @@ import {
   getConnection,
   getShopifyShop,
   markShopifyShopLinked,
-  openPendingToken,
+  openPendingGrant,
   recordShopifyInstall,
   requestPull,
   setLastError,
   type ShopifyShopFacts,
-  type ShopifyShopRow
+  type ShopifyShopRow,
+  type ShopifyTokenGrant
 } from '@/entities/shop-connection';
 import { db } from '@/shared/db';
 import {
@@ -37,6 +38,7 @@ import {
   users
 } from '@/shared/db/schema';
 import { shopifyAppConfig, type ShopifyAppConfig } from '../lib/oauth';
+import { parseShopifyTokenResponse, type ShopifyTokenResponse } from '../lib/token-grant';
 import { verifyShopifyIdToken } from '../lib/id-token';
 import { createAdminClient, SHOPIFY_API_VERSION, ShopifyAdminError } from './admin-client';
 import { registerShopifyWebhooks } from './webhooks';
@@ -53,14 +55,16 @@ export async function exchangeIdToken(
   idToken: string,
   cfg: ShopifyAppConfig,
   fetchImpl: typeof fetch = fetch
-): Promise<{ accessToken: string; scopes: string[] } | null> {
+): Promise<{ grant: ShopifyTokenGrant; scopes: string[] } | null> {
   const body = new URLSearchParams({
     client_id: cfg.clientId,
     client_secret: cfg.clientSecret,
     grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
     subject_token: idToken,
     subject_token_type: 'urn:ietf:params:oauth:token-type:id_token',
-    requested_token_type: 'urn:shopify:params:oauth:token-type:offline-access-token'
+    requested_token_type: 'urn:shopify:params:oauth:token-type:offline-access-token',
+    // Expiring offline token + refresh token (mandatory for our public app).
+    expiring: '1'
   });
   const res = await fetchImpl(`https://${shop}/admin/oauth/access_token`, {
     method: 'POST',
@@ -68,15 +72,7 @@ export async function exchangeIdToken(
     body
   });
   if (!res.ok) return null;
-  const json = (await res.json()) as { access_token?: string; scope?: string };
-  if (!json.access_token) return null;
-  return {
-    accessToken: json.access_token,
-    scopes: (json.scope ?? '')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-  };
+  return parseShopifyTokenResponse((await res.json()) as ShopifyTokenResponse);
 }
 
 export async function fetchShopFacts(
@@ -145,14 +141,14 @@ export async function ensureEmbeddedInstall(
   // never outlives an uninstall + reinstall we did not hear about.
   const token = await exchangeIdToken(auth.shop, auth.idToken, auth.cfg, deps.fetchImpl);
   if (!token) throw new ShopifyAdminError('token_invalid', 'token exchange refused');
-  const facts = await fetchShopFacts(auth.shop, token.accessToken, deps.makeClient);
-  const row = await recordShopifyInstall(auth.shop, facts, token.accessToken);
+  const facts = await fetchShopFacts(auth.shop, token.grant.accessToken, deps.makeClient);
+  const row = await recordShopifyInstall(auth.shop, facts, token.grant);
   if (row.userId && row.projectId) {
     const project = await db.query.projects.findFirst({
       where: and(eq(projects.id, row.projectId), eq(projects.userId, row.userId))
     });
     if (project) {
-      await attachShopToProject(row, row.userId, project.id, token.accessToken, auth.cfg, deps);
+      await attachShopToProject(row, row.userId, project.id, token.grant, auth.cfg, deps);
       return (await getShopifyShop(auth.shop))!;
     }
   }
@@ -165,7 +161,7 @@ async function attachShopToProject(
   row: ShopifyShopRow,
   userId: string,
   projectId: string,
-  accessToken: string,
+  grant: ShopifyTokenGrant,
   cfg: ShopifyAppConfig,
   deps: EmbeddedDeps
 ): Promise<void> {
@@ -173,7 +169,10 @@ async function attachShopToProject(
     projectId,
     userId,
     shopDomain: row.shopDomain,
-    accessToken,
+    accessToken: grant.accessToken,
+    refreshToken: grant.refreshToken,
+    accessTokenExpiresAt: grant.expiresAt,
+    refreshTokenExpiresAt: grant.refreshExpiresAt,
     apiSecret: cfg.clientSecret,
     shopName: row.shopName,
     scopes: row.scopes ?? [],
@@ -241,7 +240,7 @@ export async function onboardShopifyShop(
   const row = await getShopifyShop(shop);
   if (!cfg || !row || row.uninstalledAt) return { ok: false, reason: 'not_installed' };
   if (row.userId && row.projectId) return { ok: false, reason: 'already_linked' };
-  const token = openPendingToken(row);
+  const token = openPendingGrant(row);
   if (!token) return { ok: false, reason: 'not_installed' };
   const email = row.shopEmail?.toLowerCase().trim() || null;
   if (!email) return { ok: false, reason: 'no_email' };
@@ -339,10 +338,10 @@ export async function linkShopToUser(
   if (row.userId === userId && row.projectId && (await connectionUsable(row.projectId))) {
     return { ok: true, projectId: row.projectId, shopName: row.shopName };
   }
-  const accessToken = openPendingToken(row);
-  if (!accessToken) return { ok: false, reason: 'not_installed' };
+  const grant = openPendingGrant(row);
+  if (!grant) return { ok: false, reason: 'not_installed' };
   const projectId = await projectFor(userId, row);
-  await attachShopToProject(row, userId, projectId, accessToken, cfg, opts);
+  await attachShopToProject(row, userId, projectId, grant, cfg, opts);
   await adoptShopifyBilling(userId);
   return { ok: true, projectId, shopName: row.shopName };
 }

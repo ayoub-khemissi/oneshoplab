@@ -33,12 +33,13 @@ import {
   getShopifyShop,
   installedShopifyShopsFor,
   markShopifyShopUninstalled,
-  openPendingToken,
+  openPendingGrant,
   withDecryptedToken
 } from '@/entities/shop-connection';
 import { db } from '@/shared/db';
 import { subscriptions, users } from '@/shared/db/schema';
 import { createAdminClient, ShopifyAdminError, type ShopifyAdminClient } from './admin-client';
+import { shopifyTokenProvider } from './token';
 
 type PaidPlan = Exclude<PlanId, 'free'>;
 
@@ -89,20 +90,22 @@ async function withShopClient<T>(
   const make = deps.makeClient ?? createAdminClient;
   const row = await getShopifyShop(shop);
   if (!row || row.uninstalledAt) return null;
-  if (row.projectId) {
-    const viaConnection = await withDecryptedToken(row.projectId, (secrets) =>
+  const projectId = row.projectId;
+  if (projectId) {
+    const viaConnection = await withDecryptedToken(projectId, (secrets) =>
       fn(
         make({
           shopDomain: secrets.shopDomain,
           accessToken: secrets.accessToken,
+          tokenProvider: shopifyTokenProvider(projectId, secrets),
           apiVersion: secrets.apiVersion
         })
       )
     );
     if (viaConnection !== null) return viaConnection;
   }
-  const pending = openPendingToken(row);
-  return pending ? fn(make({ shopDomain: shop, accessToken: pending })) : null;
+  const pending = openPendingGrant(row);
+  return pending ? fn(make({ shopDomain: shop, accessToken: pending.accessToken })) : null;
 }
 
 function assertNoErrors(errors: UserError[] | undefined, op: string): void {
