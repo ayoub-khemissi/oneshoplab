@@ -7,9 +7,8 @@ import { useEffect } from 'react';
  *
  * It is what makes the app installable and, more importantly, what receives
  * push notifications — a browser cannot subscribe without one. Registration is
- * deferred to `load` so it never competes with the first paint, and a worker
- * waiting to take over is told to do so straight away: our worker never serves
- * stale HTML, so there is nothing to protect by keeping the old one alive.
+ * deferred to `load` so it never competes with the first paint. A new worker
+ * takes over by itself (`skipWaiting` in public/sw.js).
  */
 export function ServiceWorkerRegistration() {
   useEffect(() => {

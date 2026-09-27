@@ -26,6 +26,9 @@ const NETWORK_ONLY_PREFIXES = ['/api', '/auth'];
 const STATIC_ASSET_PREFIXES = ['/_next/static', '/icons', '/brand', '/flags'];
 
 self.addEventListener('install', (event) => {
+  // Take over as soon as installed: this worker never serves stale HTML, so an
+  // old one kept alive by an open tab only keeps its bugs alive.
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE_URLS)));
 });
 
