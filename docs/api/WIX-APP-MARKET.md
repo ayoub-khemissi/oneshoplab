@@ -54,7 +54,7 @@ product webhooks) is in `WIX-CONNECTOR.md`.
   Starter 58.99 / Pro 131.99 / Scale 291.99 a month, yearly −20 %; packs
   7.99 / 26.99 / 87.99 / 364.99.
 - `wixBilling.productIds`: the plan GUIDs from the Wix app dashboard
-  (Pricing). **null until created — a null plan cannot be bought.**
+  (Pricing): starter, pro, scale, boost-pack, power-pack, mega-pack, catalog-pack (set 2026-09-27).
 - Checkout: `POST /apps/v1/checkout` (plan GUID, MONTHLY / YEARLY /
   ONE_TIME), opened in a new tab, `successUrl` = the app in the Wix dashboard.
   Back on the page, the state is read again.

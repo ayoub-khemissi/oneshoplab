@@ -191,7 +191,7 @@
     },
     "testCreditCap": 500
   },
-  "_wixBillingComment": "Prices charged through Wix Billing to merchants who installed the app from Wix (the App Market requires Wix Billing for any charge). Wix sets local prices from these USD amounts. Wix keeps a 2.5% fee the first year, then 20% + 2.5%, and a price increase only ever applies to new customers, so the prices carry the long-term cut from day one: EUR price x 1.1382 (EUR/USD 2026-09-27) / 0.78, rounded up to .99, so that after the first year the net per sale matches Stripe. Offers rank by price per credit exactly as on the site. Yearly = monthly x 12 x (1 - yearly discount), set the same in the Wix app dashboard. productIds are the plan GUIDs from the Wix app dashboard (Pricing), null until created: a null plan cannot be bought. During development Wix prices every plan at 0.00: a purchase at 0.00 is a test purchase and grants at most shopifyBilling.testCreditCap credits per account in total (shared with Shopify test charges), never refilled.",
+  "_wixBillingComment": "Prices charged through Wix Billing to merchants who installed the app from Wix (the App Market requires Wix Billing for any charge). Wix sets local prices from these USD amounts. Wix keeps a 2.5% fee the first year, then 20% + 2.5%, and a price increase only ever applies to new customers, so the prices carry the long-term cut from day one: EUR price x 1.1382 (EUR/USD 2026-09-27) / 0.78, rounded up to .99, so that after the first year the net per sale matches Stripe. Offers rank by price per credit exactly as on the site. Yearly = monthly x 12 x (1 - yearly discount), set the same in the Wix app dashboard. productIds are the plans' Product IDs from the Wix app dashboard (Pricing); a null plan cannot be bought. The free plan is Wix's 'basic'. During development Wix prices every plan at 0.00: a purchase at 0.00 is a test purchase and grants at most shopifyBilling.testCreditCap credits per account in total (shared with Shopify test charges), never refilled.",
   "wixBilling": {
     "currency": "USD",
     "plans": {
@@ -206,13 +206,13 @@
       "catalog": 364.99
     },
     "productIds": {
-      "starter": null,
-      "pro": null,
-      "scale": null,
-      "boost": null,
-      "power": null,
-      "mega": null,
-      "catalog": null
+      "starter": "starter",
+      "pro": "pro",
+      "scale": "scale",
+      "boost": "boost-pack",
+      "power": "power-pack",
+      "mega": "mega-pack",
+      "catalog": "catalog-pack"
     }
   },
   "creditPacks": {
