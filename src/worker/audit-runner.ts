@@ -13,6 +13,7 @@ const MAX_CONCURRENT = 3;
 export async function runAuditRunner(): Promise<void> {
   const pending = await db.query.audits.findMany({
     where: eq(audits.status, 'pending'),
+    columns: { id: true },
     limit: MAX_CONCURRENT
   });
   if (pending.length === 0) return;

@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, lt, sql } from 'drizzle-orm';
+import { and, inArray, lt, sql } from 'drizzle-orm';
 import { db } from '@/shared/db';
 import { audits } from '@/shared/db/schema';
 
@@ -11,8 +11,8 @@ import { audits } from '@/shared/db/schema';
  *
  * This watchdog flips any pending/running audit older than the timeout
  * to `failed` with a clear `process_interrupted` error so the user can
- * relaunch from the site dashboard. Runs on every worker tick (cheap
- * indexed query on status + a date comparison).
+ * relaunch from the site dashboard. Runs on every worker tick, so it must
+ * stay a cheap query: status + date in SQL, ids only.
  *
  * Tuned to 8 minutes: real audits over 50 products typically finish in
  * 1-3 min; the dynamic AI sub-audit on 3 latest products adds another
@@ -24,25 +24,31 @@ const STUCK_STATUSES: Array<'pending' | 'running'> = ['pending', 'running'];
 
 export async function runAuditWatchdog(): Promise<{ recovered: number }> {
   const cutoff = new Date(Date.now() - STUCK_AFTER_MS);
-  const stuck = await db.query.audits.findMany({
-    where: and(isNotNull(audits.id), lt(audits.createdAt, cutoff))
-  });
-  // Drizzle doesn't have a great way to filter on enum-in-array in the
-  // mysql dialect for nullable columns; do it in JS to keep the code
-  // boring.
-  const targets = stuck.filter((a) => STUCK_STATUSES.includes(a.status as 'pending' | 'running'));
+  // Ids only, filtered in SQL: this runs every tick, and an audit row carries
+  // its whole summary (tens of MB each) — loading every audit to filter in JS
+  // pulled gigabytes per tick and pinned the worker at 300% CPU (2026-09-28).
+  const targets = await db
+    .select({ id: audits.id })
+    .from(audits)
+    .where(and(inArray(audits.status, STUCK_STATUSES), lt(audits.createdAt, cutoff)));
   if (targets.length === 0) return { recovered: 0 };
 
-  for (const a of targets) {
-    await db
-      .update(audits)
-      .set({
-        status: 'failed',
-        error: 'process_interrupted',
-        completedAt: new Date()
-      })
-      .where(and(eq(audits.id, a.id), sql`${audits.status} IN ('pending','running')`));
-  }
+  await db
+    .update(audits)
+    .set({
+      status: 'failed',
+      error: 'process_interrupted',
+      completedAt: new Date()
+    })
+    .where(
+      and(
+        inArray(
+          audits.id,
+          targets.map((a) => a.id)
+        ),
+        sql`${audits.status} IN ('pending','running')`
+      )
+    );
 
   console.log(`[audit-watchdog] cutoff=${cutoff.toISOString()} recovered=${targets.length}`);
   return { recovered: targets.length };
