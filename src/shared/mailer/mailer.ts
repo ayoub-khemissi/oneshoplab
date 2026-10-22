@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { getAppContactEmail } from '@/shared/config';
 
 /**
@@ -19,10 +19,10 @@ import { getAppContactEmail } from '@/shared/config';
  * so creating it on every call would be wasteful.
  */
 
-let transporter: nodemailer.Transporter | null = null;
+let transporter: Transporter | null = null;
 let transporterTried = false;
 
-function getTransporter(): nodemailer.Transporter | null {
+function getTransporter(): Transporter | null {
   if (transporterTried) return transporter;
   transporterTried = true;
 
