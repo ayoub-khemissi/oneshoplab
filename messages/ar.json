@@ -1202,16 +1202,15 @@
     "notifySaved": "سنخبرك",
     "chooseFirst": "اختر منصتك أعلاه لرؤية الخطوات.",
     "openAdmin": "فتح",
-    "downloadPlugin": "تنزيل الإضافة",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "ثبّت إضافة OneShopLab",
-          "body": "في لوحة تحكم WordPress افتح الإضافات › أضف جديد › رفع إضافة، اختر الملف oneshoplab.zip واضغط التثبيت الآن."
+          "body": "في لوحة إدارة ووردبريس، افتح الإضافات › أضف جديد، وابحث عن OneShopLab ثم انقر على التنصيب الآن. يفتح الزر أعلاه الصفحة مباشرة."
         },
         "step2": {
           "title": "فعّلها",
-          "body": "اضغط تفعيل الإضافة. سيظهر عنصر OneShopLab في القائمة الجانبية."
+          "body": "انقر على تفعيل. يظهر OneShopLab في القائمة الجانبية."
         },
         "step3": {
           "title": "الصق مفتاح الموقع",
@@ -1267,16 +1266,12 @@
         "plugins": "الإضافات",
         "settings": "الإعدادات",
         "addPlugins": "إضافة إضافات",
-        "uploadPlugin": "رفع إضافة",
-        "uploadHint": "إذا كانت لديك إضافة بصيغة ‎.zip فيمكنك تثبيتها برفعها هنا.",
-        "chooseFile": "اختيار ملف",
         "installNow": "التثبيت الآن",
-        "installing": "جارٍ تثبيت الإضافة من الملف المرفوع: oneshoplab.zip",
+        "installing": "جارٍ تنصيب الإضافة: OneShopLab",
         "unpacking": "جارٍ فك ضغط الحزمة…",
         "installed": "تم تثبيت الإضافة بنجاح.",
         "activate": "تفعيل الإضافة",
         "goToPlugins": "العودة إلى مثبّت الإضافات",
-        "uploadAria": "لوحة WordPress: الإضافات › أضف جديد › رفع إضافة مع اختيار oneshoplab.zip",
         "activateAria": "لوحة WordPress: زر تفعيل الإضافة بعد التثبيت",
         "pasteAria": "لوحة WordPress: عنصر القائمة OneShopLab وحقل مفتاح الموقع",
         "saveAria": "لوحة WordPress: زر الحفظ في OneShopLab والحالة الخضراء «متصل»",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "الصق المفتاح الذي أنشأته في لوحة OneShopLab.",
         "save": "حفظ",
         "statusConnected": "متصل",
-        "statusWaiting": "في انتظار مفتاح"
+        "statusWaiting": "في انتظار مفتاح",
+        "searchAria": "لوحة إدارة ووردبريس: الإضافات › أضف جديد، وOneShopLab في نتائج البحث مع زر التنصيب الآن",
+        "searchLabel": "بحث:"
       },
       "shopify": {
         "general": "عام",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "انقطع الاتصال بمتجر Shopify الخاص بك. افتح الصفحة الرئيسية لـ OneShopLab في لوحة إدارة Shopify: يُستعاد الاتصال تلقائيًا.",
       "reconnect": "إعادة الاتصال",
       "notConnectedBodyWix": "انقطع الاتصال بموقع Wix الخاص بك. افتح الصفحة الرئيسية لـ OneShopLab في لوحة تحكم Wix: تتم استعادته تلقائيًا."
-    }
+    },
+    "downloadPluginManual": "أو نزّل ملف zip لرفعه بنفسك"
   },
   "ApplyToStore": {
     "apply": "تطبيق في متجري",

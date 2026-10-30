@@ -1202,16 +1202,15 @@
     "notifySaved": "We’ll let you know",
     "chooseFirst": "Choose your platform above to see the steps.",
     "openAdmin": "Open",
-    "downloadPlugin": "Download the plugin",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "Install the OneShopLab plugin",
-          "body": "In your WordPress admin, open Plugins › Add New › Upload Plugin, pick the oneshoplab.zip file and click Install Now."
+          "body": "In your WordPress admin, open Plugins › Add New, search for OneShopLab and click Install Now. The button above opens it directly."
         },
         "step2": {
           "title": "Activate it",
-          "body": "Click Activate Plugin. A OneShopLab entry appears in the left menu."
+          "body": "Click Activate. A OneShopLab entry appears in the left menu."
         },
         "step3": {
           "title": "Paste your site key",
@@ -1267,16 +1266,12 @@
         "plugins": "Plugins",
         "settings": "Settings",
         "addPlugins": "Add Plugins",
-        "uploadPlugin": "Upload Plugin",
-        "uploadHint": "If you have a plugin in a .zip format, you may install it by uploading it here.",
-        "chooseFile": "Choose File",
         "installNow": "Install Now",
-        "installing": "Installing plugin from uploaded file: oneshoplab.zip",
+        "installing": "Installing plugin: OneShopLab",
         "unpacking": "Unpacking the package…",
         "installed": "Plugin installed successfully.",
         "activate": "Activate Plugin",
         "goToPlugins": "Go to Plugin Installer",
-        "uploadAria": "WordPress admin: Plugins › Add New › Upload Plugin with oneshoplab.zip selected",
         "activateAria": "WordPress admin: the Activate Plugin button after the install",
         "pasteAria": "WordPress admin: the OneShopLab menu entry and its Site key field",
         "saveAria": "WordPress admin: the OneShopLab Save button and the green Connected status",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "Paste the key created in your OneShopLab dashboard.",
         "save": "Save",
         "statusConnected": "Connected",
-        "statusWaiting": "Waiting for a key"
+        "statusWaiting": "Waiting for a key",
+        "searchAria": "WordPress admin: Plugins › Add New, OneShopLab found in the search with its Install Now button",
+        "searchLabel": "Search:"
       },
       "shopify": {
         "general": "General",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "The connection to your Shopify store is broken. Open the OneShopLab home in your Shopify admin: it is restored automatically.",
       "reconnect": "Reconnect",
       "notConnectedBodyWix": "The connection to your Wix site is broken. Open the OneShopLab home in your Wix dashboard: it is restored automatically."
-    }
+    },
+    "downloadPluginManual": "Or download the zip to upload it yourself"
   },
   "ApplyToStore": {
     "apply": "Apply to my store",

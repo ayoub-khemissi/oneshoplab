@@ -1202,16 +1202,15 @@
     "notifySaved": "알려드리겠습니다",
     "chooseFirst": "위에서 플랫폼을 선택하면 단계가 표시됩니다.",
     "openAdmin": "열기",
-    "downloadPlugin": "플러그인 다운로드",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "OneShopLab 플러그인 설치",
-          "body": "WordPress 관리자에서 플러그인 › 새로 추가 › 플러그인 업로드를 열고 oneshoplab.zip 파일을 선택한 뒤 지금 설치를 클릭합니다."
+          "body": "WordPress 관리자에서 플러그인 › 새로 추가를 열고 OneShopLab을 검색한 뒤 지금 설치를 클릭하세요. 위의 버튼으로 바로 열 수 있습니다."
         },
         "step2": {
           "title": "활성화",
-          "body": "플러그인 활성화를 클릭합니다. 왼쪽 메뉴에 OneShopLab 항목이 나타납니다."
+          "body": "활성화를 클릭하세요. 왼쪽 메뉴에 OneShopLab이 나타납니다."
         },
         "step3": {
           "title": "사이트 키 붙여넣기",
@@ -1267,16 +1266,12 @@
         "plugins": "플러그인",
         "settings": "설정",
         "addPlugins": "플러그인 추가",
-        "uploadPlugin": "플러그인 업로드",
-        "uploadHint": ".zip 형식의 플러그인이 있다면 여기에 업로드해 설치할 수 있습니다.",
-        "chooseFile": "파일 선택",
         "installNow": "지금 설치",
-        "installing": "업로드한 파일에서 플러그인 설치 중: oneshoplab.zip",
+        "installing": "플러그인 설치 중: OneShopLab",
         "unpacking": "패키지 압축 해제 중…",
         "installed": "플러그인이 설치되었습니다.",
         "activate": "플러그인 활성화",
         "goToPlugins": "플러그인 설치 화면으로 돌아가기",
-        "uploadAria": "WordPress 관리자: 플러그인 › 새로 추가 › 플러그인 업로드에서 oneshoplab.zip 선택",
         "activateAria": "WordPress 관리자: 설치 후 표시되는 플러그인 활성화 버튼",
         "pasteAria": "WordPress 관리자: OneShopLab 메뉴 항목과 사이트 키 입력란",
         "saveAria": "WordPress 관리자: OneShopLab 저장 버튼과 녹색 연결됨 상태",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "OneShopLab 대시보드에서 만든 키를 붙여넣으세요.",
         "save": "저장",
         "statusConnected": "연결됨",
-        "statusWaiting": "키 대기 중"
+        "statusWaiting": "키 대기 중",
+        "searchAria": "WordPress 관리자: 플러그인 › 새로 추가, 검색에서 찾은 OneShopLab과 지금 설치 버튼",
+        "searchLabel": "검색:"
       },
       "shopify": {
         "general": "일반",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Shopify 스토어와의 연결이 끊어졌습니다. Shopify 관리자에서 OneShopLab 홈을 열면 자동으로 복구됩니다.",
       "reconnect": "다시 연결",
       "notConnectedBodyWix": "Wix 사이트와의 연결이 끊어졌습니다. Wix 대시보드에서 OneShopLab 홈을 열면 자동으로 복구됩니다."
-    }
+    },
+    "downloadPluginManual": "또는 zip 파일을 내려받아 직접 업로드"
   },
   "ApplyToStore": {
     "apply": "내 스토어에 적용",

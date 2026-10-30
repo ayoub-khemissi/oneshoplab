@@ -1202,16 +1202,15 @@
     "notifySaved": "Wir sagen Bescheid",
     "chooseFirst": "Wähle oben deine Plattform, um die Schritte zu sehen.",
     "openAdmin": "Öffnen",
-    "downloadPlugin": "Plugin herunterladen",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "OneShopLab-Plugin installieren",
-          "body": "Öffne im WordPress-Admin Plugins › Installieren › Plugin hochladen, wähle die Datei oneshoplab.zip und klicke auf Jetzt installieren."
+          "body": "Öffne in deinem WordPress-Admin Plugins › Neues Plugin hinzufügen, suche nach OneShopLab und klicke auf Jetzt installieren. Der Button oben öffnet die Seite direkt."
         },
         "step2": {
           "title": "Aktivieren",
-          "body": "Klicke auf Plugin aktivieren. Im linken Menü erscheint der Eintrag OneShopLab."
+          "body": "Klicke auf Aktivieren. Im linken Menü erscheint der Eintrag OneShopLab."
         },
         "step3": {
           "title": "Site-Schlüssel einfügen",
@@ -1267,16 +1266,12 @@
         "plugins": "Plugins",
         "settings": "Einstellungen",
         "addPlugins": "Plugins hinzufügen",
-        "uploadPlugin": "Plugin hochladen",
-        "uploadHint": "Wenn du ein Plugin im .zip-Format hast, kannst du es hier hochladen und installieren.",
-        "chooseFile": "Datei auswählen",
         "installNow": "Jetzt installieren",
-        "installing": "Plugin wird aus der hochgeladenen Datei installiert: oneshoplab.zip",
+        "installing": "Plugin wird installiert: OneShopLab",
         "unpacking": "Paket wird entpackt…",
         "installed": "Plugin erfolgreich installiert.",
         "activate": "Plugin aktivieren",
         "goToPlugins": "Zurück zur Plugin-Installation",
-        "uploadAria": "WordPress-Admin: Plugins › Installieren › Plugin hochladen mit ausgewählter oneshoplab.zip",
         "activateAria": "WordPress-Admin: der Button „Plugin aktivieren“ nach der Installation",
         "pasteAria": "WordPress-Admin: der Menüeintrag OneShopLab und das Feld Site-Schlüssel",
         "saveAria": "WordPress-Admin: der Speichern-Button von OneShopLab und der grüne Status „Verbunden“",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "Füge den in deinem OneShopLab-Dashboard erstellten Schlüssel ein.",
         "save": "Speichern",
         "statusConnected": "Verbunden",
-        "statusWaiting": "Wartet auf einen Schlüssel"
+        "statusWaiting": "Wartet auf einen Schlüssel",
+        "searchAria": "WordPress-Admin: Plugins › Neues Plugin hinzufügen, OneShopLab in der Suche gefunden, mit dem Button Jetzt installieren",
+        "searchLabel": "Suche:"
       },
       "shopify": {
         "general": "Allgemein",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Die Verbindung zu Ihrem Shopify-Shop ist unterbrochen. Öffnen Sie die OneShopLab-Startseite in Ihrem Shopify-Admin: sie wird automatisch wiederhergestellt.",
       "reconnect": "Neu verbinden",
       "notConnectedBodyWix": "Die Verbindung zu deiner Wix-Website ist unterbrochen. Öffne die OneShopLab-Startseite in deinem Wix-Dashboard: Sie wird automatisch wiederhergestellt."
-    }
+    },
+    "downloadPluginManual": "Oder lade das Zip herunter und lade es selbst hoch"
   },
   "ApplyToStore": {
     "apply": "In meinem Shop anwenden",

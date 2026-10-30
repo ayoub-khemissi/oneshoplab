@@ -1202,16 +1202,15 @@
     "notifySaved": "お知らせします",
     "chooseFirst": "上でプラットフォームを選ぶと手順が表示されます。",
     "openAdmin": "開く",
-    "downloadPlugin": "プラグインをダウンロード",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "OneShopLab プラグインをインストール",
-          "body": "WordPress 管理画面で プラグイン › 新規追加 › プラグインのアップロード を開き、oneshoplab.zip を選んで 今すぐインストール をクリックします。"
+          "body": "WordPress 管理画面で プラグイン › 新規追加 を開き、OneShopLab を検索して「今すぐインストール」をクリックします。上のボタンから直接開けます。"
         },
         "step2": {
           "title": "有効化する",
-          "body": "プラグインを有効化 をクリックします。左メニューに OneShopLab が表示されます。"
+          "body": "「有効化」をクリックします。左のメニューに OneShopLab が表示されます。"
         },
         "step3": {
           "title": "サイトキーを貼り付ける",
@@ -1267,16 +1266,12 @@
         "plugins": "プラグイン",
         "settings": "設定",
         "addPlugins": "プラグインを追加",
-        "uploadPlugin": "プラグインのアップロード",
-        "uploadHint": ".zip 形式のプラグインをお持ちの場合、ここでアップロードしてインストールできます。",
-        "chooseFile": "ファイルを選択",
         "installNow": "今すぐインストール",
-        "installing": "アップロードしたファイルからプラグインをインストール中: oneshoplab.zip",
+        "installing": "プラグインをインストール中: OneShopLab",
         "unpacking": "パッケージを展開中…",
         "installed": "プラグインのインストールが完了しました。",
         "activate": "プラグインを有効化",
         "goToPlugins": "プラグインインストーラーに戻る",
-        "uploadAria": "WordPress 管理画面: プラグイン › 新規追加 › プラグインのアップロードで oneshoplab.zip を選択",
         "activateAria": "WordPress 管理画面: インストール後の「プラグインを有効化」ボタン",
         "pasteAria": "WordPress 管理画面: メニューの OneShopLab とサイトキー欄",
         "saveAria": "WordPress 管理画面: OneShopLab の保存ボタンと緑色の「接続済み」ステータス",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "OneShopLab ダッシュボードで作成したキーを貼り付けてください。",
         "save": "保存",
         "statusConnected": "接続済み",
-        "statusWaiting": "キー待ち"
+        "statusWaiting": "キー待ち",
+        "searchAria": "WordPress 管理画面：プラグイン › 新規追加、検索で見つかった OneShopLab と「今すぐインストール」ボタン",
+        "searchLabel": "検索:"
       },
       "shopify": {
         "general": "一般",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Shopify ストアとの接続が切れています。Shopify 管理画面で OneShopLab のホームを開くと、自動的に復旧します。",
       "reconnect": "再接続",
       "notConnectedBodyWix": "Wix サイトとの接続が切れています。Wix ダッシュボードで OneShopLab のホームを開くと、自動的に復旧します。"
-    }
+    },
+    "downloadPluginManual": "または zip をダウンロードして手動でアップロード"
   },
   "ApplyToStore": {
     "apply": "ストアに反映",

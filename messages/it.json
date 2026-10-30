@@ -1202,16 +1202,15 @@
     "notifySaved": "Ti avviseremo",
     "chooseFirst": "Scegli la piattaforma qui sopra per vedere i passaggi.",
     "openAdmin": "Apri",
-    "downloadPlugin": "Scarica il plugin",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "Installa il plugin OneShopLab",
-          "body": "Nell’admin di WordPress apri Plugin › Aggiungi nuovo › Carica plugin, scegli il file oneshoplab.zip e fai clic su Installa ora."
+          "body": "Nell’amministrazione di WordPress apri Plugin › Aggiungi nuovo, cerca OneShopLab e clicca su Installa ora. Il pulsante qui sopra ti porta direttamente lì."
         },
         "step2": {
           "title": "Attivalo",
-          "body": "Fai clic su Attiva plugin. Nel menu a sinistra compare la voce OneShopLab."
+          "body": "Clicca su Attiva. Nel menu a sinistra compare la voce OneShopLab."
         },
         "step3": {
           "title": "Incolla la chiave del sito",
@@ -1267,16 +1266,12 @@
         "plugins": "Plugin",
         "settings": "Impostazioni",
         "addPlugins": "Aggiungi plugin",
-        "uploadPlugin": "Carica plugin",
-        "uploadHint": "Se hai un plugin in formato .zip, puoi installarlo caricandolo qui.",
-        "chooseFile": "Scegli file",
         "installNow": "Installa ora",
-        "installing": "Installazione del plugin dal file caricato: oneshoplab.zip",
+        "installing": "Installazione del plugin: OneShopLab",
         "unpacking": "Estrazione del pacchetto…",
         "installed": "Plugin installato con successo.",
         "activate": "Attiva plugin",
         "goToPlugins": "Torna all’installazione plugin",
-        "uploadAria": "Admin WordPress: Plugin › Aggiungi nuovo › Carica plugin con oneshoplab.zip selezionato",
         "activateAria": "Admin WordPress: il pulsante Attiva plugin dopo l’installazione",
         "pasteAria": "Admin WordPress: la voce di menu OneShopLab e il campo Chiave del sito",
         "saveAria": "Admin WordPress: il pulsante Salva di OneShopLab e lo stato Connesso in verde",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "Incolla la chiave creata nella tua dashboard OneShopLab.",
         "save": "Salva",
         "statusConnected": "Connesso",
-        "statusWaiting": "In attesa di una chiave"
+        "statusWaiting": "In attesa di una chiave",
+        "searchAria": "Amministrazione WordPress: Plugin › Aggiungi nuovo, OneShopLab trovato nella ricerca con il pulsante Installa ora",
+        "searchLabel": "Cerca:"
       },
       "shopify": {
         "general": "Generale",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Il collegamento al tuo negozio Shopify si è interrotto. Apri la home di OneShopLab nel tuo admin Shopify: viene ripristinato automaticamente.",
       "reconnect": "Ricollega",
       "notConnectedBodyWix": "La connessione al tuo sito Wix si è interrotta. Apri la home di OneShopLab nella dashboard di Wix: viene ripristinata automaticamente."
-    }
+    },
+    "downloadPluginManual": "Oppure scarica lo zip per caricarlo tu"
   },
   "ApplyToStore": {
     "apply": "Applica nel mio negozio",

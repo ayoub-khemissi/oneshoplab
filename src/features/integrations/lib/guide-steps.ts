@@ -83,9 +83,17 @@ export const WIX_DASHBOARD_URL = 'https://manage.wix.com/';
 /** Latest plugin zip served from public/downloads by scripts/ops (versioned copy alongside). */
 export const WP_PLUGIN_ZIP_PATH = '/downloads/oneshoplab-wp-plugin.zip';
 
+/**
+ * The plugin is in the WordPress.org directory (approved 2026-10-24): the
+ * merchant installs it from their own admin and WordPress keeps it updated.
+ * This screen is its details page there, with the Install Now button —
+ * reachable by slug right away, unlike the search, which takes days to index.
+ */
+const WP_INSTALL_PATH = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=oneshoplab';
+
 /** Static values shown in the copy boxes (names exactly as in the admins). */
 export const GUIDE_VALUES: Record<Exclude<GuideValueKind, 'siteKey'>, string> = {
-  adminPath: '/wp-admin/plugin-install.php?tab=upload',
+  adminPath: WP_INSTALL_PATH,
   appName: 'OneShopLab',
   scopes: 'read_products, write_products'
 };
@@ -115,7 +123,7 @@ export function shopifyAdminBase(domain: string | null | undefined): string {
 }
 
 const WP_PATHS: Record<number, string> = {
-  1: '/wp-admin/plugin-install.php?tab=upload',
+  1: WP_INSTALL_PATH,
   2: '/wp-admin/plugins.php',
   3: '/wp-admin/admin.php?page=oneshoplab',
   4: '/wp-admin/admin.php?page=oneshoplab'

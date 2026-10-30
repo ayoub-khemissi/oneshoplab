@@ -1202,16 +1202,15 @@
     "notifySaved": "Damy znać",
     "chooseFirst": "Wybierz platformę powyżej, aby zobaczyć kroki.",
     "openAdmin": "Otwórz",
-    "downloadPlugin": "Pobierz wtyczkę",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "Zainstaluj wtyczkę OneShopLab",
-          "body": "W panelu WordPress otwórz Wtyczki › Dodaj nową › Wyślij wtyczkę na serwer, wybierz plik oneshoplab.zip i kliknij Zainstaluj."
+          "body": "W panelu WordPress otwórz Wtyczki › Dodaj nową, wyszukaj OneShopLab i kliknij Zainstaluj teraz. Przycisk powyżej otwiera tę stronę od razu."
         },
         "step2": {
           "title": "Włącz ją",
-          "body": "Kliknij Włącz wtyczkę. W lewym menu pojawi się pozycja OneShopLab."
+          "body": "Kliknij Włącz. W menu po lewej pojawi się pozycja OneShopLab."
         },
         "step3": {
           "title": "Wklej klucz sklepu",
@@ -1267,16 +1266,12 @@
         "plugins": "Wtyczki",
         "settings": "Ustawienia",
         "addPlugins": "Dodaj wtyczki",
-        "uploadPlugin": "Wyślij wtyczkę na serwer",
-        "uploadHint": "Jeśli masz wtyczkę w formacie .zip, możesz ją zainstalować, przesyłając ją tutaj.",
-        "chooseFile": "Wybierz plik",
         "installNow": "Zainstaluj teraz",
-        "installing": "Instalowanie wtyczki z przesłanego pliku: oneshoplab.zip",
+        "installing": "Instalowanie wtyczki: OneShopLab",
         "unpacking": "Rozpakowywanie pakietu…",
         "installed": "Wtyczka została zainstalowana.",
         "activate": "Włącz wtyczkę",
         "goToPlugins": "Wróć do instalatora wtyczek",
-        "uploadAria": "Panel WordPress: Wtyczki › Dodaj nową › Wyślij wtyczkę z wybranym plikiem oneshoplab.zip",
         "activateAria": "Panel WordPress: przycisk Włącz wtyczkę po instalacji",
         "pasteAria": "Panel WordPress: pozycja menu OneShopLab i pole Klucz witryny",
         "saveAria": "Panel WordPress: przycisk Zapisz w OneShopLab i zielony status Połączono",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "Wklej klucz utworzony w panelu OneShopLab.",
         "save": "Zapisz",
         "statusConnected": "Połączono",
-        "statusWaiting": "Oczekiwanie na klucz"
+        "statusWaiting": "Oczekiwanie na klucz",
+        "searchAria": "Panel WordPress: Wtyczki › Dodaj nową, OneShopLab w wynikach wyszukiwania z przyciskiem Zainstaluj teraz",
+        "searchLabel": "Szukaj:"
       },
       "shopify": {
         "general": "Ogólne",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Połączenie ze sklepem Shopify zostało przerwane. Otwórz stronę główną OneShopLab w panelu Shopify: zostanie przywrócone automatycznie.",
       "reconnect": "Połącz ponownie",
       "notConnectedBodyWix": "Połączenie ze stroną Wix zostało przerwane. Otwórz stronę główną OneShopLab w panelu Wix — zostanie przywrócone automatycznie."
-    }
+    },
+    "downloadPluginManual": "Albo pobierz plik zip i wgraj go samodzielnie"
   },
   "ApplyToStore": {
     "apply": "Zastosuj w sklepie",

@@ -1202,16 +1202,15 @@
     "notifySaved": "Haber vereceğiz",
     "chooseFirst": "Adımları görmek için yukarıdan platformunuzu seçin.",
     "openAdmin": "Aç",
-    "downloadPlugin": "Eklentiyi indir",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "OneShopLab eklentisini kurun",
-          "body": "WordPress yönetim panelinde Eklentiler › Yeni Ekle › Eklenti Yükle’yi açın, oneshoplab.zip dosyasını seçin ve Şimdi Kur’a tıklayın."
+          "body": "WordPress yönetiminde Eklentiler › Yeni ekle’yi açın, OneShopLab’ı arayın ve Şimdi kur’a tıklayın. Yukarıdaki düğme sizi doğrudan oraya götürür."
         },
         "step2": {
           "title": "Etkinleştirin",
-          "body": "Eklentiyi Etkinleştir’e tıklayın. Sol menüde OneShopLab girişi görünür."
+          "body": "Etkinleştir’e tıklayın. Sol menüde OneShopLab görünür."
         },
         "step3": {
           "title": "Site anahtarınızı yapıştırın",
@@ -1267,16 +1266,12 @@
         "plugins": "Eklentiler",
         "settings": "Ayarlar",
         "addPlugins": "Eklenti ekle",
-        "uploadPlugin": "Eklenti yükle",
-        "uploadHint": "Elinizde .zip biçiminde bir eklenti varsa buradan yükleyerek kurabilirsiniz.",
-        "chooseFile": "Dosya seç",
         "installNow": "Şimdi kur",
-        "installing": "Yüklenen dosyadan eklenti kuruluyor: oneshoplab.zip",
+        "installing": "Eklenti kuruluyor: OneShopLab",
         "unpacking": "Paket açılıyor…",
         "installed": "Eklenti başarıyla kuruldu.",
         "activate": "Eklentiyi etkinleştir",
         "goToPlugins": "Eklenti yükleyicisine dön",
-        "uploadAria": "WordPress yönetimi: Eklentiler › Yeni ekle › Eklenti yükle, oneshoplab.zip seçili",
         "activateAria": "WordPress yönetimi: kurulumdan sonraki Eklentiyi etkinleştir düğmesi",
         "pasteAria": "WordPress yönetimi: OneShopLab menü girişi ve Site anahtarı alanı",
         "saveAria": "WordPress yönetimi: OneShopLab Kaydet düğmesi ve yeşil Bağlı durumu",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "OneShopLab panelinde oluşturduğunuz anahtarı yapıştırın.",
         "save": "Kaydet",
         "statusConnected": "Bağlı",
-        "statusWaiting": "Anahtar bekleniyor"
+        "statusWaiting": "Anahtar bekleniyor",
+        "searchAria": "WordPress yönetimi: Eklentiler › Yeni ekle, aramada bulunan OneShopLab ve Şimdi kur düğmesi",
+        "searchLabel": "Ara:"
       },
       "shopify": {
         "general": "Genel",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "Shopify mağazanızla bağlantı koptu. Shopify yönetim panelinizde OneShopLab ana sayfasını açın: bağlantı otomatik olarak yeniden kurulur.",
       "reconnect": "Yeniden bağlan",
       "notConnectedBodyWix": "Wix sitenizle bağlantı koptu. Wix panelinizde OneShopLab ana sayfasını açın: bağlantı otomatik olarak yeniden kurulur."
-    }
+    },
+    "downloadPluginManual": "Ya da zip dosyasını indirip kendiniz yükleyin"
   },
   "ApplyToStore": {
     "apply": "Mağazama uygula",

@@ -13,7 +13,7 @@ describe('integrations guide admin links', () => {
       (s) => s.openUrl
     );
     expect(urls).toEqual([
-      'https://ma-boutique.fr/wp-admin/plugin-install.php?tab=upload',
+      'https://ma-boutique.fr/wp-admin/plugin-install.php?tab=plugin-information&plugin=oneshoplab',
       'https://ma-boutique.fr/wp-admin/plugins.php',
       'https://ma-boutique.fr/wp-admin/admin.php?page=oneshoplab',
       'https://ma-boutique.fr/wp-admin/admin.php?page=oneshoplab'

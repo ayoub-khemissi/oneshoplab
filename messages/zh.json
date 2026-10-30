@@ -1202,16 +1202,15 @@
     "notifySaved": "我们会通知你",
     "chooseFirst": "在上方选择平台以查看步骤。",
     "openAdmin": "打开",
-    "downloadPlugin": "下载插件",
     "guide": {
       "woocommerce": {
         "step1": {
           "title": "安装 OneShopLab 插件",
-          "body": "在 WordPress 后台打开 插件 › 安装插件 › 上传插件，选择 oneshoplab.zip 文件并点击 现在安装。"
+          "body": "在 WordPress 后台打开 插件 › 安装新插件，搜索 OneShopLab 并点击“立即安装”。上方按钮可直接打开该页面。"
         },
         "step2": {
           "title": "启用插件",
-          "body": "点击 启用插件。左侧菜单会出现 OneShopLab。"
+          "body": "点击“启用”。左侧菜单会出现 OneShopLab。"
         },
         "step3": {
           "title": "粘贴站点密钥",
@@ -1267,16 +1266,12 @@
         "plugins": "插件",
         "settings": "设置",
         "addPlugins": "添加插件",
-        "uploadPlugin": "上传插件",
-        "uploadHint": "如果您有 .zip 格式的插件，可以在此上传安装。",
-        "chooseFile": "选择文件",
         "installNow": "立即安装",
-        "installing": "正在从上传的文件安装插件：oneshoplab.zip",
+        "installing": "正在安装插件：OneShopLab",
         "unpacking": "正在解压安装包…",
         "installed": "插件安装成功。",
         "activate": "启用插件",
         "goToPlugins": "返回插件安装器",
-        "uploadAria": "WordPress 后台：插件 › 安装插件 › 上传插件，已选择 oneshoplab.zip",
         "activateAria": "WordPress 后台：安装完成后的“启用插件”按钮",
         "pasteAria": "WordPress 后台：菜单中的 OneShopLab 入口及站点密钥字段",
         "saveAria": "WordPress 后台：OneShopLab 的保存按钮及绿色“已连接”状态",
@@ -1284,7 +1279,9 @@
         "siteKeyHint": "粘贴您在 OneShopLab 控制台创建的密钥。",
         "save": "保存",
         "statusConnected": "已连接",
-        "statusWaiting": "等待密钥"
+        "statusWaiting": "等待密钥",
+        "searchAria": "WordPress 后台：插件 › 安装新插件，搜索结果中的 OneShopLab 及其“立即安装”按钮",
+        "searchLabel": "搜索："
       },
       "shopify": {
         "general": "常规",
@@ -1668,7 +1665,8 @@
       "notConnectedBody": "与您的 Shopify 店铺的连接已中断。在 Shopify 后台打开 OneShopLab 首页即可自动恢复。",
       "reconnect": "重新连接",
       "notConnectedBodyWix": "与您的 Wix 网站的连接已中断。在 Wix 控制台中打开 OneShopLab 首页即可自动恢复。"
-    }
+    },
+    "downloadPluginManual": "或下载 zip 文件自行上传"
   },
   "ApplyToStore": {
     "apply": "应用到我的店铺",

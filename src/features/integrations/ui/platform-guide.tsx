@@ -149,14 +149,16 @@ function GuideStepItem({
             {t(`guide.${platform}.step${step.n}.body`)}
           </p>
           {platform === 'woocommerce' && step.n === 1 ? (
+            // The directory install is the way; the zip stays for sites that
+            // cannot reach WordPress.org (or install by hand).
             <a
               href={WP_PLUGIN_ZIP_PATH}
               download
               data-download-plugin
-              className="inline-flex w-fit items-center gap-1.5 rounded-md bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90"
+              className="inline-flex w-fit items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--background)] px-3 py-1.5 text-sm font-medium hover:bg-[var(--default)]/60"
             >
               <Download className="size-4" aria-hidden />
-              {t('downloadPlugin')}
+              {t('downloadPluginManual')}
               {pluginVersion ? <span className="opacity-80">v{pluginVersion}</span> : null}
             </a>
           ) : null}
