@@ -51,19 +51,56 @@ export async function findLatestAuditFull(
 }
 
 /**
+ * A project's audits, plus the legacy `(projectId IS NULL AND domain = …)`
+ * leg used for rows inserted before the projects ↔ audits FK was wired up.
+ */
+function projectAuditsWhere(projectId: string, domain: string | null): SQL {
+  return or(
+    eq(audits.projectId, projectId),
+    and(isNull(audits.projectId), eq(audits.domain, domain ?? ''))
+  )!;
+}
+
+/**
  * Convenience for the dashboard / product pages: pick the latest
- * audit attached to a project, falling back to the legacy
- * `(projectId IS NULL AND domain = …)` leg used for rows inserted
- * before the projects ↔ audits FK was wired up.
+ * audit attached to a project (see `projectAuditsWhere`).
  */
 export async function findLatestAuditForProject(
   projectId: string,
   domain: string | null
 ): Promise<typeof audits.$inferSelect | null> {
-  return findLatestAuditFull(
-    or(
-      eq(audits.projectId, projectId),
-      and(isNull(audits.projectId), eq(audits.domain, domain ?? ''))
-    )!
-  );
+  return findLatestAuditFull(projectAuditsWhere(projectId, domain));
+}
+
+/** Which audit is the latest, and which version of its content. */
+export interface AuditStamp {
+  id: string;
+  status: (typeof audits.$inferSelect)['status'];
+  startedAt: Date | null;
+  completedAt: Date | null;
+}
+
+/**
+ * The latest audit of a project as a stamp — small columns only, never the
+ * summary — for callers that cache what they derive from the summary and need
+ * to know when to derive it again. Not just the id: a re-score rewrites the
+ * summary of the same row in place (bumping `completedAt`), a manual
+ * recompute bumps `startedAt`, and a running audit completes.
+ */
+export async function findLatestAuditStampForProject(
+  projectId: string,
+  domain: string | null
+): Promise<AuditStamp | null> {
+  const rows = await db
+    .select({
+      id: audits.id,
+      status: audits.status,
+      startedAt: audits.startedAt,
+      completedAt: audits.completedAt
+    })
+    .from(audits)
+    .where(projectAuditsWhere(projectId, domain))
+    .orderBy(desc(audits.createdAt))
+    .limit(1);
+  return rows[0] ?? null;
 }

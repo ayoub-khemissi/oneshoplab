@@ -40,7 +40,9 @@ export { setStoreLanguage } from './api/store-language';
 export {
   findLatestAuditForProject,
   findLatestAuditFull,
-  findLatestAuditIdWhere
+  findLatestAuditIdWhere,
+  findLatestAuditStampForProject,
+  type AuditStamp
 } from './api/find-latest';
 export { durationSeconds, getJobAverages } from './api/job-stats';
 export type { JobKindStats } from './api/job-stats';

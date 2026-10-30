@@ -13,15 +13,11 @@ import { InsufficientCreditsError } from '@/entities/credit';
 import { db } from '@/shared/db';
 import { jobs, projects, products } from '@/shared/db/schema';
 import { transitionJob } from '@/entities/generation-job';
-import {
-  combineInstructions,
-  effectiveChatPrompt,
-  toProductContext,
-  type SummaryProduct,
-  type SummaryShape
-} from '../lib/context';
+import { combineInstructions, effectiveChatPrompt, toProductContext } from '../lib/context';
+import { matchSummaryProduct } from '../lib/summary-index';
 import { hasExistingCompletedField } from './planning';
 import { markFieldsErrored, markJobStatus, stopBulkOnInsufficient } from './progress';
+import { forgetSummaryIndex, getSummaryIndex } from './summary-cache';
 import {
   BULK_STALL_TIMEOUT_MS,
   effectiveFields,
@@ -51,7 +47,10 @@ export async function processNextBulkProduct(): Promise<boolean> {
     ),
     orderBy: [asc(jobs.createdAt)]
   });
-  if (!job) return false;
+  if (!job) {
+    forgetSummaryIndex();
+    return false;
+  }
 
   const input = job.inputPayload as unknown as BulkInputPayload | null;
   const result = readResult(job.result);
@@ -101,18 +100,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
-  const { findLatestAuditForProject } = await import('@/entities/audit');
-  const audit = await findLatestAuditForProject(project.id, project.domain);
-
-  const summary = (audit?.summary ?? null) as SummaryShape | null;
-  const all: SummaryProduct[] = summary
-    ? [
-        ...(summary.allProducts ?? []),
-        ...(summary.worstProducts ?? []),
-        ...(summary.latestProducts ?? []),
-        ...(summary.bestProducts ?? [])
-      ]
-    : [];
+  const summaryIndex = await getSummaryIndex(project.id, project.domain);
 
   const productRow = await db.query.products.findFirst({
     where: and(eq(products.id, nextProductId), eq(products.projectId, project.id))
@@ -122,12 +110,7 @@ export async function processNextBulkProduct(): Promise<boolean> {
     return true;
   }
 
-  const matched =
-    all.find((p) => {
-      if (productRow.sourceId && p.sourceId === productRow.sourceId) return true;
-      if (productRow.handle && p.handle === productRow.handle) return true;
-      return false;
-    }) ?? null;
+  const matched = matchSummaryProduct(summaryIndex, productRow);
   if (!matched) {
     await markFieldsErrored(
       job.id,

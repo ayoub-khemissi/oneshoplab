@@ -34,6 +34,8 @@ const { drainWebhookDeliveries, sweepWebhookDeliveries } =
 import { writeWorkerHeartbeat } from '@/shared/health';
 
 const TICK_MS = 5_000;
+/** A pass this long means some task is doing far more than polling. */
+const SLOW_TICK_MS = 15_000;
 const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // hourly
 /** A store whose catalog just moved is re-scored on the next of these. */
 const RESCORE_INTERVAL_MS = 2 * 60 * 1000;
@@ -178,6 +180,9 @@ async function main(): Promise<void> {
       console.error('[worker] unhandled tick error', e);
     }
     const elapsed = Date.now() - t0;
+    // The 300% CPU episode of September (fc40706) ran 20-65 s passes for
+    // weeks, under the 90 s heartbeat threshold of /api/health, unseen.
+    if (elapsed > SLOW_TICK_MS) console.warn(`[worker] slow tick ${elapsed}ms`);
     const wait = Math.max(0, TICK_MS - elapsed);
     if (wait > 0) await sleep(wait);
   }
